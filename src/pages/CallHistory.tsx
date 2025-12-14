@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -40,7 +40,10 @@ import {
   XCircle, 
   AlertCircle,
   MessageSquare,
-  Calendar
+  Calendar,
+  Play,
+  Pause,
+  Volume2
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -63,6 +66,8 @@ interface CallLog {
   transcript: unknown;
   summary: string | null;
   metadata: unknown;
+  recording_url: string | null;
+  recording_duration_seconds: number | null;
 }
 
 interface TranscriptMessage {
@@ -369,6 +374,14 @@ export default function CallHistory() {
                 )}
               </div>
 
+              {/* Call Recording */}
+              {selectedCall.recording_url && (
+                <AudioPlayer 
+                  url={selectedCall.recording_url} 
+                  duration={selectedCall.recording_duration_seconds}
+                />
+              )}
+
               {/* Transcript */}
               {Array.isArray(selectedCall.transcript) && selectedCall.transcript.length > 0 && (
                 <div>
@@ -409,5 +422,104 @@ export default function CallHistory() {
         </DialogContent>
       </Dialog>
     </DashboardLayout>
+  );
+}
+
+// Audio Player Component
+interface AudioPlayerProps {
+  url: string;
+  duration: number | null;
+}
+
+function AudioPlayer({ url, duration }: AudioPlayerProps) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [audioDuration, setAudioDuration] = useState(duration || 0);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const handleLoadedMetadata = () => {
+      if (audio.duration && !isNaN(audio.duration)) {
+        setAudioDuration(audio.duration);
+      }
+    };
+    const handleEnded = () => setIsPlaying(false);
+
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, []);
+
+  const togglePlayPause = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    
+    const newTime = parseFloat(e.target.value);
+    audio.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="space-y-2">
+      <h4 className="font-medium flex items-center gap-2">
+        <Volume2 className="w-4 h-4" />
+        Call Recording
+      </h4>
+      <div className="bg-muted/50 rounded-lg p-4">
+        <audio ref={audioRef} src={url} preload="metadata" />
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={togglePlayPause}
+            className="h-10 w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
+          </Button>
+          <div className="flex-1 space-y-1">
+            <input
+              type="range"
+              min={0}
+              max={audioDuration || 1}
+              value={currentTime}
+              onChange={handleSeek}
+              className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>{formatTime(currentTime)}</span>
+              <span>{formatTime(audioDuration)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

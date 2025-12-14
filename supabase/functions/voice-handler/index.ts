@@ -99,6 +99,9 @@ serve(async (req) => {
           return new Response(
             `<?xml version="1.0" encoding="UTF-8"?>
             <Response>
+              <Start>
+                <Record recordingStatusCallback="${SUPABASE_URL}/functions/v1/voice-handler?action=recording" recordingStatusCallbackEvent="completed"/>
+              </Start>
               <Play>${audioUrl}</Play>
               <Gather input="speech" timeout="5" speechTimeout="auto" action="${SUPABASE_URL}/functions/v1/voice-handler?action=process&amp;callSid=${callSid}">
               </Gather>
@@ -109,10 +112,13 @@ serve(async (req) => {
         }
       }
 
-      // Fallback to Twilio TTS
+      // Fallback to Twilio TTS with recording
       return new Response(
         `<?xml version="1.0" encoding="UTF-8"?>
         <Response>
+          <Start>
+            <Record recordingStatusCallback="${SUPABASE_URL}/functions/v1/voice-handler?action=recording" recordingStatusCallbackEvent="completed"/>
+          </Start>
           <Say voice="Polly.Joanna">${greeting}</Say>
           <Gather input="speech" timeout="5" speechTimeout="auto" action="${SUPABASE_URL}/functions/v1/voice-handler?action=process&amp;callSid=${callSid}">
           </Gather>
@@ -352,8 +358,10 @@ serve(async (req) => {
       const callSid = formData.get('CallSid') as string;
       const callStatus = formData.get('CallStatus') as string;
       const callDuration = formData.get('CallDuration') as string;
+      const recordingUrl = formData.get('RecordingUrl') as string;
+      const recordingDuration = formData.get('RecordingDuration') as string;
 
-      console.log(`Call ${callSid} status: ${callStatus}, duration: ${callDuration}`);
+      console.log(`Call ${callSid} status: ${callStatus}, duration: ${callDuration}, recording: ${recordingUrl}`);
 
       // Update call log with status
       const state = conversations.get(callSid);
@@ -374,6 +382,14 @@ serve(async (req) => {
         }
       }
 
+      // Handle recording URL if provided
+      if (recordingUrl) {
+        updateData.recording_url = recordingUrl + '.mp3'; // Twilio recordings can be accessed as MP3
+        if (recordingDuration) {
+          updateData.recording_duration_seconds = parseInt(recordingDuration, 10);
+        }
+      }
+
       await supabase
         .from('call_logs')
         .update(updateData)
@@ -382,6 +398,29 @@ serve(async (req) => {
       // Clean up conversation state on call end
       if (['completed', 'failed', 'busy', 'no-answer', 'canceled'].includes(callStatus)) {
         conversations.delete(callSid);
+      }
+
+      return new Response('OK', { headers: corsHeaders });
+    }
+
+    // Handle recording callback from Twilio
+    if (path === 'recording' || url.searchParams.get('action') === 'recording') {
+      const formData = await req.formData();
+      const callSid = formData.get('CallSid') as string;
+      const recordingUrl = formData.get('RecordingUrl') as string;
+      const recordingDuration = formData.get('RecordingDuration') as string;
+      const recordingSid = formData.get('RecordingSid') as string;
+
+      console.log(`Recording received for ${callSid}: ${recordingUrl}, duration: ${recordingDuration}s, SID: ${recordingSid}`);
+
+      if (recordingUrl) {
+        await supabase
+          .from('call_logs')
+          .update({
+            recording_url: recordingUrl + '.mp3',
+            recording_duration_seconds: recordingDuration ? parseInt(recordingDuration, 10) : null,
+          })
+          .eq('call_sid', callSid);
       }
 
       return new Response('OK', { headers: corsHeaders });
