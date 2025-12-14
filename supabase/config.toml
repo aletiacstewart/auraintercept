@@ -26,3 +26,6 @@ verify_jwt = true
 
 [functions.appointment-reminders]
 verify_jwt = false
+
+[functions.test-voice-reminder]
+verify_jwt = true
