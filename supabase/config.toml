@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.test-voice-reminder]
 verify_jwt = true
+
+[functions.unsubscribe]
+verify_jwt = false

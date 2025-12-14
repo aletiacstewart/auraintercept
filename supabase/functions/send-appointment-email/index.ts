@@ -150,8 +150,14 @@ Deno.serve(async (req) => {
     const message = replacePlaceholders(template.message);
     const showPortalLink = template.show_portal_link;
 
-    // Generate portal link
+    // Generate portal and unsubscribe links
+    const baseUrl = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1';
     const portalUrl = `https://zwlcwtgjvesbevheknbk.lovable.app/appointment?token=${appointment.customer_token}`;
+    const unsubscribeSmsUrl = `${baseUrl}/unsubscribe?token=${appointment.customer_token}&channel=sms`;
+    const unsubscribeEmailUrl = `${baseUrl}/unsubscribe?token=${appointment.customer_token}&channel=email`;
+    const unsubscribeCallUrl = `${baseUrl}/unsubscribe?token=${appointment.customer_token}&channel=call`;
+    const unsubscribeAllUrl = `${baseUrl}/unsubscribe?token=${appointment.customer_token}&channel=all`;
+
     const portalSection = showPortalLink ? `
       <div style="text-align: center; margin: 24px 0;">
         <a href="${portalUrl}" style="display: inline-block; background: ${primaryColor}; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">
@@ -159,6 +165,29 @@ Deno.serve(async (req) => {
         </a>
         <p style="color: #6b7280; font-size: 12px; margin-top: 12px;">
           Reschedule or cancel your appointment online
+        </p>
+      </div>
+    ` : '';
+
+    // Build unsubscribe section based on what's enabled
+    const unsubscribeLinks: string[] = [];
+    if (appointment.customer_phone && !appointment.sms_opt_out) {
+      unsubscribeLinks.push(`<a href="${unsubscribeSmsUrl}" style="color: #6b7280; text-decoration: underline;">SMS</a>`);
+    }
+    if (appointment.customer_email && !appointment.email_opt_out) {
+      unsubscribeLinks.push(`<a href="${unsubscribeEmailUrl}" style="color: #6b7280; text-decoration: underline;">Email</a>`);
+    }
+    if (appointment.customer_phone && !appointment.call_opt_out) {
+      unsubscribeLinks.push(`<a href="${unsubscribeCallUrl}" style="color: #6b7280; text-decoration: underline;">Call</a>`);
+    }
+
+    const unsubscribeSection = unsubscribeLinks.length > 0 ? `
+      <div style="border-top: 1px solid #e5e7eb; margin-top: 24px; padding-top: 16px; text-align: center;">
+        <p style="color: #9ca3af; font-size: 11px; margin: 0 0 8px 0;">
+          Unsubscribe from reminders: ${unsubscribeLinks.join(' | ')} | <a href="${unsubscribeAllUrl}" style="color: #6b7280; text-decoration: underline;">All</a>
+        </p>
+        <p style="color: #9ca3af; font-size: 11px; margin: 0;">
+          Or <a href="${portalUrl}" style="color: #6b7280; text-decoration: underline;">manage all preferences</a>
         </p>
       </div>
     ` : '';
@@ -218,6 +247,8 @@ Deno.serve(async (req) => {
             <p style="color: #9ca3af; font-size: 12px; margin-top: 30px;">
               This email was sent by ${companyName}. Please do not reply to this email.
             </p>
+            
+            ${unsubscribeSection}
           </div>
         </body>
       </html>
