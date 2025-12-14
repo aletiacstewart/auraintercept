@@ -15,6 +15,7 @@ import EmployeeAppointments from "./pages/EmployeeAppointments";
 import Messages from "./pages/Messages";
 import Integrations from "./pages/Integrations";
 import KnowledgeBase from "./pages/KnowledgeBase";
+import AIAgent from "./pages/AIAgent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/dashboard/messages" element={<Messages />} />
             <Route path="/dashboard/integrations" element={<Integrations />} />
             <Route path="/dashboard/knowledge" element={<KnowledgeBase />} />
+            <Route path="/dashboard/ai-agent" element={<AIAgent />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

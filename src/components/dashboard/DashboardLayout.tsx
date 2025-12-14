@@ -36,7 +36,7 @@ const navItems: NavItem[] = [
   { label: 'Employees', icon: Users, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'] },
   { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin', 'employee'] },
   { label: 'Availability', icon: Clock, href: '/dashboard/availability', roles: ['employee'] },
-  { label: 'AI Agent', icon: Bot, href: '/dashboard/agent', roles: ['platform_admin', 'company_admin'] },
+  { label: 'AI Agent', icon: Bot, href: '/dashboard/ai-agent', roles: ['platform_admin', 'company_admin'] },
   { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
   { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'] },
   { label: 'Messages', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin', 'employee'] },
