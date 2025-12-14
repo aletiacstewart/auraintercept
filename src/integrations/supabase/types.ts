@@ -140,6 +140,8 @@ export type Database = {
           id: string
           metadata: Json | null
           purpose: string | null
+          recording_duration_seconds: number | null
+          recording_url: string | null
           started_at: string
           status: string
           summary: string | null
@@ -163,6 +165,8 @@ export type Database = {
           id?: string
           metadata?: Json | null
           purpose?: string | null
+          recording_duration_seconds?: number | null
+          recording_url?: string | null
           started_at?: string
           status?: string
           summary?: string | null
@@ -186,6 +190,8 @@ export type Database = {
           id?: string
           metadata?: Json | null
           purpose?: string | null
+          recording_duration_seconds?: number | null
+          recording_url?: string | null
           started_at?: string
           status?: string
           summary?: string | null
