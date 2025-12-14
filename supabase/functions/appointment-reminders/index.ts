@@ -22,6 +22,7 @@ interface CompanyIntegration {
   twilio_account_sid: string | null;
   twilio_auth_token: string | null;
   twilio_phone_number: string | null;
+  resend_api_key: string | null;
   company: {
     name: string;
   };
@@ -98,7 +99,7 @@ Deno.serve(async (req) => {
     const companyIds = Array.from(settingsByCompany.keys());
     const { data: integrations, error: intErr } = await supabase
       .from('tenant_integrations')
-      .select('company_id, twilio_account_sid, twilio_auth_token, twilio_phone_number, company:companies(name)')
+      .select('company_id, twilio_account_sid, twilio_auth_token, twilio_phone_number, resend_api_key, company:companies(name)')
       .in('company_id', companyIds);
 
     if (intErr) {
@@ -110,19 +111,24 @@ Deno.serve(async (req) => {
       integrationMap.set(int.company_id, int);
     });
 
-    let totalSent = 0;
-    let totalFailed = 0;
+    let smsSent = 0;
+    let smsFailed = 0;
+    let emailsSent = 0;
+    let emailsFailed = 0;
 
     // Process each company's settings
     for (const [companyId, settings] of settingsByCompany) {
       const integration = integrationMap.get(companyId);
       
-      if (!integration?.twilio_account_sid || !integration?.twilio_auth_token || !integration?.twilio_phone_number) {
-        console.log(`Skipping company ${companyId}: No Twilio integration`);
+      const hasTwilio = integration?.twilio_account_sid && integration?.twilio_auth_token && integration?.twilio_phone_number;
+      const hasResend = !!integration?.resend_api_key;
+      
+      if (!hasTwilio && !hasResend) {
+        console.log(`Skipping company ${companyId}: No Twilio or Resend integration`);
         continue;
       }
 
-      const companyName = integration.company?.name || 'Our company';
+      const companyName = integration?.company?.name || 'Our company';
 
       // Process each reminder setting for this company
       for (const setting of settings) {
@@ -135,7 +141,6 @@ Deno.serve(async (req) => {
         console.log(`Company ${companyId}: Looking for ${setting.reminder_type} reminders (${setting.hours_before}h) between ${windowStart.toISOString()} and ${windowEnd.toISOString()}`);
 
         // Determine which reminder field to check based on hours
-        // Use the standard fields for 24h and 1h, ignore for custom timings
         let reminderSentField: string | null = null;
         let reminderSentAtField: string | null = null;
         
@@ -170,11 +175,6 @@ Deno.serve(async (req) => {
         console.log(`Found ${appointments?.length || 0} appointments for ${setting.reminder_type} reminder`);
 
         for (const appointment of appointments || []) {
-          if (!appointment.customer_phone) {
-            console.log(`Skipping appointment ${appointment.id}: No customer phone`);
-            continue;
-          }
-
           const appointmentDate = new Date(appointment.datetime);
           const formattedDate = appointmentDate.toLocaleDateString('en-US', {
             weekday: 'long',
@@ -187,76 +187,109 @@ Deno.serve(async (req) => {
             hour12: true,
           });
 
-          const message = applyTemplate(setting.sms_template, {
-            customer_name: appointment.customer_name,
-            service_type: appointment.service_type,
-            company_name: companyName,
-            date: formattedDate,
-            time: formattedTime,
-          });
-
-          try {
-            // Send SMS via Twilio
-            const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${integration.twilio_account_sid}/Messages.json`;
-            const authHeader = btoa(`${integration.twilio_account_sid}:${integration.twilio_auth_token}`);
-
-            const formData = new URLSearchParams();
-            formData.append('From', integration.twilio_phone_number);
-            formData.append('To', appointment.customer_phone);
-            formData.append('Body', message);
-
-            const twilioResponse = await fetch(twilioUrl, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Basic ${authHeader}`,
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: formData.toString(),
+          // Send SMS reminder
+          if (hasTwilio && appointment.customer_phone) {
+            const message = applyTemplate(setting.sms_template, {
+              customer_name: appointment.customer_name,
+              service_type: appointment.service_type,
+              company_name: companyName,
+              date: formattedDate,
+              time: formattedTime,
             });
 
-            if (!twilioResponse.ok) {
-              const errorText = await twilioResponse.text();
-              console.error(`Twilio error for appointment ${appointment.id}:`, errorText);
-              totalFailed++;
-              continue;
-            }
+            try {
+              const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${integration!.twilio_account_sid}/Messages.json`;
+              const authHeader = btoa(`${integration!.twilio_account_sid}:${integration!.twilio_auth_token}`);
 
-            const twilioResult = await twilioResponse.json();
-            console.log(`SMS sent for appointment ${appointment.id}, SID: ${twilioResult.sid}`);
+              const formData = new URLSearchParams();
+              formData.append('From', integration!.twilio_phone_number!);
+              formData.append('To', appointment.customer_phone);
+              formData.append('Body', message);
 
-            // Update reminder status if using standard fields
-            if (reminderSentField && reminderSentAtField) {
-              const { error: updateErr } = await supabase
-                .from('appointments')
-                .update({ 
-                  [reminderSentField]: true, 
-                  [reminderSentAtField]: new Date().toISOString() 
-                })
-                .eq('id', appointment.id);
+              const twilioResponse = await fetch(twilioUrl, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Basic ${authHeader}`,
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData.toString(),
+              });
 
-              if (updateErr) {
-                console.error(`Error updating reminder status for ${appointment.id}:`, updateErr);
+              if (!twilioResponse.ok) {
+                const errorText = await twilioResponse.text();
+                console.error(`Twilio error for appointment ${appointment.id}:`, errorText);
+                smsFailed++;
+              } else {
+                const twilioResult = await twilioResponse.json();
+                console.log(`SMS sent for appointment ${appointment.id}, SID: ${twilioResult.sid}`);
+                smsSent++;
               }
+            } catch (smsError) {
+              console.error(`Error sending SMS for appointment ${appointment.id}:`, smsError);
+              smsFailed++;
             }
+          } else if (!appointment.customer_phone) {
+            console.log(`Skipping SMS for appointment ${appointment.id}: No customer phone`);
+          }
 
-            totalSent++;
+          // Send Email reminder
+          if (hasResend && appointment.customer_email) {
+            try {
+              // Call the send-appointment-email function
+              const emailResponse = await fetch(`${supabaseUrl}/functions/v1/send-appointment-email`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${serviceRoleKey}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  appointmentId: appointment.id,
+                  type: 'reminder',
+                }),
+              });
 
-          } catch (smsError) {
-            console.error(`Error sending SMS for appointment ${appointment.id}:`, smsError);
-            totalFailed++;
+              if (!emailResponse.ok) {
+                const errorText = await emailResponse.text();
+                console.error(`Email error for appointment ${appointment.id}:`, errorText);
+                emailsFailed++;
+              } else {
+                console.log(`Email reminder sent for appointment ${appointment.id}`);
+                emailsSent++;
+              }
+            } catch (emailError) {
+              console.error(`Error sending email for appointment ${appointment.id}:`, emailError);
+              emailsFailed++;
+            }
+          } else if (!appointment.customer_email) {
+            console.log(`Skipping email for appointment ${appointment.id}: No customer email`);
+          }
+
+          // Update reminder status if using standard fields
+          if (reminderSentField && reminderSentAtField) {
+            const { error: updateErr } = await supabase
+              .from('appointments')
+              .update({ 
+                [reminderSentField]: true, 
+                [reminderSentAtField]: new Date().toISOString() 
+              })
+              .eq('id', appointment.id);
+
+            if (updateErr) {
+              console.error(`Error updating reminder status for ${appointment.id}:`, updateErr);
+            }
           }
         }
       }
     }
 
-    console.log(`Reminder processing complete. Sent: ${totalSent}, Failed: ${totalFailed}`);
+    console.log(`Reminder processing complete. SMS: ${smsSent} sent, ${smsFailed} failed. Emails: ${emailsSent} sent, ${emailsFailed} failed`);
 
     return new Response(
       JSON.stringify({
         success: true,
-        message: `Processed reminders`,
-        sent: totalSent,
-        failed: totalFailed,
+        message: 'Processed reminders',
+        sms: { sent: smsSent, failed: smsFailed },
+        email: { sent: emailsSent, failed: emailsFailed },
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
