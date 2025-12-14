@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       appointments: {
         Row: {
+          call_opt_out: boolean
           company_id: string
           created_at: string
           customer_email: string | null
@@ -38,6 +39,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          call_opt_out?: boolean
           company_id: string
           created_at?: string
           customer_email?: string | null
@@ -60,6 +62,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          call_opt_out?: boolean
           company_id?: string
           created_at?: string
           customer_email?: string | null

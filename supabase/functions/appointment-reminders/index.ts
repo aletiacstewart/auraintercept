@@ -17,6 +17,7 @@ interface Appointment {
   reminder_1h_sent: boolean;
   sms_opt_out: boolean;
   email_opt_out: boolean;
+  call_opt_out: boolean;
 }
 
 interface CompanyIntegration {
@@ -314,8 +315,8 @@ Deno.serve(async (req) => {
             await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'email', 'skipped', null, undefined, 'No customer email');
           }
 
-          // Send Voice Call reminder (if enabled and configured)
-          if (setting.call_enabled && hasTwilio && hasElevenLabs && appointment.customer_phone && !appointment.sms_opt_out) {
+          // Send Voice Call reminder (if enabled and configured - check call_opt_out)
+          if (setting.call_enabled && hasTwilio && hasElevenLabs && appointment.customer_phone && !appointment.call_opt_out) {
             const callMessage = setting.call_template 
               ? applyTemplate(setting.call_template, templateVars)
               : applyTemplate(setting.sms_template, templateVars);
@@ -366,6 +367,9 @@ Deno.serve(async (req) => {
               callsFailed++;
               await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'call', 'failed', appointment.customer_phone, undefined, callError.message);
             }
+          } else if (setting.call_enabled && appointment.call_opt_out) {
+            console.log(`Skipping call for appointment ${appointment.id}: Customer opted out`);
+            await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'call', 'skipped', appointment.customer_phone, undefined, 'Customer opted out');
           } else if (setting.call_enabled && !hasElevenLabs) {
             console.log(`Skipping call for appointment ${appointment.id}: ElevenLabs not configured`);
             await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'call', 'skipped', appointment.customer_phone, undefined, 'ElevenLabs not configured');
