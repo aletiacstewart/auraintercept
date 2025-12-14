@@ -101,34 +101,58 @@ Deno.serve(async (req) => {
       hour12: true,
     });
 
-    // Generate email content based on type
-    let subject: string;
-    let heading: string;
-    let message: string;
+    // Fetch custom email template if exists
+    const { data: customTemplate } = await supabase
+      .from('email_templates')
+      .select('*')
+      .eq('company_id', appointment.company_id)
+      .eq('template_type', type)
+      .maybeSingle();
 
-    switch (type) {
-      case 'confirmation':
-        subject = `Appointment Confirmed - ${companyName}`;
-        heading = 'Your Appointment is Confirmed!';
-        message = `Thank you for booking with ${companyName}. We look forward to seeing you.`;
-        break;
-      case 'cancellation':
-        subject = `Appointment Cancelled - ${companyName}`;
-        heading = 'Your Appointment Has Been Cancelled';
-        message = `Your appointment with ${companyName} has been cancelled. If you did not request this cancellation, please contact us.`;
-        break;
-      case 'reminder':
-        subject = `Appointment Reminder - ${companyName}`;
-        heading = 'Appointment Reminder';
-        message = `This is a friendly reminder about your upcoming appointment with ${companyName}.`;
-        break;
-      default:
-        throw new Error('Invalid email type');
-    }
+    // Default templates
+    const defaultTemplates: Record<string, { subject: string; heading: string; message: string; show_portal_link: boolean }> = {
+      confirmation: {
+        subject: `Appointment Confirmed - ${companyName}`,
+        heading: 'Your Appointment is Confirmed!',
+        message: `Thank you for booking with ${companyName}. We look forward to seeing you.`,
+        show_portal_link: true,
+      },
+      cancellation: {
+        subject: `Appointment Cancelled - ${companyName}`,
+        heading: 'Your Appointment Has Been Cancelled',
+        message: `Your appointment with ${companyName} has been cancelled. If you did not request this cancellation, please contact us.`,
+        show_portal_link: false,
+      },
+      reminder: {
+        subject: `Appointment Reminder - ${companyName}`,
+        heading: 'Appointment Reminder',
+        message: `This is a friendly reminder about your upcoming appointment with ${companyName}.`,
+        show_portal_link: true,
+      },
+    };
+
+    // Use custom template or default
+    const template = customTemplate || defaultTemplates[type];
+    
+    // Replace placeholders in template
+    const replacePlaceholders = (text: string) => {
+      return text
+        .replace(/\{\{company_name\}\}/g, companyName)
+        .replace(/\{\{customer_name\}\}/g, appointment.customer_name)
+        .replace(/\{\{service_type\}\}/g, appointment.service_type)
+        .replace(/\{\{date\}\}/g, dateStr)
+        .replace(/\{\{time\}\}/g, timeStr)
+        .replace(/\{\{duration\}\}/g, String(appointment.duration_minutes));
+    };
+
+    const subject = replacePlaceholders(template.subject);
+    const heading = replacePlaceholders(template.heading);
+    const message = replacePlaceholders(template.message);
+    const showPortalLink = template.show_portal_link;
 
     // Generate portal link
     const portalUrl = `https://zwlcwtgjvesbevheknbk.lovable.app/appointment?token=${appointment.customer_token}`;
-    const portalSection = type !== 'cancellation' ? `
+    const portalSection = showPortalLink ? `
       <div style="text-align: center; margin: 24px 0;">
         <a href="${portalUrl}" style="display: inline-block; background: ${primaryColor}; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">
           Manage Your Appointment

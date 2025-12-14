@@ -255,6 +255,50 @@ export type Database = {
         }
         Relationships: []
       }
+      email_templates: {
+        Row: {
+          company_id: string
+          created_at: string
+          heading: string
+          id: string
+          message: string
+          show_portal_link: boolean | null
+          subject: string
+          template_type: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          heading: string
+          id?: string
+          message: string
+          show_portal_link?: boolean | null
+          subject: string
+          template_type: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          heading?: string
+          id?: string
+          message?: string
+          show_portal_link?: boolean | null
+          subject?: string
+          template_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_templates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_registration_codes: {
         Row: {
           code: string

@@ -1,6 +1,7 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { BrandingSettings } from '@/components/company/BrandingSettings';
 import { ReminderSettings } from '@/components/company/ReminderSettings';
+import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -22,12 +23,16 @@ export default function Settings() {
             <TabsList>
               <TabsTrigger value="branding">Branding</TabsTrigger>
               <TabsTrigger value="reminders">Reminders</TabsTrigger>
+              <TabsTrigger value="emails">Email Templates</TabsTrigger>
             </TabsList>
             <TabsContent value="branding">
               <BrandingSettings />
             </TabsContent>
             <TabsContent value="reminders">
               <ReminderSettings />
+            </TabsContent>
+            <TabsContent value="emails">
+              <EmailTemplatesEditor />
             </TabsContent>
           </Tabs>
         </div>
