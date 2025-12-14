@@ -130,6 +130,26 @@ serve(async (req) => {
 
     console.log('Call initiated successfully:', twilioData.sid);
 
+    // Log the outbound call
+    const { error: logError } = await supabase
+      .from('call_logs')
+      .insert({
+        company_id: companyId,
+        direction: 'outbound',
+        status: 'initiated',
+        from_number: integration.twilio_phone_number,
+        to_number: customerPhone,
+        customer_name: customerName,
+        customer_phone: customerPhone,
+        call_sid: twilioData.sid,
+        purpose,
+        metadata: { appointmentDetails },
+      });
+
+    if (logError) {
+      console.error('Error logging call:', logError);
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
