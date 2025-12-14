@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { format, addDays, setHours, setMinutes, isBefore } from 'date-fns';
-import { Calendar as CalendarIcon, Clock, MapPin, User, Phone, Mail, XCircle, CalendarCheck, Loader2, CheckCircle, AlertTriangle, Bell, BellOff } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, MapPin, User, Phone, Mail, XCircle, CalendarCheck, Loader2, CheckCircle, AlertTriangle, Bell, BellOff, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -50,6 +50,7 @@ interface Appointment {
   customer_token: string;
   sms_opt_out: boolean;
   email_opt_out: boolean;
+  call_opt_out: boolean;
   companies: {
     id: string;
     name: string;
@@ -154,7 +155,7 @@ export default function CustomerPortal() {
     }
   };
 
-  const handleUpdatePreferences = async (field: 'sms_opt_out' | 'email_opt_out', value: boolean) => {
+  const handleUpdatePreferences = async (field: 'sms_opt_out' | 'email_opt_out' | 'call_opt_out', value: boolean) => {
     setPreferencesLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('customer-portal', {
@@ -329,20 +330,37 @@ export default function CustomerPortal() {
                 </div>
                 
                 {appointment.customer_phone && (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-muted-foreground" />
-                      <Label htmlFor="sms-reminders" className="text-sm cursor-pointer">
-                        SMS Reminders
-                      </Label>
+                  <>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4 text-muted-foreground" />
+                        <Label htmlFor="sms-reminders" className="text-sm cursor-pointer">
+                          SMS Reminders
+                        </Label>
+                      </div>
+                      <Switch
+                        id="sms-reminders"
+                        checked={!appointment.sms_opt_out}
+                        onCheckedChange={(checked) => handleUpdatePreferences('sms_opt_out', !checked)}
+                        disabled={preferencesLoading}
+                      />
                     </div>
-                    <Switch
-                      id="sms-reminders"
-                      checked={!appointment.sms_opt_out}
-                      onCheckedChange={(checked) => handleUpdatePreferences('sms_opt_out', !checked)}
-                      disabled={preferencesLoading}
-                    />
-                  </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-muted-foreground" />
+                        <Label htmlFor="call-reminders" className="text-sm cursor-pointer">
+                          Voice Call Reminders
+                        </Label>
+                      </div>
+                      <Switch
+                        id="call-reminders"
+                        checked={!appointment.call_opt_out}
+                        onCheckedChange={(checked) => handleUpdatePreferences('call_opt_out', !checked)}
+                        disabled={preferencesLoading}
+                      />
+                    </div>
+                  </>
                 )}
                 
                 {appointment.customer_email && (

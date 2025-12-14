@@ -12,6 +12,7 @@ interface PortalRequest {
   preferences?: {
     sms_opt_out?: boolean;
     email_opt_out?: boolean;
+    call_opt_out?: boolean;
   };
 }
 
@@ -192,6 +193,9 @@ Deno.serve(async (req) => {
         }
         if (typeof preferences.email_opt_out === 'boolean') {
           updateData.email_opt_out = preferences.email_opt_out;
+        }
+        if (typeof preferences.call_opt_out === 'boolean') {
+          updateData.call_opt_out = preferences.call_opt_out;
         }
 
         if (Object.keys(updateData).length === 0) {
