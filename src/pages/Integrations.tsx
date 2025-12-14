@@ -21,6 +21,7 @@ import {
   CreditCard, 
   Phone, 
   Mic, 
+  Mail,
   Check, 
   ExternalLink, 
   Eye, 
@@ -87,6 +88,18 @@ const INTEGRATIONS: Integration[] = [
       { key: 'elevenlabs_voice_id', label: 'Voice ID', placeholder: 'Voice ID (optional)', type: 'text', required: false, helpText: 'Leave blank to use default voice' },
     ],
     checkConnection: (data) => !!data.elevenlabs_api_key,
+  },
+  {
+    id: 'resend',
+    name: 'Resend',
+    description: 'Send email notifications for appointments and reminders.',
+    icon: Mail,
+    color: 'bg-emerald-500',
+    docsUrl: 'https://resend.com/api-keys',
+    fields: [
+      { key: 'resend_api_key', label: 'API Key', placeholder: 're_...', type: 'password', required: true, helpText: 'Get your API key from resend.com/api-keys' },
+    ],
+    checkConnection: (data) => !!data.resend_api_key,
   },
 ];
 
@@ -339,7 +352,7 @@ export default function Integrations() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-3">
               <div className="space-y-2">
                 <h4 className="font-medium">Twilio Setup</h4>
                 <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-1">
@@ -359,6 +372,16 @@ export default function Integrations() {
                   <li>Generate a new API key</li>
                   <li>Optionally, select a voice from the Voice Library</li>
                   <li>Enter the Voice ID for custom voices</li>
+                </ol>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-medium">Resend Setup</h4>
+                <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-1">
+                  <li>Create a Resend account at resend.com</li>
+                  <li>Verify your email domain at resend.com/domains</li>
+                  <li>Go to API Keys and create a new key</li>
+                  <li>Enter your API key above</li>
+                  <li>Test by creating an appointment with a customer email</li>
                 </ol>
               </div>
             </div>

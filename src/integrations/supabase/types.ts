@@ -518,6 +518,7 @@ export type Database = {
           elevenlabs_voice_id: string | null
           google_refresh_token: string | null
           id: string
+          resend_api_key: string | null
           twilio_account_sid: string | null
           twilio_auth_token: string | null
           twilio_phone_number: string | null
@@ -530,6 +531,7 @@ export type Database = {
           elevenlabs_voice_id?: string | null
           google_refresh_token?: string | null
           id?: string
+          resend_api_key?: string | null
           twilio_account_sid?: string | null
           twilio_auth_token?: string | null
           twilio_phone_number?: string | null
@@ -542,6 +544,7 @@ export type Database = {
           elevenlabs_voice_id?: string | null
           google_refresh_token?: string | null
           id?: string
+          resend_api_key?: string | null
           twilio_account_sid?: string | null
           twilio_auth_token?: string | null
           twilio_phone_number?: string | null

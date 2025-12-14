@@ -218,6 +218,16 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
     return { success: false, error: 'Failed to book appointment' };
   }
 
+  // Send confirmation email asynchronously (don't wait for it)
+  if (appointment?.id && customer_email) {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    fetch(`${supabaseUrl}/functions/v1/send-appointment-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ appointmentId: appointment.id, type: 'confirmation' })
+    }).catch(err => console.error('Failed to send confirmation email:', err));
+  }
+
   return { 
     success: true, 
     appointment,
