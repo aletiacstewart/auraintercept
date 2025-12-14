@@ -1,14 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, MessageSquare, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, MessageSquare, CheckCircle, Settings } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
 
 export function EmployeeDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['profile', user?.id],
@@ -18,7 +20,7 @@ export function EmployeeDashboard() {
         .from('profiles')
         .select('*, companies(*)')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
       return data;
     },
     enabled: !!user?.id,
@@ -41,6 +43,10 @@ export function EmployeeDashboard() {
   });
 
   const isLoading = profileLoading || appointmentsLoading;
+
+  // Check if availability is set
+  const hasAvailability = profile?.availability_json && 
+    Object.values(profile.availability_json as Record<string, unknown[]>).some(arr => arr.length > 0);
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -117,11 +123,40 @@ export function EmployeeDashboard() {
         </Card>
       </div>
 
+      {/* Setup Availability Banner */}
+      {!isLoading && !hasAvailability && (
+        <Card className="border-primary/50 bg-primary/5">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center">
+                  <Settings className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <p className="font-semibold">Set Your Availability</p>
+                  <p className="text-sm text-muted-foreground">
+                    Let customers know when you're available for appointments
+                  </p>
+                </div>
+              </div>
+              <Button onClick={() => navigate('/dashboard/availability')}>
+                Set Up Now
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Upcoming Appointments */}
       <Card className="border-border/50">
-        <CardHeader>
-          <CardTitle>Upcoming Appointments</CardTitle>
-          <CardDescription>Your scheduled appointments</CardDescription>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>Upcoming Appointments</CardTitle>
+            <CardDescription>Your scheduled appointments</CardDescription>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/appointments')}>
+            View All
+          </Button>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -135,7 +170,8 @@ export function EmployeeDashboard() {
               {appointments.map((appointment) => (
                 <div
                   key={appointment.id}
-                  className="flex items-center justify-between p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                  className="flex items-center justify-between p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer"
+                  onClick={() => navigate('/dashboard/appointments')}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-lg gradient-primary flex items-center justify-center text-primary-foreground">
@@ -163,29 +199,33 @@ export function EmployeeDashboard() {
         </CardContent>
       </Card>
 
-      {/* Availability Quick Edit */}
-      <Card className="border-border/50">
-        <CardHeader>
-          <CardTitle>Your Availability</CardTitle>
-          <CardDescription>Manage when you're available for appointments</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-7 gap-2">
-            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-              <div key={day} className="text-center">
-                <div className="text-xs text-muted-foreground mb-2">{day}</div>
-                <div className="w-full h-20 rounded-lg border border-dashed border-border flex items-center justify-center text-xs text-muted-foreground">
-                  Set hours
-                </div>
-              </div>
-            ))}
-          </div>
-          <Button variant="outline" className="w-full mt-4">
-            <Clock className="w-4 h-4 mr-2" />
-            Edit Availability
-          </Button>
-        </CardContent>
-      </Card>
+      {/* Quick Actions */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Button
+          variant="outline"
+          className="h-auto py-6 flex flex-col items-center gap-2"
+          onClick={() => navigate('/dashboard/availability')}
+        >
+          <Clock className="w-6 h-6 text-primary" />
+          <span>Manage Availability</span>
+        </Button>
+        <Button
+          variant="outline"
+          className="h-auto py-6 flex flex-col items-center gap-2"
+          onClick={() => navigate('/dashboard/appointments')}
+        >
+          <Calendar className="w-6 h-6 text-secondary" />
+          <span>View Calendar</span>
+        </Button>
+        <Button
+          variant="outline"
+          className="h-auto py-6 flex flex-col items-center gap-2"
+          onClick={() => navigate('/dashboard/messages')}
+        >
+          <MessageSquare className="w-6 h-6 text-accent" />
+          <span>View Messages</span>
+        </Button>
+      </div>
     </div>
   );
 }

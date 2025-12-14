@@ -10,6 +10,9 @@ import Dashboard from "./pages/Dashboard";
 import Employees from "./pages/Employees";
 import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
+import EmployeeAvailability from "./pages/EmployeeAvailability";
+import EmployeeAppointments from "./pages/EmployeeAppointments";
+import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +31,9 @@ const App = () => (
             <Route path="/dashboard/employees" element={<Employees />} />
             <Route path="/dashboard/settings" element={<Settings />} />
             <Route path="/dashboard/onboarding" element={<Onboarding />} />
+            <Route path="/dashboard/availability" element={<EmployeeAvailability />} />
+            <Route path="/dashboard/appointments" element={<EmployeeAppointments />} />
+            <Route path="/dashboard/messages" element={<Messages />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
