@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { 
   BarChart, 
   Bar, 
@@ -17,9 +18,10 @@ import {
   Cell,
   Legend
 } from 'recharts';
-import { TrendingDown, TrendingUp, MessageSquare, Mail, Phone, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingDown, TrendingUp, MessageSquare, Mail, Phone, ArrowUpRight, ArrowDownRight, Download } from 'lucide-react';
 import { format, subDays, startOfDay } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { toast } from 'sonner';
 
 const COLORS = {
   sms: '#3b82f6',
@@ -28,6 +30,18 @@ const COLORS = {
   subscribe: '#22c55e',
   unsubscribe: '#ef4444'
 };
+
+interface SubscriptionEvent {
+  id: string;
+  company_id: string;
+  appointment_id: string;
+  channel: string;
+  action: string;
+  source: string;
+  customer_email: string | null;
+  customer_phone: string | null;
+  created_at: string;
+}
 
 export function SubscriptionAnalytics() {
   const { companyId } = useAuth();
@@ -43,10 +57,53 @@ export function SubscriptionAnalytics() {
         .order('created_at', { ascending: false })
         .limit(500);
       if (error) throw error;
-      return data || [];
+      return (data || []) as SubscriptionEvent[];
     },
     enabled: !!companyId,
   });
+
+  const exportToCSV = () => {
+    if (!events || events.length === 0) {
+      toast.error('No data to export');
+      return;
+    }
+
+    // CSV headers
+    const headers = ['Date', 'Time', 'Channel', 'Action', 'Source', 'Customer Email', 'Customer Phone'];
+    
+    // CSV rows
+    const rows = events.map(event => {
+      const date = new Date(event.created_at);
+      return [
+        format(date, 'yyyy-MM-dd'),
+        format(date, 'HH:mm:ss'),
+        event.channel.toUpperCase(),
+        event.action === 'subscribe' ? 'Re-subscribed' : 'Unsubscribed',
+        event.source.replace('_', ' '),
+        event.customer_email || '',
+        event.customer_phone || ''
+      ];
+    });
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+
+    // Create and download the file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `subscription-events-${format(new Date(), 'yyyy-MM-dd')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast.success(`Exported ${events.length} events to CSV`);
+  };
 
   if (isLoading) {
     return (
@@ -140,6 +197,24 @@ export function SubscriptionAnalytics() {
 
   return (
     <div className="space-y-6">
+      {/* Header with Export Button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-semibold">Subscription Analytics</h3>
+          <p className="text-sm text-muted-foreground">Track customer opt-in and opt-out trends</p>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={exportToCSV}
+          disabled={!events || events.length === 0}
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Export CSV
+        </Button>
+      </div>
+
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
