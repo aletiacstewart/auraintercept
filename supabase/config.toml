@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.outbound-call]
 verify_jwt = true
+
+[functions.create-company-admin]
+verify_jwt = true
