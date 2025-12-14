@@ -2,6 +2,7 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { BrandingSettings } from '@/components/company/BrandingSettings';
 import { ReminderSettings } from '@/components/company/ReminderSettings';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
+import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -24,6 +25,7 @@ export default function Settings() {
               <TabsTrigger value="branding">Branding</TabsTrigger>
               <TabsTrigger value="reminders">Reminders</TabsTrigger>
               <TabsTrigger value="emails">Email Templates</TabsTrigger>
+              <TabsTrigger value="sms">SMS Templates</TabsTrigger>
             </TabsList>
             <TabsContent value="branding">
               <BrandingSettings />
@@ -33,6 +35,9 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="emails">
               <EmailTemplatesEditor />
+            </TabsContent>
+            <TabsContent value="sms">
+              <SmsTemplatesEditor />
             </TabsContent>
           </Tabs>
         </div>

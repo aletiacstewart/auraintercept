@@ -95,21 +95,35 @@ Deno.serve(async (req) => {
       hour12: true,
     });
 
-    // Generate SMS message based on type
-    let message: string;
+    // Fetch custom SMS template if exists
+    const { data: customTemplate } = await supabase
+      .from('sms_templates')
+      .select('*')
+      .eq('company_id', appointment.company_id)
+      .eq('template_type', type)
+      .maybeSingle();
 
-    switch (type) {
-      case 'confirmation':
-        message = `Hi ${appointment.customer_name}! Your ${appointment.service_type} appointment at ${companyName} is confirmed for ${dateStr} at ${timeStr}. Reply HELP for assistance.`;
-        break;
-      case 'cancellation':
-        message = `Hi ${appointment.customer_name}, your appointment at ${companyName} on ${dateStr} at ${timeStr} has been cancelled. Contact us to rebook.`;
-        break;
-      case 'reminder':
-        message = `Reminder: You have a ${appointment.service_type} appointment at ${companyName} on ${dateStr} at ${timeStr}. See you soon!`;
-        break;
-      default:
-        throw new Error('Invalid SMS type');
+    // Default templates
+    const defaultTemplates: Record<string, string> = {
+      confirmation: `Hi ${appointment.customer_name}! Your ${appointment.service_type} appointment at ${companyName} is confirmed for ${dateStr} at ${timeStr}. Reply HELP for assistance.`,
+      cancellation: `Hi ${appointment.customer_name}, your appointment at ${companyName} on ${dateStr} at ${timeStr} has been cancelled. Contact us to rebook.`,
+      reminder: `Reminder: You have a ${appointment.service_type} appointment at ${companyName} on ${dateStr} at ${timeStr}. See you soon!`,
+    };
+
+    // Use custom template or default
+    let message: string;
+    
+    if (customTemplate?.message) {
+      // Replace placeholders in custom template
+      message = customTemplate.message
+        .replace(/\{\{company_name\}\}/g, companyName)
+        .replace(/\{\{customer_name\}\}/g, appointment.customer_name)
+        .replace(/\{\{service_type\}\}/g, appointment.service_type)
+        .replace(/\{\{date\}\}/g, dateStr)
+        .replace(/\{\{time\}\}/g, timeStr)
+        .replace(/\{\{duration\}\}/g, String(appointment.duration_minutes));
+    } else {
+      message = defaultTemplates[type];
     }
 
     // Send SMS via Twilio
