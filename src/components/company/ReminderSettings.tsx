@@ -9,8 +9,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Bell, Clock, MessageSquare, Phone, Plus, Trash2 } from 'lucide-react';
+import { Bell, Clock, MessageSquare, Phone, Plus, Trash2, AlertTriangle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Link } from 'react-router-dom';
 
 interface ReminderSetting {
   id: string;
@@ -24,6 +26,7 @@ interface ReminderSetting {
 }
 
 const DEFAULT_TEMPLATE = 'Hi {customer_name}, this is a reminder for your {service_type} appointment at {company_name} on {date} at {time}.';
+const DEFAULT_CALL_TEMPLATE = 'Hello {customer_name}, this is a friendly reminder from {company_name} about your upcoming {service_type} appointment on {date} at {time}. We look forward to seeing you. Press 1 to confirm your appointment or press 2 if you need to reschedule.';
 
 const PRESET_REMINDERS = [
   { type: '48h', hours: 48, label: '48 hours before' },
@@ -52,6 +55,24 @@ export function ReminderSettings() {
     },
     enabled: !!companyId,
   });
+
+  // Check if ElevenLabs is configured
+  const { data: integrations } = useQuery({
+    queryKey: ['tenant-integrations', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data, error } = await supabase
+        .from('tenant_integrations')
+        .select('elevenlabs_api_key, elevenlabs_voice_id, twilio_account_sid, twilio_auth_token, twilio_phone_number')
+        .eq('company_id', companyId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  const hasVoiceSupport = !!(integrations?.elevenlabs_api_key && integrations?.twilio_account_sid && integrations?.twilio_auth_token && integrations?.twilio_phone_number);
 
   const upsertMutation = useMutation({
     mutationFn: async (setting: Partial<ReminderSetting> & { company_id: string; reminder_type: string; hours_before: number }) => {
@@ -94,9 +115,14 @@ export function ReminderSettings() {
   };
 
   const handleToggleCall = (setting: ReminderSetting) => {
+    if (!setting.call_enabled && !hasVoiceSupport) {
+      toast.error('Please configure ElevenLabs and Twilio integrations first');
+      return;
+    }
     upsertMutation.mutate({
       ...setting,
       call_enabled: !setting.call_enabled,
+      call_template: !setting.call_enabled && !setting.call_template ? DEFAULT_CALL_TEMPLATE : setting.call_template,
     });
   };
 
@@ -104,6 +130,13 @@ export function ReminderSettings() {
     upsertMutation.mutate({
       ...setting,
       sms_template: template,
+    });
+  };
+
+  const handleUpdateCallTemplate = (setting: ReminderSetting, template: string) => {
+    upsertMutation.mutate({
+      ...setting,
+      call_template: template,
     });
   };
 
@@ -224,6 +257,18 @@ export function ReminderSettings() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        {!hasVoiceSupport && (
+          <Alert variant="default" className="border-amber-500/50 bg-amber-500/10">
+            <AlertTriangle className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="text-sm">
+              Voice call reminders require{' '}
+              <Link to="/integrations" className="text-primary underline hover:no-underline">
+                Twilio and ElevenLabs integrations
+              </Link>{' '}
+              to be configured.
+            </AlertDescription>
+          </Alert>
+        )}
         {settings?.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <Bell className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -235,9 +280,11 @@ export function ReminderSettings() {
             <ReminderCard
               key={setting.id}
               setting={setting}
+              hasVoiceSupport={hasVoiceSupport}
               onToggleEnabled={() => handleToggleEnabled(setting)}
               onToggleCall={() => handleToggleCall(setting)}
               onUpdateTemplate={(template) => handleUpdateTemplate(setting, template)}
+              onUpdateCallTemplate={(template) => handleUpdateCallTemplate(setting, template)}
               onDelete={() => deleteMutation.mutate(setting.id)}
             />
           ))
@@ -264,23 +311,33 @@ export function ReminderSettings() {
 
 interface ReminderCardProps {
   setting: ReminderSetting;
+  hasVoiceSupport: boolean;
   onToggleEnabled: () => void;
   onToggleCall: () => void;
   onUpdateTemplate: (template: string) => void;
+  onUpdateCallTemplate: (template: string) => void;
   onDelete: () => void;
 }
 
-function ReminderCard({ setting, onToggleEnabled, onToggleCall, onUpdateTemplate, onDelete }: ReminderCardProps) {
+function ReminderCard({ setting, hasVoiceSupport, onToggleEnabled, onToggleCall, onUpdateTemplate, onUpdateCallTemplate, onDelete }: ReminderCardProps) {
   const [template, setTemplate] = useState(setting.sms_template);
+  const [callTemplate, setCallTemplate] = useState(setting.call_template || '');
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingCall, setIsEditingCall] = useState(false);
 
   useEffect(() => {
     setTemplate(setting.sms_template);
-  }, [setting.sms_template]);
+    setCallTemplate(setting.call_template || '');
+  }, [setting.sms_template, setting.call_template]);
 
   const handleSave = () => {
     onUpdateTemplate(template);
     setIsEditing(false);
+  };
+
+  const handleSaveCall = () => {
+    onUpdateCallTemplate(callTemplate);
+    setIsEditingCall(false);
   };
 
   return (
@@ -322,10 +379,11 @@ function ReminderCard({ setting, onToggleEnabled, onToggleCall, onUpdateTemplate
         </div>
         <div className="flex items-center gap-2">
           <Phone className="h-4 w-4" />
-          <span>Call</span>
+          <span>Voice Call</span>
           <Switch
             checked={setting.call_enabled}
             onCheckedChange={onToggleCall}
+            disabled={!hasVoiceSupport && !setting.call_enabled}
           />
         </div>
       </div>
@@ -356,6 +414,39 @@ function ReminderCard({ setting, onToggleEnabled, onToggleCall, onUpdateTemplate
           </div>
         )}
       </div>
+
+      {setting.call_enabled && (
+        <div className="space-y-2">
+          <Label className="text-sm flex items-center gap-2">
+            <Phone className="h-3.5 w-3.5" />
+            Voice Call Script
+          </Label>
+          {isEditingCall ? (
+            <div className="space-y-2">
+              <Textarea
+                value={callTemplate}
+                onChange={(e) => setCallTemplate(e.target.value)}
+                rows={4}
+                placeholder="Enter the script for the voice call..."
+              />
+              <div className="flex gap-2">
+                <Button size="sm" onClick={handleSaveCall}>Save</Button>
+                <Button size="sm" variant="outline" onClick={() => {
+                  setCallTemplate(setting.call_template || '');
+                  setIsEditingCall(false);
+                }}>Cancel</Button>
+              </div>
+            </div>
+          ) : (
+            <div
+              className="bg-muted/50 rounded p-2 text-sm cursor-pointer hover:bg-muted transition-colors"
+              onClick={() => setIsEditingCall(true)}
+            >
+              {setting.call_template || 'Click to add a voice call script...'}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

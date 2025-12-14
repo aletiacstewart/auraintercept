@@ -2,8 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, TrendingUp, TrendingDown, Mail, MessageSquare, CheckCircle, XCircle, Clock, BarChart3 } from "lucide-react";
+import { Loader2, TrendingUp, TrendingDown, Mail, MessageSquare, CheckCircle, Clock, BarChart3, Phone } from "lucide-react";
 import { format, subDays, startOfDay, eachDayOfInterval } from "date-fns";
 import {
   AreaChart,
@@ -101,8 +100,10 @@ export function ReminderAnalytics() {
   
   const smsCount = allLogs.filter(l => l.channel === 'sms').length;
   const emailCount = allLogs.filter(l => l.channel === 'email').length;
+  const callCount = allLogs.filter(l => l.channel === 'call').length;
   const smsSent = allLogs.filter(l => l.channel === 'sms' && l.status === 'sent').length;
   const emailSent = allLogs.filter(l => l.channel === 'email' && l.status === 'sent').length;
+  const callsSent = allLogs.filter(l => l.channel === 'call' && l.status === 'sent').length;
 
   // Calculate trend (compare last 7 days vs previous 7 days)
   const sevenDaysAgo = subDays(new Date(), 7);
@@ -161,6 +162,12 @@ export function ReminderAnalytics() {
       failed: allLogs.filter(l => l.channel === 'email' && l.status === 'failed').length,
       skipped: allLogs.filter(l => l.channel === 'email' && l.status === 'skipped').length,
     },
+    { 
+      channel: 'Call', 
+      sent: callsSent, 
+      failed: allLogs.filter(l => l.channel === 'call' && l.status === 'failed').length,
+      skipped: allLogs.filter(l => l.channel === 'call' && l.status === 'skipped').length,
+    },
   ];
 
   if (totalReminders === 0) {
@@ -187,7 +194,7 @@ export function ReminderAnalytics() {
   return (
     <div className="space-y-6">
       {/* Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <MetricCard
           title="Total Reminders"
           value={totalReminders}
@@ -212,6 +219,12 @@ export function ReminderAnalytics() {
           value={emailSent}
           subtitle={`${emailCount} total attempts`}
           icon={<Mail className="h-5 w-5 text-purple-600" />}
+        />
+        <MetricCard
+          title="Calls Made"
+          value={callsSent}
+          subtitle={`${callCount} total attempts`}
+          icon={<Phone className="h-5 w-5 text-green-600" />}
         />
       </div>
 

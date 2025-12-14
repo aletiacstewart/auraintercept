@@ -15,6 +15,8 @@ interface Appointment {
   company_id: string;
   reminder_24h_sent: boolean;
   reminder_1h_sent: boolean;
+  sms_opt_out: boolean;
+  email_opt_out: boolean;
 }
 
 interface CompanyIntegration {
@@ -23,6 +25,8 @@ interface CompanyIntegration {
   twilio_auth_token: string | null;
   twilio_phone_number: string | null;
   resend_api_key: string | null;
+  elevenlabs_api_key: string | null;
+  elevenlabs_voice_id: string | null;
   company: {
     name: string;
   };
@@ -52,7 +56,7 @@ async function logReminder(
   companyId: string,
   appointmentId: string,
   reminderType: string,
-  channel: 'sms' | 'email',
+  channel: 'sms' | 'email' | 'call',
   status: 'sent' | 'failed' | 'skipped',
   recipient: string | null,
   messagePreview?: string,
@@ -126,7 +130,7 @@ Deno.serve(async (req) => {
     const companyIds = Array.from(settingsByCompany.keys());
     const { data: integrations, error: intErr } = await supabase
       .from('tenant_integrations')
-      .select('company_id, twilio_account_sid, twilio_auth_token, twilio_phone_number, resend_api_key, company:companies(name)')
+      .select('company_id, twilio_account_sid, twilio_auth_token, twilio_phone_number, resend_api_key, elevenlabs_api_key, elevenlabs_voice_id, company:companies(name)')
       .in('company_id', companyIds);
 
     if (intErr) {
@@ -142,6 +146,8 @@ Deno.serve(async (req) => {
     let smsFailed = 0;
     let emailsSent = 0;
     let emailsFailed = 0;
+    let callsSent = 0;
+    let callsFailed = 0;
 
     // Process each company's settings
     for (const [companyId, settings] of settingsByCompany) {
@@ -149,6 +155,7 @@ Deno.serve(async (req) => {
       
       const hasTwilio = integration?.twilio_account_sid && integration?.twilio_auth_token && integration?.twilio_phone_number;
       const hasResend = !!integration?.resend_api_key;
+      const hasElevenLabs = !!(integration?.elevenlabs_api_key);
       
       if (!hasTwilio && !hasResend) {
         console.log(`Skipping company ${companyId}: No Twilio or Resend integration`);
@@ -214,15 +221,17 @@ Deno.serve(async (req) => {
             hour12: true,
           });
 
+          const templateVars = {
+            customer_name: appointment.customer_name,
+            service_type: appointment.service_type,
+            company_name: companyName,
+            date: formattedDate,
+            time: formattedTime,
+          };
+
           // Send SMS reminder (check opt-out)
           if (hasTwilio && appointment.customer_phone && !appointment.sms_opt_out) {
-            const message = applyTemplate(setting.sms_template, {
-              customer_name: appointment.customer_name,
-              service_type: appointment.service_type,
-              company_name: companyName,
-              date: formattedDate,
-              time: formattedTime,
-            });
+            const message = applyTemplate(setting.sms_template, templateVars);
 
             try {
               const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${integration!.twilio_account_sid}/Messages.json`;
@@ -305,6 +314,69 @@ Deno.serve(async (req) => {
             await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'email', 'skipped', null, undefined, 'No customer email');
           }
 
+          // Send Voice Call reminder (if enabled and configured)
+          if (setting.call_enabled && hasTwilio && hasElevenLabs && appointment.customer_phone && !appointment.sms_opt_out) {
+            const callMessage = setting.call_template 
+              ? applyTemplate(setting.call_template, templateVars)
+              : applyTemplate(setting.sms_template, templateVars);
+
+            try {
+              const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${integration!.twilio_account_sid}/Calls.json`;
+              const authHeader = btoa(`${integration!.twilio_account_sid}:${integration!.twilio_auth_token}`);
+
+              // Build the URL for the voice handler with context
+              const voiceHandlerUrl = new URL(`${supabaseUrl}/functions/v1/voice-handler`);
+              voiceHandlerUrl.searchParams.set('action', 'outbound');
+              voiceHandlerUrl.searchParams.set('context', JSON.stringify({
+                message: callMessage,
+                purpose: 'reminder',
+                appointmentId: appointment.id,
+                companyId: companyId,
+              }));
+
+              const formData = new URLSearchParams();
+              formData.append('From', integration!.twilio_phone_number!);
+              formData.append('To', appointment.customer_phone);
+              formData.append('Url', voiceHandlerUrl.toString());
+              formData.append('StatusCallback', `${supabaseUrl}/functions/v1/voice-handler?action=status`);
+              formData.append('StatusCallbackEvent', 'initiated ringing answered completed');
+
+              const twilioResponse = await fetch(twilioUrl, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Basic ${authHeader}`,
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData.toString(),
+              });
+
+              if (!twilioResponse.ok) {
+                const errorText = await twilioResponse.text();
+                console.error(`Twilio call error for appointment ${appointment.id}:`, errorText);
+                callsFailed++;
+                await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'call', 'failed', appointment.customer_phone, callMessage, errorText);
+              } else {
+                const twilioResult = await twilioResponse.json();
+                console.log(`Voice call initiated for appointment ${appointment.id}, SID: ${twilioResult.sid}`);
+                callsSent++;
+                await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'call', 'sent', appointment.customer_phone, callMessage);
+              }
+            } catch (callError: any) {
+              console.error(`Error initiating call for appointment ${appointment.id}:`, callError);
+              callsFailed++;
+              await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'call', 'failed', appointment.customer_phone, undefined, callError.message);
+            }
+          } else if (setting.call_enabled && !hasElevenLabs) {
+            console.log(`Skipping call for appointment ${appointment.id}: ElevenLabs not configured`);
+            await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'call', 'skipped', appointment.customer_phone, undefined, 'ElevenLabs not configured');
+          } else if (setting.call_enabled && !hasTwilio) {
+            console.log(`Skipping call for appointment ${appointment.id}: Twilio not configured`);
+            await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'call', 'skipped', appointment.customer_phone, undefined, 'Twilio not configured');
+          } else if (setting.call_enabled && !appointment.customer_phone) {
+            console.log(`Skipping call for appointment ${appointment.id}: No customer phone`);
+            await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'call', 'skipped', null, undefined, 'No customer phone');
+          }
+
           // Update reminder status if using standard fields
           if (reminderSentField && reminderSentAtField) {
             const { error: updateErr } = await supabase
@@ -323,7 +395,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    console.log(`Reminder processing complete. SMS: ${smsSent} sent, ${smsFailed} failed. Emails: ${emailsSent} sent, ${emailsFailed} failed`);
+    console.log(`Reminder processing complete. SMS: ${smsSent} sent, ${smsFailed} failed. Emails: ${emailsSent} sent, ${emailsFailed} failed. Calls: ${callsSent} sent, ${callsFailed} failed`);
 
     return new Response(
       JSON.stringify({
@@ -331,6 +403,7 @@ Deno.serve(async (req) => {
         message: 'Processed reminders',
         sms: { sent: smsSent, failed: smsFailed },
         email: { sent: emailsSent, failed: emailsFailed },
+        call: { sent: callsSent, failed: callsFailed },
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
