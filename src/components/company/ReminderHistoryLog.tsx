@@ -3,9 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { History, Mail, MessageSquare, CheckCircle, XCircle, Clock, Loader2 } from "lucide-react";
+import { History, Mail, MessageSquare, CheckCircle, XCircle, Clock, Loader2, Download } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 interface ReminderLog {
   id: string;
@@ -39,6 +41,40 @@ export function ReminderHistoryLog() {
     enabled: !!companyId,
     refetchInterval: 30000, // Refresh every 30 seconds
   });
+
+  const exportToCSV = () => {
+    if (!logs || logs.length === 0) {
+      toast.error("No logs to export");
+      return;
+    }
+
+    const headers = ["Date", "Type", "Channel", "Status", "Recipient", "Message Preview", "Error"];
+    const rows = logs.map(log => [
+      format(new Date(log.created_at), "yyyy-MM-dd HH:mm:ss"),
+      log.reminder_type,
+      log.channel,
+      log.status,
+      log.recipient || "",
+      (log.message_preview || "").replace(/"/g, '""'),
+      (log.error_message || "").replace(/"/g, '""')
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `reminder-logs-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast.success("Logs exported successfully");
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -94,14 +130,25 @@ export function ReminderHistoryLog() {
 
   return (
     <Card className="border-border/50">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <History className="h-5 w-5" />
-          Reminder History
-        </CardTitle>
-        <CardDescription>
-          Recent reminder notifications sent to customers
-        </CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <div>
+          <CardTitle className="flex items-center gap-2">
+            <History className="h-5 w-5" />
+            Reminder History
+          </CardTitle>
+          <CardDescription className="mt-1.5">
+            Recent reminder notifications sent to customers
+          </CardDescription>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={exportToCSV}
+          disabled={!logs || logs.length === 0}
+        >
+          <Download className="h-4 w-4 mr-2" />
+          Export CSV
+        </Button>
       </CardHeader>
       <CardContent>
         {!logs || logs.length === 0 ? (
