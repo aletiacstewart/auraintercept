@@ -4,6 +4,7 @@ import { ReminderSettings } from '@/components/company/ReminderSettings';
 import { ReminderHistoryLog } from '@/components/company/ReminderHistoryLog';
 import { ReminderAnalytics } from '@/components/company/ReminderAnalytics';
 import { CustomerPreferencesManager } from '@/components/company/CustomerPreferencesManager';
+import { DefaultPreferencesSettings } from '@/components/company/DefaultPreferencesSettings';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,6 +28,7 @@ export default function Settings() {
             <TabsList className="flex-wrap h-auto gap-1">
               <TabsTrigger value="branding">Branding</TabsTrigger>
               <TabsTrigger value="reminders">Reminders</TabsTrigger>
+              <TabsTrigger value="default-prefs">Default Prefs</TabsTrigger>
               <TabsTrigger value="reminder-analytics">Analytics</TabsTrigger>
               <TabsTrigger value="reminder-history">History</TabsTrigger>
               <TabsTrigger value="customer-prefs">Customer Prefs</TabsTrigger>
@@ -38,6 +40,9 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="reminders">
               <ReminderSettings />
+            </TabsContent>
+            <TabsContent value="default-prefs">
+              <DefaultPreferencesSettings />
             </TabsContent>
             <TabsContent value="reminder-analytics">
               <ReminderAnalytics />

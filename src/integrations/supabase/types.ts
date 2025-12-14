@@ -231,6 +231,9 @@ export type Database = {
       companies: {
         Row: {
           created_at: string
+          default_call_enabled: boolean
+          default_email_enabled: boolean
+          default_sms_enabled: boolean
           id: string
           logo_url: string | null
           name: string
@@ -242,6 +245,9 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          default_call_enabled?: boolean
+          default_email_enabled?: boolean
+          default_sms_enabled?: boolean
           id?: string
           logo_url?: string | null
           name: string
@@ -253,6 +259,9 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          default_call_enabled?: boolean
+          default_email_enabled?: boolean
+          default_sms_enabled?: boolean
           id?: string
           logo_url?: string | null
           name?: string

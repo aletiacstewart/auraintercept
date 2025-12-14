@@ -178,6 +178,17 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
     return { success: false, error: 'Service not found' };
   }
 
+  // Get company default notification preferences
+  const { data: company } = await supabase
+    .from('companies')
+    .select('default_sms_enabled, default_email_enabled, default_call_enabled')
+    .eq('id', companyId)
+    .single();
+
+  const smsOptOut = !(company?.default_sms_enabled ?? true);
+  const emailOptOut = !(company?.default_email_enabled ?? true);
+  const callOptOut = !(company?.default_call_enabled ?? true);
+
   // Find first available employee if not specified
   let assignedEmployeeId = employee_id;
   
@@ -196,7 +207,7 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
     }
   }
 
-  // Create appointment
+  // Create appointment with company default preferences
   const { data: appointment, error } = await supabase
     .from('appointments')
     .insert({
@@ -208,7 +219,10 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
       customer_name,
       customer_email,
       customer_phone,
-      status: 'scheduled'
+      status: 'scheduled',
+      sms_opt_out: smsOptOut,
+      email_opt_out: emailOptOut,
+      call_opt_out: callOptOut
     })
     .select()
     .single();
