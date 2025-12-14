@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,10 +14,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { format, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
-import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
+import { toast } from 'sonner';
 
 interface Appointment {
   id: string;
@@ -33,9 +44,66 @@ interface Appointment {
 
 export function AppointmentCalendar() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [month, setMonth] = useState<Date>(new Date());
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+
+  // Cancel appointment mutation
+  const cancelMutation = useMutation({
+    mutationFn: async (appointmentId: string) => {
+      const { error } = await supabase
+        .from('appointments')
+        .update({ status: 'cancelled' })
+        .eq('id', appointmentId);
+      
+      if (error) throw error;
+
+      // Send cancellation email
+      try {
+        await supabase.functions.invoke('send-appointment-email', {
+          body: { appointmentId, type: 'cancellation' }
+        });
+      } catch (emailError) {
+        console.error('Failed to send cancellation email:', emailError);
+      }
+
+      return appointmentId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee-appointments'] });
+      toast.success('Appointment cancelled successfully');
+      setSelectedAppointment(null);
+      setCancelDialogOpen(false);
+    },
+    onError: (error) => {
+      console.error('Failed to cancel appointment:', error);
+      toast.error('Failed to cancel appointment');
+    },
+  });
+
+  // Complete appointment mutation
+  const completeMutation = useMutation({
+    mutationFn: async (appointmentId: string) => {
+      const { error } = await supabase
+        .from('appointments')
+        .update({ status: 'completed' })
+        .eq('id', appointmentId);
+      
+      if (error) throw error;
+      return appointmentId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee-appointments'] });
+      toast.success('Appointment marked as completed');
+      setSelectedAppointment(null);
+    },
+    onError: (error) => {
+      console.error('Failed to complete appointment:', error);
+      toast.error('Failed to update appointment');
+    },
+  });
 
   // Fetch appointments for the month
   const { data: appointments, isLoading } = useQuery({
@@ -237,11 +305,37 @@ export function AppointmentCalendar() {
                 )}
               </div>
 
-              <div className="flex gap-2 pt-4">
+              {selectedAppointment.status === 'scheduled' && (
+                <div className="flex gap-2 pt-4">
+                  <Button 
+                    variant="default" 
+                    className="flex-1"
+                    onClick={() => completeMutation.mutate(selectedAppointment.id)}
+                    disabled={completeMutation.isPending}
+                  >
+                    {completeMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                    )}
+                    Mark Complete
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    className="flex-1"
+                    onClick={() => setCancelDialogOpen(true)}
+                  >
+                    <XCircle className="w-4 h-4 mr-2" />
+                    Cancel
+                  </Button>
+                </div>
+              )}
+
+              <div className="flex gap-2 pt-2">
                 {selectedAppointment.customer_phone && (
                   <OutboundCallDialog
                     trigger={
-                      <Button variant="default" className="flex-1">
+                      <Button variant="outline" className="flex-1">
                         <Phone className="w-4 h-4 mr-2" />
                         Call Customer
                       </Button>
@@ -254,7 +348,7 @@ export function AppointmentCalendar() {
                     }}
                   />
                 )}
-                <Button variant="outline" className="flex-1" onClick={() => setSelectedAppointment(null)}>
+                <Button variant="ghost" onClick={() => setSelectedAppointment(null)}>
                   Close
                 </Button>
               </div>
@@ -262,6 +356,36 @@ export function AppointmentCalendar() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Cancel Confirmation Dialog */}
+      <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel Appointment</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to cancel this appointment with {selectedAppointment?.customer_name}? 
+              {selectedAppointment?.customer_email && ' A cancellation email will be sent to the customer.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep Appointment</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => selectedAppointment && cancelMutation.mutate(selectedAppointment.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={cancelMutation.isPending}
+            >
+              {cancelMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Cancelling...
+                </>
+              ) : (
+                'Yes, Cancel Appointment'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
