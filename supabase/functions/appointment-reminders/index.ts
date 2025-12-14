@@ -214,8 +214,8 @@ Deno.serve(async (req) => {
             hour12: true,
           });
 
-          // Send SMS reminder
-          if (hasTwilio && appointment.customer_phone) {
+          // Send SMS reminder (check opt-out)
+          if (hasTwilio && appointment.customer_phone && !appointment.sms_opt_out) {
             const message = applyTemplate(setting.sms_template, {
               customer_name: appointment.customer_name,
               service_type: appointment.service_type,
@@ -258,13 +258,16 @@ Deno.serve(async (req) => {
               smsFailed++;
               await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'sms', 'failed', appointment.customer_phone, undefined, smsError.message);
             }
+          } else if (appointment.sms_opt_out) {
+            console.log(`Skipping SMS for appointment ${appointment.id}: Customer opted out`);
+            await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'sms', 'skipped', appointment.customer_phone, undefined, 'Customer opted out');
           } else if (!appointment.customer_phone) {
             console.log(`Skipping SMS for appointment ${appointment.id}: No customer phone`);
             await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'sms', 'skipped', null, undefined, 'No customer phone');
           }
 
-          // Send Email reminder
-          if (hasResend && appointment.customer_email) {
+          // Send Email reminder (check opt-out)
+          if (hasResend && appointment.customer_email && !appointment.email_opt_out) {
             try {
               // Call the send-appointment-email function
               const emailResponse = await fetch(`${supabaseUrl}/functions/v1/send-appointment-email`, {
@@ -294,6 +297,9 @@ Deno.serve(async (req) => {
               emailsFailed++;
               await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'email', 'failed', appointment.customer_email, undefined, emailError.message);
             }
+          } else if (appointment.email_opt_out) {
+            console.log(`Skipping email for appointment ${appointment.id}: Customer opted out`);
+            await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'email', 'skipped', appointment.customer_email, undefined, 'Customer opted out');
           } else if (!appointment.customer_email) {
             console.log(`Skipping email for appointment ${appointment.id}: No customer email`);
             await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'email', 'skipped', null, undefined, 'No customer email');
