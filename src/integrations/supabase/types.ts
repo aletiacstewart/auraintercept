@@ -413,6 +413,53 @@ export type Database = {
           },
         ]
       }
+      reminder_settings: {
+        Row: {
+          call_enabled: boolean
+          call_template: string | null
+          company_id: string
+          created_at: string
+          hours_before: number
+          id: string
+          is_enabled: boolean
+          reminder_type: string
+          sms_template: string
+          updated_at: string
+        }
+        Insert: {
+          call_enabled?: boolean
+          call_template?: string | null
+          company_id: string
+          created_at?: string
+          hours_before: number
+          id?: string
+          is_enabled?: boolean
+          reminder_type: string
+          sms_template?: string
+          updated_at?: string
+        }
+        Update: {
+          call_enabled?: boolean
+          call_template?: string | null
+          company_id?: string
+          created_at?: string
+          hours_before?: number
+          id?: string
+          is_enabled?: boolean
+          reminder_type?: string
+          sms_template?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminder_settings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       services: {
         Row: {
           company_id: string
