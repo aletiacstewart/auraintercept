@@ -17,6 +17,7 @@ import {
 import { format, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
 import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 
 interface Appointment {
   id: string;
@@ -237,6 +238,22 @@ export function AppointmentCalendar() {
               </div>
 
               <div className="flex gap-2 pt-4">
+                {selectedAppointment.customer_phone && (
+                  <OutboundCallDialog
+                    trigger={
+                      <Button variant="default" className="flex-1">
+                        <Phone className="w-4 h-4 mr-2" />
+                        Call Customer
+                      </Button>
+                    }
+                    defaultPhone={selectedAppointment.customer_phone}
+                    defaultName={selectedAppointment.customer_name}
+                    appointmentDetails={{
+                      service: selectedAppointment.service_type,
+                      datetime: selectedAppointment.datetime,
+                    }}
+                  />
+                )}
                 <Button variant="outline" className="flex-1" onClick={() => setSelectedAppointment(null)}>
                   Close
                 </Button>
