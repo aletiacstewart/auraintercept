@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
+import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
 
 export function CompanyAdminDashboard() {
   const { companyId } = useAuth();
@@ -170,54 +171,8 @@ export function CompanyAdminDashboard() {
         </CardContent>
       </Card>
 
-      {/* Setup Progress */}
-      <Card className="border-border/50 border-dashed">
-        <CardHeader>
-          <CardTitle>Setup Your AI Agent</CardTitle>
-          <CardDescription>Complete these steps to get your AI agent up and running</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
-              <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-primary-foreground text-sm font-bold">✓</div>
-              <div className="flex-1">
-                <p className="font-medium">Create Account</p>
-                <p className="text-sm text-muted-foreground">Company registered successfully</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
-              <div className="w-8 h-8 rounded-full border-2 border-primary flex items-center justify-center text-primary text-sm font-bold">2</div>
-              <div className="flex-1">
-                <p className="font-medium">Upload Branding</p>
-                <p className="text-sm text-muted-foreground">Add your logo and brand colors</p>
-              </div>
-              <Button size="sm" variant="outline" onClick={() => navigate('/dashboard/onboarding')}>
-                Configure
-              </Button>
-            </div>
-            <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
-              <div className="w-8 h-8 rounded-full border-2 border-muted-foreground flex items-center justify-center text-muted-foreground text-sm font-bold">3</div>
-              <div className="flex-1">
-                <p className="font-medium">Add Knowledge Base</p>
-                <p className="text-sm text-muted-foreground">Train your AI with your business info</p>
-              </div>
-              <Button size="sm" variant="outline" onClick={() => navigate('/dashboard/knowledge')}>
-                Add Info
-              </Button>
-            </div>
-            <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
-              <div className="w-8 h-8 rounded-full border-2 border-muted-foreground flex items-center justify-center text-muted-foreground text-sm font-bold">4</div>
-              <div className="flex-1">
-                <p className="font-medium">Connect Integrations</p>
-                <p className="text-sm text-muted-foreground">Set up Twilio, ElevenLabs, and Stripe</p>
-              </div>
-              <Button size="sm" variant="outline" onClick={() => navigate('/dashboard/integrations')}>
-                Connect
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Onboarding Checklist */}
+      <OnboardingChecklist />
     </div>
   );
 }
