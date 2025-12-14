@@ -1,0 +1,167 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import {
+  LayoutDashboard,
+  Building2,
+  Users,
+  Calendar,
+  MessageSquare,
+  Settings,
+  LogOut,
+  Bot,
+  Puzzle,
+  FileText,
+  ChevronLeft,
+  ChevronRight,
+  Shield
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import logo from '@/assets/logo.png';
+
+interface NavItem {
+  label: string;
+  icon: React.ElementType;
+  href: string;
+  roles: ('platform_admin' | 'company_admin' | 'employee')[];
+}
+
+const navItems: NavItem[] = [
+  { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
+  { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'] },
+  { label: 'Employees', icon: Users, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'] },
+  { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin', 'employee'] },
+  { label: 'AI Agent', icon: Bot, href: '/dashboard/agent', roles: ['platform_admin', 'company_admin'] },
+  { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
+  { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'] },
+  { label: 'Messages', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin', 'employee'] },
+  { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin', 'employee'] },
+];
+
+export function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const [collapsed, setCollapsed] = useState(false);
+  const { userRole, signOut, user } = useAuth();
+  const navigate = useNavigate();
+
+  const filteredNav = navItems.filter((item) =>
+    userRole && item.roles.includes(userRole)
+  );
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
+
+  const getRoleBadge = () => {
+    switch (userRole) {
+      case 'platform_admin':
+        return { label: 'Platform Admin', icon: Shield, color: 'text-primary' };
+      case 'company_admin':
+        return { label: 'Company Admin', icon: Building2, color: 'text-secondary' };
+      case 'employee':
+        return { label: 'Employee', icon: Users, color: 'text-accent' };
+      default:
+        return null;
+    }
+  };
+
+  const roleBadge = getRoleBadge();
+
+  return (
+    <div className="min-h-screen flex bg-background">
+      {/* Sidebar */}
+      <aside
+        className={cn(
+          'h-screen sticky top-0 flex flex-col bg-sidebar text-sidebar-foreground transition-all duration-300 border-r border-sidebar-border',
+          collapsed ? 'w-16' : 'w-64'
+        )}
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-3 px-4 py-5">
+          <div className="w-10 h-10 rounded-xl gradient-primary p-0.5 flex-shrink-0">
+            <div className="w-full h-full rounded-xl bg-sidebar flex items-center justify-center overflow-hidden">
+              <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
+            </div>
+          </div>
+          {!collapsed && (
+            <div className="overflow-hidden">
+              <h1 className="font-bold text-sm truncate">AI Bot Company</h1>
+              <p className="text-xs text-sidebar-foreground/60 truncate">Platform</p>
+            </div>
+          )}
+        </div>
+
+        <Separator className="bg-sidebar-border" />
+
+        {/* Navigation */}
+        <ScrollArea className="flex-1 px-2 py-4">
+          <nav className="space-y-1">
+            {filteredNav.map((item) => {
+              const Icon = item.icon;
+              const isActive = window.location.pathname === item.href;
+              
+              return (
+                <Button
+                  key={item.href}
+                  variant="ghost"
+                  className={cn(
+                    'w-full justify-start gap-3 text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent',
+                    isActive && 'bg-sidebar-accent text-sidebar-foreground',
+                    collapsed && 'justify-center px-2'
+                  )}
+                  onClick={() => navigate(item.href)}
+                >
+                  <Icon className="w-5 h-5 flex-shrink-0" />
+                  {!collapsed && <span className="truncate">{item.label}</span>}
+                </Button>
+              );
+            })}
+          </nav>
+        </ScrollArea>
+
+        <Separator className="bg-sidebar-border" />
+
+        {/* User section */}
+        <div className="p-3">
+          {!collapsed && roleBadge && (
+            <div className={cn('flex items-center gap-2 px-3 py-2 mb-2 rounded-lg bg-sidebar-accent/50', roleBadge.color)}>
+              <roleBadge.icon className="w-4 h-4" />
+              <span className="text-xs font-medium">{roleBadge.label}</span>
+            </div>
+          )}
+          <Button
+            variant="ghost"
+            className={cn(
+              'w-full justify-start gap-3 text-sidebar-foreground/80 hover:text-destructive hover:bg-destructive/10',
+              collapsed && 'justify-center px-2'
+            )}
+            onClick={handleSignOut}
+          >
+            <LogOut className="w-5 h-5 flex-shrink-0" />
+            {!collapsed && <span>Sign Out</span>}
+          </Button>
+        </div>
+
+        {/* Collapse button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute -right-3 top-8 h-6 w-6 rounded-full border border-sidebar-border bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent"
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
+        </Button>
+      </aside>
+
+      {/* Main content */}
+      <main className="flex-1 overflow-auto">
+        <div className="container max-w-7xl py-8 px-6">
+          {children}
+        </div>
+      </main>
+    </div>
+  );
+}
