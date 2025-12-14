@@ -236,6 +236,7 @@ export type Database = {
           default_sms_enabled: boolean
           id: string
           last_unsubscribe_alert_at: string | null
+          last_weekly_digest_at: string | null
           logo_url: string | null
           name: string
           primary_color: string | null
@@ -246,6 +247,9 @@ export type Database = {
           unsubscribe_alert_enabled: boolean | null
           unsubscribe_alert_threshold: number | null
           updated_at: string
+          weekly_digest_day: number | null
+          weekly_digest_email: string | null
+          weekly_digest_enabled: boolean | null
         }
         Insert: {
           created_at?: string
@@ -254,6 +258,7 @@ export type Database = {
           default_sms_enabled?: boolean
           id?: string
           last_unsubscribe_alert_at?: string | null
+          last_weekly_digest_at?: string | null
           logo_url?: string | null
           name: string
           primary_color?: string | null
@@ -264,6 +269,9 @@ export type Database = {
           unsubscribe_alert_enabled?: boolean | null
           unsubscribe_alert_threshold?: number | null
           updated_at?: string
+          weekly_digest_day?: number | null
+          weekly_digest_email?: string | null
+          weekly_digest_enabled?: boolean | null
         }
         Update: {
           created_at?: string
@@ -272,6 +280,7 @@ export type Database = {
           default_sms_enabled?: boolean
           id?: string
           last_unsubscribe_alert_at?: string | null
+          last_weekly_digest_at?: string | null
           logo_url?: string | null
           name?: string
           primary_color?: string | null
@@ -282,6 +291,9 @@ export type Database = {
           unsubscribe_alert_enabled?: boolean | null
           unsubscribe_alert_threshold?: number | null
           updated_at?: string
+          weekly_digest_day?: number | null
+          weekly_digest_email?: string | null
+          weekly_digest_enabled?: boolean | null
         }
         Relationships: []
       }

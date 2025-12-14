@@ -7,6 +7,7 @@ import { CustomerPreferencesManager } from '@/components/company/CustomerPrefere
 import { DefaultPreferencesSettings } from '@/components/company/DefaultPreferencesSettings';
 import { SubscriptionAnalytics } from '@/components/company/SubscriptionAnalytics';
 import { UnsubscribeAlertSettings } from '@/components/company/UnsubscribeAlertSettings';
+import { WeeklyDigestSettings } from '@/components/company/WeeklyDigestSettings';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
 import { useAuth } from '@/contexts/AuthContext';
@@ -52,7 +53,10 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="subscription-analytics">
               <div className="space-y-6">
-                <UnsubscribeAlertSettings />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <UnsubscribeAlertSettings />
+                  <WeeklyDigestSettings />
+                </div>
                 <SubscriptionAnalytics />
               </div>
             </TabsContent>
