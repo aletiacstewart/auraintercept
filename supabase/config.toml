@@ -8,3 +8,9 @@ verify_jwt = true
 
 [functions.missed-call-handler]
 verify_jwt = false
+
+[functions.widget-api]
+verify_jwt = false
+
+[functions.chat-widget]
+verify_jwt = false

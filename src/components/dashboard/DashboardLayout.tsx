@@ -18,7 +18,8 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
-  Shield
+  Shield,
+  MessageCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/logo.png';
@@ -37,6 +38,7 @@ const navItems: NavItem[] = [
   { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin', 'employee'] },
   { label: 'Availability', icon: Clock, href: '/dashboard/availability', roles: ['employee'] },
   { label: 'AI Agent', icon: Bot, href: '/dashboard/ai-agent', roles: ['platform_admin', 'company_admin'] },
+  { label: 'Chat Widget', icon: MessageCircle, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
   { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
   { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'] },
   { label: 'Messages', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin', 'employee'] },
