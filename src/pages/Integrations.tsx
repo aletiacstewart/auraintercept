@@ -271,6 +271,65 @@ export default function Integrations() {
           })}
         </div>
 
+        {/* Webhook Configuration */}
+        <Card className="border-primary/30 bg-primary/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Phone className="w-5 h-5 text-primary" />
+              Voice Webhook Configuration
+            </CardTitle>
+            <CardDescription>
+              Configure your Twilio phone number to use the AI voice handler
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Voice Webhook URL (for incoming calls)</Label>
+              <div className="flex gap-2">
+                <Input
+                  readOnly
+                  value={`https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=incoming`}
+                  className="font-mono text-sm"
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText('https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=incoming');
+                    toast.success('Webhook URL copied!');
+                  }}
+                >
+                  Copy
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Set this as the "A CALL COMES IN" webhook in your Twilio phone number settings. Select HTTP POST.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label>Status Callback URL (optional)</Label>
+              <div className="flex gap-2">
+                <Input
+                  readOnly
+                  value={`https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=status`}
+                  className="font-mono text-sm"
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText('https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=status');
+                    toast.success('Status URL copied!');
+                  }}
+                >
+                  Copy
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Set this as the "STATUS CALLBACK URL" to track call status updates.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Setup Instructions */}
         <Card className="border-border/50 border-dashed">
           <CardHeader>
@@ -288,6 +347,8 @@ export default function Integrations() {
                   <li>Get your Account SID and Auth Token from the Console</li>
                   <li>Purchase a phone number with Voice capabilities</li>
                   <li>Enter your credentials above</li>
+                  <li>Go to Phone Numbers → Active Numbers</li>
+                  <li>Configure the Voice webhook URL (copy from above)</li>
                 </ol>
               </div>
               <div className="space-y-2">
@@ -297,6 +358,7 @@ export default function Integrations() {
                   <li>Go to Settings → API Keys</li>
                   <li>Generate a new API key</li>
                   <li>Optionally, select a voice from the Voice Library</li>
+                  <li>Enter the Voice ID for custom voices</li>
                 </ol>
               </div>
             </div>
