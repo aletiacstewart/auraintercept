@@ -1,0 +1,33 @@
+-- Create email templates table for per-company customization
+CREATE TABLE public.email_templates (
+  id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  company_id uuid NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
+  template_type text NOT NULL CHECK (template_type IN ('confirmation', 'cancellation', 'reminder')),
+  subject text NOT NULL,
+  heading text NOT NULL,
+  message text NOT NULL,
+  show_portal_link boolean DEFAULT true,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  UNIQUE(company_id, template_type)
+);
+
+-- Enable RLS
+ALTER TABLE public.email_templates ENABLE ROW LEVEL SECURITY;
+
+-- RLS policies
+CREATE POLICY "Company admins can manage their email templates" 
+ON public.email_templates 
+FOR ALL 
+USING (company_id = get_user_company_id(auth.uid()) AND has_role(auth.uid(), 'company_admin'::app_role));
+
+CREATE POLICY "Platform admins can view all email templates" 
+ON public.email_templates 
+FOR SELECT 
+USING (has_role(auth.uid(), 'platform_admin'::app_role));
+
+-- Trigger for updated_at
+CREATE TRIGGER update_email_templates_updated_at
+BEFORE UPDATE ON public.email_templates
+FOR EACH ROW
+EXECUTE FUNCTION public.update_updated_at_column();
