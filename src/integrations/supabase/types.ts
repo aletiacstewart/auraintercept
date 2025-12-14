@@ -235,12 +235,16 @@ export type Database = {
           default_email_enabled: boolean
           default_sms_enabled: boolean
           id: string
+          last_unsubscribe_alert_at: string | null
           logo_url: string | null
           name: string
           primary_color: string | null
           secondary_color: string | null
           slug: string
           stripe_customer_id: string | null
+          unsubscribe_alert_email: string | null
+          unsubscribe_alert_enabled: boolean | null
+          unsubscribe_alert_threshold: number | null
           updated_at: string
         }
         Insert: {
@@ -249,12 +253,16 @@ export type Database = {
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
           id?: string
+          last_unsubscribe_alert_at?: string | null
           logo_url?: string | null
           name: string
           primary_color?: string | null
           secondary_color?: string | null
           slug: string
           stripe_customer_id?: string | null
+          unsubscribe_alert_email?: string | null
+          unsubscribe_alert_enabled?: boolean | null
+          unsubscribe_alert_threshold?: number | null
           updated_at?: string
         }
         Update: {
@@ -263,12 +271,16 @@ export type Database = {
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
           id?: string
+          last_unsubscribe_alert_at?: string | null
           logo_url?: string | null
           name?: string
           primary_color?: string | null
           secondary_color?: string | null
           slug?: string
           stripe_customer_id?: string | null
+          unsubscribe_alert_email?: string | null
+          unsubscribe_alert_enabled?: boolean | null
+          unsubscribe_alert_threshold?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -760,6 +772,44 @@ export type Database = {
             foreignKeyName: "tenant_integrations_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unsubscribe_alerts: {
+        Row: {
+          company_id: string
+          id: string
+          period_end: string
+          period_start: string
+          sent_at: string
+          threshold: number
+          unsubscribe_count: number
+        }
+        Insert: {
+          company_id: string
+          id?: string
+          period_end: string
+          period_start: string
+          sent_at?: string
+          threshold: number
+          unsubscribe_count: number
+        }
+        Update: {
+          company_id?: string
+          id?: string
+          period_end?: string
+          period_start?: string
+          sent_at?: string
+          threshold?: number
+          unsubscribe_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unsubscribe_alerts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
