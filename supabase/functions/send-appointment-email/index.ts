@@ -126,6 +126,19 @@ Deno.serve(async (req) => {
         throw new Error('Invalid email type');
     }
 
+    // Generate portal link
+    const portalUrl = `https://zwlcwtgjvesbevheknbk.lovable.app/appointment?token=${appointment.customer_token}`;
+    const portalSection = type !== 'cancellation' ? `
+      <div style="text-align: center; margin: 24px 0;">
+        <a href="${portalUrl}" style="display: inline-block; background: ${primaryColor}; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">
+          Manage Your Appointment
+        </a>
+        <p style="color: #6b7280; font-size: 12px; margin-top: 12px;">
+          Reschedule or cancel your appointment online
+        </p>
+      </div>
+    ` : '';
+
     const html = `
       <!DOCTYPE html>
       <html>
@@ -149,6 +162,8 @@ Deno.serve(async (req) => {
               <p style="margin: 8px 0;"><strong>Duration:</strong> ${appointment.duration_minutes} minutes</p>
               ${appointment.notes ? `<p style="margin: 8px 0;"><strong>Notes:</strong> ${appointment.notes}</p>` : ''}
             </div>
+            
+            ${portalSection}
             
             <p style="color: #6b7280; font-size: 14px;">
               If you have any questions, please don't hesitate to contact us.
