@@ -47,6 +47,33 @@ function applyTemplate(template: string, vars: Record<string, string>): string {
   return result;
 }
 
+async function logReminder(
+  supabase: any,
+  companyId: string,
+  appointmentId: string,
+  reminderType: string,
+  channel: 'sms' | 'email',
+  status: 'sent' | 'failed' | 'skipped',
+  recipient: string | null,
+  messagePreview?: string,
+  errorMessage?: string
+) {
+  try {
+    await supabase.from('reminder_logs').insert({
+      company_id: companyId,
+      appointment_id: appointmentId,
+      reminder_type: reminderType,
+      channel,
+      status,
+      recipient,
+      message_preview: messagePreview?.substring(0, 100),
+      error_message: errorMessage,
+    });
+  } catch (err) {
+    console.error('Failed to log reminder:', err);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -219,17 +246,21 @@ Deno.serve(async (req) => {
                 const errorText = await twilioResponse.text();
                 console.error(`Twilio error for appointment ${appointment.id}:`, errorText);
                 smsFailed++;
+                await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'sms', 'failed', appointment.customer_phone, message, errorText);
               } else {
                 const twilioResult = await twilioResponse.json();
                 console.log(`SMS sent for appointment ${appointment.id}, SID: ${twilioResult.sid}`);
                 smsSent++;
+                await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'sms', 'sent', appointment.customer_phone, message);
               }
-            } catch (smsError) {
+            } catch (smsError: any) {
               console.error(`Error sending SMS for appointment ${appointment.id}:`, smsError);
               smsFailed++;
+              await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'sms', 'failed', appointment.customer_phone, undefined, smsError.message);
             }
           } else if (!appointment.customer_phone) {
             console.log(`Skipping SMS for appointment ${appointment.id}: No customer phone`);
+            await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'sms', 'skipped', null, undefined, 'No customer phone');
           }
 
           // Send Email reminder
@@ -252,16 +283,20 @@ Deno.serve(async (req) => {
                 const errorText = await emailResponse.text();
                 console.error(`Email error for appointment ${appointment.id}:`, errorText);
                 emailsFailed++;
+                await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'email', 'failed', appointment.customer_email, undefined, errorText);
               } else {
                 console.log(`Email reminder sent for appointment ${appointment.id}`);
                 emailsSent++;
+                await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'email', 'sent', appointment.customer_email, 'Email reminder sent');
               }
-            } catch (emailError) {
+            } catch (emailError: any) {
               console.error(`Error sending email for appointment ${appointment.id}:`, emailError);
               emailsFailed++;
+              await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'email', 'failed', appointment.customer_email, undefined, emailError.message);
             }
           } else if (!appointment.customer_email) {
             console.log(`Skipping email for appointment ${appointment.id}: No customer email`);
+            await logReminder(supabase, companyId, appointment.id, setting.reminder_type, 'email', 'skipped', null, undefined, 'No customer email');
           }
 
           // Update reminder status if using standard fields
