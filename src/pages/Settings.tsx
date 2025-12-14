@@ -2,6 +2,7 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { BrandingSettings } from '@/components/company/BrandingSettings';
 import { ReminderSettings } from '@/components/company/ReminderSettings';
 import { ReminderHistoryLog } from '@/components/company/ReminderHistoryLog';
+import { ReminderAnalytics } from '@/components/company/ReminderAnalytics';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
 import { useAuth } from '@/contexts/AuthContext';
@@ -22,10 +23,11 @@ export default function Settings() {
             </p>
           </div>
           <Tabs defaultValue="branding" className="space-y-4">
-            <TabsList>
+            <TabsList className="flex-wrap h-auto gap-1">
               <TabsTrigger value="branding">Branding</TabsTrigger>
               <TabsTrigger value="reminders">Reminders</TabsTrigger>
-              <TabsTrigger value="reminder-history">Reminder History</TabsTrigger>
+              <TabsTrigger value="reminder-analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="reminder-history">History</TabsTrigger>
               <TabsTrigger value="emails">Email Templates</TabsTrigger>
               <TabsTrigger value="sms">SMS Templates</TabsTrigger>
             </TabsList>
@@ -34,6 +36,9 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="reminders">
               <ReminderSettings />
+            </TabsContent>
+            <TabsContent value="reminder-analytics">
+              <ReminderAnalytics />
             </TabsContent>
             <TabsContent value="reminder-history">
               <ReminderHistoryLog />
