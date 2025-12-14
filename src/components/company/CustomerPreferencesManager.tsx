@@ -1,0 +1,343 @@
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Users, Mail, Phone, MessageSquare, Loader2, Search, CheckCircle, XCircle } from "lucide-react";
+import { format } from "date-fns";
+import { toast } from "sonner";
+
+interface AppointmentWithPrefs {
+  id: string;
+  customer_name: string;
+  customer_email: string | null;
+  customer_phone: string | null;
+  datetime: string;
+  service_type: string;
+  status: string;
+  sms_opt_out: boolean;
+  email_opt_out: boolean;
+  call_opt_out: boolean;
+}
+
+export function CustomerPreferencesManager() {
+  const { companyId } = useAuth();
+  const queryClient = useQueryClient();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("scheduled");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const { data: appointments, isLoading } = useQuery({
+    queryKey: ["appointments-preferences", companyId, statusFilter],
+    queryFn: async () => {
+      if (!companyId) return [];
+      let query = supabase
+        .from("appointments")
+        .select("id, customer_name, customer_email, customer_phone, datetime, service_type, status, sms_opt_out, email_opt_out, call_opt_out")
+        .eq("company_id", companyId)
+        .order("datetime", { ascending: false })
+        .limit(200);
+
+      if (statusFilter !== "all") {
+        query = query.eq("status", statusFilter);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data as AppointmentWithPrefs[];
+    },
+    enabled: !!companyId,
+  });
+
+  const updatePreferenceMutation = useMutation({
+    mutationFn: async ({ id, field, value }: { id: string; field: string; value: boolean }) => {
+      const { error } = await supabase
+        .from("appointments")
+        .update({ [field]: value })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments-preferences"] });
+    },
+    onError: (error) => {
+      toast.error("Failed to update preference");
+      console.error(error);
+    },
+  });
+
+  const bulkUpdateMutation = useMutation({
+    mutationFn: async ({ ids, field, value }: { ids: string[]; field: string; value: boolean }) => {
+      const { error } = await supabase
+        .from("appointments")
+        .update({ [field]: value })
+        .in("id", ids);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments-preferences"] });
+      setSelectedIds(new Set());
+      toast.success("Preferences updated successfully");
+    },
+    onError: (error) => {
+      toast.error("Failed to update preferences");
+      console.error(error);
+    },
+  });
+
+  const filteredAppointments = appointments?.filter(apt => 
+    apt.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    apt.customer_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    apt.customer_phone?.includes(searchTerm)
+  ) || [];
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(new Set(filteredAppointments.map(a => a.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const handleSelectOne = (id: string, checked: boolean) => {
+    const newSet = new Set(selectedIds);
+    if (checked) {
+      newSet.add(id);
+    } else {
+      newSet.delete(id);
+    }
+    setSelectedIds(newSet);
+  };
+
+  const handleBulkUpdate = (field: string, value: boolean) => {
+    if (selectedIds.size === 0) {
+      toast.error("Please select appointments first");
+      return;
+    }
+    bulkUpdateMutation.mutate({ ids: Array.from(selectedIds), field, value });
+  };
+
+  const getPreferenceBadge = (optOut: boolean, hasContact: boolean) => {
+    if (!hasContact) {
+      return <Badge variant="outline" className="text-xs opacity-50">N/A</Badge>;
+    }
+    return optOut ? (
+      <Badge variant="outline" className="text-xs text-destructive border-destructive/30">Off</Badge>
+    ) : (
+      <Badge variant="outline" className="text-xs text-green-600 border-green-500/30">On</Badge>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="border-border/50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            Customer Preferences
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="border-border/50">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Users className="h-5 w-5" />
+          Customer Preferences
+        </CardTitle>
+        <CardDescription>
+          Manage notification preferences for customer appointments
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Filters */}
+        <div className="flex flex-wrap gap-3">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by name, email, or phone..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="scheduled">Scheduled</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Bulk Actions */}
+        {selectedIds.size > 0 && (
+          <div className="flex flex-wrap items-center gap-2 p-3 rounded-lg bg-muted/50 border">
+            <span className="text-sm font-medium">{selectedIds.size} selected:</span>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="outline" onClick={() => handleBulkUpdate("sms_opt_out", false)}>
+                <MessageSquare className="h-3 w-3 mr-1" />
+                Enable SMS
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleBulkUpdate("sms_opt_out", true)}>
+                <MessageSquare className="h-3 w-3 mr-1 opacity-50" />
+                Disable SMS
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleBulkUpdate("email_opt_out", false)}>
+                <Mail className="h-3 w-3 mr-1" />
+                Enable Email
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleBulkUpdate("email_opt_out", true)}>
+                <Mail className="h-3 w-3 mr-1 opacity-50" />
+                Disable Email
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleBulkUpdate("call_opt_out", false)}>
+                <Phone className="h-3 w-3 mr-1" />
+                Enable Calls
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleBulkUpdate("call_opt_out", true)}>
+                <Phone className="h-3 w-3 mr-1 opacity-50" />
+                Disable Calls
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Table */}
+        {filteredAppointments.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
+            <p>No appointments found</p>
+          </div>
+        ) : (
+          <ScrollArea className="h-[500px]">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[50px]">
+                    <Checkbox
+                      checked={selectedIds.size === filteredAppointments.length && filteredAppointments.length > 0}
+                      onCheckedChange={handleSelectAll}
+                    />
+                  </TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Appointment</TableHead>
+                  <TableHead className="text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      <MessageSquare className="h-3 w-3" />
+                      SMS
+                    </div>
+                  </TableHead>
+                  <TableHead className="text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      <Mail className="h-3 w-3" />
+                      Email
+                    </div>
+                  </TableHead>
+                  <TableHead className="text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      <Phone className="h-3 w-3" />
+                      Call
+                    </div>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredAppointments.map((apt) => (
+                  <TableRow key={apt.id}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedIds.has(apt.id)}
+                        onCheckedChange={(checked) => handleSelectOne(apt.id, !!checked)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">{apt.customer_name}</p>
+                        <p className="text-xs text-muted-foreground truncate max-w-[200px]">
+                          {apt.customer_email || apt.customer_phone || "No contact"}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <p className="text-sm">{apt.service_type}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {format(new Date(apt.datetime), "MMM d, yyyy")}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Switch
+                        checked={!apt.sms_opt_out}
+                        onCheckedChange={(checked) => 
+                          updatePreferenceMutation.mutate({ id: apt.id, field: "sms_opt_out", value: !checked })
+                        }
+                        disabled={!apt.customer_phone || updatePreferenceMutation.isPending}
+                      />
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Switch
+                        checked={!apt.email_opt_out}
+                        onCheckedChange={(checked) => 
+                          updatePreferenceMutation.mutate({ id: apt.id, field: "email_opt_out", value: !checked })
+                        }
+                        disabled={!apt.customer_email || updatePreferenceMutation.isPending}
+                      />
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Switch
+                        checked={!apt.call_opt_out}
+                        onCheckedChange={(checked) => 
+                          updatePreferenceMutation.mutate({ id: apt.id, field: "call_opt_out", value: !checked })
+                        }
+                        disabled={!apt.customer_phone || updatePreferenceMutation.isPending}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
+        )}
+
+        <p className="text-xs text-muted-foreground">
+          Showing {filteredAppointments.length} of {appointments?.length || 0} appointments
+        </p>
+      </CardContent>
+    </Card>
+  );
+}

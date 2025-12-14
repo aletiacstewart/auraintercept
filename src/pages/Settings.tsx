@@ -3,6 +3,7 @@ import { BrandingSettings } from '@/components/company/BrandingSettings';
 import { ReminderSettings } from '@/components/company/ReminderSettings';
 import { ReminderHistoryLog } from '@/components/company/ReminderHistoryLog';
 import { ReminderAnalytics } from '@/components/company/ReminderAnalytics';
+import { CustomerPreferencesManager } from '@/components/company/CustomerPreferencesManager';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
 import { useAuth } from '@/contexts/AuthContext';
@@ -28,6 +29,7 @@ export default function Settings() {
               <TabsTrigger value="reminders">Reminders</TabsTrigger>
               <TabsTrigger value="reminder-analytics">Analytics</TabsTrigger>
               <TabsTrigger value="reminder-history">History</TabsTrigger>
+              <TabsTrigger value="customer-prefs">Customer Prefs</TabsTrigger>
               <TabsTrigger value="emails">Email Templates</TabsTrigger>
               <TabsTrigger value="sms">SMS Templates</TabsTrigger>
             </TabsList>
@@ -42,6 +44,9 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="reminder-history">
               <ReminderHistoryLog />
+            </TabsContent>
+            <TabsContent value="customer-prefs">
+              <CustomerPreferencesManager />
             </TabsContent>
             <TabsContent value="emails">
               <EmailTemplatesEditor />
