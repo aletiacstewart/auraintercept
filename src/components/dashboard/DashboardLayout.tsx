@@ -20,7 +20,8 @@ import {
   ChevronRight,
   Shield,
   MessageCircle,
-  PhoneCall
+  PhoneCall,
+  BarChart3
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/logo.png';
@@ -34,6 +35,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
+  { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin'] },
   { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'] },
   { label: 'Employees', icon: Users, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'] },
   { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin', 'employee'] },
