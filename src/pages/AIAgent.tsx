@@ -5,7 +5,8 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { AIAgentChat } from '@/components/ai/AIAgentChat';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle } from 'lucide-react';
+import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing } from 'lucide-react';
+import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 
 const AIAgent = () => {
   const { companyId } = useAuth();
@@ -32,11 +33,23 @@ const AIAgent = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">AI Agent</h1>
-          <p className="text-muted-foreground mt-1">
-            Test and monitor your AI-powered virtual assistant
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">AI Agent</h1>
+            <p className="text-muted-foreground mt-1">
+              Test and monitor your AI-powered virtual assistant
+            </p>
+          </div>
+          {hasVoice && (
+            <OutboundCallDialog
+              trigger={
+                <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+                  <PhoneOutgoing className="w-4 h-4" />
+                  Make Outbound Call
+                </button>
+              }
+            />
+          )}
         </div>
 
         <div className="grid gap-4 md:grid-cols-4">

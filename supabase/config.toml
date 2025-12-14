@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.voice-handler]
 verify_jwt = false
+
+[functions.outbound-call]
+verify_jwt = true

@@ -194,6 +194,144 @@ serve(async (req) => {
       );
     }
 
+    // Handle outbound calls (appointment reminders, follow-ups)
+    if (path === 'outbound' || url.searchParams.get('action') === 'outbound') {
+      const formData = await req.formData();
+      const callSid = formData.get('CallSid') as string;
+      const contextParam = url.searchParams.get('context');
+      
+      if (!contextParam) {
+        return new Response(
+          `<?xml version="1.0" encoding="UTF-8"?>
+          <Response>
+            <Say voice="Polly.Joanna">Hello, this is an automated call. Goodbye.</Say>
+            <Hangup/>
+          </Response>`,
+          { headers: { ...corsHeaders, 'Content-Type': 'application/xml' } }
+        );
+      }
+
+      const context = JSON.parse(decodeURIComponent(contextParam));
+      console.log(`Outbound call ${callSid} for ${context.purpose}:`, context);
+
+      // Initialize conversation state for potential follow-up
+      conversations.set(callSid, {
+        companyId: context.companyId,
+        messages: [{ role: 'system', content: `This is an outbound ${context.purpose} call to ${context.customerName}.` }],
+        customerPhone: context.customerPhone,
+      });
+
+      // Get ElevenLabs config
+      const { data: integration } = await supabase
+        .from('tenant_integrations')
+        .select('elevenlabs_api_key, elevenlabs_voice_id')
+        .eq('company_id', context.companyId)
+        .single();
+
+      // Generate voice message
+      if (integration?.elevenlabs_api_key) {
+        const audioUrl = await generateElevenLabsAudio(
+          context.message,
+          integration.elevenlabs_api_key,
+          integration.elevenlabs_voice_id || 'EXAVITQu4vr4xnSDxMaL'
+        );
+
+        if (audioUrl) {
+          return new Response(
+            `<?xml version="1.0" encoding="UTF-8"?>
+            <Response>
+              <Play>${audioUrl}</Play>
+              <Gather input="dtmf speech" timeout="5" numDigits="1" action="${SUPABASE_URL}/functions/v1/voice-handler?action=outbound-response&amp;callSid=${callSid}&amp;context=${contextParam}">
+              </Gather>
+              <Say voice="Polly.Joanna">We didn't receive a response. Thank you for your time. Goodbye!</Say>
+              <Hangup/>
+            </Response>`,
+            { headers: { ...corsHeaders, 'Content-Type': 'application/xml' } }
+          );
+        }
+      }
+
+      // Fallback to Twilio TTS
+      return new Response(
+        `<?xml version="1.0" encoding="UTF-8"?>
+        <Response>
+          <Say voice="Polly.Joanna">${escapeXml(context.message)}</Say>
+          <Gather input="dtmf speech" timeout="5" numDigits="1" action="${SUPABASE_URL}/functions/v1/voice-handler?action=outbound-response&amp;callSid=${callSid}&amp;context=${contextParam}">
+          </Gather>
+          <Say voice="Polly.Joanna">We didn't receive a response. Thank you for your time. Goodbye!</Say>
+          <Hangup/>
+        </Response>`,
+        { headers: { ...corsHeaders, 'Content-Type': 'application/xml' } }
+      );
+    }
+
+    // Handle outbound call responses (DTMF or speech)
+    if (path === 'outbound-response' || url.searchParams.get('action') === 'outbound-response') {
+      const formData = await req.formData();
+      const callSid = url.searchParams.get('callSid') || formData.get('CallSid') as string;
+      const digits = formData.get('Digits') as string;
+      const speechResult = formData.get('SpeechResult') as string;
+      const contextParam = url.searchParams.get('context');
+
+      console.log(`Outbound response for ${callSid}: digits=${digits}, speech=${speechResult}`);
+
+      const context = contextParam ? JSON.parse(decodeURIComponent(contextParam)) : null;
+
+      // Handle DTMF responses
+      if (digits === '1') {
+        // Confirmed
+        return new Response(
+          `<?xml version="1.0" encoding="UTF-8"?>
+          <Response>
+            <Say voice="Polly.Joanna">Thank you for confirming! We look forward to seeing you. Goodbye!</Say>
+            <Hangup/>
+          </Response>`,
+          { headers: { ...corsHeaders, 'Content-Type': 'application/xml' } }
+        );
+      } else if (digits === '2') {
+        // Wants to reschedule or speak with someone
+        return new Response(
+          `<?xml version="1.0" encoding="UTF-8"?>
+          <Response>
+            <Say voice="Polly.Joanna">I'll connect you with our scheduling assistant. How can I help you today?</Say>
+            <Gather input="speech" timeout="5" speechTimeout="auto" action="${SUPABASE_URL}/functions/v1/voice-handler?action=process&amp;callSid=${callSid}">
+            </Gather>
+            <Redirect>${SUPABASE_URL}/functions/v1/voice-handler?action=timeout&amp;callSid=${callSid}</Redirect>
+          </Response>`,
+          { headers: { ...corsHeaders, 'Content-Type': 'application/xml' } }
+        );
+      } else if (speechResult) {
+        // Handle speech response - treat as conversation
+        const state = conversations.get(callSid);
+        if (state) {
+          state.messages.push({ role: 'user', content: speechResult });
+          const aiResponse = await getAIResponse(supabase, state.companyId, state.messages);
+          state.messages.push({ role: 'assistant', content: aiResponse });
+
+          return new Response(
+            `<?xml version="1.0" encoding="UTF-8"?>
+            <Response>
+              <Say voice="Polly.Joanna">${escapeXml(aiResponse)}</Say>
+              <Gather input="speech" timeout="5" speechTimeout="auto" action="${SUPABASE_URL}/functions/v1/voice-handler?action=process&amp;callSid=${callSid}">
+              </Gather>
+              <Redirect>${SUPABASE_URL}/functions/v1/voice-handler?action=timeout&amp;callSid=${callSid}</Redirect>
+            </Response>`,
+            { headers: { ...corsHeaders, 'Content-Type': 'application/xml' } }
+          );
+        }
+      }
+
+      // Default response
+      return new Response(
+        `<?xml version="1.0" encoding="UTF-8"?>
+        <Response>
+          <Say voice="Polly.Joanna">Thank you for your time. Goodbye!</Say>
+          <Hangup/>
+        </Response>`,
+        { headers: { ...corsHeaders, 'Content-Type': 'application/xml' } }
+      );
+    }
+
     // Handle call status updates
     if (path === 'status' || url.searchParams.get('action') === 'status') {
       const formData = await req.formData();
