@@ -1,11 +1,34 @@
-import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { AIAgentChat } from '@/components/ai/AIAgentChat';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bot, Phone, MessageSquare, Calendar, Brain } from 'lucide-react';
+import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle } from 'lucide-react';
 
 const AIAgent = () => {
+  const { companyId } = useAuth();
+
+  // Check integration status
+  const { data: integrations } = useQuery({
+    queryKey: ['integrations-status', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data } = await supabase
+        .from('tenant_integrations')
+        .select('twilio_account_sid, twilio_phone_number, elevenlabs_api_key')
+        .eq('company_id', companyId)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  const hasTwilio = !!(integrations?.twilio_account_sid && integrations?.twilio_phone_number);
+  const hasElevenLabs = !!integrations?.elevenlabs_api_key;
+  const hasVoice = hasTwilio && hasElevenLabs;
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -55,10 +78,31 @@ const AIAgent = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Badge variant="secondary">Requires Setup</Badge>
-              <p className="text-xs text-muted-foreground mt-2">
-                Configure Twilio & ElevenLabs
-              </p>
+              {hasVoice ? (
+                <>
+                  <Badge variant="default" className="bg-green-500">
+                    <CheckCircle2 className="w-3 h-3 mr-1" />
+                    Active
+                  </Badge>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Twilio + ElevenLabs ready
+                  </p>
+                </>
+              ) : (
+                <>
+                  <Badge variant="secondary">
+                    <XCircle className="w-3 h-3 mr-1" />
+                    Requires Setup
+                  </Badge>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {!hasTwilio && !hasElevenLabs 
+                      ? 'Configure Twilio & ElevenLabs'
+                      : !hasTwilio 
+                        ? 'Configure Twilio'
+                        : 'Configure ElevenLabs'}
+                  </p>
+                </>
+              )}
             </CardContent>
           </Card>
 
@@ -70,10 +114,27 @@ const AIAgent = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Badge variant="secondary">Requires Setup</Badge>
-              <p className="text-xs text-muted-foreground mt-2">
-                Configure Twilio integration
-              </p>
+              {hasTwilio ? (
+                <>
+                  <Badge variant="default" className="bg-green-500">
+                    <CheckCircle2 className="w-3 h-3 mr-1" />
+                    Active
+                  </Badge>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Twilio connected
+                  </p>
+                </>
+              ) : (
+                <>
+                  <Badge variant="secondary">
+                    <XCircle className="w-3 h-3 mr-1" />
+                    Requires Setup
+                  </Badge>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Configure Twilio integration
+                  </p>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -116,9 +177,12 @@ const AIAgent = () => {
                 <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
                   <Phone className="h-5 w-5 text-primary mt-0.5" />
                   <div>
-                    <h4 className="font-medium">Missed Call Handler</h4>
+                    <h4 className="font-medium flex items-center gap-2">
+                      Voice Calling
+                      {hasVoice && <Badge variant="outline" className="text-xs">Live</Badge>}
+                    </h4>
                     <p className="text-sm text-muted-foreground">
-                      Automatically sends SMS follow-ups when calls are missed, offering to schedule callbacks or appointments.
+                      AI-powered phone conversations using Twilio for telephony and ElevenLabs for natural voice synthesis.
                     </p>
                   </div>
                 </div>
