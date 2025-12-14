@@ -191,7 +191,7 @@ export function CompanyAdminDashboard() {
                 <p className="font-medium">Upload Branding</p>
                 <p className="text-sm text-muted-foreground">Add your logo and brand colors</p>
               </div>
-              <Button size="sm" variant="outline" onClick={() => navigate('/dashboard/settings')}>
+              <Button size="sm" variant="outline" onClick={() => navigate('/dashboard/onboarding')}>
                 Configure
               </Button>
             </div>
