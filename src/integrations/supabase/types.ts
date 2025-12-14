@@ -466,6 +466,60 @@ export type Database = {
           },
         ]
       }
+      reminder_logs: {
+        Row: {
+          appointment_id: string
+          channel: string
+          company_id: string
+          created_at: string
+          error_message: string | null
+          id: string
+          message_preview: string | null
+          recipient: string | null
+          reminder_type: string
+          status: string
+        }
+        Insert: {
+          appointment_id: string
+          channel: string
+          company_id: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message_preview?: string | null
+          recipient?: string | null
+          reminder_type: string
+          status?: string
+        }
+        Update: {
+          appointment_id?: string
+          channel?: string
+          company_id?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message_preview?: string | null
+          recipient?: string | null
+          reminder_type?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminder_logs_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reminder_logs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reminder_settings: {
         Row: {
           call_enabled: boolean
