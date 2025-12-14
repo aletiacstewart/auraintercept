@@ -367,19 +367,43 @@ export default function CustomerPortal() {
             {/* Notification Preferences */}
             {appointment.status === 'scheduled' && !isPast && (
               <div className="space-y-3 p-4 rounded-lg border bg-card">
-                <div className="flex items-center gap-2 mb-3">
-                  <Bell className="w-4 h-4 text-muted-foreground" />
-                  <h4 className="font-medium text-sm">Reminder Preferences</h4>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Bell className="w-4 h-4 text-muted-foreground" />
+                    <h4 className="font-medium text-sm">Reminder Preferences</h4>
+                  </div>
+                  {preferencesLoading && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
                 </div>
+
+                {/* Show re-subscribe banner if any channel is opted out */}
+                {(appointment.sms_opt_out || appointment.email_opt_out || appointment.call_opt_out) && (
+                  <div className="flex items-center gap-2 p-3 rounded-md bg-amber-500/10 border border-amber-500/20 mb-3">
+                    <BellOff className="w-4 h-4 text-amber-600 shrink-0" />
+                    <p className="text-xs text-amber-700">
+                      Some reminders are turned off. Toggle them on below to re-subscribe.
+                    </p>
+                  </div>
+                )}
                 
                 {appointment.customer_phone && (
                   <>
-                    <div className="flex items-center justify-between">
+                    <div className={cn(
+                      "flex items-center justify-between p-3 rounded-md transition-colors",
+                      appointment.sms_opt_out ? "bg-muted/50" : "bg-green-500/5"
+                    )}>
                       <div className="flex items-center gap-2">
-                        <MessageSquare className="w-4 h-4 text-muted-foreground" />
-                        <Label htmlFor="sms-reminders" className="text-sm cursor-pointer">
-                          SMS Reminders
-                        </Label>
+                        <MessageSquare className={cn(
+                          "w-4 h-4",
+                          appointment.sms_opt_out ? "text-muted-foreground" : "text-green-600"
+                        )} />
+                        <div>
+                          <Label htmlFor="sms-reminders" className="text-sm cursor-pointer">
+                            SMS Reminders
+                          </Label>
+                          {appointment.sms_opt_out && (
+                            <p className="text-xs text-muted-foreground">Currently unsubscribed</p>
+                          )}
+                        </div>
                       </div>
                       <Switch
                         id="sms-reminders"
@@ -389,12 +413,23 @@ export default function CustomerPortal() {
                       />
                     </div>
                     
-                    <div className="flex items-center justify-between">
+                    <div className={cn(
+                      "flex items-center justify-between p-3 rounded-md transition-colors",
+                      appointment.call_opt_out ? "bg-muted/50" : "bg-green-500/5"
+                    )}>
                       <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-muted-foreground" />
-                        <Label htmlFor="call-reminders" className="text-sm cursor-pointer">
-                          Voice Call Reminders
-                        </Label>
+                        <Phone className={cn(
+                          "w-4 h-4",
+                          appointment.call_opt_out ? "text-muted-foreground" : "text-green-600"
+                        )} />
+                        <div>
+                          <Label htmlFor="call-reminders" className="text-sm cursor-pointer">
+                            Voice Call Reminders
+                          </Label>
+                          {appointment.call_opt_out && (
+                            <p className="text-xs text-muted-foreground">Currently unsubscribed</p>
+                          )}
+                        </div>
                       </div>
                       <Switch
                         id="call-reminders"
@@ -407,12 +442,23 @@ export default function CustomerPortal() {
                 )}
                 
                 {appointment.customer_email && (
-                  <div className="flex items-center justify-between">
+                  <div className={cn(
+                    "flex items-center justify-between p-3 rounded-md transition-colors",
+                    appointment.email_opt_out ? "bg-muted/50" : "bg-green-500/5"
+                  )}>
                     <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-muted-foreground" />
-                      <Label htmlFor="email-reminders" className="text-sm cursor-pointer">
-                        Email Reminders
-                      </Label>
+                      <Mail className={cn(
+                        "w-4 h-4",
+                        appointment.email_opt_out ? "text-muted-foreground" : "text-green-600"
+                      )} />
+                      <div>
+                        <Label htmlFor="email-reminders" className="text-sm cursor-pointer">
+                          Email Reminders
+                        </Label>
+                        {appointment.email_opt_out && (
+                          <p className="text-xs text-muted-foreground">Currently unsubscribed</p>
+                        )}
+                      </div>
                     </div>
                     <Switch
                       id="email-reminders"
@@ -424,7 +470,7 @@ export default function CustomerPortal() {
                 )}
                 
                 <p className="text-xs text-muted-foreground mt-2">
-                  Toggle off to stop receiving reminder notifications for this appointment.
+                  Toggle to subscribe or unsubscribe from reminder notifications.
                 </p>
               </div>
             )}
