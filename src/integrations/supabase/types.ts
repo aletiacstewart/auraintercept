@@ -24,6 +24,7 @@ export type Database = {
           customer_token: string | null
           datetime: string
           duration_minutes: number
+          email_opt_out: boolean
           employee_id: string | null
           id: string
           notes: string | null
@@ -32,6 +33,7 @@ export type Database = {
           reminder_24h_sent: boolean | null
           reminder_24h_sent_at: string | null
           service_type: string
+          sms_opt_out: boolean
           status: string
           updated_at: string
         }
@@ -44,6 +46,7 @@ export type Database = {
           customer_token?: string | null
           datetime: string
           duration_minutes?: number
+          email_opt_out?: boolean
           employee_id?: string | null
           id?: string
           notes?: string | null
@@ -52,6 +55,7 @@ export type Database = {
           reminder_24h_sent?: boolean | null
           reminder_24h_sent_at?: string | null
           service_type: string
+          sms_opt_out?: boolean
           status?: string
           updated_at?: string
         }
@@ -64,6 +68,7 @@ export type Database = {
           customer_token?: string | null
           datetime?: string
           duration_minutes?: number
+          email_opt_out?: boolean
           employee_id?: string | null
           id?: string
           notes?: string | null
@@ -72,6 +77,7 @@ export type Database = {
           reminder_24h_sent?: boolean | null
           reminder_24h_sent_at?: string | null
           service_type?: string
+          sms_opt_out?: boolean
           status?: string
           updated_at?: string
         }

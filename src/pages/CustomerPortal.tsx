@@ -31,9 +31,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { format, addDays, setHours, setMinutes, isBefore } from 'date-fns';
-import { Calendar as CalendarIcon, Clock, MapPin, User, Phone, Mail, XCircle, CalendarCheck, Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, MapPin, User, Phone, Mail, XCircle, CalendarCheck, Loader2, CheckCircle, AlertTriangle, Bell, BellOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 interface Appointment {
   id: string;
@@ -46,6 +48,8 @@ interface Appointment {
   status: string;
   notes: string | null;
   customer_token: string;
+  sms_opt_out: boolean;
+  email_opt_out: boolean;
   companies: {
     id: string;
     name: string;
@@ -64,6 +68,7 @@ export default function CustomerPortal() {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [preferencesLoading, setPreferencesLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string>('');
 
@@ -146,6 +151,26 @@ export default function CustomerPortal() {
       toast.error(err instanceof Error ? err.message : 'Failed to reschedule appointment');
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handleUpdatePreferences = async (field: 'sms_opt_out' | 'email_opt_out', value: boolean) => {
+    setPreferencesLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal', {
+        body: { action: 'update-preferences', token, preferences: { [field]: value } }
+      });
+
+      if (error) throw error;
+      if (data.error) throw new Error(data.error);
+
+      setAppointment(prev => prev ? { ...prev, [field]: value } : null);
+      toast.success('Notification preferences updated');
+    } catch (err) {
+      console.error('Failed to update preferences:', err);
+      toast.error(err instanceof Error ? err.message : 'Failed to update preferences');
+    } finally {
+      setPreferencesLoading(false);
     }
   };
 
@@ -294,6 +319,54 @@ export default function CustomerPortal() {
                 </div>
               )}
             </div>
+
+            {/* Notification Preferences */}
+            {appointment.status === 'scheduled' && !isPast && (
+              <div className="space-y-3 p-4 rounded-lg border bg-card">
+                <div className="flex items-center gap-2 mb-3">
+                  <Bell className="w-4 h-4 text-muted-foreground" />
+                  <h4 className="font-medium text-sm">Reminder Preferences</h4>
+                </div>
+                
+                {appointment.customer_phone && (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-4 h-4 text-muted-foreground" />
+                      <Label htmlFor="sms-reminders" className="text-sm cursor-pointer">
+                        SMS Reminders
+                      </Label>
+                    </div>
+                    <Switch
+                      id="sms-reminders"
+                      checked={!appointment.sms_opt_out}
+                      onCheckedChange={(checked) => handleUpdatePreferences('sms_opt_out', !checked)}
+                      disabled={preferencesLoading}
+                    />
+                  </div>
+                )}
+                
+                {appointment.customer_email && (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-muted-foreground" />
+                      <Label htmlFor="email-reminders" className="text-sm cursor-pointer">
+                        Email Reminders
+                      </Label>
+                    </div>
+                    <Switch
+                      id="email-reminders"
+                      checked={!appointment.email_opt_out}
+                      onCheckedChange={(checked) => handleUpdatePreferences('email_opt_out', !checked)}
+                      disabled={preferencesLoading}
+                    />
+                  </div>
+                )}
+                
+                <p className="text-xs text-muted-foreground mt-2">
+                  Toggle off to stop receiving reminder notifications for this appointment.
+                </p>
+              </div>
+            )}
 
             {/* Status Messages */}
             {appointment.status === 'cancelled' && (

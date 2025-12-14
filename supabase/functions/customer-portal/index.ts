@@ -6,9 +6,13 @@ const corsHeaders = {
 };
 
 interface PortalRequest {
-  action: 'get' | 'cancel' | 'reschedule';
+  action: 'get' | 'cancel' | 'reschedule' | 'update-preferences';
   token: string;
   newDatetime?: string;
+  preferences?: {
+    sms_opt_out?: boolean;
+    email_opt_out?: boolean;
+  };
 }
 
 Deno.serve(async (req) => {
@@ -21,7 +25,7 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    const { action, token, newDatetime }: PortalRequest = await req.json();
+    const { action, token, newDatetime, preferences }: PortalRequest = await req.json();
 
     if (!token) {
       return new Response(
@@ -171,6 +175,49 @@ Deno.serve(async (req) => {
 
         return new Response(
           JSON.stringify({ success: true, message: 'Appointment rescheduled successfully' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+
+      case 'update-preferences':
+        if (!preferences) {
+          return new Response(
+            JSON.stringify({ error: 'Preferences are required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        const updateData: Record<string, boolean> = {};
+        if (typeof preferences.sms_opt_out === 'boolean') {
+          updateData.sms_opt_out = preferences.sms_opt_out;
+        }
+        if (typeof preferences.email_opt_out === 'boolean') {
+          updateData.email_opt_out = preferences.email_opt_out;
+        }
+
+        if (Object.keys(updateData).length === 0) {
+          return new Response(
+            JSON.stringify({ error: 'No valid preferences provided' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        const { error: prefError } = await supabase
+          .from('appointments')
+          .update(updateData)
+          .eq('id', appointment.id);
+
+        if (prefError) {
+          console.error('Preferences update error:', prefError);
+          return new Response(
+            JSON.stringify({ error: 'Failed to update preferences' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        console.log(`Updated preferences for appointment ${appointment.id}:`, updateData);
+
+        return new Response(
+          JSON.stringify({ success: true, message: 'Preferences updated successfully' }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
 
