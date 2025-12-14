@@ -187,6 +187,28 @@ Deno.serve(async (req) => {
               ${appointment.notes ? `<p style="margin: 8px 0;"><strong>Notes:</strong> ${appointment.notes}</p>` : ''}
             </div>
             
+            <div style="background: #f3f4f6; border-radius: 6px; padding: 16px; margin: 20px 0;">
+              <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #374151;">Reminder Preferences</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                ${appointment.customer_phone ? `
+                  <span style="display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; ${!appointment.sms_opt_out ? 'background: #dcfce7; color: #166534;' : 'background: #f3f4f6; color: #6b7280; text-decoration: line-through;'}">
+                    📱 SMS ${!appointment.sms_opt_out ? 'On' : 'Off'}
+                  </span>
+                  <span style="display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; ${!appointment.call_opt_out ? 'background: #dcfce7; color: #166534;' : 'background: #f3f4f6; color: #6b7280; text-decoration: line-through;'}">
+                    📞 Call ${!appointment.call_opt_out ? 'On' : 'Off'}
+                  </span>
+                ` : ''}
+                ${appointment.customer_email ? `
+                  <span style="display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; ${!appointment.email_opt_out ? 'background: #dcfce7; color: #166534;' : 'background: #f3f4f6; color: #6b7280; text-decoration: line-through;'}">
+                    ✉️ Email ${!appointment.email_opt_out ? 'On' : 'Off'}
+                  </span>
+                ` : ''}
+              </div>
+              <p style="margin: 8px 0 0 0; font-size: 11px; color: #6b7280;">
+                You can update your reminder preferences anytime using the link below.
+              </p>
+            </div>
+            
             ${portalSection}
             
             <p style="color: #6b7280; font-size: 14px;">
