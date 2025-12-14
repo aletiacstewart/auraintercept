@@ -9,8 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Bell, Clock, MessageSquare, Phone, Plus, Trash2, AlertTriangle } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Bell, Clock, MessageSquare, Phone, Plus, Trash2, AlertTriangle, PhoneCall, Loader2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Link } from 'react-router-dom';
 
@@ -281,6 +281,7 @@ export function ReminderSettings() {
               key={setting.id}
               setting={setting}
               hasVoiceSupport={hasVoiceSupport}
+              companyId={companyId}
               onToggleEnabled={() => handleToggleEnabled(setting)}
               onToggleCall={() => handleToggleCall(setting)}
               onUpdateTemplate={(template) => handleUpdateTemplate(setting, template)}
@@ -312,6 +313,7 @@ export function ReminderSettings() {
 interface ReminderCardProps {
   setting: ReminderSetting;
   hasVoiceSupport: boolean;
+  companyId: string | null;
   onToggleEnabled: () => void;
   onToggleCall: () => void;
   onUpdateTemplate: (template: string) => void;
@@ -319,11 +321,14 @@ interface ReminderCardProps {
   onDelete: () => void;
 }
 
-function ReminderCard({ setting, hasVoiceSupport, onToggleEnabled, onToggleCall, onUpdateTemplate, onUpdateCallTemplate, onDelete }: ReminderCardProps) {
+function ReminderCard({ setting, hasVoiceSupport, companyId, onToggleEnabled, onToggleCall, onUpdateTemplate, onUpdateCallTemplate, onDelete }: ReminderCardProps) {
   const [template, setTemplate] = useState(setting.sms_template);
   const [callTemplate, setCallTemplate] = useState(setting.call_template || '');
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingCall, setIsEditingCall] = useState(false);
+  const [isTestCallDialogOpen, setIsTestCallDialogOpen] = useState(false);
+  const [testPhoneNumber, setTestPhoneNumber] = useState('');
+  const [isTestingCall, setIsTestingCall] = useState(false);
 
   useEffect(() => {
     setTemplate(setting.sms_template);
@@ -338,6 +343,55 @@ function ReminderCard({ setting, hasVoiceSupport, onToggleEnabled, onToggleCall,
   const handleSaveCall = () => {
     onUpdateCallTemplate(callTemplate);
     setIsEditingCall(false);
+  };
+
+  const handleTestCall = async () => {
+    if (!testPhoneNumber || !companyId) {
+      toast.error('Please enter a phone number');
+      return;
+    }
+
+    // Basic phone validation
+    const cleanNumber = testPhoneNumber.replace(/\D/g, '');
+    if (cleanNumber.length < 10) {
+      toast.error('Please enter a valid phone number');
+      return;
+    }
+
+    setIsTestingCall(true);
+
+    try {
+      // Apply template variables with sample data
+      const sampleScript = (setting.call_template || setting.sms_template)
+        .replace(/{customer_name}/g, 'Test Customer')
+        .replace(/{service_type}/g, 'Sample Service')
+        .replace(/{company_name}/g, 'Your Company')
+        .replace(/{date}/g, 'Tomorrow')
+        .replace(/{time}/g, '2:00 PM');
+
+      const { data, error } = await supabase.functions.invoke('test-voice-reminder', {
+        body: {
+          phoneNumber: testPhoneNumber.startsWith('+') ? testPhoneNumber : `+1${cleanNumber}`,
+          callScript: sampleScript,
+          companyId,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        toast.success('Test call initiated! You should receive a call shortly.');
+        setIsTestCallDialogOpen(false);
+        setTestPhoneNumber('');
+      } else {
+        throw new Error(data?.error || 'Failed to initiate test call');
+      }
+    } catch (error: any) {
+      console.error('Test call error:', error);
+      toast.error(error.message || 'Failed to initiate test call');
+    } finally {
+      setIsTestingCall(false);
+    }
   };
 
   return (
@@ -417,10 +471,70 @@ function ReminderCard({ setting, hasVoiceSupport, onToggleEnabled, onToggleCall,
 
       {setting.call_enabled && (
         <div className="space-y-2">
-          <Label className="text-sm flex items-center gap-2">
-            <Phone className="h-3.5 w-3.5" />
-            Voice Call Script
-          </Label>
+          <div className="flex items-center justify-between">
+            <Label className="text-sm flex items-center gap-2">
+              <Phone className="h-3.5 w-3.5" />
+              Voice Call Script
+            </Label>
+            <Dialog open={isTestCallDialogOpen} onOpenChange={setIsTestCallDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" variant="outline" disabled={!hasVoiceSupport}>
+                  <PhoneCall className="h-3.5 w-3.5 mr-1" />
+                  Test Call
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Test Voice Reminder</DialogTitle>
+                  <DialogDescription>
+                    Enter your phone number to receive a test call with the current voice script.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Phone Number</Label>
+                    <Input
+                      type="tel"
+                      placeholder="+1 (555) 123-4567"
+                      value={testPhoneNumber}
+                      onChange={(e) => setTestPhoneNumber(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Include country code (e.g., +1 for US)
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Preview Script</Label>
+                    <div className="bg-muted/50 rounded p-3 text-sm">
+                      {(setting.call_template || setting.sms_template)
+                        .replace(/{customer_name}/g, 'Test Customer')
+                        .replace(/{service_type}/g, 'Sample Service')
+                        .replace(/{company_name}/g, 'Your Company')
+                        .replace(/{date}/g, 'Tomorrow')
+                        .replace(/{time}/g, '2:00 PM')}
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={handleTestCall} 
+                    disabled={isTestingCall || !testPhoneNumber}
+                    className="w-full"
+                  >
+                    {isTestingCall ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Initiating Call...
+                      </>
+                    ) : (
+                      <>
+                        <PhoneCall className="h-4 w-4 mr-2" />
+                        Send Test Call
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
           {isEditingCall ? (
             <div className="space-y-2">
               <Textarea
