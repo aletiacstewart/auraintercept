@@ -60,13 +60,21 @@ export function AppointmentCalendar() {
       
       if (error) throw error;
 
-      // Send cancellation email
+      // Send cancellation notifications
       try {
         await supabase.functions.invoke('send-appointment-email', {
           body: { appointmentId, type: 'cancellation' }
         });
       } catch (emailError) {
         console.error('Failed to send cancellation email:', emailError);
+      }
+
+      try {
+        await supabase.functions.invoke('send-appointment-sms', {
+          body: { appointmentId, type: 'cancellation' }
+        });
+      } catch (smsError) {
+        console.error('Failed to send cancellation SMS:', smsError);
       }
 
       return appointmentId;

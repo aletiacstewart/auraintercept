@@ -90,7 +90,7 @@ Deno.serve(async (req) => {
           );
         }
 
-        // Send cancellation email
+        // Send cancellation notifications
         if (appointment.customer_email) {
           try {
             await fetch(`${supabaseUrl}/functions/v1/send-appointment-email`, {
@@ -100,6 +100,18 @@ Deno.serve(async (req) => {
             });
           } catch (emailError) {
             console.error('Failed to send cancellation email:', emailError);
+          }
+        }
+
+        if (appointment.customer_phone) {
+          try {
+            await fetch(`${supabaseUrl}/functions/v1/send-appointment-sms`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ appointmentId: appointment.id, type: 'cancellation' })
+            });
+          } catch (smsError) {
+            console.error('Failed to send cancellation SMS:', smsError);
           }
         }
 
