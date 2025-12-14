@@ -123,6 +123,93 @@ export type Database = {
           },
         ]
       }
+      call_logs: {
+        Row: {
+          answered_at: string | null
+          appointment_id: string | null
+          call_sid: string | null
+          company_id: string
+          created_at: string
+          customer_name: string | null
+          customer_phone: string | null
+          direction: string
+          duration_seconds: number | null
+          employee_id: string | null
+          ended_at: string | null
+          from_number: string | null
+          id: string
+          metadata: Json | null
+          purpose: string | null
+          started_at: string
+          status: string
+          summary: string | null
+          to_number: string | null
+          transcript: Json | null
+          updated_at: string
+        }
+        Insert: {
+          answered_at?: string | null
+          appointment_id?: string | null
+          call_sid?: string | null
+          company_id: string
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          direction: string
+          duration_seconds?: number | null
+          employee_id?: string | null
+          ended_at?: string | null
+          from_number?: string | null
+          id?: string
+          metadata?: Json | null
+          purpose?: string | null
+          started_at?: string
+          status?: string
+          summary?: string | null
+          to_number?: string | null
+          transcript?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          answered_at?: string | null
+          appointment_id?: string | null
+          call_sid?: string | null
+          company_id?: string
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          direction?: string
+          duration_seconds?: number | null
+          employee_id?: string | null
+          ended_at?: string | null
+          from_number?: string | null
+          id?: string
+          metadata?: Json | null
+          purpose?: string | null
+          started_at?: string
+          status?: string
+          summary?: string | null
+          to_number?: string | null
+          transcript?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_logs_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           created_at: string

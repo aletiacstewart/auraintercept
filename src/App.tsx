@@ -18,6 +18,7 @@ import Integrations from "./pages/Integrations";
 import KnowledgeBase from "./pages/KnowledgeBase";
 import AIAgent from "./pages/AIAgent";
 import Widget from "./pages/Widget";
+import CallHistory from "./pages/CallHistory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/dashboard/knowledge" element={<KnowledgeBase />} />
             <Route path="/dashboard/ai-agent" element={<AIAgent />} />
             <Route path="/dashboard/widget" element={<Widget />} />
+            <Route path="/dashboard/calls" element={<CallHistory />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

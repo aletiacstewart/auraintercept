@@ -64,6 +64,20 @@ serve(async (req) => {
         .eq('id', integration.company_id)
         .single();
 
+      // Log the incoming call
+      await supabase
+        .from('call_logs')
+        .insert({
+          company_id: integration.company_id,
+          direction: 'inbound',
+          status: 'answered',
+          from_number: callerPhone,
+          to_number: calledPhone,
+          customer_phone: callerPhone,
+          call_sid: callSid,
+          answered_at: new Date().toISOString(),
+        });
+
       // Initialize conversation state
       conversations.set(callSid, {
         companyId: integration.company_id,
@@ -337,8 +351,33 @@ serve(async (req) => {
       const formData = await req.formData();
       const callSid = formData.get('CallSid') as string;
       const callStatus = formData.get('CallStatus') as string;
+      const callDuration = formData.get('CallDuration') as string;
 
-      console.log(`Call ${callSid} status: ${callStatus}`);
+      console.log(`Call ${callSid} status: ${callStatus}, duration: ${callDuration}`);
+
+      // Update call log with status
+      const state = conversations.get(callSid);
+      const updateData: Record<string, any> = { status: callStatus };
+      
+      if (callStatus === 'in-progress') {
+        updateData.answered_at = new Date().toISOString();
+      }
+      
+      if (['completed', 'failed', 'busy', 'no-answer', 'canceled'].includes(callStatus)) {
+        updateData.ended_at = new Date().toISOString();
+        if (callDuration) {
+          updateData.duration_seconds = parseInt(callDuration, 10);
+        }
+        // Save transcript if we have conversation history
+        if (state && state.messages.length > 0) {
+          updateData.transcript = state.messages;
+        }
+      }
+
+      await supabase
+        .from('call_logs')
+        .update(updateData)
+        .eq('call_sid', callSid);
 
       // Clean up conversation state on call end
       if (['completed', 'failed', 'busy', 'no-answer', 'canceled'].includes(callStatus)) {
