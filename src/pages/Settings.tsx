@@ -6,6 +6,7 @@ import { ReminderAnalytics } from '@/components/company/ReminderAnalytics';
 import { CustomerPreferencesManager } from '@/components/company/CustomerPreferencesManager';
 import { DefaultPreferencesSettings } from '@/components/company/DefaultPreferencesSettings';
 import { SubscriptionAnalytics } from '@/components/company/SubscriptionAnalytics';
+import { UnsubscribeAlertSettings } from '@/components/company/UnsubscribeAlertSettings';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
 import { useAuth } from '@/contexts/AuthContext';
@@ -50,7 +51,10 @@ export default function Settings() {
               <ReminderAnalytics />
             </TabsContent>
             <TabsContent value="subscription-analytics">
-              <SubscriptionAnalytics />
+              <div className="space-y-6">
+                <UnsubscribeAlertSettings />
+                <SubscriptionAnalytics />
+              </div>
             </TabsContent>
             <TabsContent value="reminder-history">
               <ReminderHistoryLog />
