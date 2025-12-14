@@ -26,6 +26,10 @@ export type Database = {
           employee_id: string | null
           id: string
           notes: string | null
+          reminder_1h_sent: boolean | null
+          reminder_1h_sent_at: string | null
+          reminder_24h_sent: boolean | null
+          reminder_24h_sent_at: string | null
           service_type: string
           status: string
           updated_at: string
@@ -41,6 +45,10 @@ export type Database = {
           employee_id?: string | null
           id?: string
           notes?: string | null
+          reminder_1h_sent?: boolean | null
+          reminder_1h_sent_at?: string | null
+          reminder_24h_sent?: boolean | null
+          reminder_24h_sent_at?: string | null
           service_type: string
           status?: string
           updated_at?: string
@@ -56,6 +64,10 @@ export type Database = {
           employee_id?: string | null
           id?: string
           notes?: string | null
+          reminder_1h_sent?: boolean | null
+          reminder_1h_sent_at?: string | null
+          reminder_24h_sent?: boolean | null
+          reminder_24h_sent_at?: string | null
           service_type?: string
           status?: string
           updated_at?: string
