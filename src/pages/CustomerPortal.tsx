@@ -321,6 +321,49 @@ export default function CustomerPortal() {
               )}
             </div>
 
+            {/* Notification Preferences Summary */}
+            {appointment.status === 'scheduled' && !isPast && (
+              <div className="flex flex-wrap items-center gap-2 p-3 rounded-lg bg-muted/30 border border-border/50">
+                <span className="text-xs font-medium text-muted-foreground mr-1">Reminders:</span>
+                {appointment.customer_phone && (
+                  <>
+                    <Badge 
+                      variant={appointment.sms_opt_out ? "outline" : "secondary"}
+                      className={cn(
+                        "text-xs gap-1",
+                        appointment.sms_opt_out ? "opacity-50" : "bg-green-500/10 text-green-600 border-green-500/30"
+                      )}
+                    >
+                      <MessageSquare className="w-3 h-3" />
+                      SMS {appointment.sms_opt_out ? "Off" : "On"}
+                    </Badge>
+                    <Badge 
+                      variant={appointment.call_opt_out ? "outline" : "secondary"}
+                      className={cn(
+                        "text-xs gap-1",
+                        appointment.call_opt_out ? "opacity-50" : "bg-green-500/10 text-green-600 border-green-500/30"
+                      )}
+                    >
+                      <Phone className="w-3 h-3" />
+                      Call {appointment.call_opt_out ? "Off" : "On"}
+                    </Badge>
+                  </>
+                )}
+                {appointment.customer_email && (
+                  <Badge 
+                    variant={appointment.email_opt_out ? "outline" : "secondary"}
+                    className={cn(
+                      "text-xs gap-1",
+                      appointment.email_opt_out ? "opacity-50" : "bg-green-500/10 text-green-600 border-green-500/30"
+                    )}
+                  >
+                    <Mail className="w-3 h-3" />
+                    Email {appointment.email_opt_out ? "Off" : "On"}
+                  </Badge>
+                )}
+              </div>
+            )}
+
             {/* Notification Preferences */}
             {appointment.status === 'scheduled' && !isPast && (
               <div className="space-y-3 p-4 rounded-lg border bg-card">
