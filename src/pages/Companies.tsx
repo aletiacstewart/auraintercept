@@ -41,7 +41,10 @@ import {
   Users, 
   Settings,
   Loader2,
-  ExternalLink
+  ExternalLink,
+  Copy,
+  Check,
+  Mail
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -62,6 +65,8 @@ interface CompanyFormData {
   slug: string;
   primary_color: string;
   secondary_color: string;
+  admin_email: string;
+  admin_name: string;
 }
 
 export default function Companies() {
@@ -75,7 +80,10 @@ export default function Companies() {
     slug: '',
     primary_color: '#0EA5E9',
     secondary_color: '#8B5CF6',
+    admin_email: '',
+    admin_name: '',
   });
+  const [createdCredentials, setCreatedCredentials] = useState<{ email: string; password: string } | null>(null);
 
   // Redirect non-platform admins
   if (userRole !== 'platform_admin') {
@@ -126,29 +134,63 @@ export default function Companies() {
   // Create company mutation
   const createMutation = useMutation({
     mutationFn: async (data: CompanyFormData) => {
-      const { error } = await supabase
+      // First create the company
+      const { data: newCompany, error } = await supabase
         .from('companies')
         .insert({
           name: data.name,
           slug: data.slug.toLowerCase().replace(/\s+/g, '-'),
           primary_color: data.primary_color,
           secondary_color: data.secondary_color,
-        });
+        })
+        .select()
+        .single();
       
       if (error) throw error;
+
+      // If admin email provided, create the admin user
+      if (data.admin_email) {
+        const { data: adminResult, error: adminError } = await supabase.functions.invoke('create-company-admin', {
+          body: {
+            companyId: newCompany.id,
+            adminEmail: data.admin_email,
+            adminName: data.admin_name,
+          },
+        });
+
+        if (adminError) {
+          console.error('Admin creation error:', adminError);
+          throw new Error(adminError.message || 'Failed to create company admin');
+        }
+
+        if (adminResult?.error) {
+          throw new Error(adminResult.error);
+        }
+
+        return { company: newCompany, credentials: { email: data.admin_email, password: adminResult.tempPassword } };
+      }
+
+      return { company: newCompany, credentials: null };
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['companies'] });
-      toast.success('Company created successfully!');
-      setIsCreateOpen(false);
-      resetForm();
+      queryClient.invalidateQueries({ queryKey: ['company-employee-counts'] });
+      
+      if (result.credentials) {
+        setCreatedCredentials(result.credentials);
+        toast.success('Company and admin created! Share the credentials with the admin.');
+      } else {
+        toast.success('Company created successfully!');
+        setIsCreateOpen(false);
+        resetForm();
+      }
     },
     onError: (error: any) => {
       console.error('Create error:', error);
       if (error.message?.includes('duplicate')) {
         toast.error('A company with this slug already exists');
       } else {
-        toast.error('Failed to create company');
+        toast.error(error.message || 'Failed to create company');
       }
     },
   });
@@ -186,7 +228,10 @@ export default function Companies() {
       slug: '',
       primary_color: '#0EA5E9',
       secondary_color: '#8B5CF6',
+      admin_email: '',
+      admin_name: '',
     });
+    setCreatedCredentials(null);
   };
 
   const handleEdit = (company: Company) => {
@@ -195,6 +240,8 @@ export default function Companies() {
       slug: company.slug,
       primary_color: company.primary_color || '#0EA5E9',
       secondary_color: company.secondary_color || '#8B5CF6',
+      admin_email: '',
+      admin_name: '',
     });
     setEditingCompany(company);
   };
@@ -236,28 +283,40 @@ export default function Companies() {
               Manage tenant companies on the platform
             </p>
           </div>
-          <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+          <Dialog open={isCreateOpen} onOpenChange={(open) => { setIsCreateOpen(open); if (!open) resetForm(); }}>
             <DialogTrigger asChild>
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
                 Add Company
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-lg">
               <DialogHeader>
-                <DialogTitle>Create New Company</DialogTitle>
+                <DialogTitle>
+                  {createdCredentials ? 'Company Admin Credentials' : 'Create New Company'}
+                </DialogTitle>
                 <DialogDescription>
-                  Add a new tenant company to the platform
+                  {createdCredentials 
+                    ? 'Share these credentials securely with the company admin'
+                    : 'Add a new tenant company to the platform'
+                  }
                 </DialogDescription>
               </DialogHeader>
-              <CompanyForm
-                formData={formData}
-                setFormData={setFormData}
-                onSubmit={handleSubmit}
-                onCancel={() => { setIsCreateOpen(false); resetForm(); }}
-                isLoading={createMutation.isPending}
-                generateSlug={generateSlug}
-              />
+              {createdCredentials ? (
+                <CredentialsDisplay 
+                  credentials={createdCredentials} 
+                  onClose={() => { setIsCreateOpen(false); resetForm(); }} 
+                />
+              ) : (
+                <CompanyForm
+                  formData={formData}
+                  setFormData={setFormData}
+                  onSubmit={handleSubmit}
+                  onCancel={() => { setIsCreateOpen(false); resetForm(); }}
+                  isLoading={createMutation.isPending}
+                  generateSlug={generateSlug}
+                />
+              )}
             </DialogContent>
           </Dialog>
         </div>
@@ -534,6 +593,40 @@ function CompanyForm({
         </div>
       </div>
 
+      {/* Admin Assignment Section - Only for create */}
+      {!isEdit && (
+        <div className="border-t pt-4 mt-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Mail className="w-4 h-4 text-muted-foreground" />
+            <Label className="text-sm font-medium">Company Admin (Optional)</Label>
+          </div>
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <Label htmlFor="admin_name">Admin Name</Label>
+              <Input
+                id="admin_name"
+                placeholder="John Smith"
+                value={formData.admin_name}
+                onChange={(e) => setFormData({ ...formData, admin_name: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="admin_email">Admin Email</Label>
+              <Input
+                id="admin_email"
+                type="email"
+                placeholder="admin@company.com"
+                value={formData.admin_email}
+                onChange={(e) => setFormData({ ...formData, admin_email: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground">
+                An account will be created and temporary credentials will be shown after creation
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex gap-3 pt-4">
         <Button variant="outline" className="flex-1" onClick={onCancel}>
           Cancel
@@ -549,6 +642,75 @@ function CompanyForm({
           )}
         </Button>
       </div>
+    </div>
+  );
+}
+
+// Credentials display component
+function CredentialsDisplay({ 
+  credentials, 
+  onClose 
+}: { 
+  credentials: { email: string; password: string }; 
+  onClose: () => void;
+}) {
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [copiedPassword, setCopiedPassword] = useState(false);
+
+  const copyToClipboard = async (text: string, type: 'email' | 'password') => {
+    await navigator.clipboard.writeText(text);
+    if (type === 'email') {
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2000);
+    } else {
+      setCopiedPassword(true);
+      setTimeout(() => setCopiedPassword(false), 2000);
+    }
+    toast.success(`${type === 'email' ? 'Email' : 'Password'} copied!`);
+  };
+
+  return (
+    <div className="space-y-4 pt-4">
+      <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+        <p className="text-sm text-amber-800 dark:text-amber-200">
+          <strong>Important:</strong> Share these credentials securely with the company admin. 
+          They should change their password after first login.
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        <div className="space-y-2">
+          <Label>Email</Label>
+          <div className="flex gap-2">
+            <Input value={credentials.email} readOnly className="font-mono bg-muted" />
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={() => copyToClipboard(credentials.email, 'email')}
+            >
+              {copiedEmail ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+            </Button>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Temporary Password</Label>
+          <div className="flex gap-2">
+            <Input value={credentials.password} readOnly className="font-mono bg-muted" />
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={() => copyToClipboard(credentials.password, 'password')}
+            >
+              {copiedPassword ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <Button className="w-full" onClick={onClose}>
+        Done
+      </Button>
     </div>
   );
 }
