@@ -664,6 +664,57 @@ export type Database = {
           },
         ]
       }
+      subscription_events: {
+        Row: {
+          action: string
+          appointment_id: string
+          channel: string
+          company_id: string
+          created_at: string
+          customer_email: string | null
+          customer_phone: string | null
+          id: string
+          source: string
+        }
+        Insert: {
+          action: string
+          appointment_id: string
+          channel: string
+          company_id: string
+          created_at?: string
+          customer_email?: string | null
+          customer_phone?: string | null
+          id?: string
+          source?: string
+        }
+        Update: {
+          action?: string
+          appointment_id?: string
+          channel?: string
+          company_id?: string
+          created_at?: string
+          customer_email?: string | null
+          customer_phone?: string | null
+          id?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_events_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_events_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_integrations: {
         Row: {
           company_id: string

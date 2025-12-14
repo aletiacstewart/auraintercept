@@ -98,6 +98,28 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Log subscription events for analytics
+    const channelsToLog = channel === 'all' ? ['sms', 'email', 'call'] : [channel];
+    const eventsToInsert = channelsToLog.map(ch => ({
+      company_id: appointment.company_id,
+      appointment_id: appointment.id,
+      channel: ch,
+      action: 'unsubscribe',
+      source: 'email_link',
+      customer_email: (appointment.companies as any)?.customer_email || null,
+      customer_phone: null
+    }));
+
+    const { error: eventError } = await supabase
+      .from('subscription_events')
+      .insert(eventsToInsert);
+
+    if (eventError) {
+      console.error('Failed to log subscription events:', eventError);
+    } else {
+      console.log(`Logged ${eventsToInsert.length} unsubscribe events from email link`);
+    }
+
     const companyName = (appointment.companies as any)?.name || 'Our Business';
     const channelName = channel === 'all' ? 'all reminder' : channel.toUpperCase();
     

@@ -188,14 +188,35 @@ Deno.serve(async (req) => {
         }
 
         const updateData: Record<string, boolean> = {};
+        const subscriptionEvents: { channel: string; action: string }[] = [];
+
         if (typeof preferences.sms_opt_out === 'boolean') {
           updateData.sms_opt_out = preferences.sms_opt_out;
+          // Track if preference changed
+          if (preferences.sms_opt_out !== appointment.sms_opt_out) {
+            subscriptionEvents.push({
+              channel: 'sms',
+              action: preferences.sms_opt_out ? 'unsubscribe' : 'subscribe'
+            });
+          }
         }
         if (typeof preferences.email_opt_out === 'boolean') {
           updateData.email_opt_out = preferences.email_opt_out;
+          if (preferences.email_opt_out !== appointment.email_opt_out) {
+            subscriptionEvents.push({
+              channel: 'email',
+              action: preferences.email_opt_out ? 'unsubscribe' : 'subscribe'
+            });
+          }
         }
         if (typeof preferences.call_opt_out === 'boolean') {
           updateData.call_opt_out = preferences.call_opt_out;
+          if (preferences.call_opt_out !== appointment.call_opt_out) {
+            subscriptionEvents.push({
+              channel: 'call',
+              action: preferences.call_opt_out ? 'unsubscribe' : 'subscribe'
+            });
+          }
         }
 
         if (Object.keys(updateData).length === 0) {
@@ -216,6 +237,29 @@ Deno.serve(async (req) => {
             JSON.stringify({ error: 'Failed to update preferences' }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
+        }
+
+        // Log subscription events for analytics
+        if (subscriptionEvents.length > 0) {
+          const eventsToInsert = subscriptionEvents.map(event => ({
+            company_id: appointment.company_id,
+            appointment_id: appointment.id,
+            channel: event.channel,
+            action: event.action,
+            source: 'customer_portal',
+            customer_email: appointment.customer_email,
+            customer_phone: appointment.customer_phone
+          }));
+
+          const { error: eventError } = await supabase
+            .from('subscription_events')
+            .insert(eventsToInsert);
+
+          if (eventError) {
+            console.error('Failed to log subscription events:', eventError);
+          } else {
+            console.log(`Logged ${subscriptionEvents.length} subscription events`);
+          }
         }
 
         console.log(`Updated preferences for appointment ${appointment.id}:`, updateData);
