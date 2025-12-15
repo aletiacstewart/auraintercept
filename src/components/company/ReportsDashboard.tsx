@@ -11,6 +11,7 @@ import { Calendar, Clock, Mail, CheckCircle2, XCircle, AlertCircle, FileText, Tr
 import { format, formatDistanceToNow, addDays, setHours, setMinutes, setDate } from 'date-fns';
 import { DigestDeliveryHistory } from './DigestDeliveryHistory';
 import { DigestDeliveryStats } from './DigestDeliveryStats';
+import { SuppressedEmailsManager } from './SuppressedEmailsManager';
 
 interface ReportConfig {
   id: string;
@@ -369,6 +370,10 @@ export function ReportsDashboard() {
 
       <div className="mt-6">
         <DigestDeliveryStats />
+      </div>
+
+      <div className="mt-6">
+        <SuppressedEmailsManager />
       </div>
 
       <div className="mt-6">
