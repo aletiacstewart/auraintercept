@@ -13,9 +13,12 @@ import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, Phon
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { TestCallDialog } from '@/components/ai/TestCallDialog';
 import { Button } from '@/components/ui/button';
+import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const AIAgent = () => {
   const { companyId } = useAuth();
+  const { isAtLeastTier } = useSubscription();
   const [viewMode, setViewMode] = useState<'customer' | 'debug'>('customer');
   const [activeTab, setActiveTab] = useState<'console' | 'settings'>('console');
 
@@ -40,37 +43,38 @@ const AIAgent = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">AI Agent</h1>
-            <p className="text-muted-foreground mt-1">
-              Test and monitor your AI-powered virtual assistant
-            </p>
+      <FeatureGate requiredTier="pro">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">AI Agent</h1>
+              <p className="text-muted-foreground mt-1">
+                Test and monitor your AI-powered virtual assistant
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {hasVoice && (
+                <>
+                  <TestCallDialog
+                    trigger={
+                      <Button variant="outline">
+                        <PhoneCall className="w-4 h-4 mr-2" />
+                        Test Call
+                      </Button>
+                    }
+                  />
+                  <OutboundCallDialog
+                    trigger={
+                      <Button>
+                        <PhoneOutgoing className="w-4 h-4 mr-2" />
+                        Make Outbound Call
+                      </Button>
+                    }
+                  />
+                </>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            {hasVoice && (
-              <>
-                <TestCallDialog
-                  trigger={
-                    <Button variant="outline">
-                      <PhoneCall className="w-4 h-4 mr-2" />
-                      Test Call
-                    </Button>
-                  }
-                />
-                <OutboundCallDialog
-                  trigger={
-                    <Button>
-                      <PhoneOutgoing className="w-4 h-4 mr-2" />
-                      Make Outbound Call
-                    </Button>
-                  }
-                />
-              </>
-            )}
-          </div>
-        </div>
 
         {/* Status Cards */}
         <div className="grid gap-4 md:grid-cols-4">
@@ -298,7 +302,8 @@ const AIAgent = () => {
             <AIAgentSettings />
           </TabsContent>
         </Tabs>
-      </div>
+        </div>
+      </FeatureGate>
     </DashboardLayout>
   );
 };
