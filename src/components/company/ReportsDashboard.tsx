@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { Calendar, Clock, Mail, CheckCircle2, XCircle, AlertCircle, FileText, TrendingUp } from 'lucide-react';
+import { Calendar, Clock, Mail, CheckCircle2, XCircle, AlertCircle, FileText, TrendingUp, Send, Loader2 } from 'lucide-react';
 import { format, formatDistanceToNow, addDays, setHours, setMinutes, setDate } from 'date-fns';
 import { DigestDeliveryHistory } from './DigestDeliveryHistory';
 
@@ -31,6 +32,7 @@ export function ReportsDashboard() {
   const [reports, setReports] = useState<ReportConfig[]>([]);
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState<string | null>(null);
+  const [sendingTest, setSendingTest] = useState<string | null>(null);
 
   useEffect(() => {
     if (companyId) {
@@ -185,6 +187,41 @@ export function ReportsDashboard() {
     setToggling(null);
   };
 
+  const sendTestDigest = async (reportType: string, email: string | null) => {
+    if (!companyId) return;
+    
+    if (!email) {
+      toast.error('Please configure a recipient email first');
+      return;
+    }
+
+    setSendingTest(reportType);
+
+    try {
+      const functionName = `${reportType}-digest`;
+      const { data, error } = await supabase.functions.invoke(functionName, {
+        body: { test: true, company_id: companyId }
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        toast.success(`Test ${reportType} digest sent to ${email}`, {
+          description: 'Check your inbox for the email with real company data.'
+        });
+      } else if (data?.error) {
+        toast.error(`Failed to send test digest: ${data.error}`);
+      }
+    } catch (error: any) {
+      console.error('Error sending test digest:', error);
+      toast.error(`Failed to send test ${reportType} digest`, {
+        description: error.message || 'Please try again later.'
+      });
+    } finally {
+      setSendingTest(null);
+    }
+  };
+
   const getStatusBadge = (report: ReportConfig) => {
     if (!report.enabled) {
       return <Badge variant="secondary" className="gap-1"><XCircle className="h-3 w-3" /> Disabled</Badge>;
@@ -255,7 +292,20 @@ export function ReportsDashboard() {
                       <p className="text-sm text-muted-foreground">{report.scheduleDescription}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => sendTestDigest(report.type, report.email)}
+                      disabled={sendingTest === report.type || !report.email}
+                    >
+                      {sendingTest === report.type ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                      ) : (
+                        <Send className="h-4 w-4 mr-1" />
+                      )}
+                      Send Test
+                    </Button>
                     {getStatusBadge(report)}
                     <Switch
                       checked={report.enabled}
