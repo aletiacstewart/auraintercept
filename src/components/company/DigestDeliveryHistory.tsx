@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,8 +8,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 import { format, formatDistanceToNow } from 'date-fns';
-import { History, Mail, CheckCircle2, XCircle, Calendar, FileText, TrendingUp, Download } from 'lucide-react';
+import { History, Mail, CheckCircle2, XCircle, Calendar, FileText, TrendingUp, Download, RotateCcw, Loader2 } from 'lucide-react';
 
 interface DeliveryLog {
   id: string;
@@ -22,7 +23,9 @@ interface DeliveryLog {
 
 export function DigestDeliveryHistory() {
   const { companyId } = useAuth();
+  const queryClient = useQueryClient();
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [retrying, setRetrying] = useState<string | null>(null);
 
   const { data: logs, isLoading } = useQuery({
     queryKey: ['digest-delivery-logs', companyId, typeFilter],
@@ -46,6 +49,38 @@ export function DigestDeliveryHistory() {
     },
     enabled: !!companyId,
   });
+
+  const retryDelivery = async (log: DeliveryLog) => {
+    if (!companyId) return;
+
+    setRetrying(log.id);
+
+    try {
+      const functionName = `${log.digest_type}-digest`;
+      const { data, error } = await supabase.functions.invoke(functionName, {
+        body: { test: true, company_id: companyId }
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        toast.success(`${log.digest_type} digest resent successfully`, {
+          description: `Email sent to ${log.recipient_email}`
+        });
+        // Refresh the logs
+        queryClient.invalidateQueries({ queryKey: ['digest-delivery-logs'] });
+      } else if (data?.error) {
+        toast.error(`Retry failed: ${data.error}`);
+      }
+    } catch (error: any) {
+      console.error('Error retrying digest:', error);
+      toast.error(`Failed to retry ${log.digest_type} digest`, {
+        description: error.message || 'Please try again later.'
+      });
+    } finally {
+      setRetrying(null);
+    }
+  };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -187,9 +222,27 @@ export function DigestDeliveryHistory() {
                       )}
                     </div>
                   </div>
-                  <div className="text-right text-sm text-muted-foreground">
-                    <div>{format(new Date(log.sent_at), 'MMM d, yyyy')}</div>
-                    <div className="text-xs">{formatDistanceToNow(new Date(log.sent_at), { addSuffix: true })}</div>
+                  <div className="flex items-center gap-3">
+                    {log.status === 'failed' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => retryDelivery(log)}
+                        disabled={retrying === log.id}
+                        className="text-xs"
+                      >
+                        {retrying === log.id ? (
+                          <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                        ) : (
+                          <RotateCcw className="h-3 w-3 mr-1" />
+                        )}
+                        Retry
+                      </Button>
+                    )}
+                    <div className="text-right text-sm text-muted-foreground">
+                      <div>{format(new Date(log.sent_at), 'MMM d, yyyy')}</div>
+                      <div className="text-xs">{formatDistanceToNow(new Date(log.sent_at), { addSuffix: true })}</div>
+                    </div>
                   </div>
                 </div>
               ))}
