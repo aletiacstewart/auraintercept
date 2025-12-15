@@ -114,7 +114,7 @@ export function ReminderSettings() {
 
   const handleToggleEnabled = (setting: ReminderSetting) => {
     if (!hasSmsReminders && !setting.is_enabled) {
-      toast.error('SMS reminders require Basic plan or higher', {
+      toast.error('SMS reminders require Enterprise subscription', {
         action: {
           label: 'Upgrade',
           onClick: () => navigate('/dashboard/subscription'),
@@ -130,7 +130,7 @@ export function ReminderSettings() {
 
   const handleToggleCall = (setting: ReminderSetting) => {
     if (!hasVoiceReminders) {
-      toast.error('Voice reminders require Pro plan or higher', {
+      toast.error('Voice reminders require Enterprise subscription', {
         action: {
           label: 'Upgrade',
           onClick: () => navigate('/dashboard/subscription'),
@@ -281,22 +281,10 @@ export function ReminderSettings() {
       </CardHeader>
       <CardContent className="space-y-4">
         {!hasSmsReminders && (
-          <Alert className="border-blue-500/50 bg-blue-500/5">
-            <Lock className="h-4 w-4 text-blue-500" />
+          <Alert className="border-amber-500/50 bg-amber-500/5">
+            <Lock className="h-4 w-4 text-amber-500" />
             <AlertDescription className="text-sm flex items-center justify-between">
-              <span>SMS reminders require Basic plan or higher.</span>
-              <Button size="sm" variant="outline" onClick={() => navigate('/dashboard/subscription')} className="ml-2">
-                <Sparkles className="h-3 w-3 mr-1" />
-                Upgrade
-              </Button>
-            </AlertDescription>
-          </Alert>
-        )}
-        {!hasVoiceReminders && (
-          <Alert className="border-primary/50 bg-primary/5">
-            <Lock className="h-4 w-4 text-primary" />
-            <AlertDescription className="text-sm flex items-center justify-between">
-              <span>Voice call reminders require Pro plan or higher.</span>
+              <span>SMS & Voice reminders require Enterprise subscription.</span>
               <Button size="sm" variant="outline" onClick={() => navigate('/dashboard/subscription')} className="ml-2">
                 <Sparkles className="h-3 w-3 mr-1" />
                 Upgrade

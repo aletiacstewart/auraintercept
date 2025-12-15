@@ -25,8 +25,7 @@ import {
   PhoneCall,
   BarChart3,
   CreditCard,
-  Crown,
-  Sparkles
+  Crown
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/logo.png';
@@ -63,10 +62,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   const getTierDisplay = () => {
-    const tierConfig = {
+    const tierConfig: Record<string, { label: string; color: string; icon: typeof Crown | null }> = {
       free: { label: 'Free', color: 'bg-muted text-muted-foreground', icon: null },
-      basic: { label: 'Basic', color: 'bg-blue-500/20 text-blue-500', icon: null },
-      pro: { label: 'Pro', color: 'bg-primary/20 text-primary', icon: Sparkles },
       enterprise: { label: 'Enterprise', color: 'bg-amber-500/20 text-amber-500', icon: Crown },
     };
     return tierConfig[subscriptionTier] || tierConfig.free;

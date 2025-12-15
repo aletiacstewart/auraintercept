@@ -12,26 +12,12 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
-// Subscription tiers with their Stripe price IDs
-const SUBSCRIPTION_TIERS = {
-  basic: {
-    price_id: "price_1Sel7MJ9fo9y8fGHXdZoJzjS",
-    product_id: "prod_Tbz5xz6brOwdic",
-    name: "Basic Plan",
-    price: 2900,
-  },
-  pro: {
-    price_id: "price_1Sel7dJ9fo9y8fGHuoqM2Usw",
-    product_id: "prod_Tbz5uoubgrLr8M",
-    name: "Pro Plan",
-    price: 7900,
-  },
-  enterprise: {
-    price_id: "price_1Sel7nJ9fo9y8fGHOUL8fUhZ",
-    product_id: "prod_Tbz5qTAFtrmaNY",
-    name: "Enterprise Plan",
-    price: 19900,
-  },
+// Enterprise Company Subscription - $250/month
+const ENTERPRISE_SUBSCRIPTION = {
+  price_id: "price_1SelZTJ9fo9y8fGHf9Q9RtGr",
+  product_id: "prod_TbzYMyd0yO0shv",
+  name: "Enterprise Company Subscription",
+  price: 25000, // $250.00 in cents
 };
 
 serve(async (req) => {
@@ -62,12 +48,6 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    // Get the tier from request body
-    const { tier = "pro" } = await req.json().catch(() => ({}));
-    const selectedTier = SUBSCRIPTION_TIERS[tier as keyof typeof SUBSCRIPTION_TIERS];
-    if (!selectedTier) throw new Error(`Invalid tier: ${tier}`);
-    logStep("Selected tier", { tier, price_id: selectedTier.price_id });
-
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
     // Check if customer already exists
@@ -87,7 +67,7 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [
         {
-          price: selectedTier.price_id,
+          price: ENTERPRISE_SUBSCRIPTION.price_id,
           quantity: 1,
         },
       ],
@@ -96,7 +76,7 @@ serve(async (req) => {
       cancel_url: `${origin}/dashboard/subscription?canceled=true`,
       metadata: {
         user_id: user.id,
-        tier,
+        tier: "enterprise",
       },
     });
 
