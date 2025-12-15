@@ -32,8 +32,9 @@ Deno.serve(async (req) => {
 
     const now = new Date();
     const currentDay = now.getDay();
+    const currentHour = now.getUTCHours();
     
-    console.log(`Running weekly digest ${isTestMode ? '(TEST MODE)' : ''} at ${now.toISOString()}, day: ${currentDay}`);
+    console.log(`Running weekly digest ${isTestMode ? '(TEST MODE)' : ''} at ${now.toISOString()}, day: ${currentDay}, hour: ${currentHour}`);
 
     let companies;
     
@@ -41,7 +42,7 @@ Deno.serve(async (req) => {
       // Test mode: get specific company regardless of day
       const { data, error } = await supabase
         .from('companies')
-        .select('id, name, weekly_digest_email, weekly_digest_day, last_weekly_digest_at')
+        .select('id, name, weekly_digest_email, weekly_digest_day, weekly_digest_time, last_weekly_digest_at')
         .eq('id', testCompanyId)
         .not('weekly_digest_email', 'is', null);
       
@@ -58,7 +59,7 @@ Deno.serve(async (req) => {
       // Normal cron mode: get companies scheduled for today
       const { data, error } = await supabase
         .from('companies')
-        .select('id, name, weekly_digest_email, weekly_digest_day, last_weekly_digest_at')
+        .select('id, name, weekly_digest_email, weekly_digest_day, weekly_digest_time, last_weekly_digest_at')
         .eq('weekly_digest_enabled', true)
         .eq('weekly_digest_day', currentDay)
         .not('weekly_digest_email', 'is', null);
@@ -101,6 +102,16 @@ Deno.serve(async (req) => {
     };
 
     for (const company of companies) {
+      // Check if it's the right time for this company (skip in test mode)
+      if (!isTestMode && company.weekly_digest_time) {
+        const scheduledHour = parseInt(company.weekly_digest_time.split(':')[0], 10);
+        // Allow a 1-hour window for cron scheduling flexibility
+        if (Math.abs(currentHour - scheduledHour) > 1) {
+          console.log(`Skipping ${company.name}: not scheduled for this hour (scheduled: ${scheduledHour}, current: ${currentHour})`);
+          continue;
+        }
+      }
+
       // Skip duplicate check in test mode
       if (!isTestMode && company.last_weekly_digest_at) {
         const lastDigest = new Date(company.last_weekly_digest_at);

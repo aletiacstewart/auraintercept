@@ -32,6 +32,7 @@ export function WeeklyDigestSettings() {
   const [enabled, setEnabled] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [day, setDay] = useState<string>('1');
+  const [time, setTime] = useState<string>('09:00');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
 
@@ -57,7 +58,7 @@ export function WeeklyDigestSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('weekly_digest_enabled, weekly_digest_email, weekly_digest_day, last_weekly_digest_at')
+        .select('weekly_digest_enabled, weekly_digest_email, weekly_digest_day, weekly_digest_time, last_weekly_digest_at')
         .eq('id', companyId)
         .single();
       if (error) throw error;
@@ -71,6 +72,7 @@ export function WeeklyDigestSettings() {
       setEnabled(company.weekly_digest_enabled || false);
       setEmail(company.weekly_digest_email || '');
       setDay(String(company.weekly_digest_day ?? 1));
+      setTime(company.weekly_digest_time?.slice(0, 5) || '09:00');
     }
   }, [company]);
 
@@ -79,6 +81,7 @@ export function WeeklyDigestSettings() {
       weekly_digest_enabled?: boolean;
       weekly_digest_email?: string | null;
       weekly_digest_day?: number;
+      weekly_digest_time?: string;
     }) => {
       if (!companyId) throw new Error('No company ID');
       const { error } = await supabase
@@ -105,6 +108,7 @@ export function WeeklyDigestSettings() {
       weekly_digest_enabled: enabled,
       weekly_digest_email: email || null,
       weekly_digest_day: parseInt(day),
+      weekly_digest_time: time,
     });
   };
 
@@ -212,24 +216,36 @@ export function WeeklyDigestSettings() {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="digest-day">Send On</Label>
-            <Select value={day} onValueChange={setDay} disabled={!enabled}>
-              <SelectTrigger id="digest-day">
-                <SelectValue placeholder="Select day" />
-              </SelectTrigger>
-              <SelectContent>
-                {DAYS_OF_WEEK.map((d) => (
-                  <SelectItem key={d.value} value={d.value}>
-                    {d.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              Digest will be sent every {DAYS_OF_WEEK.find(d => d.value === day)?.label} morning
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="digest-day">Day</Label>
+              <Select value={day} onValueChange={setDay} disabled={!enabled}>
+                <SelectTrigger id="digest-day">
+                  <SelectValue placeholder="Select day" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DAYS_OF_WEEK.map((d) => (
+                    <SelectItem key={d.value} value={d.value}>
+                      {d.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="digest-time">Time</Label>
+              <Input
+                id="digest-time"
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                disabled={!enabled}
+              />
+            </div>
           </div>
+          <p className="text-xs text-muted-foreground">
+            Digest will be sent every {DAYS_OF_WEEK.find(d => d.value === day)?.label} at {time}
+          </p>
         </div>
 
         {company?.last_weekly_digest_at && (
