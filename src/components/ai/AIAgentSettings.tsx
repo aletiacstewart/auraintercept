@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Mic, MessageSquare, Save, Loader2, RotateCcw, Play, Volume2, AlertCircle, ExternalLink, Gauge, Sparkles } from 'lucide-react';
+import { VoiceCloningCard } from './VoiceCloningCard';
 
 // Popular ElevenLabs voices
 const ELEVENLABS_VOICES = [
@@ -598,6 +599,9 @@ export const AIAgentSettings = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Voice Cloning Card */}
+      <VoiceCloningCard hasElevenLabs={hasElevenLabs} />
     </div>
   );
 };
