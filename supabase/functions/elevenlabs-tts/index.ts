@@ -13,41 +13,53 @@ serve(async (req) => {
   }
 
   try {
-    const { text, company_id } = await req.json();
+    const { text, company_id, voice_id, api_key } = await req.json();
 
     if (!text) {
       throw new Error('Text is required');
     }
 
-    if (!company_id) {
-      throw new Error('Company ID is required');
+    let elevenLabsApiKey: string;
+    let voiceId: string;
+
+    // Preview mode: use provided api_key and voice_id directly
+    if (api_key && voice_id) {
+      console.log(`TTS preview request with voice ${voice_id}`);
+      elevenLabsApiKey = api_key;
+      voiceId = voice_id;
+    } else {
+      // Production mode: look up from tenant_integrations
+      if (!company_id) {
+        throw new Error('Company ID is required');
+      }
+
+      console.log(`TTS request for company ${company_id}: "${text.substring(0, 50)}..."`);
+
+      // Initialize Supabase client
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+      // Fetch company's ElevenLabs credentials
+      const { data: integration, error: integrationError } = await supabase
+        .from('tenant_integrations')
+        .select('elevenlabs_api_key, elevenlabs_voice_id')
+        .eq('company_id', company_id)
+        .maybeSingle();
+
+      if (integrationError) {
+        console.error('Error fetching integration:', integrationError);
+        throw new Error('Failed to fetch integration settings');
+      }
+
+      if (!integration?.elevenlabs_api_key) {
+        throw new Error('ElevenLabs API key not configured');
+      }
+
+      elevenLabsApiKey = integration.elevenlabs_api_key;
+      // Use company's voice ID or default to a standard voice
+      voiceId = integration.elevenlabs_voice_id || 'JBFqnCBsd6RMkjVDRZzb'; // George - default voice
     }
-
-    console.log(`TTS request for company ${company_id}: "${text.substring(0, 50)}..."`);
-
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    // Fetch company's ElevenLabs credentials
-    const { data: integration, error: integrationError } = await supabase
-      .from('tenant_integrations')
-      .select('elevenlabs_api_key, elevenlabs_voice_id')
-      .eq('company_id', company_id)
-      .maybeSingle();
-
-    if (integrationError) {
-      console.error('Error fetching integration:', integrationError);
-      throw new Error('Failed to fetch integration settings');
-    }
-
-    if (!integration?.elevenlabs_api_key) {
-      throw new Error('ElevenLabs API key not configured');
-    }
-
-    // Use company's voice ID or default to a standard voice
-    const voiceId = integration.elevenlabs_voice_id || 'JBFqnCBsd6RMkjVDRZzb'; // George - default voice
     
     console.log(`Using voice ID: ${voiceId}`);
 
@@ -57,7 +69,7 @@ serve(async (req) => {
       {
         method: 'POST',
         headers: {
-          'xi-api-key': integration.elevenlabs_api_key,
+          'xi-api-key': elevenLabsApiKey,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
