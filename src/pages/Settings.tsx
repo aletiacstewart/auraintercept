@@ -8,6 +8,7 @@ import { DefaultPreferencesSettings } from '@/components/company/DefaultPreferen
 import { SubscriptionAnalytics } from '@/components/company/SubscriptionAnalytics';
 import { UnsubscribeAlertSettings } from '@/components/company/UnsubscribeAlertSettings';
 import { WeeklyDigestSettings } from '@/components/company/WeeklyDigestSettings';
+import { MonthlyDigestSettings } from '@/components/company/MonthlyDigestSettings';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
 import { useAuth } from '@/contexts/AuthContext';
@@ -57,6 +58,7 @@ export default function Settings() {
                   <UnsubscribeAlertSettings />
                   <WeeklyDigestSettings />
                 </div>
+                <MonthlyDigestSettings />
                 <SubscriptionAnalytics />
               </div>
             </TabsContent>
