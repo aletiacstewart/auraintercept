@@ -903,6 +903,7 @@ export type Database = {
         Row: {
           company_id: string
           created_at: string
+          elevenlabs_agent_id: string | null
           elevenlabs_api_key: string | null
           elevenlabs_voice_id: string | null
           google_refresh_token: string | null
@@ -916,6 +917,7 @@ export type Database = {
         Insert: {
           company_id: string
           created_at?: string
+          elevenlabs_agent_id?: string | null
           elevenlabs_api_key?: string | null
           elevenlabs_voice_id?: string | null
           google_refresh_token?: string | null
@@ -929,6 +931,7 @@ export type Database = {
         Update: {
           company_id?: string
           created_at?: string
+          elevenlabs_agent_id?: string | null
           elevenlabs_api_key?: string | null
           elevenlabs_voice_id?: string | null
           google_refresh_token?: string | null
