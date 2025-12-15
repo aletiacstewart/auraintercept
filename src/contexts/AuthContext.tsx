@@ -8,9 +8,7 @@ export type SubscriptionTier = 'free' | 'basic' | 'pro' | 'enterprise';
 
 // Map Stripe product IDs to tier names
 const PRODUCT_TO_TIER: Record<string, SubscriptionTier> = {
-  'prod_SWYxYBJqkbhO4e': 'basic',
-  'prod_SWYy94FDlxjqRU': 'pro',
-  'prod_SWYyN0b5FiLtCg': 'enterprise',
+  'prod_TbzYMyd0yO0shv': 'enterprise', // Enterprise Company Subscription - $250/month
 };
 
 interface AuthContextType {

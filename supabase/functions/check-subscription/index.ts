@@ -12,11 +12,9 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
-// Map product IDs to tier names
+// Map product IDs to tier names - only Enterprise at $250/month
 const PRODUCT_TO_TIER: Record<string, string> = {
-  "prod_Tbz5xz6brOwdic": "basic",
-  "prod_Tbz5uoubgrLr8M": "pro",
-  "prod_Tbz5qTAFtrmaNY": "enterprise",
+  "prod_TbzYMyd0yO0shv": "enterprise", // Enterprise Company Subscription - $250/month
 };
 
 serve(async (req) => {
