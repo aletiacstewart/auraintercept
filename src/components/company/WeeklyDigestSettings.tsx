@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Mail, CalendarDays, Info, Eye } from 'lucide-react';
+import { Mail, CalendarDays, Info, Eye, Send, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useState, useEffect } from 'react';
 import { format, subDays } from 'date-fns';
@@ -33,6 +33,7 @@ export function WeeklyDigestSettings() {
   const [email, setEmail] = useState<string>('');
   const [day, setDay] = useState<string>('1');
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [sendingTest, setSendingTest] = useState(false);
 
   // Fetch company name for preview
   const { data: companyDetails } = useQuery({
@@ -105,6 +106,38 @@ export function WeeklyDigestSettings() {
       weekly_digest_email: email || null,
       weekly_digest_day: parseInt(day),
     });
+  };
+
+  const handleSendTest = async () => {
+    if (!email) {
+      toast.error('Please enter a recipient email first');
+      return;
+    }
+    
+    // Save settings first if needed
+    if (email !== company?.weekly_digest_email) {
+      await supabase
+        .from('companies')
+        .update({ weekly_digest_email: email })
+        .eq('id', companyId);
+    }
+    
+    setSendingTest(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('weekly-digest', {
+        body: { test: true, company_id: companyId }
+      });
+      
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      
+      toast.success(`Test digest sent to ${email}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to send test email';
+      toast.error(message);
+    } finally {
+      setSendingTest(false);
+    }
   };
 
   if (isLoading) {
@@ -205,12 +238,12 @@ export function WeeklyDigestSettings() {
           </p>
         )}
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" className="flex-1 gap-2">
                 <Eye className="h-4 w-4" />
-                Preview Email
+                Preview
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
@@ -223,13 +256,27 @@ export function WeeklyDigestSettings() {
               <DigestEmailPreview companyName={companyDetails?.name || 'Your Company'} />
             </DialogContent>
           </Dialog>
+
+          <Button 
+            variant="outline"
+            onClick={handleSendTest}
+            disabled={sendingTest || !email}
+            className="flex-1 gap-2"
+          >
+            {sendingTest ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+            Send Test
+          </Button>
           
           <Button 
             onClick={handleSave} 
             disabled={updateMutation.isPending}
             className="flex-1"
           >
-            {updateMutation.isPending ? 'Saving...' : 'Save Settings'}
+            {updateMutation.isPending ? 'Saving...' : 'Save'}
           </Button>
         </div>
       </CardContent>
