@@ -111,15 +111,26 @@ export default function Auth() {
       }
 
       // Update profile with company_id
-      await supabase
+      const { error: profileError } = await supabase
         .from('profiles')
         .update({ company_id: companyData.id })
         .eq('id', authData.user.id);
 
+      if (profileError) {
+        console.error('Profile update error:', profileError);
+      }
+
       // Assign platform_admin role
-      await supabase
+      const { error: roleError } = await supabase
         .from('user_roles')
         .insert({ user_id: authData.user.id, role: 'platform_admin' });
+
+      if (roleError) {
+        console.error('Role insert error:', roleError);
+        toast({ title: 'Error', description: 'Failed to assign role: ' + roleError.message, variant: 'destructive' });
+        setIsLoading(false);
+        return;
+      }
 
       toast({ title: 'Account Created!', description: 'Welcome to AI Bot Company Platform!' });
       navigate('/dashboard');
