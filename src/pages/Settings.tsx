@@ -6,11 +6,7 @@ import { ReminderAnalytics } from '@/components/company/ReminderAnalytics';
 import { CustomerPreferencesManager } from '@/components/company/CustomerPreferencesManager';
 import { DefaultPreferencesSettings } from '@/components/company/DefaultPreferencesSettings';
 import { SubscriptionAnalytics } from '@/components/company/SubscriptionAnalytics';
-import { UnsubscribeAlertSettings } from '@/components/company/UnsubscribeAlertSettings';
-import { BounceAlertSettings } from '@/components/company/BounceAlertSettings';
-import { WeeklyDigestSettings } from '@/components/company/WeeklyDigestSettings';
-import { MonthlyDigestSettings } from '@/components/company/MonthlyDigestSettings';
-import { QuarterlyDigestSettings } from '@/components/company/QuarterlyDigestSettings';
+import { AlertsSettings } from '@/components/company/AlertsSettings';
 import { ReportsDashboard } from '@/components/company/ReportsDashboard';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
@@ -37,8 +33,9 @@ export default function Settings() {
               <TabsTrigger value="reminders">Reminders</TabsTrigger>
               <TabsTrigger value="default-prefs">Default Prefs</TabsTrigger>
               <TabsTrigger value="reminder-analytics">Reminder Stats</TabsTrigger>
-              <TabsTrigger value="reports">Reports</TabsTrigger>
-              <TabsTrigger value="subscription-analytics">Opt-in/Out</TabsTrigger>
+              <TabsTrigger value="reports">Reports & Digests</TabsTrigger>
+              <TabsTrigger value="alerts">Alerts</TabsTrigger>
+              <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
               <TabsTrigger value="reminder-history">History</TabsTrigger>
               <TabsTrigger value="customer-prefs">Customer Prefs</TabsTrigger>
               <TabsTrigger value="emails">Email Templates</TabsTrigger>
@@ -59,21 +56,11 @@ export default function Settings() {
             <TabsContent value="reports">
               <ReportsDashboard />
             </TabsContent>
-            <TabsContent value="subscription-analytics">
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <UnsubscribeAlertSettings />
-                  <BounceAlertSettings />
-                </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <WeeklyDigestSettings />
-                  <MonthlyDigestSettings />
-                </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <QuarterlyDigestSettings />
-                </div>
-                <SubscriptionAnalytics />
-              </div>
+            <TabsContent value="alerts">
+              <AlertsSettings />
+            </TabsContent>
+            <TabsContent value="subscriptions">
+              <SubscriptionAnalytics />
             </TabsContent>
             <TabsContent value="reminder-history">
               <ReminderHistoryLog />
