@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { useConversation } from '@elevenlabs/react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -9,133 +8,338 @@ import { cn } from '@/lib/utils';
 interface VoiceChatProps {
   companyId: string;
   companyName: string;
-  agentId?: string;
   onTranscript?: (role: 'user' | 'assistant', text: string) => void;
 }
+
+// Check if Web Speech API is available
+const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
 export const VoiceChat: React.FC<VoiceChatProps> = ({ 
   companyId, 
   companyName,
-  agentId,
   onTranscript 
 }) => {
   const { toast } = useToast();
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const visualizerRef = useRef<HTMLDivElement>(null);
+  const [conversationHistory, setConversationHistory] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([]);
+  
+  const recognitionRef = useRef<any>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const isActiveRef = useRef(false);
 
-  const conversation = useConversation({
-    onConnect: () => {
-      console.log('Connected to ElevenLabs agent');
-      toast({
-        title: "Voice Connected",
-        description: "You can now speak with the AI assistant",
-      });
-    },
-    onDisconnect: () => {
-      console.log('Disconnected from ElevenLabs agent');
-    },
-    onMessage: (message: unknown) => {
-      console.log('Voice message:', message);
-      const msg = message as Record<string, unknown>;
-      
-      // Handle transcriptions
-      if (msg.type === 'user_transcript' && onTranscript) {
-        const event = msg.user_transcription_event as Record<string, string> | undefined;
-        const text = event?.user_transcript;
-        if (text) onTranscript('user', text);
-      }
-      if (msg.type === 'agent_response' && onTranscript) {
-        const event = msg.agent_response_event as Record<string, string> | undefined;
-        const text = event?.agent_response;
-        if (text) onTranscript('assistant', text);
-      }
-    },
-    onError: (error) => {
-      console.error('Voice error:', error);
-      toast({
-        variant: "destructive",
-        title: "Voice Error",
-        description: "Connection failed. Please try again.",
-      });
-    },
-  });
-
-  // Check microphone permission on mount
+  // Check microphone permission and Speech API availability
   useEffect(() => {
+    if (!SpeechRecognition) {
+      setHasPermission(false);
+      return;
+    }
+    
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(() => setHasPermission(true))
       .catch(() => setHasPermission(false));
   }, []);
 
+  // Initialize speech recognition
+  const initRecognition = useCallback(() => {
+    if (!SpeechRecognition) return null;
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = async (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      console.log('User said:', transcript);
+      
+      if (transcript && isActiveRef.current) {
+        onTranscript?.('user', transcript);
+        setConversationHistory(prev => [...prev, { role: 'user', content: transcript }]);
+        await processUserInput(transcript);
+      }
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Speech recognition error:', event.error);
+      if (event.error !== 'aborted' && event.error !== 'no-speech') {
+        toast({
+          variant: "destructive",
+          title: "Speech Error",
+          description: `Could not recognize speech: ${event.error}`,
+        });
+      }
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      // Restart listening if still active and not processing/speaking
+      if (isActiveRef.current && !isProcessing && !isSpeaking) {
+        setTimeout(() => {
+          if (isActiveRef.current && recognitionRef.current) {
+            try {
+              recognitionRef.current.start();
+              setIsListening(true);
+            } catch (e) {
+              console.log('Recognition restart skipped:', e);
+            }
+          }
+        }, 100);
+      }
+    };
+
+    return recognition;
+  }, [onTranscript, toast, isProcessing, isSpeaking]);
+
+  // Process user input with AI agent
+  const processUserInput = useCallback(async (userText: string) => {
+    setIsProcessing(true);
+    setIsListening(false);
+
+    try {
+      // Stop recognition while processing
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {
+          // Ignore
+        }
+      }
+
+      // Build messages for AI
+      const messages = [
+        ...conversationHistory,
+        { role: 'user' as const, content: userText }
+      ];
+
+      // Call AI agent
+      const { data: aiResponse, error: aiError } = await supabase.functions.invoke('ai-agent', {
+        body: { 
+          messages,
+          companyId,
+          action: 'chat'
+        }
+      });
+
+      if (aiError) {
+        throw new Error(aiError.message);
+      }
+
+      // Parse the AI response
+      let assistantText = '';
+      if (typeof aiResponse === 'string') {
+        // Handle streaming response
+        const lines = aiResponse.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+            try {
+              const json = JSON.parse(line.substring(6));
+              const content = json.choices?.[0]?.delta?.content;
+              if (content) assistantText += content;
+            } catch (e) {
+              // Skip malformed JSON
+            }
+          }
+        }
+      } else if (aiResponse?.choices?.[0]?.message?.content) {
+        assistantText = aiResponse.choices[0].message.content;
+      } else if (aiResponse?.content) {
+        assistantText = aiResponse.content;
+      }
+
+      if (!assistantText) {
+        assistantText = "I'm sorry, I couldn't process that request. Could you please try again?";
+      }
+
+      console.log('AI response:', assistantText);
+      onTranscript?.('assistant', assistantText);
+      setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantText }]);
+
+      // Convert to speech
+      await speakText(assistantText);
+
+    } catch (error) {
+      console.error('Error processing input:', error);
+      toast({
+        variant: "destructive",
+        title: "Processing Error",
+        description: error instanceof Error ? error.message : "Failed to process your request",
+      });
+    } finally {
+      setIsProcessing(false);
+      // Resume listening if still active
+      if (isActiveRef.current) {
+        setTimeout(() => startListening(), 500);
+      }
+    }
+  }, [companyId, conversationHistory, onTranscript, toast]);
+
+  // Speak text using ElevenLabs TTS
+  const speakText = useCallback(async (text: string) => {
+    setIsSpeaking(true);
+
+    try {
+      // Call ElevenLabs TTS edge function
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ text, company_id: companyId }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'TTS request failed');
+      }
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      
+      // Play the audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+        URL.revokeObjectURL(audioRef.current.src);
+      }
+
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+      
+      audio.onended = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(audioUrl);
+        // Resume listening after speaking
+        if (isActiveRef.current) {
+          setTimeout(() => startListening(), 300);
+        }
+      };
+
+      audio.onerror = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(audioUrl);
+        console.error('Audio playback error');
+      };
+
+      await audio.play();
+    } catch (error) {
+      console.error('TTS error:', error);
+      setIsSpeaking(false);
+      toast({
+        variant: "destructive",
+        title: "Voice Error",
+        description: error instanceof Error ? error.message : "Could not generate speech",
+      });
+    }
+  }, [companyId, toast]);
+
+  // Start listening
+  const startListening = useCallback(() => {
+    if (!recognitionRef.current || !isActiveRef.current) return;
+    
+    try {
+      recognitionRef.current.start();
+      setIsListening(true);
+    } catch (e) {
+      console.log('Could not start recognition:', e);
+    }
+  }, []);
+
+  // Start conversation
   const startConversation = useCallback(async () => {
     setIsConnecting(true);
+
     try {
       // Request microphone permission
       await navigator.mediaDevices.getUserMedia({ audio: true });
       setHasPermission(true);
 
-      // Get credentials from edge function
-      const { data, error } = await supabase.functions.invoke(
-        'elevenlabs-conversation-token',
-        {
-          body: { company_id: companyId, agent_id: agentId }
-        }
-      );
-
-      if (error) {
-        throw new Error(error.message);
+      // Initialize recognition
+      recognitionRef.current = initRecognition();
+      if (!recognitionRef.current) {
+        throw new Error('Speech recognition not available in this browser');
       }
 
-      if (data.error) {
-        throw new Error(data.error);
-      }
+      isActiveRef.current = true;
+      
+      // Start with a greeting
+      const greeting = `Hello! Welcome to ${companyName}. How can I help you today?`;
+      onTranscript?.('assistant', greeting);
+      setConversationHistory([{ role: 'assistant', content: greeting }]);
+      
+      await speakText(greeting);
 
-      if (data.signed_url) {
-        // Use signed URL for authenticated agent
-        await conversation.startSession({
-          signedUrl: data.signed_url,
-        });
-      } else {
-        // For testing without a pre-configured agent, show setup message
-        toast({
-          variant: "destructive",
-          title: "Agent Not Configured",
-          description: "Please configure an ElevenLabs Conversational AI agent in your ElevenLabs dashboard and add the agent ID in settings.",
-        });
-        setIsConnecting(false);
-        return;
-      }
+      toast({
+        title: "Voice Chat Started",
+        description: "You can now speak with the AI assistant",
+      });
     } catch (error) {
       console.error('Failed to start voice conversation:', error);
+      isActiveRef.current = false;
       toast({
         variant: "destructive",
         title: "Connection Failed",
-        description: error instanceof Error ? error.message : "Unable to connect to voice assistant",
+        description: error instanceof Error ? error.message : "Unable to start voice chat",
       });
     } finally {
       setIsConnecting(false);
     }
-  }, [conversation, companyId, agentId, toast]);
+  }, [companyName, initRecognition, onTranscript, speakText, toast]);
 
-  const stopConversation = useCallback(async () => {
-    await conversation.endSession();
-  }, [conversation]);
+  // Stop conversation
+  const stopConversation = useCallback(() => {
+    isActiveRef.current = false;
+    
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {
+        // Ignore
+      }
+      recognitionRef.current = null;
+    }
 
-  const isConnected = conversation.status === 'connected';
-  const isSpeaking = conversation.isSpeaking;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      URL.revokeObjectURL(audioRef.current.src);
+      audioRef.current = null;
+    }
+
+    setIsListening(false);
+    setIsSpeaking(false);
+    setIsProcessing(false);
+    setConversationHistory([]);
+
+    toast({
+      title: "Voice Chat Ended",
+      description: "The conversation has been disconnected",
+    });
+  }, [toast]);
+
+  const isConnected = isActiveRef.current && (isListening || isSpeaking || isProcessing);
 
   // Visual feedback based on state
   const getStatusText = () => {
     if (isConnecting) return 'Connecting...';
-    if (isConnected && isSpeaking) return 'AI is speaking...';
-    if (isConnected) return 'Listening...';
+    if (isSpeaking) return 'AI is speaking...';
+    if (isProcessing) return 'Processing...';
+    if (isListening) return 'Listening...';
+    if (isActiveRef.current) return 'Ready';
     return 'Click to start voice chat';
   };
 
   const getStatusColor = () => {
-    if (isConnected && isSpeaking) return 'bg-secondary';
-    if (isConnected) return 'bg-green-500';
+    if (isSpeaking) return 'bg-secondary';
+    if (isProcessing) return 'bg-amber-500';
+    if (isListening) return 'bg-green-500';
+    if (isActiveRef.current) return 'bg-primary';
     return 'bg-muted';
   };
 
@@ -144,9 +348,10 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       <div className="flex flex-col items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
         <MicOff className="h-8 w-8 text-destructive" />
         <p className="text-sm text-center text-destructive">
-          Microphone access is required for voice chat.
-          <br />
-          Please enable it in your browser settings.
+          {!SpeechRecognition 
+            ? 'Speech recognition is not supported in this browser. Please use Chrome or Edge.'
+            : 'Microphone access is required for voice chat. Please enable it in your browser settings.'
+          }
         </p>
       </div>
     );
@@ -156,27 +361,26 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     <div className="flex flex-col items-center gap-4 p-4">
       {/* Voice Visualizer */}
       <div 
-        ref={visualizerRef}
         className={cn(
           "relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300",
           getStatusColor(),
-          isConnected && "animate-pulse"
+          (isListening || isSpeaking) && "animate-pulse"
         )}
       >
         {isConnecting ? (
           <Loader2 className="h-10 w-10 text-white animate-spin" />
-        ) : isConnected ? (
-          isSpeaking ? (
-            <Volume2 className="h-10 w-10 text-white animate-pulse" />
-          ) : (
-            <Mic className="h-10 w-10 text-white" />
-          )
+        ) : isSpeaking ? (
+          <Volume2 className="h-10 w-10 text-white animate-pulse" />
+        ) : isProcessing ? (
+          <Loader2 className="h-10 w-10 text-white animate-spin" />
+        ) : isListening ? (
+          <Mic className="h-10 w-10 text-white" />
         ) : (
           <Mic className="h-10 w-10 text-muted-foreground" />
         )}
         
-        {/* Pulse rings when connected */}
-        {isConnected && (
+        {/* Pulse rings when active */}
+        {(isListening || isSpeaking) && (
           <>
             <div className="absolute inset-0 rounded-full border-2 border-current opacity-20 animate-ping" />
             <div className="absolute inset-[-4px] rounded-full border border-current opacity-10 animate-pulse" />
@@ -189,7 +393,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
       {/* Control Buttons */}
       <div className="flex gap-2">
-        {!isConnected ? (
+        {!isActiveRef.current ? (
           <Button
             onClick={startConversation}
             disabled={isConnecting}
