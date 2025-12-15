@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { Calendar, Clock, Mail, CheckCircle2, XCircle, AlertCircle, FileText, TrendingUp, Send, Loader2 } from 'lucide-react';
 import { format, formatDistanceToNow, addDays, setHours, setMinutes, setDate } from 'date-fns';
 import { DigestDeliveryHistory } from './DigestDeliveryHistory';
+import { DigestDeliveryStats } from './DigestDeliveryStats';
 
 interface ReportConfig {
   id: string;
@@ -365,6 +366,10 @@ export function ReportsDashboard() {
           </div>
         </CardContent>
       </Card>
+
+      <div className="mt-6">
+        <DigestDeliveryStats />
+      </div>
 
       <div className="mt-6">
         <DigestDeliveryHistory />
