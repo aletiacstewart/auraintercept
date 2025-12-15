@@ -10,8 +10,8 @@ import { AlertsSettings } from '@/components/company/AlertsSettings';
 import { ReportsDashboard } from '@/components/company/ReportsDashboard';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
+import { ProfileSettings } from '@/components/employee/ProfileSettings';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Settings() {
@@ -84,19 +84,7 @@ export default function Settings() {
               Manage your account settings
             </p>
           </div>
-          <Card className="border-border/50">
-            <CardHeader>
-              <CardTitle>Profile Settings</CardTitle>
-              <CardDescription>
-                Update your personal information
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Profile settings coming soon...
-              </p>
-            </CardContent>
-          </Card>
+          <ProfileSettings />
         </div>
       )}
     </DashboardLayout>
