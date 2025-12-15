@@ -10,6 +10,7 @@ import { UnsubscribeAlertSettings } from '@/components/company/UnsubscribeAlertS
 import { WeeklyDigestSettings } from '@/components/company/WeeklyDigestSettings';
 import { MonthlyDigestSettings } from '@/components/company/MonthlyDigestSettings';
 import { QuarterlyDigestSettings } from '@/components/company/QuarterlyDigestSettings';
+import { ReportsDashboard } from '@/components/company/ReportsDashboard';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
 import { useAuth } from '@/contexts/AuthContext';
@@ -35,6 +36,7 @@ export default function Settings() {
               <TabsTrigger value="reminders">Reminders</TabsTrigger>
               <TabsTrigger value="default-prefs">Default Prefs</TabsTrigger>
               <TabsTrigger value="reminder-analytics">Reminder Stats</TabsTrigger>
+              <TabsTrigger value="reports">Reports</TabsTrigger>
               <TabsTrigger value="subscription-analytics">Opt-in/Out</TabsTrigger>
               <TabsTrigger value="reminder-history">History</TabsTrigger>
               <TabsTrigger value="customer-prefs">Customer Prefs</TabsTrigger>
@@ -52,6 +54,9 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="reminder-analytics">
               <ReminderAnalytics />
+            </TabsContent>
+            <TabsContent value="reports">
+              <ReportsDashboard />
             </TabsContent>
             <TabsContent value="subscription-analytics">
               <div className="space-y-6">
