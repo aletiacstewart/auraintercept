@@ -14,6 +14,7 @@ import { Mail, CalendarDays, Info, Eye, Send, Loader2, Globe } from 'lucide-reac
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useState, useEffect, useMemo } from 'react';
 import { format, subDays } from 'date-fns';
+import { DigestMetricsSelector } from './DigestMetricsSelector';
 
 const COMMON_TIMEZONES = [
   { value: 'America/New_York', label: 'Eastern Time (ET)' },
@@ -51,6 +52,9 @@ export function WeeklyDigestSettings() {
   const [day, setDay] = useState<string>('1');
   const [time, setTime] = useState<string>('09:00');
   const [timezone, setTimezone] = useState<string>('America/New_York');
+  const [includeAppointments, setIncludeAppointments] = useState(true);
+  const [includeReminders, setIncludeReminders] = useState(true);
+  const [includeSubscriptions, setIncludeSubscriptions] = useState(true);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
 
@@ -79,7 +83,7 @@ export function WeeklyDigestSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('weekly_digest_enabled, weekly_digest_email, weekly_digest_day, weekly_digest_time, weekly_digest_timezone, last_weekly_digest_at')
+        .select('weekly_digest_enabled, weekly_digest_email, weekly_digest_day, weekly_digest_time, weekly_digest_timezone, weekly_digest_include_appointments, weekly_digest_include_reminders, weekly_digest_include_subscriptions, last_weekly_digest_at')
         .eq('id', companyId)
         .single();
       if (error) throw error;
@@ -95,6 +99,9 @@ export function WeeklyDigestSettings() {
       setDay(String(company.weekly_digest_day ?? 1));
       setTime(company.weekly_digest_time?.slice(0, 5) || '09:00');
       setTimezone(company.weekly_digest_timezone || browserTimezone || 'America/New_York');
+      setIncludeAppointments(company.weekly_digest_include_appointments ?? true);
+      setIncludeReminders(company.weekly_digest_include_reminders ?? true);
+      setIncludeSubscriptions(company.weekly_digest_include_subscriptions ?? true);
     }
   }, [company, browserTimezone]);
 
@@ -105,6 +112,9 @@ export function WeeklyDigestSettings() {
       weekly_digest_day?: number;
       weekly_digest_time?: string;
       weekly_digest_timezone?: string;
+      weekly_digest_include_appointments?: boolean;
+      weekly_digest_include_reminders?: boolean;
+      weekly_digest_include_subscriptions?: boolean;
     }) => {
       if (!companyId) throw new Error('No company ID');
       const { error } = await supabase
@@ -127,12 +137,19 @@ export function WeeklyDigestSettings() {
       toast.error('Please enter an email address');
       return;
     }
+    if (enabled && !includeAppointments && !includeReminders && !includeSubscriptions) {
+      toast.error('Please select at least one metric to include');
+      return;
+    }
     updateMutation.mutate({
       weekly_digest_enabled: enabled,
       weekly_digest_email: email || null,
       weekly_digest_day: parseInt(day),
       weekly_digest_time: time,
       weekly_digest_timezone: timezone,
+      weekly_digest_include_appointments: includeAppointments,
+      weekly_digest_include_reminders: includeReminders,
+      weekly_digest_include_subscriptions: includeSubscriptions,
     });
   };
 
@@ -289,6 +306,16 @@ export function WeeklyDigestSettings() {
             Digest will be sent every {DAYS_OF_WEEK.find(d => d.value === day)?.label} at {time} ({COMMON_TIMEZONES.find(tz => tz.value === timezone)?.label || timezone})
           </p>
         </div>
+
+        <DigestMetricsSelector
+          includeAppointments={includeAppointments}
+          includeReminders={includeReminders}
+          includeSubscriptions={includeSubscriptions}
+          onChangeAppointments={setIncludeAppointments}
+          onChangeReminders={setIncludeReminders}
+          onChangeSubscriptions={setIncludeSubscriptions}
+          disabled={!enabled}
+        />
 
         {company?.last_weekly_digest_at && (
           <p className="text-sm text-muted-foreground">
