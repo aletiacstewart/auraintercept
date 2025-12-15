@@ -60,7 +60,7 @@ const INTEGRATIONS: Integration[] = [
     color: 'bg-purple-500',
     docsUrl: 'https://dashboard.stripe.com/apikeys',
     fields: [],
-    checkConnection: () => false,
+    checkConnection: () => true, // Stripe is configured at platform level
   },
   {
     id: 'twilio',
@@ -251,12 +251,12 @@ export default function Integrations() {
                   ) : integration.id === 'stripe' ? (
                     <div className="space-y-3">
                       <p className="text-sm text-muted-foreground">
-                        Stripe is managed at the platform level. Contact your administrator for billing setup.
+                        Stripe is connected. Manage your subscription and billing settings.
                       </p>
-                      <Button variant="outline" className="w-full" asChild>
-                        <a href={integration.docsUrl} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          View Stripe Dashboard
+                      <Button variant="default" className="w-full" asChild>
+                        <a href="/dashboard/subscription">
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          Manage Subscription
                         </a>
                       </Button>
                     </div>

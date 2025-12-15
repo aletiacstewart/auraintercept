@@ -21,7 +21,8 @@ import {
   Shield,
   MessageCircle,
   PhoneCall,
-  BarChart3
+  BarChart3,
+  CreditCard
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/logo.png';
@@ -45,6 +46,7 @@ const navItems: NavItem[] = [
   { label: 'Call History', icon: PhoneCall, href: '/dashboard/calls', roles: ['platform_admin', 'company_admin'] },
   { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
   { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'] },
+  { label: 'Subscription', icon: CreditCard, href: '/dashboard/subscription', roles: ['platform_admin', 'company_admin'] },
   { label: 'Messages', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin', 'employee'] },
   { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin', 'employee'] },
 ];
