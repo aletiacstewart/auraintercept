@@ -39,7 +39,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
 
   const checkSubscription = useCallback(async () => {
-    if (!session?.access_token) return;
+    if (!session?.access_token || !user?.email) return;
+    
+    // Bypass subscription for test accounts and platform admins
+    const isTestAccount = user.email.endsWith('@test.com') || userRole === 'platform_admin';
+    if (isTestAccount) {
+      setSubscribed(true);
+      setSubscriptionTier('enterprise');
+      setSubscriptionEnd(null);
+      return;
+    }
     
     try {
       const { data, error } = await supabase.functions.invoke('check-subscription', {
@@ -64,7 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (err) {
       console.error('Failed to check subscription:', err);
     }
-  }, [session?.access_token]);
+  }, [session?.access_token, user?.email, userRole]);
 
   const fetchUserData = async (userId: string) => {
     const { data: roleData } = await supabase
