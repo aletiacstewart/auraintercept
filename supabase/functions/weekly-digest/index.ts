@@ -31,10 +31,34 @@ Deno.serve(async (req) => {
     }
 
     const now = new Date();
-    const currentDay = now.getDay();
-    const currentHour = now.getUTCHours();
+    const currentUTCDay = now.getUTCDay();
+    const currentUTCHour = now.getUTCHours();
     
-    console.log(`Running weekly digest ${isTestMode ? '(TEST MODE)' : ''} at ${now.toISOString()}, day: ${currentDay}, hour: ${currentHour}`);
+    console.log(`Running weekly digest ${isTestMode ? '(TEST MODE)' : ''} at ${now.toISOString()}, UTC day: ${currentUTCDay}, UTC hour: ${currentUTCHour}`);
+
+    // Helper to get current day and hour in a specific timezone
+    const getLocalTime = (timezone: string) => {
+      try {
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          timeZone: timezone,
+          weekday: 'short',
+          hour: 'numeric',
+          hour12: false,
+        });
+        const parts = formatter.formatToParts(now);
+        const dayPart = parts.find(p => p.type === 'weekday')?.value;
+        const hourPart = parts.find(p => p.type === 'hour')?.value;
+        
+        const dayMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+        return {
+          day: dayMap[dayPart || 'Mon'] ?? currentUTCDay,
+          hour: parseInt(hourPart || '0', 10)
+        };
+      } catch {
+        // Fallback to UTC if timezone is invalid
+        return { day: currentUTCDay, hour: currentUTCHour };
+      }
+    };
 
     let companies;
     
@@ -42,7 +66,7 @@ Deno.serve(async (req) => {
       // Test mode: get specific company regardless of day
       const { data, error } = await supabase
         .from('companies')
-        .select('id, name, weekly_digest_email, weekly_digest_day, weekly_digest_time, last_weekly_digest_at')
+        .select('id, name, weekly_digest_email, weekly_digest_day, weekly_digest_time, weekly_digest_timezone, last_weekly_digest_at')
         .eq('id', testCompanyId)
         .not('weekly_digest_email', 'is', null);
       
@@ -56,12 +80,11 @@ Deno.serve(async (req) => {
         );
       }
     } else {
-      // Normal cron mode: get companies scheduled for today
+      // Normal cron mode: get all enabled companies (we'll filter by timezone below)
       const { data, error } = await supabase
         .from('companies')
-        .select('id, name, weekly_digest_email, weekly_digest_day, weekly_digest_time, last_weekly_digest_at')
+        .select('id, name, weekly_digest_email, weekly_digest_day, weekly_digest_time, weekly_digest_timezone, last_weekly_digest_at')
         .eq('weekly_digest_enabled', true)
-        .eq('weekly_digest_day', currentDay)
         .not('weekly_digest_email', 'is', null);
       
       if (error) throw error;
@@ -102,13 +125,25 @@ Deno.serve(async (req) => {
     };
 
     for (const company of companies) {
-      // Check if it's the right time for this company (skip in test mode)
-      if (!isTestMode && company.weekly_digest_time) {
-        const scheduledHour = parseInt(company.weekly_digest_time.split(':')[0], 10);
-        // Allow a 1-hour window for cron scheduling flexibility
-        if (Math.abs(currentHour - scheduledHour) > 1) {
-          console.log(`Skipping ${company.name}: not scheduled for this hour (scheduled: ${scheduledHour}, current: ${currentHour})`);
+      // Check if it's the right day and time for this company based on their timezone (skip in test mode)
+      if (!isTestMode) {
+        const companyTimezone = company.weekly_digest_timezone || 'America/New_York';
+        const localTime = getLocalTime(companyTimezone);
+        
+        // Check if it's the scheduled day in the company's timezone
+        if (localTime.day !== company.weekly_digest_day) {
+          console.log(`Skipping ${company.name}: not scheduled for this day in ${companyTimezone} (scheduled: ${company.weekly_digest_day}, local day: ${localTime.day})`);
           continue;
+        }
+        
+        // Check if it's the scheduled hour in the company's timezone
+        if (company.weekly_digest_time) {
+          const scheduledHour = parseInt(company.weekly_digest_time.split(':')[0], 10);
+          // Allow a 1-hour window for cron scheduling flexibility
+          if (Math.abs(localTime.hour - scheduledHour) > 1) {
+            console.log(`Skipping ${company.name}: not scheduled for this hour in ${companyTimezone} (scheduled: ${scheduledHour}, local hour: ${localTime.hour})`);
+            continue;
+          }
         }
       }
 

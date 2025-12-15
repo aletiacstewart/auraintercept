@@ -10,10 +10,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Mail, CalendarDays, Info, Eye, Send, Loader2 } from 'lucide-react';
+import { Mail, CalendarDays, Info, Eye, Send, Loader2, Globe } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { format, subDays } from 'date-fns';
+
+const COMMON_TIMEZONES = [
+  { value: 'America/New_York', label: 'Eastern Time (ET)' },
+  { value: 'America/Chicago', label: 'Central Time (CT)' },
+  { value: 'America/Denver', label: 'Mountain Time (MT)' },
+  { value: 'America/Los_Angeles', label: 'Pacific Time (PT)' },
+  { value: 'America/Anchorage', label: 'Alaska Time (AKT)' },
+  { value: 'Pacific/Honolulu', label: 'Hawaii Time (HT)' },
+  { value: 'Europe/London', label: 'London (GMT/BST)' },
+  { value: 'Europe/Paris', label: 'Paris (CET/CEST)' },
+  { value: 'Europe/Berlin', label: 'Berlin (CET/CEST)' },
+  { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
+  { value: 'Asia/Shanghai', label: 'Shanghai (CST)' },
+  { value: 'Asia/Dubai', label: 'Dubai (GST)' },
+  { value: 'Australia/Sydney', label: 'Sydney (AEST/AEDT)' },
+  { value: 'UTC', label: 'UTC' },
+];
 
 const DAYS_OF_WEEK = [
   { value: '0', label: 'Sunday' },
@@ -33,8 +50,12 @@ export function WeeklyDigestSettings() {
   const [email, setEmail] = useState<string>('');
   const [day, setDay] = useState<string>('1');
   const [time, setTime] = useState<string>('09:00');
+  const [timezone, setTimezone] = useState<string>('America/New_York');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
+
+  // Get user's browser timezone as a suggestion
+  const browserTimezone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone, []);
 
   // Fetch company name for preview
   const { data: companyDetails } = useQuery({
@@ -58,7 +79,7 @@ export function WeeklyDigestSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('weekly_digest_enabled, weekly_digest_email, weekly_digest_day, weekly_digest_time, last_weekly_digest_at')
+        .select('weekly_digest_enabled, weekly_digest_email, weekly_digest_day, weekly_digest_time, weekly_digest_timezone, last_weekly_digest_at')
         .eq('id', companyId)
         .single();
       if (error) throw error;
@@ -73,8 +94,9 @@ export function WeeklyDigestSettings() {
       setEmail(company.weekly_digest_email || '');
       setDay(String(company.weekly_digest_day ?? 1));
       setTime(company.weekly_digest_time?.slice(0, 5) || '09:00');
+      setTimezone(company.weekly_digest_timezone || browserTimezone || 'America/New_York');
     }
-  }, [company]);
+  }, [company, browserTimezone]);
 
   const updateMutation = useMutation({
     mutationFn: async (updates: {
@@ -82,6 +104,7 @@ export function WeeklyDigestSettings() {
       weekly_digest_email?: string | null;
       weekly_digest_day?: number;
       weekly_digest_time?: string;
+      weekly_digest_timezone?: string;
     }) => {
       if (!companyId) throw new Error('No company ID');
       const { error } = await supabase
@@ -109,6 +132,7 @@ export function WeeklyDigestSettings() {
       weekly_digest_email: email || null,
       weekly_digest_day: parseInt(day),
       weekly_digest_time: time,
+      weekly_digest_timezone: timezone,
     });
   };
 
@@ -216,7 +240,7 @@ export function WeeklyDigestSettings() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="digest-day">Day</Label>
               <Select value={day} onValueChange={setDay} disabled={!enabled}>
@@ -242,9 +266,27 @@ export function WeeklyDigestSettings() {
                 disabled={!enabled}
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="digest-timezone" className="flex items-center gap-1">
+                <Globe className="h-3.5 w-3.5" />
+                Timezone
+              </Label>
+              <Select value={timezone} onValueChange={setTimezone} disabled={!enabled}>
+                <SelectTrigger id="digest-timezone">
+                  <SelectValue placeholder="Select timezone" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COMMON_TIMEZONES.map((tz) => (
+                    <SelectItem key={tz.value} value={tz.value}>
+                      {tz.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            Digest will be sent every {DAYS_OF_WEEK.find(d => d.value === day)?.label} at {time}
+            Digest will be sent every {DAYS_OF_WEEK.find(d => d.value === day)?.label} at {time} ({COMMON_TIMEZONES.find(tz => tz.value === timezone)?.label || timezone})
           </p>
         </div>
 
