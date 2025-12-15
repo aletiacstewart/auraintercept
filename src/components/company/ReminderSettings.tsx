@@ -9,10 +9,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Bell, Clock, MessageSquare, Phone, Plus, Trash2, AlertTriangle, PhoneCall, Loader2 } from 'lucide-react';
+import { Bell, Clock, MessageSquare, Phone, Plus, Trash2, AlertTriangle, PhoneCall, Loader2, Lock, Sparkles } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSubscription } from '@/hooks/useSubscription';
 
 interface ReminderSetting {
   id: string;
@@ -37,9 +38,13 @@ const PRESET_REMINDERS = [
 
 export function ReminderSettings() {
   const { companyId } = useAuth();
+  const { hasFeature } = useSubscription();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newHours, setNewHours] = useState('');
+  
+  const hasVoiceReminders = hasFeature('voice_reminders');
 
   const { data: settings, isLoading } = useQuery({
     queryKey: ['reminder-settings', companyId],
@@ -115,6 +120,15 @@ export function ReminderSettings() {
   };
 
   const handleToggleCall = (setting: ReminderSetting) => {
+    if (!hasVoiceReminders) {
+      toast.error('Voice reminders require Pro plan or higher', {
+        action: {
+          label: 'Upgrade',
+          onClick: () => navigate('/dashboard/subscription'),
+        },
+      });
+      return;
+    }
     if (!setting.call_enabled && !hasVoiceSupport) {
       toast.error('Please configure ElevenLabs and Twilio integrations first');
       return;
@@ -257,7 +271,19 @@ export function ReminderSettings() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!hasVoiceSupport && (
+        {!hasVoiceReminders && (
+          <Alert className="border-primary/50 bg-primary/5">
+            <Lock className="h-4 w-4 text-primary" />
+            <AlertDescription className="text-sm flex items-center justify-between">
+              <span>Voice call reminders require Pro plan or higher.</span>
+              <Button size="sm" variant="outline" onClick={() => navigate('/dashboard/subscription')} className="ml-2">
+                <Sparkles className="h-3 w-3 mr-1" />
+                Upgrade
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+        {hasVoiceReminders && !hasVoiceSupport && (
           <Alert variant="default" className="border-amber-500/50 bg-amber-500/10">
             <AlertTriangle className="h-4 w-4 text-amber-600" />
             <AlertDescription className="text-sm">
@@ -281,6 +307,7 @@ export function ReminderSettings() {
               key={setting.id}
               setting={setting}
               hasVoiceSupport={hasVoiceSupport}
+              hasVoiceReminders={hasVoiceReminders}
               companyId={companyId}
               onToggleEnabled={() => handleToggleEnabled(setting)}
               onToggleCall={() => handleToggleCall(setting)}
@@ -313,6 +340,7 @@ export function ReminderSettings() {
 interface ReminderCardProps {
   setting: ReminderSetting;
   hasVoiceSupport: boolean;
+  hasVoiceReminders: boolean;
   companyId: string | null;
   onToggleEnabled: () => void;
   onToggleCall: () => void;
@@ -321,7 +349,7 @@ interface ReminderCardProps {
   onDelete: () => void;
 }
 
-function ReminderCard({ setting, hasVoiceSupport, companyId, onToggleEnabled, onToggleCall, onUpdateTemplate, onUpdateCallTemplate, onDelete }: ReminderCardProps) {
+function ReminderCard({ setting, hasVoiceSupport, hasVoiceReminders, companyId, onToggleEnabled, onToggleCall, onUpdateTemplate, onUpdateCallTemplate, onDelete }: ReminderCardProps) {
   const [template, setTemplate] = useState(setting.sms_template);
   const [callTemplate, setCallTemplate] = useState(setting.call_template || '');
   const [isEditing, setIsEditing] = useState(false);
@@ -434,11 +462,18 @@ function ReminderCard({ setting, hasVoiceSupport, companyId, onToggleEnabled, on
         <div className="flex items-center gap-2">
           <Phone className="h-4 w-4" />
           <span>Voice Call</span>
-          <Switch
-            checked={setting.call_enabled}
-            onCheckedChange={onToggleCall}
-            disabled={!hasVoiceSupport && !setting.call_enabled}
-          />
+          {hasVoiceReminders ? (
+            <Switch
+              checked={setting.call_enabled}
+              onCheckedChange={onToggleCall}
+              disabled={!hasVoiceSupport && !setting.call_enabled}
+            />
+          ) : (
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <Lock className="h-3 w-3" />
+              <span className="text-xs">Pro</span>
+            </div>
+          )}
         </div>
       </div>
 
