@@ -5,8 +5,9 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { AIAgentChat } from '@/components/ai/AIAgentChat';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing } from 'lucide-react';
+import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink } from 'lucide-react';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
+import { Button } from '@/components/ui/button';
 
 const AIAgent = () => {
   const { companyId } = useAuth();
@@ -114,6 +115,22 @@ const AIAgent = () => {
                         ? 'Configure Twilio'
                         : 'Configure ElevenLabs'}
                   </p>
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {!hasTwilio && (
+                      <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild>
+                        <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer">
+                          Twilio <ExternalLink className="w-3 h-3 ml-1" />
+                        </a>
+                      </Button>
+                    )}
+                    {!hasElevenLabs && (
+                      <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild>
+                        <a href="https://elevenlabs.io/sign-up" target="_blank" rel="noopener noreferrer">
+                          ElevenLabs <ExternalLink className="w-3 h-3 ml-1" />
+                        </a>
+                      </Button>
+                    )}
+                  </div>
                 </>
               )}
             </CardContent>
@@ -146,6 +163,11 @@ const AIAgent = () => {
                   <p className="text-xs text-muted-foreground mt-2">
                     Configure Twilio integration
                   </p>
+                  <Button variant="link" size="sm" className="h-auto p-0 text-xs mt-2" asChild>
+                    <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer">
+                      Sign up for Twilio <ExternalLink className="w-3 h-3 ml-1" />
+                    </a>
+                  </Button>
                 </>
               )}
             </CardContent>
