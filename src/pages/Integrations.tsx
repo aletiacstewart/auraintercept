@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -17,13 +16,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { toast } from 'sonner';
 import { 
   CreditCard, 
@@ -36,24 +28,8 @@ import {
   EyeOff,
   AlertCircle,
   Loader2,
-  Play,
-  Volume2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-// Popular ElevenLabs voices
-const ELEVENLABS_VOICES = [
-  { id: 'JBFqnCBsd6RMkjVDRZzb', name: 'George', description: 'Male, British, warm' },
-  { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Sarah', description: 'Female, American, soft' },
-  { id: 'CwhRBWXzGAHq8TQ4Fs17', name: 'Roger', description: 'Male, British' },
-  { id: 'FGY2WhTYpPnrIDTdsKH5', name: 'Laura', description: 'Female, American' },
-  { id: 'IKne3meq5aSn9XLyUdCD', name: 'Charlie', description: 'Male, Australian' },
-  { id: 'XrExE9yKIg1WjnnlVkGX', name: 'Matilda', description: 'Female, Australian' },
-  { id: 'cgSgspJ2msm6clMCkdW9', name: 'Jessica', description: 'Female, American, expressive' },
-  { id: 'nPczCjzI2devNBz1zQrb', name: 'Brian', description: 'Male, American' },
-  { id: 'pFZP5JQG7iQjIQuC4Bku', name: 'Lily', description: 'Female, British' },
-  { id: 'onwK4e9ZLuTAKqWW03F9', name: 'Daniel', description: 'Male, British, deep' },
-];
 
 interface Integration {
   id: string;
@@ -70,7 +46,7 @@ interface IntegrationField {
   key: string;
   label: string;
   placeholder: string;
-  type: 'text' | 'password' | 'voice-select';
+  type: 'text' | 'password';
   required: boolean;
   helpText?: string;
 }
@@ -108,8 +84,7 @@ const INTEGRATIONS: Integration[] = [
     color: 'bg-blue-500',
     docsUrl: 'https://elevenlabs.io/app/settings/api-keys',
     fields: [
-      { key: 'elevenlabs_api_key', label: 'API Key', placeholder: 'Your ElevenLabs API key', type: 'password', required: true },
-      { key: 'elevenlabs_voice_id', label: 'Voice', placeholder: 'Select a voice', type: 'voice-select', required: false, helpText: 'Select a voice for your AI agent' },
+      { key: 'elevenlabs_api_key', label: 'API Key', placeholder: 'Your ElevenLabs API key', type: 'password', required: true, helpText: 'Voice selection is available in AI Agent → Settings' },
     ],
     checkConnection: (data) => !!data.elevenlabs_api_key,
   },
@@ -133,9 +108,6 @@ export default function Integrations() {
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
-  const [useCustomVoice, setUseCustomVoice] = useState(false);
-  const [customVoiceId, setCustomVoiceId] = useState('');
-  const [isPreviewingVoice, setIsPreviewingVoice] = useState(false);
 
   // Fetch current integrations
   const { data: integrations, isLoading } = useQuery({
@@ -182,8 +154,6 @@ export default function Integrations() {
       toast.success('Integration saved successfully!');
       setSelectedIntegration(null);
       setFormData({});
-      setUseCustomVoice(false);
-      setCustomVoiceId('');
     },
     onError: (error) => {
       console.error('Error saving integration:', error);
@@ -201,22 +171,6 @@ export default function Integrations() {
       }
     });
     setFormData(existingData);
-    
-    // Check if existing voice ID is a custom one
-    if (integration.id === 'elevenlabs' && existingData.elevenlabs_voice_id) {
-      const isPresetVoice = ELEVENLABS_VOICES.some(v => v.id === existingData.elevenlabs_voice_id);
-      if (!isPresetVoice) {
-        setUseCustomVoice(true);
-        setCustomVoiceId(existingData.elevenlabs_voice_id);
-      } else {
-        setUseCustomVoice(false);
-        setCustomVoiceId('');
-      }
-    } else {
-      setUseCustomVoice(false);
-      setCustomVoiceId('');
-    }
-    
     setSelectedIntegration(integration);
   };
 
@@ -233,13 +187,7 @@ export default function Integrations() {
       return;
     }
 
-    // If using custom voice, update formData
-    const finalData = { ...formData };
-    if (selectedIntegration.id === 'elevenlabs' && useCustomVoice && customVoiceId) {
-      finalData.elevenlabs_voice_id = customVoiceId;
-    }
-
-    saveMutation.mutate(finalData);
+    saveMutation.mutate(formData);
   };
 
   const getConnectionStatus = (integration: Integration) => {
@@ -256,57 +204,6 @@ export default function Integrations() {
 
   const togglePasswordVisibility = (key: string) => {
     setShowPasswords((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const handlePreviewVoice = async () => {
-    const apiKey = formData.elevenlabs_api_key;
-    const voiceId = useCustomVoice ? customVoiceId : (formData.elevenlabs_voice_id || 'JBFqnCBsd6RMkjVDRZzb');
-    
-    if (!apiKey) {
-      toast.error('Please enter your API key first');
-      return;
-    }
-    
-    if (!voiceId) {
-      toast.error('Please select a voice');
-      return;
-    }
-
-    setIsPreviewingVoice(true);
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({
-            text: "Hello! I'm your AI assistant. How can I help you today?",
-            api_key: apiKey,
-            voice_id: voiceId,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to generate voice preview');
-      }
-
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audio.play();
-      toast.success('Playing voice preview');
-    } catch (error) {
-      console.error('Voice preview error:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to preview voice');
-    } finally {
-      setIsPreviewingVoice(false);
-    }
   };
 
   return (
@@ -517,113 +414,31 @@ export default function Integrations() {
                     {field.label}
                     {field.required && <span className="text-destructive ml-1">*</span>}
                   </Label>
-                  
-                  {field.type === 'voice-select' ? (
-                    <div className="space-y-3">
-                      {/* Voice Select Dropdown */}
-                      <div className="flex gap-2">
-                        <Select
-                          value={useCustomVoice ? 'custom' : (formData[field.key] || 'JBFqnCBsd6RMkjVDRZzb')}
-                          onValueChange={(value) => {
-                            if (value === 'custom') {
-                              setUseCustomVoice(true);
-                            } else {
-                              setUseCustomVoice(false);
-                              setFormData((prev) => ({ ...prev, [field.key]: value }));
-                            }
-                          }}
-                        >
-                          <SelectTrigger className="flex-1">
-                            <SelectValue placeholder="Select a voice" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ELEVENLABS_VOICES.map((voice) => (
-                              <SelectItem key={voice.id} value={voice.id}>
-                                <div className="flex items-center gap-2">
-                                  <Volume2 className="w-3 h-3 text-muted-foreground" />
-                                  <span>{voice.name}</span>
-                                  <span className="text-muted-foreground text-xs">({voice.description})</span>
-                                </div>
-                              </SelectItem>
-                            ))}
-                            <SelectItem value="custom">
-                              <div className="flex items-center gap-2">
-                                <Mic className="w-3 h-3 text-muted-foreground" />
-                                <span>Custom Voice ID</span>
-                              </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={handlePreviewVoice}
-                          disabled={isPreviewingVoice || !formData.elevenlabs_api_key}
-                          title="Preview voice"
-                        >
-                          {isPreviewingVoice ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Play className="w-4 h-4" />
-                          )}
-                        </Button>
-                      </div>
-                      
-                      {/* Custom Voice ID Input */}
-                      {useCustomVoice && (
-                        <div className="space-y-2">
-                          <Input
-                            placeholder="Enter custom Voice ID"
-                            value={customVoiceId}
-                            onChange={(e) => setCustomVoiceId(e.target.value)}
-                          />
-                          <p className="text-xs text-muted-foreground">
-                            Find more voices at{' '}
-                            <a
-                              href="https://elevenlabs.io/voice-library"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-primary hover:underline"
-                            >
-                              ElevenLabs Voice Library
-                            </a>
-                          </p>
-                        </div>
-                      )}
-                      
-                      {field.helpText && !useCustomVoice && (
-                        <p className="text-xs text-muted-foreground">{field.helpText}</p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="relative">
-                      <Input
-                        id={field.key}
-                        type={field.type === 'password' && !showPasswords[field.key] ? 'password' : 'text'}
-                        placeholder={field.placeholder}
-                        value={formData[field.key] || ''}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, [field.key]: e.target.value }))}
-                      />
-                      {field.type === 'password' && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
-                          onClick={() => togglePasswordVisibility(field.key)}
-                        >
-                          {showPasswords[field.key] ? (
-                            <EyeOff className="w-4 h-4" />
-                          ) : (
-                            <Eye className="w-4 h-4" />
-                          )}
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                  
-                  {field.type !== 'voice-select' && field.helpText && (
+                  <div className="relative">
+                    <Input
+                      id={field.key}
+                      type={field.type === 'password' && !showPasswords[field.key] ? 'password' : 'text'}
+                      placeholder={field.placeholder}
+                      value={formData[field.key] || ''}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, [field.key]: e.target.value }))}
+                    />
+                    {field.type === 'password' && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+                        onClick={() => togglePasswordVisibility(field.key)}
+                      >
+                        {showPasswords[field.key] ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                  {field.helpText && (
                     <p className="text-xs text-muted-foreground">{field.helpText}</p>
                   )}
                 </div>

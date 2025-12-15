@@ -6,19 +6,47 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Mic, MessageSquare, Save, Loader2, RotateCcw, Play, Volume2 } from 'lucide-react';
+import { Mic, MessageSquare, Save, Loader2, RotateCcw, Play, Volume2, AlertCircle, ExternalLink } from 'lucide-react';
+
+// Popular ElevenLabs voices
+const ELEVENLABS_VOICES = [
+  { id: 'JBFqnCBsd6RMkjVDRZzb', name: 'George', description: 'Male, British, warm' },
+  { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Sarah', description: 'Female, American, soft' },
+  { id: 'CwhRBWXzGAHq8TQ4Fs17', name: 'Roger', description: 'Male, British' },
+  { id: 'FGY2WhTYpPnrIDTdsKH5', name: 'Laura', description: 'Female, American' },
+  { id: 'IKne3meq5aSn9XLyUdCD', name: 'Charlie', description: 'Male, Australian' },
+  { id: 'XrExE9yKIg1WjnnlVkGX', name: 'Matilda', description: 'Female, Australian' },
+  { id: 'cgSgspJ2msm6clMCkdW9', name: 'Jessica', description: 'Female, American, expressive' },
+  { id: 'nPczCjzI2devNBz1zQrb', name: 'Brian', description: 'Male, American' },
+  { id: 'pFZP5JQG7iQjIQuC4Bku', name: 'Lily', description: 'Female, British' },
+  { id: 'onwK4e9ZLuTAKqWW03F9', name: 'Daniel', description: 'Male, British, deep' },
+];
 
 export const AIAgentSettings = () => {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [voiceGreeting, setVoiceGreeting] = useState('');
   const [agentPrompt, setAgentPrompt] = useState('');
+  const [selectedVoiceId, setSelectedVoiceId] = useState('JBFqnCBsd6RMkjVDRZzb');
+  const [useCustomVoice, setUseCustomVoice] = useState(false);
+  const [customVoiceId, setCustomVoiceId] = useState('');
   const [isPreviewingGreeting, setIsPreviewingGreeting] = useState(false);
+  const [isPreviewingVoice, setIsPreviewingVoice] = useState(false);
 
   // Fetch company settings
-  const { data: company, isLoading } = useQuery({
+  const { data: company, isLoading: isLoadingCompany } = useQuery({
     queryKey: ['company-ai-settings', companyId],
     queryFn: async () => {
       if (!companyId) return null;
@@ -34,14 +62,14 @@ export const AIAgentSettings = () => {
     enabled: !!companyId,
   });
 
-  // Fetch integrations to check if ElevenLabs is configured
-  const { data: integrations } = useQuery({
+  // Fetch integrations
+  const { data: integrations, isLoading: isLoadingIntegrations } = useQuery({
     queryKey: ['integrations-elevenlabs', companyId],
     queryFn: async () => {
       if (!companyId) return null;
       const { data } = await supabase
         .from('tenant_integrations')
-        .select('elevenlabs_api_key, elevenlabs_voice_id')
+        .select('id, elevenlabs_api_key, elevenlabs_voice_id')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -50,6 +78,7 @@ export const AIAgentSettings = () => {
   });
 
   const hasElevenLabs = !!integrations?.elevenlabs_api_key;
+  const isLoading = isLoadingCompany || isLoadingIntegrations;
 
   // Update local state when data loads
   useEffect(() => {
@@ -59,8 +88,22 @@ export const AIAgentSettings = () => {
     }
   }, [company]);
 
-  // Save mutation
-  const saveMutation = useMutation({
+  // Update voice selection when integrations load
+  useEffect(() => {
+    if (integrations?.elevenlabs_voice_id) {
+      const isPresetVoice = ELEVENLABS_VOICES.some(v => v.id === integrations.elevenlabs_voice_id);
+      if (isPresetVoice) {
+        setSelectedVoiceId(integrations.elevenlabs_voice_id);
+        setUseCustomVoice(false);
+      } else {
+        setUseCustomVoice(true);
+        setCustomVoiceId(integrations.elevenlabs_voice_id);
+      }
+    }
+  }, [integrations]);
+
+  // Save company settings mutation
+  const saveCompanyMutation = useMutation({
     mutationFn: async () => {
       if (!companyId) throw new Error('No company ID');
 
@@ -76,27 +119,60 @@ export const AIAgentSettings = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['company-ai-settings'] });
-      toast.success('AI Agent settings saved!');
-    },
-    onError: (error) => {
-      console.error('Error saving settings:', error);
-      toast.error('Failed to save settings');
     },
   });
+
+  // Save voice selection mutation
+  const saveVoiceMutation = useMutation({
+    mutationFn: async () => {
+      if (!companyId) throw new Error('No company ID');
+
+      const voiceId = useCustomVoice ? customVoiceId : selectedVoiceId;
+      
+      if (integrations?.id) {
+        const { error } = await supabase
+          .from('tenant_integrations')
+          .update({ elevenlabs_voice_id: voiceId })
+          .eq('id', integrations.id);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['integrations-elevenlabs'] });
+      queryClient.invalidateQueries({ queryKey: ['integrations'] });
+    },
+  });
+
+  const handleSave = async () => {
+    try {
+      await Promise.all([
+        saveCompanyMutation.mutateAsync(),
+        hasElevenLabs ? saveVoiceMutation.mutateAsync() : Promise.resolve(),
+      ]);
+      toast.success('AI Agent settings saved!');
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      toast.error('Failed to save settings');
+    }
+  };
 
   const handleReset = () => {
     setVoiceGreeting('Hello! Thank you for calling. How can I assist you today?');
     setAgentPrompt('You are a helpful AI assistant for this business. Help callers with scheduling appointments, answering questions about services, and providing information about business hours.');
+    setSelectedVoiceId('JBFqnCBsd6RMkjVDRZzb');
+    setUseCustomVoice(false);
+    setCustomVoiceId('');
   };
 
   const handlePreviewGreeting = async () => {
     if (!hasElevenLabs) {
-      toast.error('Please configure ElevenLabs in Integrations to preview voice');
+      toast.error('Please configure ElevenLabs in Integrations first');
       return;
     }
 
     setIsPreviewingGreeting(true);
     try {
+      const voiceId = useCustomVoice ? customVoiceId : selectedVoiceId;
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
         {
@@ -109,6 +185,7 @@ export const AIAgentSettings = () => {
           body: JSON.stringify({
             text: voiceGreeting,
             company_id: companyId,
+            voice_id: voiceId,
           }),
         }
       );
@@ -131,6 +208,55 @@ export const AIAgentSettings = () => {
     }
   };
 
+  const handlePreviewVoice = async () => {
+    if (!hasElevenLabs) {
+      toast.error('Please configure ElevenLabs in Integrations first');
+      return;
+    }
+
+    const voiceId = useCustomVoice ? customVoiceId : selectedVoiceId;
+    if (!voiceId) {
+      toast.error('Please select a voice');
+      return;
+    }
+
+    setIsPreviewingVoice(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            text: "Hello! I'm your AI assistant. How can I help you today?",
+            company_id: companyId,
+            voice_id: voiceId,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to generate voice preview');
+      }
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audio.play();
+      toast.success('Playing voice preview');
+    } catch (error) {
+      console.error('Voice preview error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to preview voice');
+    } finally {
+      setIsPreviewingVoice(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -146,102 +272,210 @@ export const AIAgentSettings = () => {
     );
   }
 
+  const isSaving = saveCompanyMutation.isPending || saveVoiceMutation.isPending;
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Mic className="h-5 w-5" />
-          AI Agent Settings
-        </CardTitle>
-        <CardDescription>
-          Configure how your AI agent greets callers and responds to inquiries
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Voice Greeting */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="voice-greeting" className="flex items-center gap-2">
-              <Volume2 className="h-4 w-4 text-muted-foreground" />
-              Voice Greeting
-            </Label>
-            {hasElevenLabs && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handlePreviewGreeting}
-                disabled={isPreviewingGreeting || !voiceGreeting.trim()}
-              >
-                {isPreviewingGreeting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Play className="h-4 w-4" />
+    <div className="space-y-6">
+      {/* Voice Selection Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Volume2 className="h-5 w-5" />
+            AI Voice
+          </CardTitle>
+          <CardDescription>
+            Select the voice your AI agent will use for phone calls
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!hasElevenLabs ? (
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="flex items-center justify-between">
+                <span>Configure ElevenLabs API key in Integrations to enable voice features.</span>
+                <Button variant="link" size="sm" className="h-auto p-0" asChild>
+                  <a href="/dashboard/integrations">
+                    Go to Integrations <ExternalLink className="w-3 h-3 ml-1" />
+                  </a>
+                </Button>
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <>
+              <div className="space-y-3">
+                <Label>Voice Selection</Label>
+                <div className="flex gap-2">
+                  <Select
+                    value={useCustomVoice ? 'custom' : selectedVoiceId}
+                    onValueChange={(value) => {
+                      if (value === 'custom') {
+                        setUseCustomVoice(true);
+                      } else {
+                        setUseCustomVoice(false);
+                        setSelectedVoiceId(value);
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="flex-1">
+                      <SelectValue placeholder="Select a voice" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ELEVENLABS_VOICES.map((voice) => (
+                        <SelectItem key={voice.id} value={voice.id}>
+                          <div className="flex items-center gap-2">
+                            <Volume2 className="w-3 h-3 text-muted-foreground" />
+                            <span>{voice.name}</span>
+                            <span className="text-muted-foreground text-xs">({voice.description})</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="custom">
+                        <div className="flex items-center gap-2">
+                          <Mic className="w-3 h-3 text-muted-foreground" />
+                          <span>Custom Voice ID</span>
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handlePreviewVoice}
+                    disabled={isPreviewingVoice}
+                    title="Preview voice"
+                  >
+                    {isPreviewingVoice ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Play className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+
+                {useCustomVoice && (
+                  <div className="space-y-2">
+                    <Input
+                      placeholder="Enter custom Voice ID"
+                      value={customVoiceId}
+                      onChange={(e) => setCustomVoiceId(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Find more voices at{' '}
+                      <a
+                        href="https://elevenlabs.io/voice-library"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        ElevenLabs Voice Library
+                      </a>
+                    </p>
+                  </div>
                 )}
-                <span className="ml-1">Preview</span>
-              </Button>
-            )}
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Greeting & Prompt Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Mic className="h-5 w-5" />
+            AI Agent Behavior
+          </CardTitle>
+          <CardDescription>
+            Configure how your AI agent greets callers and responds to inquiries
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Voice Greeting */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="voice-greeting" className="flex items-center gap-2">
+                <Volume2 className="h-4 w-4 text-muted-foreground" />
+                Voice Greeting
+              </Label>
+              {hasElevenLabs && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handlePreviewGreeting}
+                  disabled={isPreviewingGreeting || !voiceGreeting.trim()}
+                >
+                  {isPreviewingGreeting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Play className="h-4 w-4" />
+                  )}
+                  <span className="ml-1">Preview</span>
+                </Button>
+              )}
+            </div>
+            <Textarea
+              id="voice-greeting"
+              value={voiceGreeting}
+              onChange={(e) => setVoiceGreeting(e.target.value)}
+              placeholder="Enter the greeting message your AI agent will say when answering calls..."
+              rows={3}
+              className="resize-none"
+            />
+            <p className="text-xs text-muted-foreground">
+              This is what the AI agent will say when someone calls your business. Keep it friendly and concise.
+            </p>
           </div>
-          <Textarea
-            id="voice-greeting"
-            value={voiceGreeting}
-            onChange={(e) => setVoiceGreeting(e.target.value)}
-            placeholder="Enter the greeting message your AI agent will say when answering calls..."
-            rows={3}
-            className="resize-none"
-          />
-          <p className="text-xs text-muted-foreground">
-            This is what the AI agent will say when someone calls your business. Keep it friendly and concise.
-          </p>
-        </div>
 
-        {/* Agent System Prompt */}
-        <div className="space-y-2">
-          <Label htmlFor="agent-prompt" className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-            AI Agent Personality & Instructions
-          </Label>
-          <Textarea
-            id="agent-prompt"
-            value={agentPrompt}
-            onChange={(e) => setAgentPrompt(e.target.value)}
-            placeholder="Enter instructions for how your AI agent should behave and respond..."
-            rows={5}
-            className="resize-none"
-          />
-          <p className="text-xs text-muted-foreground">
-            This guides how your AI agent responds. Include your business tone, special instructions, and any restrictions.
-          </p>
-        </div>
+          {/* Agent System Prompt */}
+          <div className="space-y-2">
+            <Label htmlFor="agent-prompt" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+              AI Agent Personality & Instructions
+            </Label>
+            <Textarea
+              id="agent-prompt"
+              value={agentPrompt}
+              onChange={(e) => setAgentPrompt(e.target.value)}
+              placeholder="Enter instructions for how your AI agent should behave and respond..."
+              rows={5}
+              className="resize-none"
+            />
+            <p className="text-xs text-muted-foreground">
+              This guides how your AI agent responds. Include your business tone, special instructions, and any restrictions.
+            </p>
+          </div>
 
-        {/* Actions */}
-        <div className="flex gap-3 pt-2">
-          <Button
-            variant="outline"
-            onClick={handleReset}
-            disabled={saveMutation.isPending}
-          >
-            <RotateCcw className="h-4 w-4 mr-2" />
-            Reset to Defaults
-          </Button>
-          <Button
-            onClick={() => saveMutation.mutate()}
-            disabled={saveMutation.isPending}
-          >
-            {saveMutation.isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4 mr-2" />
-                Save Settings
-              </>
-            )}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          {/* Actions */}
+          <div className="flex gap-3 pt-2">
+            <Button
+              variant="outline"
+              onClick={handleReset}
+              disabled={isSaving}
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Reset to Defaults
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4 mr-2" />
+                  Save Settings
+                </>
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
