@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { text, company_id, voice_id, api_key } = await req.json();
+    const { text, company_id, voice_id, api_key, voice_settings: customSettings } = await req.json();
 
     if (!text) {
       throw new Error('Text is required');
@@ -21,12 +21,22 @@ serve(async (req) => {
 
     let elevenLabsApiKey: string;
     let voiceId: string;
+    let voiceSettings = {
+      stability: 0.5,
+      similarity_boost: 0.75,
+      style: 0.5,
+      speed: 1.0,
+    };
 
     // Preview mode: use provided api_key and voice_id directly
     if (api_key && voice_id) {
       console.log(`TTS preview request with voice ${voice_id}`);
       elevenLabsApiKey = api_key;
       voiceId = voice_id;
+      // Use custom settings if provided
+      if (customSettings) {
+        voiceSettings = { ...voiceSettings, ...customSettings };
+      }
     } else {
       // Production mode: look up from tenant_integrations
       if (!company_id) {
@@ -40,10 +50,10 @@ serve(async (req) => {
       const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-      // Fetch company's ElevenLabs credentials
+      // Fetch company's ElevenLabs credentials and voice settings
       const { data: integration, error: integrationError } = await supabase
         .from('tenant_integrations')
-        .select('elevenlabs_api_key, elevenlabs_voice_id')
+        .select('elevenlabs_api_key, elevenlabs_voice_id, elevenlabs_voice_stability, elevenlabs_voice_similarity, elevenlabs_voice_style, elevenlabs_voice_speed')
         .eq('company_id', company_id)
         .maybeSingle();
 
@@ -59,6 +69,14 @@ serve(async (req) => {
       elevenLabsApiKey = integration.elevenlabs_api_key;
       // Use company's voice ID or default to a standard voice
       voiceId = integration.elevenlabs_voice_id || 'JBFqnCBsd6RMkjVDRZzb'; // George - default voice
+      
+      // Use saved voice settings if available
+      voiceSettings = {
+        stability: integration.elevenlabs_voice_stability ?? 0.5,
+        similarity_boost: integration.elevenlabs_voice_similarity ?? 0.75,
+        style: integration.elevenlabs_voice_style ?? 0.5,
+        speed: integration.elevenlabs_voice_speed ?? 1.0,
+      };
     }
     
     console.log(`Using voice ID: ${voiceId}`);
@@ -77,10 +95,11 @@ serve(async (req) => {
           model_id: 'eleven_multilingual_v2',
           output_format: 'mp3_44100_128',
           voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.75,
-            style: 0.3,
+            stability: voiceSettings.stability,
+            similarity_boost: voiceSettings.similarity_boost,
+            style: voiceSettings.style,
             use_speaker_boost: true,
+            speed: voiceSettings.speed,
           },
         }),
       }
