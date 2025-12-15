@@ -1,9 +1,17 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
 type AppRole = Database['public']['Enums']['app_role'];
+export type SubscriptionTier = 'free' | 'basic' | 'pro' | 'enterprise';
+
+// Map Stripe product IDs to tier names
+const PRODUCT_TO_TIER: Record<string, SubscriptionTier> = {
+  'prod_SWYxYBJqkbhO4e': 'basic',
+  'prod_SWYy94FDlxjqRU': 'pro',
+  'prod_SWYyN0b5FiLtCg': 'enterprise',
+};
 
 interface AuthContextType {
   user: User | null;
@@ -11,7 +19,11 @@ interface AuthContextType {
   loading: boolean;
   userRole: AppRole | null;
   companyId: string | null;
+  subscribed: boolean;
+  subscriptionTier: SubscriptionTier | null;
+  subscriptionEnd: string | null;
   signOut: () => Promise<void>;
+  checkSubscription: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,9 +34,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<AppRole | null>(null);
   const [companyId, setCompanyId] = useState<string | null>(null);
+  const [subscribed, setSubscribed] = useState(false);
+  const [subscriptionTier, setSubscriptionTier] = useState<SubscriptionTier | null>(null);
+  const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
+
+  const checkSubscription = useCallback(async () => {
+    if (!session?.access_token) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error('Error checking subscription:', error);
+        return;
+      }
+
+      setSubscribed(data?.subscribed ?? false);
+      setSubscriptionEnd(data?.subscription_end ?? null);
+      
+      if (data?.product_id && PRODUCT_TO_TIER[data.product_id]) {
+        setSubscriptionTier(PRODUCT_TO_TIER[data.product_id]);
+      } else {
+        setSubscriptionTier(data?.subscribed ? 'basic' : 'free');
+      }
+    } catch (err) {
+      console.error('Failed to check subscription:', err);
+    }
+  }, [session?.access_token]);
 
   const fetchUserData = async (userId: string) => {
-    // Fetch role
     const { data: roleData } = await supabase
       .from('user_roles')
       .select('role')
@@ -35,7 +77,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUserRole(roleData.role);
     }
 
-    // Fetch company_id from profile
     const { data: profileData } = await supabase
       .from('profiles')
       .select('company_id')
@@ -48,27 +89,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Defer data fetching to avoid deadlock
           setTimeout(() => {
             fetchUserData(session.user.id);
           }, 0);
         } else {
           setUserRole(null);
           setCompanyId(null);
+          setSubscribed(false);
+          setSubscriptionTier(null);
+          setSubscriptionEnd(null);
         }
         
         setLoading(false);
       }
     );
 
-    // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -83,16 +124,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
+  // Check subscription on session change and periodically
+  useEffect(() => {
+    if (session?.access_token) {
+      checkSubscription();
+      const interval = setInterval(checkSubscription, 60000); // Every 60 seconds
+      return () => clearInterval(interval);
+    }
+  }, [session?.access_token, checkSubscription]);
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
     setUserRole(null);
     setCompanyId(null);
+    setSubscribed(false);
+    setSubscriptionTier(null);
+    setSubscriptionEnd(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, userRole, companyId, signOut }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      session, 
+      loading, 
+      userRole, 
+      companyId, 
+      subscribed, 
+      subscriptionTier, 
+      subscriptionEnd, 
+      signOut, 
+      checkSubscription 
+    }}>
       {children}
     </AuthContext.Provider>
   );
