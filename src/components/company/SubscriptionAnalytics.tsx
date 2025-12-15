@@ -20,10 +20,12 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend
+  Legend,
+  LineChart,
+  Line
 } from 'recharts';
 import { TrendingDown, TrendingUp, MessageSquare, Mail, Phone, ArrowUpRight, ArrowDownRight, Download, CalendarIcon } from 'lucide-react';
-import { format, subDays, startOfDay, endOfDay, isWithinInterval } from 'date-fns';
+import { format, subDays, startOfDay, endOfDay, isWithinInterval, startOfWeek, subWeeks } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -50,13 +52,21 @@ interface SubscriptionEvent {
   created_at: string;
 }
 
+interface ReminderLog {
+  id: string;
+  company_id: string;
+  status: string;
+  channel: string;
+  created_at: string;
+}
+
 export function SubscriptionAnalytics() {
   const { companyId } = useAuth();
   const [datePreset, setDatePreset] = useState<DatePreset>('all');
   const [customStartDate, setCustomStartDate] = useState<Date | undefined>(undefined);
   const [customEndDate, setCustomEndDate] = useState<Date | undefined>(undefined);
 
-  const { data: events, isLoading } = useQuery({
+  const { data: events, isLoading: eventsLoading } = useQuery({
     queryKey: ['subscription-events', companyId],
     queryFn: async () => {
       if (!companyId) return [];
@@ -71,6 +81,61 @@ export function SubscriptionAnalytics() {
     },
     enabled: !!companyId,
   });
+
+  // Fetch reminder logs for trend chart (last 4 weeks)
+  const fourWeeksAgo = subWeeks(new Date(), 4);
+  const { data: reminderLogs, isLoading: remindersLoading } = useQuery({
+    queryKey: ['reminder-logs-trends', companyId],
+    queryFn: async () => {
+      if (!companyId) return [];
+      const { data, error } = await supabase
+        .from('reminder_logs')
+        .select('id, company_id, status, channel, created_at')
+        .eq('company_id', companyId)
+        .gte('created_at', fourWeeksAgo.toISOString())
+        .order('created_at', { ascending: true });
+      if (error) throw error;
+      return (data || []) as ReminderLog[];
+    },
+    enabled: !!companyId,
+  });
+
+  const isLoading = eventsLoading || remindersLoading;
+
+  // Calculate weekly trend data for line chart
+  const weeklyTrendData = useMemo(() => {
+    const weeks: { weekStart: Date; weekLabel: string; reminders: number; unsubscribes: number; resubscribes: number }[] = [];
+    
+    for (let i = 3; i >= 0; i--) {
+      const weekStart = startOfWeek(subWeeks(new Date(), i), { weekStartsOn: 1 });
+      const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1);
+      
+      const remindersInWeek = reminderLogs?.filter(log => {
+        const logDate = new Date(log.created_at);
+        return logDate >= weekStart && logDate <= weekEnd;
+      }).length || 0;
+      
+      const unsubscribesInWeek = events?.filter(e => {
+        const eventDate = new Date(e.created_at);
+        return e.action === 'unsubscribe' && eventDate >= weekStart && eventDate <= weekEnd;
+      }).length || 0;
+      
+      const resubscribesInWeek = events?.filter(e => {
+        const eventDate = new Date(e.created_at);
+        return e.action === 'subscribe' && eventDate >= weekStart && eventDate <= weekEnd;
+      }).length || 0;
+      
+      weeks.push({
+        weekStart,
+        weekLabel: format(weekStart, 'MMM d'),
+        reminders: remindersInWeek,
+        unsubscribes: unsubscribesInWeek,
+        resubscribes: resubscribesInWeek
+      });
+    }
+    
+    return weeks;
+  }, [events, reminderLogs]);
 
   // Filter events based on date range
   const filteredEvents = useMemo(() => {
@@ -392,6 +457,69 @@ export function SubscriptionAnalytics() {
           </CardContent>
         </Card>
       </div>
+
+      {/* 4-Week Trend Chart */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">4-Week Trends</CardTitle>
+          <CardDescription>Reminders sent and subscription changes over the past 4 weeks</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {weeklyTrendData.some(d => d.reminders > 0 || d.unsubscribes > 0 || d.resubscribes > 0) ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={weeklyTrendData}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis 
+                  dataKey="weekLabel" 
+                  className="text-xs"
+                  tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                />
+                <YAxis 
+                  className="text-xs"
+                  tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))', 
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '6px'
+                  }}
+                  labelFormatter={(label) => `Week of ${label}`}
+                />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="reminders" 
+                  stroke="#3b82f6" 
+                  strokeWidth={2}
+                  dot={{ fill: '#3b82f6', strokeWidth: 2 }}
+                  name="Reminders Sent"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="unsubscribes" 
+                  stroke="#ef4444" 
+                  strokeWidth={2}
+                  dot={{ fill: '#ef4444', strokeWidth: 2 }}
+                  name="Unsubscribes"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="resubscribes" 
+                  stroke="#22c55e" 
+                  strokeWidth={2}
+                  dot={{ fill: '#22c55e', strokeWidth: 2 }}
+                  name="Re-subscribes"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-64 flex items-center justify-center text-muted-foreground">
+              No data available for the past 4 weeks
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Channel Breakdown Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
