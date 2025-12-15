@@ -16,26 +16,59 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    const now = new Date();
-    const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    // Check if this is a test request
+    let isTestMode = false;
+    let testCompanyId: string | null = null;
     
-    console.log(`Running weekly digest check at ${now.toISOString()}, day: ${currentDay}`);
+    if (req.method === 'POST') {
+      try {
+        const body = await req.json();
+        isTestMode = body.test === true;
+        testCompanyId = body.company_id || null;
+      } catch {
+        // Not JSON body, continue as normal cron
+      }
+    }
 
-    // Get companies with digest enabled for today
-    const { data: companies, error: companiesError } = await supabase
-      .from('companies')
-      .select('id, name, weekly_digest_email, weekly_digest_day, last_weekly_digest_at')
-      .eq('weekly_digest_enabled', true)
-      .eq('weekly_digest_day', currentDay)
-      .not('weekly_digest_email', 'is', null);
+    const now = new Date();
+    const currentDay = now.getDay();
+    
+    console.log(`Running weekly digest ${isTestMode ? '(TEST MODE)' : ''} at ${now.toISOString()}, day: ${currentDay}`);
 
-    if (companiesError) {
-      console.error('Failed to fetch companies:', companiesError);
-      throw companiesError;
+    let companies;
+    
+    if (isTestMode && testCompanyId) {
+      // Test mode: get specific company regardless of day
+      const { data, error } = await supabase
+        .from('companies')
+        .select('id, name, weekly_digest_email, weekly_digest_day, last_weekly_digest_at')
+        .eq('id', testCompanyId)
+        .not('weekly_digest_email', 'is', null);
+      
+      if (error) throw error;
+      companies = data;
+      
+      if (!companies || companies.length === 0) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Please save a recipient email first' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    } else {
+      // Normal cron mode: get companies scheduled for today
+      const { data, error } = await supabase
+        .from('companies')
+        .select('id, name, weekly_digest_email, weekly_digest_day, last_weekly_digest_at')
+        .eq('weekly_digest_enabled', true)
+        .eq('weekly_digest_day', currentDay)
+        .not('weekly_digest_email', 'is', null);
+      
+      if (error) throw error;
+      companies = data;
     }
 
     if (!companies || companies.length === 0) {
-      console.log('No companies scheduled for digest today');
+      console.log('No companies to process');
       return new Response(
         JSON.stringify({ success: true, message: 'No digests to send', digests_sent: 0 }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -50,8 +83,8 @@ Deno.serve(async (req) => {
     let digestsSent = 0;
 
     for (const company of companies) {
-      // Skip if we already sent a digest this week
-      if (company.last_weekly_digest_at) {
+      // Skip duplicate check in test mode
+      if (!isTestMode && company.last_weekly_digest_at) {
         const lastDigest = new Date(company.last_weekly_digest_at);
         if (periodEnd.getTime() - lastDigest.getTime() < 6 * 24 * 60 * 60 * 1000) {
           console.log(`Skipping ${company.name}: digest already sent this week`);
@@ -230,16 +263,24 @@ Deno.serve(async (req) => {
 
       if (emailError) {
         console.error(`Failed to send digest for ${company.name}:`, emailError);
+        if (isTestMode) {
+          return new Response(
+            JSON.stringify({ success: false, error: `Email failed: ${emailError.message}` }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
         continue;
       }
 
-      // Update last digest timestamp
-      await supabase
-        .from('companies')
-        .update({ last_weekly_digest_at: periodEnd.toISOString() })
-        .eq('id', company.id);
+      // Only update timestamp in non-test mode
+      if (!isTestMode) {
+        await supabase
+          .from('companies')
+          .update({ last_weekly_digest_at: periodEnd.toISOString() })
+          .eq('id', company.id);
+      }
 
-      console.log(`Weekly digest sent to ${company.weekly_digest_email} for ${company.name}`);
+      console.log(`Weekly digest ${isTestMode ? '(TEST)' : ''} sent to ${company.weekly_digest_email} for ${company.name}`);
       digestsSent++;
     }
 
