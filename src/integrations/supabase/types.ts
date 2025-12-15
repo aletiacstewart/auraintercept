@@ -235,9 +235,15 @@ export type Database = {
           default_email_enabled: boolean
           default_sms_enabled: boolean
           id: string
+          last_monthly_digest_at: string | null
           last_unsubscribe_alert_at: string | null
           last_weekly_digest_at: string | null
           logo_url: string | null
+          monthly_digest_day: number | null
+          monthly_digest_email: string | null
+          monthly_digest_enabled: boolean | null
+          monthly_digest_time: string | null
+          monthly_digest_timezone: string | null
           name: string
           primary_color: string | null
           secondary_color: string | null
@@ -259,9 +265,15 @@ export type Database = {
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
           id?: string
+          last_monthly_digest_at?: string | null
           last_unsubscribe_alert_at?: string | null
           last_weekly_digest_at?: string | null
           logo_url?: string | null
+          monthly_digest_day?: number | null
+          monthly_digest_email?: string | null
+          monthly_digest_enabled?: boolean | null
+          monthly_digest_time?: string | null
+          monthly_digest_timezone?: string | null
           name: string
           primary_color?: string | null
           secondary_color?: string | null
@@ -283,9 +295,15 @@ export type Database = {
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
           id?: string
+          last_monthly_digest_at?: string | null
           last_unsubscribe_alert_at?: string | null
           last_weekly_digest_at?: string | null
           logo_url?: string | null
+          monthly_digest_day?: number | null
+          monthly_digest_email?: string | null
+          monthly_digest_enabled?: boolean | null
+          monthly_digest_time?: string | null
+          monthly_digest_timezone?: string | null
           name?: string
           primary_color?: string | null
           secondary_color?: string | null
