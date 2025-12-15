@@ -1,17 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { Calendar, Clock, Mail, CheckCircle2, XCircle, AlertCircle, FileText, TrendingUp, Send, Loader2 } from 'lucide-react';
+import { Calendar, Clock, Mail, CheckCircle2, XCircle, AlertCircle, FileText, TrendingUp, Send, Loader2, ChevronDown, Settings2, Globe } from 'lucide-react';
 import { format, formatDistanceToNow, addDays, setHours, setMinutes, setDate } from 'date-fns';
 import { DigestDeliveryHistory } from './DigestDeliveryHistory';
 import { DigestDeliveryStats } from './DigestDeliveryStats';
 import { SuppressedEmailsManager } from './SuppressedEmailsManager';
+import { DigestMetricsSelector } from './DigestMetricsSelector';
 
 interface ReportConfig {
   id: string;
@@ -25,9 +30,30 @@ interface ReportConfig {
   includeReminders: boolean;
   includeSubscriptions: boolean;
   scheduleDescription: string;
+  day: number;
+  time: string;
+  month?: number;
 }
 
 const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DAYS_OF_MONTH = Array.from({ length: 28 }, (_, i) => i + 1);
+const QUARTER_MONTHS = [
+  { value: 1, label: '1st month (Jan, Apr, Jul, Oct)' },
+  { value: 2, label: '2nd month (Feb, May, Aug, Nov)' },
+  { value: 3, label: '3rd month (Mar, Jun, Sep, Dec)' },
+];
+
+const COMMON_TIMEZONES = [
+  { value: 'America/New_York', label: 'Eastern Time (ET)' },
+  { value: 'America/Chicago', label: 'Central Time (CT)' },
+  { value: 'America/Denver', label: 'Mountain Time (MT)' },
+  { value: 'America/Los_Angeles', label: 'Pacific Time (PT)' },
+  { value: 'Europe/London', label: 'London (GMT/BST)' },
+  { value: 'Europe/Paris', label: 'Paris (CET/CEST)' },
+  { value: 'Asia/Tokyo', label: 'Tokyo (JST)' },
+  { value: 'Australia/Sydney', label: 'Sydney (AEST/AEDT)' },
+  { value: 'UTC', label: 'UTC' },
+];
 
 export function ReportsDashboard() {
   const { companyId } = useAuth();
@@ -35,6 +61,11 @@ export function ReportsDashboard() {
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState<string | null>(null);
   const [sendingTest, setSendingTest] = useState<string | null>(null);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [expandedReport, setExpandedReport] = useState<string | null>(null);
+  const [editState, setEditState] = useState<Record<string, ReportConfig>>({});
+
+  const browserTimezone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone, []);
 
   useEffect(() => {
     if (companyId) {
@@ -48,34 +79,12 @@ export function ReportsDashboard() {
     const { data, error } = await supabase
       .from('companies')
       .select(`
-        weekly_digest_enabled,
-        weekly_digest_email,
-        weekly_digest_day,
-        weekly_digest_time,
-        weekly_digest_timezone,
-        weekly_digest_include_appointments,
-        weekly_digest_include_reminders,
-        weekly_digest_include_subscriptions,
-        last_weekly_digest_at,
-        monthly_digest_enabled,
-        monthly_digest_email,
-        monthly_digest_day,
-        monthly_digest_time,
-        monthly_digest_timezone,
-        monthly_digest_include_appointments,
-        monthly_digest_include_reminders,
-        monthly_digest_include_subscriptions,
-        last_monthly_digest_at,
-        quarterly_digest_enabled,
-        quarterly_digest_email,
-        quarterly_digest_month,
-        quarterly_digest_day,
-        quarterly_digest_time,
-        quarterly_digest_timezone,
-        quarterly_digest_include_appointments,
-        quarterly_digest_include_reminders,
-        quarterly_digest_include_subscriptions,
-        last_quarterly_digest_at
+        weekly_digest_enabled, weekly_digest_email, weekly_digest_day, weekly_digest_time, weekly_digest_timezone,
+        weekly_digest_include_appointments, weekly_digest_include_reminders, weekly_digest_include_subscriptions, last_weekly_digest_at,
+        monthly_digest_enabled, monthly_digest_email, monthly_digest_day, monthly_digest_time, monthly_digest_timezone,
+        monthly_digest_include_appointments, monthly_digest_include_reminders, monthly_digest_include_subscriptions, last_monthly_digest_at,
+        quarterly_digest_enabled, quarterly_digest_email, quarterly_digest_month, quarterly_digest_day, quarterly_digest_time, quarterly_digest_timezone,
+        quarterly_digest_include_appointments, quarterly_digest_include_reminders, quarterly_digest_include_subscriptions, last_quarterly_digest_at
       `)
       .eq('id', companyId)
       .single();
@@ -88,7 +97,6 @@ export function ReportsDashboard() {
 
     const now = new Date();
 
-    // Calculate next weekly
     const weeklyDay = data.weekly_digest_day || 1;
     const weeklyTime = data.weekly_digest_time || '09:00';
     const [weeklyHour, weeklyMin] = weeklyTime.split(':').map(Number);
@@ -97,7 +105,6 @@ export function ReportsDashboard() {
     nextWeekly = addDays(nextWeekly, daysUntilWeekly);
     nextWeekly = setHours(setMinutes(nextWeekly, weeklyMin), weeklyHour);
 
-    // Calculate next monthly
     const monthlyDay = data.monthly_digest_day || 1;
     const monthlyTime = data.monthly_digest_time || '09:00';
     const [monthlyHour, monthlyMin] = monthlyTime.split(':').map(Number);
@@ -108,7 +115,6 @@ export function ReportsDashboard() {
       nextMonthly = setHours(setMinutes(nextMonthly, monthlyMin), monthlyHour);
     }
 
-    // Calculate next quarterly
     const quarterlyMonth = data.quarterly_digest_month || 1;
     const quarterlyDay = data.quarterly_digest_day || 1;
     const quarterlyTime = data.quarterly_digest_time || '09:00';
@@ -122,9 +128,7 @@ export function ReportsDashboard() {
       nextQuarterly = setHours(setMinutes(nextQuarterly, quarterlyMin), quarterlyHour);
     }
 
-    const quarterMonthNames = ['1st month', '2nd month', '3rd month'];
-
-    setReports([
+    const reportConfigs: ReportConfig[] = [
       {
         id: 'weekly',
         type: 'weekly',
@@ -132,11 +136,13 @@ export function ReportsDashboard() {
         email: data.weekly_digest_email,
         lastSentAt: data.last_weekly_digest_at,
         nextScheduled: data.weekly_digest_enabled ? nextWeekly : null,
-        timezone: data.weekly_digest_timezone || 'America/New_York',
+        timezone: data.weekly_digest_timezone || browserTimezone || 'America/New_York',
         includeAppointments: data.weekly_digest_include_appointments !== false,
         includeReminders: data.weekly_digest_include_reminders !== false,
         includeSubscriptions: data.weekly_digest_include_subscriptions !== false,
-        scheduleDescription: `Every ${DAYS_OF_WEEK[weeklyDay]} at ${weeklyTime}`
+        scheduleDescription: `Every ${DAYS_OF_WEEK[weeklyDay]} at ${weeklyTime}`,
+        day: weeklyDay,
+        time: weeklyTime.slice(0, 5),
       },
       {
         id: 'monthly',
@@ -145,11 +151,13 @@ export function ReportsDashboard() {
         email: data.monthly_digest_email,
         lastSentAt: data.last_monthly_digest_at,
         nextScheduled: data.monthly_digest_enabled ? nextMonthly : null,
-        timezone: data.monthly_digest_timezone || 'America/New_York',
+        timezone: data.monthly_digest_timezone || browserTimezone || 'America/New_York',
         includeAppointments: data.monthly_digest_include_appointments !== false,
         includeReminders: data.monthly_digest_include_reminders !== false,
         includeSubscriptions: data.monthly_digest_include_subscriptions !== false,
-        scheduleDescription: `Day ${monthlyDay} of each month at ${monthlyTime}`
+        scheduleDescription: `Day ${monthlyDay} of each month at ${monthlyTime}`,
+        day: monthlyDay,
+        time: monthlyTime.slice(0, 5),
       },
       {
         id: 'quarterly',
@@ -158,19 +166,26 @@ export function ReportsDashboard() {
         email: data.quarterly_digest_email,
         lastSentAt: data.last_quarterly_digest_at,
         nextScheduled: data.quarterly_digest_enabled ? nextQuarterly : null,
-        timezone: data.quarterly_digest_timezone || 'America/New_York',
+        timezone: data.quarterly_digest_timezone || browserTimezone || 'America/New_York',
         includeAppointments: data.quarterly_digest_include_appointments !== false,
         includeReminders: data.quarterly_digest_include_reminders !== false,
         includeSubscriptions: data.quarterly_digest_include_subscriptions !== false,
-        scheduleDescription: `${quarterMonthNames[quarterlyMonth - 1]} of quarter, day ${quarterlyDay} at ${quarterlyTime}`
+        scheduleDescription: `${QUARTER_MONTHS[quarterlyMonth - 1]?.label.split(' ')[0]} month of quarter, day ${quarterlyDay} at ${quarterlyTime}`,
+        day: quarterlyDay,
+        time: quarterlyTime.slice(0, 5),
+        month: quarterlyMonth,
       }
-    ]);
+    ];
+
+    setReports(reportConfigs);
+    const editInit: Record<string, ReportConfig> = {};
+    reportConfigs.forEach(r => { editInit[r.id] = { ...r }; });
+    setEditState(editInit);
     setLoading(false);
   };
 
   const toggleReport = async (reportType: string, enabled: boolean) => {
     if (!companyId) return;
-    
     setToggling(reportType);
 
     const updateField = `${reportType}_digest_enabled`;
@@ -181,7 +196,6 @@ export function ReportsDashboard() {
 
     if (error) {
       toast.error('Failed to update report status');
-      console.error(error);
     } else {
       toast.success(`${reportType.charAt(0).toUpperCase() + reportType.slice(1)} digest ${enabled ? 'enabled' : 'disabled'}`);
       fetchReportConfigs();
@@ -189,9 +203,50 @@ export function ReportsDashboard() {
     setToggling(null);
   };
 
+  const saveReportSettings = async (reportType: string) => {
+    if (!companyId) return;
+    const edit = editState[reportType];
+    if (!edit) return;
+
+    if (edit.enabled && !edit.email) {
+      toast.error('Please enter a recipient email');
+      return;
+    }
+
+    setSaving(reportType);
+
+    const updates: Record<string, unknown> = {
+      [`${reportType}_digest_enabled`]: edit.enabled,
+      [`${reportType}_digest_email`]: edit.email || null,
+      [`${reportType}_digest_day`]: edit.day,
+      [`${reportType}_digest_time`]: edit.time,
+      [`${reportType}_digest_timezone`]: edit.timezone,
+      [`${reportType}_digest_include_appointments`]: edit.includeAppointments,
+      [`${reportType}_digest_include_reminders`]: edit.includeReminders,
+      [`${reportType}_digest_include_subscriptions`]: edit.includeSubscriptions,
+    };
+
+    if (reportType === 'quarterly' && edit.month) {
+      updates['quarterly_digest_month'] = edit.month;
+    }
+
+    const { error } = await supabase
+      .from('companies')
+      .update(updates)
+      .eq('id', companyId);
+
+    if (error) {
+      toast.error('Failed to save settings');
+    } else {
+      toast.success('Settings saved');
+      fetchReportConfigs();
+      setExpandedReport(null);
+    }
+    setSaving(null);
+  };
+
   const sendTestDigest = async (reportType: string, email: string | null) => {
     if (!companyId) return;
-    
     if (!email) {
       toast.error('Please configure a recipient email first');
       return;
@@ -206,22 +261,24 @@ export function ReportsDashboard() {
       });
 
       if (error) throw error;
-
       if (data?.success) {
-        toast.success(`Test ${reportType} digest sent to ${email}`, {
-          description: 'Check your inbox for the email with real company data.'
-        });
+        toast.success(`Test ${reportType} digest sent to ${email}`);
       } else if (data?.error) {
-        toast.error(`Failed to send test digest: ${data.error}`);
+        toast.error(`Failed to send: ${data.error}`);
       }
-    } catch (error: any) {
-      console.error('Error sending test digest:', error);
-      toast.error(`Failed to send test ${reportType} digest`, {
-        description: error.message || 'Please try again later.'
-      });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to send test digest';
+      toast.error(message);
     } finally {
       setSendingTest(null);
     }
+  };
+
+  const updateEditState = (reportId: string, updates: Partial<ReportConfig>) => {
+    setEditState(prev => ({
+      ...prev,
+      [reportId]: { ...prev[reportId], ...updates }
+    }));
   };
 
   const getStatusBadge = (report: ReportConfig) => {
@@ -276,94 +333,224 @@ export function ReportsDashboard() {
             Scheduled Reports
           </CardTitle>
           <CardDescription>
-            Overview of all automated digest reports and their status
+            Configure automated digest reports for performance insights
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {reports.map(report => (
-              <div 
-                key={report.id}
-                className="border border-border rounded-lg p-4 space-y-3 hover:bg-muted/30 transition-colors"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    {getReportIcon(report.type)}
-                    <div>
-                      <h3 className="font-semibold capitalize">{report.type} Digest</h3>
-                      <p className="text-sm text-muted-foreground">{report.scheduleDescription}</p>
+            {reports.map(report => {
+              const edit = editState[report.id] || report;
+              const isExpanded = expandedReport === report.id;
+
+              return (
+                <Collapsible
+                  key={report.id}
+                  open={isExpanded}
+                  onOpenChange={(open) => setExpandedReport(open ? report.id : null)}
+                >
+                  <div className="border border-border rounded-lg overflow-hidden">
+                    <div className="p-4 space-y-3 hover:bg-muted/30 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          {getReportIcon(report.type)}
+                          <div>
+                            <h3 className="font-semibold capitalize">{report.type} Digest</h3>
+                            <p className="text-sm text-muted-foreground">{report.scheduleDescription}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => sendTestDigest(report.type, report.email)}
+                            disabled={sendingTest === report.type || !report.email}
+                          >
+                            {sendingTest === report.type ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Send className="h-4 w-4" />
+                            )}
+                            <span className="ml-1 hidden sm:inline">Test</span>
+                          </Button>
+                          {getStatusBadge(report)}
+                          <Switch
+                            checked={report.enabled}
+                            onCheckedChange={(checked) => toggleReport(report.type, checked)}
+                            disabled={toggling === report.type}
+                          />
+                          <CollapsibleTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <Settings2 className="h-4 w-4" />
+                              <ChevronDown className={`h-4 w-4 ml-1 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                            </Button>
+                          </CollapsibleTrigger>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Mail className="h-4 w-4" />
+                          <span>{report.email || 'No recipient set'}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Clock className="h-4 w-4" />
+                          <span>
+                            {report.lastSentAt 
+                              ? `Last sent ${formatDistanceToNow(new Date(report.lastSentAt), { addSuffix: true })}`
+                              : 'Never sent'
+                            }
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Calendar className="h-4 w-4" />
+                          <span>
+                            {report.nextScheduled && report.enabled
+                              ? `Next: ${format(report.nextScheduled, 'MMM d, yyyy')}`
+                              : 'Not scheduled'
+                            }
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs text-muted-foreground">Includes:</span>
+                        {getIncludedMetrics(report).map(metric => (
+                          <Badge key={metric} variant="outline" className="text-xs">
+                            {metric}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => sendTestDigest(report.type, report.email)}
-                      disabled={sendingTest === report.type || !report.email}
-                    >
-                      {sendingTest === report.type ? (
-                        <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                      ) : (
-                        <Send className="h-4 w-4 mr-1" />
-                      )}
-                      Send Test
-                    </Button>
-                    {getStatusBadge(report)}
-                    <Switch
-                      checked={report.enabled}
-                      onCheckedChange={(checked) => toggleReport(report.type, checked)}
-                      disabled={toggling === report.type}
-                    />
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Mail className="h-4 w-4" />
-                    <span>{report.email || 'No recipient set'}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Clock className="h-4 w-4" />
-                    <span>
-                      {report.lastSentAt 
-                        ? `Last sent ${formatDistanceToNow(new Date(report.lastSentAt), { addSuffix: true })}`
-                        : 'Never sent'
-                      }
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span>
-                      {report.nextScheduled && report.enabled
-                        ? `Next: ${format(report.nextScheduled, 'MMM d, yyyy')}`
-                        : 'Not scheduled'
-                      }
-                    </span>
-                  </div>
-                </div>
+                    <CollapsibleContent>
+                      <div className="p-4 pt-0 border-t border-border bg-muted/20 space-y-4">
+                        <div className="space-y-2">
+                          <Label>Recipient Email</Label>
+                          <div className="flex items-center gap-2">
+                            <Mail className="h-4 w-4 text-muted-foreground" />
+                            <Input
+                              type="email"
+                              value={edit.email || ''}
+                              onChange={(e) => updateEditState(report.id, { email: e.target.value })}
+                              placeholder="admin@company.com"
+                            />
+                          </div>
+                        </div>
 
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs text-muted-foreground">Includes:</span>
-                  {getIncludedMetrics(report).map(metric => (
-                    <Badge key={metric} variant="outline" className="text-xs">
-                      {metric}
-                    </Badge>
-                  ))}
-                  {getIncludedMetrics(report).length === 0 && (
-                    <span className="text-xs text-destructive">No metrics selected</span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          {report.type === 'weekly' && (
+                            <div className="space-y-2">
+                              <Label>Day of Week</Label>
+                              <Select value={String(edit.day)} onValueChange={(v) => updateEditState(report.id, { day: parseInt(v) })}>
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {DAYS_OF_WEEK.map((d, i) => (
+                                    <SelectItem key={i} value={String(i)}>{d}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          )}
 
-          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-            <h4 className="font-medium text-sm mb-2">Quick Tips</h4>
-            <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Configure individual report settings in the Opt-in/Out tab</li>
-              <li>• Ensure each report has a valid recipient email</li>
-              <li>• Reports are sent based on your configured timezone</li>
-            </ul>
+                          {report.type === 'monthly' && (
+                            <div className="space-y-2">
+                              <Label>Day of Month</Label>
+                              <Select value={String(edit.day)} onValueChange={(v) => updateEditState(report.id, { day: parseInt(v) })}>
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {DAYS_OF_MONTH.map((d) => (
+                                    <SelectItem key={d} value={String(d)}>{d}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          )}
+
+                          {report.type === 'quarterly' && (
+                            <>
+                              <div className="space-y-2">
+                                <Label>Month of Quarter</Label>
+                                <Select value={String(edit.month || 1)} onValueChange={(v) => updateEditState(report.id, { month: parseInt(v) })}>
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {QUARTER_MONTHS.map((m) => (
+                                      <SelectItem key={m.value} value={String(m.value)}>{m.label}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="space-y-2">
+                                <Label>Day of Month</Label>
+                                <Select value={String(edit.day)} onValueChange={(v) => updateEditState(report.id, { day: parseInt(v) })}>
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {DAYS_OF_MONTH.map((d) => (
+                                      <SelectItem key={d} value={String(d)}>{d}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </>
+                          )}
+
+                          <div className="space-y-2">
+                            <Label>Time</Label>
+                            <Input
+                              type="time"
+                              value={edit.time}
+                              onChange={(e) => updateEditState(report.id, { time: e.target.value })}
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label className="flex items-center gap-1">
+                              <Globe className="h-3.5 w-3.5" />
+                              Timezone
+                            </Label>
+                            <Select value={edit.timezone} onValueChange={(v) => updateEditState(report.id, { timezone: v })}>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {COMMON_TIMEZONES.map((tz) => (
+                                  <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <DigestMetricsSelector
+                          includeAppointments={edit.includeAppointments}
+                          includeReminders={edit.includeReminders}
+                          includeSubscriptions={edit.includeSubscriptions}
+                          onChangeAppointments={(v) => updateEditState(report.id, { includeAppointments: v })}
+                          onChangeReminders={(v) => updateEditState(report.id, { includeReminders: v })}
+                          onChangeSubscriptions={(v) => updateEditState(report.id, { includeSubscriptions: v })}
+                          disabled={false}
+                        />
+
+                        <div className="flex justify-end gap-2">
+                          <Button variant="outline" onClick={() => setExpandedReport(null)}>Cancel</Button>
+                          <Button onClick={() => saveReportSettings(report.type)} disabled={saving === report.type}>
+                            {saving === report.type ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
+                            Save
+                          </Button>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
+              );
+            })}
           </div>
         </CardContent>
       </Card>
