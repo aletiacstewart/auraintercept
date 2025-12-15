@@ -85,8 +85,7 @@ const INTEGRATIONS: Integration[] = [
     docsUrl: 'https://elevenlabs.io/app/settings/api-keys',
     fields: [
       { key: 'elevenlabs_api_key', label: 'API Key', placeholder: 'Your ElevenLabs API key', type: 'password', required: true },
-      { key: 'elevenlabs_voice_id', label: 'Voice ID', placeholder: 'Voice ID (optional)', type: 'text', required: false, helpText: 'Leave blank to use default voice' },
-      { key: 'elevenlabs_agent_id', label: 'Conversational AI Agent ID', placeholder: 'Agent ID for voice chat', type: 'text', required: false, helpText: 'Create an agent at elevenlabs.io/conversational-ai to get the Agent ID' },
+      { key: 'elevenlabs_voice_id', label: 'Voice ID', placeholder: 'Voice ID (optional)', type: 'text', required: false, helpText: 'Leave blank to use default voice. Find voices at elevenlabs.io/voice-library' },
     ],
     checkConnection: (data) => !!data.elevenlabs_api_key,
   },
@@ -371,9 +370,7 @@ export default function Integrations() {
                   <li>Create an ElevenLabs account at elevenlabs.io</li>
                   <li>Go to Settings → API Keys</li>
                   <li>Generate a new API key</li>
-                  <li>Optionally, select a voice from the Voice Library</li>
-                  <li>For voice chat: Go to Conversational AI → Create Agent</li>
-                  <li>Configure your agent and copy the Agent ID</li>
+                  <li>Optionally, browse the Voice Library and copy a Voice ID</li>
                 </ol>
               </div>
               <div className="space-y-2">

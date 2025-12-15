@@ -101,7 +101,7 @@ export const AIAgentConsole = () => {
       if (!companyId) return null;
       const { data } = await supabase
         .from('tenant_integrations')
-        .select('twilio_phone_number, elevenlabs_api_key, elevenlabs_agent_id')
+        .select('twilio_phone_number, elevenlabs_api_key')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -110,9 +110,8 @@ export const AIAgentConsole = () => {
   });
 
   const hasVoice = !!(integrations?.twilio_phone_number && integrations?.elevenlabs_api_key);
-  const hasVoiceChat = !!(integrations?.elevenlabs_api_key && integrations?.elevenlabs_agent_id);
+  const hasVoiceChat = !!integrations?.elevenlabs_api_key;
   const twilioPhone = integrations?.twilio_phone_number;
-  const agentId = integrations?.elevenlabs_agent_id;
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -447,13 +446,12 @@ export const AIAgentConsole = () => {
         </TabsContent>
 
         {/* Voice Tab */}
-        {hasVoiceChat && companyId && agentId && (
+        {hasVoiceChat && companyId && (
           <TabsContent value="voice" className="flex-1 overflow-hidden m-0">
             <div className="h-full flex flex-col items-center justify-center p-4">
               <VoiceChat 
                 companyId={companyId}
                 companyName={company?.name || 'AI Assistant'}
-                agentId={agentId}
                 onTranscript={(role, text) => {
                   console.log(`Voice transcript [${role}]:`, text);
                 }}
