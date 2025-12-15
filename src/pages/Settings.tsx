@@ -7,6 +7,7 @@ import { CustomerPreferencesManager } from '@/components/company/CustomerPrefere
 import { DefaultPreferencesSettings } from '@/components/company/DefaultPreferencesSettings';
 import { SubscriptionAnalytics } from '@/components/company/SubscriptionAnalytics';
 import { UnsubscribeAlertSettings } from '@/components/company/UnsubscribeAlertSettings';
+import { BounceAlertSettings } from '@/components/company/BounceAlertSettings';
 import { WeeklyDigestSettings } from '@/components/company/WeeklyDigestSettings';
 import { MonthlyDigestSettings } from '@/components/company/MonthlyDigestSettings';
 import { QuarterlyDigestSettings } from '@/components/company/QuarterlyDigestSettings';
@@ -62,10 +63,13 @@ export default function Settings() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <UnsubscribeAlertSettings />
-                  <WeeklyDigestSettings />
+                  <BounceAlertSettings />
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <WeeklyDigestSettings />
                   <MonthlyDigestSettings />
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <QuarterlyDigestSettings />
                 </div>
                 <SubscriptionAnalytics />
