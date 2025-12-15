@@ -298,9 +298,14 @@ export default function CallHistory() {
                             {formatDistanceToNow(new Date(call.started_at), { addSuffix: true })}
                           </TableCell>
                           <TableCell>
-                            {Array.isArray(call.transcript) && call.transcript.length > 0 && (
-                              <MessageSquare className="w-4 h-4 text-muted-foreground" />
-                            )}
+                            <div className="flex items-center gap-2">
+                              {call.recording_url && (
+                                <Volume2 className="w-4 h-4 text-primary" />
+                              )}
+                              {Array.isArray(call.transcript) && call.transcript.length > 0 && (
+                                <MessageSquare className="w-4 h-4 text-muted-foreground" />
+                              )}
+                            </div>
                           </TableCell>
                         </TableRow>
                       );
@@ -436,6 +441,8 @@ function AudioPlayer({ url, duration }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [audioDuration, setAudioDuration] = useState(duration || 0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -443,31 +450,41 @@ function AudioPlayer({ url, duration }: AudioPlayerProps) {
 
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleLoadedMetadata = () => {
+      setIsLoading(false);
       if (audio.duration && !isNaN(audio.duration)) {
         setAudioDuration(audio.duration);
       }
     };
     const handleEnded = () => setIsPlaying(false);
+    const handleCanPlay = () => setIsLoading(false);
+    const handleError = () => {
+      setIsLoading(false);
+      setError('Unable to load recording');
+    };
 
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('error', handleError);
 
     return () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('error', handleError);
     };
   }, []);
 
   const togglePlayPause = () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || isLoading || error) return;
 
     if (isPlaying) {
       audio.pause();
     } else {
-      audio.play();
+      audio.play().catch(() => setError('Unable to play recording'));
     }
     setIsPlaying(!isPlaying);
   };
@@ -487,38 +504,82 @@ function AudioPlayer({ url, duration }: AudioPlayerProps) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const progress = audioDuration > 0 ? (currentTime / audioDuration) * 100 : 0;
+
   return (
     <div className="space-y-2">
       <h4 className="font-medium flex items-center gap-2">
-        <Volume2 className="w-4 h-4" />
+        <Volume2 className="w-4 h-4 text-primary" />
         Call Recording
+        {audioDuration > 0 && (
+          <span className="text-xs text-muted-foreground font-normal">
+            ({formatTime(audioDuration)})
+          </span>
+        )}
       </h4>
-      <div className="bg-muted/50 rounded-lg p-4">
+      <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
         <audio ref={audioRef} src={url} preload="metadata" />
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={togglePlayPause}
-            className="h-10 w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
-          </Button>
-          <div className="flex-1 space-y-1">
-            <input
-              type="range"
-              min={0}
-              max={audioDuration || 1}
-              value={currentTime}
-              onChange={handleSeek}
-              className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
-            />
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{formatTime(currentTime)}</span>
-              <span>{formatTime(audioDuration)}</span>
+        
+        {error ? (
+          <div className="flex items-center gap-2 text-destructive text-sm">
+            <XCircle className="w-4 h-4" />
+            {error}
+          </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={togglePlayPause}
+              disabled={isLoading}
+              className={cn(
+                "h-12 w-12 rounded-full transition-all shadow-md",
+                isPlaying 
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90 scale-105" 
+                  : "bg-primary text-primary-foreground hover:bg-primary/90"
+              )}
+            >
+              {isLoading ? (
+                <div className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+              ) : isPlaying ? (
+                <Pause className="h-5 w-5" />
+              ) : (
+                <Play className="h-5 w-5 ml-0.5" />
+              )}
+            </Button>
+            
+            <div className="flex-1 space-y-2">
+              {/* Custom progress bar */}
+              <div 
+                className="relative h-2 bg-muted rounded-full overflow-hidden cursor-pointer group"
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const x = e.clientX - rect.left;
+                  const percentage = x / rect.width;
+                  const newTime = percentage * audioDuration;
+                  if (audioRef.current) {
+                    audioRef.current.currentTime = newTime;
+                    setCurrentTime(newTime);
+                  }
+                }}
+              >
+                <div 
+                  className="absolute h-full bg-primary rounded-full transition-all"
+                  style={{ width: `${progress}%` }}
+                />
+                <div 
+                  className="absolute h-4 w-4 bg-primary rounded-full -top-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{ left: `calc(${progress}% - 8px)` }}
+                />
+              </div>
+              
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span className="font-mono">{formatTime(currentTime)}</span>
+                <span className="font-mono">{formatTime(audioDuration)}</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
