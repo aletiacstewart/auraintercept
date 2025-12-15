@@ -5,16 +5,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
 import { AIAgentChat } from '@/components/ai/AIAgentChat';
+import { AIAgentSettings } from '@/components/ai/AIAgentSettings';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code } from 'lucide-react';
+import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings } from 'lucide-react';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { Button } from '@/components/ui/button';
 
 const AIAgent = () => {
   const { companyId } = useAuth();
   const [viewMode, setViewMode] = useState<'customer' | 'debug'>('customer');
+  const [activeTab, setActiveTab] = useState<'console' | 'settings'>('console');
 
   // Check integration status
   const { data: integrations } = useQuery({
@@ -181,90 +183,110 @@ const AIAgent = () => {
           </Card>
         </div>
 
-        {/* Console with View Toggle */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">AI Agent Console</h2>
-              <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
-                <TabsList className="h-8">
-                  <TabsTrigger value="customer" className="text-xs h-7 px-3">
-                    <Monitor className="h-3 w-3 mr-1" />
-                    Customer View
-                  </TabsTrigger>
-                  <TabsTrigger value="debug" className="text-xs h-7 px-3">
-                    <Code className="h-3 w-3 mr-1" />
-                    Debug
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
-            
-            {viewMode === 'customer' ? (
-              <AIAgentConsole />
-            ) : (
-              <AIAgentChat />
-            )}
-          </div>
+        {/* Main Tabs */}
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'console' | 'settings')}>
+          <TabsList>
+            <TabsTrigger value="console">
+              <Bot className="h-4 w-4 mr-2" />
+              Console
+            </TabsTrigger>
+            <TabsTrigger value="settings">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </TabsTrigger>
+          </TabsList>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bot className="h-5 w-5" />
-                Agent Capabilities
-              </CardTitle>
-              <CardDescription>
-                What your AI agent can do
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                  <Calendar className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <h4 className="font-medium">Appointment Booking</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Check availability, find first available slots, and book appointments based on service duration and employee schedules.
-                    </p>
-                  </div>
+          <TabsContent value="console" className="mt-6">
+            {/* Console with View Toggle */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold">AI Agent Console</h2>
+                  <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
+                    <TabsList className="h-8">
+                      <TabsTrigger value="customer" className="text-xs h-7 px-3">
+                        <Monitor className="h-3 w-3 mr-1" />
+                        Customer View
+                      </TabsTrigger>
+                      <TabsTrigger value="debug" className="text-xs h-7 px-3">
+                        <Code className="h-3 w-3 mr-1" />
+                        Debug
+                      </TabsTrigger>
+                    </TabsList>
+                  </Tabs>
                 </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                  <Brain className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <h4 className="font-medium">RAG-Powered Responses</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Answers questions using your knowledge base including services, FAQs, business hours, and uploaded documents.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                  <Phone className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <h4 className="font-medium flex items-center gap-2">
-                      Voice Calling
-                      {hasVoice && <Badge variant="outline" className="text-xs">Live</Badge>}
-                    </h4>
-                    <p className="text-sm text-muted-foreground">
-                      AI-powered phone conversations using Twilio for telephony and ElevenLabs for natural voice synthesis.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                  <MessageSquare className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <h4 className="font-medium">Multi-Channel Support</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Works across text chat, SMS, and voice channels with consistent responses and context.
-                    </p>
-                  </div>
-                </div>
+                
+                {viewMode === 'customer' ? (
+                  <AIAgentConsole />
+                ) : (
+                  <AIAgentChat />
+                )}
               </div>
-            </CardContent>
-          </Card>
-        </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Bot className="h-5 w-5" />
+                    Agent Capabilities
+                  </CardTitle>
+                  <CardDescription>
+                    What your AI agent can do
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                      <Calendar className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <h4 className="font-medium">Appointment Booking</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Check availability, find first available slots, and book appointments based on service duration and employee schedules.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                      <Brain className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <h4 className="font-medium">RAG-Powered Responses</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Answers questions using your knowledge base including services, FAQs, business hours, and uploaded documents.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                      <Phone className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <h4 className="font-medium flex items-center gap-2">
+                          Voice Calling
+                          {hasVoice && <Badge variant="outline" className="text-xs">Live</Badge>}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          AI-powered phone conversations using Twilio for telephony and ElevenLabs for natural voice synthesis.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                      <MessageSquare className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <h4 className="font-medium">Multi-Channel Support</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Works across text chat, SMS, and voice channels with consistent responses and context.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="settings" className="mt-6">
+            <AIAgentSettings />
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   );

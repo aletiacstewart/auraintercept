@@ -230,6 +230,8 @@ export type Database = {
       }
       companies: {
         Row: {
+          ai_agent_prompt: string | null
+          ai_voice_greeting: string | null
           bounce_alert_email: string | null
           bounce_alert_enabled: boolean | null
           bounce_alert_threshold: number | null
@@ -280,6 +282,8 @@ export type Database = {
           weekly_digest_timezone: string | null
         }
         Insert: {
+          ai_agent_prompt?: string | null
+          ai_voice_greeting?: string | null
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
@@ -330,6 +334,8 @@ export type Database = {
           weekly_digest_timezone?: string | null
         }
         Update: {
+          ai_agent_prompt?: string | null
+          ai_voice_greeting?: string | null
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
