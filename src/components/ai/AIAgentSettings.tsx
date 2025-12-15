@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Slider } from '@/components/ui/slider';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Select,
@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Mic, MessageSquare, Save, Loader2, RotateCcw, Play, Volume2, AlertCircle, ExternalLink } from 'lucide-react';
+import { Mic, MessageSquare, Save, Loader2, RotateCcw, Play, Volume2, AlertCircle, ExternalLink, Gauge, Sparkles } from 'lucide-react';
 
 // Popular ElevenLabs voices
 const ELEVENLABS_VOICES = [
@@ -44,6 +44,12 @@ export const AIAgentSettings = () => {
   const [customVoiceId, setCustomVoiceId] = useState('');
   const [isPreviewingGreeting, setIsPreviewingGreeting] = useState(false);
   const [isPreviewingVoice, setIsPreviewingVoice] = useState(false);
+  
+  // Voice settings
+  const [voiceStability, setVoiceStability] = useState(0.5);
+  const [voiceSimilarity, setVoiceSimilarity] = useState(0.75);
+  const [voiceStyle, setVoiceStyle] = useState(0.5);
+  const [voiceSpeed, setVoiceSpeed] = useState(1.0);
 
   // Fetch company settings
   const { data: company, isLoading: isLoadingCompany } = useQuery({
@@ -69,7 +75,7 @@ export const AIAgentSettings = () => {
       if (!companyId) return null;
       const { data } = await supabase
         .from('tenant_integrations')
-        .select('id, elevenlabs_api_key, elevenlabs_voice_id')
+        .select('id, elevenlabs_api_key, elevenlabs_voice_id, elevenlabs_voice_stability, elevenlabs_voice_similarity, elevenlabs_voice_style, elevenlabs_voice_speed')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -99,6 +105,13 @@ export const AIAgentSettings = () => {
         setUseCustomVoice(true);
         setCustomVoiceId(integrations.elevenlabs_voice_id);
       }
+    }
+    // Load voice settings
+    if (integrations) {
+      setVoiceStability(integrations.elevenlabs_voice_stability ?? 0.5);
+      setVoiceSimilarity(integrations.elevenlabs_voice_similarity ?? 0.75);
+      setVoiceStyle(integrations.elevenlabs_voice_style ?? 0.5);
+      setVoiceSpeed(integrations.elevenlabs_voice_speed ?? 1.0);
     }
   }, [integrations]);
 
@@ -132,7 +145,13 @@ export const AIAgentSettings = () => {
       if (integrations?.id) {
         const { error } = await supabase
           .from('tenant_integrations')
-          .update({ elevenlabs_voice_id: voiceId })
+          .update({ 
+            elevenlabs_voice_id: voiceId,
+            elevenlabs_voice_stability: voiceStability,
+            elevenlabs_voice_similarity: voiceSimilarity,
+            elevenlabs_voice_style: voiceStyle,
+            elevenlabs_voice_speed: voiceSpeed,
+          })
           .eq('id', integrations.id);
         if (error) throw error;
       }
@@ -162,6 +181,10 @@ export const AIAgentSettings = () => {
     setSelectedVoiceId('JBFqnCBsd6RMkjVDRZzb');
     setUseCustomVoice(false);
     setCustomVoiceId('');
+    setVoiceStability(0.5);
+    setVoiceSimilarity(0.75);
+    setVoiceStyle(0.5);
+    setVoiceSpeed(1.0);
   };
 
   const handlePreviewGreeting = async () => {
@@ -186,6 +209,12 @@ export const AIAgentSettings = () => {
             text: voiceGreeting,
             company_id: companyId,
             voice_id: voiceId,
+            voice_settings: {
+              stability: voiceStability,
+              similarity_boost: voiceSimilarity,
+              style: voiceStyle,
+              speed: voiceSpeed,
+            },
           }),
         }
       );
@@ -235,6 +264,12 @@ export const AIAgentSettings = () => {
             text: "Hello! I'm your AI assistant. How can I help you today?",
             company_id: companyId,
             voice_id: voiceId,
+            voice_settings: {
+              stability: voiceStability,
+              similarity_boost: voiceSimilarity,
+              style: voiceStyle,
+              speed: voiceSpeed,
+            },
           }),
         }
       );
@@ -373,6 +408,93 @@ export const AIAgentSettings = () => {
                     </p>
                   </div>
                 )}
+              </div>
+
+              {/* Voice Settings Sliders */}
+              <div className="pt-4 border-t space-y-5">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Gauge className="h-4 w-4 text-muted-foreground" />
+                  Voice Fine-Tuning
+                </div>
+
+                {/* Stability */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm">Stability</Label>
+                    <span className="text-xs text-muted-foreground">{Math.round(voiceStability * 100)}%</span>
+                  </div>
+                  <Slider
+                    value={[voiceStability]}
+                    onValueChange={([value]) => setVoiceStability(value)}
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Lower = more expressive & variable. Higher = more consistent.
+                  </p>
+                </div>
+
+                {/* Similarity */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm">Clarity + Similarity</Label>
+                    <span className="text-xs text-muted-foreground">{Math.round(voiceSimilarity * 100)}%</span>
+                  </div>
+                  <Slider
+                    value={[voiceSimilarity]}
+                    onValueChange={([value]) => setVoiceSimilarity(value)}
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    How closely the AI matches the original voice characteristics.
+                  </p>
+                </div>
+
+                {/* Style */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm flex items-center gap-1">
+                      Style Exaggeration
+                      <Sparkles className="h-3 w-3 text-muted-foreground" />
+                    </Label>
+                    <span className="text-xs text-muted-foreground">{Math.round(voiceStyle * 100)}%</span>
+                  </div>
+                  <Slider
+                    value={[voiceStyle]}
+                    onValueChange={([value]) => setVoiceStyle(value)}
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Higher values amplify the voice's unique style.
+                  </p>
+                </div>
+
+                {/* Speed */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm">Speaking Speed</Label>
+                    <span className="text-xs text-muted-foreground">{voiceSpeed.toFixed(2)}x</span>
+                  </div>
+                  <Slider
+                    value={[voiceSpeed]}
+                    onValueChange={([value]) => setVoiceSpeed(value)}
+                    min={0.7}
+                    max={1.2}
+                    step={0.05}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Adjust speech rate. 1.0x is normal speed.
+                  </p>
+                </div>
               </div>
             </>
           )}
