@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data?.product_id && PRODUCT_TO_TIER[data.product_id]) {
         setSubscriptionTier(PRODUCT_TO_TIER[data.product_id]);
       } else {
-        setSubscriptionTier(data?.subscribed ? 'basic' : 'free');
+        setSubscriptionTier(data?.subscribed ? 'enterprise' : 'free');
       }
     } catch (err) {
       console.error('Failed to check subscription:', err);
