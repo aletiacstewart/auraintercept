@@ -21,6 +21,7 @@ import Widget from "./pages/Widget";
 import CallHistory from "./pages/CallHistory";
 import Analytics from "./pages/Analytics";
 import CustomerPortal from "./pages/CustomerPortal";
+import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/dashboard/widget" element={<Widget />} />
             <Route path="/dashboard/calls" element={<CallHistory />} />
             <Route path="/dashboard/analytics" element={<Analytics />} />
+            <Route path="/dashboard/subscription" element={<Subscription />} />
             <Route path="/appointment" element={<CustomerPortal />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
