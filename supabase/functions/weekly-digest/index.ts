@@ -6,6 +6,51 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Retry configuration
+const MAX_RETRIES = 3;
+const INITIAL_DELAY_MS = 1000; // 1 second
+
+// Helper function to send email with exponential backoff retry
+async function sendWithRetry(
+  resend: Resend,
+  emailOptions: { from: string; to: string[]; subject: string; html: string },
+  maxRetries = MAX_RETRIES
+): Promise<{ success: boolean; error?: string; attempts: number }> {
+  let lastError: string | undefined;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const { error } = await resend.emails.send(emailOptions);
+      
+      if (!error) {
+        console.log(`Email sent successfully on attempt ${attempt}`);
+        return { success: true, attempts: attempt };
+      }
+      
+      lastError = error.message || 'Unknown error';
+      console.log(`Email attempt ${attempt}/${maxRetries} failed: ${lastError}`);
+      
+      // Don't retry on permanent errors (invalid email, etc.)
+      if (error.message?.includes('Invalid') || error.message?.includes('not allowed')) {
+        return { success: false, error: lastError, attempts: attempt };
+      }
+      
+    } catch (err) {
+      lastError = err instanceof Error ? err.message : 'Network error';
+      console.log(`Email attempt ${attempt}/${maxRetries} threw error: ${lastError}`);
+    }
+    
+    // Calculate exponential backoff delay
+    if (attempt < maxRetries) {
+      const delay = INITIAL_DELAY_MS * Math.pow(2, attempt - 1);
+      console.log(`Waiting ${delay}ms before retry...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  
+  return { success: false, error: lastError, attempts: maxRetries };
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -380,12 +425,8 @@ Deno.serve(async (req) => {
         `);
       }
 
-      // Send digest email with week-over-week comparisons
-      const { error: emailError } = await resend.emails.send({
-        from: `${company.name} <onboarding@resend.dev>`,
-        to: [company.weekly_digest_email],
-        subject: `📊 Weekly Performance Digest - ${formatDate(periodStart)} to ${formatDate(periodEnd)}`,
-        html: `
+      // Send digest email with week-over-week comparisons and retry logic
+      const emailHtml = `
           <!DOCTYPE html>
           <html>
             <head>
@@ -415,34 +456,41 @@ Deno.serve(async (req) => {
               </div>
             </body>
           </html>
-        `,
+        `;
+
+      const emailResult = await sendWithRetry(resend, {
+        from: `${company.name} <onboarding@resend.dev>`,
+        to: [company.weekly_digest_email],
+        subject: `📊 Weekly Performance Digest - ${formatDate(periodStart)} to ${formatDate(periodEnd)}`,
+        html: emailHtml,
       });
 
-      if (emailError) {
-        console.error(`Failed to send digest for ${company.name}:`, emailError);
-        // Log failed delivery
+      if (!emailResult.success) {
+        console.error(`Failed to send digest for ${company.name} after ${emailResult.attempts} attempts:`, emailResult.error);
+        // Log failed delivery with retry info
         await supabase.from('digest_delivery_logs').insert({
           company_id: company.id,
           digest_type: 'weekly',
           recipient_email: company.weekly_digest_email,
           status: 'failed',
-          error_message: emailError.message || 'Unknown error',
+          error_message: `Failed after ${emailResult.attempts} attempts: ${emailResult.error}`,
         });
         if (isTestMode) {
           return new Response(
-            JSON.stringify({ success: false, error: `Email failed: ${emailError.message}` }),
+            JSON.stringify({ success: false, error: `Email failed after ${emailResult.attempts} attempts: ${emailResult.error}` }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
         continue;
       }
 
-      // Log successful delivery
+      // Log successful delivery with retry info
       await supabase.from('digest_delivery_logs').insert({
         company_id: company.id,
         digest_type: 'weekly',
         recipient_email: company.weekly_digest_email,
         status: 'sent',
+        error_message: emailResult.attempts > 1 ? `Succeeded after ${emailResult.attempts} attempts` : null,
       });
 
       // Only update timestamp in non-test mode
