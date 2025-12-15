@@ -43,7 +43,7 @@ export function ReminderSettings() {
   const queryClient = useQueryClient();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newHours, setNewHours] = useState('');
-  
+  const hasSmsReminders = hasFeature('sms_reminders');
   const hasVoiceReminders = hasFeature('voice_reminders');
 
   const { data: settings, isLoading } = useQuery({
@@ -113,6 +113,15 @@ export function ReminderSettings() {
   });
 
   const handleToggleEnabled = (setting: ReminderSetting) => {
+    if (!hasSmsReminders && !setting.is_enabled) {
+      toast.error('SMS reminders require Basic plan or higher', {
+        action: {
+          label: 'Upgrade',
+          onClick: () => navigate('/dashboard/subscription'),
+        },
+      });
+      return;
+    }
     upsertMutation.mutate({
       ...setting,
       is_enabled: !setting.is_enabled,
@@ -271,6 +280,18 @@ export function ReminderSettings() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        {!hasSmsReminders && (
+          <Alert className="border-blue-500/50 bg-blue-500/5">
+            <Lock className="h-4 w-4 text-blue-500" />
+            <AlertDescription className="text-sm flex items-center justify-between">
+              <span>SMS reminders require Basic plan or higher.</span>
+              <Button size="sm" variant="outline" onClick={() => navigate('/dashboard/subscription')} className="ml-2">
+                <Sparkles className="h-3 w-3 mr-1" />
+                Upgrade
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
         {!hasVoiceReminders && (
           <Alert className="border-primary/50 bg-primary/5">
             <Lock className="h-4 w-4 text-primary" />
@@ -307,6 +328,7 @@ export function ReminderSettings() {
               key={setting.id}
               setting={setting}
               hasVoiceSupport={hasVoiceSupport}
+              hasSmsReminders={hasSmsReminders}
               hasVoiceReminders={hasVoiceReminders}
               companyId={companyId}
               onToggleEnabled={() => handleToggleEnabled(setting)}
@@ -340,6 +362,7 @@ export function ReminderSettings() {
 interface ReminderCardProps {
   setting: ReminderSetting;
   hasVoiceSupport: boolean;
+  hasSmsReminders: boolean;
   hasVoiceReminders: boolean;
   companyId: string | null;
   onToggleEnabled: () => void;
@@ -349,7 +372,7 @@ interface ReminderCardProps {
   onDelete: () => void;
 }
 
-function ReminderCard({ setting, hasVoiceSupport, hasVoiceReminders, companyId, onToggleEnabled, onToggleCall, onUpdateTemplate, onUpdateCallTemplate, onDelete }: ReminderCardProps) {
+function ReminderCard({ setting, hasVoiceSupport, hasSmsReminders, hasVoiceReminders, companyId, onToggleEnabled, onToggleCall, onUpdateTemplate, onUpdateCallTemplate, onDelete }: ReminderCardProps) {
   const [template, setTemplate] = useState(setting.sms_template);
   const [callTemplate, setCallTemplate] = useState(setting.call_template || '');
   const [isEditing, setIsEditing] = useState(false);
@@ -436,10 +459,17 @@ function ReminderCard({ setting, hasVoiceSupport, hasVoiceReminders, companyId, 
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <Switch
-              checked={setting.is_enabled}
-              onCheckedChange={onToggleEnabled}
-            />
+            {hasSmsReminders ? (
+              <Switch
+                checked={setting.is_enabled}
+                onCheckedChange={onToggleEnabled}
+              />
+            ) : (
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <Lock className="h-3 w-3" />
+                <span className="text-xs">Basic</span>
+              </div>
+            )}
             <span className="text-sm">{setting.is_enabled ? 'Enabled' : 'Disabled'}</span>
           </div>
           <Button
