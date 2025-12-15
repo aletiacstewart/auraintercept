@@ -165,10 +165,25 @@ Deno.serve(async (req) => {
 
     console.log(`Updated log ${logToUpdate.id} to status: ${newStatus}`);
 
-    // If this is a bounce or complaint, we might want to disable future emails
-    // For now, just log it - companies can decide on their policy
-    if (event.type === 'email.bounced' || event.type === 'email.complained') {
-      console.log(`Action required: ${recipientEmail} ${event.type} for company ${logToUpdate.company_id}`);
+    // Add email to suppression list for this company
+    const suppressionReason = event.type === 'email.bounced' ? 'bounce' : 'complaint';
+    
+    const { error: suppressionError } = await supabase
+      .from('suppressed_emails')
+      .upsert({
+        company_id: logToUpdate.company_id,
+        email: recipientEmail,
+        reason: suppressionReason,
+        source_event_id: event.data.email_id,
+        suppressed_at: new Date().toISOString(),
+      }, {
+        onConflict: 'company_id,email'
+      });
+
+    if (suppressionError) {
+      console.error('Error adding to suppression list:', suppressionError);
+    } else {
+      console.log(`Added ${recipientEmail} to suppression list for company ${logToUpdate.company_id} (reason: ${suppressionReason})`);
     }
 
     return new Response(

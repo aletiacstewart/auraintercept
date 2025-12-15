@@ -200,6 +200,19 @@ Deno.serve(async (req) => {
         continue;
       }
 
+      // Check if recipient email is suppressed
+      const { data: suppression } = await supabase
+        .from('suppressed_emails')
+        .select('id, reason, suppressed_at')
+        .eq('company_id', company.id)
+        .eq('email', company.monthly_digest_email)
+        .maybeSingle();
+
+      if (suppression) {
+        console.log(`Skipping ${company.name}: recipient ${company.monthly_digest_email} is suppressed (${suppression.reason} on ${suppression.suppressed_at})`);
+        continue;
+      }
+
       // Fetch THIS MONTH data
       const { data: reminderLogs } = await supabase
         .from('reminder_logs')
