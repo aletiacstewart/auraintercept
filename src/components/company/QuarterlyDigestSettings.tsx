@@ -15,6 +15,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useState, useEffect, useMemo } from 'react';
 import { format, subQuarters, subYears } from 'date-fns';
 import { DigestMetricsSelector } from './DigestMetricsSelector';
+import { DigestEmailPreview } from './DigestEmailPreview';
 
 const COMMON_TIMEZONES = [
   { value: 'America/New_York', label: 'Eastern Time (ET)' },
@@ -364,7 +365,13 @@ export function QuarterlyDigestSettings() {
                   This is how your quarterly business review will appear
                 </DialogDescription>
               </DialogHeader>
-              <QuarterlyDigestPreview companyName={companyDetails?.name || 'Your Company'} />
+              <DigestEmailPreview 
+                type="quarterly"
+                companyName={companyDetails?.name || 'Your Company'}
+                includeAppointments={includeAppointments}
+                includeReminders={includeReminders}
+                includeSubscriptions={includeSubscriptions}
+              />
             </DialogContent>
           </Dialog>
 
@@ -392,202 +399,5 @@ export function QuarterlyDigestSettings() {
         </div>
       </CardContent>
     </Card>
-  );
-}
-
-function QuarterlyDigestPreview({ companyName }: { companyName: string }) {
-  const now = new Date();
-  const currentQuarter = Math.floor(now.getMonth() / 3) + 1;
-  const lastQuarter = subQuarters(now, 1);
-  const lastYearSameQuarter = subYears(now, 1);
-  
-  const formatQuarter = (d: Date) => `Q${Math.floor(d.getMonth() / 3) + 1} ${format(d, 'yyyy')}`;
-
-  const thisQuarter = {
-    appointments: { total: 312, completed: 258, cancelled: 32, noShow: 22, avgPerWeek: 24 },
-    reminders: { total: 936, successRate: 97 },
-    subscriptions: { unsubscribes: 28, resubscribes: 12, netChange: -16 },
-    revenue: { value: 45600, avgPerAppointment: 177 }
-  };
-
-  const lastQuarterData = {
-    appointments: { total: 285, completed: 230 },
-    reminders: { total: 855, successRate: 95 },
-    subscriptions: { unsubscribes: 35, resubscribes: 8 }
-  };
-
-  const lastYearData = {
-    appointments: { total: 245, completed: 198 },
-    reminders: { total: 735, successRate: 92 },
-    subscriptions: { unsubscribes: 22, resubscribes: 5 }
-  };
-
-  const calcChange = (current: number, previous: number) => {
-    if (previous === 0) return { value: current > 0 ? 100 : 0, direction: current > 0 ? 'up' : 'same' };
-    const change = Math.round(((current - previous) / previous) * 100);
-    return { value: Math.abs(change), direction: change > 0 ? 'up' : change < 0 ? 'down' : 'same' };
-  };
-
-  const qoqChanges = {
-    appointments: calcChange(thisQuarter.appointments.total, lastQuarterData.appointments.total),
-    completed: calcChange(thisQuarter.appointments.completed, lastQuarterData.appointments.completed),
-    reminders: calcChange(thisQuarter.reminders.total, lastQuarterData.reminders.total),
-  };
-
-  const yoyChanges = {
-    appointments: calcChange(thisQuarter.appointments.total, lastYearData.appointments.total),
-    completed: calcChange(thisQuarter.appointments.completed, lastYearData.appointments.completed),
-    reminders: calcChange(thisQuarter.reminders.total, lastYearData.reminders.total),
-  };
-
-  const ChangeIndicator = ({ change, positiveIsGood = true, label }: { change: { value: number; direction: string }; positiveIsGood?: boolean; label?: string }) => {
-    if (change.direction === 'same' || change.value === 0) return null;
-    const isGood = (change.direction === 'up') === positiveIsGood;
-    return (
-      <span className={`text-xs ${isGood ? 'text-green-600' : 'text-red-600'}`}>
-        {change.direction === 'up' ? '↑' : '↓'}{change.value}%{label && ` ${label}`}
-      </span>
-    );
-  };
-
-  return (
-    <div className="border rounded-lg overflow-hidden">
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-center text-white">
-        <h2 className="text-xl font-bold mb-1">📊 Quarterly Business Review</h2>
-        <p className="text-sm opacity-90">{companyName}</p>
-        <p className="text-xs opacity-70">{formatQuarter(lastQuarter)}</p>
-      </div>
-
-      <div className="bg-muted/30 p-6 space-y-4">
-        {/* Executive Summary */}
-        <div className="bg-card border rounded-lg p-4">
-          <h3 className="font-semibold mb-3">📈 Executive Summary</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-primary">{thisQuarter.appointments.total}</div>
-              <div className="text-xs text-muted-foreground mb-1">Appointments</div>
-              <div className="flex justify-center gap-2">
-                <ChangeIndicator change={qoqChanges.appointments} label="QoQ" />
-              </div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-green-600">{thisQuarter.appointments.completed}</div>
-              <div className="text-xs text-muted-foreground mb-1">Completed</div>
-              <div className="flex justify-center gap-2">
-                <ChangeIndicator change={qoqChanges.completed} label="QoQ" />
-              </div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-primary">{thisQuarter.reminders.total}</div>
-              <div className="text-xs text-muted-foreground mb-1">Reminders</div>
-              <div className="flex justify-center gap-2">
-                <ChangeIndicator change={qoqChanges.reminders} label="QoQ" />
-              </div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-green-600">{thisQuarter.reminders.successRate}%</div>
-              <div className="text-xs text-muted-foreground">Success Rate</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Year-over-Year Comparison */}
-        <div className="bg-card border rounded-lg p-4">
-          <h3 className="font-semibold mb-3">📅 Year-over-Year Comparison</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-2">Metric</th>
-                  <th className="text-center py-2">{formatQuarter(lastYearSameQuarter)}</th>
-                  <th className="text-center py-2">{formatQuarter(lastQuarter)}</th>
-                  <th className="text-center py-2">YoY Change</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b">
-                  <td className="py-2">Appointments</td>
-                  <td className="text-center">{lastYearData.appointments.total}</td>
-                  <td className="text-center font-medium">{thisQuarter.appointments.total}</td>
-                  <td className="text-center"><ChangeIndicator change={yoyChanges.appointments} /></td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2">Completed</td>
-                  <td className="text-center">{lastYearData.appointments.completed}</td>
-                  <td className="text-center font-medium">{thisQuarter.appointments.completed}</td>
-                  <td className="text-center"><ChangeIndicator change={yoyChanges.completed} /></td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2">Reminders Sent</td>
-                  <td className="text-center">{lastYearData.reminders.total}</td>
-                  <td className="text-center font-medium">{thisQuarter.reminders.total}</td>
-                  <td className="text-center"><ChangeIndicator change={yoyChanges.reminders} /></td>
-                </tr>
-                <tr>
-                  <td className="py-2">Success Rate</td>
-                  <td className="text-center">{lastYearData.reminders.successRate}%</td>
-                  <td className="text-center font-medium">{thisQuarter.reminders.successRate}%</td>
-                  <td className="text-center text-green-600">+5pp</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Quarterly Trends */}
-        <div className="bg-card border rounded-lg p-4">
-          <h3 className="font-semibold mb-3">📊 Quarterly Trends</h3>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-lg font-bold text-primary">{thisQuarter.appointments.avgPerWeek}</div>
-              <div className="text-xs text-muted-foreground">Avg/Week</div>
-            </div>
-            <div>
-              <div className="text-lg font-bold text-green-600">{Math.round((thisQuarter.appointments.completed / thisQuarter.appointments.total) * 100)}%</div>
-              <div className="text-xs text-muted-foreground">Completion Rate</div>
-            </div>
-            <div>
-              <div className="text-lg font-bold text-amber-600">{thisQuarter.appointments.noShow}</div>
-              <div className="text-xs text-muted-foreground">No-Shows</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Subscription Health */}
-        <div className="bg-card border rounded-lg p-4">
-          <h3 className="font-semibold mb-3">📈 Subscription Health</h3>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-xl font-bold text-red-600">{thisQuarter.subscriptions.unsubscribes}</div>
-              <div className="text-xs text-muted-foreground">Unsubscribes</div>
-            </div>
-            <div>
-              <div className="text-xl font-bold text-green-600">{thisQuarter.subscriptions.resubscribes}</div>
-              <div className="text-xs text-muted-foreground">Re-subscribes</div>
-            </div>
-            <div>
-              <div className={`text-xl font-bold ${thisQuarter.subscriptions.netChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {thisQuarter.subscriptions.netChange >= 0 ? '+' : ''}{thisQuarter.subscriptions.netChange}
-              </div>
-              <div className="text-xs text-muted-foreground">Net Change</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Strategic Insights */}
-        <div className="bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-500/30 rounded-lg p-4">
-          <h4 className="font-medium text-indigo-700 dark:text-indigo-400 mb-2">💡 Strategic Insights</h4>
-          <ul className="text-sm text-indigo-700 dark:text-indigo-400 space-y-1">
-            <li>• Appointments grew 27% year-over-year, indicating strong business growth</li>
-            <li>• Reminder success rate improved by 5 percentage points vs last year</li>
-            <li>• Consider reviewing communication frequency to reduce unsubscribes</li>
-          </ul>
-        </div>
-
-        <p className="text-xs text-center text-muted-foreground pt-2">
-          This is an automated quarterly report from {companyName}.
-        </p>
-      </div>
-    </div>
   );
 }

@@ -15,6 +15,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useState, useEffect, useMemo } from 'react';
 import { format, subDays } from 'date-fns';
 import { DigestMetricsSelector } from './DigestMetricsSelector';
+import { DigestEmailPreview } from './DigestEmailPreview';
 
 const COMMON_TIMEZONES = [
   { value: 'America/New_York', label: 'Eastern Time (ET)' },
@@ -338,7 +339,13 @@ export function WeeklyDigestSettings() {
                   This is how your weekly digest email will appear
                 </DialogDescription>
               </DialogHeader>
-              <DigestEmailPreview companyName={companyDetails?.name || 'Your Company'} />
+              <DigestEmailPreview 
+                type="weekly"
+                companyName={companyDetails?.name || 'Your Company'}
+                includeAppointments={includeAppointments}
+                includeReminders={includeReminders}
+                includeSubscriptions={includeSubscriptions}
+              />
             </DialogContent>
           </Dialog>
 
@@ -369,163 +376,3 @@ export function WeeklyDigestSettings() {
   );
 }
 
-// Preview component showing sample email with week-over-week comparison
-function DigestEmailPreview({ companyName }: { companyName: string }) {
-  const periodEnd = new Date();
-  const periodStart = subDays(periodEnd, 7);
-  const formatDateStr = (d: Date) => format(d, 'MMM d');
-
-  // Sample data for preview (this week vs last week)
-  const thisWeek = {
-    appointments: { total: 24, completed: 18, cancelled: 2 },
-    reminders: { total: 72, successRate: 96, sms: 40, email: 25, call: 7 },
-    subscriptions: { unsubscribes: 3, resubscribes: 1, smsSubs: 1, emailSubs: 2, callSubs: 0 }
-  };
-
-  const lastWeek = {
-    appointments: { total: 20, completed: 15, cancelled: 3 },
-    reminders: { total: 65, successRate: 94 },
-    subscriptions: { unsubscribes: 5, resubscribes: 0 }
-  };
-
-  // Calculate changes
-  const calcChange = (current: number, previous: number) => {
-    if (previous === 0) return { value: current > 0 ? 100 : 0, direction: current > 0 ? 'up' : 'same' };
-    const change = Math.round(((current - previous) / previous) * 100);
-    return { value: Math.abs(change), direction: change > 0 ? 'up' : change < 0 ? 'down' : 'same' };
-  };
-
-  const changes = {
-    appointments: calcChange(thisWeek.appointments.total, lastWeek.appointments.total),
-    completed: calcChange(thisWeek.appointments.completed, lastWeek.appointments.completed),
-    cancelled: calcChange(thisWeek.appointments.cancelled, lastWeek.appointments.cancelled),
-    reminders: calcChange(thisWeek.reminders.total, lastWeek.reminders.total),
-    successRate: calcChange(thisWeek.reminders.successRate, lastWeek.reminders.successRate),
-    unsubscribes: calcChange(thisWeek.subscriptions.unsubscribes, lastWeek.subscriptions.unsubscribes),
-    resubscribes: calcChange(thisWeek.subscriptions.resubscribes, lastWeek.subscriptions.resubscribes)
-  };
-
-  const ChangeIndicator = ({ change, positiveIsGood = true }: { change: { value: number; direction: string }; positiveIsGood?: boolean }) => {
-    if (change.direction === 'same' || change.value === 0) return null;
-    const isGood = (change.direction === 'up') === positiveIsGood;
-    return (
-      <span className={`text-xs ml-1 ${isGood ? 'text-green-600' : 'text-red-600'}`}>
-        {change.direction === 'up' ? '↑' : '↓'}{change.value}%
-      </span>
-    );
-  };
-
-  return (
-    <div className="border rounded-lg overflow-hidden">
-      {/* Email Header */}
-      <div className="bg-gradient-to-r from-primary to-purple-500 p-6 text-center text-primary-foreground">
-        <h2 className="text-xl font-bold mb-1">📊 Weekly Digest</h2>
-        <p className="text-sm opacity-90">{companyName}</p>
-        <p className="text-xs opacity-70">{formatDateStr(periodStart)} - {formatDateStr(periodEnd)}</p>
-      </div>
-
-      <div className="bg-muted/30 p-6 space-y-4">
-        {/* Appointments */}
-        <div className="bg-card border rounded-lg p-4">
-          <h3 className="font-semibold mb-3">📅 Appointments</h3>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-primary">
-                {thisWeek.appointments.total}
-                <ChangeIndicator change={changes.appointments} />
-              </div>
-              <div className="text-xs text-muted-foreground">Total</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-green-600">
-                {thisWeek.appointments.completed}
-                <ChangeIndicator change={changes.completed} />
-              </div>
-              <div className="text-xs text-muted-foreground">Completed</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-red-600">
-                {thisWeek.appointments.cancelled}
-                <ChangeIndicator change={changes.cancelled} positiveIsGood={false} />
-              </div>
-              <div className="text-xs text-muted-foreground">Cancelled</div>
-            </div>
-          </div>
-          <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
-            vs previous week: {lastWeek.appointments.total} total, {lastWeek.appointments.completed} completed
-          </div>
-        </div>
-
-        {/* Reminders */}
-        <div className="bg-card border rounded-lg p-4">
-          <h3 className="font-semibold mb-3">🔔 Reminders Sent</h3>
-          <div className="grid grid-cols-2 gap-4 text-center mb-3">
-            <div>
-              <div className="text-2xl font-bold text-primary">
-                {thisWeek.reminders.total}
-                <ChangeIndicator change={changes.reminders} />
-              </div>
-              <div className="text-xs text-muted-foreground">Total</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-green-600">
-                {thisWeek.reminders.successRate}%
-                <ChangeIndicator change={changes.successRate} />
-              </div>
-              <div className="text-xs text-muted-foreground">Success Rate</div>
-            </div>
-          </div>
-          <div className="border-t pt-3 text-sm space-y-1">
-            <p>📱 SMS: {thisWeek.reminders.sms}</p>
-            <p>✉️ Email: {thisWeek.reminders.email}</p>
-            <p>📞 Voice: {thisWeek.reminders.call}</p>
-          </div>
-          <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
-            vs previous week: {lastWeek.reminders.total} reminders, {lastWeek.reminders.successRate}% success
-          </div>
-        </div>
-
-        {/* Subscription Trends */}
-        <div className="bg-card border rounded-lg p-4">
-          <h3 className="font-semibold mb-3">📈 Subscription Trends</h3>
-          <div className="grid grid-cols-2 gap-4 text-center mb-3">
-            <div>
-              <div className="text-2xl font-bold text-red-600">
-                {thisWeek.subscriptions.unsubscribes}
-                <ChangeIndicator change={changes.unsubscribes} positiveIsGood={false} />
-              </div>
-              <div className="text-xs text-muted-foreground">Unsubscribes</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-green-600">
-                {thisWeek.subscriptions.resubscribes}
-                <ChangeIndicator change={changes.resubscribes} />
-              </div>
-              <div className="text-xs text-muted-foreground">Re-subscribes</div>
-            </div>
-          </div>
-          <div className="border-t pt-3 text-sm space-y-1">
-            <p className="font-medium mb-1">Unsubscribes by channel:</p>
-            <p>📱 SMS: {thisWeek.subscriptions.smsSubs}</p>
-            <p>✉️ Email: {thisWeek.subscriptions.emailSubs}</p>
-            <p>📞 Voice: {thisWeek.subscriptions.callSubs}</p>
-          </div>
-          <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
-            vs previous week: {lastWeek.subscriptions.unsubscribes} unsubscribes, {lastWeek.subscriptions.resubscribes} re-subscribes
-          </div>
-        </div>
-
-        {/* Positive callout example */}
-        <div className="bg-green-50 dark:bg-green-950/30 border border-green-500/30 rounded-lg p-4">
-          <p className="text-sm text-green-700 dark:text-green-400">
-            🎉 <strong>Great news!</strong> Appointments are up 20% compared to last week!
-          </p>
-        </div>
-
-        <p className="text-xs text-center text-muted-foreground pt-2">
-          This is an automated weekly digest from {companyName}.
-        </p>
-      </div>
-    </div>
-  );
-}
