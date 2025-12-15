@@ -852,6 +852,41 @@ export type Database = {
           },
         ]
       }
+      suppressed_emails: {
+        Row: {
+          company_id: string
+          email: string
+          id: string
+          reason: string
+          source_event_id: string | null
+          suppressed_at: string
+        }
+        Insert: {
+          company_id: string
+          email: string
+          id?: string
+          reason: string
+          source_event_id?: string | null
+          suppressed_at?: string
+        }
+        Update: {
+          company_id?: string
+          email?: string
+          id?: string
+          reason?: string
+          source_event_id?: string | null
+          suppressed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suppressed_emails_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_integrations: {
         Row: {
           company_id: string
