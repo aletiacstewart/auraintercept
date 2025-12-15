@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSubscription } from '@/hooks/useSubscription';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import {
   LayoutDashboard,
   Building2,
@@ -22,10 +24,13 @@ import {
   MessageCircle,
   PhoneCall,
   BarChart3,
-  CreditCard
+  CreditCard,
+  Crown,
+  Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/logo.png';
+import { differenceInDays, parseISO } from 'date-fns';
 
 interface NavItem {
   label: string;
@@ -54,7 +59,27 @@ const navItems: NavItem[] = [
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const { userRole, signOut, user } = useAuth();
+  const { subscriptionTier, subscriptionEnd } = useSubscription();
   const navigate = useNavigate();
+
+  const getTierDisplay = () => {
+    const tierConfig = {
+      free: { label: 'Free', color: 'bg-muted text-muted-foreground', icon: null },
+      basic: { label: 'Basic', color: 'bg-blue-500/20 text-blue-500', icon: null },
+      pro: { label: 'Pro', color: 'bg-primary/20 text-primary', icon: Sparkles },
+      enterprise: { label: 'Enterprise', color: 'bg-amber-500/20 text-amber-500', icon: Crown },
+    };
+    return tierConfig[subscriptionTier] || tierConfig.free;
+  };
+
+  const getDaysRemaining = () => {
+    if (!subscriptionEnd) return null;
+    const days = differenceInDays(parseISO(subscriptionEnd), new Date());
+    return days > 0 ? days : 0;
+  };
+
+  const tierDisplay = getTierDisplay();
+  const daysRemaining = getDaysRemaining();
 
   const filteredNav = navItems.filter((item) =>
     userRole && item.roles.includes(userRole)
@@ -135,9 +160,40 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <Separator className="bg-sidebar-border" />
 
         {/* User section */}
-        <div className="p-3">
+        <div className="p-3 space-y-2">
+          {/* Subscription badge */}
+          {!collapsed && (
+            <button
+              onClick={() => navigate('/dashboard/subscription')}
+              className={cn(
+                'w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors hover:opacity-80',
+                tierDisplay.color
+              )}
+            >
+              <div className="flex items-center gap-2">
+                {tierDisplay.icon && <tierDisplay.icon className="w-4 h-4" />}
+                <span className="text-xs font-semibold">{tierDisplay.label}</span>
+              </div>
+              {daysRemaining !== null && (
+                <span className="text-xs opacity-80">{daysRemaining}d left</span>
+              )}
+            </button>
+          )}
+          {collapsed && (
+            <button
+              onClick={() => navigate('/dashboard/subscription')}
+              className={cn(
+                'w-full flex items-center justify-center p-2 rounded-lg transition-colors hover:opacity-80',
+                tierDisplay.color
+              )}
+              title={`${tierDisplay.label}${daysRemaining !== null ? ` - ${daysRemaining} days left` : ''}`}
+            >
+              {tierDisplay.icon ? <tierDisplay.icon className="w-4 h-4" /> : <CreditCard className="w-4 h-4" />}
+            </button>
+          )}
+          
           {!collapsed && roleBadge && (
-            <div className={cn('flex items-center gap-2 px-3 py-2 mb-2 rounded-lg bg-sidebar-accent/50', roleBadge.color)}>
+            <div className={cn('flex items-center gap-2 px-3 py-2 rounded-lg bg-sidebar-accent/50', roleBadge.color)}>
               <roleBadge.icon className="w-4 h-4" />
               <span className="text-xs font-medium">{roleBadge.label}</span>
             </div>
