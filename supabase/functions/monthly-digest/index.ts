@@ -260,6 +260,113 @@ Deno.serve(async (req) => {
 
       const formatMonth = (d: Date) => d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
+      // Get preferences with defaults
+      const includeAppointments = company.monthly_digest_include_appointments !== false;
+      const includeReminders = company.monthly_digest_include_reminders !== false;
+      const includeSubscriptions = company.monthly_digest_include_subscriptions !== false;
+
+      // Build summary stats based on preferences
+      const summaryItems = [];
+      if (includeAppointments) {
+        summaryItems.push(`
+          <div style="text-align: center; flex: 1; min-width: 70px;">
+            <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${appointmentStats.total}${renderChange(changes.appointments)}</div>
+            <div style="font-size: 11px; color: #6b7280;">Appointments</div>
+          </div>
+          <div style="text-align: center; flex: 1; min-width: 70px;">
+            <div style="font-size: 24px; font-weight: bold; color: #10b981;">${appointmentStats.completed}${renderChange(changes.completed)}</div>
+            <div style="font-size: 11px; color: #6b7280;">Completed</div>
+          </div>
+        `);
+      }
+      if (includeReminders) {
+        summaryItems.push(`
+          <div style="text-align: center; flex: 1; min-width: 70px;">
+            <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${reminderStats.total}${renderChange(changes.reminders)}</div>
+            <div style="font-size: 11px; color: #6b7280;">Reminders</div>
+          </div>
+          <div style="text-align: center; flex: 1; min-width: 70px;">
+            <div style="font-size: 24px; font-weight: bold; color: #10b981;">${successRate}%${renderChange(successRateChange)}</div>
+            <div style="font-size: 11px; color: #6b7280;">Success Rate</div>
+          </div>
+        `);
+      }
+
+      // Build appointment breakdown section
+      const appointmentSection = includeAppointments ? `
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+          <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">📅 Appointment Breakdown</h2>
+          <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: #10b981;">${appointmentStats.completed}</div>
+              <div style="font-size: 11px; color: #6b7280;">Completed</div>
+            </div>
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: #ef4444;">${appointmentStats.cancelled}</div>
+              <div style="font-size: 11px; color: #6b7280;">Cancelled</div>
+            </div>
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: #f59e0b;">${appointmentStats.noShow}</div>
+              <div style="font-size: 11px; color: #6b7280;">No-Show</div>
+            </div>
+          </div>
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+            <p style="margin: 0; font-size: 14px;"><strong>Completion Rate:</strong> ${completionRate}%</p>
+          </div>
+        </div>
+      ` : '';
+
+      // Build reminder section
+      const reminderSection = includeReminders ? `
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+          <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">🔔 Reminder Performance</h2>
+          <p style="margin: 4px 0; font-size: 14px;">📱 SMS Reminders: <strong>${reminderStats.sms}</strong></p>
+          <p style="margin: 4px 0; font-size: 14px;">✉️ Email Reminders: <strong>${reminderStats.email}</strong></p>
+          <p style="margin: 4px 0; font-size: 14px;">📞 Voice Reminders: <strong>${reminderStats.call}</strong></p>
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+            <p style="margin: 0; font-size: 12px; color: #6b7280;">vs previous month: ${prevReminderStats.total} reminders, ${prevSuccessRate}% success</p>
+          </div>
+        </div>
+      ` : '';
+
+      // Build subscription section
+      const subscriptionSection = includeSubscriptions ? `
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+          <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">📈 Subscription Health</h2>
+          <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: #ef4444;">${subscriptionStats.unsubscribes}${renderChange(changes.unsubscribes, false)}</div>
+              <div style="font-size: 11px; color: #6b7280;">Unsubscribes</div>
+            </div>
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: #10b981;">${subscriptionStats.resubscribes}</div>
+              <div style="font-size: 11px; color: #6b7280;">Re-subscribes</div>
+            </div>
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: ${netChange >= 0 ? '#10b981' : '#ef4444'};">${netChange >= 0 ? '+' : ''}${netChange}</div>
+              <div style="font-size: 11px; color: #6b7280;">Net Change</div>
+            </div>
+          </div>
+        </div>
+      ` : '';
+
+      // Build insight alerts
+      const appointmentInsight = includeAppointments && changes.appointments.direction === 'up' && changes.appointments.value >= 10 ? `
+        <div style="background: #d1fae5; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+          <p style="margin: 0; color: #065f46; font-size: 14px;">
+            🎉 <strong>Great month!</strong> Appointments increased by ${changes.appointments.value}% compared to last month!
+          </p>
+        </div>
+      ` : '';
+
+      const unsubscribeWarning = includeSubscriptions && subscriptionStats.unsubscribes > 10 ? `
+        <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+          <p style="margin: 0; color: #92400e; font-size: 14px;">
+            ⚠️ <strong>Attention:</strong> You had ${subscriptionStats.unsubscribes} unsubscribes this month. Consider reviewing your communication frequency.
+          </p>
+        </div>
+      ` : '';
+
       const { error: emailError } = await resend.emails.send({
         from: `${company.name} <onboarding@resend.dev>`,
         to: [company.monthly_digest_email],
@@ -280,96 +387,20 @@ Deno.serve(async (req) => {
               
               <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px;">
                 
-                <!-- Summary Stats -->
+                ${summaryItems.length > 0 ? `
                 <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
                   <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">📊 Monthly Summary</h2>
                   <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <div style="text-align: center; flex: 1; min-width: 70px;">
-                      <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${appointmentStats.total}${renderChange(changes.appointments)}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Appointments</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 70px;">
-                      <div style="font-size: 24px; font-weight: bold; color: #10b981;">${appointmentStats.completed}${renderChange(changes.completed)}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Completed</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 70px;">
-                      <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${reminderStats.total}${renderChange(changes.reminders)}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Reminders</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 70px;">
-                      <div style="font-size: 24px; font-weight: bold; color: #10b981;">${successRate}%${renderChange(successRateChange)}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Success Rate</div>
-                    </div>
+                    ${summaryItems.join('')}
                   </div>
-                </div>
-
-                <!-- Appointment Breakdown -->
-                <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                  <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">📅 Appointment Breakdown</h2>
-                  <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: #10b981;">${appointmentStats.completed}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Completed</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: #ef4444;">${appointmentStats.cancelled}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Cancelled</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: #f59e0b;">${appointmentStats.noShow}</div>
-                      <div style="font-size: 11px; color: #6b7280;">No-Show</div>
-                    </div>
-                  </div>
-                  <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-                    <p style="margin: 0; font-size: 14px;"><strong>Completion Rate:</strong> ${completionRate}%</p>
-                  </div>
-                </div>
-
-                <!-- Reminder Performance -->
-                <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                  <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">🔔 Reminder Performance</h2>
-                  <p style="margin: 4px 0; font-size: 14px;">📱 SMS Reminders: <strong>${reminderStats.sms}</strong></p>
-                  <p style="margin: 4px 0; font-size: 14px;">✉️ Email Reminders: <strong>${reminderStats.email}</strong></p>
-                  <p style="margin: 4px 0; font-size: 14px;">📞 Voice Reminders: <strong>${reminderStats.call}</strong></p>
-                  <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-                    <p style="margin: 0; font-size: 12px; color: #6b7280;">vs previous month: ${prevReminderStats.total} reminders, ${prevSuccessRate}% success</p>
-                  </div>
-                </div>
-
-                <!-- Subscription Health -->
-                <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                  <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">📈 Subscription Health</h2>
-                  <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: #ef4444;">${subscriptionStats.unsubscribes}${renderChange(changes.unsubscribes, false)}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Unsubscribes</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: #10b981;">${subscriptionStats.resubscribes}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Re-subscribes</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: ${netChange >= 0 ? '#10b981' : '#ef4444'};">${netChange >= 0 ? '+' : ''}${netChange}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Net Change</div>
-                    </div>
-                  </div>
-                </div>
-
-                ${changes.appointments.direction === 'up' && changes.appointments.value >= 10 ? `
-                <div style="background: #d1fae5; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                  <p style="margin: 0; color: #065f46; font-size: 14px;">
-                    🎉 <strong>Great month!</strong> Appointments increased by ${changes.appointments.value}% compared to last month!
-                  </p>
                 </div>
                 ` : ''}
 
-                ${subscriptionStats.unsubscribes > 10 ? `
-                <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                  <p style="margin: 0; color: #92400e; font-size: 14px;">
-                    ⚠️ <strong>Attention:</strong> You had ${subscriptionStats.unsubscribes} unsubscribes this month. Consider reviewing your communication frequency.
-                  </p>
-                </div>
-                ` : ''}
+                ${appointmentSection}
+                ${reminderSection}
+                ${subscriptionSection}
+                ${appointmentInsight}
+                ${unsubscribeWarning}
 
                 <p style="text-align: center; font-size: 12px; color: #6b7280; margin-top: 24px;">
                   This is an automated monthly report from ${company.name}.

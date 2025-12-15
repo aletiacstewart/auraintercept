@@ -301,6 +301,171 @@ Deno.serve(async (req) => {
 
       const resend = new Resend(integrations.resend_api_key);
 
+      // Get preferences with defaults
+      const includeAppointments = company.quarterly_digest_include_appointments !== false;
+      const includeReminders = company.quarterly_digest_include_reminders !== false;
+      const includeSubscriptions = company.quarterly_digest_include_subscriptions !== false;
+
+      // Build executive summary items based on preferences
+      const summaryItems = [];
+      if (includeAppointments) {
+        summaryItems.push(`
+          <div style="text-align: center; flex: 1; min-width: 70px;">
+            <div style="font-size: 24px; font-weight: bold; color: #4f46e5;">${appointmentStats.total}</div>
+            <div style="font-size: 11px; color: #6b7280;">Appointments</div>
+            <div style="font-size: 11px; margin-top: 4px;">${renderChange(qoqChanges.appointments, true, 'QoQ')}</div>
+          </div>
+          <div style="text-align: center; flex: 1; min-width: 70px;">
+            <div style="font-size: 24px; font-weight: bold; color: #10b981;">${appointmentStats.completed}</div>
+            <div style="font-size: 11px; color: #6b7280;">Completed</div>
+            <div style="font-size: 11px; margin-top: 4px;">${renderChange(qoqChanges.completed, true, 'QoQ')}</div>
+          </div>
+        `);
+      }
+      if (includeReminders) {
+        summaryItems.push(`
+          <div style="text-align: center; flex: 1; min-width: 70px;">
+            <div style="font-size: 24px; font-weight: bold; color: #4f46e5;">${reminderStats.total}</div>
+            <div style="font-size: 11px; color: #6b7280;">Reminders</div>
+            <div style="font-size: 11px; margin-top: 4px;">${renderChange(qoqChanges.reminders, true, 'QoQ')}</div>
+          </div>
+          <div style="text-align: center; flex: 1; min-width: 70px;">
+            <div style="font-size: 24px; font-weight: bold; color: #10b981;">${successRate}%</div>
+            <div style="font-size: 11px; color: #6b7280;">Success Rate</div>
+          </div>
+        `);
+      }
+
+      // Build YoY comparison rows
+      const yoyRows = [];
+      if (includeAppointments) {
+        yoyRows.push(`
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 8px 4px;">Appointments</td>
+            <td style="text-align: center; padding: 8px 4px;">${yoyAppointmentStats.total}</td>
+            <td style="text-align: center; padding: 8px 4px; font-weight: 600;">${appointmentStats.total}</td>
+            <td style="text-align: center; padding: 8px 4px;">${renderChange(yoyChanges.appointments)}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 8px 4px;">Completed</td>
+            <td style="text-align: center; padding: 8px 4px;">${yoyAppointmentStats.completed}</td>
+            <td style="text-align: center; padding: 8px 4px; font-weight: 600;">${appointmentStats.completed}</td>
+            <td style="text-align: center; padding: 8px 4px;">${renderChange(yoyChanges.completed)}</td>
+          </tr>
+        `);
+      }
+      if (includeReminders) {
+        yoyRows.push(`
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 8px 4px;">Reminders</td>
+            <td style="text-align: center; padding: 8px 4px;">${yoyReminderStats.total}</td>
+            <td style="text-align: center; padding: 8px 4px; font-weight: 600;">${reminderStats.total}</td>
+            <td style="text-align: center; padding: 8px 4px;">${renderChange(yoyChanges.reminders)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 4px;">Success Rate</td>
+            <td style="text-align: center; padding: 8px 4px;">${yoySuccessRate}%</td>
+            <td style="text-align: center; padding: 8px 4px; font-weight: 600;">${successRate}%</td>
+            <td style="text-align: center; padding: 8px 4px; color: ${successRate >= yoySuccessRate ? '#10b981' : '#ef4444'};">${successRate >= yoySuccessRate ? '+' : ''}${successRate - yoySuccessRate}pp</td>
+          </tr>
+        `);
+      }
+
+      // Build YoY section
+      const yoySection = yoyRows.length > 0 ? `
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+          <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">📅 Year-over-Year Comparison</h2>
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <th style="text-align: left; padding: 8px 4px;">Metric</th>
+                <th style="text-align: center; padding: 8px 4px;">${formatQuarter(lastYearSameQuarterStart)}</th>
+                <th style="text-align: center; padding: 8px 4px;">${formatQuarter(lastQuarterStart)}</th>
+                <th style="text-align: center; padding: 8px 4px;">YoY</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${yoyRows.join('')}
+            </tbody>
+          </table>
+        </div>
+      ` : '';
+
+      // Build quarterly metrics section (appointments-focused)
+      const quarterlyMetricsSection = includeAppointments ? `
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+          <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">📊 Quarterly Metrics</h2>
+          <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: #4f46e5;">${avgPerWeek}</div>
+              <div style="font-size: 11px; color: #6b7280;">Avg/Week</div>
+            </div>
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: #10b981;">${completionRate}%</div>
+              <div style="font-size: 11px; color: #6b7280;">Completion</div>
+            </div>
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: #ef4444;">${appointmentStats.cancelled}</div>
+              <div style="font-size: 11px; color: #6b7280;">Cancelled</div>
+            </div>
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: #f59e0b;">${appointmentStats.noShow}</div>
+              <div style="font-size: 11px; color: #6b7280;">No-Show</div>
+            </div>
+          </div>
+        </div>
+      ` : '';
+
+      // Build subscription health section
+      const subscriptionSection = includeSubscriptions ? `
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+          <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">📈 Subscription Health</h2>
+          <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: #ef4444;">${subscriptionStats.unsubscribes}</div>
+              <div style="font-size: 11px; color: #6b7280;">Unsubscribes</div>
+            </div>
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: #10b981;">${subscriptionStats.resubscribes}</div>
+              <div style="font-size: 11px; color: #6b7280;">Re-subscribes</div>
+            </div>
+            <div style="text-align: center; flex: 1; min-width: 80px;">
+              <div style="font-size: 20px; font-weight: bold; color: ${netChange >= 0 ? '#10b981' : '#ef4444'};">${netChange >= 0 ? '+' : ''}${netChange}</div>
+              <div style="font-size: 11px; color: #6b7280;">Net Change</div>
+            </div>
+          </div>
+        </div>
+      ` : '';
+
+      // Build strategic insights
+      const insightItems = [];
+      if (includeAppointments && yoyChanges.appointments.direction === 'up' && yoyChanges.appointments.value >= 10) {
+        insightItems.push(`Appointments grew ${yoyChanges.appointments.value}% year-over-year`);
+      }
+      if (includeReminders && successRate > yoySuccessRate) {
+        insightItems.push(`Reminder success rate improved by ${successRate - yoySuccessRate} percentage points`);
+      }
+      if (includeAppointments && qoqChanges.appointments.direction === 'up') {
+        insightItems.push(`Quarter-over-quarter growth of ${qoqChanges.appointments.value}%`);
+      }
+
+      const insightsSection = insightItems.length > 0 ? `
+        <div style="background: #d1fae5; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+          <h3 style="margin: 0 0 8px 0; color: #065f46; font-size: 14px;">💡 Strategic Insights</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #065f46; font-size: 13px;">
+            ${insightItems.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
+      ` : '';
+
+      const unsubscribeWarning = includeSubscriptions && subscriptionStats.unsubscribes > 20 ? `
+        <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+          <p style="margin: 0; color: #92400e; font-size: 14px;">
+            ⚠️ <strong>Attention:</strong> ${subscriptionStats.unsubscribes} unsubscribes this quarter. Consider reviewing your communication strategy.
+          </p>
+        </div>
+      ` : '';
+
       const { error: emailError } = await resend.emails.send({
         from: `${company.name} <onboarding@resend.dev>`,
         to: [company.quarterly_digest_email],
@@ -321,134 +486,20 @@ Deno.serve(async (req) => {
               
               <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px;">
                 
-                <!-- Executive Summary -->
+                ${summaryItems.length > 0 ? `
                 <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
                   <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">📈 Executive Summary</h2>
                   <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <div style="text-align: center; flex: 1; min-width: 70px;">
-                      <div style="font-size: 24px; font-weight: bold; color: #4f46e5;">${appointmentStats.total}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Appointments</div>
-                      <div style="font-size: 11px; margin-top: 4px;">${renderChange(qoqChanges.appointments, true, 'QoQ')}</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 70px;">
-                      <div style="font-size: 24px; font-weight: bold; color: #10b981;">${appointmentStats.completed}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Completed</div>
-                      <div style="font-size: 11px; margin-top: 4px;">${renderChange(qoqChanges.completed, true, 'QoQ')}</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 70px;">
-                      <div style="font-size: 24px; font-weight: bold; color: #4f46e5;">${reminderStats.total}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Reminders</div>
-                      <div style="font-size: 11px; margin-top: 4px;">${renderChange(qoqChanges.reminders, true, 'QoQ')}</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 70px;">
-                      <div style="font-size: 24px; font-weight: bold; color: #10b981;">${successRate}%</div>
-                      <div style="font-size: 11px; color: #6b7280;">Success Rate</div>
-                    </div>
+                    ${summaryItems.join('')}
                   </div>
-                </div>
-
-                <!-- Year-over-Year Comparison -->
-                <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                  <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">📅 Year-over-Year Comparison</h2>
-                  <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                    <thead>
-                      <tr style="border-bottom: 1px solid #e5e7eb;">
-                        <th style="text-align: left; padding: 8px 4px;">Metric</th>
-                        <th style="text-align: center; padding: 8px 4px;">${formatQuarter(lastYearSameQuarterStart)}</th>
-                        <th style="text-align: center; padding: 8px 4px;">${formatQuarter(lastQuarterStart)}</th>
-                        <th style="text-align: center; padding: 8px 4px;">YoY</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr style="border-bottom: 1px solid #e5e7eb;">
-                        <td style="padding: 8px 4px;">Appointments</td>
-                        <td style="text-align: center; padding: 8px 4px;">${yoyAppointmentStats.total}</td>
-                        <td style="text-align: center; padding: 8px 4px; font-weight: 600;">${appointmentStats.total}</td>
-                        <td style="text-align: center; padding: 8px 4px;">${renderChange(yoyChanges.appointments)}</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid #e5e7eb;">
-                        <td style="padding: 8px 4px;">Completed</td>
-                        <td style="text-align: center; padding: 8px 4px;">${yoyAppointmentStats.completed}</td>
-                        <td style="text-align: center; padding: 8px 4px; font-weight: 600;">${appointmentStats.completed}</td>
-                        <td style="text-align: center; padding: 8px 4px;">${renderChange(yoyChanges.completed)}</td>
-                      </tr>
-                      <tr style="border-bottom: 1px solid #e5e7eb;">
-                        <td style="padding: 8px 4px;">Reminders</td>
-                        <td style="text-align: center; padding: 8px 4px;">${yoyReminderStats.total}</td>
-                        <td style="text-align: center; padding: 8px 4px; font-weight: 600;">${reminderStats.total}</td>
-                        <td style="text-align: center; padding: 8px 4px;">${renderChange(yoyChanges.reminders)}</td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 8px 4px;">Success Rate</td>
-                        <td style="text-align: center; padding: 8px 4px;">${yoySuccessRate}%</td>
-                        <td style="text-align: center; padding: 8px 4px; font-weight: 600;">${successRate}%</td>
-                        <td style="text-align: center; padding: 8px 4px; color: ${successRate >= yoySuccessRate ? '#10b981' : '#ef4444'};">${successRate >= yoySuccessRate ? '+' : ''}${successRate - yoySuccessRate}pp</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <!-- Quarterly Metrics -->
-                <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                  <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">📊 Quarterly Metrics</h2>
-                  <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: #4f46e5;">${avgPerWeek}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Avg/Week</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: #10b981;">${completionRate}%</div>
-                      <div style="font-size: 11px; color: #6b7280;">Completion</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: #ef4444;">${appointmentStats.cancelled}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Cancelled</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: #f59e0b;">${appointmentStats.noShow}</div>
-                      <div style="font-size: 11px; color: #6b7280;">No-Show</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Subscription Health -->
-                <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                  <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #374151;">📈 Subscription Health</h2>
-                  <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: #ef4444;">${subscriptionStats.unsubscribes}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Unsubscribes</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: #10b981;">${subscriptionStats.resubscribes}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Re-subscribes</div>
-                    </div>
-                    <div style="text-align: center; flex: 1; min-width: 80px;">
-                      <div style="font-size: 20px; font-weight: bold; color: ${netChange >= 0 ? '#10b981' : '#ef4444'};">${netChange >= 0 ? '+' : ''}${netChange}</div>
-                      <div style="font-size: 11px; color: #6b7280;">Net Change</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Strategic Insights -->
-                ${yoyChanges.appointments.direction === 'up' && yoyChanges.appointments.value >= 10 ? `
-                <div style="background: #d1fae5; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                  <h3 style="margin: 0 0 8px 0; color: #065f46; font-size: 14px;">💡 Strategic Insights</h3>
-                  <ul style="margin: 0; padding-left: 20px; color: #065f46; font-size: 13px;">
-                    <li>Appointments grew ${yoyChanges.appointments.value}% year-over-year</li>
-                    ${successRate > yoySuccessRate ? `<li>Reminder success rate improved by ${successRate - yoySuccessRate} percentage points</li>` : ''}
-                    ${qoqChanges.appointments.direction === 'up' ? `<li>Quarter-over-quarter growth of ${qoqChanges.appointments.value}%</li>` : ''}
-                  </ul>
                 </div>
                 ` : ''}
 
-                ${subscriptionStats.unsubscribes > 20 ? `
-                <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                  <p style="margin: 0; color: #92400e; font-size: 14px;">
-                    ⚠️ <strong>Attention:</strong> ${subscriptionStats.unsubscribes} unsubscribes this quarter. Consider reviewing your communication strategy.
-                  </p>
-                </div>
-                ` : ''}
+                ${yoySection}
+                ${quarterlyMetricsSection}
+                ${subscriptionSection}
+                ${insightsSection}
+                ${unsubscribeWarning}
 
                 <p style="text-align: center; font-size: 12px; color: #6b7280; margin-top: 24px;">
                   This is an automated quarterly report from ${company.name}.
