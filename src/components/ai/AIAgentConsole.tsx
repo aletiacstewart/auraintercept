@@ -14,6 +14,7 @@ import {
   Clock, MessageSquare, Sparkles, ChevronRight, Building2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { VoiceChat } from './VoiceChat';
 
 interface Service {
   id: string;
@@ -190,6 +191,7 @@ export const AIAgentConsole = () => {
                 variant="ghost" 
                 size="sm" 
                 className="text-white hover:bg-white/20"
+                onClick={() => setActiveTab('voice')}
               >
                 <Mic className="h-4 w-4" />
               </Button>
@@ -222,6 +224,15 @@ export const AIAgentConsole = () => {
             <Clock className="h-4 w-4 mr-2" />
             Hours
           </TabsTrigger>
+          {hasVoice && (
+            <TabsTrigger 
+              value="voice"
+              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3"
+            >
+              <Mic className="h-4 w-4 mr-2" />
+              Voice
+            </TabsTrigger>
+          )}
         </TabsList>
 
         {/* Chat Tab */}
@@ -432,6 +443,21 @@ export const AIAgentConsole = () => {
             </div>
           </ScrollArea>
         </TabsContent>
+
+        {/* Voice Tab */}
+        {hasVoice && companyId && (
+          <TabsContent value="voice" className="flex-1 overflow-hidden m-0">
+            <div className="h-full flex flex-col items-center justify-center p-4">
+              <VoiceChat 
+                companyId={companyId}
+                companyName={company?.name || 'AI Assistant'}
+                onTranscript={(role, text) => {
+                  console.log(`Voice transcript [${role}]:`, text);
+                }}
+              />
+            </div>
+          </TabsContent>
+        )}
       </Tabs>
     </Card>
   );
