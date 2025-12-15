@@ -413,8 +413,24 @@ Deno.serve(async (req) => {
 
       if (emailError) {
         console.error(`Failed to send digest to ${company.name}:`, emailError);
+        // Log failed delivery
+        await supabase.from('digest_delivery_logs').insert({
+          company_id: company.id,
+          digest_type: 'monthly',
+          recipient_email: company.monthly_digest_email,
+          status: 'failed',
+          error_message: emailError.message || 'Unknown error',
+        });
         continue;
       }
+
+      // Log successful delivery
+      await supabase.from('digest_delivery_logs').insert({
+        company_id: company.id,
+        digest_type: 'monthly',
+        recipient_email: company.monthly_digest_email,
+        status: 'sent',
+      });
 
       if (!isTestMode) {
         await supabase

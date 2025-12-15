@@ -369,6 +369,47 @@ export type Database = {
         }
         Relationships: []
       }
+      digest_delivery_logs: {
+        Row: {
+          company_id: string
+          created_at: string
+          digest_type: string
+          error_message: string | null
+          id: string
+          recipient_email: string
+          sent_at: string
+          status: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          digest_type: string
+          error_message?: string | null
+          id?: string
+          recipient_email: string
+          sent_at?: string
+          status?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          digest_type?: string
+          error_message?: string | null
+          id?: string
+          recipient_email?: string
+          sent_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "digest_delivery_logs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_templates: {
         Row: {
           company_id: string

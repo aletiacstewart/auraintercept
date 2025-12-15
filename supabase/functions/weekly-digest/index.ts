@@ -420,6 +420,14 @@ Deno.serve(async (req) => {
 
       if (emailError) {
         console.error(`Failed to send digest for ${company.name}:`, emailError);
+        // Log failed delivery
+        await supabase.from('digest_delivery_logs').insert({
+          company_id: company.id,
+          digest_type: 'weekly',
+          recipient_email: company.weekly_digest_email,
+          status: 'failed',
+          error_message: emailError.message || 'Unknown error',
+        });
         if (isTestMode) {
           return new Response(
             JSON.stringify({ success: false, error: `Email failed: ${emailError.message}` }),
@@ -428,6 +436,14 @@ Deno.serve(async (req) => {
         }
         continue;
       }
+
+      // Log successful delivery
+      await supabase.from('digest_delivery_logs').insert({
+        company_id: company.id,
+        digest_type: 'weekly',
+        recipient_email: company.weekly_digest_email,
+        status: 'sent',
+      });
 
       // Only update timestamp in non-test mode
       if (!isTestMode) {

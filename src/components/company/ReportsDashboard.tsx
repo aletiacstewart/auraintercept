@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { Calendar, Clock, Mail, CheckCircle2, XCircle, AlertCircle, FileText, TrendingUp } from 'lucide-react';
 import { format, formatDistanceToNow, addDays, setHours, setMinutes, setDate } from 'date-fns';
+import { DigestDeliveryHistory } from './DigestDeliveryHistory';
 
 interface ReportConfig {
   id: string;
@@ -229,90 +229,96 @@ export function ReportsDashboard() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileText className="h-5 w-5" />
-          Scheduled Reports
-        </CardTitle>
-        <CardDescription>
-          Overview of all automated digest reports and their status
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {reports.map(report => (
-            <div 
-              key={report.id}
-              className="border border-border rounded-lg p-4 space-y-3 hover:bg-muted/30 transition-colors"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  {getReportIcon(report.type)}
-                  <div>
-                    <h3 className="font-semibold capitalize">{report.type} Digest</h3>
-                    <p className="text-sm text-muted-foreground">{report.scheduleDescription}</p>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Scheduled Reports
+          </CardTitle>
+          <CardDescription>
+            Overview of all automated digest reports and their status
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {reports.map(report => (
+              <div 
+                key={report.id}
+                className="border border-border rounded-lg p-4 space-y-3 hover:bg-muted/30 transition-colors"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    {getReportIcon(report.type)}
+                    <div>
+                      <h3 className="font-semibold capitalize">{report.type} Digest</h3>
+                      <p className="text-sm text-muted-foreground">{report.scheduleDescription}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {getStatusBadge(report)}
+                    <Switch
+                      checked={report.enabled}
+                      onCheckedChange={(checked) => toggleReport(report.type, checked)}
+                      disabled={toggling === report.type}
+                    />
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  {getStatusBadge(report)}
-                  <Switch
-                    checked={report.enabled}
-                    onCheckedChange={(checked) => toggleReport(report.type, checked)}
-                    disabled={toggling === report.type}
-                  />
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Mail className="h-4 w-4" />
+                    <span>{report.email || 'No recipient set'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Clock className="h-4 w-4" />
+                    <span>
+                      {report.lastSentAt 
+                        ? `Last sent ${formatDistanceToNow(new Date(report.lastSentAt), { addSuffix: true })}`
+                        : 'Never sent'
+                      }
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span>
+                      {report.nextScheduled && report.enabled
+                        ? `Next: ${format(report.nextScheduled, 'MMM d, yyyy')}`
+                        : 'Not scheduled'
+                      }
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs text-muted-foreground">Includes:</span>
+                  {getIncludedMetrics(report).map(metric => (
+                    <Badge key={metric} variant="outline" className="text-xs">
+                      {metric}
+                    </Badge>
+                  ))}
+                  {getIncludedMetrics(report).length === 0 && (
+                    <span className="text-xs text-destructive">No metrics selected</span>
+                  )}
                 </div>
               </div>
+            ))}
+          </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Mail className="h-4 w-4" />
-                  <span>{report.email || 'No recipient set'}</span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Clock className="h-4 w-4" />
-                  <span>
-                    {report.lastSentAt 
-                      ? `Last sent ${formatDistanceToNow(new Date(report.lastSentAt), { addSuffix: true })}`
-                      : 'Never sent'
-                    }
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span>
-                    {report.nextScheduled && report.enabled
-                      ? `Next: ${format(report.nextScheduled, 'MMM d, yyyy')}`
-                      : 'Not scheduled'
-                    }
-                  </span>
-                </div>
-              </div>
+          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+            <h4 className="font-medium text-sm mb-2">Quick Tips</h4>
+            <ul className="text-sm text-muted-foreground space-y-1">
+              <li>• Configure individual report settings in the Opt-in/Out tab</li>
+              <li>• Ensure each report has a valid recipient email</li>
+              <li>• Reports are sent based on your configured timezone</li>
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
 
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs text-muted-foreground">Includes:</span>
-                {getIncludedMetrics(report).map(metric => (
-                  <Badge key={metric} variant="outline" className="text-xs">
-                    {metric}
-                  </Badge>
-                ))}
-                {getIncludedMetrics(report).length === 0 && (
-                  <span className="text-xs text-destructive">No metrics selected</span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-          <h4 className="font-medium text-sm mb-2">Quick Tips</h4>
-          <ul className="text-sm text-muted-foreground space-y-1">
-            <li>• Configure individual report settings in the Opt-in/Out tab</li>
-            <li>• Ensure each report has a valid recipient email</li>
-            <li>• Reports are sent based on your configured timezone</li>
-          </ul>
-        </div>
-      </CardContent>
-    </Card>
+      <div className="mt-6">
+        <DigestDeliveryHistory />
+      </div>
+    </>
   );
 }
