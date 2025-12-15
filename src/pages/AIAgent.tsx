@@ -1,16 +1,20 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
 import { AIAgentChat } from '@/components/ai/AIAgentChat';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code } from 'lucide-react';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { Button } from '@/components/ui/button';
 
 const AIAgent = () => {
   const { companyId } = useAuth();
+  const [viewMode, setViewMode] = useState<'customer' | 'debug'>('customer');
 
   // Check integration status
   const { data: integrations } = useQuery({
@@ -41,18 +45,21 @@ const AIAgent = () => {
               Test and monitor your AI-powered virtual assistant
             </p>
           </div>
-          {hasVoice && (
-            <OutboundCallDialog
-              trigger={
-                <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
-                  <PhoneOutgoing className="w-4 h-4" />
-                  Make Outbound Call
-                </button>
-              }
-            />
-          )}
+          <div className="flex items-center gap-2">
+            {hasVoice && (
+              <OutboundCallDialog
+                trigger={
+                  <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+                    <PhoneOutgoing className="w-4 h-4" />
+                    Make Outbound Call
+                  </button>
+                }
+              />
+            )}
+          </div>
         </div>
 
+        {/* Status Cards */}
         <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
@@ -174,8 +181,31 @@ const AIAgent = () => {
           </Card>
         </div>
 
+        {/* Console with View Toggle */}
         <div className="grid gap-6 lg:grid-cols-2">
-          <AIAgentChat />
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">AI Agent Console</h2>
+              <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
+                <TabsList className="h-8">
+                  <TabsTrigger value="customer" className="text-xs h-7 px-3">
+                    <Monitor className="h-3 w-3 mr-1" />
+                    Customer View
+                  </TabsTrigger>
+                  <TabsTrigger value="debug" className="text-xs h-7 px-3">
+                    <Code className="h-3 w-3 mr-1" />
+                    Debug
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+            
+            {viewMode === 'customer' ? (
+              <AIAgentConsole />
+            ) : (
+              <AIAgentChat />
+            )}
+          </div>
 
           <Card>
             <CardHeader>
