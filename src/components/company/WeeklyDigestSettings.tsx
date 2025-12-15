@@ -7,11 +7,13 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Mail, CalendarDays, Info } from 'lucide-react';
+import { Mail, CalendarDays, Info, Eye } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useState, useEffect } from 'react';
+import { format, subDays } from 'date-fns';
 
 const DAYS_OF_WEEK = [
   { value: '0', label: 'Sunday' },
@@ -30,6 +32,23 @@ export function WeeklyDigestSettings() {
   const [enabled, setEnabled] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [day, setDay] = useState<string>('1');
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+  // Fetch company name for preview
+  const { data: companyDetails } = useQuery({
+    queryKey: ['company-details', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data, error } = await supabase
+        .from('companies')
+        .select('name')
+        .eq('id', companyId)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!companyId,
+  });
 
   const { data: company, isLoading } = useQuery({
     queryKey: ['company-weekly-digest', companyId],
@@ -186,14 +205,125 @@ export function WeeklyDigestSettings() {
           </p>
         )}
 
-        <Button 
-          onClick={handleSave} 
-          disabled={updateMutation.isPending}
-          className="w-full"
-        >
-          {updateMutation.isPending ? 'Saving...' : 'Save Digest Settings'}
-        </Button>
+        <div className="flex gap-3">
+          <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="flex-1 gap-2">
+                <Eye className="h-4 w-4" />
+                Preview Email
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Weekly Digest Preview</DialogTitle>
+                <DialogDescription>
+                  This is how your weekly digest email will appear
+                </DialogDescription>
+              </DialogHeader>
+              <DigestEmailPreview companyName={companyDetails?.name || 'Your Company'} />
+            </DialogContent>
+          </Dialog>
+          
+          <Button 
+            onClick={handleSave} 
+            disabled={updateMutation.isPending}
+            className="flex-1"
+          >
+            {updateMutation.isPending ? 'Saving...' : 'Save Settings'}
+          </Button>
+        </div>
       </CardContent>
     </Card>
+  );
+}
+
+// Preview component showing sample email
+function DigestEmailPreview({ companyName }: { companyName: string }) {
+  const periodEnd = new Date();
+  const periodStart = subDays(periodEnd, 7);
+  const formatDate = (d: Date) => format(d, 'MMM d');
+
+  // Sample data for preview
+  const sampleData = {
+    appointments: { total: 24, completed: 18, cancelled: 2 },
+    reminders: { total: 72, successRate: 96, sms: 40, email: 25, call: 7 },
+    subscriptions: { unsubscribes: 3, resubscribes: 1, smsSubs: 1, emailSubs: 2, callSubs: 0 }
+  };
+
+  return (
+    <div className="border rounded-lg overflow-hidden">
+      {/* Email Header */}
+      <div className="bg-gradient-to-r from-primary to-purple-500 p-6 text-center text-primary-foreground">
+        <h2 className="text-xl font-bold mb-1">📊 Weekly Digest</h2>
+        <p className="text-sm opacity-90">{companyName}</p>
+        <p className="text-xs opacity-70">{formatDate(periodStart)} - {formatDate(periodEnd)}</p>
+      </div>
+
+      <div className="bg-muted/30 p-6 space-y-4">
+        {/* Appointments */}
+        <div className="bg-card border rounded-lg p-4">
+          <h3 className="font-semibold mb-3">📅 Appointments</h3>
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div className="text-2xl font-bold text-primary">{sampleData.appointments.total}</div>
+              <div className="text-xs text-muted-foreground">Total</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-green-600">{sampleData.appointments.completed}</div>
+              <div className="text-xs text-muted-foreground">Completed</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-red-600">{sampleData.appointments.cancelled}</div>
+              <div className="text-xs text-muted-foreground">Cancelled</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Reminders */}
+        <div className="bg-card border rounded-lg p-4">
+          <h3 className="font-semibold mb-3">🔔 Reminders Sent</h3>
+          <div className="grid grid-cols-2 gap-4 text-center mb-3">
+            <div>
+              <div className="text-2xl font-bold text-primary">{sampleData.reminders.total}</div>
+              <div className="text-xs text-muted-foreground">Total</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-green-600">{sampleData.reminders.successRate}%</div>
+              <div className="text-xs text-muted-foreground">Success Rate</div>
+            </div>
+          </div>
+          <div className="border-t pt-3 text-sm space-y-1">
+            <p>📱 SMS: {sampleData.reminders.sms}</p>
+            <p>✉️ Email: {sampleData.reminders.email}</p>
+            <p>📞 Voice: {sampleData.reminders.call}</p>
+          </div>
+        </div>
+
+        {/* Subscription Trends */}
+        <div className="bg-card border rounded-lg p-4">
+          <h3 className="font-semibold mb-3">📈 Subscription Trends</h3>
+          <div className="grid grid-cols-2 gap-4 text-center mb-3">
+            <div>
+              <div className="text-2xl font-bold text-red-600">{sampleData.subscriptions.unsubscribes}</div>
+              <div className="text-xs text-muted-foreground">Unsubscribes</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-green-600">{sampleData.subscriptions.resubscribes}</div>
+              <div className="text-xs text-muted-foreground">Re-subscribes</div>
+            </div>
+          </div>
+          <div className="border-t pt-3 text-sm space-y-1">
+            <p className="font-medium mb-1">Unsubscribes by channel:</p>
+            <p>📱 SMS: {sampleData.subscriptions.smsSubs}</p>
+            <p>✉️ Email: {sampleData.subscriptions.emailSubs}</p>
+            <p>📞 Voice: {sampleData.subscriptions.callSubs}</p>
+          </div>
+        </div>
+
+        <p className="text-xs text-center text-muted-foreground pt-2">
+          This is an automated weekly digest from {companyName}.
+        </p>
+      </div>
+    </div>
   );
 }
