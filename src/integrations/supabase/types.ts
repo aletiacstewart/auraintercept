@@ -251,6 +251,7 @@ export type Database = {
           weekly_digest_email: string | null
           weekly_digest_enabled: boolean | null
           weekly_digest_time: string | null
+          weekly_digest_timezone: string | null
         }
         Insert: {
           created_at?: string
@@ -274,6 +275,7 @@ export type Database = {
           weekly_digest_email?: string | null
           weekly_digest_enabled?: boolean | null
           weekly_digest_time?: string | null
+          weekly_digest_timezone?: string | null
         }
         Update: {
           created_at?: string
@@ -297,6 +299,7 @@ export type Database = {
           weekly_digest_email?: string | null
           weekly_digest_enabled?: boolean | null
           weekly_digest_time?: string | null
+          weekly_digest_timezone?: string | null
         }
         Relationships: []
       }
