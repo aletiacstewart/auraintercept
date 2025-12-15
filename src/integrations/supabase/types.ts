@@ -230,11 +230,15 @@ export type Database = {
       }
       companies: {
         Row: {
+          bounce_alert_email: string | null
+          bounce_alert_enabled: boolean | null
+          bounce_alert_threshold: number | null
           created_at: string
           default_call_enabled: boolean
           default_email_enabled: boolean
           default_sms_enabled: boolean
           id: string
+          last_bounce_alert_at: string | null
           last_monthly_digest_at: string | null
           last_quarterly_digest_at: string | null
           last_unsubscribe_alert_at: string | null
@@ -276,11 +280,15 @@ export type Database = {
           weekly_digest_timezone: string | null
         }
         Insert: {
+          bounce_alert_email?: string | null
+          bounce_alert_enabled?: boolean | null
+          bounce_alert_threshold?: number | null
           created_at?: string
           default_call_enabled?: boolean
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
           id?: string
+          last_bounce_alert_at?: string | null
           last_monthly_digest_at?: string | null
           last_quarterly_digest_at?: string | null
           last_unsubscribe_alert_at?: string | null
@@ -322,11 +330,15 @@ export type Database = {
           weekly_digest_timezone?: string | null
         }
         Update: {
+          bounce_alert_email?: string | null
+          bounce_alert_enabled?: boolean | null
+          bounce_alert_threshold?: number | null
           created_at?: string
           default_call_enabled?: boolean
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
           id?: string
+          last_bounce_alert_at?: string | null
           last_monthly_digest_at?: string | null
           last_quarterly_digest_at?: string | null
           last_unsubscribe_alert_at?: string | null
