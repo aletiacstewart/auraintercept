@@ -9,8 +9,9 @@ import { AIAgentSettings } from '@/components/ai/AIAgentSettings';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings } from 'lucide-react';
+import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall } from 'lucide-react';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
+import { TestCallDialog } from '@/components/ai/TestCallDialog';
 import { Button } from '@/components/ui/button';
 
 const AIAgent = () => {
@@ -49,14 +50,24 @@ const AIAgent = () => {
           </div>
           <div className="flex items-center gap-2">
             {hasVoice && (
-              <OutboundCallDialog
-                trigger={
-                  <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
-                    <PhoneOutgoing className="w-4 h-4" />
-                    Make Outbound Call
-                  </button>
-                }
-              />
+              <>
+                <TestCallDialog
+                  trigger={
+                    <Button variant="outline">
+                      <PhoneCall className="w-4 h-4 mr-2" />
+                      Test Call
+                    </Button>
+                  }
+                />
+                <OutboundCallDialog
+                  trigger={
+                    <Button>
+                      <PhoneOutgoing className="w-4 h-4 mr-2" />
+                      Make Outbound Call
+                    </Button>
+                  }
+                />
+              </>
             )}
           </div>
         </div>
