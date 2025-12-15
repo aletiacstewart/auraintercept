@@ -1,10 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -40,13 +39,12 @@ import {
   XCircle, 
   AlertCircle,
   MessageSquare,
-  Calendar,
-  Play,
-  Pause,
   Volume2
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { AudioPlayer } from '@/components/calls/AudioPlayer';
+import { TranscriptViewer } from '@/components/calls/TranscriptViewer';
 
 interface CallLog {
   id: string;
@@ -389,30 +387,10 @@ export default function CallHistory() {
 
               {/* Transcript */}
               {Array.isArray(selectedCall.transcript) && selectedCall.transcript.length > 0 && (
-                <div>
-                  <h4 className="font-medium mb-3 flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4" />
-                    Transcript
-                  </h4>
-                  <div className="space-y-3 max-h-64 overflow-y-auto p-3 bg-muted/50 rounded-lg">
-                    {(selectedCall.transcript as TranscriptMessage[]).map((msg, i) => (
-                      <div 
-                        key={i} 
-                        className={cn(
-                          'p-3 rounded-lg max-w-[85%]',
-                          msg.role === 'user' 
-                            ? 'bg-primary/10 ml-auto' 
-                            : 'bg-background border'
-                        )}
-                      >
-                        <p className="text-xs text-muted-foreground mb-1 capitalize">
-                          {msg.role === 'user' ? 'Customer' : 'AI Agent'}
-                        </p>
-                        <p className="text-sm">{msg.content}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <TranscriptViewer 
+                  transcript={selectedCall.transcript as TranscriptMessage[]}
+                  customerName={selectedCall.customer_name || 'Customer'}
+                />
               )}
 
               {/* Summary */}
@@ -427,160 +405,5 @@ export default function CallHistory() {
         </DialogContent>
       </Dialog>
     </DashboardLayout>
-  );
-}
-
-// Audio Player Component
-interface AudioPlayerProps {
-  url: string;
-  duration: number | null;
-}
-
-function AudioPlayer({ url, duration }: AudioPlayerProps) {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [audioDuration, setAudioDuration] = useState(duration || 0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const handleLoadedMetadata = () => {
-      setIsLoading(false);
-      if (audio.duration && !isNaN(audio.duration)) {
-        setAudioDuration(audio.duration);
-      }
-    };
-    const handleEnded = () => setIsPlaying(false);
-    const handleCanPlay = () => setIsLoading(false);
-    const handleError = () => {
-      setIsLoading(false);
-      setError('Unable to load recording');
-    };
-
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('canplay', handleCanPlay);
-    audio.addEventListener('error', handleError);
-
-    return () => {
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('canplay', handleCanPlay);
-      audio.removeEventListener('error', handleError);
-    };
-  }, []);
-
-  const togglePlayPause = () => {
-    const audio = audioRef.current;
-    if (!audio || isLoading || error) return;
-
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play().catch(() => setError('Unable to play recording'));
-    }
-    setIsPlaying(!isPlaying);
-  };
-
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    
-    const newTime = parseFloat(e.target.value);
-    audio.currentTime = newTime;
-    setCurrentTime(newTime);
-  };
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const progress = audioDuration > 0 ? (currentTime / audioDuration) * 100 : 0;
-
-  return (
-    <div className="space-y-2">
-      <h4 className="font-medium flex items-center gap-2">
-        <Volume2 className="w-4 h-4 text-primary" />
-        Call Recording
-        {audioDuration > 0 && (
-          <span className="text-xs text-muted-foreground font-normal">
-            ({formatTime(audioDuration)})
-          </span>
-        )}
-      </h4>
-      <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
-        <audio ref={audioRef} src={url} preload="metadata" />
-        
-        {error ? (
-          <div className="flex items-center gap-2 text-destructive text-sm">
-            <XCircle className="w-4 h-4" />
-            {error}
-          </div>
-        ) : (
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={togglePlayPause}
-              disabled={isLoading}
-              className={cn(
-                "h-12 w-12 rounded-full transition-all shadow-md",
-                isPlaying 
-                  ? "bg-primary text-primary-foreground hover:bg-primary/90 scale-105" 
-                  : "bg-primary text-primary-foreground hover:bg-primary/90"
-              )}
-            >
-              {isLoading ? (
-                <div className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-              ) : isPlaying ? (
-                <Pause className="h-5 w-5" />
-              ) : (
-                <Play className="h-5 w-5 ml-0.5" />
-              )}
-            </Button>
-            
-            <div className="flex-1 space-y-2">
-              {/* Custom progress bar */}
-              <div 
-                className="relative h-2 bg-muted rounded-full overflow-hidden cursor-pointer group"
-                onClick={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const x = e.clientX - rect.left;
-                  const percentage = x / rect.width;
-                  const newTime = percentage * audioDuration;
-                  if (audioRef.current) {
-                    audioRef.current.currentTime = newTime;
-                    setCurrentTime(newTime);
-                  }
-                }}
-              >
-                <div 
-                  className="absolute h-full bg-primary rounded-full transition-all"
-                  style={{ width: `${progress}%` }}
-                />
-                <div 
-                  className="absolute h-4 w-4 bg-primary rounded-full -top-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ left: `calc(${progress}% - 8px)` }}
-                />
-              </div>
-              
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span className="font-mono">{formatTime(currentTime)}</span>
-                <span className="font-mono">{formatTime(audioDuration)}</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
   );
 }
