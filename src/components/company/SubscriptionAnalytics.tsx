@@ -1,3 +1,4 @@
+import { useState, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
@@ -5,6 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   BarChart, 
   Bar, 
@@ -18,10 +22,13 @@ import {
   Cell,
   Legend
 } from 'recharts';
-import { TrendingDown, TrendingUp, MessageSquare, Mail, Phone, ArrowUpRight, ArrowDownRight, Download } from 'lucide-react';
-import { format, subDays, startOfDay } from 'date-fns';
+import { TrendingDown, TrendingUp, MessageSquare, Mail, Phone, ArrowUpRight, ArrowDownRight, Download, CalendarIcon } from 'lucide-react';
+import { format, subDays, startOfDay, endOfDay, isWithinInterval } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+
+type DatePreset = 'all' | '7d' | '30d' | '90d' | 'custom';
 
 const COLORS = {
   sms: '#3b82f6',
@@ -45,6 +52,9 @@ interface SubscriptionEvent {
 
 export function SubscriptionAnalytics() {
   const { companyId } = useAuth();
+  const [datePreset, setDatePreset] = useState<DatePreset>('all');
+  const [customStartDate, setCustomStartDate] = useState<Date | undefined>(undefined);
+  const [customEndDate, setCustomEndDate] = useState<Date | undefined>(undefined);
 
   const { data: events, isLoading } = useQuery({
     queryKey: ['subscription-events', companyId],
@@ -62,8 +72,32 @@ export function SubscriptionAnalytics() {
     enabled: !!companyId,
   });
 
+  // Filter events based on date range
+  const filteredEvents = useMemo(() => {
+    if (!events) return [];
+    
+    if (datePreset === 'all') return events;
+    
+    let startDate: Date;
+    let endDate = endOfDay(new Date());
+    
+    if (datePreset === 'custom') {
+      if (!customStartDate) return events;
+      startDate = startOfDay(customStartDate);
+      endDate = customEndDate ? endOfDay(customEndDate) : endOfDay(new Date());
+    } else {
+      const daysMap = { '7d': 7, '30d': 30, '90d': 90 };
+      startDate = startOfDay(subDays(new Date(), daysMap[datePreset]));
+    }
+    
+    return events.filter(event => {
+      const eventDate = new Date(event.created_at);
+      return isWithinInterval(eventDate, { start: startDate, end: endDate });
+    });
+  }, [events, datePreset, customStartDate, customEndDate]);
+
   const exportToCSV = () => {
-    if (!events || events.length === 0) {
+    if (!filteredEvents || filteredEvents.length === 0) {
       toast.error('No data to export');
       return;
     }
@@ -72,7 +106,7 @@ export function SubscriptionAnalytics() {
     const headers = ['Date', 'Time', 'Channel', 'Action', 'Source', 'Customer Email', 'Customer Phone'];
     
     // CSV rows
-    const rows = events.map(event => {
+    const rows = filteredEvents.map(event => {
       const date = new Date(event.created_at);
       return [
         format(date, 'yyyy-MM-dd'),
@@ -102,7 +136,7 @@ export function SubscriptionAnalytics() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    toast.success(`Exported ${events.length} events to CSV`);
+    toast.success(`Exported ${filteredEvents.length} events to CSV`);
   };
 
   if (isLoading) {
@@ -132,22 +166,22 @@ export function SubscriptionAnalytics() {
     );
   }
 
-  // Calculate stats
-  const totalUnsubscribes = events?.filter(e => e.action === 'unsubscribe').length || 0;
-  const totalSubscribes = events?.filter(e => e.action === 'subscribe').length || 0;
+  // Calculate stats from filtered events
+  const totalUnsubscribes = filteredEvents?.filter(e => e.action === 'unsubscribe').length || 0;
+  const totalSubscribes = filteredEvents?.filter(e => e.action === 'subscribe').length || 0;
   
   const channelStats = {
     sms: {
-      unsubscribes: events?.filter(e => e.channel === 'sms' && e.action === 'unsubscribe').length || 0,
-      subscribes: events?.filter(e => e.channel === 'sms' && e.action === 'subscribe').length || 0
+      unsubscribes: filteredEvents?.filter(e => e.channel === 'sms' && e.action === 'unsubscribe').length || 0,
+      subscribes: filteredEvents?.filter(e => e.channel === 'sms' && e.action === 'subscribe').length || 0
     },
     email: {
-      unsubscribes: events?.filter(e => e.channel === 'email' && e.action === 'unsubscribe').length || 0,
-      subscribes: events?.filter(e => e.channel === 'email' && e.action === 'subscribe').length || 0
+      unsubscribes: filteredEvents?.filter(e => e.channel === 'email' && e.action === 'unsubscribe').length || 0,
+      subscribes: filteredEvents?.filter(e => e.channel === 'email' && e.action === 'subscribe').length || 0
     },
     call: {
-      unsubscribes: events?.filter(e => e.channel === 'call' && e.action === 'unsubscribe').length || 0,
-      subscribes: events?.filter(e => e.channel === 'call' && e.action === 'subscribe').length || 0
+      unsubscribes: filteredEvents?.filter(e => e.channel === 'call' && e.action === 'unsubscribe').length || 0,
+      subscribes: filteredEvents?.filter(e => e.channel === 'call' && e.action === 'subscribe').length || 0
     }
   };
 
@@ -172,9 +206,9 @@ export function SubscriptionAnalytics() {
 
   // Pie chart data for source breakdown
   const sourceStats = {
-    customer_portal: events?.filter(e => e.source === 'customer_portal').length || 0,
-    email_link: events?.filter(e => e.source === 'email_link').length || 0,
-    admin: events?.filter(e => e.source === 'admin').length || 0
+    customer_portal: filteredEvents?.filter(e => e.source === 'customer_portal').length || 0,
+    email_link: filteredEvents?.filter(e => e.source === 'email_link').length || 0,
+    admin: filteredEvents?.filter(e => e.source === 'admin').length || 0
   };
 
   const sourceChartData = [
@@ -183,8 +217,20 @@ export function SubscriptionAnalytics() {
     { name: 'Admin', value: sourceStats.admin, color: '#f59e0b' }
   ].filter(d => d.value > 0);
 
-  // Recent events for the table
-  const recentEvents = events?.slice(0, 10) || [];
+  // Recent events for the table (from filtered)
+  const recentEvents = filteredEvents?.slice(0, 10) || [];
+
+  const getDateRangeLabel = () => {
+    if (datePreset === 'all') return 'All time';
+    if (datePreset === '7d') return 'Last 7 days';
+    if (datePreset === '30d') return 'Last 30 days';
+    if (datePreset === '90d') return 'Last 90 days';
+    if (datePreset === 'custom' && customStartDate) {
+      const endLabel = customEndDate ? format(customEndDate, 'MMM d, yyyy') : 'Today';
+      return `${format(customStartDate, 'MMM d, yyyy')} - ${endLabel}`;
+    }
+    return 'All time';
+  };
 
   const getChannelIcon = (channel: string) => {
     switch (channel) {
@@ -197,22 +243,100 @@ export function SubscriptionAnalytics() {
 
   return (
     <div className="space-y-6">
-      {/* Header with Export Button */}
-      <div className="flex items-center justify-between">
+      {/* Header with Date Filter and Export Button */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h3 className="text-lg font-semibold">Subscription Analytics</h3>
           <p className="text-sm text-muted-foreground">Track customer opt-in and opt-out trends</p>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={exportToCSV}
-          disabled={!events || events.length === 0}
-          className="gap-2"
-        >
-          <Download className="h-4 w-4" />
-          Export CSV
-        </Button>
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Date Range Preset Select */}
+          <Select value={datePreset} onValueChange={(value: DatePreset) => setDatePreset(value)}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Time period" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All time</SelectItem>
+              <SelectItem value="7d">Last 7 days</SelectItem>
+              <SelectItem value="30d">Last 30 days</SelectItem>
+              <SelectItem value="90d">Last 90 days</SelectItem>
+              <SelectItem value="custom">Custom range</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Custom Date Pickers (shown when custom is selected) */}
+          {datePreset === 'custom' && (
+            <div className="flex items-center gap-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={cn(
+                      "justify-start text-left font-normal",
+                      !customStartDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {customStartDate ? format(customStartDate, "MMM d, yyyy") : "Start date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={customStartDate}
+                    onSelect={setCustomStartDate}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+              <span className="text-muted-foreground">to</span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={cn(
+                      "justify-start text-left font-normal",
+                      !customEndDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {customEndDate ? format(customEndDate, "MMM d, yyyy") : "End date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={customEndDate}
+                    onSelect={setCustomEndDate}
+                    disabled={(date) => customStartDate ? date < customStartDate : false}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          )}
+
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={exportToCSV}
+            disabled={!filteredEvents || filteredEvents.length === 0}
+            className="gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
+        </div>
+      </div>
+
+      {/* Showing results badge */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Badge variant="secondary">{filteredEvents.length} events</Badge>
+        <span>{getDateRangeLabel()}</span>
       </div>
 
       {/* Summary Cards */}
@@ -227,7 +351,7 @@ export function SubscriptionAnalytics() {
           <CardContent>
             <div className="text-3xl font-bold text-red-600">{totalUnsubscribes}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              All time opt-outs
+              {datePreset === 'all' ? 'All time' : getDateRangeLabel()} opt-outs
             </p>
           </CardContent>
         </Card>
@@ -242,7 +366,7 @@ export function SubscriptionAnalytics() {
           <CardContent>
             <div className="text-3xl font-bold text-green-600">{totalSubscribes}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              All time opt-ins
+              {datePreset === 'all' ? 'All time' : getDateRangeLabel()} opt-ins
             </p>
           </CardContent>
         </Card>
