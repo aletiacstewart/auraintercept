@@ -236,6 +236,7 @@ export type Database = {
           default_sms_enabled: boolean
           id: string
           last_monthly_digest_at: string | null
+          last_quarterly_digest_at: string | null
           last_unsubscribe_alert_at: string | null
           last_weekly_digest_at: string | null
           logo_url: string | null
@@ -246,6 +247,12 @@ export type Database = {
           monthly_digest_timezone: string | null
           name: string
           primary_color: string | null
+          quarterly_digest_day: number | null
+          quarterly_digest_email: string | null
+          quarterly_digest_enabled: boolean | null
+          quarterly_digest_month: number | null
+          quarterly_digest_time: string | null
+          quarterly_digest_timezone: string | null
           secondary_color: string | null
           slug: string
           stripe_customer_id: string | null
@@ -266,6 +273,7 @@ export type Database = {
           default_sms_enabled?: boolean
           id?: string
           last_monthly_digest_at?: string | null
+          last_quarterly_digest_at?: string | null
           last_unsubscribe_alert_at?: string | null
           last_weekly_digest_at?: string | null
           logo_url?: string | null
@@ -276,6 +284,12 @@ export type Database = {
           monthly_digest_timezone?: string | null
           name: string
           primary_color?: string | null
+          quarterly_digest_day?: number | null
+          quarterly_digest_email?: string | null
+          quarterly_digest_enabled?: boolean | null
+          quarterly_digest_month?: number | null
+          quarterly_digest_time?: string | null
+          quarterly_digest_timezone?: string | null
           secondary_color?: string | null
           slug: string
           stripe_customer_id?: string | null
@@ -296,6 +310,7 @@ export type Database = {
           default_sms_enabled?: boolean
           id?: string
           last_monthly_digest_at?: string | null
+          last_quarterly_digest_at?: string | null
           last_unsubscribe_alert_at?: string | null
           last_weekly_digest_at?: string | null
           logo_url?: string | null
@@ -306,6 +321,12 @@ export type Database = {
           monthly_digest_timezone?: string | null
           name?: string
           primary_color?: string | null
+          quarterly_digest_day?: number | null
+          quarterly_digest_email?: string | null
+          quarterly_digest_enabled?: boolean | null
+          quarterly_digest_month?: number | null
+          quarterly_digest_time?: string | null
+          quarterly_digest_timezone?: string | null
           secondary_color?: string | null
           slug?: string
           stripe_customer_id?: string | null

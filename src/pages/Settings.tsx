@@ -9,6 +9,7 @@ import { SubscriptionAnalytics } from '@/components/company/SubscriptionAnalytic
 import { UnsubscribeAlertSettings } from '@/components/company/UnsubscribeAlertSettings';
 import { WeeklyDigestSettings } from '@/components/company/WeeklyDigestSettings';
 import { MonthlyDigestSettings } from '@/components/company/MonthlyDigestSettings';
+import { QuarterlyDigestSettings } from '@/components/company/QuarterlyDigestSettings';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
 import { useAuth } from '@/contexts/AuthContext';
@@ -58,7 +59,10 @@ export default function Settings() {
                   <UnsubscribeAlertSettings />
                   <WeeklyDigestSettings />
                 </div>
-                <MonthlyDigestSettings />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <MonthlyDigestSettings />
+                  <QuarterlyDigestSettings />
+                </div>
                 <SubscriptionAnalytics />
               </div>
             </TabsContent>
