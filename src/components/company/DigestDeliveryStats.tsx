@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { BarChart3, CheckCircle2, XCircle, Mail, Calendar, FileText, TrendingUp } from 'lucide-react';
+import { BarChart3, CheckCircle2, XCircle, Mail, Calendar, FileText, TrendingUp, Ban, AlertTriangle } from 'lucide-react';
 import { subDays, format, startOfDay } from 'date-fns';
 
 interface DeliveryLog {
@@ -17,6 +17,8 @@ interface DailyStats {
   date: string;
   sent: number;
   failed: number;
+  bounced: number;
+  complained: number;
 }
 
 export function DigestDeliveryStats() {
@@ -44,13 +46,16 @@ export function DigestDeliveryStats() {
       const total = logs.length;
       const sent = logs.filter(l => l.status === 'sent').length;
       const failed = logs.filter(l => l.status === 'failed').length;
+      const bounced = logs.filter(l => l.status === 'bounced').length;
+      const complained = logs.filter(l => l.status === 'complained').length;
+      const deliveryIssues = failed + bounced + complained;
       const successRate = total > 0 ? Math.round((sent / total) * 100) : 0;
 
       // Breakdown by type
       const byType = {
-        weekly: { sent: 0, failed: 0 },
-        monthly: { sent: 0, failed: 0 },
-        quarterly: { sent: 0, failed: 0 },
+        weekly: { sent: 0, failed: 0, bounced: 0, complained: 0 },
+        monthly: { sent: 0, failed: 0, bounced: 0, complained: 0 },
+        quarterly: { sent: 0, failed: 0, bounced: 0, complained: 0 },
       };
 
       logs.forEach(log => {
@@ -58,6 +63,10 @@ export function DigestDeliveryStats() {
         if (byType[type]) {
           if (log.status === 'sent') {
             byType[type].sent++;
+          } else if (log.status === 'bounced') {
+            byType[type].bounced++;
+          } else if (log.status === 'complained') {
+            byType[type].complained++;
           } else {
             byType[type].failed++;
           }
@@ -74,10 +83,12 @@ export function DigestDeliveryStats() {
           date: format(date, 'EEE'),
           sent: dayLogs.filter(l => l.status === 'sent').length,
           failed: dayLogs.filter(l => l.status === 'failed').length,
+          bounced: dayLogs.filter(l => l.status === 'bounced').length,
+          complained: dayLogs.filter(l => l.status === 'complained').length,
         });
       }
 
-      return { total, sent, failed, successRate, byType, dailyStats };
+      return { total, sent, failed, bounced, complained, deliveryIssues, successRate, byType, dailyStats };
     },
     enabled: !!companyId,
   });
@@ -121,7 +132,7 @@ export function DigestDeliveryStats() {
     );
   }
 
-  const maxDailyValue = Math.max(...stats.dailyStats.map(d => d.sent + d.failed), 1);
+  const maxDailyValue = Math.max(...stats.dailyStats.map(d => d.sent + d.failed + d.bounced + d.complained), 1);
 
   return (
     <Card>
@@ -153,9 +164,18 @@ export function DigestDeliveryStats() {
           <div className="text-center p-4 bg-red-500/10 rounded-lg">
             <div className="flex items-center justify-center gap-1">
               <XCircle className="h-5 w-5 text-red-600" />
-              <span className="text-3xl font-bold text-red-600">{stats.failed}</span>
+              <span className="text-3xl font-bold text-red-600">{stats.deliveryIssues}</span>
             </div>
-            <div className="text-sm text-muted-foreground">Failed</div>
+            <div className="text-sm text-muted-foreground">
+              Issues
+              {(stats.bounced > 0 || stats.complained > 0) && (
+                <span className="block text-xs">
+                  {stats.bounced > 0 && `${stats.bounced} bounced`}
+                  {stats.bounced > 0 && stats.complained > 0 && ', '}
+                  {stats.complained > 0 && `${stats.complained} spam`}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -166,31 +186,31 @@ export function DigestDeliveryStats() {
             <div className="flex items-center gap-3 p-3 border border-border rounded-lg">
               <Calendar className="h-5 w-5 text-blue-500" />
               <div>
-                <div className="font-semibold">{stats.byType.weekly.sent + stats.byType.weekly.failed}</div>
+                <div className="font-semibold">{stats.byType.weekly.sent + stats.byType.weekly.failed + stats.byType.weekly.bounced + stats.byType.weekly.complained}</div>
                 <div className="text-xs text-muted-foreground">Weekly</div>
               </div>
-              {stats.byType.weekly.failed > 0 && (
-                <span className="text-xs text-red-500 ml-auto">{stats.byType.weekly.failed} failed</span>
+              {(stats.byType.weekly.failed + stats.byType.weekly.bounced + stats.byType.weekly.complained) > 0 && (
+                <span className="text-xs text-red-500 ml-auto">{stats.byType.weekly.failed + stats.byType.weekly.bounced + stats.byType.weekly.complained} issues</span>
               )}
             </div>
             <div className="flex items-center gap-3 p-3 border border-border rounded-lg">
               <FileText className="h-5 w-5 text-purple-500" />
               <div>
-                <div className="font-semibold">{stats.byType.monthly.sent + stats.byType.monthly.failed}</div>
+                <div className="font-semibold">{stats.byType.monthly.sent + stats.byType.monthly.failed + stats.byType.monthly.bounced + stats.byType.monthly.complained}</div>
                 <div className="text-xs text-muted-foreground">Monthly</div>
               </div>
-              {stats.byType.monthly.failed > 0 && (
-                <span className="text-xs text-red-500 ml-auto">{stats.byType.monthly.failed} failed</span>
+              {(stats.byType.monthly.failed + stats.byType.monthly.bounced + stats.byType.monthly.complained) > 0 && (
+                <span className="text-xs text-red-500 ml-auto">{stats.byType.monthly.failed + stats.byType.monthly.bounced + stats.byType.monthly.complained} issues</span>
               )}
             </div>
             <div className="flex items-center gap-3 p-3 border border-border rounded-lg">
               <TrendingUp className="h-5 w-5 text-indigo-500" />
               <div>
-                <div className="font-semibold">{stats.byType.quarterly.sent + stats.byType.quarterly.failed}</div>
+                <div className="font-semibold">{stats.byType.quarterly.sent + stats.byType.quarterly.failed + stats.byType.quarterly.bounced + stats.byType.quarterly.complained}</div>
                 <div className="text-xs text-muted-foreground">Quarterly</div>
               </div>
-              {stats.byType.quarterly.failed > 0 && (
-                <span className="text-xs text-red-500 ml-auto">{stats.byType.quarterly.failed} failed</span>
+              {(stats.byType.quarterly.failed + stats.byType.quarterly.bounced + stats.byType.quarterly.complained) > 0 && (
+                <span className="text-xs text-red-500 ml-auto">{stats.byType.quarterly.failed + stats.byType.quarterly.bounced + stats.byType.quarterly.complained} issues</span>
               )}
             </div>
           </div>
@@ -200,28 +220,32 @@ export function DigestDeliveryStats() {
         <div>
           <h4 className="text-sm font-medium mb-3">Last 7 Days</h4>
           <div className="flex items-end gap-2 h-24">
-            {stats.dailyStats.map((day, idx) => (
-              <div key={idx} className="flex-1 flex flex-col items-center gap-1">
-                <div className="w-full flex flex-col gap-0.5" style={{ height: '80px' }}>
-                  {day.failed > 0 && (
-                    <div
-                      className="w-full bg-red-400 rounded-t"
-                      style={{ height: `${(day.failed / maxDailyValue) * 80}px` }}
-                    />
-                  )}
-                  {day.sent > 0 && (
-                    <div
-                      className="w-full bg-green-500 rounded-t"
-                      style={{ height: `${(day.sent / maxDailyValue) * 80}px` }}
-                    />
-                  )}
-                  {day.sent === 0 && day.failed === 0 && (
-                    <div className="w-full bg-muted rounded-t" style={{ height: '4px', marginTop: 'auto' }} />
-                  )}
+            {stats.dailyStats.map((day, idx) => {
+              const totalIssues = day.failed + day.bounced + day.complained;
+              return (
+                <div key={idx} className="flex-1 flex flex-col items-center gap-1">
+                  <div className="w-full flex flex-col gap-0.5" style={{ height: '80px' }}>
+                    {totalIssues > 0 && (
+                      <div
+                        className="w-full bg-red-400 rounded-t"
+                        style={{ height: `${(totalIssues / maxDailyValue) * 80}px` }}
+                        title={`${day.failed} failed, ${day.bounced} bounced, ${day.complained} spam`}
+                      />
+                    )}
+                    {day.sent > 0 && (
+                      <div
+                        className="w-full bg-green-500 rounded-t"
+                        style={{ height: `${(day.sent / maxDailyValue) * 80}px` }}
+                      />
+                    )}
+                    {day.sent === 0 && totalIssues === 0 && (
+                      <div className="w-full bg-muted rounded-t" style={{ height: '4px', marginTop: 'auto' }} />
+                    )}
+                  </div>
+                  <span className="text-xs text-muted-foreground">{day.date}</span>
                 </div>
-                <span className="text-xs text-muted-foreground">{day.date}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="flex items-center justify-center gap-4 mt-2 text-xs text-muted-foreground">
             <div className="flex items-center gap-1">
@@ -230,7 +254,7 @@ export function DigestDeliveryStats() {
             </div>
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 bg-red-400 rounded" />
-              <span>Failed</span>
+              <span>Failed/Bounced/Spam</span>
             </div>
           </div>
         </div>

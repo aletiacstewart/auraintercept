@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { format, formatDistanceToNow } from 'date-fns';
-import { History, Mail, CheckCircle2, XCircle, Calendar, FileText, TrendingUp, Download, RotateCcw, Loader2 } from 'lucide-react';
+import { History, Mail, CheckCircle2, XCircle, Calendar, FileText, TrendingUp, Download, RotateCcw, Loader2, AlertTriangle, Ban } from 'lucide-react';
 
 interface DeliveryLog {
   id: string;
@@ -105,18 +105,33 @@ export function DigestDeliveryHistory() {
   };
 
   const getStatusBadge = (status: string) => {
-    if (status === 'sent') {
-      return (
-        <Badge className="gap-1 bg-green-500/20 text-green-700 border-green-500/30">
-          <CheckCircle2 className="h-3 w-3" /> Sent
-        </Badge>
-      );
+    switch (status) {
+      case 'sent':
+        return (
+          <Badge className="gap-1 bg-green-500/20 text-green-700 border-green-500/30">
+            <CheckCircle2 className="h-3 w-3" /> Sent
+          </Badge>
+        );
+      case 'bounced':
+        return (
+          <Badge className="gap-1 bg-orange-500/20 text-orange-700 border-orange-500/30">
+            <Ban className="h-3 w-3" /> Bounced
+          </Badge>
+        );
+      case 'complained':
+        return (
+          <Badge className="gap-1 bg-yellow-500/20 text-yellow-700 border-yellow-500/30">
+            <AlertTriangle className="h-3 w-3" /> Spam
+          </Badge>
+        );
+      case 'failed':
+      default:
+        return (
+          <Badge variant="destructive" className="gap-1">
+            <XCircle className="h-3 w-3" /> Failed
+          </Badge>
+        );
     }
-    return (
-      <Badge variant="destructive" className="gap-1">
-        <XCircle className="h-3 w-3" /> Failed
-      </Badge>
-    );
   };
 
   const exportToCSV = () => {
@@ -223,7 +238,7 @@ export function DigestDeliveryHistory() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    {log.status === 'failed' && (
+                    {(log.status === 'failed' || log.status === 'bounced') && (
                       <Button
                         variant="outline"
                         size="sm"
