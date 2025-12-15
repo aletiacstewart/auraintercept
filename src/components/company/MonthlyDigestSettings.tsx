@@ -14,6 +14,7 @@ import { Mail, Calendar, Info, Eye, Send, Loader2, Globe } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useState, useEffect, useMemo } from 'react';
 import { format, subMonths } from 'date-fns';
+import { DigestMetricsSelector } from './DigestMetricsSelector';
 
 const COMMON_TIMEZONES = [
   { value: 'America/New_York', label: 'Eastern Time (ET)' },
@@ -52,6 +53,9 @@ export function MonthlyDigestSettings() {
   const [day, setDay] = useState<string>('1');
   const [time, setTime] = useState<string>('09:00');
   const [timezone, setTimezone] = useState<string>('America/New_York');
+  const [includeAppointments, setIncludeAppointments] = useState(true);
+  const [includeReminders, setIncludeReminders] = useState(true);
+  const [includeSubscriptions, setIncludeSubscriptions] = useState(true);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
 
@@ -78,7 +82,7 @@ export function MonthlyDigestSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('monthly_digest_enabled, monthly_digest_email, monthly_digest_day, monthly_digest_time, monthly_digest_timezone, last_monthly_digest_at')
+        .select('monthly_digest_enabled, monthly_digest_email, monthly_digest_day, monthly_digest_time, monthly_digest_timezone, monthly_digest_include_appointments, monthly_digest_include_reminders, monthly_digest_include_subscriptions, last_monthly_digest_at')
         .eq('id', companyId)
         .single();
       if (error) throw error;
@@ -94,6 +98,9 @@ export function MonthlyDigestSettings() {
       setDay(String(company.monthly_digest_day ?? 1));
       setTime(company.monthly_digest_time?.slice(0, 5) || '09:00');
       setTimezone(company.monthly_digest_timezone || browserTimezone || 'America/New_York');
+      setIncludeAppointments(company.monthly_digest_include_appointments ?? true);
+      setIncludeReminders(company.monthly_digest_include_reminders ?? true);
+      setIncludeSubscriptions(company.monthly_digest_include_subscriptions ?? true);
     }
   }, [company, browserTimezone]);
 
@@ -104,6 +111,9 @@ export function MonthlyDigestSettings() {
       monthly_digest_day?: number;
       monthly_digest_time?: string;
       monthly_digest_timezone?: string;
+      monthly_digest_include_appointments?: boolean;
+      monthly_digest_include_reminders?: boolean;
+      monthly_digest_include_subscriptions?: boolean;
     }) => {
       if (!companyId) throw new Error('No company ID');
       const { error } = await supabase
@@ -126,12 +136,19 @@ export function MonthlyDigestSettings() {
       toast.error('Please enter an email address');
       return;
     }
+    if (enabled && !includeAppointments && !includeReminders && !includeSubscriptions) {
+      toast.error('Please select at least one metric to include');
+      return;
+    }
     updateMutation.mutate({
       monthly_digest_enabled: enabled,
       monthly_digest_email: email || null,
       monthly_digest_day: parseInt(day),
       monthly_digest_time: time,
       monthly_digest_timezone: timezone,
+      monthly_digest_include_appointments: includeAppointments,
+      monthly_digest_include_reminders: includeReminders,
+      monthly_digest_include_subscriptions: includeSubscriptions,
     });
   };
 
@@ -287,6 +304,16 @@ export function MonthlyDigestSettings() {
             Report will be sent on the {DAYS_OF_MONTH.find(d => d.value === day)?.label} of each month at {time} ({COMMON_TIMEZONES.find(tz => tz.value === timezone)?.label || timezone})
           </p>
         </div>
+
+        <DigestMetricsSelector
+          includeAppointments={includeAppointments}
+          includeReminders={includeReminders}
+          includeSubscriptions={includeSubscriptions}
+          onChangeAppointments={setIncludeAppointments}
+          onChangeReminders={setIncludeReminders}
+          onChangeSubscriptions={setIncludeSubscriptions}
+          disabled={!enabled}
+        />
 
         {company?.last_monthly_digest_at && (
           <p className="text-sm text-muted-foreground">

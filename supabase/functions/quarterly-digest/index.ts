@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
     if (isTestMode && testCompanyId) {
       const { data, error } = await supabase
         .from('companies')
-        .select('id, name, quarterly_digest_email, quarterly_digest_month, quarterly_digest_day, quarterly_digest_time, quarterly_digest_timezone, last_quarterly_digest_at')
+        .select('id, name, quarterly_digest_email, quarterly_digest_month, quarterly_digest_day, quarterly_digest_time, quarterly_digest_timezone, quarterly_digest_include_appointments, quarterly_digest_include_reminders, quarterly_digest_include_subscriptions, last_quarterly_digest_at')
         .eq('id', testCompanyId)
         .not('quarterly_digest_email', 'is', null);
       
@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
     } else {
       const { data, error } = await supabase
         .from('companies')
-        .select('id, name, quarterly_digest_email, quarterly_digest_month, quarterly_digest_day, quarterly_digest_time, quarterly_digest_timezone, last_quarterly_digest_at')
+        .select('id, name, quarterly_digest_email, quarterly_digest_month, quarterly_digest_day, quarterly_digest_time, quarterly_digest_timezone, quarterly_digest_include_appointments, quarterly_digest_include_reminders, quarterly_digest_include_subscriptions, last_quarterly_digest_at')
         .eq('quarterly_digest_enabled', true)
         .not('quarterly_digest_email', 'is', null);
       

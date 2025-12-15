@@ -14,6 +14,7 @@ import { Mail, TrendingUp, Info, Eye, Send, Loader2, Globe } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useState, useEffect, useMemo } from 'react';
 import { format, subQuarters, subYears } from 'date-fns';
+import { DigestMetricsSelector } from './DigestMetricsSelector';
 
 const COMMON_TIMEZONES = [
   { value: 'America/New_York', label: 'Eastern Time (ET)' },
@@ -59,6 +60,9 @@ export function QuarterlyDigestSettings() {
   const [day, setDay] = useState<string>('1');
   const [time, setTime] = useState<string>('09:00');
   const [timezone, setTimezone] = useState<string>('America/New_York');
+  const [includeAppointments, setIncludeAppointments] = useState(true);
+  const [includeReminders, setIncludeReminders] = useState(true);
+  const [includeSubscriptions, setIncludeSubscriptions] = useState(true);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
 
@@ -85,7 +89,7 @@ export function QuarterlyDigestSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('quarterly_digest_enabled, quarterly_digest_email, quarterly_digest_month, quarterly_digest_day, quarterly_digest_time, quarterly_digest_timezone, last_quarterly_digest_at')
+        .select('quarterly_digest_enabled, quarterly_digest_email, quarterly_digest_month, quarterly_digest_day, quarterly_digest_time, quarterly_digest_timezone, quarterly_digest_include_appointments, quarterly_digest_include_reminders, quarterly_digest_include_subscriptions, last_quarterly_digest_at')
         .eq('id', companyId)
         .maybeSingle();
       if (error) throw error;
@@ -102,6 +106,9 @@ export function QuarterlyDigestSettings() {
       setDay(String(company.quarterly_digest_day ?? 1));
       setTime(company.quarterly_digest_time?.slice(0, 5) || '09:00');
       setTimezone(company.quarterly_digest_timezone || browserTimezone || 'America/New_York');
+      setIncludeAppointments(company.quarterly_digest_include_appointments ?? true);
+      setIncludeReminders(company.quarterly_digest_include_reminders ?? true);
+      setIncludeSubscriptions(company.quarterly_digest_include_subscriptions ?? true);
     }
   }, [company, browserTimezone]);
 
@@ -113,6 +120,9 @@ export function QuarterlyDigestSettings() {
       quarterly_digest_day?: number;
       quarterly_digest_time?: string;
       quarterly_digest_timezone?: string;
+      quarterly_digest_include_appointments?: boolean;
+      quarterly_digest_include_reminders?: boolean;
+      quarterly_digest_include_subscriptions?: boolean;
     }) => {
       if (!companyId) throw new Error('No company ID');
       const { error } = await supabase
@@ -135,6 +145,10 @@ export function QuarterlyDigestSettings() {
       toast.error('Please enter an email address');
       return;
     }
+    if (enabled && !includeAppointments && !includeReminders && !includeSubscriptions) {
+      toast.error('Please select at least one metric to include');
+      return;
+    }
     updateMutation.mutate({
       quarterly_digest_enabled: enabled,
       quarterly_digest_email: email || null,
@@ -142,6 +156,9 @@ export function QuarterlyDigestSettings() {
       quarterly_digest_day: parseInt(day),
       quarterly_digest_time: time,
       quarterly_digest_timezone: timezone,
+      quarterly_digest_include_appointments: includeAppointments,
+      quarterly_digest_include_reminders: includeReminders,
+      quarterly_digest_include_subscriptions: includeSubscriptions,
     });
   };
 
@@ -315,6 +332,16 @@ export function QuarterlyDigestSettings() {
             Report will be sent on the {DAYS_OF_MONTH.find(d => d.value === day)?.label} of the {QUARTER_MONTHS.find(m => m.value === month)?.label.toLowerCase()} at {time}
           </p>
         </div>
+
+        <DigestMetricsSelector
+          includeAppointments={includeAppointments}
+          includeReminders={includeReminders}
+          includeSubscriptions={includeSubscriptions}
+          onChangeAppointments={setIncludeAppointments}
+          onChangeReminders={setIncludeReminders}
+          onChangeSubscriptions={setIncludeSubscriptions}
+          disabled={!enabled}
+        />
 
         {company?.last_quarterly_digest_at && (
           <p className="text-sm text-muted-foreground">

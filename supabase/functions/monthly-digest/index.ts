@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
     if (isTestMode && testCompanyId) {
       const { data, error } = await supabase
         .from('companies')
-        .select('id, name, monthly_digest_email, monthly_digest_day, monthly_digest_time, monthly_digest_timezone, last_monthly_digest_at')
+        .select('id, name, monthly_digest_email, monthly_digest_day, monthly_digest_time, monthly_digest_timezone, monthly_digest_include_appointments, monthly_digest_include_reminders, monthly_digest_include_subscriptions, last_monthly_digest_at')
         .eq('id', testCompanyId)
         .not('monthly_digest_email', 'is', null);
       
@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
     } else {
       const { data, error } = await supabase
         .from('companies')
-        .select('id, name, monthly_digest_email, monthly_digest_day, monthly_digest_time, monthly_digest_timezone, last_monthly_digest_at')
+        .select('id, name, monthly_digest_email, monthly_digest_day, monthly_digest_time, monthly_digest_timezone, monthly_digest_include_appointments, monthly_digest_include_reminders, monthly_digest_include_subscriptions, last_monthly_digest_at')
         .eq('monthly_digest_enabled', true)
         .not('monthly_digest_email', 'is', null);
       
