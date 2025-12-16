@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -26,6 +26,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   Table,
   TableBody,
   TableCell,
@@ -34,7 +40,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Clock, DollarSign, MapPin, Video, HelpCircle, Eye, Calculator, Copy } from 'lucide-react';
+import { Plus, Pencil, Trash2, Clock, DollarSign, MapPin, Video, HelpCircle, Eye, Calculator, Copy, Download, Upload, MoreHorizontal, FileDown, FileUp } from 'lucide-react';
 
 interface Service {
   id: string;
@@ -64,11 +70,16 @@ const SERVICE_TYPE_ICONS: Record<ServiceType, React.ReactNode> = {
   other: <HelpCircle className="w-4 h-4" />,
 };
 
+const CSV_HEADERS = ['name', 'description', 'service_type', 'service_type_other', 'duration_minutes', 'flat_fee', 'hourly_rate', 'parts_cost', 'price', 'is_active'];
+
 export function ServicesManager() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [importPreview, setImportPreview] = useState<Partial<Service>[]>([]);
   const [viewingService, setViewingService] = useState<Service | null>(null);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [formData, setFormData] = useState({
@@ -187,6 +198,171 @@ export function ServicesManager() {
     },
   });
 
+  const importMutation = useMutation({
+    mutationFn: async (servicesToImport: Partial<Service>[]) => {
+      if (!companyId) throw new Error('No company ID');
+      
+      const payloads = servicesToImport.map(service => ({
+        company_id: companyId,
+        name: service.name || 'Unnamed Service',
+        description: service.description || null,
+        duration_minutes: service.duration_minutes || null,
+        price: service.price || null,
+        is_active: service.is_active ?? false,
+        service_type: service.service_type || 'in_person',
+        service_type_other: service.service_type_other || null,
+        flat_fee: service.flat_fee || null,
+        hourly_rate: service.hourly_rate || null,
+        parts_cost: service.parts_cost || null,
+      }));
+
+      const { error } = await supabase.from('services').insert(payloads);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+      toast.success(`Successfully imported ${importPreview.length} services`);
+      setImportDialogOpen(false);
+      setImportPreview([]);
+    },
+    onError: (error) => {
+      console.error('Error importing services:', error);
+      toast.error('Failed to import services');
+    },
+  });
+
+  const handleExportCSV = () => {
+    if (!services || services.length === 0) {
+      toast.error('No services to export');
+      return;
+    }
+
+    const csvContent = [
+      CSV_HEADERS.join(','),
+      ...services.map(service => [
+        `"${(service.name || '').replace(/"/g, '""')}"`,
+        `"${(service.description || '').replace(/"/g, '""')}"`,
+        service.service_type || 'in_person',
+        `"${(service.service_type_other || '').replace(/"/g, '""')}"`,
+        service.duration_minutes || '',
+        service.flat_fee || '',
+        service.hourly_rate || '',
+        service.parts_cost || '',
+        service.price || '',
+        service.is_active ? 'true' : 'false',
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `services_export_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    toast.success('Services exported successfully');
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target?.result as string;
+        const lines = text.split('\n').filter(line => line.trim());
+        
+        if (lines.length < 2) {
+          toast.error('CSV file is empty or has no data rows');
+          return;
+        }
+
+        const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''));
+        const nameIndex = headers.indexOf('name');
+        
+        if (nameIndex === -1) {
+          toast.error('CSV must have a "name" column');
+          return;
+        }
+
+        const parsedServices: Partial<Service>[] = [];
+        
+        for (let i = 1; i < lines.length; i++) {
+          const values = parseCSVLine(lines[i]);
+          if (values.length === 0) continue;
+
+          const service: Partial<Service> = {
+            name: getCSVValue(values, headers, 'name') || `Service ${i}`,
+            description: getCSVValue(values, headers, 'description') || null,
+            service_type: getCSVValue(values, headers, 'service_type') || 'in_person',
+            service_type_other: getCSVValue(values, headers, 'service_type_other') || null,
+            duration_minutes: parseNumber(getCSVValue(values, headers, 'duration_minutes')),
+            flat_fee: parseNumber(getCSVValue(values, headers, 'flat_fee')),
+            hourly_rate: parseNumber(getCSVValue(values, headers, 'hourly_rate')),
+            parts_cost: parseNumber(getCSVValue(values, headers, 'parts_cost')),
+            price: parseNumber(getCSVValue(values, headers, 'price')),
+            is_active: getCSVValue(values, headers, 'is_active')?.toLowerCase() === 'true',
+          };
+          
+          parsedServices.push(service);
+        }
+
+        if (parsedServices.length === 0) {
+          toast.error('No valid services found in CSV');
+          return;
+        }
+
+        setImportPreview(parsedServices);
+        setImportDialogOpen(true);
+      } catch (error) {
+        console.error('Error parsing CSV:', error);
+        toast.error('Failed to parse CSV file');
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const parseCSVLine = (line: string): string[] => {
+    const values: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === ',' && !inQuotes) {
+        values.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    values.push(current.trim());
+    return values;
+  };
+
+  const getCSVValue = (values: string[], headers: string[], key: string): string | null => {
+    const index = headers.indexOf(key);
+    return index >= 0 && values[index] ? values[index].replace(/^"|"$/g, '') : null;
+  };
+
+  const parseNumber = (value: string | null): number | null => {
+    if (!value) return null;
+    const num = parseFloat(value);
+    return isNaN(num) ? null : num;
+  };
+
   const handleOpenDialog = (service?: Service) => {
     if (service) {
       setEditingService(service);
@@ -277,10 +453,36 @@ export function ServicesManager() {
           <CardTitle>Services</CardTitle>
           <CardDescription>Services your business offers</CardDescription>
         </div>
-        <Button onClick={() => handleOpenDialog()} className="gap-2">
-          <Plus className="w-4 h-4" />
-          Add Service
-        </Button>
+        <div className="flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv"
+            className="hidden"
+            onChange={handleFileSelect}
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleExportCSV} disabled={!services || services.length === 0}>
+                <FileDown className="w-4 h-4 mr-2" />
+                Export CSV
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
+                <FileUp className="w-4 h-4 mr-2" />
+                Import CSV
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button onClick={() => handleOpenDialog()} className="gap-2">
+            <Plus className="w-4 h-4" />
+            Add Service
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -669,6 +871,91 @@ export function ServicesManager() {
               </Button>
               <Button className="flex-1" onClick={handleSave} disabled={saveMutation.isPending}>
                 {saveMutation.isPending ? 'Saving...' : 'Save'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Import Preview Dialog */}
+      <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileUp className="w-5 h-5" />
+              Import Services
+            </DialogTitle>
+            <DialogDescription>
+              Review the services to be imported. All imported services will be set to inactive by default.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 pt-4">
+            <div className="border rounded-lg overflow-hidden">
+              <div className="max-h-[40vh] overflow-y-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Duration</TableHead>
+                      <TableHead>Pricing</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {importPreview.map((service, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">{service.name}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1.5">
+                            {SERVICE_TYPE_ICONS[(service.service_type as ServiceType) || 'in_person']}
+                            <span className="text-sm">
+                              {service.service_type === 'other' && service.service_type_other
+                                ? service.service_type_other
+                                : SERVICE_TYPE_LABELS[(service.service_type as ServiceType) || 'in_person']}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {service.duration_minutes ? `${service.duration_minutes} min` : '-'}
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          {[
+                            service.flat_fee && `$${service.flat_fee} flat`,
+                            service.hourly_rate && `$${service.hourly_rate}/hr`,
+                            service.parts_cost && `$${service.parts_cost} parts`,
+                            service.price && `$${service.price}`,
+                          ].filter(Boolean).join(' + ') || '-'}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span>{importPreview.length} service(s) will be imported</span>
+              <Badge variant="secondary">All set to Inactive</Badge>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Button 
+                variant="outline" 
+                className="flex-1" 
+                onClick={() => {
+                  setImportDialogOpen(false);
+                  setImportPreview([]);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                className="flex-1" 
+                onClick={() => importMutation.mutate(importPreview)}
+                disabled={importMutation.isPending}
+              >
+                {importMutation.isPending ? 'Importing...' : `Import ${importPreview.length} Services`}
               </Button>
             </div>
           </div>
