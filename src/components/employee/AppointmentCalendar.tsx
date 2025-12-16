@@ -25,7 +25,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { format, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
-import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { toast } from 'sonner';
@@ -35,11 +35,14 @@ interface Appointment {
   customer_name: string;
   customer_email: string | null;
   customer_phone: string | null;
+  customer_address: string | null;
   service_type: string;
   datetime: string;
   duration_minutes: number;
   status: string;
   notes: string | null;
+  job_status?: string;
+  job_id?: string;
 }
 
 export function AppointmentCalendar() {
@@ -80,7 +83,7 @@ export function AppointmentCalendar() {
       return appointmentId;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['employee-appointments'] });
+      queryClient.invalidateQueries({ queryKey: ['employee-calendar-appointments'] });
       toast.success('Appointment cancelled successfully');
       setSelectedAppointment(null);
       setCancelDialogOpen(false);
@@ -103,7 +106,7 @@ export function AppointmentCalendar() {
       return appointmentId;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['employee-appointments'] });
+      queryClient.invalidateQueries({ queryKey: ['employee-calendar-appointments'] });
       toast.success('Appointment marked as completed');
       setSelectedAppointment(null);
     },
@@ -113,24 +116,85 @@ export function AppointmentCalendar() {
     },
   });
 
-  // Fetch appointments for the month
+  // Fetch appointments for the month - via job_assignments for assigned jobs
   const { data: appointments, isLoading } = useQuery({
-    queryKey: ['employee-appointments', user?.id, month],
+    queryKey: ['employee-calendar-appointments', user?.id, month],
     queryFn: async () => {
       if (!user?.id) return [];
       const start = startOfMonth(month);
       const end = endOfMonth(month);
       
-      const { data, error } = await supabase
+      // Fetch via job_assignments to get assigned jobs
+      const { data: jobAssignments, error: jobError } = await supabase
+        .from('job_assignments')
+        .select(`
+          id,
+          status,
+          appointments:appointment_id (
+            id,
+            customer_name,
+            customer_email,
+            customer_phone,
+            customer_address,
+            service_type,
+            datetime,
+            duration_minutes,
+            status,
+            notes
+          )
+        `)
+        .eq('employee_id', user.id)
+        .not('status', 'eq', 'declined');
+
+      if (jobError) throw jobError;
+
+      // Also fetch directly assigned appointments (legacy or direct assignment)
+      const { data: directAppointments, error: directError } = await supabase
         .from('appointments')
         .select('*')
         .eq('employee_id', user.id)
         .gte('datetime', start.toISOString())
-        .lte('datetime', end.toISOString())
-        .order('datetime', { ascending: true });
+        .lte('datetime', end.toISOString());
 
-      if (error) throw error;
-      return (data ?? []) as Appointment[];
+      if (directError) throw directError;
+
+      // Combine both sources, filtering by date range
+      const assignedAppointments: Appointment[] = (jobAssignments || [])
+        .filter(ja => ja.appointments)
+        .map(ja => ({
+          id: ja.appointments!.id,
+          customer_name: ja.appointments!.customer_name,
+          customer_email: ja.appointments!.customer_email,
+          customer_phone: ja.appointments!.customer_phone,
+          customer_address: ja.appointments!.customer_address,
+          service_type: ja.appointments!.service_type,
+          datetime: ja.appointments!.datetime,
+          duration_minutes: ja.appointments!.duration_minutes,
+          status: ja.appointments!.status,
+          notes: ja.appointments!.notes,
+          job_status: ja.status,
+          job_id: ja.id,
+        }))
+        .filter(apt => {
+          const aptDate = new Date(apt.datetime);
+          return aptDate >= start && aptDate <= end;
+        });
+
+      // Merge direct appointments (if not already in job assignments)
+      const assignedIds = new Set(assignedAppointments.map(a => a.id));
+      const directOnly = (directAppointments || [])
+        .filter(apt => !assignedIds.has(apt.id))
+        .map(apt => ({
+          ...apt,
+          job_status: undefined,
+          job_id: undefined,
+        }));
+
+      const allAppointments = [...assignedAppointments, ...directOnly];
+      
+      return allAppointments.sort((a, b) => 
+        new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
+      );
     },
     enabled: !!user?.id,
   });
@@ -156,6 +220,31 @@ export function AppointmentCalendar() {
       default:
         return 'bg-muted text-muted-foreground';
     }
+  };
+
+  const getJobStatusBadge = (jobStatus?: string) => {
+    if (!jobStatus) return null;
+    const colors: Record<string, string> = {
+      pending_acceptance: 'bg-yellow-500/10 text-yellow-600',
+      accepted: 'bg-blue-500/10 text-blue-600',
+      en_route: 'bg-purple-500/10 text-purple-600',
+      arrived: 'bg-indigo-500/10 text-indigo-600',
+      in_progress: 'bg-orange-500/10 text-orange-600',
+      completed: 'bg-green-500/10 text-green-600',
+    };
+    const labels: Record<string, string> = {
+      pending_acceptance: 'Pending',
+      accepted: 'Accepted',
+      en_route: 'En Route',
+      arrived: 'Arrived',
+      in_progress: 'In Progress',
+      completed: 'Completed',
+    };
+    return (
+      <Badge variant="outline" className={cn('text-xs', colors[jobStatus] || 'bg-muted')}>
+        {labels[jobStatus] || jobStatus}
+      </Badge>
+    );
   };
 
   return (
@@ -226,17 +315,35 @@ export function AppointmentCalendar() {
                       <div>
                         <p className="font-medium">{appointment.customer_name}</p>
                         <p className="text-sm text-muted-foreground">{appointment.service_type}</p>
+                        {appointment.customer_address && (
+                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                            <MapPin className="w-3 h-3" />
+                            {appointment.customer_address}
+                          </p>
+                        )}
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right space-y-1">
                       <p className="font-medium">
                         {format(new Date(appointment.datetime), 'h:mm a')}
                       </p>
-                      <Badge variant="outline" className={cn('mt-1', getStatusColor(appointment.status))}>
-                        {appointment.status}
-                      </Badge>
+                      <div className="flex flex-col gap-1 items-end">
+                        <Badge variant="outline" className={cn('text-xs', getStatusColor(appointment.status))}>
+                          {appointment.status}
+                        </Badge>
+                        {getJobStatusBadge(appointment.job_status)}
+                      </div>
                     </div>
                   </div>
+                  {/* Show customer notes preview */}
+                  {appointment.notes && (
+                    <div className="mt-2 pt-2 border-t border-border/50">
+                      <p className="text-xs text-muted-foreground flex items-start gap-1">
+                        <MessageSquare className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                        <span className="line-clamp-2">{appointment.notes}</span>
+                      </p>
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
@@ -252,7 +359,7 @@ export function AppointmentCalendar() {
 
       {/* Appointment Detail Dialog */}
       <Dialog open={!!selectedAppointment} onOpenChange={() => setSelectedAppointment(null)}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Appointment Details</DialogTitle>
             <DialogDescription>
@@ -266,11 +373,14 @@ export function AppointmentCalendar() {
                 <div className="w-14 h-14 rounded-full gradient-primary flex items-center justify-center text-primary-foreground text-xl font-bold">
                   {selectedAppointment.customer_name.charAt(0)}
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className="font-semibold text-lg">{selectedAppointment.customer_name}</p>
-                  <Badge variant="outline" className={cn(getStatusColor(selectedAppointment.status))}>
-                    {selectedAppointment.status}
-                  </Badge>
+                  <div className="flex gap-2 flex-wrap">
+                    <Badge variant="outline" className={cn(getStatusColor(selectedAppointment.status))}>
+                      {selectedAppointment.status}
+                    </Badge>
+                    {getJobStatusBadge(selectedAppointment.job_status)}
+                  </div>
                 </div>
               </div>
 
@@ -286,6 +396,13 @@ export function AppointmentCalendar() {
                   <FileText className="w-4 h-4 text-muted-foreground" />
                   <span>{selectedAppointment.service_type}</span>
                 </div>
+
+                {selectedAppointment.customer_address && (
+                  <div className="flex items-start gap-3 text-sm">
+                    <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
+                    <span>{selectedAppointment.customer_address}</span>
+                  </div>
+                )}
 
                 {selectedAppointment.customer_phone && (
                   <div className="flex items-center gap-3 text-sm">
@@ -307,8 +424,11 @@ export function AppointmentCalendar() {
 
                 {selectedAppointment.notes && (
                   <div className="pt-2">
-                    <p className="text-sm text-muted-foreground mb-1">Notes:</p>
-                    <p className="text-sm bg-muted/50 p-3 rounded-lg">{selectedAppointment.notes}</p>
+                    <p className="text-sm font-medium text-muted-foreground mb-1 flex items-center gap-1">
+                      <MessageSquare className="w-4 h-4" />
+                      Customer Notes
+                    </p>
+                    <p className="text-sm bg-muted/50 p-3 rounded-lg whitespace-pre-wrap">{selectedAppointment.notes}</p>
                   </div>
                 )}
               </div>
