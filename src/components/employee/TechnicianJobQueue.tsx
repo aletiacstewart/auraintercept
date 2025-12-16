@@ -6,9 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { format, formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow, differenceInMinutes } from 'date-fns';
 import {
   CheckCircle,
   XCircle,
@@ -21,6 +23,10 @@ import {
   Wrench,
   AlertCircle,
   RefreshCw,
+  FileText,
+  Package,
+  Car,
+  Timer,
 } from 'lucide-react';
 
 interface JobAssignment {
@@ -36,6 +42,7 @@ interface JobAssignment {
   customer_address: string | null;
   estimated_arrival_minutes: number | null;
   notes: string | null;
+  parts_used: string | null;
   decline_reason: string | null;
   appointments: {
     id: string;
@@ -247,8 +254,23 @@ export function TechnicianJobQueue() {
     updateStatusMutation.mutate({ jobId: job.id, status: 'in_progress' });
   };
 
-  const handleCompleteJob = (job: JobAssignment) => {
-    updateStatusMutation.mutate({ jobId: job.id, status: 'completed' });
+  const handleCompleteJob = (job: JobAssignment, notes?: string, partsUsed?: string) => {
+    updateStatusMutation.mutate({ 
+      jobId: job.id, 
+      status: 'completed',
+      additionalData: { 
+        notes: notes || job.notes,
+        parts_used: partsUsed || job.parts_used,
+      },
+    });
+  };
+
+  const handleUpdateNotes = (job: JobAssignment, notes: string, partsUsed: string) => {
+    updateStatusMutation.mutate({
+      jobId: job.id,
+      status: job.status,
+      additionalData: { notes, parts_used: partsUsed },
+    });
   };
 
   // Group jobs by status priority
@@ -290,6 +312,7 @@ export function TechnicianJobQueue() {
               onArrived={handleArrived}
               onStartJob={handleStartJob}
               onCompleteJob={handleCompleteJob}
+              onUpdateNotes={handleUpdateNotes}
             />
           </CardContent>
         </Card>
@@ -390,7 +413,8 @@ interface JobCardProps {
   onEnRoute?: (job: JobAssignment) => void;
   onArrived?: (job: JobAssignment) => void;
   onStartJob?: (job: JobAssignment) => void;
-  onCompleteJob?: (job: JobAssignment) => void;
+  onCompleteJob?: (job: JobAssignment, notes?: string, partsUsed?: string) => void;
+  onUpdateNotes?: (job: JobAssignment, notes: string, partsUsed: string) => void;
 }
 
 function JobCard({
@@ -402,12 +426,43 @@ function JobCard({
   onArrived,
   onStartJob,
   onCompleteJob,
+  onUpdateNotes,
 }: JobCardProps) {
+  const [notes, setNotes] = useState(job.notes || '');
+  const [partsUsed, setPartsUsed] = useState(job.parts_used || '');
+  const [hasChanges, setHasChanges] = useState(false);
+
   const appointment = job.appointments;
   if (!appointment) return null;
 
   const statusConfig = STATUS_CONFIG[job.status];
   const StatusIcon = statusConfig?.icon || Clock;
+
+  // Calculate time tracking
+  const travelTimeMinutes = job.en_route_at && job.arrived_at 
+    ? differenceInMinutes(new Date(job.arrived_at), new Date(job.en_route_at))
+    : null;
+  
+  const workTimeMinutes = job.started_at && job.completed_at
+    ? differenceInMinutes(new Date(job.completed_at), new Date(job.started_at))
+    : job.started_at
+    ? differenceInMinutes(new Date(), new Date(job.started_at))
+    : null;
+
+  const handleNotesChange = (value: string) => {
+    setNotes(value);
+    setHasChanges(true);
+  };
+
+  const handlePartsChange = (value: string) => {
+    setPartsUsed(value);
+    setHasChanges(true);
+  };
+
+  const handleSaveNotes = () => {
+    onUpdateNotes?.(job, notes, partsUsed);
+    setHasChanges(false);
+  };
 
   return (
     <div className={`p-4 rounded-lg border ${isActive ? 'bg-background' : 'bg-muted/30'}`}>
@@ -452,10 +507,112 @@ function JobCard({
         )}
       </div>
 
+      {/* Time Tracking Section */}
+      {(job.en_route_at || job.started_at) && (
+        <div className="bg-muted/50 p-3 rounded-lg mb-3 space-y-2">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+            <Timer className="w-3 h-3" />
+            Time Tracking
+          </p>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            {job.en_route_at && (
+              <div className="flex items-center gap-2">
+                <Car className="w-4 h-4 text-purple-500" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Travel Started</p>
+                  <p className="font-medium">{format(new Date(job.en_route_at), 'h:mm a')}</p>
+                </div>
+              </div>
+            )}
+            {job.arrived_at && (
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-indigo-500" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Arrived</p>
+                  <p className="font-medium">{format(new Date(job.arrived_at), 'h:mm a')}</p>
+                </div>
+              </div>
+            )}
+            {job.started_at && (
+              <div className="flex items-center gap-2">
+                <Play className="w-4 h-4 text-orange-500" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Job Started</p>
+                  <p className="font-medium">{format(new Date(job.started_at), 'h:mm a')}</p>
+                </div>
+              </div>
+            )}
+            {job.completed_at && (
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Completed</p>
+                  <p className="font-medium">{format(new Date(job.completed_at), 'h:mm a')}</p>
+                </div>
+              </div>
+            )}
+          </div>
+          {/* Duration summaries */}
+          <div className="flex gap-4 pt-2 border-t border-border/50 text-xs">
+            {travelTimeMinutes !== null && (
+              <div className="flex items-center gap-1">
+                <Car className="w-3 h-3" />
+                <span className="text-muted-foreground">Travel:</span>
+                <span className="font-medium">{travelTimeMinutes} min</span>
+              </div>
+            )}
+            {workTimeMinutes !== null && (
+              <div className="flex items-center gap-1">
+                <Wrench className="w-3 h-3" />
+                <span className="text-muted-foreground">Work:</span>
+                <span className="font-medium">{workTimeMinutes} min{!job.completed_at && ' (ongoing)'}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {appointment.notes && (
         <p className="text-sm text-muted-foreground bg-muted/50 p-2 rounded mb-3">
-          {appointment.notes}
+          <span className="font-medium">Customer Notes:</span> {appointment.notes}
         </p>
+      )}
+
+      {/* Notes & Parts Section - Show for active jobs */}
+      {isActive && ['arrived', 'in_progress'].includes(job.status) && (
+        <div className="space-y-3 mb-3 p-3 bg-muted/30 rounded-lg border">
+          <div className="space-y-2">
+            <Label htmlFor={`notes-${job.id}`} className="flex items-center gap-1 text-sm">
+              <FileText className="w-3 h-3" />
+              Job Notes
+            </Label>
+            <Textarea
+              id={`notes-${job.id}`}
+              placeholder="Add notes about the job, issues found, work performed..."
+              value={notes}
+              onChange={(e) => handleNotesChange(e.target.value)}
+              className="min-h-[80px] text-sm"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor={`parts-${job.id}`} className="flex items-center gap-1 text-sm">
+              <Package className="w-3 h-3" />
+              Parts Used
+            </Label>
+            <Input
+              id={`parts-${job.id}`}
+              placeholder="List parts used (e.g., capacitor, filter, refrigerant)"
+              value={partsUsed}
+              onChange={(e) => handlePartsChange(e.target.value)}
+              className="text-sm"
+            />
+          </div>
+          {hasChanges && (
+            <Button size="sm" variant="outline" onClick={handleSaveNotes}>
+              Save Notes
+            </Button>
+          )}
+        </div>
       )}
 
       <p className="text-xs text-muted-foreground mb-3">
@@ -499,7 +656,7 @@ function JobCard({
         )}
 
         {job.status === 'in_progress' && (
-          <Button size="sm" variant="default" onClick={() => onCompleteJob?.(job)}>
+          <Button size="sm" variant="default" onClick={() => onCompleteJob?.(job, notes, partsUsed)}>
             <CheckCircle className="w-4 h-4 mr-1" />
             Complete Job
           </Button>

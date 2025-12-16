@@ -878,6 +878,7 @@ export type Database = {
           estimated_arrival_minutes: number | null
           id: string
           notes: string | null
+          parts_used: string | null
           started_at: string | null
           status: string
           technician_lat: number | null
@@ -907,6 +908,7 @@ export type Database = {
           estimated_arrival_minutes?: number | null
           id?: string
           notes?: string | null
+          parts_used?: string | null
           started_at?: string | null
           status?: string
           technician_lat?: number | null
@@ -936,6 +938,7 @@ export type Database = {
           estimated_arrival_minutes?: number | null
           id?: string
           notes?: string | null
+          parts_used?: string | null
           started_at?: string | null
           status?: string
           technician_lat?: number | null
