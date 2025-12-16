@@ -579,10 +579,36 @@ export function CostCalculator() {
                           <TooltipTrigger>
                             <Info className="w-3.5 h-3.5 text-muted-foreground" />
                           </TooltipTrigger>
-                          <TooltipContent>
-                            {ch.key === 'email' && 'Free up to 3,000/month via Resend'}
-                            {ch.key === 'sms' && 'Sent via Twilio with delivery confirmation'}
-                            {ch.key === 'voice' && 'AI-generated calls via your TTS provider'}
+                          <TooltipContent side="bottom" className="max-w-xs p-3">
+                            {ch.key === 'email' && (
+                              <div className="space-y-1 text-xs">
+                                <p className="font-medium">Resend Email</p>
+                                <p>• First 3,000 emails/month: <span className="text-green-500 font-medium">FREE</span></p>
+                                <p>• After 3,000: ~$0.001/email ($20/50K)</p>
+                                <p className="text-muted-foreground mt-1">Most cost-effective reminder channel</p>
+                              </div>
+                            )}
+                            {ch.key === 'sms' && (
+                              <div className="space-y-1 text-xs">
+                                <p className="font-medium">Twilio SMS</p>
+                                <p>• Phone number: $1.15/month</p>
+                                <p>• Per SMS: ~$0.0079 (~1¢)</p>
+                                <p>• {costs.totalReminders} reminders × $0.0079 = {formatCurrencyShort(costs.totalReminders * 0.0079)}</p>
+                                <p className="text-muted-foreground mt-1">98% open rate, 45% response rate</p>
+                              </div>
+                            )}
+                            {ch.key === 'voice' && (
+                              <div className="space-y-1 text-xs">
+                                <p className="font-medium">Voice Calls (Twilio + TTS)</p>
+                                <p>• Phone number: $1.15/month</p>
+                                <p>• Twilio voice: ~$0.014/min</p>
+                                <p>• TTS cost varies by provider:</p>
+                                <p className="pl-2">- ElevenLabs: ~$0.30/1K chars</p>
+                                <p className="pl-2">- OpenAI: ~$0.015/1K chars</p>
+                                <p className="pl-2">- Google: $4-16/1M chars + 1M free</p>
+                                <p className="text-muted-foreground mt-1">85% answer rate, 65% response rate</p>
+                              </div>
+                            )}
                           </TooltipContent>
                         </Tooltip>
                       </div>
