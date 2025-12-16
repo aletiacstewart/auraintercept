@@ -7,18 +7,9 @@ const corsHeaders = {
 };
 
 interface Message {
-  role: 'user' | 'assistant' | 'system';
+  role: 'user' | 'assistant' | 'system' | 'tool';
   content: string;
-}
-
-interface BookingRequest {
-  service_name: string;
-  preferred_date: string;
-  preferred_time: string;
-  customer_name: string;
-  customer_email?: string;
-  customer_phone?: string;
-  employee_id?: string;
+  tool_call_id?: string;
 }
 
 serve(async (req) => {
@@ -27,7 +18,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, company_id, action } = await req.json();
+    const { messages, company_id } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -41,10 +32,77 @@ serve(async (req) => {
 
     // Fetch knowledge base for RAG
     const knowledgeContext = await fetchKnowledgeBase(supabase, company_id);
-
     const systemPrompt = buildSystemPrompt(knowledgeContext);
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const tools = [
+      {
+        type: "function",
+        function: {
+          name: "check_availability",
+          description: "Check available appointment slots for a service on a specific date",
+          parameters: {
+            type: "object",
+            properties: {
+              service_name: { type: "string", description: "Name of the service" },
+              date: { type: "string", description: "Date in YYYY-MM-DD format" },
+              employee_id: { type: "string", description: "Optional specific employee ID" }
+            },
+            required: ["service_name", "date"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "book_appointment",
+          description: "Book an appointment for a customer",
+          parameters: {
+            type: "object",
+            properties: {
+              service_name: { type: "string" },
+              datetime: { type: "string", description: "ISO datetime string" },
+              customer_name: { type: "string" },
+              customer_email: { type: "string" },
+              customer_phone: { type: "string" },
+              employee_id: { type: "string" }
+            },
+            required: ["service_name", "datetime", "customer_name"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "get_business_hours",
+          description: "Get the business hours for a specific day",
+          parameters: {
+            type: "object",
+            properties: {
+              day_of_week: { type: "number", description: "0=Sunday, 1=Monday, etc." }
+            },
+            required: ["day_of_week"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "get_quote",
+          description: "Generate a price quote for services",
+          parameters: {
+            type: "object",
+            properties: {
+              service_names: { type: "array", items: { type: "string" }, description: "List of service names" },
+              customer_name: { type: "string" }
+            },
+            required: ["service_names"]
+          }
+        }
+      }
+    ];
+
+    // First, make a non-streaming request to check for tool calls
+    const initialResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -56,84 +114,117 @@ serve(async (req) => {
           { role: "system", content: systemPrompt },
           ...messages,
         ],
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "check_availability",
-              description: "Check available appointment slots for a service on a specific date",
-              parameters: {
-                type: "object",
-                properties: {
-                  service_name: { type: "string", description: "Name of the service" },
-                  date: { type: "string", description: "Date in YYYY-MM-DD format" },
-                  employee_id: { type: "string", description: "Optional specific employee ID" }
-                },
-                required: ["service_name", "date"]
-              }
-            }
-          },
-          {
-            type: "function",
-            function: {
-              name: "book_appointment",
-              description: "Book an appointment for a customer",
-              parameters: {
-                type: "object",
-                properties: {
-                  service_name: { type: "string" },
-                  datetime: { type: "string", description: "ISO datetime string" },
-                  customer_name: { type: "string" },
-                  customer_email: { type: "string" },
-                  customer_phone: { type: "string" },
-                  employee_id: { type: "string" }
-                },
-                required: ["service_name", "datetime", "customer_name"]
-              }
-            }
-          },
-          {
-            type: "function",
-            function: {
-              name: "get_business_hours",
-              description: "Get the business hours for a specific day",
-              parameters: {
-                type: "object",
-                properties: {
-                  day_of_week: { type: "number", description: "0=Sunday, 1=Monday, etc." }
-                },
-                required: ["day_of_week"]
-              }
-            }
-          }
+        tools,
+        tool_choice: "auto",
+        stream: false,
+      }),
+    });
+
+    if (!initialResponse.ok) {
+      const errorText = await initialResponse.text();
+      console.error("AI gateway error:", initialResponse.status, errorText);
+      return new Response(JSON.stringify({ error: "AI gateway error" }), {
+        status: initialResponse.status,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const initialData = await initialResponse.json();
+    const assistantMessage = initialData.choices?.[0]?.message;
+
+    // Check if there are tool calls to process
+    if (assistantMessage?.tool_calls && assistantMessage.tool_calls.length > 0) {
+      console.log("Processing tool calls:", assistantMessage.tool_calls);
+      
+      const toolResults: Message[] = [];
+      
+      for (const toolCall of assistantMessage.tool_calls) {
+        const toolName = toolCall.function.name;
+        let toolArgs = {};
+        try {
+          toolArgs = JSON.parse(toolCall.function.arguments || "{}");
+        } catch {
+          toolArgs = {};
+        }
+        
+        console.log(`Executing tool: ${toolName}`, toolArgs);
+        const result = await executeToolCall(supabase, company_id, toolName, toolArgs, knowledgeContext);
+        
+        toolResults.push({
+          role: "tool",
+          content: JSON.stringify(result),
+          tool_call_id: toolCall.id
+        });
+      }
+
+      // Make follow-up request with tool results
+      const followUpMessages = [
+        { role: "system", content: systemPrompt },
+        ...messages,
+        {
+          role: "assistant",
+          content: assistantMessage.content || "",
+          tool_calls: assistantMessage.tool_calls
+        },
+        ...toolResults
+      ];
+
+      const followUpResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: followUpMessages,
+          stream: true,
+        }),
+      });
+
+      if (!followUpResponse.ok) {
+        const errorText = await followUpResponse.text();
+        console.error("Follow-up AI error:", followUpResponse.status, errorText);
+        return new Response(JSON.stringify({ error: "AI processing error" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response(followUpResponse.body, {
+        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+      });
+    }
+
+    // No tool calls - make streaming request for regular response
+    const streamResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...messages,
         ],
+        tools,
         tool_choice: "auto",
         stream: true,
       }),
     });
 
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Payment required, please add funds." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
+    if (!streamResponse.ok) {
+      const errorText = await streamResponse.text();
+      console.error("Stream AI error:", streamResponse.status, errorText);
       return new Response(JSON.stringify({ error: "AI gateway error" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    return new Response(response.body, {
+    return new Response(streamResponse.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
 
@@ -145,6 +236,195 @@ serve(async (req) => {
     });
   }
 });
+
+async function executeToolCall(supabase: any, companyId: string, toolName: string, args: any, knowledge: any) {
+  switch (toolName) {
+    case "check_availability":
+      return await checkAvailability(supabase, companyId, args, knowledge);
+    case "book_appointment":
+      return await bookAppointment(supabase, companyId, args, knowledge);
+    case "get_business_hours":
+      return getBusinessHours(knowledge, args.day_of_week);
+    case "get_quote":
+      return getQuote(knowledge, args);
+    default:
+      return { error: `Unknown tool: ${toolName}` };
+  }
+}
+
+async function checkAvailability(supabase: any, companyId: string, args: any, knowledge: any) {
+  const { service_name, date, employee_id } = args;
+  
+  const service = knowledge.services.find((s: any) => 
+    s.name.toLowerCase().includes(service_name.toLowerCase())
+  );
+  
+  if (!service) {
+    return { available: false, message: `Service "${service_name}" not found` };
+  }
+
+  const dateObj = new Date(date);
+  const dayOfWeek = dateObj.getDay();
+  const hours = knowledge.businessHours.find((h: any) => h.day_of_week === dayOfWeek);
+  
+  if (!hours || hours.is_closed) {
+    return { available: false, message: `Business is closed on ${date}` };
+  }
+
+  // Get existing appointments for that date
+  const { data: existingAppts } = await supabase
+    .from('appointments')
+    .select('datetime, duration_minutes, employee_id')
+    .eq('company_id', companyId)
+    .gte('datetime', `${date}T00:00:00`)
+    .lt('datetime', `${date}T23:59:59`)
+    .neq('status', 'cancelled');
+
+  // Generate available slots
+  const slots = generateTimeSlots(hours.open_time, hours.close_time, service.duration_minutes, existingAppts || []);
+  
+  return {
+    available: slots.length > 0,
+    service: service.name,
+    date,
+    available_slots: slots.slice(0, 6),
+    message: slots.length > 0 
+      ? `Found ${slots.length} available slots for ${service.name} on ${date}`
+      : `No available slots for ${service.name} on ${date}`
+  };
+}
+
+function generateTimeSlots(openTime: string, closeTime: string, duration: number, existingAppts: any[]) {
+  const slots: string[] = [];
+  const [openHour, openMin] = openTime.split(':').map(Number);
+  const [closeHour, closeMin] = closeTime.split(':').map(Number);
+  
+  let currentMinutes = openHour * 60 + openMin;
+  const closeMinutes = closeHour * 60 + closeMin;
+  
+  while (currentMinutes + duration <= closeMinutes) {
+    const hour = Math.floor(currentMinutes / 60);
+    const min = currentMinutes % 60;
+    const timeStr = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+    
+    // Check if slot conflicts with existing appointments
+    const hasConflict = existingAppts.some(appt => {
+      const apptTime = new Date(appt.datetime);
+      const apptMinutes = apptTime.getHours() * 60 + apptTime.getMinutes();
+      const apptEnd = apptMinutes + (appt.duration_minutes || 60);
+      const slotEnd = currentMinutes + duration;
+      return !(slotEnd <= apptMinutes || currentMinutes >= apptEnd);
+    });
+    
+    if (!hasConflict) {
+      slots.push(timeStr);
+    }
+    
+    currentMinutes += 30; // 30-minute increments
+  }
+  
+  return slots;
+}
+
+async function bookAppointment(supabase: any, companyId: string, args: any, knowledge: any) {
+  const { service_name, datetime, customer_name, customer_email, customer_phone, employee_id } = args;
+  
+  const service = knowledge.services.find((s: any) => 
+    s.name.toLowerCase().includes(service_name.toLowerCase())
+  );
+  
+  if (!service) {
+    return { success: false, message: `Service "${service_name}" not found` };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('appointments')
+      .insert({
+        company_id: companyId,
+        service_type: service.name,
+        datetime,
+        customer_name,
+        customer_email: customer_email || null,
+        customer_phone: customer_phone || null,
+        employee_id: employee_id || null,
+        duration_minutes: service.duration_minutes || 60,
+        status: 'confirmed'
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Booking error:", error);
+      return { success: false, message: `Failed to book appointment: ${error.message}` };
+    }
+
+    return {
+      success: true,
+      appointment_id: data.id,
+      message: `Appointment booked successfully for ${customer_name} on ${new Date(datetime).toLocaleString()}`,
+      details: {
+        service: service.name,
+        datetime,
+        customer_name,
+        duration: service.duration_minutes
+      }
+    };
+  } catch (err) {
+    console.error("Booking exception:", err);
+    return { success: false, message: "An error occurred while booking" };
+  }
+}
+
+function getBusinessHours(knowledge: any, dayOfWeek: number) {
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const hours = knowledge.businessHours.find((h: any) => h.day_of_week === dayOfWeek);
+  
+  if (!hours) {
+    return { day: dayNames[dayOfWeek], status: "unknown", message: "Business hours not configured" };
+  }
+  
+  if (hours.is_closed) {
+    return { day: dayNames[dayOfWeek], status: "closed", message: `Closed on ${dayNames[dayOfWeek]}` };
+  }
+  
+  return {
+    day: dayNames[dayOfWeek],
+    status: "open",
+    open_time: hours.open_time,
+    close_time: hours.close_time,
+    message: `${dayNames[dayOfWeek]}: ${hours.open_time} - ${hours.close_time}`
+  };
+}
+
+function getQuote(knowledge: any, args: any) {
+  const { service_names, customer_name } = args;
+  const items: any[] = [];
+  let total = 0;
+  
+  for (const serviceName of service_names) {
+    const service = knowledge.services.find((s: any) => 
+      s.name.toLowerCase().includes(serviceName.toLowerCase())
+    );
+    if (service) {
+      items.push({
+        service: service.name,
+        price: service.price || 0,
+        duration: service.duration_minutes
+      });
+      total += service.price || 0;
+    }
+  }
+  
+  return {
+    customer_name: customer_name || "Customer",
+    items,
+    total,
+    message: items.length > 0 
+      ? `Quote generated: $${total} for ${items.length} service(s)`
+      : "No matching services found for quote"
+  };
+}
 
 async function fetchKnowledgeBase(supabase: any, companyId: string) {
   const [servicesRes, faqsRes, hoursRes, docsRes, companyRes] = await Promise.all([
@@ -206,5 +486,6 @@ ${docsText || 'No additional documents'}
 5. If no slots are available, suggest alternative dates or times
 6. Answer questions using the knowledge base above
 7. If you don't know something, politely say so and offer to help with something else
-8. Keep responses concise but informative`;
+8. Keep responses concise but informative
+9. When booking is complete, confirm all details with the customer`;
 }
