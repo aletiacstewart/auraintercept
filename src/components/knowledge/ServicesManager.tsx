@@ -34,7 +34,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Clock, DollarSign, MapPin, Video, HelpCircle, Eye, Calculator } from 'lucide-react';
+import { Plus, Pencil, Trash2, Clock, DollarSign, MapPin, Video, HelpCircle, Eye, Calculator, Copy } from 'lucide-react';
 
 interface Service {
   id: string;
@@ -156,6 +156,37 @@ export function ServicesManager() {
     },
   });
 
+  const duplicateMutation = useMutation({
+    mutationFn: async (service: Service) => {
+      if (!companyId) throw new Error('No company ID');
+      
+      const payload = {
+        company_id: companyId,
+        name: `${service.name} (Copy)`,
+        description: service.description,
+        duration_minutes: service.duration_minutes,
+        price: service.price,
+        is_active: false, // Start as inactive
+        service_type: service.service_type,
+        service_type_other: service.service_type_other,
+        flat_fee: service.flat_fee,
+        hourly_rate: service.hourly_rate,
+        parts_cost: service.parts_cost,
+      };
+
+      const { error } = await supabase.from('services').insert(payload);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+      toast.success('Service duplicated! The copy is set to inactive.');
+    },
+    onError: (error) => {
+      console.error('Error duplicating service:', error);
+      toast.error('Failed to duplicate service');
+    },
+  });
+
   const handleOpenDialog = (service?: Service) => {
     if (service) {
       setEditingService(service);
@@ -265,7 +296,7 @@ export function ServicesManager() {
                 <TableHead>Duration</TableHead>
                 <TableHead>Pricing</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="w-32">Actions</TableHead>
+                <TableHead className="w-40">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -315,6 +346,15 @@ export function ServicesManager() {
                       </Button>
                       <Button size="icon" variant="ghost" onClick={() => handleOpenDialog(service)} title="Edit">
                         <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        size="icon" 
+                        variant="ghost" 
+                        onClick={() => duplicateMutation.mutate(service)} 
+                        title="Duplicate"
+                        disabled={duplicateMutation.isPending}
+                      >
+                        <Copy className="w-4 h-4" />
                       </Button>
                       <Button
                         size="icon"
