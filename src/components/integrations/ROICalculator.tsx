@@ -16,23 +16,8 @@ import {
   AlertTriangle,
   BarChart3,
   Percent,
-  LineChart as LineChartIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  Legend,
-  AreaChart,
-  Area,
-} from 'recharts';
 
 // Effectiveness data based on industry research
 const REMINDER_EFFECTIVENESS = {
@@ -117,29 +102,6 @@ export function ROICalculator() {
       .filter(s => s.key !== 'none')
       .sort((a, b) => b.monthlyNetSavings - a.monthlyNetSavings)[0];
 
-    // Chart data: Strategy comparison
-    const strategyChartData = strategies
-      .filter(s => s.key !== 'none')
-      .map(s => ({
-        name: s.name.replace(' + ', '+').replace(' Only', ''),
-        netSavings: Math.round(s.monthlyNetSavings),
-        revenueSaved: Math.round(s.monthlyRevenueSaved),
-        cost: Math.round(s.monthlyCost),
-        roi: s.roi === Infinity ? 999 : Math.round(s.roi),
-      }));
-
-    // Chart data: Cumulative savings over 12 months
-    const timelineChartData = Array.from({ length: 12 }, (_, i) => {
-      const month = i + 1;
-      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return {
-        month: monthNames[i],
-        noAction: -currentLostRevenue * month,
-        withReminders: bestStrategy ? bestStrategy.monthlyNetSavings * month : 0,
-        difference: bestStrategy ? (currentLostRevenue + bestStrategy.monthlyNetSavings) * month : currentLostRevenue * month,
-      };
-    });
-
     return {
       monthlyRevenuePotential,
       currentNoShows,
@@ -147,30 +109,11 @@ export function ROICalculator() {
       annualLostRevenue,
       strategies,
       bestStrategy,
-      strategyChartData,
-      timelineChartData,
     };
   }, [monthlyAppointments, avgServiceValue, currentNoShowRate, remindersPerAppointment]);
 
-  const formatCurrencyChart = (value: number) => {
-    if (Math.abs(value) >= 1000) {
-      return `$${(value / 1000).toFixed(1)}k`;
-    }
-    return `$${value}`;
-  };
-
   return (
-    <Card className="border-border/50">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-primary" />
-          ROI Calculator
-        </CardTitle>
-        <CardDescription>
-          See how much revenue you can recover by reducing no-shows with automated reminders
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <div className="space-y-6">
         {/* Input Section */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-2">
@@ -275,12 +218,8 @@ export function ROICalculator() {
           </div>
         </div>
 
-        <Tabs defaultValue="charts" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="charts" className="flex items-center gap-1">
-              <LineChartIcon className="w-4 h-4" />
-              Visual Charts
-            </TabsTrigger>
+        <Tabs defaultValue="comparison" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="comparison" className="flex items-center gap-1">
               <BarChart3 className="w-4 h-4" />
               Strategy Comparison
@@ -291,143 +230,6 @@ export function ROICalculator() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Charts Tab */}
-          <TabsContent value="charts" className="mt-4 space-y-6">
-            {/* Strategy Savings Comparison Bar Chart */}
-            <div className="p-4 rounded-lg border bg-card">
-              <h5 className="text-sm font-medium mb-4">Monthly Savings by Strategy</h5>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={calculations.strategyChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                    <XAxis 
-                      dataKey="name" 
-                      tick={{ fontSize: 11 }} 
-                      className="fill-muted-foreground"
-                      angle={-15}
-                      textAnchor="end"
-                      height={50}
-                    />
-                    <YAxis 
-                      tickFormatter={formatCurrencyChart} 
-                      tick={{ fontSize: 11 }}
-                      className="fill-muted-foreground"
-                    />
-                    <Tooltip 
-                      formatter={(value: number, name: string) => [
-                        `$${value.toLocaleString()}`, 
-                        name === 'netSavings' ? 'Net Savings' : name === 'revenueSaved' ? 'Revenue Saved' : 'Cost'
-                      ]}
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--card))', 
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px',
-                      }}
-                    />
-                    <Legend 
-                      formatter={(value) => value === 'netSavings' ? 'Net Savings' : value === 'revenueSaved' ? 'Revenue Saved' : 'Cost'}
-                    />
-                    <Bar dataKey="revenueSaved" fill="hsl(142.1 76.2% 36.3%)" name="revenueSaved" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="cost" fill="hsl(346.8 77.2% 49.8%)" name="cost" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="netSavings" fill="hsl(var(--primary))" name="netSavings" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                Compare monthly revenue saved, costs, and net savings across different reminder strategies
-              </p>
-            </div>
-
-            {/* Cumulative Savings Over Time */}
-            <div className="p-4 rounded-lg border bg-card">
-              <h5 className="text-sm font-medium mb-4">Cumulative Impact: 12-Month Projection</h5>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={calculations.timelineChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                    <XAxis 
-                      dataKey="month" 
-                      tick={{ fontSize: 11 }}
-                      className="fill-muted-foreground"
-                    />
-                    <YAxis 
-                      tickFormatter={formatCurrencyChart}
-                      tick={{ fontSize: 11 }}
-                      className="fill-muted-foreground"
-                    />
-                    <Tooltip 
-                      formatter={(value: number, name: string) => [
-                        `$${value.toLocaleString()}`, 
-                        name === 'noAction' ? 'Lost Revenue (No Action)' : name === 'withReminders' ? 'Net Savings (With Reminders)' : 'Total Difference'
-                      ]}
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--card))', 
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px',
-                      }}
-                    />
-                    <Legend 
-                      formatter={(value) => value === 'noAction' ? 'Lost Revenue' : value === 'withReminders' ? 'Net Savings' : 'Total Difference'}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="noAction" 
-                      stroke="hsl(346.8 77.2% 49.8%)" 
-                      fill="hsl(346.8 77.2% 49.8% / 0.2)" 
-                      name="noAction"
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="withReminders" 
-                      stroke="hsl(142.1 76.2% 36.3%)" 
-                      fill="hsl(142.1 76.2% 36.3% / 0.2)" 
-                      name="withReminders"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                See how savings accumulate over time with {calculations.bestStrategy?.name || 'automated reminders'}
-              </p>
-            </div>
-
-            {/* ROI Comparison */}
-            <div className="p-4 rounded-lg border bg-card">
-              <h5 className="text-sm font-medium mb-4">ROI Comparison by Strategy</h5>
-              <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={calculations.strategyChartData} layout="vertical" margin={{ top: 10, right: 30, left: 80, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                    <XAxis 
-                      type="number" 
-                      tickFormatter={(v) => `${v}%`}
-                      tick={{ fontSize: 11 }}
-                      className="fill-muted-foreground"
-                    />
-                    <YAxis 
-                      type="category" 
-                      dataKey="name"
-                      tick={{ fontSize: 11 }}
-                      className="fill-muted-foreground"
-                      width={70}
-                    />
-                    <Tooltip 
-                      formatter={(value: number) => [`${value === 999 ? '∞' : value}%`, 'ROI']}
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--card))', 
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px',
-                      }}
-                    />
-                    <Bar dataKey="roi" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                Return on investment percentage for each reminder strategy
-              </p>
-            </div>
-          </TabsContent>
 
           {/* Strategy Comparison Tab */}
           <TabsContent value="comparison" className="mt-4 space-y-4">
@@ -621,7 +423,6 @@ export function ROICalculator() {
             )}
           </TabsContent>
         </Tabs>
-      </CardContent>
-    </Card>
+      </div>
   );
 }
