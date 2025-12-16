@@ -402,6 +402,74 @@ export type Database = {
         }
         Relationships: []
       }
+      cost_estimates: {
+        Row: {
+          appointments_count: number
+          avg_transaction_value: number
+          channels_email: boolean
+          channels_sms: boolean
+          channels_voice: boolean
+          company_id: string
+          created_at: string
+          estimated_email_cost: number
+          estimated_sms_cost: number
+          estimated_stripe_cost: number
+          estimated_total_cost: number
+          estimated_voice_cost: number
+          id: string
+          month_year: string
+          name: string
+          reminders_per_appointment: number
+          updated_at: string
+        }
+        Insert: {
+          appointments_count: number
+          avg_transaction_value?: number
+          channels_email?: boolean
+          channels_sms?: boolean
+          channels_voice?: boolean
+          company_id: string
+          created_at?: string
+          estimated_email_cost?: number
+          estimated_sms_cost?: number
+          estimated_stripe_cost?: number
+          estimated_total_cost?: number
+          estimated_voice_cost?: number
+          id?: string
+          month_year: string
+          name?: string
+          reminders_per_appointment?: number
+          updated_at?: string
+        }
+        Update: {
+          appointments_count?: number
+          avg_transaction_value?: number
+          channels_email?: boolean
+          channels_sms?: boolean
+          channels_voice?: boolean
+          company_id?: string
+          created_at?: string
+          estimated_email_cost?: number
+          estimated_sms_cost?: number
+          estimated_stripe_cost?: number
+          estimated_total_cost?: number
+          estimated_voice_cost?: number
+          id?: string
+          month_year?: string
+          name?: string
+          reminders_per_appointment?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cost_estimates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       digest_delivery_logs: {
         Row: {
           company_id: string
