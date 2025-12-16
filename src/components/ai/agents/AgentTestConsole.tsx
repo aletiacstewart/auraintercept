@@ -348,29 +348,22 @@ export function AgentTestConsole({
                         }`}
                       >
                         <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                        {message.metadata && (
+                        {message.metadata && message.metadata.handoff_to && (
                           <div className="mt-2 pt-2 border-t border-border/50">
-                            {message.metadata.event_type && (
-                              <Badge variant="outline" className="mr-2 text-xs">
-                                Event: {message.metadata.event_type}
+                            <div className="flex items-center gap-1 flex-wrap">
+                              <Badge variant="secondary" className="text-xs gap-1">
+                                <ArrowRight className="h-3 w-3" />
+                                Handoff → {message.metadata.handoff_to}
                               </Badge>
-                            )}
-                            {message.metadata.handoff_to && (
-                              <div className="flex items-center gap-1">
-                                <Badge variant="secondary" className="text-xs gap-1">
-                                  <ArrowRight className="h-3 w-3" />
-                                  Handoff → {message.metadata.handoff_to}
-                                </Badge>
-                                {message.metadata.handoff_reason && (
-                                  <span className="text-xs text-muted-foreground ml-1">
-                                    ({message.metadata.handoff_reason})
-                                  </span>
-                                )}
-                              </div>
-                            )}
+                              {message.metadata.handoff_reason && (
+                                <span className="text-xs text-muted-foreground ml-1">
+                                  ({message.metadata.handoff_reason})
+                                </span>
+                              )}
+                            </div>
                             {message.metadata.tool_calls && message.metadata.tool_calls.length > 0 && (
                               <div className="mt-2 text-xs">
-                                <p className="font-medium">Tool Calls:</p>
+                                <p className="font-medium text-muted-foreground">Tool Calls:</p>
                                 {message.metadata.tool_calls.map((tc, i) => (
                                   <div key={i} className="flex items-center gap-2 mt-1">
                                     <CheckCircle2 className="h-3 w-3 text-green-500" />
