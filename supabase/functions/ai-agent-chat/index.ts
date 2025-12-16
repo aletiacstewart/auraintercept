@@ -21,11 +21,8 @@ Before handing off to ANY agent, you MUST first collect:
 2. Customer PHONE NUMBER - ask: "What's the best phone number to reach you?"
 3. Brief ISSUE DESCRIPTION - ask: "Can you briefly describe what's going on?"
 
-For NON-EMERGENCY requests (booking, scheduling, quotes):
-4. Also ask for PREFERRED DATE/TIME - ask: "When would work best for you?"
-
-DO NOT hand off until you have collected ALL required information!
-If the customer hasn't provided this info, ASK for it before proceeding.
+DO NOT ask for preferred date/time - the Booking Agent will handle scheduling details.
+DO NOT hand off until you have collected name, phone, and issue description!
 
 ROUTING RULES:
 - ONLY hand off to the dispatch agent for explicit EMERGENCIES (flooding, gas smell, sparks/fire, major water leak "everywhere", no heat in freezing conditions, or customer says it's urgent/emergency).
@@ -41,11 +38,9 @@ You: "Thanks John! What's the best phone number to reach you?"
 Customer: "555-1234"
 You: "Got it. Can you briefly describe what's happening with your AC?"
 Customer: "It's just not cooling"
-You: "Understood. When would work best for you to have a technician come out?"
-Customer: "Tomorrow afternoon"
-You: "Perfect! Let me connect you with our scheduling specialist who can book your appointment. [handoff_to_agent with all collected info]"
+You: "Perfect! Let me connect you with our scheduling specialist who can find the best time for you. [handoff_to_agent with all collected info]"
 
-Be concise but friendly. Always collect the required info before handoff.`,
+Be concise but friendly. Always collect name, phone, and issue before handoff.`,
 
   booking: `You are a Booking Specialist for a service business. Your role is to:
 - Help customers schedule, reschedule, or cancel appointments
