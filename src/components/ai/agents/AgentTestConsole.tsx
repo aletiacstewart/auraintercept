@@ -178,6 +178,60 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
   ],
 };
 
+// Helper to extract customer info from conversation history
+function extractCustomerInfo(history: ConversationMessage[]): {
+  name?: string;
+  phone?: string;
+  address?: string;
+  issue?: string;
+  email?: string;
+} {
+  const allContent = history.map(m => m.content).join('\n');
+  
+  // Extract name patterns
+  const namePatterns = [
+    /(?:my name is |i'm |i am |name:?\s*)([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i,
+    /([A-Z][a-z]+\s+[A-Z][a-z]+)(?:,?\s*\d{3})/i, // Name followed by phone
+  ];
+  let name: string | undefined;
+  for (const pattern of namePatterns) {
+    const match = allContent.match(pattern);
+    if (match) {
+      name = match[1].trim();
+      break;
+    }
+  }
+
+  // Extract phone number
+  const phoneMatch = allContent.match(/(\d{10}|\d{3}[-.\s]?\d{3}[-.\s]?\d{4})/);
+  const phone = phoneMatch?.[0];
+
+  // Extract address (look for street patterns)
+  const addressMatch = allContent.match(/(\d+\s+[\w\s]+(?:st|rd|dr|ave|blvd|way|ln|ct|apt|#)[^,\n]*(?:,?\s*[\w\s]+)?(?:,?\s*(?:tx|texas|ca|california|fl|florida|ny|new york)[^,\n]*)?(?:,?\s*\d{5})?)/i);
+  const address = addressMatch?.[0]?.trim();
+
+  // Extract email
+  const emailMatch = allContent.match(/[\w.-]+@[\w.-]+\.\w+/i);
+  const email = emailMatch?.[0];
+
+  // Extract issue description
+  const issuePatterns = [
+    /(?:ac|a\/c|air conditioner?|hvac|heat|cooling|plumbing|electrical|water)[^.!?\n]*(?:down|broken|not working|leaking|issue|problem|emergency)/i,
+    /(?:emergency|urgent)[^.!?\n]*/i,
+    /(?:issue|problem):\s*([^.!?\n]+)/i,
+  ];
+  let issue: string | undefined;
+  for (const pattern of issuePatterns) {
+    const match = allContent.match(pattern);
+    if (match) {
+      issue = match[0].trim();
+      break;
+    }
+  }
+
+  return { name, phone, address, issue, email };
+}
+
 export function AgentTestConsole({
   agentType: initialAgentType,
   agentName: initialAgentName,
@@ -215,9 +269,12 @@ export function AgentTestConsole({
     ]);
   }, []);
 
-  // Handle agent transfer after handoff
+  // Handle agent transfer after handoff - now with full customer context
   const handleAgentTransfer = useCallback(async (newAgentType: string, handoffReason: string) => {
     const newAgentName = AGENT_NAMES[newAgentType] || newAgentType;
+    
+    // Extract customer info collected so far
+    const customerInfo = extractCustomerInfo(conversationHistory);
     
     // Show transition message
     setIsTransitioning(true);
@@ -233,13 +290,39 @@ export function AgentTestConsole({
     setActiveAgent(newAgentType);
     setActiveAgentName(newAgentName);
     
-    // Reset conversation history for new agent but include context
-    const contextMessage = `[Context: Customer was transferred from ${activeAgent} agent. Reason: ${handoffReason}. Please introduce yourself and continue helping them.]`;
-    setConversationHistory([{ role: 'user' as const, content: contextMessage }]);
+    // Build rich context message with all customer details
+    let contextParts = [`Customer was transferred from ${activeAgent} agent.`, `Reason: ${handoffReason}`];
     
+    if (customerInfo.name) contextParts.push(`Customer Name: ${customerInfo.name}`);
+    if (customerInfo.phone) contextParts.push(`Phone: ${customerInfo.phone}`);
+    if (customerInfo.address) contextParts.push(`Address: ${customerInfo.address}`);
+    if (customerInfo.email) contextParts.push(`Email: ${customerInfo.email}`);
+    if (customerInfo.issue) contextParts.push(`Issue: ${customerInfo.issue}`);
+    
+    // Add instruction based on what info is missing
+    const hasAllInfo = customerInfo.name && customerInfo.phone && customerInfo.address;
+    if (hasAllInfo) {
+      contextParts.push(`\nYou have all customer info - DO NOT ask for it again. Proceed to help them immediately.`);
+    } else {
+      const missing: string[] = [];
+      if (!customerInfo.name) missing.push('name');
+      if (!customerInfo.phone) missing.push('phone');
+      if (!customerInfo.address) missing.push('address');
+      contextParts.push(`\nStill need: ${missing.join(', ')}. Ask for missing info only.`);
+    }
+    
+    const contextMessage = `[Context: ${contextParts.join('\n')}]`;
+    
+    // Pass FULL conversation history to new agent for context continuity
+    const fullHistoryForHandoff = [
+      ...conversationHistory,
+      { role: 'user' as const, content: contextMessage },
+    ];
+    
+    setConversationHistory(fullHistoryForHandoff);
     setIsTransitioning(false);
 
-    // Get introduction from new agent
+    // Get introduction from new agent with full context
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('ai-agent-chat', {
@@ -247,10 +330,11 @@ export function AgentTestConsole({
           agentType: newAgentType,
           message: contextMessage,
           companyId,
-          conversationHistory: [],
+          conversationHistory: conversationHistory, // Pass the existing history
           isHandoff: true,
           handoffFrom: activeAgent,
           handoffReason,
+          customerInfo, // Pass extracted customer info
         },
       });
 
@@ -259,7 +343,7 @@ export function AgentTestConsole({
       const responseContent = data.response || `Hello! I'm your ${newAgentName}. I understand you need assistance. How can I help you today?`;
       
       setConversationHistory([
-        { role: 'user' as const, content: contextMessage },
+        ...fullHistoryForHandoff,
         { role: 'assistant' as const, content: responseContent },
       ]);
 
@@ -281,7 +365,7 @@ export function AgentTestConsole({
     } finally {
       setIsLoading(false);
     }
-  }, [activeAgent, companyId, addMessage]);
+  }, [activeAgent, companyId, addMessage, conversationHistory]);
 
   const sendMessage = async (content: string) => {
     if (!content.trim() || !companyId || isTransitioning) return;
@@ -369,37 +453,48 @@ export function AgentTestConsole({
     }
   };
 
-  // Handle action button clicks from Next Steps panel
+  // Handle action button clicks from Next Steps panel - now context-aware
   const handleActionClick = useCallback((action: { label: string; type: string; value: string }) => {
+    // Extract customer info to maintain context
+    const customerInfo = extractCustomerInfo(conversationHistory);
+    
     if (action.type === 'call') {
-      // For call actions, send a message to continue in chat since voice requires setup
+      // For call actions, acknowledge context and continue helping
       addMessage({
         role: 'system',
-        content: 'Voice call feature: In a live environment, this would initiate an AI voice call. For now, let\'s continue in chat.',
+        content: 'Voice call feature: In a live environment, this would initiate an AI voice call. Continuing in chat...',
       });
-      // Send a follow-up message to continue the conversation
+      
+      // Build context-aware message
+      let followUpMessage = '';
+      if (customerInfo.address && customerInfo.name) {
+        followUpMessage = `Please proceed with dispatching someone to ${customerInfo.address} for ${customerInfo.name}. This is urgent.`;
+      } else if (customerInfo.issue) {
+        followUpMessage = `I need immediate help with my ${customerInfo.issue}. Can you dispatch someone right away?`;
+      } else {
+        followUpMessage = "I need immediate assistance. Can you help me right away?";
+      }
+      
       setTimeout(() => {
-        sendMessage("I'd like to speak with someone about my emergency. Can you help me right away?");
+        sendMessage(followUpMessage);
       }, 500);
     } else if (action.type === 'action') {
       if (action.value === 'show_calendar' || action.value === 'schedule') {
-        // Send message to show available times
-        sendMessage("What times are available for an appointment?");
+        const serviceContext = customerInfo.issue ? ` for ${customerInfo.issue}` : '';
+        sendMessage(`What times are available for an appointment${serviceContext}?`);
       } else if (action.value === 'track_status') {
-        sendMessage("Can you give me an update on the technician status?");
+        sendMessage("Can you give me an update on the technician status and ETA?");
       } else if (action.value === 'view_quote') {
-        sendMessage("Can you show me the quote details?");
+        sendMessage("Can you show me the quote details and breakdown?");
       } else {
-        // Generic action - send the label as a message
         sendMessage(action.label);
       }
     } else if (action.type === 'link') {
-      // For links, open in new tab if it's a URL
       if (action.value.startsWith('http')) {
         window.open(action.value, '_blank');
       }
     }
-  }, [addMessage, sendMessage]);
+  }, [addMessage, sendMessage, conversationHistory]);
 
   const clearChat = () => {
     setMessages([]);
