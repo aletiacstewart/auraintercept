@@ -123,7 +123,7 @@ export function TechnicianJobQueue() {
     };
   }, [user?.id, refetch]);
 
-  // Update job status mutation
+  // Update job status mutation with optimistic updates
   const updateStatusMutation = useMutation({
     mutationFn: async ({ jobId, status, additionalData }: { 
       jobId: string; 
@@ -172,11 +172,39 @@ export function TechnicianJobQueue() {
 
       return { jobId, status };
     },
+    onMutate: async ({ jobId, status }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['technician-jobs', user?.id] });
+
+      // Snapshot the previous value
+      const previousJobs = queryClient.getQueryData(['technician-jobs', user?.id]);
+
+      // Optimistically update the cache
+      queryClient.setQueryData(['technician-jobs', user?.id], (old: JobAssignment[] | undefined) => {
+        if (!old) return old;
+        
+        // For completed/declined jobs, remove from list (they're filtered out by query)
+        if (status === 'completed' || status === 'declined') {
+          return old.filter(j => j.id !== jobId);
+        }
+        
+        // Otherwise, update the status
+        return old.map(j => 
+          j.id === jobId ? { ...j, status } : j
+        );
+      });
+
+      return { previousJobs };
+    },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['technician-jobs'] });
       toast.success(`Job ${data.status.replace('_', ' ')}`);
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
+      // Rollback on error
+      if (context?.previousJobs) {
+        queryClient.setQueryData(['technician-jobs', user?.id], context.previousJobs);
+      }
       toast.error('Failed to update job status');
       console.error('Update error:', error);
     },
