@@ -12,10 +12,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   Bot, Send, User, Loader2, Trash2, Phone, Mic, Calendar, 
-  Clock, MessageSquare, Sparkles, ChevronRight, Building2, Volume2
+  Clock, MessageSquare, Sparkles, ChevronRight, Building2, Volume2,
+  AlertTriangle, DollarSign, MapPin, Star
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VoiceChat } from './VoiceChat';
+
+// Quick actions matching customer-facing widget/public chat features
+const QUICK_ACTIONS = [
+  { id: 'schedule', label: 'Book Appointment', icon: Calendar, message: "I'd like to schedule an appointment" },
+  { id: 'emergency', label: 'Emergency', icon: AlertTriangle, message: "I have an urgent emergency situation", variant: 'destructive' as const },
+  { id: 'quote', label: 'Get Quote', icon: DollarSign, message: "I need a quote for your services" },
+  { id: 'hours', label: 'Business Hours', icon: Clock, message: "What are your business hours?" },
+  { id: 'services', label: 'View Services', icon: Sparkles, message: "What services do you offer?" },
+  { id: 'track', label: 'Track Appointment', icon: MapPin, message: "I want to track my appointment status" },
+  { id: 'feedback', label: 'Leave Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
+];
 
 interface Service {
   id: string;
@@ -327,30 +339,22 @@ export const AIAgentConsole = () => {
                     </p>
                     
                     {/* Quick Actions */}
-                    <div className="flex flex-wrap justify-center gap-2 mt-4">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleQuickAction("What services do you offer?")}
-                      >
-                        View Services
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleQuickAction("I'd like to book an appointment")}
-                      >
-                        <Calendar className="h-4 w-4 mr-1" />
-                        Book Appointment
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleQuickAction("What are your business hours?")}
-                      >
-                        <Clock className="h-4 w-4 mr-1" />
-                        Business Hours
-                      </Button>
+                    <div className="grid grid-cols-2 gap-2 mt-4 max-w-sm mx-auto">
+                      {QUICK_ACTIONS.map((action) => (
+                        <Button 
+                          key={action.id}
+                          variant={action.variant || 'outline'} 
+                          size="sm"
+                          className={cn(
+                            "justify-start gap-2",
+                            action.variant === 'destructive' && "bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive/30"
+                          )}
+                          onClick={() => handleQuickAction(action.message)}
+                        >
+                          <action.icon className="h-4 w-4" />
+                          <span className="truncate">{action.label}</span>
+                        </Button>
+                      ))}
                     </div>
                   </div>
                 )}
