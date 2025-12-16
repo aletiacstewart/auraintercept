@@ -24,6 +24,7 @@ import CallHistory from "./pages/CallHistory";
 import Analytics from "./pages/Analytics";
 import CustomerPortal from "./pages/CustomerPortal";
 import Subscription from "./pages/Subscription";
+import PublicChat from "./pages/PublicChat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/dashboard/analytics" element={<Analytics />} />
             <Route path="/dashboard/subscription" element={<Subscription />} />
             <Route path="/appointment" element={<CustomerPortal />} />
+            <Route path="/chat/:companySlug" element={<PublicChat />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
