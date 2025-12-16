@@ -227,19 +227,64 @@ export default function Integrations() {
     setShowPasswords((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
+  // Get TTS connection status
+  const connectedTTS = {
+    elevenlabs: !!integrations?.elevenlabs_api_key,
+    openai: !!integrations?.openai_api_key,
+    google: !!integrations?.google_tts_api_key,
+  };
+  const hasAnyTTS = connectedTTS.elevenlabs || connectedTTS.openai || connectedTTS.google;
+
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Integrations</h1>
             <p className="text-muted-foreground">Connect services to power your reminders</p>
           </div>
-          <Button onClick={() => setShowQuickStart(true)} className="gap-2">
-            <Rocket className="w-4 h-4" />
-            Quick Start
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button onClick={() => setShowQuickStart(true)} className="gap-2">
+              <Rocket className="w-4 h-4" />
+              Quick Start
+            </Button>
+            
+            {/* TTS Quick Setup */}
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-muted-foreground mr-1">Voice:</span>
+              <Button
+                variant={connectedTTS.elevenlabs ? "secondary" : "outline"}
+                size="sm"
+                className={cn("h-7 px-2 text-xs", connectedTTS.elevenlabs && "bg-green-500/10 text-green-600 border-green-500/30")}
+                onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'elevenlabs')!)}
+              >
+                <Mic className="w-3 h-3 mr-1" />
+                ElevenLabs
+                {connectedTTS.elevenlabs && <Check className="w-3 h-3 ml-1" />}
+              </Button>
+              <Button
+                variant={connectedTTS.openai ? "secondary" : "outline"}
+                size="sm"
+                className={cn("h-7 px-2 text-xs", connectedTTS.openai && "bg-green-500/10 text-green-600 border-green-500/30")}
+                onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'openai-tts')!)}
+              >
+                <Bot className="w-3 h-3 mr-1" />
+                OpenAI
+                {connectedTTS.openai && <Check className="w-3 h-3 ml-1" />}
+              </Button>
+              <Button
+                variant={connectedTTS.google ? "secondary" : "outline"}
+                size="sm"
+                className={cn("h-7 px-2 text-xs", connectedTTS.google && "bg-green-500/10 text-green-600 border-green-500/30")}
+                onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'google-tts')!)}
+              >
+                <Volume2 className="w-3 h-3 mr-1" />
+                Google
+                {connectedTTS.google && <Check className="w-3 h-3 ml-1" />}
+              </Button>
+            </div>
+          </div>
         </div>
 
         <QuickStartWizard
