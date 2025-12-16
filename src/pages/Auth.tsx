@@ -175,7 +175,7 @@ export default function Auth() {
     }
 
     if (authData.user) {
-      // Create company
+      // Create company first
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
         .insert({
@@ -186,21 +186,46 @@ export default function Auth() {
         .single();
 
       if (companyError) {
-        toast({ title: 'Error', description: 'Failed to create company', variant: 'destructive' });
+        console.error('Company creation error:', companyError);
+        toast({ title: 'Error', description: 'Failed to create company: ' + companyError.message, variant: 'destructive' });
         setIsLoading(false);
         return;
       }
 
-      // Update profile with company_id
-      await supabase
-        .from('profiles')
-        .update({ company_id: companyData.id })
-        .eq('id', authData.user.id);
+      // Wait a moment for the trigger to create the profile
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Update profile with company_id - retry if profile doesn't exist yet
+      let profileUpdated = false;
+      for (let i = 0; i < 3; i++) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ company_id: companyData.id, full_name: fullName })
+          .eq('id', authData.user.id);
+
+        if (!profileError) {
+          profileUpdated = true;
+          break;
+        }
+        console.log(`Profile update attempt ${i + 1} failed:`, profileError);
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      if (!profileUpdated) {
+        console.error('Failed to update profile after retries');
+      }
 
       // Assign company_admin role
-      await supabase
+      const { error: roleError } = await supabase
         .from('user_roles')
         .insert({ user_id: authData.user.id, role: 'company_admin' });
+
+      if (roleError) {
+        console.error('Role assignment error:', roleError);
+        toast({ title: 'Warning', description: 'Account created but role assignment failed. Please contact support.', variant: 'destructive' });
+        setIsLoading(false);
+        return;
+      }
 
       toast({ title: 'Welcome!', description: 'Your company has been registered!' });
       navigate('/dashboard');
