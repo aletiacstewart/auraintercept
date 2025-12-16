@@ -78,6 +78,7 @@ const INTEGRATIONS: Integration[] = [
     docsUrl: 'https://dashboard.stripe.com/apikeys',
     fields: [],
     checkConnection: () => true,
+    note: '💡 Platform managed. 2.9% + $0.30 per transaction. No setup needed for your reminders.',
   },
   {
     id: 'twilio',
@@ -92,6 +93,7 @@ const INTEGRATIONS: Integration[] = [
       { key: 'twilio_phone_number', label: 'Phone Number', placeholder: '+1234567890', type: 'text', required: true, helpText: 'E.164 format' },
     ],
     checkConnection: (data) => !!(data.twilio_account_sid && data.twilio_auth_token && data.twilio_phone_number),
+    note: '💡 SMS ~$0.0079/msg, Voice ~$0.014/min. Required for SMS & voice reminders.',
   },
   {
     id: 'elevenlabs',
@@ -117,6 +119,7 @@ const INTEGRATIONS: Integration[] = [
       { key: 'resend_api_key', label: 'API Key', placeholder: 're_...', type: 'password', required: true, helpText: 'Get from resend.com/api-keys' },
     ],
     checkConnection: (data) => !!data.resend_api_key,
+    note: '💡 3,000 free emails/mo, then $0.001/email. Most cost-effective reminder channel.',
   },
   {
     id: 'openai-tts',
