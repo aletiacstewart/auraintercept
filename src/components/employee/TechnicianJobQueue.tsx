@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, forwardRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,6 +29,7 @@ import {
   Car,
   Timer,
   MessageSquare,
+  Camera,
 } from 'lucide-react';
 import { JobPhotoUpload } from './JobPhotoUpload';
 
@@ -74,9 +76,13 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
 export function TechnicianJobQueue() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [declineDialogOpen, setDeclineDialogOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobAssignment | null>(null);
   const [declineReason, setDeclineReason] = useState('');
+  const [highlightedJobId, setHighlightedJobId] = useState<string | null>(null);
+  const [autoExpandPhotoUpload, setAutoExpandPhotoUpload] = useState<string | null>(null);
+  const jobRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // Fetch job assignments
   const { data: jobs, isLoading, refetch } = useQuery({
@@ -133,6 +139,40 @@ export function TechnicianJobQueue() {
       supabase.removeChannel(channel);
     };
   }, [user?.id, refetch]);
+
+  // Handle URL parameters for direct photo upload links
+  useEffect(() => {
+    const jobId = searchParams.get('job');
+    const uploadType = searchParams.get('upload');
+    
+    if (jobId && jobs) {
+      // Set highlighted job
+      setHighlightedJobId(jobId);
+      
+      // Set auto-expand photo upload section
+      if (uploadType) {
+        setAutoExpandPhotoUpload(uploadType);
+      }
+      
+      // Scroll to job after a short delay to ensure DOM is ready
+      setTimeout(() => {
+        const jobElement = jobRefs.current[jobId];
+        if (jobElement) {
+          jobElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Add highlight animation
+          jobElement.classList.add('ring-2', 'ring-primary', 'ring-offset-2');
+          setTimeout(() => {
+            jobElement.classList.remove('ring-2', 'ring-primary', 'ring-offset-2');
+          }, 3000);
+        }
+      }, 100);
+      
+      // Clear URL params after handling
+      setTimeout(() => {
+        setSearchParams({});
+      }, 500);
+    }
+  }, [searchParams, jobs, setSearchParams]);
 
   // Update job status mutation with optimistic updates
   const updateStatusMutation = useMutation({
@@ -331,6 +371,8 @@ export function TechnicianJobQueue() {
               onStartJob={handleStartJob}
               onCompleteJob={handleCompleteJob}
               onUpdateNotes={handleUpdateNotes}
+              ref={(el) => { jobRefs.current[activeJob.id] = el; }}
+              autoExpandPhotoUpload={highlightedJobId === activeJob.id ? autoExpandPhotoUpload : null}
             />
           </CardContent>
         </Card>
@@ -354,6 +396,8 @@ export function TechnicianJobQueue() {
                 job={job}
                 onAccept={handleAccept}
                 onDecline={handleDecline}
+                ref={(el) => { jobRefs.current[job.id] = el; }}
+                autoExpandPhotoUpload={highlightedJobId === job.id ? autoExpandPhotoUpload : null}
               />
             ))}
           </CardContent>
@@ -377,6 +421,8 @@ export function TechnicianJobQueue() {
                 key={job.id}
                 job={job}
                 onEnRoute={handleEnRoute}
+                ref={(el) => { jobRefs.current[job.id] = el; }}
+                autoExpandPhotoUpload={highlightedJobId === job.id ? autoExpandPhotoUpload : null}
               />
             ))}
           </CardContent>
@@ -433,9 +479,10 @@ interface JobCardProps {
   onStartJob?: (job: JobAssignment) => void;
   onCompleteJob?: (job: JobAssignment, notes?: string, partsUsed?: string) => void;
   onUpdateNotes?: (job: JobAssignment, notes: string, partsUsed: string) => void;
+  autoExpandPhotoUpload?: string | null;
 }
 
-function JobCard({
+const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
   job,
   isActive,
   onAccept,
@@ -445,12 +492,14 @@ function JobCard({
   onStartJob,
   onCompleteJob,
   onUpdateNotes,
-}: JobCardProps) {
+  autoExpandPhotoUpload,
+}, ref) => {
   const [notes, setNotes] = useState(job.notes || '');
   const [partsUsed, setPartsUsed] = useState(job.parts_used || '');
   const [hasChanges, setHasChanges] = useState(false);
   const [beforePhotos, setBeforePhotos] = useState<string[]>(job.before_photos || []);
   const [afterPhotos, setAfterPhotos] = useState<string[]>(job.after_photos || []);
+  const [showPhotoSection, setShowPhotoSection] = useState(!!autoExpandPhotoUpload);
 
   const appointment = job.appointments;
   if (!appointment) return null;
@@ -485,7 +534,7 @@ function JobCard({
   };
 
   return (
-    <div className={`p-4 rounded-lg border ${isActive ? 'bg-background' : 'bg-muted/30'}`}>
+    <div ref={ref} className={`p-4 rounded-lg border transition-all ${isActive ? 'bg-background' : 'bg-muted/30'}`}>
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center text-primary-foreground">
@@ -603,8 +652,8 @@ function JobCard({
         </div>
       )}
 
-      {/* Photo Upload Section - Show for arrived and in_progress jobs */}
-      {isActive && ['arrived', 'in_progress'].includes(job.status) && (
+      {/* Photo Upload Section - Show for arrived and in_progress jobs, or when linked directly */}
+      {(isActive && ['arrived', 'in_progress'].includes(job.status)) || (showPhotoSection && ['arrived', 'in_progress'].includes(job.status)) ? (
         <div className="mb-3">
           <JobPhotoUpload
             jobId={job.id}
@@ -616,7 +665,14 @@ function JobCard({
             }}
           />
         </div>
-      )}
+      ) : showPhotoSection && !['arrived', 'in_progress'].includes(job.status) ? (
+        <div className="mb-3 p-3 bg-muted/30 rounded-lg border">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Camera className="w-4 h-4" />
+            <span className="text-sm">Photo upload will be available once you arrive at the job site and mark your arrival.</span>
+          </div>
+        </div>
+      ) : null}
 
       {/* Notes & Parts Section - Show for active jobs */}
       {isActive && ['arrived', 'in_progress'].includes(job.status) && (
@@ -704,4 +760,6 @@ function JobCard({
       </div>
     </div>
   );
-}
+});
+
+JobCard.displayName = 'JobCard';

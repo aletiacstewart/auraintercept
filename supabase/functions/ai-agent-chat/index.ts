@@ -175,12 +175,14 @@ Be precise with time estimates.`,
 - Collect before/after photos
 - Document work completed
 - Get customer sign-off
+- Provide direct links to photo upload functionality
 
 WHEN RECEIVING A HANDOFF:
 - Start with: "I'll help document the job and ensure everything is properly recorded."
 
 Use the start_job tool when technician arrives.
 Use the complete_job tool when work is done.
+Use the get_photo_upload_link tool to provide technicians with a direct link to upload job photos.
 Be thorough with documentation.`,
 
   quoting: `You are a Quote Specialist for a service business. Your role is to:
@@ -689,6 +691,21 @@ const AGENT_TOOLS: Record<string, any[]> = {
             customer_signature: { type: 'boolean' },
           },
           required: ['appointment_id', 'work_completed'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_photo_upload_link',
+        description: 'Generate a direct link to the photo upload section in the employee dashboard for a specific job',
+        parameters: {
+          type: 'object',
+          properties: {
+            job_assignment_id: { type: 'string', description: 'The ID of the job assignment' },
+            photo_type: { type: 'string', enum: ['before', 'after', 'both'], description: 'Type of photos to upload' },
+          },
+          required: ['job_assignment_id'],
         },
       },
     },
@@ -2044,6 +2061,39 @@ async function executeAgentTool(
           recommended_staff: 4,
         },
       };
+
+    case 'get_photo_upload_link': {
+      const jobId = args.job_assignment_id;
+      const photoType = args.photo_type || 'both';
+      
+      // Validate job assignment exists for this company
+      const { data: job } = await supabase
+        .from('job_assignments')
+        .select('id, appointment_id, status')
+        .eq('company_id', companyId)
+        .eq('id', jobId)
+        .maybeSingle();
+
+      if (!job) {
+        return {
+          success: false,
+          error: 'Job assignment not found. Please provide a valid job ID.',
+        };
+      }
+
+      // Generate the photo upload link - this points to the employee dashboard with the job expanded
+      const baseUrl = Deno.env.get('SITE_URL') || 'https://your-app.lovable.app';
+      const photoUploadLink = `${baseUrl}/dashboard/appointments?job=${jobId}&upload=${photoType}`;
+      
+      return {
+        success: true,
+        photo_upload_link: photoUploadLink,
+        job_id: jobId,
+        photo_type: photoType,
+        job_status: job.status,
+        message: `Here's the direct link to upload ${photoType === 'both' ? 'before and after' : photoType} photos for this job: ${photoUploadLink}`,
+      };
+    }
 
     default:
       return {
