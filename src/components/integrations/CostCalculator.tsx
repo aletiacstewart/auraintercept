@@ -463,7 +463,21 @@ export function CostCalculator() {
           </div>
 
           <div className="space-y-2">
-            <Label>Avg. Transaction</Label>
+            <Label className="flex items-center justify-between">
+              <span>Avg. Service Price</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="text-muted-foreground hover:text-foreground">
+                      <Info className="w-3 h-3" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p className="text-xs">Used to estimate Stripe payment processing fees (2.9% + $0.30/transaction). Set to $0 if customers don't pay online.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </Label>
             <div className="relative">
               <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -471,6 +485,7 @@ export function CostCalculator() {
                 value={avgTransactionValue}
                 onChange={(e) => setAvgTransactionValue(Number(e.target.value))}
                 className="pl-9"
+                placeholder="0 = no Stripe fees"
                 min={0}
               />
             </div>
