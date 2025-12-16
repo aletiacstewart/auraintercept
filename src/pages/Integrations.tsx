@@ -424,63 +424,6 @@ export default function Integrations() {
           );
         })()}
 
-        {/* Integration Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {INTEGRATIONS.map((integration) => {
-            const isConnected = getConnectionStatus(integration);
-            const Icon = integration.icon;
-            return (
-              <Card key={integration.id} className="border-border/50 relative">
-                {isConnected && (
-                  <Badge className="absolute top-3 right-3 bg-green-500/10 text-green-600 border-green-500/30">
-                    <Check className="w-3 h-3 mr-1" />
-                    Connected
-                  </Badge>
-                )}
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-3">
-                    <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', integration.color)}>
-                      <Icon className="w-5 h-5 text-white" />
-                    </div>
-                    <CardTitle className="text-base">{integration.name}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-muted-foreground mb-2">{integration.description}</p>
-                  {integration.note && (
-                    <p className="text-xs text-muted-foreground/80 mb-3 p-2 rounded bg-muted/50 border border-border/50">
-                      {integration.note}
-                    </p>
-                  )}
-                  {isLoading ? (
-                    <Skeleton className="h-9 w-full" />
-                  ) : integration.id === 'stripe' ? (
-                    <Button variant="outline" size="sm" className="w-full" asChild>
-                      <a href="/dashboard/subscription">Manage Billing</a>
-                    </Button>
-                  ) : (
-                    <div className="flex gap-2">
-                      <Button
-                        variant={isConnected ? 'outline' : 'default'}
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => handleOpenSetup(integration)}
-                      >
-                        {isConnected ? 'Update' : 'Connect'}
-                      </Button>
-                      <Button variant="ghost" size="sm" asChild>
-                        <a href={integration.docsUrl} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
         {/* Getting Started Accordion */}
         <Card className="border-border/50">
           <CardHeader className="pb-2">
@@ -505,7 +448,7 @@ export default function Integrations() {
                     <li>Create a Twilio account at twilio.com</li>
                     <li>Get Account SID and Auth Token from Console</li>
                     <li>Purchase a phone number with Voice capabilities</li>
-                    <li>Enter credentials in the Twilio card above</li>
+                    <li>Enter credentials in the Twilio card below</li>
                   </ol>
                   <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-2">
                     <p className="font-medium text-foreground">Voice Webhook URL:</p>
@@ -564,7 +507,7 @@ export default function Integrations() {
                     <li>Create a Resend account at resend.com</li>
                     <li>Verify your email domain at resend.com/domains</li>
                     <li>Go to API Keys and create a new key</li>
-                    <li>Enter your API key in the Resend card above</li>
+                    <li>Enter your API key in the Resend card below</li>
                   </ol>
                 </AccordionContent>
               </AccordionItem>
@@ -583,7 +526,7 @@ export default function Integrations() {
                     <li>Create an OpenAI account at platform.openai.com</li>
                     <li>Go to API Keys section</li>
                     <li>Create a new secret key and copy it</li>
-                    <li>Enter the API key in the OpenAI TTS card above</li>
+                    <li>Enter the API key in the OpenAI TTS card below</li>
                   </ol>
                   <div className="p-3 rounded-lg bg-muted/50 border">
                     <p className="font-medium text-foreground mb-1">Available Voices:</p>
@@ -608,7 +551,7 @@ export default function Integrations() {
                     <li>Enable the Cloud Text-to-Speech API</li>
                     <li>Go to APIs & Services → Credentials</li>
                     <li>Create an API key and copy it</li>
-                    <li>Enter the API key in the Google TTS card above</li>
+                    <li>Enter the API key in the Google TTS card below</li>
                   </ol>
                   <div className="p-3 rounded-lg bg-muted/50 border">
                     <p className="font-medium text-foreground mb-1">Voice Types:</p>
@@ -620,6 +563,63 @@ export default function Integrations() {
             </Accordion>
           </CardContent>
         </Card>
+
+        {/* Integration Cards */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {INTEGRATIONS.map((integration) => {
+            const isConnected = getConnectionStatus(integration);
+            const Icon = integration.icon;
+            return (
+              <Card key={integration.id} className="border-border/50 relative">
+                {isConnected && (
+                  <Badge className="absolute top-3 right-3 bg-green-500/10 text-green-600 border-green-500/30">
+                    <Check className="w-3 h-3 mr-1" />
+                    Connected
+                  </Badge>
+                )}
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-3">
+                    <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', integration.color)}>
+                      <Icon className="w-5 h-5 text-white" />
+                    </div>
+                    <CardTitle className="text-base">{integration.name}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-sm text-muted-foreground mb-2">{integration.description}</p>
+                  {integration.note && (
+                    <p className="text-xs text-muted-foreground/80 mb-3 p-2 rounded bg-muted/50 border border-border/50">
+                      {integration.note}
+                    </p>
+                  )}
+                  {isLoading ? (
+                    <Skeleton className="h-9 w-full" />
+                  ) : integration.id === 'stripe' ? (
+                    <Button variant="outline" size="sm" className="w-full" asChild>
+                      <a href="/dashboard/subscription">Manage Billing</a>
+                    </Button>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Button
+                        variant={isConnected ? 'outline' : 'default'}
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => handleOpenSetup(integration)}
+                      >
+                        {isConnected ? 'Update' : 'Connect'}
+                      </Button>
+                      <Button variant="ghost" size="sm" asChild>
+                        <a href={integration.docsUrl} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
 
         {/* Combined Calculator Card */}
         <Card className="border-border/50">
