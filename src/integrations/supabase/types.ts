@@ -474,6 +474,14 @@ export type Database = {
           quarterly_digest_month: number | null
           quarterly_digest_time: string | null
           quarterly_digest_timezone: string | null
+          review_email_subject: string | null
+          review_email_template: string | null
+          review_facebook_url: string | null
+          review_google_url: string | null
+          review_request_delay_hours: number | null
+          review_request_enabled: boolean | null
+          review_sms_template: string | null
+          review_yelp_url: string | null
           secondary_color: string | null
           slug: string
           stripe_customer_id: string | null
@@ -535,6 +543,14 @@ export type Database = {
           quarterly_digest_month?: number | null
           quarterly_digest_time?: string | null
           quarterly_digest_timezone?: string | null
+          review_email_subject?: string | null
+          review_email_template?: string | null
+          review_facebook_url?: string | null
+          review_google_url?: string | null
+          review_request_delay_hours?: number | null
+          review_request_enabled?: boolean | null
+          review_sms_template?: string | null
+          review_yelp_url?: string | null
           secondary_color?: string | null
           slug: string
           stripe_customer_id?: string | null
@@ -596,6 +612,14 @@ export type Database = {
           quarterly_digest_month?: number | null
           quarterly_digest_time?: string | null
           quarterly_digest_timezone?: string | null
+          review_email_subject?: string | null
+          review_email_template?: string | null
+          review_facebook_url?: string | null
+          review_google_url?: string | null
+          review_request_delay_hours?: number | null
+          review_request_enabled?: boolean | null
+          review_sms_template?: string | null
+          review_yelp_url?: string | null
           secondary_color?: string | null
           slug?: string
           stripe_customer_id?: string | null
