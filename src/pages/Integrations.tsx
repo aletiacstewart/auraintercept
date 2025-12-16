@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Accordion,
@@ -216,6 +217,59 @@ export default function Integrations() {
           hasTwilio={!!(integrations?.twilio_account_sid && integrations?.twilio_auth_token && integrations?.twilio_phone_number)}
           hasElevenLabs={!!integrations?.elevenlabs_api_key}
         />
+
+        {/* Setup Progress */}
+        {(() => {
+          const statuses = [
+            { name: 'Stripe', connected: true, icon: CreditCard, color: 'bg-purple-500' },
+            { name: 'Email', connected: !!integrations?.resend_api_key, icon: Mail, color: 'bg-emerald-500' },
+            { name: 'SMS', connected: !!(integrations?.twilio_account_sid && integrations?.twilio_auth_token && integrations?.twilio_phone_number), icon: Phone, color: 'bg-red-500' },
+            { name: 'Voice', connected: !!integrations?.elevenlabs_api_key, icon: Mic, color: 'bg-blue-500' },
+          ];
+          const connectedCount = statuses.filter(s => s.connected).length;
+          const percentage = Math.round((connectedCount / statuses.length) * 100);
+          
+          return (
+            <Card className={cn(
+              "border-border/50",
+              percentage === 100 && "border-green-500/30 bg-green-500/5"
+            )}>
+              <CardContent className="py-4">
+                <div className="flex items-center gap-6">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">Setup Progress</span>
+                      <span className={cn(
+                        "text-sm font-bold",
+                        percentage === 100 ? "text-green-600" : "text-primary"
+                      )}>
+                        {percentage}%
+                      </span>
+                    </div>
+                    <Progress value={percentage} className="h-2" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {statuses.map((status) => (
+                      <div
+                        key={status.name}
+                        className={cn(
+                          "flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium transition-colors",
+                          status.connected 
+                            ? "bg-green-500/10 text-green-600" 
+                            : "bg-muted text-muted-foreground"
+                        )}
+                      >
+                        <status.icon className="w-3 h-3" />
+                        {status.name}
+                        {status.connected && <Check className="w-3 h-3" />}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
 
         {/* Integration Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
