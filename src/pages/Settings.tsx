@@ -10,6 +10,7 @@ import { AlertsSettings } from '@/components/company/AlertsSettings';
 import { ReportsDashboard } from '@/components/company/ReportsDashboard';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
+import { ReviewRequestSettings } from '@/components/company/ReviewRequestSettings';
 import { ProfileSettings } from '@/components/employee/ProfileSettings';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -40,6 +41,7 @@ export default function Settings() {
               <TabsTrigger value="customer-prefs">Customer Prefs</TabsTrigger>
               <TabsTrigger value="emails">Email Templates</TabsTrigger>
               <TabsTrigger value="sms">SMS Templates</TabsTrigger>
+              <TabsTrigger value="reviews">Reviews</TabsTrigger>
             </TabsList>
             <TabsContent value="branding">
               <BrandingSettings />
@@ -73,6 +75,9 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="sms">
               <SmsTemplatesEditor />
+            </TabsContent>
+            <TabsContent value="reviews">
+              <ReviewRequestSettings />
             </TabsContent>
           </Tabs>
         </div>
