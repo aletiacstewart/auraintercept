@@ -1312,6 +1312,12 @@ IMPORTANT:
         .eq('id', contextId);
     }
 
+    // Generate next steps for customer based on handoff target
+    let nextSteps: any = null;
+    if (handoffTo) {
+      nextSteps = generateNextSteps(handoffTo, handoffReason);
+    }
+
     return new Response(JSON.stringify({
       response: responseText,
       event_type: eventType,
@@ -1319,6 +1325,7 @@ IMPORTANT:
       handoff_reason: handoffReason,
       tool_calls: toolCalls,
       context_id: contextId,
+      next_steps: nextSteps,
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -1455,4 +1462,72 @@ async function executeAgentTool(
         message: `Tool ${toolName} executed with args: ${JSON.stringify(args)}`,
       };
   }
+}
+
+// Generate customer-facing next steps based on handoff target
+function generateNextSteps(handoffTo: string, reason: string | null): any {
+  const nextStepsConfig: Record<string, any> = {
+    dispatch: {
+      type: 'emergency',
+      title: 'Emergency Dispatch Initiated',
+      message: 'Our team has been notified and will contact you shortly.',
+      actions: [
+        { label: 'Call Us Now', type: 'call', value: 'company_phone' },
+        { label: 'Expect Callback', type: 'info', value: 'within 15 minutes' },
+      ],
+      priority: 'high',
+      estimated_response: '15 minutes',
+    },
+    booking: {
+      type: 'scheduling',
+      title: 'Ready to Schedule',
+      message: 'Let me help you find a convenient appointment time.',
+      actions: [
+        { label: 'View Available Times', type: 'action', value: 'show_calendar' },
+        { label: 'Request Callback', type: 'callback', value: 'schedule_call' },
+      ],
+      priority: 'normal',
+    },
+    quoting: {
+      type: 'quote',
+      title: 'Quote Request Received',
+      message: 'We are preparing a detailed quote for your service.',
+      actions: [
+        { label: 'Provide More Details', type: 'action', value: 'quote_form' },
+        { label: 'Call for Immediate Quote', type: 'call', value: 'company_phone' },
+      ],
+      priority: 'normal',
+      estimated_response: '1 business day',
+    },
+    followup: {
+      type: 'followup',
+      title: 'Service Follow-up',
+      message: 'We want to ensure you are satisfied with your recent service.',
+      actions: [
+        { label: 'Rate Your Experience', type: 'action', value: 'feedback_form' },
+        { label: 'Report an Issue', type: 'action', value: 'issue_form' },
+      ],
+      priority: 'low',
+    },
+    review: {
+      type: 'review',
+      title: 'Share Your Experience',
+      message: 'We would love to hear about your experience with us.',
+      actions: [
+        { label: 'Leave a Review', type: 'external', value: 'review_link' },
+        { label: 'Contact Support', type: 'action', value: 'support' },
+      ],
+      priority: 'low',
+    },
+  };
+
+  return nextStepsConfig[handoffTo] || {
+    type: 'general',
+    title: 'Request Received',
+    message: 'A team member will assist you shortly.',
+    actions: [
+      { label: 'Contact Us', type: 'call', value: 'company_phone' },
+    ],
+    priority: 'normal',
+  };
 }

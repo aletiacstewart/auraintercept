@@ -16,8 +16,22 @@ import {
   RefreshCw,
   Terminal,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Phone,
+  Clock,
+  Calendar,
+  MessageSquare,
+  AlertTriangle
 } from 'lucide-react';
+
+interface NextSteps {
+  type: string;
+  title: string;
+  message: string;
+  actions: Array<{ label: string; type: string; value: string }>;
+  priority: string;
+  estimated_response?: string;
+}
 
 interface Message {
   id: string;
@@ -29,6 +43,7 @@ interface Message {
     handoff_to?: string;
     handoff_reason?: string;
     tool_calls?: Array<{ name: string; result: string }>;
+    next_steps?: NextSteps;
   };
 }
 
@@ -218,6 +233,7 @@ export function AgentTestConsole({
           handoff_to: data.handoff_to,
           handoff_reason: data.handoff_reason,
           tool_calls: data.tool_calls,
+          next_steps: data.next_steps,
         },
       });
     } catch (error: any) {
@@ -349,29 +365,57 @@ export function AgentTestConsole({
                       >
                         <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                         {message.metadata && message.metadata.handoff_to && (
-                          <div className="mt-2 pt-2 border-t border-border/50">
-                            <div className="flex items-center gap-1 flex-wrap">
-                              <Badge variant="secondary" className="text-xs gap-1">
-                                <ArrowRight className="h-3 w-3" />
-                                Handoff → {message.metadata.handoff_to}
-                              </Badge>
-                              {message.metadata.handoff_reason && (
-                                <span className="text-xs text-muted-foreground ml-1">
-                                  ({message.metadata.handoff_reason})
-                                </span>
-                              )}
-                            </div>
-                            {message.metadata.tool_calls && message.metadata.tool_calls.length > 0 && (
-                              <div className="mt-2 text-xs">
-                                <p className="font-medium text-muted-foreground">Tool Calls:</p>
-                                {message.metadata.tool_calls.map((tc, i) => (
-                                  <div key={i} className="flex items-center gap-2 mt-1">
-                                    <CheckCircle2 className="h-3 w-3 text-green-500" />
-                                    <span>{tc.name}</span>
+                          <div className="mt-3 space-y-3">
+                            {/* Next Steps Panel */}
+                            {message.metadata.next_steps && (
+                              <div className={`rounded-lg p-3 border ${
+                                message.metadata.next_steps.priority === 'high' 
+                                  ? 'bg-destructive/10 border-destructive/30' 
+                                  : 'bg-primary/10 border-primary/30'
+                              }`}>
+                                <div className="flex items-center gap-2 mb-2">
+                                  {message.metadata.next_steps.priority === 'high' ? (
+                                    <AlertTriangle className="h-4 w-4 text-destructive" />
+                                  ) : (
+                                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                                  )}
+                                  <span className="font-semibold text-sm">
+                                    {message.metadata.next_steps.title}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-muted-foreground mb-3">
+                                  {message.metadata.next_steps.message}
+                                </p>
+                                {message.metadata.next_steps.estimated_response && (
+                                  <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
+                                    <Clock className="h-3 w-3" />
+                                    Expected response: {message.metadata.next_steps.estimated_response}
                                   </div>
-                                ))}
+                                )}
+                                <div className="flex flex-wrap gap-2">
+                                  {message.metadata.next_steps.actions.map((action, i) => (
+                                    <Button
+                                      key={i}
+                                      size="sm"
+                                      variant={action.type === 'call' ? 'default' : 'outline'}
+                                      className="text-xs h-7"
+                                    >
+                                      {action.type === 'call' && <Phone className="h-3 w-3 mr-1" />}
+                                      {action.type === 'action' && action.value === 'show_calendar' && <Calendar className="h-3 w-3 mr-1" />}
+                                      {action.label}
+                                    </Button>
+                                  ))}
+                                </div>
                               </div>
                             )}
+                            
+                            {/* Handoff Badge - smaller, below next steps */}
+                            <div className="flex items-center gap-1 flex-wrap pt-2 border-t border-border/50">
+                              <Badge variant="outline" className="text-xs gap-1 opacity-70">
+                                <ArrowRight className="h-3 w-3" />
+                                Transferred to {message.metadata.handoff_to}
+                              </Badge>
+                            </div>
                           </div>
                         )}
                         <p className="text-xs opacity-50 mt-1">
