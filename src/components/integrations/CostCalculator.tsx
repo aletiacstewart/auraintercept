@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   Calculator, 
   Mail, 
@@ -30,10 +31,12 @@ import {
   Trash2,
   Bell,
   AlertTriangle,
+  Info,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
+import { CostCalculatorHelp, TTSComparisonTable, ExampleBreakdown } from './CostCalculatorHelp';
 
 // Pricing constants (approximate)
 const PRICING = {
@@ -542,63 +545,131 @@ export function CostCalculator() {
 
           {/* Summary Tab */}
           <TabsContent value="summary" className="space-y-4 mt-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="p-4 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
-                <p className="text-sm text-muted-foreground mb-1">Estimated Monthly Cost</p>
-                <p className="text-3xl font-bold text-primary">{formatCurrencyShort(costs.total)}</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {appointments} appointments × {remindersPerAppointment} reminders = {costs.totalReminders} total
-                </p>
-              </div>
+            {/* What Am I Paying For? Help Section */}
+            <CostCalculatorHelp 
+              totalReminders={costs.totalReminders}
+              appointments={appointments}
+              avgTransactionValue={avgTransactionValue}
+              costs={{
+                email: costs.email,
+                sms: costs.sms,
+                voice: costs.voice,
+                stripe: costs.stripe,
+                total: costs.total,
+                perReminder: costs.perReminder,
+              }}
+            />
 
-              <div className="p-4 rounded-lg border bg-card">
-                <p className="text-sm text-muted-foreground mb-1">Cost per Appointment</p>
-                <p className="text-3xl font-bold">{formatCurrencyShort(costs.total / appointments)}</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Including all selected channels + payment processing
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              {channelConfig.map((ch) => {
-                const cost = costs[ch.key as keyof typeof costs.comparison] as number;
-                const isEnabled = channels[ch.key as keyof typeof channels];
-                if (!isEnabled && cost === 0) return null;
-                
-                return (
-                  <div 
-                    key={ch.key}
-                    className={cn(
-                      'flex items-center justify-between p-3 rounded-lg border',
-                      isEnabled ? ch.bgClass : 'bg-muted/20',
-                      !isEnabled && 'opacity-50'
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                      <ch.icon className={cn('w-4 h-4', ch.textClass)} />
-                      <span className="text-sm">{ch.label}</span>
-                      {!isEnabled && <Badge variant="outline" className="text-xs">Not active</Badge>}
+            {/* Per-Reminder Cost Cards */}
+            <div className="grid gap-3 md:grid-cols-3">
+              <TooltipProvider>
+                {channelConfig.map((ch) => {
+                  const cost = costs.comparison[ch.key as keyof typeof costs.comparison];
+                  const perReminder = costs.perReminder[ch.key as keyof typeof costs.perReminder];
+                  const isEnabled = channels[ch.key as keyof typeof channels];
+                  const isFree = ch.key === 'email' && costs.totalReminders <= 3000 && cost === 0;
+                  
+                  return (
+                    <div 
+                      key={ch.key}
+                      className={cn(
+                        'p-4 rounded-lg border transition-all',
+                        isEnabled ? `${ch.bgClass} ${ch.borderClass}` : 'bg-muted/20 opacity-50'
+                      )}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <ch.icon className={cn('w-4 h-4', ch.textClass)} />
+                          <span className="font-medium text-sm">{ch.label}</span>
+                        </div>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="w-3.5 h-3.5 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {ch.key === 'email' && 'Free up to 3,000/month via Resend'}
+                            {ch.key === 'sms' && 'Sent via Twilio with delivery confirmation'}
+                            {ch.key === 'voice' && 'AI-generated calls via your TTS provider'}
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-2xl font-bold">
+                            {isFree ? 'FREE' : `~${Math.round(perReminder * 100)}¢`}
+                          </span>
+                          {!isFree && <span className="text-xs text-muted-foreground">per reminder</span>}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {formatCurrencyShort(cost)}/month total
+                        </p>
+                      </div>
                     </div>
-                    <span className="font-medium">{formatCurrencyShort(cost)}</span>
-                  </div>
-                );
-              })}
-
-              {avgTransactionValue > 0 && (
-                <div className="flex items-center justify-between p-3 rounded-lg border bg-purple-50/50 dark:bg-purple-950/20">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-purple-500" />
-                    <span className="text-sm">Stripe Fees</span>
-                  </div>
-                  <span className="font-medium">{formatCurrencyShort(costs.stripe)}</span>
-                </div>
-              )}
+                  );
+                })}
+              </TooltipProvider>
             </div>
+
+            {/* Stripe Fees Card */}
+            {avgTransactionValue > 0 && (
+              <div className="p-4 rounded-lg border bg-purple-50/50 dark:bg-purple-950/20 border-purple-200/50 dark:border-purple-900/30">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="w-4 h-4 text-purple-600" />
+                    <span className="font-medium text-sm">Payment Processing (Stripe)</span>
+                  </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="w-3.5 h-3.5 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        2.9% + $0.30 per transaction
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-bold text-purple-700 dark:text-purple-400">
+                    {formatCurrencyShort(costs.stripe / appointments)}
+                  </span>
+                  <span className="text-xs text-muted-foreground">per transaction</span>
+                  <span className="text-sm text-muted-foreground ml-auto">
+                    {formatCurrencyShort(costs.stripe)}/month total
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Example Breakdown */}
+            <ExampleBreakdown 
+              appointments={appointments}
+              remindersPerAppointment={remindersPerAppointment}
+              avgTransactionValue={avgTransactionValue}
+              costs={{
+                email: costs.email,
+                sms: costs.sms,
+                voice: costs.voice,
+                stripe: costs.stripe,
+                total: costs.total,
+              }}
+              channels={channels}
+            />
+
+            {/* TTS Provider Comparison (only show if voice is enabled) */}
+            {channels.voice && (
+              <TTSComparisonTable 
+                totalReminders={costs.totalReminders}
+                ttsComparison={costs.ttsComparison}
+              />
+            )}
           </TabsContent>
 
           {/* Comparison Tab */}
           <TabsContent value="comparison" className="space-y-4 mt-4">
+            <p className="text-sm text-muted-foreground">
+              Compare cost, reach, and effectiveness across all reminder channels
+            </p>
             <div className="grid gap-4 md:grid-cols-3">
               {channelConfig.map((ch) => {
                 const perAppt = costs.perAppointment[ch.key as keyof typeof costs.perAppointment];
@@ -606,6 +677,7 @@ export function CostCalculator() {
                 const monthly = costs.comparison[ch.key as keyof typeof costs.comparison];
                 const effectiveness = EFFECTIVENESS[ch.key as keyof typeof EFFECTIVENESS];
                 const isBest = bestValue === ch.key;
+                const isFree = ch.key === 'email' && costs.totalReminders <= 3000 && monthly === 0;
                 
                 return (
                   <div 
@@ -629,34 +701,42 @@ export function CostCalculator() {
                     </div>
 
                     <div className="space-y-3">
-                      <div>
-                        <p className="text-xs text-muted-foreground">Monthly Cost</p>
-                        <p className="text-xl font-bold">{formatCurrencyShort(monthly)}</p>
+                      {/* Per Reminder Cost - Made Prominent */}
+                      <div className="p-2 rounded bg-background/50">
+                        <p className="text-xs text-muted-foreground">Cost per Reminder</p>
+                        <p className="text-xl font-bold">
+                          {isFree ? (
+                            <span className="text-emerald-600">FREE</span>
+                          ) : (
+                            <>~{Math.round(perReminder * 100)}¢</>
+                          )}
+                        </p>
                       </div>
 
                       <div className="grid grid-cols-2 gap-2 text-sm">
                         <div>
-                          <p className="text-xs text-muted-foreground">Per Appt</p>
+                          <p className="text-xs text-muted-foreground">Per Appointment</p>
                           <p className="font-medium">{formatCurrency(perAppt)}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Per Reminder</p>
-                          <p className="font-medium">{formatCurrency(perReminder)}</p>
+                          <p className="text-xs text-muted-foreground">Monthly Total</p>
+                          <p className="font-medium">{formatCurrencyShort(monthly)}</p>
                         </div>
                       </div>
 
                       <div className="pt-2 border-t space-y-2">
+                        <p className="text-xs font-medium text-muted-foreground">Effectiveness</p>
                         <div>
                           <div className="flex justify-between text-xs mb-1">
                             <span className="text-muted-foreground">Open Rate</span>
-                            <span>{(effectiveness.openRate * 100).toFixed(0)}%</span>
+                            <span className="font-medium">{(effectiveness.openRate * 100).toFixed(0)}%</span>
                           </div>
                           <Progress value={effectiveness.openRate * 100} className="h-1.5" />
                         </div>
                         <div>
                           <div className="flex justify-between text-xs mb-1">
                             <span className="text-muted-foreground">Response Rate</span>
-                            <span>{(effectiveness.responseRate * 100).toFixed(0)}%</span>
+                            <span className="font-medium">{(effectiveness.responseRate * 100).toFixed(0)}%</span>
                           </div>
                           <Progress value={effectiveness.responseRate * 100} className="h-1.5" />
                         </div>
