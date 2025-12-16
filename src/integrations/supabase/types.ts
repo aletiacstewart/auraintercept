@@ -850,6 +850,7 @@ export type Database = {
           price: number | null
           service_type: string | null
           service_type_other: string | null
+          sort_order: number | null
           updated_at: string
         }
         Insert: {
@@ -866,6 +867,7 @@ export type Database = {
           price?: number | null
           service_type?: string | null
           service_type_other?: string | null
+          sort_order?: number | null
           updated_at?: string
         }
         Update: {
@@ -882,6 +884,7 @@ export type Database = {
           price?: number | null
           service_type?: string | null
           service_type_other?: string | null
+          sort_order?: number | null
           updated_at?: string
         }
         Relationships: [

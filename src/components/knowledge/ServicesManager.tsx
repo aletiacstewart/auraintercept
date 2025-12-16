@@ -40,7 +40,24 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Clock, DollarSign, MapPin, Video, HelpCircle, Eye, Calculator, Copy, Download, Upload, MoreHorizontal, FileDown, FileUp } from 'lucide-react';
+import { Plus, Pencil, Trash2, Clock, DollarSign, MapPin, Video, HelpCircle, Eye, Calculator, Copy, MoreHorizontal, FileDown, FileUp, GripVertical } from 'lucide-react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface Service {
   id: string;
@@ -54,6 +71,7 @@ interface Service {
   flat_fee: number | null;
   hourly_rate: number | null;
   parts_cost: number | null;
+  sort_order: number | null;
 }
 
 type ServiceType = 'in_person' | 'virtual' | 'other';
@@ -71,6 +89,123 @@ const SERVICE_TYPE_ICONS: Record<ServiceType, React.ReactNode> = {
 };
 
 const CSV_HEADERS = ['name', 'description', 'service_type', 'service_type_other', 'duration_minutes', 'flat_fee', 'hourly_rate', 'parts_cost', 'price', 'is_active'];
+
+interface SortableRowProps {
+  service: Service;
+  getServiceTypeDisplay: (service: Service) => string;
+  getPriceDisplay: (service: Service) => string;
+  onView: () => void;
+  onEdit: () => void;
+  onDuplicate: () => void;
+  onDelete: () => void;
+  isDuplicating: boolean;
+}
+
+function SortableRow({
+  service,
+  getServiceTypeDisplay,
+  getPriceDisplay,
+  onView,
+  onEdit,
+  onDuplicate,
+  onDelete,
+  isDuplicating,
+}: SortableRowProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: service.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <TableRow ref={setNodeRef} style={style} className={isDragging ? 'bg-muted' : ''}>
+      <TableCell className="w-10">
+        <button
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded"
+          title="Drag to reorder"
+        >
+          <GripVertical className="w-4 h-4 text-muted-foreground" />
+        </button>
+      </TableCell>
+      <TableCell>
+        <div>
+          <p className="font-medium">{service.name}</p>
+          {service.description && (
+            <p className="text-sm text-muted-foreground truncate max-w-xs">
+              {service.description}
+            </p>
+          )}
+        </div>
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-1.5">
+          {SERVICE_TYPE_ICONS[(service.service_type as ServiceType) || 'in_person']}
+          <span className="text-sm">{getServiceTypeDisplay(service)}</span>
+        </div>
+      </TableCell>
+      <TableCell>
+        {service.duration_minutes ? (
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <Clock className="w-4 h-4" />
+            {service.duration_minutes} min
+          </div>
+        ) : (
+          <span className="text-muted-foreground">-</span>
+        )}
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-1 text-sm">
+          <DollarSign className="w-4 h-4 text-muted-foreground" />
+          {getPriceDisplay(service)}
+        </div>
+      </TableCell>
+      <TableCell>
+        <Badge variant={service.is_active ? 'default' : 'secondary'}>
+          {service.is_active ? 'Active' : 'Inactive'}
+        </Badge>
+      </TableCell>
+      <TableCell>
+        <div className="flex gap-1">
+          <Button size="icon" variant="ghost" onClick={onView} title="View Details">
+            <Eye className="w-4 h-4" />
+          </Button>
+          <Button size="icon" variant="ghost" onClick={onEdit} title="Edit">
+            <Pencil className="w-4 h-4" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={onDuplicate}
+            title="Duplicate"
+            disabled={isDuplicating}
+          >
+            <Copy className="w-4 h-4" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="text-destructive hover:text-destructive"
+            onClick={onDelete}
+            title="Delete"
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+}
 
 export function ServicesManager() {
   const { companyId } = useAuth();
@@ -103,12 +238,61 @@ export function ServicesManager() {
         .from('services')
         .select('*')
         .eq('company_id', companyId)
+        .order('sort_order', { ascending: true, nullsFirst: false })
         .order('name');
       if (error) throw error;
       return data as Service[];
     },
     enabled: !!companyId,
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const reorderMutation = useMutation({
+    mutationFn: async (reorderedServices: { id: string; sort_order: number }[]) => {
+      const updates = reorderedServices.map(({ id, sort_order }) =>
+        supabase.from('services').update({ sort_order }).eq('id', id)
+      );
+      await Promise.all(updates);
+    },
+    onError: (error) => {
+      console.error('Error reordering services:', error);
+      toast.error('Failed to save order');
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+    },
+  });
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (!over || active.id === over.id || !services) return;
+
+    const oldIndex = services.findIndex((s) => s.id === active.id);
+    const newIndex = services.findIndex((s) => s.id === over.id);
+    
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(services, oldIndex, newIndex);
+    
+    // Optimistically update the cache
+    queryClient.setQueryData(['services', companyId], reordered);
+    
+    // Save the new order
+    const updates = reordered.map((service, index) => ({
+      id: service.id,
+      sort_order: index,
+    }));
+    reorderMutation.mutate(updates);
+  };
 
   const saveMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -490,89 +674,42 @@ export function ServicesManager() {
             {[1, 2, 3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
           </div>
         ) : services && services.length > 0 ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Service</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Duration</TableHead>
-                <TableHead>Pricing</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-40">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {services.map((service) => (
-                <TableRow key={service.id}>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{service.name}</p>
-                      {service.description && (
-                        <p className="text-sm text-muted-foreground truncate max-w-xs">
-                          {service.description}
-                        </p>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1.5">
-                      {SERVICE_TYPE_ICONS[(service.service_type as ServiceType) || 'in_person']}
-                      <span className="text-sm">{getServiceTypeDisplay(service)}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {service.duration_minutes ? (
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Clock className="w-4 h-4" />
-                        {service.duration_minutes} min
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1 text-sm">
-                      <DollarSign className="w-4 h-4 text-muted-foreground" />
-                      {getPriceDisplay(service)}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={service.is_active ? 'default' : 'secondary'}>
-                      {service.is_active ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <Button size="icon" variant="ghost" onClick={() => handleViewDetails(service)} title="View Details">
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" onClick={() => handleOpenDialog(service)} title="Edit">
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        size="icon" 
-                        variant="ghost" 
-                        onClick={() => duplicateMutation.mutate(service)} 
-                        title="Duplicate"
-                        disabled={duplicateMutation.isPending}
-                      >
-                        <Copy className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => deleteMutation.mutate(service.id)}
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-10"></TableHead>
+                  <TableHead>Service</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Duration</TableHead>
+                  <TableHead>Pricing</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="w-40">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                <SortableContext items={services.map(s => s.id)} strategy={verticalListSortingStrategy}>
+                  {services.map((service) => (
+                    <SortableRow
+                      key={service.id}
+                      service={service}
+                      getServiceTypeDisplay={getServiceTypeDisplay}
+                      getPriceDisplay={getPriceDisplay}
+                      onView={() => handleViewDetails(service)}
+                      onEdit={() => handleOpenDialog(service)}
+                      onDuplicate={() => duplicateMutation.mutate(service)}
+                      onDelete={() => deleteMutation.mutate(service.id)}
+                      isDuplicating={duplicateMutation.isPending}
+                    />
+                  ))}
+                </SortableContext>
+              </TableBody>
+            </Table>
+          </DndContext>
         ) : (
           <div className="text-center py-8">
             <p className="text-muted-foreground">No services yet</p>
