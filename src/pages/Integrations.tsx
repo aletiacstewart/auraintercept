@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CostCalculator } from '@/components/integrations/CostCalculator';
 import { RecommendedPlanCalculator } from '@/components/integrations/RecommendedPlanCalculator';
+import { ROICalculator } from '@/components/integrations/ROICalculator';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -498,6 +499,9 @@ export default function Integrations() {
 
         {/* Recommended Plan Calculator */}
         <RecommendedPlanCalculator />
+
+        {/* ROI Calculator */}
+        <ROICalculator />
 
         {/* Cost Calculator */}
         <CostCalculator />
