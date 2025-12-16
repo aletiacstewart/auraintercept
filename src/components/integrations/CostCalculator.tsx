@@ -28,6 +28,8 @@ import {
   ArrowDownRight,
   Minus,
   Trash2,
+  Bell,
+  AlertTriangle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -93,6 +95,22 @@ export function CostCalculator() {
         .limit(12);
       if (error) throw error;
       return data || [];
+    },
+    enabled: !!companyId,
+  });
+
+  // Fetch company alert settings
+  const { data: alertSettings, isLoading: loadingAlerts } = useQuery({
+    queryKey: ['cost-alert-settings', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data, error } = await supabase
+        .from('companies')
+        .select('cost_alert_enabled, cost_alert_threshold, cost_alert_email, last_cost_alert_at')
+        .eq('id', companyId)
+        .single();
+      if (error) throw error;
+      return data;
     },
     enabled: !!companyId,
   });
@@ -211,6 +229,29 @@ export function CostCalculator() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cost-estimates'] });
       toast.success('Estimate deleted');
+    },
+  });
+
+  // Update alert settings mutation
+  const updateAlertsMutation = useMutation({
+    mutationFn: async (settings: { 
+      cost_alert_enabled: boolean;
+      cost_alert_threshold: number;
+      cost_alert_email: string | null;
+    }) => {
+      if (!companyId) throw new Error('No company ID');
+      const { error } = await supabase
+        .from('companies')
+        .update(settings)
+        .eq('id', companyId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cost-alert-settings'] });
+      toast.success('Alert settings saved');
+    },
+    onError: () => {
+      toast.error('Failed to save alert settings');
     },
   });
 
@@ -431,7 +472,7 @@ export function CostCalculator() {
         </div>
 
         <Tabs defaultValue="summary" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="summary" className="flex items-center gap-1">
               <DollarSign className="w-4 h-4" />
               Summary
@@ -447,6 +488,10 @@ export function CostCalculator() {
             <TabsTrigger value="history" className="flex items-center gap-1">
               <History className="w-4 h-4" />
               History
+            </TabsTrigger>
+            <TabsTrigger value="alerts" className="flex items-center gap-1">
+              <Bell className="w-4 h-4" />
+              Alerts
             </TabsTrigger>
           </TabsList>
 
@@ -730,6 +775,106 @@ export function CostCalculator() {
                 <History className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p className="font-medium">No saved estimates yet</p>
                 <p className="text-sm">Save your first estimate to start tracking accuracy over time.</p>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Alerts Tab */}
+          <TabsContent value="alerts" className="space-y-4 mt-4">
+            {loadingAlerts ? (
+              <Skeleton className="h-40 w-full" />
+            ) : (
+              <div className="space-y-6">
+                <div className="p-4 rounded-lg border bg-gradient-to-br from-amber-50/50 to-amber-100/30 dark:from-amber-950/20 dark:to-amber-900/10 border-amber-200/50 dark:border-amber-900/30">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="font-medium mb-1">Cost Overage Alerts</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Get notified via email when your actual costs exceed your saved estimates by a configurable threshold.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <Label className="text-base">Enable Cost Alerts</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Receive email notifications when costs exceed estimates
+                      </p>
+                    </div>
+                    <Switch
+                      checked={alertSettings?.cost_alert_enabled || false}
+                      onCheckedChange={(checked) => {
+                        updateAlertsMutation.mutate({
+                          cost_alert_enabled: checked,
+                          cost_alert_threshold: alertSettings?.cost_alert_threshold || 20,
+                          cost_alert_email: alertSettings?.cost_alert_email || null,
+                        });
+                      }}
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="flex items-center justify-between">
+                      <span>Alert Threshold</span>
+                      <span className="text-sm font-semibold text-primary">
+                        {alertSettings?.cost_alert_threshold || 20}% over estimate
+                      </span>
+                    </Label>
+                    <Slider
+                      value={[alertSettings?.cost_alert_threshold || 20]}
+                      onValueChange={(v) => {
+                        updateAlertsMutation.mutate({
+                          cost_alert_enabled: alertSettings?.cost_alert_enabled || false,
+                          cost_alert_threshold: v[0],
+                          cost_alert_email: alertSettings?.cost_alert_email || null,
+                        });
+                      }}
+                      min={5}
+                      max={100}
+                      step={5}
+                      disabled={!alertSettings?.cost_alert_enabled}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      You'll be notified when actual costs exceed your estimate by more than this percentage
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Alert Email</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="email"
+                        placeholder="alerts@company.com"
+                        defaultValue={alertSettings?.cost_alert_email || ''}
+                        disabled={!alertSettings?.cost_alert_enabled}
+                        onBlur={(e) => {
+                          if (e.target.value !== alertSettings?.cost_alert_email) {
+                            updateAlertsMutation.mutate({
+                              cost_alert_enabled: alertSettings?.cost_alert_enabled || false,
+                              cost_alert_threshold: alertSettings?.cost_alert_threshold || 20,
+                              cost_alert_email: e.target.value || null,
+                            });
+                          }
+                        }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Email address where cost alerts will be sent (requires Resend API key)
+                    </p>
+                  </div>
+
+                  {alertSettings?.last_cost_alert_at && (
+                    <div className="pt-4 border-t">
+                      <p className="text-sm text-muted-foreground">
+                        Last alert sent: {format(new Date(alertSettings.last_cost_alert_at), 'PPp')}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </TabsContent>
