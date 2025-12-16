@@ -342,6 +342,126 @@ export default function Integrations() {
           </CardContent>
         </Card>
 
+        {/* Pricing & Usage Information */}
+        <Card className="border-border/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-primary" />
+              Pricing & Usage Information
+            </CardTitle>
+            <CardDescription>
+              Understand what each service offers and their pricing tiers
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-6 md:grid-cols-3">
+              {/* Twilio Pricing */}
+              <div className="space-y-3 p-4 rounded-lg border border-red-200 bg-red-50/50 dark:border-red-900/50 dark:bg-red-950/20">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center">
+                    <Phone className="w-4 h-4 text-white" />
+                  </div>
+                  <h4 className="font-semibold">Twilio</h4>
+                </div>
+                <div className="space-y-2">
+                  <div className="p-2 rounded bg-background border">
+                    <p className="text-xs font-medium text-green-600 dark:text-green-400">Free Trial</p>
+                    <p className="text-sm text-muted-foreground">$15.50 credit to start</p>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <p className="font-medium">Pay-as-you-go Pricing:</p>
+                    <ul className="text-muted-foreground space-y-0.5 text-xs">
+                      <li>• Phone numbers: ~$1.15/month</li>
+                      <li>• Outbound calls: ~$0.014/min</li>
+                      <li>• Inbound calls: ~$0.0085/min</li>
+                      <li>• SMS outbound: ~$0.0079/msg</li>
+                      <li>• SMS inbound: ~$0.0075/msg</li>
+                    </ul>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" className="w-full" asChild>
+                  <a href="https://www.twilio.com/pricing" target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="w-3 h-3 mr-1" />
+                    View Full Pricing
+                  </a>
+                </Button>
+              </div>
+
+              {/* ElevenLabs Pricing */}
+              <div className="space-y-3 p-4 rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
+                    <Mic className="w-4 h-4 text-white" />
+                  </div>
+                  <h4 className="font-semibold">ElevenLabs</h4>
+                </div>
+                <div className="space-y-2">
+                  <div className="p-2 rounded bg-background border">
+                    <p className="text-xs font-medium text-green-600 dark:text-green-400">Free Plan</p>
+                    <p className="text-sm text-muted-foreground">10,000 characters/month</p>
+                    <p className="text-xs text-muted-foreground">~10 min of audio</p>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <p className="font-medium">Paid Plans:</p>
+                    <ul className="text-muted-foreground space-y-0.5 text-xs">
+                      <li>• Starter: $5/mo – 30K chars</li>
+                      <li>• Creator: $22/mo – 100K chars</li>
+                      <li>• Pro: $99/mo – 500K chars</li>
+                      <li>• Scale: $330/mo – 2M chars</li>
+                    </ul>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" className="w-full" asChild>
+                  <a href="https://elevenlabs.io/pricing" target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="w-3 h-3 mr-1" />
+                    View Full Pricing
+                  </a>
+                </Button>
+              </div>
+
+              {/* Resend Pricing */}
+              <div className="space-y-3 p-4 rounded-lg border border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/50 dark:bg-emerald-950/20">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center">
+                    <Mail className="w-4 h-4 text-white" />
+                  </div>
+                  <h4 className="font-semibold">Resend</h4>
+                </div>
+                <div className="space-y-2">
+                  <div className="p-2 rounded bg-background border">
+                    <p className="text-xs font-medium text-green-600 dark:text-green-400">Free Plan</p>
+                    <p className="text-sm text-muted-foreground">3,000 emails/month</p>
+                    <p className="text-xs text-muted-foreground">100 emails/day limit</p>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <p className="font-medium">Paid Plans:</p>
+                    <ul className="text-muted-foreground space-y-0.5 text-xs">
+                      <li>• Pro: $20/mo – 50K emails</li>
+                      <li>• Scale: $90/mo – 100K emails</li>
+                      <li>• Enterprise: Custom pricing</li>
+                      <li>• No daily sending limits</li>
+                    </ul>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" className="w-full" asChild>
+                  <a href="https://resend.com/pricing" target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="w-3 h-3 mr-1" />
+                    View Full Pricing
+                  </a>
+                </Button>
+              </div>
+            </div>
+
+            <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-dashed">
+              <p className="text-sm text-muted-foreground">
+                <strong className="text-foreground">💡 Tip:</strong> All three services offer generous free tiers perfect for small businesses. 
+                Twilio's trial credit, ElevenLabs' 10K characters, and Resend's 3K emails/month should cover most starter needs.
+                Upgrade only when you exceed these limits.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Setup Instructions */}
         <Card className="border-border/50 border-dashed">
           <CardHeader>
