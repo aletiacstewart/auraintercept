@@ -369,6 +369,38 @@ export function AgentTestConsole({
     }
   };
 
+  // Handle action button clicks from Next Steps panel
+  const handleActionClick = useCallback((action: { label: string; type: string; value: string }) => {
+    if (action.type === 'call') {
+      // For call actions, send a message to continue in chat since voice requires setup
+      addMessage({
+        role: 'system',
+        content: 'Voice call feature: In a live environment, this would initiate an AI voice call. For now, let\'s continue in chat.',
+      });
+      // Send a follow-up message to continue the conversation
+      setTimeout(() => {
+        sendMessage("I'd like to speak with someone about my emergency. Can you help me right away?");
+      }, 500);
+    } else if (action.type === 'action') {
+      if (action.value === 'show_calendar' || action.value === 'schedule') {
+        // Send message to show available times
+        sendMessage("What times are available for an appointment?");
+      } else if (action.value === 'track_status') {
+        sendMessage("Can you give me an update on the technician status?");
+      } else if (action.value === 'view_quote') {
+        sendMessage("Can you show me the quote details?");
+      } else {
+        // Generic action - send the label as a message
+        sendMessage(action.label);
+      }
+    } else if (action.type === 'link') {
+      // For links, open in new tab if it's a URL
+      if (action.value.startsWith('http')) {
+        window.open(action.value, '_blank');
+      }
+    }
+  }, [addMessage, sendMessage]);
+
   const clearChat = () => {
     setMessages([]);
     setConversationHistory([]);
@@ -522,6 +554,7 @@ export function AgentTestConsole({
                                       size="sm"
                                       variant={action.type === 'call' ? 'default' : 'outline'}
                                       className="text-xs h-7"
+                                      onClick={() => handleActionClick(action)}
                                     >
                                       {action.type === 'call' && <Phone className="h-3 w-3 mr-1" />}
                                       {action.type === 'action' && action.value === 'show_calendar' && <Calendar className="h-3 w-3 mr-1" />}
