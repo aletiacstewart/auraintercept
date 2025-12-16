@@ -29,6 +29,7 @@ import {
   Timer,
   MessageSquare,
 } from 'lucide-react';
+import { JobPhotoUpload } from './JobPhotoUpload';
 
 interface JobAssignment {
   id: string;
@@ -45,6 +46,8 @@ interface JobAssignment {
   notes: string | null;
   parts_used: string | null;
   decline_reason: string | null;
+  before_photos: string[];
+  after_photos: string[];
   appointments: {
     id: string;
     customer_name: string;
@@ -446,6 +449,8 @@ function JobCard({
   const [notes, setNotes] = useState(job.notes || '');
   const [partsUsed, setPartsUsed] = useState(job.parts_used || '');
   const [hasChanges, setHasChanges] = useState(false);
+  const [beforePhotos, setBeforePhotos] = useState<string[]>(job.before_photos || []);
+  const [afterPhotos, setAfterPhotos] = useState<string[]>(job.after_photos || []);
 
   const appointment = job.appointments;
   if (!appointment) return null;
@@ -595,6 +600,21 @@ function JobCard({
             Customer Notes
           </p>
           <p className="text-sm whitespace-pre-wrap">{appointment.notes}</p>
+        </div>
+      )}
+
+      {/* Photo Upload Section - Show for arrived and in_progress jobs */}
+      {isActive && ['arrived', 'in_progress'].includes(job.status) && (
+        <div className="mb-3">
+          <JobPhotoUpload
+            jobId={job.id}
+            beforePhotos={beforePhotos}
+            afterPhotos={afterPhotos}
+            onPhotosUpdated={(before, after) => {
+              setBeforePhotos(before);
+              setAfterPhotos(after);
+            }}
+          />
         </div>
       )}
 

@@ -882,9 +882,11 @@ export type Database = {
         Row: {
           accepted_at: string | null
           actual_arrival_minutes: number | null
+          after_photos: string[] | null
           appointment_id: string
           arrived_at: string | null
           assigned_at: string | null
+          before_photos: string[] | null
           company_id: string
           completed_at: string | null
           created_at: string | null
@@ -912,9 +914,11 @@ export type Database = {
         Insert: {
           accepted_at?: string | null
           actual_arrival_minutes?: number | null
+          after_photos?: string[] | null
           appointment_id: string
           arrived_at?: string | null
           assigned_at?: string | null
+          before_photos?: string[] | null
           company_id: string
           completed_at?: string | null
           created_at?: string | null
@@ -942,9 +946,11 @@ export type Database = {
         Update: {
           accepted_at?: string | null
           actual_arrival_minutes?: number | null
+          after_photos?: string[] | null
           appointment_id?: string
           arrived_at?: string | null
           assigned_at?: string | null
+          before_photos?: string[] | null
           company_id?: string
           completed_at?: string | null
           created_at?: string | null
