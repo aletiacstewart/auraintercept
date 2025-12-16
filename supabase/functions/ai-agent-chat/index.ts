@@ -1727,10 +1727,7 @@ async function executeAgentTool(
         console.log(`[AI Agent] Assigning to employee: ${employees[0].full_name}`);
       }
 
-      // Create the appointment - include address in notes for visibility
-      const addressNote = args.customer_address ? `Service Address: ${args.customer_address}` : '';
-      const combinedNotes = [addressNote, args.notes].filter(Boolean).join('\n');
-      
+      // Create the appointment with dedicated customer_address column
       const { data: appointment, error } = await supabase
         .from('appointments')
         .insert({
@@ -1738,10 +1735,11 @@ async function executeAgentTool(
           customer_name: args.customer_name,
           customer_phone: args.customer_phone,
           customer_email: args.customer_email,
+          customer_address: args.customer_address || null,
           service_type: args.service_type,
           datetime: args.datetime,
           duration_minutes: args.duration_minutes || 60,
-          notes: combinedNotes || null,
+          notes: args.notes || null,
           status: 'scheduled',
           employee_id: employeeId,
         })
