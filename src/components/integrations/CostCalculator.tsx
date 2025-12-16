@@ -431,29 +431,7 @@ export function CostCalculator() {
   };
 
   return (
-    <Card className="border-border/50">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Calculator className="w-5 h-5 text-primary" />
-              Cost Calculator & Tracking
-            </CardTitle>
-            <CardDescription>
-              Estimate costs, save projections, and compare with actual spending
-            </CardDescription>
-          </div>
-          <Button 
-            onClick={() => saveMutation.mutate()} 
-            disabled={saveMutation.isPending || !companyId}
-            size="sm"
-          >
-            <Save className="w-4 h-4 mr-2" />
-            Save Estimate
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <div className="space-y-6">
         {/* Input Controls */}
         <div className="grid gap-6 md:grid-cols-4">
           <div className="space-y-3">
@@ -1004,7 +982,6 @@ export function CostCalculator() {
             )}
           </TabsContent>
         </Tabs>
-      </CardContent>
-    </Card>
+      </div>
   );
 }

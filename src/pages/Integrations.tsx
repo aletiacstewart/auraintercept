@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { CostCalculator } from '@/components/integrations/CostCalculator';
-import { RecommendedPlanCalculator } from '@/components/integrations/RecommendedPlanCalculator';
 import { ROICalculator } from '@/components/integrations/ROICalculator';
 import { QuickStartWizard } from '@/components/integrations/QuickStartWizard';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,6 +12,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import {
   Dialog,
   DialogContent,
@@ -30,9 +36,11 @@ import {
   ExternalLink, 
   Eye, 
   EyeOff,
-  AlertCircle,
   Loader2,
   Rocket,
+  Calculator,
+  TrendingUp,
+  BookOpen,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -60,48 +68,48 @@ const INTEGRATIONS: Integration[] = [
   {
     id: 'stripe',
     name: 'Stripe',
-    description: 'Accept payments and manage subscriptions for your customers.',
+    description: 'Accept payments and manage subscriptions.',
     icon: CreditCard,
     color: 'bg-purple-500',
     docsUrl: 'https://dashboard.stripe.com/apikeys',
     fields: [],
-    checkConnection: () => true, // Stripe is configured at platform level
+    checkConnection: () => true,
   },
   {
     id: 'twilio',
     name: 'Twilio',
-    description: 'Enable voice calls and SMS messaging for your AI agent.',
+    description: 'Voice calls and SMS messaging.',
     icon: Phone,
     color: 'bg-red-500',
     docsUrl: 'https://console.twilio.com',
     fields: [
       { key: 'twilio_account_sid', label: 'Account SID', placeholder: 'AC...', type: 'text', required: true },
       { key: 'twilio_auth_token', label: 'Auth Token', placeholder: 'Your auth token', type: 'password', required: true },
-      { key: 'twilio_phone_number', label: 'Phone Number', placeholder: '+1234567890', type: 'text', required: true, helpText: 'Your Twilio phone number in E.164 format' },
+      { key: 'twilio_phone_number', label: 'Phone Number', placeholder: '+1234567890', type: 'text', required: true, helpText: 'E.164 format' },
     ],
     checkConnection: (data) => !!(data.twilio_account_sid && data.twilio_auth_token && data.twilio_phone_number),
   },
   {
     id: 'elevenlabs',
     name: 'ElevenLabs',
-    description: 'Add natural-sounding AI voices to your phone calls.',
+    description: 'AI-powered voice synthesis.',
     icon: Mic,
     color: 'bg-blue-500',
     docsUrl: 'https://elevenlabs.io/app/settings/api-keys',
     fields: [
-      { key: 'elevenlabs_api_key', label: 'API Key', placeholder: 'Your ElevenLabs API key', type: 'password', required: true, helpText: 'Voice selection is available in AI Agent → Settings' },
+      { key: 'elevenlabs_api_key', label: 'API Key', placeholder: 'Your ElevenLabs API key', type: 'password', required: true, helpText: 'Voice selection in AI Agent → Settings' },
     ],
     checkConnection: (data) => !!data.elevenlabs_api_key,
   },
   {
     id: 'resend',
     name: 'Resend',
-    description: 'Send email notifications for appointments and reminders.',
+    description: 'Email notifications and reminders.',
     icon: Mail,
     color: 'bg-emerald-500',
     docsUrl: 'https://resend.com/api-keys',
     fields: [
-      { key: 'resend_api_key', label: 'API Key', placeholder: 're_...', type: 'password', required: true, helpText: 'Get your API key from resend.com/api-keys' },
+      { key: 'resend_api_key', label: 'API Key', placeholder: 're_...', type: 'password', required: true, helpText: 'Get from resend.com/api-keys' },
     ],
     checkConnection: (data) => !!data.resend_api_key,
   },
@@ -115,7 +123,6 @@ export default function Integrations() {
   const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
   const [showQuickStart, setShowQuickStart] = useState(false);
 
-  // Fetch current integrations
   const { data: integrations, isLoading } = useQuery({
     queryKey: ['integrations', companyId],
     queryFn: async () => {
@@ -125,56 +132,38 @@ export default function Integrations() {
         .select('*')
         .eq('company_id', companyId)
         .maybeSingle();
-
       if (error && error.code !== 'PGRST116') throw error;
       return data;
     },
     enabled: !!companyId,
   });
 
-  // Save integration mutation
   const saveMutation = useMutation({
     mutationFn: async (data: Record<string, string>) => {
       if (!companyId) throw new Error('No company ID');
-
-      const payload = {
-        company_id: companyId,
-        ...data,
-      };
-
+      const payload = { company_id: companyId, ...data };
       if (integrations?.id) {
-        const { error } = await supabase
-          .from('tenant_integrations')
-          .update(payload)
-          .eq('id', integrations.id);
+        const { error } = await supabase.from('tenant_integrations').update(payload).eq('id', integrations.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from('tenant_integrations')
-          .insert(payload);
+        const { error } = await supabase.from('tenant_integrations').insert(payload);
         if (error) throw error;
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['integrations'] });
-      toast.success('Integration saved successfully!');
+      toast.success('Integration saved!');
       setSelectedIntegration(null);
       setFormData({});
     },
-    onError: (error) => {
-      console.error('Error saving integration:', error);
-      toast.error('Failed to save integration');
-    },
+    onError: () => toast.error('Failed to save integration'),
   });
 
   const handleOpenSetup = (integration: Integration) => {
-    // Pre-fill form with existing data
     const existingData: Record<string, string> = {};
     integration.fields.forEach((field) => {
       const value = integrations?.[field.key as keyof typeof integrations];
-      if (value && typeof value === 'string') {
-        existingData[field.key] = value;
-      }
+      if (value && typeof value === 'string') existingData[field.key] = value;
     });
     setFormData(existingData);
     setSelectedIntegration(integration);
@@ -182,17 +171,11 @@ export default function Integrations() {
 
   const handleSave = () => {
     if (!selectedIntegration) return;
-
-    // Validate required fields
-    const missingFields = selectedIntegration.fields
-      .filter((f) => f.required && !formData[f.key])
-      .map((f) => f.label);
-
+    const missingFields = selectedIntegration.fields.filter((f) => f.required && !formData[f.key]).map((f) => f.label);
     if (missingFields.length > 0) {
       toast.error(`Please fill in: ${missingFields.join(', ')}`);
       return;
     }
-
     saveMutation.mutate(formData);
   };
 
@@ -201,9 +184,7 @@ export default function Integrations() {
     const data: Record<string, string> = {};
     integration.fields.forEach((field) => {
       const value = integrations[field.key as keyof typeof integrations];
-      if (value && typeof value === 'string') {
-        data[field.key] = value;
-      }
+      if (value && typeof value === 'string') data[field.key] = value;
     });
     return integration.checkConnection(data);
   };
@@ -215,20 +196,18 @@ export default function Integrations() {
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Integrations</h1>
-            <p className="text-muted-foreground">
-              Connect external services to power your AI agent
-            </p>
+            <p className="text-muted-foreground">Connect services to power your reminders</p>
           </div>
           <Button onClick={() => setShowQuickStart(true)} className="gap-2">
             <Rocket className="w-4 h-4" />
-            Quick Start Wizard
+            Quick Start
           </Button>
         </div>
 
-        {/* Quick Start Wizard */}
         <QuickStartWizard
           open={showQuickStart}
           onOpenChange={setShowQuickStart}
@@ -239,62 +218,47 @@ export default function Integrations() {
         />
 
         {/* Integration Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {INTEGRATIONS.map((integration) => {
             const isConnected = getConnectionStatus(integration);
             const Icon = integration.icon;
-
             return (
-              <Card key={integration.id} className="border-border/50 relative overflow-hidden">
+              <Card key={integration.id} className="border-border/50 relative">
                 {isConnected && (
-                  <div className="absolute top-3 right-3">
-                    <Badge className="bg-green-500/10 text-green-600 border-green-500/30">
-                      <Check className="w-3 h-3 mr-1" />
-                      Connected
-                    </Badge>
-                  </div>
+                  <Badge className="absolute top-3 right-3 bg-green-500/10 text-green-600 border-green-500/30">
+                    <Check className="w-3 h-3 mr-1" />
+                    Connected
+                  </Badge>
                 )}
-                <CardHeader>
+                <CardHeader className="pb-2">
                   <div className="flex items-center gap-3">
-                    <div className={cn('w-12 h-12 rounded-lg flex items-center justify-center', integration.color)}>
-                      <Icon className="w-6 h-6 text-white" />
+                    <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', integration.color)}>
+                      <Icon className="w-5 h-5 text-white" />
                     </div>
-                    <div>
-                      <CardTitle className="text-lg">{integration.name}</CardTitle>
-                    </div>
+                    <CardTitle className="text-base">{integration.name}</CardTitle>
                   </div>
-                  <CardDescription className="mt-2">
-                    {integration.description}
-                  </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-0">
+                  <p className="text-sm text-muted-foreground mb-3">{integration.description}</p>
                   {isLoading ? (
-                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-9 w-full" />
                   ) : integration.id === 'stripe' ? (
-                    <div className="space-y-3">
-                      <p className="text-sm text-muted-foreground">
-                        Stripe is connected. Manage your subscription and billing settings.
-                      </p>
-                      <Button variant="default" className="w-full" asChild>
-                        <a href="/dashboard/subscription">
-                          <CreditCard className="w-4 h-4 mr-2" />
-                          Manage Subscription
-                        </a>
-                      </Button>
-                    </div>
+                    <Button variant="outline" size="sm" className="w-full" asChild>
+                      <a href="/dashboard/subscription">Manage Billing</a>
+                    </Button>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="flex gap-2">
                       <Button
                         variant={isConnected ? 'outline' : 'default'}
-                        className="w-full"
+                        size="sm"
+                        className="flex-1"
                         onClick={() => handleOpenSetup(integration)}
                       >
-                        {isConnected ? 'Update Settings' : 'Connect'}
+                        {isConnected ? 'Update' : 'Connect'}
                       </Button>
-                      <Button variant="ghost" className="w-full text-muted-foreground" asChild>
+                      <Button variant="ghost" size="sm" asChild>
                         <a href={integration.docsUrl} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Get API Keys
+                          <ExternalLink className="w-4 h-4" />
                         </a>
                       </Button>
                     </div>
@@ -305,266 +269,176 @@ export default function Integrations() {
           })}
         </div>
 
-        {/* Webhook Configuration */}
-        <Card className="border-primary/30 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Phone className="w-5 h-5 text-primary" />
-              Voice Webhook Configuration
-            </CardTitle>
-            <CardDescription>
-              Configure your Twilio phone number to use the AI voice handler
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Voice Webhook URL (for incoming calls)</Label>
-              <div className="flex gap-2">
-                <Input
-                  readOnly
-                  value={`https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=incoming`}
-                  className="font-mono text-sm"
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    navigator.clipboard.writeText('https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=incoming');
-                    toast.success('Webhook URL copied!');
-                  }}
-                >
-                  Copy
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Set this as the "A CALL COMES IN" webhook in your Twilio phone number settings. Select HTTP POST.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label>Status Callback URL (optional)</Label>
-              <div className="flex gap-2">
-                <Input
-                  readOnly
-                  value={`https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=status`}
-                  className="font-mono text-sm"
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    navigator.clipboard.writeText('https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=status');
-                    toast.success('Status URL copied!');
-                  }}
-                >
-                  Copy
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Set this as the "STATUS CALLBACK URL" to track call status updates.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Pricing & Usage Information */}
+        {/* Getting Started Accordion */}
         <Card className="border-border/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-primary" />
-              Pricing & Usage Information
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <BookOpen className="w-5 h-5 text-primary" />
+              Getting Started
             </CardTitle>
-            <CardDescription>
-              Understand what each service offers and their pricing tiers
-            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {/* Stripe Pricing */}
-              <div className="space-y-3 p-4 rounded-lg border border-purple-200 bg-purple-50/50 dark:border-purple-900/50 dark:bg-purple-950/20">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center">
-                    <CreditCard className="w-4 h-4 text-white" />
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="twilio">
+                <AccordionTrigger className="text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-red-500 flex items-center justify-center">
+                      <Phone className="w-3 h-3 text-white" />
+                    </div>
+                    Twilio Setup (Voice & SMS)
                   </div>
-                  <h4 className="font-semibold">Stripe</h4>
-                </div>
-                <div className="space-y-2">
-                  <div className="p-2 rounded bg-background border">
-                    <p className="text-xs font-medium text-green-600 dark:text-green-400">No Monthly Fee</p>
-                    <p className="text-sm text-muted-foreground">Pay only when you get paid</p>
+                </AccordionTrigger>
+                <AccordionContent className="space-y-4 text-sm text-muted-foreground">
+                  <ol className="list-decimal list-inside space-y-1">
+                    <li>Create a Twilio account at twilio.com</li>
+                    <li>Get Account SID and Auth Token from Console</li>
+                    <li>Purchase a phone number with Voice capabilities</li>
+                    <li>Enter credentials in the Twilio card above</li>
+                  </ol>
+                  <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-2">
+                    <p className="font-medium text-foreground">Voice Webhook URL:</p>
+                    <div className="flex gap-2">
+                      <Input
+                        readOnly
+                        value="https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=incoming"
+                        className="font-mono text-xs"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          navigator.clipboard.writeText('https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=incoming');
+                          toast.success('Copied!');
+                        }}
+                      >
+                        Copy
+                      </Button>
+                    </div>
+                    <p className="text-xs">Set as "A CALL COMES IN" webhook (HTTP POST)</p>
                   </div>
-                  <div className="space-y-1 text-sm">
-                    <p className="font-medium">Transaction Fees:</p>
-                    <ul className="text-muted-foreground space-y-0.5 text-xs">
-                      <li>• Cards: 2.9% + $0.30/txn</li>
-                      <li>• ACH: 0.8% (max $5)</li>
-                      <li>• Invoicing: +0.4%</li>
-                      <li>• Intl cards: +1.5%</li>
-                      <li>• Currency conv: +1%</li>
-                    </ul>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" className="w-full" asChild>
-                  <a href="https://stripe.com/pricing" target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="w-3 h-3 mr-1" />
-                    View Full Pricing
-                  </a>
-                </Button>
-              </div>
+                </AccordionContent>
+              </AccordionItem>
 
-              {/* Twilio Pricing */}
-              <div className="space-y-3 p-4 rounded-lg border border-red-200 bg-red-50/50 dark:border-red-900/50 dark:bg-red-950/20">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center">
-                    <Phone className="w-4 h-4 text-white" />
+              <AccordionItem value="elevenlabs">
+                <AccordionTrigger className="text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-blue-500 flex items-center justify-center">
+                      <Mic className="w-3 h-3 text-white" />
+                    </div>
+                    ElevenLabs Setup (AI Voice)
                   </div>
-                  <h4 className="font-semibold">Twilio</h4>
-                </div>
-                <div className="space-y-2">
-                  <div className="p-2 rounded bg-background border">
-                    <p className="text-xs font-medium text-green-600 dark:text-green-400">Free Trial</p>
-                    <p className="text-sm text-muted-foreground">$15.50 credit to start</p>
-                  </div>
-                  <div className="space-y-1 text-sm">
-                    <p className="font-medium">Pay-as-you-go Pricing:</p>
-                    <ul className="text-muted-foreground space-y-0.5 text-xs">
-                      <li>• Phone numbers: ~$1.15/mo</li>
-                      <li>• Outbound calls: ~$0.014/min</li>
-                      <li>• Inbound calls: ~$0.0085/min</li>
-                      <li>• SMS outbound: ~$0.0079/msg</li>
-                      <li>• SMS inbound: ~$0.0075/msg</li>
-                    </ul>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" className="w-full" asChild>
-                  <a href="https://www.twilio.com/pricing" target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="w-3 h-3 mr-1" />
-                    View Full Pricing
-                  </a>
-                </Button>
-              </div>
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground">
+                  <ol className="list-decimal list-inside space-y-1">
+                    <li>Create an ElevenLabs account at elevenlabs.io</li>
+                    <li>Go to Settings → API Keys</li>
+                    <li>Generate and copy your API key</li>
+                    <li>Select voice in AI Agent → Settings</li>
+                  </ol>
+                </AccordionContent>
+              </AccordionItem>
 
-              {/* ElevenLabs Pricing */}
-              <div className="space-y-3 p-4 rounded-lg border border-blue-200 bg-blue-50/50 dark:border-blue-900/50 dark:bg-blue-950/20">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
-                    <Mic className="w-4 h-4 text-white" />
+              <AccordionItem value="resend">
+                <AccordionTrigger className="text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-emerald-500 flex items-center justify-center">
+                      <Mail className="w-3 h-3 text-white" />
+                    </div>
+                    Resend Setup (Email)
                   </div>
-                  <h4 className="font-semibold">ElevenLabs</h4>
-                </div>
-                <div className="space-y-2">
-                  <div className="p-2 rounded bg-background border">
-                    <p className="text-xs font-medium text-green-600 dark:text-green-400">Free Plan</p>
-                    <p className="text-sm text-muted-foreground">10,000 characters/month</p>
-                    <p className="text-xs text-muted-foreground">~10 min of audio</p>
-                  </div>
-                  <div className="space-y-1 text-sm">
-                    <p className="font-medium">Paid Plans:</p>
-                    <ul className="text-muted-foreground space-y-0.5 text-xs">
-                      <li>• Starter: $5/mo – 30K chars</li>
-                      <li>• Creator: $22/mo – 100K chars</li>
-                      <li>• Pro: $99/mo – 500K chars</li>
-                      <li>• Scale: $330/mo – 2M chars</li>
-                    </ul>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" className="w-full" asChild>
-                  <a href="https://elevenlabs.io/pricing" target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="w-3 h-3 mr-1" />
-                    View Full Pricing
-                  </a>
-                </Button>
-              </div>
-
-              {/* Resend Pricing */}
-              <div className="space-y-3 p-4 rounded-lg border border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/50 dark:bg-emerald-950/20">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center">
-                    <Mail className="w-4 h-4 text-white" />
-                  </div>
-                  <h4 className="font-semibold">Resend</h4>
-                </div>
-                <div className="space-y-2">
-                  <div className="p-2 rounded bg-background border">
-                    <p className="text-xs font-medium text-green-600 dark:text-green-400">Free Plan</p>
-                    <p className="text-sm text-muted-foreground">3,000 emails/month</p>
-                    <p className="text-xs text-muted-foreground">100 emails/day limit</p>
-                  </div>
-                  <div className="space-y-1 text-sm">
-                    <p className="font-medium">Paid Plans:</p>
-                    <ul className="text-muted-foreground space-y-0.5 text-xs">
-                      <li>• Pro: $20/mo – 50K emails</li>
-                      <li>• Scale: $90/mo – 100K emails</li>
-                      <li>• Enterprise: Custom pricing</li>
-                      <li>• No daily sending limits</li>
-                    </ul>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm" className="w-full" asChild>
-                  <a href="https://resend.com/pricing" target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="w-3 h-3 mr-1" />
-                    View Full Pricing
-                  </a>
-                </Button>
-              </div>
-            </div>
-
-            <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-dashed">
-              <p className="text-sm text-muted-foreground">
-                <strong className="text-foreground">💡 Tip:</strong> Stripe has no monthly fees—you only pay per transaction. 
-                Twilio, ElevenLabs, and Resend all offer generous free tiers perfect for getting started. 
-                Upgrade only when you exceed these limits.
-              </p>
-            </div>
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground">
+                  <ol className="list-decimal list-inside space-y-1">
+                    <li>Create a Resend account at resend.com</li>
+                    <li>Verify your email domain at resend.com/domains</li>
+                    <li>Go to API Keys and create a new key</li>
+                    <li>Enter your API key in the Resend card above</li>
+                  </ol>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </CardContent>
         </Card>
 
-        {/* Recommended Plan Calculator */}
-        <RecommendedPlanCalculator />
+        {/* Combined Calculator Card */}
+        <Card className="border-border/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Calculator className="w-5 h-5 text-primary" />
+              Cost & ROI Calculator
+            </CardTitle>
+            <CardDescription>Estimate costs and calculate potential savings</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="costs" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="costs" className="flex items-center gap-1">
+                  <Calculator className="w-4 h-4" />
+                  Estimate Costs
+                </TabsTrigger>
+                <TabsTrigger value="roi" className="flex items-center gap-1">
+                  <TrendingUp className="w-4 h-4" />
+                  Calculate ROI
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="costs">
+                <CostCalculator />
+              </TabsContent>
+              <TabsContent value="roi">
+                <ROICalculator />
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
 
-        {/* ROI Calculator */}
-        <ROICalculator />
-
-        {/* Cost Calculator */}
-        <CostCalculator />
-
-        {/* Setup Instructions */}
-        <Card className="border-border/50 border-dashed">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-primary" />
-              Setup Guide
+        {/* Simplified Pricing Reference */}
+        <Card className="border-border/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <CreditCard className="w-5 h-5 text-primary" />
+              Pricing Quick Reference
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-2">
-                <h4 className="font-medium">Twilio Setup</h4>
-                <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-1">
-                  <li>Create a Twilio account at twilio.com</li>
-                  <li>Get your Account SID and Auth Token from the Console</li>
-                  <li>Purchase a phone number with Voice capabilities</li>
-                  <li>Enter your credentials above</li>
-                  <li>Go to Phone Numbers → Active Numbers</li>
-                  <li>Configure the Voice webhook URL (copy from above)</li>
-                </ol>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">ElevenLabs Setup</h4>
-                <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-1">
-                  <li>Create an ElevenLabs account at elevenlabs.io</li>
-                  <li>Go to Settings → API Keys</li>
-                  <li>Generate a new API key</li>
-                  <li>Optionally, browse the Voice Library and copy a Voice ID</li>
-                </ol>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-medium">Resend Setup</h4>
-                <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-1">
-                  <li>Create a Resend account at resend.com</li>
-                  <li>Verify your email domain at resend.com/domains</li>
-                  <li>Go to API Keys and create a new key</li>
-                  <li>Enter your API key above</li>
-                  <li>Test by creating an appointment with a customer email</li>
-                </ol>
-              </div>
+          <CardContent>
+            <div className="flex flex-wrap gap-3 mb-4">
+              <Badge variant="outline" className="py-2 px-3 text-sm">
+                <Mail className="w-3 h-3 mr-2 text-emerald-500" />
+                Email: 3K free/mo
+              </Badge>
+              <Badge variant="outline" className="py-2 px-3 text-sm">
+                <Phone className="w-3 h-3 mr-2 text-red-500" />
+                SMS: $15.50 trial credit
+              </Badge>
+              <Badge variant="outline" className="py-2 px-3 text-sm">
+                <Mic className="w-3 h-3 mr-2 text-blue-500" />
+                Voice: 10K chars free/mo
+              </Badge>
+              <Badge variant="outline" className="py-2 px-3 text-sm">
+                <CreditCard className="w-3 h-3 mr-2 text-purple-500" />
+                Stripe: No monthly fee
+              </Badge>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="ghost" size="sm" asChild>
+                <a href="https://resend.com/pricing" target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="w-3 h-3 mr-1" /> Resend
+                </a>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <a href="https://www.twilio.com/pricing" target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="w-3 h-3 mr-1" /> Twilio
+                </a>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <a href="https://elevenlabs.io/pricing" target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="w-3 h-3 mr-1" /> ElevenLabs
+                </a>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <a href="https://stripe.com/pricing" target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="w-3 h-3 mr-1" /> Stripe
+                </a>
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -584,11 +458,8 @@ export default function Integrations() {
                 </>
               )}
             </DialogTitle>
-            <DialogDescription>
-              Enter your API credentials to connect {selectedIntegration?.name}
-            </DialogDescription>
+            <DialogDescription>Enter your API credentials</DialogDescription>
           </DialogHeader>
-
           {selectedIntegration && (
             <div className="space-y-4 pt-4">
               {selectedIntegration.fields.map((field) => (
@@ -613,33 +484,18 @@ export default function Integrations() {
                         className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
                         onClick={() => togglePasswordVisibility(field.key)}
                       >
-                        {showPasswords[field.key] ? (
-                          <EyeOff className="w-4 h-4" />
-                        ) : (
-                          <Eye className="w-4 h-4" />
-                        )}
+                        {showPasswords[field.key] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </Button>
                     )}
                   </div>
-                  {field.helpText && (
-                    <p className="text-xs text-muted-foreground">{field.helpText}</p>
-                  )}
+                  {field.helpText && <p className="text-xs text-muted-foreground">{field.helpText}</p>}
                 </div>
               ))}
-
               <div className="flex gap-3 pt-4">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => setSelectedIntegration(null)}
-                >
+                <Button variant="outline" className="flex-1" onClick={() => setSelectedIntegration(null)}>
                   Cancel
                 </Button>
-                <Button
-                  className="flex-1"
-                  onClick={handleSave}
-                  disabled={saveMutation.isPending}
-                >
+                <Button className="flex-1" onClick={handleSave} disabled={saveMutation.isPending}>
                   {saveMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
