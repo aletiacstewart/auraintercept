@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,8 +21,31 @@ import {
   Clock,
   Calendar,
   MessageSquare,
-  AlertTriangle
+  AlertTriangle,
+  Zap
 } from 'lucide-react';
+
+// Agent display names
+const AGENT_NAMES: Record<string, string> = {
+  triage: 'Triage Specialist',
+  booking: 'Booking Specialist',
+  dispatch: 'Emergency Dispatch',
+  quoting: 'Quote Specialist',
+  followup: 'Follow-up Specialist',
+  review: 'Review Specialist',
+  route: 'Route Optimizer',
+  eta: 'ETA Specialist',
+  checkin: 'Check-in Specialist',
+  invoice: 'Billing Specialist',
+  inventory: 'Inventory Specialist',
+  warranty: 'Warranty Specialist',
+  promo: 'Promotions Specialist',
+  referral: 'Referral Specialist',
+  winback: 'Win-back Specialist',
+  seasonal: 'Seasonal Campaign Specialist',
+  insights: 'Insights Analyst',
+  forecast: 'Forecast Analyst',
+};
 
 interface NextSteps {
   type: string;
@@ -44,6 +67,7 @@ interface Message {
     handoff_reason?: string;
     tool_calls?: Array<{ name: string; result: string }>;
     next_steps?: NextSteps;
+    current_agent?: string;
   };
 }
 
@@ -155,8 +179,8 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
 };
 
 export function AgentTestConsole({
-  agentType,
-  agentName,
+  agentType: initialAgentType,
+  agentName: initialAgentName,
   isEnabled,
   companyId,
 }: AgentTestConsoleProps) {
@@ -164,8 +188,11 @@ export function AgentTestConsole({
   const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [activeAgent, setActiveAgent] = useState(initialAgentType);
+  const [activeAgentName, setActiveAgentName] = useState(initialAgentName);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const scenarios = TEST_SCENARIOS[agentType] || [];
+  const scenarios = TEST_SCENARIOS[initialAgentType] || [];
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -173,15 +200,91 @@ export function AgentTestConsole({
     }
   }, [messages]);
 
-  const addMessage = (message: Omit<Message, 'id' | 'timestamp'>) => {
+  // Reset when initial agent changes (navigating to different agent page)
+  useEffect(() => {
+    setActiveAgent(initialAgentType);
+    setActiveAgentName(initialAgentName);
+    setMessages([]);
+    setConversationHistory([]);
+  }, [initialAgentType, initialAgentName]);
+
+  const addMessage = useCallback((message: Omit<Message, 'id' | 'timestamp'>) => {
     setMessages((prev) => [
       ...prev,
       { ...message, id: crypto.randomUUID(), timestamp: new Date() },
     ]);
-  };
+  }, []);
+
+  // Handle agent transfer after handoff
+  const handleAgentTransfer = useCallback(async (newAgentType: string, handoffReason: string) => {
+    const newAgentName = AGENT_NAMES[newAgentType] || newAgentType;
+    
+    // Show transition message
+    setIsTransitioning(true);
+    addMessage({
+      role: 'system',
+      content: `Connecting you to ${newAgentName}...`,
+    });
+
+    // Small delay for visual effect
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    // Switch to new agent
+    setActiveAgent(newAgentType);
+    setActiveAgentName(newAgentName);
+    
+    // Reset conversation history for new agent but include context
+    const contextMessage = `[Context: Customer was transferred from ${activeAgent} agent. Reason: ${handoffReason}. Please introduce yourself and continue helping them.]`;
+    setConversationHistory([{ role: 'user' as const, content: contextMessage }]);
+    
+    setIsTransitioning(false);
+
+    // Get introduction from new agent
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-agent-chat', {
+        body: {
+          agentType: newAgentType,
+          message: contextMessage,
+          companyId,
+          conversationHistory: [],
+          isHandoff: true,
+          handoffFrom: activeAgent,
+          handoffReason,
+        },
+      });
+
+      if (error) throw error;
+
+      const responseContent = data.response || `Hello! I'm your ${newAgentName}. I understand you need assistance. How can I help you today?`;
+      
+      setConversationHistory([
+        { role: 'user' as const, content: contextMessage },
+        { role: 'assistant' as const, content: responseContent },
+      ]);
+
+      addMessage({
+        role: 'agent',
+        content: responseContent,
+        metadata: {
+          event_type: 'agent_introduction',
+          current_agent: newAgentType,
+        },
+      });
+    } catch (error: any) {
+      console.error('Agent transfer error:', error);
+      addMessage({
+        role: 'agent',
+        content: `Hello! I'm your ${newAgentName}. I understand you were transferred over. How can I assist you today?`,
+        metadata: { current_agent: newAgentType },
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [activeAgent, companyId, addMessage]);
 
   const sendMessage = async (content: string) => {
-    if (!content.trim() || !companyId) return;
+    if (!content.trim() || !companyId || isTransitioning) return;
 
     addMessage({ role: 'user', content });
     setInput('');
@@ -193,7 +296,7 @@ export function AgentTestConsole({
     try {
       const { data, error } = await supabase.functions.invoke('ai-agent-chat', {
         body: {
-          agentType,
+          agentType: activeAgent, // Use current active agent, not initial
           message: content,
           companyId,
           conversationHistory: updatedHistory,
@@ -234,8 +337,16 @@ export function AgentTestConsole({
           handoff_reason: data.handoff_reason,
           tool_calls: data.tool_calls,
           next_steps: data.next_steps,
+          current_agent: activeAgent,
         },
       });
+
+      // Handle handoff - transfer chat to new agent
+      if (data.handoff_to) {
+        setIsLoading(false); // Stop loading before transition
+        await handleAgentTransfer(data.handoff_to, data.handoff_reason || 'Customer request');
+        return; // Don't continue to finally block since handleAgentTransfer manages loading
+      }
     } catch (error: any) {
       console.error('AI Agent error:', error);
       
@@ -261,6 +372,8 @@ export function AgentTestConsole({
   const clearChat = () => {
     setMessages([]);
     setConversationHistory([]);
+    setActiveAgent(initialAgentType);
+    setActiveAgentName(initialAgentName);
   };
 
   if (!isEnabled) {
@@ -309,12 +422,22 @@ export function AgentTestConsole({
           <div>
             <div className="flex items-center gap-2">
               <CardTitle className="text-lg">Test Console</CardTitle>
+              {activeAgent !== initialAgentType && (
+                <Badge variant="secondary" className="text-xs gap-1 bg-primary/10 text-primary">
+                  <Zap className="h-3 w-3" />
+                  Transferred to {AGENT_NAMES[activeAgent] || activeAgent}
+                </Badge>
+              )}
               <Badge variant="outline" className="text-xs gap-1">
                 <Sparkles className="h-3 w-3" />
                 Powered by Lovable AI
               </Badge>
             </div>
-            <CardDescription>Interact with {agentName} using real AI</CardDescription>
+            <CardDescription>
+              {activeAgent !== initialAgentType 
+                ? `Now chatting with ${AGENT_NAMES[activeAgent] || activeAgent}` 
+                : `Interact with ${initialAgentName} using real AI`}
+            </CardDescription>
           </div>
           <Button variant="outline" size="sm" onClick={clearChat}>
             <RefreshCw className="h-4 w-4 mr-2" />
