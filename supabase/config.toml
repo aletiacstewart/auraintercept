@@ -64,7 +64,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.send-appointment-sms]
-verify_jwt = true
+verify_jwt = false
 
 [functions.customer-portal]
 verify_jwt = false
@@ -92,3 +92,6 @@ verify_jwt = true
 
 [functions.ai-agent-chat]
 verify_jwt = true
+
+[functions.send-job-notification]
+verify_jwt = false
