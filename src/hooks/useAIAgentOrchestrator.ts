@@ -159,24 +159,42 @@ export function useAIAgentOrchestrator() {
 
   // Toggle agent enabled state
   const toggleAgent = async (agentType: string, enabled: boolean) => {
-    if (!companyId) return;
+    if (!companyId) {
+      console.error('No company ID available for toggling agent');
+      toast({
+        title: 'Error',
+        description: 'No company associated with your account',
+        variant: 'destructive',
+      });
+      return;
+    }
     
     try {
       // Check if config exists
-      const { data: existing } = await supabase
+      const { data: existing, error: selectError } = await supabase
         .from('ai_agent_configs')
         .select('id')
         .eq('company_id', companyId)
         .eq('agent_type', agentType)
-        .single();
+        .maybeSingle();
+      
+      if (selectError) {
+        console.error('Error checking agent config:', selectError);
+        throw selectError;
+      }
       
       if (existing) {
-        await supabase
+        const { error: updateError } = await supabase
           .from('ai_agent_configs')
           .update({ is_enabled: enabled })
           .eq('id', existing.id);
+        
+        if (updateError) {
+          console.error('Error updating agent config:', updateError);
+          throw updateError;
+        }
       } else {
-        await supabase
+        const { error: insertError } = await supabase
           .from('ai_agent_configs')
           .insert({
             company_id: companyId,
@@ -184,6 +202,11 @@ export function useAIAgentOrchestrator() {
             is_enabled: enabled,
             settings: {},
           });
+        
+        if (insertError) {
+          console.error('Error inserting agent config:', insertError);
+          throw insertError;
+        }
       }
       
       await fetchAgents();
@@ -192,11 +215,11 @@ export function useAIAgentOrchestrator() {
         title: enabled ? 'Agent Enabled' : 'Agent Disabled',
         description: `${agentType} agent has been ${enabled ? 'enabled' : 'disabled'}`,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error toggling agent:', error);
       toast({
         title: 'Error',
-        description: 'Failed to update agent',
+        description: error?.message || 'Failed to update agent',
         variant: 'destructive',
       });
     }
