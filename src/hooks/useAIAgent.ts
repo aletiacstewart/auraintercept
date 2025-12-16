@@ -1,15 +1,9 @@
 import { useState, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
-}
-
-interface ToolCall {
-  name: string;
-  arguments: Record<string, any>;
 }
 
 export const useAIAgent = () => {
@@ -26,8 +20,6 @@ export const useAIAgent = () => {
     const userMsg: Message = { role: 'user', content: userMessage };
     setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
-
-    let assistantContent = '';
 
     try {
       const response = await fetch(
@@ -53,15 +45,17 @@ export const useAIAgent = () => {
       if (!reader) throw new Error('No response body');
 
       const decoder = new TextDecoder();
+      let assistantContent = '';
       let buffer = '';
-      let pendingToolCalls: ToolCall[] = [];
+
+      // Add placeholder assistant message first (like PublicChat does)
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-
         const lines = buffer.split('\n');
         buffer = lines.pop() || '';
 
@@ -74,39 +68,14 @@ export const useAIAgent = () => {
 
           try {
             const parsed = JSON.parse(jsonStr);
-            const delta = parsed.choices?.[0]?.delta;
-
-            if (delta?.content) {
-              assistantContent += delta.content;
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantContent += content;
               setMessages(prev => {
-                const last = prev[prev.length - 1];
-                if (last?.role === 'assistant') {
-                  return prev.map((m, i) => 
-                    i === prev.length - 1 ? { ...m, content: assistantContent } : m
-                  );
-                }
-                return [...prev, { role: 'assistant', content: assistantContent }];
+                const updated = [...prev];
+                updated[updated.length - 1] = { role: 'assistant', content: assistantContent };
+                return updated;
               });
-            }
-
-            // Handle tool calls
-            if (delta?.tool_calls) {
-              for (const tc of delta.tool_calls) {
-                if (tc.function?.name) {
-                  pendingToolCalls.push({
-                    name: tc.function.name,
-                    arguments: {}
-                  });
-                }
-                if (tc.function?.arguments && pendingToolCalls.length > 0) {
-                  const lastTool = pendingToolCalls[pendingToolCalls.length - 1];
-                  try {
-                    lastTool.arguments = JSON.parse(tc.function.arguments);
-                  } catch {
-                    // Arguments may be streamed in chunks
-                  }
-                }
-              }
             }
           } catch {
             // Continue on parse errors
@@ -114,9 +83,13 @@ export const useAIAgent = () => {
         }
       }
 
-      // Execute any tool calls
-      for (const toolCall of pendingToolCalls) {
-        await executeToolCall(toolCall, companyId);
+      // Handle empty response
+      if (!assistantContent) {
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { role: 'assistant', content: 'I apologize, I encountered an issue. Please try again.' };
+          return updated;
+        });
       }
 
     } catch (error) {
@@ -129,28 +102,6 @@ export const useAIAgent = () => {
       setIsLoading(false);
     }
   }, [messages, companyId]);
-
-  const executeToolCall = async (toolCall: ToolCall, companyId: string) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('booking-actions', {
-        body: {
-          action: toolCall.name,
-          company_id: companyId,
-          ...toolCall.arguments
-        }
-      });
-
-      if (error) {
-        console.error('Tool call error:', error);
-      } else {
-        console.log('Tool call result:', data);
-      }
-
-      return data;
-    } catch (error) {
-      console.error('Failed to execute tool call:', error);
-    }
-  };
 
   const clearMessages = useCallback(() => {
     setMessages([]);
