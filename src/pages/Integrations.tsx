@@ -246,11 +246,18 @@ export default function Integrations() {
 
         {/* Setup Progress */}
         {(() => {
+          const ttsProvider = integrations?.tts_provider || 'elevenlabs';
+          const isTTSConfigured = ttsProvider === 'elevenlabs' 
+            ? !!integrations?.elevenlabs_api_key 
+            : ttsProvider === 'openai' 
+              ? !!integrations?.openai_api_key 
+              : !!integrations?.google_tts_api_key;
+          
           const statuses = [
             { name: 'Stripe', connected: true, icon: CreditCard, color: 'bg-purple-500' },
             { name: 'Email', connected: !!integrations?.resend_api_key, icon: Mail, color: 'bg-emerald-500' },
             { name: 'SMS', connected: !!(integrations?.twilio_account_sid && integrations?.twilio_auth_token && integrations?.twilio_phone_number), icon: Phone, color: 'bg-red-500' },
-            { name: 'Voice', connected: !!integrations?.elevenlabs_api_key, icon: Mic, color: 'bg-blue-500' },
+            { name: 'Voice', connected: isTTSConfigured, icon: Mic, color: 'bg-blue-500' },
           ];
           const connectedCount = statuses.filter(s => s.connected).length;
           const percentage = Math.round((connectedCount / statuses.length) * 100);

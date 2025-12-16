@@ -29,7 +29,7 @@ const AIAgent = () => {
       if (!companyId) return null;
       const { data } = await supabase
         .from('tenant_integrations')
-        .select('twilio_account_sid, twilio_phone_number, elevenlabs_api_key')
+        .select('twilio_account_sid, twilio_phone_number, elevenlabs_api_key, tts_provider, openai_api_key, google_tts_api_key')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -37,9 +37,33 @@ const AIAgent = () => {
     enabled: !!companyId,
   });
 
+  // Get TTS provider status dynamically
+  const getTTSStatus = () => {
+    const provider = integrations?.tts_provider || 'elevenlabs';
+    const providerConfig: Record<string, { name: string; isConfigured: boolean; setupUrl: string }> = {
+      elevenlabs: {
+        name: 'ElevenLabs',
+        isConfigured: !!integrations?.elevenlabs_api_key,
+        setupUrl: 'https://elevenlabs.io/sign-up'
+      },
+      openai: {
+        name: 'OpenAI TTS',
+        isConfigured: !!integrations?.openai_api_key,
+        setupUrl: 'https://platform.openai.com/api-keys'
+      },
+      google: {
+        name: 'Google TTS',
+        isConfigured: !!integrations?.google_tts_api_key,
+        setupUrl: 'https://console.cloud.google.com/apis/credentials'
+      }
+    };
+    return providerConfig[provider] || providerConfig.elevenlabs;
+  };
+
   const hasTwilio = !!(integrations?.twilio_account_sid && integrations?.twilio_phone_number);
-  const hasElevenLabs = !!integrations?.elevenlabs_api_key;
-  const hasVoice = hasTwilio && hasElevenLabs;
+  const ttsStatus = getTTSStatus();
+  const hasTTS = ttsStatus.isConfigured;
+  const hasVoice = hasTwilio && hasTTS;
 
   return (
     <DashboardLayout>
@@ -123,7 +147,7 @@ const AIAgent = () => {
                     Active
                   </Badge>
                   <p className="text-xs text-muted-foreground mt-2">
-                    Twilio + ElevenLabs ready
+                    Twilio + {ttsStatus.name} ready
                   </p>
                 </>
               ) : (
@@ -133,11 +157,11 @@ const AIAgent = () => {
                     Requires Setup
                   </Badge>
                   <p className="text-xs text-muted-foreground mt-2">
-                    {!hasTwilio && !hasElevenLabs 
-                      ? 'Configure Twilio & ElevenLabs'
+                    {!hasTwilio && !hasTTS 
+                      ? `Configure Twilio & ${ttsStatus.name}`
                       : !hasTwilio 
                         ? 'Configure Twilio'
-                        : 'Configure ElevenLabs'}
+                        : `Configure ${ttsStatus.name}`}
                   </p>
                   <div className="flex flex-wrap gap-1 mt-2">
                     {!hasTwilio && (
@@ -147,10 +171,10 @@ const AIAgent = () => {
                         </a>
                       </Button>
                     )}
-                    {!hasElevenLabs && (
+                    {!hasTTS && (
                       <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild>
-                        <a href="https://elevenlabs.io/sign-up" target="_blank" rel="noopener noreferrer">
-                          ElevenLabs <ExternalLink className="w-3 h-3 ml-1" />
+                        <a href={ttsStatus.setupUrl} target="_blank" rel="noopener noreferrer">
+                          {ttsStatus.name} <ExternalLink className="w-3 h-3 ml-1" />
                         </a>
                       </Button>
                     )}
@@ -278,7 +302,7 @@ const AIAgent = () => {
                           {hasVoice && <Badge variant="outline" className="text-xs">Live</Badge>}
                         </h4>
                         <p className="text-sm text-muted-foreground">
-                          AI-powered phone conversations using Twilio for telephony and ElevenLabs for natural voice synthesis.
+                          AI-powered phone conversations using Twilio for telephony and {ttsStatus.name} for natural voice synthesis.
                         </p>
                       </div>
                     </div>
