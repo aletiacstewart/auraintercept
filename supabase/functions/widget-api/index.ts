@@ -268,7 +268,8 @@ GUIDELINES:
         },
       ];
 
-      const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      // First, make a non-streaming request to check for tool calls
+      const initialResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -278,22 +279,22 @@ GUIDELINES:
           model: "google/gemini-2.5-flash",
           messages: [{ role: "system", content: systemPrompt }, ...messages],
           tools,
-          stream: true,
+          stream: false,
         }),
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('AI Gateway error:', response.status, errorText);
+      if (!initialResponse.ok) {
+        const errorText = await initialResponse.text();
+        console.error('AI Gateway error:', initialResponse.status, errorText);
         
-        if (response.status === 429) {
+        if (initialResponse.status === 429) {
           return new Response(JSON.stringify({ error: 'Service busy, please try again' }), {
             status: 429,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
         }
         
-        if (response.status === 402) {
+        if (initialResponse.status === 402) {
           return new Response(JSON.stringify({ error: 'Service temporarily unavailable' }), {
             status: 402,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -306,7 +307,137 @@ GUIDELINES:
         });
       }
 
-      return new Response(response.body, {
+      const aiResult = await initialResponse.json();
+      const assistantMessage = aiResult.choices?.[0]?.message;
+      
+      // Check if AI wants to call tools
+      if (assistantMessage?.tool_calls && assistantMessage.tool_calls.length > 0) {
+        console.log('Processing tool calls:', assistantMessage.tool_calls);
+        
+        const toolResults: any[] = [];
+        
+        for (const toolCall of assistantMessage.tool_calls) {
+          const funcName = toolCall.function.name;
+          let args: any = {};
+          try {
+            args = JSON.parse(toolCall.function.arguments || '{}');
+          } catch (e) {
+            console.error('Failed to parse tool args:', e);
+          }
+          
+          let result = '';
+          
+          if (funcName === 'book_appointment') {
+            // Execute booking
+            const { data: service } = await supabase
+              .from('services')
+              .select('*')
+              .eq('company_id', company.id)
+              .ilike('name', `%${args.service_type || ''}%`)
+              .maybeSingle();
+
+            const { data: appointment, error: bookError } = await supabase
+              .from('appointments')
+              .insert({
+                company_id: company.id,
+                customer_name: args.customer_name || 'Customer',
+                customer_phone: args.customer_phone || '',
+                customer_email: args.customer_email || null,
+                service_type: args.service_type || 'General',
+                datetime: args.preferred_datetime || new Date().toISOString(),
+                duration_minutes: service?.duration_minutes || 60,
+                notes: args.notes || null,
+                status: args.is_emergency ? 'emergency' : 'pending',
+              })
+              .select()
+              .single();
+
+            if (bookError) {
+              console.error('Booking error:', bookError);
+              result = JSON.stringify({ success: false, error: 'Failed to book appointment' });
+            } else {
+              result = JSON.stringify({ success: true, appointment_id: appointment.id, message: 'Appointment booked successfully' });
+            }
+          } else if (funcName === 'check_availability') {
+            // Return available slots
+            result = JSON.stringify({ 
+              available_slots: ['9:00 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:00 PM', '4:00 PM'],
+              date: args.date 
+            });
+          } else if (funcName === 'get_quote') {
+            // Generate quote based on services
+            const servicesList = args.services || [];
+            const { data: dbServices } = await supabase
+              .from('services')
+              .select('name, price')
+              .eq('company_id', company.id)
+              .eq('is_active', true);
+            
+            let total = 0;
+            const items = servicesList.map((s: string) => {
+              const found = dbServices?.find(ds => ds.name.toLowerCase().includes(s.toLowerCase()));
+              const price = found?.price || 100;
+              total += price;
+              return { service: s, price };
+            });
+            
+            result = JSON.stringify({ items, total, note: 'Final price may vary based on inspection' });
+          }
+          
+          toolResults.push({
+            tool_call_id: toolCall.id,
+            role: 'tool',
+            content: result,
+          });
+        }
+        
+        // Make follow-up request with tool results
+        const followUpResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash",
+            messages: [
+              { role: "system", content: systemPrompt },
+              ...messages,
+              assistantMessage,
+              ...toolResults,
+            ],
+            stream: true,
+          }),
+        });
+
+        if (!followUpResponse.ok) {
+          console.error('Follow-up AI error:', followUpResponse.status);
+          return new Response(JSON.stringify({ error: 'AI service error' }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        return new Response(followUpResponse.body, {
+          headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
+        });
+      }
+      
+      // No tool calls - stream the response
+      const streamResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: [{ role: "system", content: systemPrompt }, ...messages],
+          stream: true,
+        }),
+      });
+
+      return new Response(streamResponse.body, {
         headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
       });
     }
