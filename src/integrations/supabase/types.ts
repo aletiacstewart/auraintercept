@@ -221,6 +221,7 @@ export type Database = {
           call_opt_out: boolean
           company_id: string
           created_at: string
+          customer_address: string | null
           customer_email: string | null
           customer_name: string
           customer_phone: string | null
@@ -244,6 +245,7 @@ export type Database = {
           call_opt_out?: boolean
           company_id: string
           created_at?: string
+          customer_address?: string | null
           customer_email?: string | null
           customer_name: string
           customer_phone?: string | null
@@ -267,6 +269,7 @@ export type Database = {
           call_opt_out?: boolean
           company_id?: string
           created_at?: string
+          customer_address?: string | null
           customer_email?: string | null
           customer_name?: string
           customer_phone?: string | null
