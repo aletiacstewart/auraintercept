@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AgentWorkflowMonitor } from '@/components/ai/agents/AgentWorkflowMonitor';
 import { BatchAgentActivation } from '@/components/ai/agents/BatchAgentActivation';
+import { JobStatusMonitor } from '@/components/ai/agents/JobStatusMonitor';
 import { 
   Bot, 
   Users, 
@@ -21,7 +22,8 @@ import {
   ChevronRight,
   Zap,
   Activity,
-  Rocket
+  Rocket,
+  ClipboardList
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -216,9 +218,26 @@ export default function AIAgentsHub() {
           </TabsContent>
 
           {/* Monitor Tab */}
-          <TabsContent value="monitor">
+          <TabsContent value="monitor" className="space-y-4">
             {companyId ? (
-              <AgentWorkflowMonitor companyId={companyId} />
+              <Tabs defaultValue="jobs">
+                <TabsList>
+                  <TabsTrigger value="jobs" className="flex items-center gap-2">
+                    <ClipboardList className="h-4 w-4" />
+                    Job Status
+                  </TabsTrigger>
+                  <TabsTrigger value="events" className="flex items-center gap-2">
+                    <Activity className="h-4 w-4" />
+                    Agent Events
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="jobs" className="mt-4">
+                  <JobStatusMonitor companyId={companyId} />
+                </TabsContent>
+                <TabsContent value="events" className="mt-4">
+                  <AgentWorkflowMonitor companyId={companyId} />
+                </TabsContent>
+              </Tabs>
             ) : (
               <Card className="p-12 text-center">
                 <Activity className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
