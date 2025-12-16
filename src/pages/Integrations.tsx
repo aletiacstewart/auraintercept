@@ -445,8 +445,8 @@ export default function Integrations() {
                 </AccordionTrigger>
                 <AccordionContent className="space-y-4 text-sm text-muted-foreground">
                   <ol className="list-decimal list-inside space-y-1">
-                    <li>Create a Twilio account at twilio.com</li>
-                    <li>Get Account SID and Auth Token from Console</li>
+                    <li>Create a Twilio account at <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">twilio.com</a></li>
+                    <li>Get Account SID and Auth Token from <a href="https://console.twilio.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Console</a></li>
                     <li>Purchase a phone number with Voice capabilities</li>
                     <li>Enter credentials in the Twilio card below</li>
                   </ol>
@@ -485,8 +485,8 @@ export default function Integrations() {
                 </AccordionTrigger>
                 <AccordionContent className="text-sm text-muted-foreground">
                   <ol className="list-decimal list-inside space-y-1">
-                    <li>Create an ElevenLabs account at elevenlabs.io</li>
-                    <li>Go to Settings → API Keys</li>
+                    <li>Create an ElevenLabs account at <a href="https://elevenlabs.io" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">elevenlabs.io</a></li>
+                    <li>Go to <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Settings → API Keys</a></li>
                     <li>Generate and copy your API key</li>
                     <li>Select voice in AI Agent → Settings</li>
                   </ol>
@@ -504,9 +504,9 @@ export default function Integrations() {
                 </AccordionTrigger>
                 <AccordionContent className="text-sm text-muted-foreground">
                   <ol className="list-decimal list-inside space-y-1">
-                    <li>Create a Resend account at resend.com</li>
-                    <li>Verify your email domain at resend.com/domains</li>
-                    <li>Go to API Keys and create a new key</li>
+                    <li>Create a Resend account at <a href="https://resend.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">resend.com</a></li>
+                    <li>Verify your email domain at <a href="https://resend.com/domains" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">resend.com/domains</a></li>
+                    <li>Go to <a href="https://resend.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">API Keys</a> and create a new key</li>
                     <li>Enter your API key in the Resend card below</li>
                   </ol>
                 </AccordionContent>
@@ -523,8 +523,8 @@ export default function Integrations() {
                 </AccordionTrigger>
                 <AccordionContent className="text-sm text-muted-foreground space-y-3">
                   <ol className="list-decimal list-inside space-y-1">
-                    <li>Create an OpenAI account at platform.openai.com</li>
-                    <li>Go to API Keys section</li>
+                    <li>Create an OpenAI account at <a href="https://platform.openai.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">platform.openai.com</a></li>
+                    <li>Go to <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">API Keys</a> section</li>
                     <li>Create a new secret key and copy it</li>
                     <li>Enter the API key in the OpenAI TTS card below</li>
                   </ol>
@@ -547,9 +547,9 @@ export default function Integrations() {
                 </AccordionTrigger>
                 <AccordionContent className="text-sm text-muted-foreground space-y-3">
                   <ol className="list-decimal list-inside space-y-1">
-                    <li>Create a Google Cloud project at console.cloud.google.com</li>
-                    <li>Enable the Cloud Text-to-Speech API</li>
-                    <li>Go to APIs & Services → Credentials</li>
+                    <li>Create a Google Cloud project at <a href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">console.cloud.google.com</a></li>
+                    <li>Enable the <a href="https://console.cloud.google.com/apis/library/texttospeech.googleapis.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Cloud Text-to-Speech API</a></li>
+                    <li>Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">APIs & Services → Credentials</a></li>
                     <li>Create an API key and copy it</li>
                     <li>Enter the API key in the Google TTS card below</li>
                   </ol>
