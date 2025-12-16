@@ -14,7 +14,9 @@ import {
   AlertCircle, 
   CheckCircle2,
   RefreshCw,
-  Terminal
+  Terminal,
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 
 interface Message {
@@ -25,8 +27,14 @@ interface Message {
   metadata?: {
     event_type?: string;
     handoff_to?: string;
+    handoff_reason?: string;
     tool_calls?: Array<{ name: string; result: string }>;
   };
+}
+
+interface ConversationMessage {
+  role: 'user' | 'assistant';
+  content: string;
 }
 
 interface AgentTestConsoleProps {
@@ -38,96 +46,96 @@ interface AgentTestConsoleProps {
 
 const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> = {
   triage: [
-    { label: 'New Customer Inquiry', message: "Hi, I'm interested in your services" },
-    { label: 'Emergency Request', message: "I have an urgent plumbing issue, water is leaking everywhere!" },
-    { label: 'Schedule Request', message: "I'd like to schedule an appointment" },
-    { label: 'Price Check', message: "How much does a routine maintenance cost?" },
+    { label: 'New Customer', message: "Hi, I'm interested in your services. Can you help me?" },
+    { label: 'Emergency', message: "I have an urgent plumbing issue, water is leaking everywhere!" },
+    { label: 'Schedule Request', message: "I'd like to schedule an appointment for next week" },
+    { label: 'Price Inquiry', message: "How much does a routine AC maintenance cost?" },
   ],
   booking: [
-    { label: 'New Appointment', message: "I'd like to book an appointment for next week" },
-    { label: 'Check Availability', message: "What times are available on Friday?" },
-    { label: 'Reschedule', message: "I need to reschedule my appointment from Tuesday to Thursday" },
-    { label: 'Cancel', message: "I need to cancel my appointment tomorrow" },
+    { label: 'New Appointment', message: "I'd like to book an appointment for next Tuesday" },
+    { label: 'Check Availability', message: "What times are available this Friday afternoon?" },
+    { label: 'Reschedule', message: "I need to move my appointment from Monday to Wednesday" },
+    { label: 'Cancel', message: "I need to cancel my appointment for tomorrow morning" },
   ],
   followup: [
-    { label: 'Service Completed', message: "Trigger follow-up for completed service" },
-    { label: 'Check Satisfaction', message: "Test satisfaction survey" },
-    { label: 'Issue Report', message: "The technician missed something during the visit" },
+    { label: 'After Service', message: "The technician just left. Following up on the service." },
+    { label: 'Satisfaction Check', message: "How would you rate your recent service experience?" },
+    { label: 'Issue Report', message: "The issue came back after the technician left yesterday" },
   ],
   review: [
-    { label: 'Request Review', message: "Trigger review request" },
-    { label: 'Positive Response', message: "The service was excellent! 5 stars" },
-    { label: 'Negative Response', message: "I'm not satisfied with the service, 2 stars" },
+    { label: 'Request Review', message: "Could you share your feedback about our service?" },
+    { label: 'Positive Feedback', message: "The service was excellent! Very professional team." },
+    { label: 'Negative Feedback', message: "I'm disappointed with the service quality. 2 stars." },
   ],
   dispatch: [
-    { label: 'New Job', message: "Dispatch technician for job #12345" },
-    { label: 'Emergency Dispatch', message: "Emergency dispatch needed - customer has no heat" },
-    { label: 'Reassign', message: "Reassign job from Tech A to Tech B" },
+    { label: 'New Job', message: "Need to dispatch a technician for a new HVAC repair job" },
+    { label: 'Emergency', message: "Emergency dispatch needed - customer has gas leak" },
+    { label: 'Reassign', message: "Need to reassign job #12345 to a different technician" },
   ],
   route: [
-    { label: 'Optimize Route', message: "Optimize today's route for technician John" },
-    { label: 'Add Stop', message: "Add a new stop to the current route" },
-    { label: 'Re-route', message: "Re-route due to traffic on main highway" },
+    { label: 'Optimize Route', message: "Optimize today's route for technician Mike" },
+    { label: 'Add Stop', message: "Add an emergency stop to the current route" },
+    { label: 'Traffic Update', message: "Major traffic on Highway 101, need alternate route" },
   ],
   eta: [
-    { label: 'Get ETA', message: "What's the ETA for the technician?" },
-    { label: 'Delay Alert', message: "Technician is running 15 minutes late" },
-    { label: 'Arrival Update', message: "Technician is 5 minutes away" },
+    { label: 'Get ETA', message: "What's the current ETA for the technician?" },
+    { label: 'Delay Alert', message: "Technician is running 20 minutes behind schedule" },
+    { label: 'Almost There', message: "Update: technician is 5 minutes away" },
   ],
   checkin: [
-    { label: 'Check In', message: "Technician arrived at job site" },
-    { label: 'Check Out', message: "Job completed, technician checking out" },
-    { label: 'Upload Photos', message: "Upload before/after photos" },
+    { label: 'Arrival', message: "Technician has arrived at the job site" },
+    { label: 'Job Complete', message: "Work is finished, ready to check out" },
+    { label: 'Photo Upload', message: "Need to upload before and after photos" },
   ],
   quoting: [
-    { label: 'Generate Quote', message: "Generate quote for AC repair" },
-    { label: 'Custom Quote', message: "Customer needs a custom quote with parts" },
-    { label: 'Quote Follow-up', message: "Follow up on pending quote #Q-123" },
+    { label: 'Generate Quote', message: "Generate a quote for AC compressor replacement" },
+    { label: 'Custom Quote', message: "Need a custom quote with labor and parts breakdown" },
+    { label: 'Quote Follow-up', message: "Following up on quote #Q-123 sent last week" },
   ],
   invoice: [
     { label: 'Create Invoice', message: "Create invoice for completed job #J-456" },
-    { label: 'Send Reminder', message: "Send payment reminder for overdue invoice" },
-    { label: 'Process Payment', message: "Customer wants to pay invoice #INV-789" },
+    { label: 'Send Reminder', message: "Send payment reminder for invoice #INV-789" },
+    { label: 'Process Payment', message: "Customer wants to pay their outstanding invoice" },
   ],
   inventory: [
-    { label: 'Check Stock', message: "Check stock level for HVAC filters" },
-    { label: 'Low Stock Alert', message: "Generate low stock report" },
-    { label: 'Reorder', message: "Place reorder for depleted items" },
+    { label: 'Check Stock', message: "What's the current stock level for HVAC filters?" },
+    { label: 'Low Stock', message: "Generate a low stock alert report" },
+    { label: 'Reorder', message: "Place reorder for items below minimum threshold" },
   ],
   warranty: [
     { label: 'Check Coverage', message: "Is my AC unit still under warranty?" },
-    { label: 'File Claim', message: "I need to file a warranty claim" },
-    { label: 'Claim Status', message: "What's the status of my warranty claim?" },
+    { label: 'File Claim', message: "I need to file a warranty claim for a defective part" },
+    { label: 'Claim Status', message: "What's the status of my warranty claim #WC-123?" },
   ],
   promo: [
-    { label: 'Create Campaign', message: "Create a 15% off holiday promotion" },
-    { label: 'Target Segment', message: "Send promo to inactive customers" },
-    { label: 'Check Results', message: "Show results of last promotion" },
+    { label: 'Create Campaign', message: "Create a 20% off winter promotion campaign" },
+    { label: 'Target Segment', message: "Send promo to customers inactive for 60+ days" },
+    { label: 'Check Results', message: "Show performance of last month's promotion" },
   ],
   referral: [
-    { label: 'Generate Link', message: "Generate referral link for customer" },
-    { label: 'Track Referral', message: "Check status of referral from John" },
-    { label: 'Process Reward', message: "Process referral reward for successful conversion" },
+    { label: 'Generate Link', message: "Generate a referral link for a happy customer" },
+    { label: 'Track Referral', message: "Check status of referral from customer John" },
+    { label: 'Process Reward', message: "Process referral reward for successful signup" },
   ],
   winback: [
-    { label: 'Identify Churned', message: "Show customers inactive for 90+ days" },
-    { label: 'Send Outreach', message: "Send win-back offer to inactive customer" },
-    { label: 'Check Campaign', message: "Show win-back campaign results" },
+    { label: 'Find Churned', message: "Identify customers inactive for 90+ days" },
+    { label: 'Send Offer', message: "Send win-back offer with 15% discount" },
+    { label: 'Campaign Status', message: "Show results of the current win-back campaign" },
   ],
   seasonal: [
-    { label: 'Schedule Campaign', message: "Schedule spring HVAC tune-up campaign" },
-    { label: 'Send Reminders', message: "Send seasonal maintenance reminders" },
-    { label: 'Check Weather', message: "Trigger weather-based campaign" },
+    { label: 'Plan Campaign', message: "Plan spring HVAC tune-up reminder campaign" },
+    { label: 'Send Reminders', message: "Send seasonal maintenance reminders to customers" },
+    { label: 'Weather Trigger', message: "Cold front coming - trigger heating service campaign" },
   ],
   insights: [
-    { label: 'Weekly Report', message: "Generate weekly performance report" },
-    { label: 'Anomaly Check', message: "Check for anomalies in recent data" },
-    { label: 'Recommendations', message: "What are your recommendations this week?" },
+    { label: 'Weekly Report', message: "Generate this week's performance summary" },
+    { label: 'Find Anomalies', message: "Are there any unusual patterns in recent data?" },
+    { label: 'Recommendations', message: "What should we focus on improving this month?" },
   ],
   forecast: [
-    { label: '30 Day Forecast', message: "Forecast demand for next 30 days" },
-    { label: 'Revenue Projection', message: "Project revenue for next quarter" },
-    { label: 'Capacity Planning', message: "Do we need to hire more technicians?" },
+    { label: '30 Day Forecast', message: "Forecast demand for the next 30 days" },
+    { label: 'Revenue Projection', message: "Project revenue for the next quarter" },
+    { label: 'Staffing Needs', message: "Do we need to adjust staffing levels?" },
   ],
 };
 
@@ -138,6 +146,7 @@ export function AgentTestConsole({
   companyId,
 }: AgentTestConsoleProps) {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -163,35 +172,55 @@ export function AgentTestConsole({
     setInput('');
     setIsLoading(true);
 
+    // Add to conversation history
+    const updatedHistory = [...conversationHistory, { role: 'user' as const, content }];
+
     try {
-      const { data, error } = await supabase.functions.invoke('ai-orchestrator', {
+      const { data, error } = await supabase.functions.invoke('ai-agent-chat', {
         body: {
-          action: 'test_agent',
-          companyId,
           agentType,
-          payload: {
-            message: content,
-            test_mode: true,
-          },
+          message: content,
+          companyId,
+          conversationHistory: updatedHistory,
         },
       });
 
       if (error) throw error;
 
+      const responseContent = data.response || 'Agent processed the request successfully.';
+      
+      // Update conversation history with assistant response
+      setConversationHistory([
+        ...updatedHistory,
+        { role: 'assistant' as const, content: responseContent },
+      ]);
+
       addMessage({
         role: 'agent',
-        content: data.response || 'Agent processed the request successfully.',
+        content: responseContent,
         metadata: {
           event_type: data.event_type,
           handoff_to: data.handoff_to,
+          handoff_reason: data.handoff_reason,
           tool_calls: data.tool_calls,
         },
       });
-    } catch (error) {
-      console.error('Test error:', error);
+    } catch (error: any) {
+      console.error('AI Agent error:', error);
+      
+      // Handle specific error types
+      let errorMessage = 'Failed to process request';
+      if (error?.message?.includes('Rate limit')) {
+        errorMessage = 'Rate limit exceeded. Please wait a moment and try again.';
+      } else if (error?.message?.includes('credits')) {
+        errorMessage = 'AI credits exhausted. Please add credits to continue.';
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
       addMessage({
         role: 'system',
-        content: `Error: ${error instanceof Error ? error.message : 'Failed to process request'}`,
+        content: `Error: ${errorMessage}`,
       });
     } finally {
       setIsLoading(false);
@@ -200,6 +229,7 @@ export function AgentTestConsole({
 
   const clearChat = () => {
     setMessages([]);
+    setConversationHistory([]);
   };
 
   if (!isEnabled) {
@@ -246,8 +276,14 @@ export function AgentTestConsole({
       <Card className="lg:col-span-2">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <div>
-            <CardTitle className="text-lg">Test Console</CardTitle>
-            <CardDescription>Interact with {agentName} in test mode</CardDescription>
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-lg">Test Console</CardTitle>
+              <Badge variant="outline" className="text-xs gap-1">
+                <Sparkles className="h-3 w-3" />
+                Powered by Lovable AI
+              </Badge>
+            </div>
+            <CardDescription>Interact with {agentName} using real AI</CardDescription>
           </div>
           <Button variant="outline" size="sm" onClick={clearChat}>
             <RefreshCw className="h-4 w-4 mr-2" />
@@ -305,9 +341,17 @@ export function AgentTestConsole({
                               </Badge>
                             )}
                             {message.metadata.handoff_to && (
-                              <Badge variant="secondary" className="text-xs">
-                                Handoff → {message.metadata.handoff_to}
-                              </Badge>
+                              <div className="flex items-center gap-1">
+                                <Badge variant="secondary" className="text-xs gap-1">
+                                  <ArrowRight className="h-3 w-3" />
+                                  Handoff → {message.metadata.handoff_to}
+                                </Badge>
+                                {message.metadata.handoff_reason && (
+                                  <span className="text-xs text-muted-foreground ml-1">
+                                    ({message.metadata.handoff_reason})
+                                  </span>
+                                )}
+                              </div>
                             )}
                             {message.metadata.tool_calls && message.metadata.tool_calls.length > 0 && (
                               <div className="mt-2 text-xs">
