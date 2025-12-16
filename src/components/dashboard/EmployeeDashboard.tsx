@@ -4,9 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, MessageSquare, CheckCircle, Settings } from 'lucide-react';
+import { Calendar, Clock, MessageSquare, CheckCircle, Settings, Wrench, AlertCircle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { TechnicianJobQueue } from '@/components/employee/TechnicianJobQueue';
 
 export function EmployeeDashboard() {
   const { user } = useAuth();
@@ -42,6 +44,20 @@ export function EmployeeDashboard() {
     enabled: !!user?.id,
   });
 
+  const { data: pendingJobs } = useQuery({
+    queryKey: ['pending-jobs', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return 0;
+      const { count } = await supabase
+        .from('job_assignments')
+        .select('id', { count: 'exact', head: true })
+        .eq('employee_id', user.id)
+        .eq('status', 'pending_acceptance');
+      return count ?? 0;
+    },
+    enabled: !!user?.id,
+  });
+
   const isLoading = profileLoading || appointmentsLoading;
 
   // Check if availability is set
@@ -70,11 +86,24 @@ export function EmployeeDashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card className="border-border/50">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Today's Appointments
+              Pending Jobs
+            </CardTitle>
+            <AlertCircle className="w-5 h-5 text-yellow-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-yellow-600">{pendingJobs ?? 0}</div>
+            <p className="text-xs text-muted-foreground mt-1">Awaiting your response</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/50">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Today's Jobs
             </CardTitle>
             <Calendar className="w-5 h-5 text-primary" />
           </CardHeader>
@@ -146,6 +175,9 @@ export function EmployeeDashboard() {
           </CardContent>
         </Card>
       )}
+
+      {/* Job Queue - Primary Focus */}
+      <TechnicianJobQueue />
 
       {/* Upcoming Appointments */}
       <Card className="border-border/50">

@@ -851,6 +851,118 @@ export type Database = {
           },
         ]
       }
+      job_assignments: {
+        Row: {
+          accepted_at: string | null
+          actual_arrival_minutes: number | null
+          appointment_id: string
+          arrived_at: string | null
+          assigned_at: string | null
+          company_id: string
+          completed_at: string | null
+          created_at: string | null
+          customer_address: string | null
+          customer_lat: number | null
+          customer_lng: number | null
+          customer_notified_arrived: boolean | null
+          customer_notified_assigned: boolean | null
+          customer_notified_completed: boolean | null
+          customer_notified_en_route: boolean | null
+          decline_reason: string | null
+          declined_at: string | null
+          employee_id: string | null
+          en_route_at: string | null
+          estimated_arrival_minutes: number | null
+          id: string
+          notes: string | null
+          started_at: string | null
+          status: string
+          technician_lat: number | null
+          technician_lng: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          actual_arrival_minutes?: number | null
+          appointment_id: string
+          arrived_at?: string | null
+          assigned_at?: string | null
+          company_id: string
+          completed_at?: string | null
+          created_at?: string | null
+          customer_address?: string | null
+          customer_lat?: number | null
+          customer_lng?: number | null
+          customer_notified_arrived?: boolean | null
+          customer_notified_assigned?: boolean | null
+          customer_notified_completed?: boolean | null
+          customer_notified_en_route?: boolean | null
+          decline_reason?: string | null
+          declined_at?: string | null
+          employee_id?: string | null
+          en_route_at?: string | null
+          estimated_arrival_minutes?: number | null
+          id?: string
+          notes?: string | null
+          started_at?: string | null
+          status?: string
+          technician_lat?: number | null
+          technician_lng?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          actual_arrival_minutes?: number | null
+          appointment_id?: string
+          arrived_at?: string | null
+          assigned_at?: string | null
+          company_id?: string
+          completed_at?: string | null
+          created_at?: string | null
+          customer_address?: string | null
+          customer_lat?: number | null
+          customer_lng?: number | null
+          customer_notified_arrived?: boolean | null
+          customer_notified_assigned?: boolean | null
+          customer_notified_completed?: boolean | null
+          customer_notified_en_route?: boolean | null
+          decline_reason?: string | null
+          declined_at?: string | null
+          employee_id?: string | null
+          en_route_at?: string | null
+          estimated_arrival_minutes?: number | null
+          id?: string
+          notes?: string | null
+          started_at?: string | null
+          status?: string
+          technician_lat?: number | null
+          technician_lng?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_assignments_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_assignments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_assignments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_documents: {
         Row: {
           company_id: string
@@ -902,8 +1014,11 @@ export type Database = {
           company_id: string | null
           created_at: string
           email: string | null
+          email_notifications_enabled: boolean | null
           full_name: string | null
           id: string
+          phone_number: string | null
+          sms_notifications_enabled: boolean | null
           updated_at: string
         }
         Insert: {
@@ -912,8 +1027,11 @@ export type Database = {
           company_id?: string | null
           created_at?: string
           email?: string | null
+          email_notifications_enabled?: boolean | null
           full_name?: string | null
           id: string
+          phone_number?: string | null
+          sms_notifications_enabled?: boolean | null
           updated_at?: string
         }
         Update: {
@@ -922,8 +1040,11 @@ export type Database = {
           company_id?: string | null
           created_at?: string
           email?: string | null
+          email_notifications_enabled?: boolean | null
           full_name?: string | null
           id?: string
+          phone_number?: string | null
+          sms_notifications_enabled?: boolean | null
           updated_at?: string
         }
         Relationships: [
