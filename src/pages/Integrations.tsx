@@ -235,6 +235,46 @@ export default function Integrations() {
   };
   const hasAnyTTS = connectedTTS.elevenlabs || connectedTTS.openai || connectedTTS.google;
 
+  // Fetch cost estimates to determine recommended TTS
+  const { data: costEstimates } = useQuery({
+    queryKey: ['cost-estimates-latest', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data } = await supabase
+        .from('cost_estimates')
+        .select('appointments_count, reminders_per_appointment')
+        .eq('company_id', companyId)
+        .order('month_year', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  // Calculate recommended TTS provider based on usage
+  const getRecommendedTTS = () => {
+    const appointments = costEstimates?.appointments_count || 100;
+    const remindersPerAppt = costEstimates?.reminders_per_appointment || 2;
+    const totalReminders = appointments * remindersPerAppt;
+    const avgCallDuration = 0.5; // minutes
+    const charsPerMinute = 1000;
+    const totalChars = totalReminders * avgCallDuration * charsPerMinute;
+
+    // Google's free tier is 1M chars/month
+    if (totalChars <= 1000000) {
+      return { provider: 'google', reason: 'Free tier covers your volume', icon: Volume2 };
+    }
+    // For moderate to high volume, OpenAI is most cost-effective
+    if (totalChars <= 500000) {
+      return { provider: 'openai', reason: 'Best value for your volume', icon: Bot };
+    }
+    // For premium quality needs or very high volume with budget
+    return { provider: 'elevenlabs', reason: 'Premium quality voices', icon: Mic };
+  };
+
+  const recommendedTTS = getRecommendedTTS();
+
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
@@ -251,38 +291,66 @@ export default function Integrations() {
             </Button>
             
             {/* TTS Quick Setup */}
-            <div className="flex items-center gap-1">
-              <span className="text-xs text-muted-foreground mr-1">Voice:</span>
-              <Button
-                variant={connectedTTS.elevenlabs ? "secondary" : "outline"}
-                size="sm"
-                className={cn("h-7 px-2 text-xs", connectedTTS.elevenlabs && "bg-green-500/10 text-green-600 border-green-500/30")}
-                onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'elevenlabs')!)}
-              >
-                <Mic className="w-3 h-3 mr-1" />
-                ElevenLabs
-                {connectedTTS.elevenlabs && <Check className="w-3 h-3 ml-1" />}
-              </Button>
-              <Button
-                variant={connectedTTS.openai ? "secondary" : "outline"}
-                size="sm"
-                className={cn("h-7 px-2 text-xs", connectedTTS.openai && "bg-green-500/10 text-green-600 border-green-500/30")}
-                onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'openai-tts')!)}
-              >
-                <Bot className="w-3 h-3 mr-1" />
-                OpenAI
-                {connectedTTS.openai && <Check className="w-3 h-3 ml-1" />}
-              </Button>
-              <Button
-                variant={connectedTTS.google ? "secondary" : "outline"}
-                size="sm"
-                className={cn("h-7 px-2 text-xs", connectedTTS.google && "bg-green-500/10 text-green-600 border-green-500/30")}
-                onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'google-tts')!)}
-              >
-                <Volume2 className="w-3 h-3 mr-1" />
-                Google
-                {connectedTTS.google && <Check className="w-3 h-3 ml-1" />}
-              </Button>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-muted-foreground mr-1">Voice:</span>
+                <Button
+                  variant={connectedTTS.elevenlabs ? "secondary" : "outline"}
+                  size="sm"
+                  className={cn(
+                    "h-7 px-2 text-xs relative",
+                    connectedTTS.elevenlabs && "bg-green-500/10 text-green-600 border-green-500/30",
+                    recommendedTTS.provider === 'elevenlabs' && !connectedTTS.elevenlabs && "ring-2 ring-primary/50"
+                  )}
+                  onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'elevenlabs')!)}
+                >
+                  <Mic className="w-3 h-3 mr-1" />
+                  ElevenLabs
+                  {connectedTTS.elevenlabs && <Check className="w-3 h-3 ml-1" />}
+                  {recommendedTTS.provider === 'elevenlabs' && !connectedTTS.elevenlabs && (
+                    <Badge className="absolute -top-2 -right-2 h-4 px-1 text-[10px] bg-primary">★</Badge>
+                  )}
+                </Button>
+                <Button
+                  variant={connectedTTS.openai ? "secondary" : "outline"}
+                  size="sm"
+                  className={cn(
+                    "h-7 px-2 text-xs relative",
+                    connectedTTS.openai && "bg-green-500/10 text-green-600 border-green-500/30",
+                    recommendedTTS.provider === 'openai' && !connectedTTS.openai && "ring-2 ring-primary/50"
+                  )}
+                  onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'openai-tts')!)}
+                >
+                  <Bot className="w-3 h-3 mr-1" />
+                  OpenAI
+                  {connectedTTS.openai && <Check className="w-3 h-3 ml-1" />}
+                  {recommendedTTS.provider === 'openai' && !connectedTTS.openai && (
+                    <Badge className="absolute -top-2 -right-2 h-4 px-1 text-[10px] bg-primary">★</Badge>
+                  )}
+                </Button>
+                <Button
+                  variant={connectedTTS.google ? "secondary" : "outline"}
+                  size="sm"
+                  className={cn(
+                    "h-7 px-2 text-xs relative",
+                    connectedTTS.google && "bg-green-500/10 text-green-600 border-green-500/30",
+                    recommendedTTS.provider === 'google' && !connectedTTS.google && "ring-2 ring-primary/50"
+                  )}
+                  onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'google-tts')!)}
+                >
+                  <Volume2 className="w-3 h-3 mr-1" />
+                  Google
+                  {connectedTTS.google && <Check className="w-3 h-3 ml-1" />}
+                  {recommendedTTS.provider === 'google' && !connectedTTS.google && (
+                    <Badge className="absolute -top-2 -right-2 h-4 px-1 text-[10px] bg-primary">★</Badge>
+                  )}
+                </Button>
+              </div>
+              {!hasAnyTTS && (
+                <p className="text-[10px] text-muted-foreground">
+                  ★ Recommended: {recommendedTTS.provider === 'google' ? 'Google' : recommendedTTS.provider === 'openai' ? 'OpenAI' : 'ElevenLabs'} - {recommendedTTS.reason}
+                </p>
+              )}
             </div>
           </div>
         </div>
