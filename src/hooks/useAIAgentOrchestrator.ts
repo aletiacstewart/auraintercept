@@ -44,18 +44,53 @@ export interface AgentEvent {
   created_at: string;
 }
 
+// Default agent definitions
+const DEFAULT_AGENTS: AgentInfo[] = [
+  { type: 'triage', name: 'Triage Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
+  { type: 'booking', name: 'Booking Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
+  { type: 'followup', name: 'Follow-up Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
+  { type: 'review', name: 'Review Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
+  { type: 'dispatch', name: 'Dispatch Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
+  { type: 'route', name: 'Route Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
+  { type: 'eta', name: 'ETA Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
+  { type: 'checkin', name: 'Check-in Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
+  { type: 'quoting', name: 'Quoting Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
+  { type: 'invoice', name: 'Invoice Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
+  { type: 'inventory', name: 'Inventory Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
+  { type: 'warranty', name: 'Warranty Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
+  { type: 'promo', name: 'Promo Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
+  { type: 'referral', name: 'Referral Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
+  { type: 'winback', name: 'Win-back Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
+  { type: 'seasonal', name: 'Seasonal Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
+  { type: 'insights', name: 'Insights Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },
+  { type: 'forecast', name: 'Forecast Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },
+];
+
+function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo[]> {
+  return agentList.reduce((acc, agent) => {
+    if (!acc[agent.category]) {
+      acc[agent.category] = [];
+    }
+    acc[agent.category].push(agent);
+    return acc;
+  }, {} as Record<string, AgentInfo[]>);
+}
+
 export function useAIAgentOrchestrator() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [agents, setAgents] = useState<AgentInfo[]>([]);
-  const [groupedAgents, setGroupedAgents] = useState<Record<string, AgentInfo[]>>({});
+  const [agents, setAgents] = useState<AgentInfo[]>(DEFAULT_AGENTS);
+  const [groupedAgents, setGroupedAgents] = useState<Record<string, AgentInfo[]>>(groupAgentsByCategory(DEFAULT_AGENTS));
   const [loading, setLoading] = useState(true);
   const [companyId, setCompanyId] = useState<string | null>(null);
 
   // Get company ID
   useEffect(() => {
     async function fetchCompanyId() {
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
       
       const { data } = await supabase
         .from('profiles')
@@ -65,41 +100,62 @@ export function useAIAgentOrchestrator() {
       
       if (data?.company_id) {
         setCompanyId(data.company_id);
+      } else {
+        setLoading(false);
       }
     }
     
     fetchCompanyId();
   }, [user]);
 
-  // Fetch all agents
+  // Fetch all agents - now using direct DB query with defaults
   const fetchAgents = useCallback(async () => {
-    if (!companyId) return;
+    if (!companyId) {
+      setLoading(false);
+      return;
+    }
     
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('ai-orchestrator', {
-        body: { action: 'list_agents', companyId },
-      });
+      // Fetch existing configs from database
+      const { data: configs, error } = await supabase
+        .from('ai_agent_configs')
+        .select('*')
+        .eq('company_id', companyId);
       
       if (error) throw error;
       
-      setAgents(data.agents || []);
-      setGroupedAgents(data.grouped || {});
+      // Merge defaults with database configs
+      const mergedAgents = DEFAULT_AGENTS.map(defaultAgent => {
+        const config = configs?.find(c => c.agent_type === defaultAgent.type);
+        if (config) {
+          return {
+            ...defaultAgent,
+            is_enabled: config.is_enabled || false,
+            settings: (config.settings as Record<string, any>) || {},
+            config_id: config.id,
+          };
+        }
+        return defaultAgent;
+      });
+      
+      setAgents(mergedAgents);
+      setGroupedAgents(groupAgentsByCategory(mergedAgents));
     } catch (error) {
       console.error('Error fetching agents:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load AI agents',
-        variant: 'destructive',
-      });
+      // Keep defaults on error
+      setAgents(DEFAULT_AGENTS);
+      setGroupedAgents(groupAgentsByCategory(DEFAULT_AGENTS));
     } finally {
       setLoading(false);
     }
-  }, [companyId, toast]);
+  }, [companyId]);
 
   useEffect(() => {
-    fetchAgents();
-  }, [fetchAgents]);
+    if (companyId) {
+      fetchAgents();
+    }
+  }, [companyId, fetchAgents]);
 
   // Toggle agent enabled state
   const toggleAgent = async (agentType: string, enabled: boolean) => {
