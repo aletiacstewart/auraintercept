@@ -121,7 +121,13 @@ export function TestCallDialog({ trigger }: TestCallDialogProps) {
       });
 
       if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      if (data?.error) {
+        // Check for Twilio trial account error
+        if (data?.details?.code === 21219) {
+          throw new Error('TWILIO_TRIAL_UNVERIFIED');
+        }
+        throw new Error(data.error);
+      }
       return data;
     },
     onSuccess: (data) => {
@@ -134,9 +140,17 @@ export function TestCallDialog({ trigger }: TestCallDialogProps) {
     onError: (error) => {
       console.error('Call error:', error);
       setCallStatus('failed');
-      toast.error('Failed to initiate test call', {
-        description: error.message,
-      });
+      
+      if (error.message === 'TWILIO_TRIAL_UNVERIFIED') {
+        toast.error('Twilio Trial Account Limitation', {
+          description: 'Your Twilio account is in trial mode. You must verify this phone number in your Twilio Console before calling it.',
+          duration: 10000,
+        });
+      } else {
+        toast.error('Failed to initiate test call', {
+          description: error.message,
+        });
+      }
     },
   });
 
