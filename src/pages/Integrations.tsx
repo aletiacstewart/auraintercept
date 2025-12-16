@@ -56,6 +56,7 @@ interface Integration {
   docsUrl: string;
   fields: IntegrationField[];
   checkConnection: (data: Record<string, string>) => boolean;
+  note?: string;
 }
 
 interface IntegrationField {
@@ -95,7 +96,7 @@ const INTEGRATIONS: Integration[] = [
   {
     id: 'elevenlabs',
     name: 'ElevenLabs',
-    description: 'AI-powered voice synthesis.',
+    description: 'Premium AI voice synthesis with natural emotions.',
     icon: Mic,
     color: 'bg-blue-500',
     docsUrl: 'https://elevenlabs.io/app/settings/api-keys',
@@ -103,6 +104,7 @@ const INTEGRATIONS: Integration[] = [
       { key: 'elevenlabs_api_key', label: 'API Key', placeholder: 'Your ElevenLabs API key', type: 'password', required: true, helpText: 'Voice selection in AI Agent → Settings' },
     ],
     checkConnection: (data) => !!data.elevenlabs_api_key,
+    note: '💡 Best for: High-quality, emotional voices. ~$0.30/1K chars. Choose if voice quality is priority.',
   },
   {
     id: 'resend',
@@ -119,7 +121,7 @@ const INTEGRATIONS: Integration[] = [
   {
     id: 'openai-tts',
     name: 'OpenAI TTS',
-    description: 'Text-to-speech with natural voices.',
+    description: 'Fast, affordable text-to-speech.',
     icon: Bot,
     color: 'bg-slate-700',
     docsUrl: 'https://platform.openai.com/api-keys',
@@ -127,11 +129,12 @@ const INTEGRATIONS: Integration[] = [
       { key: 'openai_api_key', label: 'API Key', placeholder: 'sk-...', type: 'password', required: true, helpText: 'Get from platform.openai.com/api-keys' },
     ],
     checkConnection: (data) => !!data.openai_api_key,
+    note: '💡 Best for: Budget-conscious, high volume. $0.015/1K chars. Great balance of cost & quality.',
   },
   {
     id: 'google-tts',
     name: 'Google TTS',
-    description: 'Cloud Text-to-Speech with WaveNet.',
+    description: 'Enterprise-grade WaveNet voices.',
     icon: Volume2,
     color: 'bg-amber-500',
     docsUrl: 'https://console.cloud.google.com/apis/credentials',
@@ -139,6 +142,7 @@ const INTEGRATIONS: Integration[] = [
       { key: 'google_tts_api_key', label: 'API Key', placeholder: 'Your Google Cloud API key', type: 'password', required: true, helpText: 'Enable Cloud Text-to-Speech API first' },
     ],
     checkConnection: (data) => !!data.google_tts_api_key,
+    note: '💡 Best for: Enterprise scale. $4-16/1M chars + 1M free/mo. Cheapest at high volume.',
   },
 ];
 
@@ -326,7 +330,12 @@ export default function Integrations() {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <p className="text-sm text-muted-foreground mb-3">{integration.description}</p>
+                  <p className="text-sm text-muted-foreground mb-2">{integration.description}</p>
+                  {integration.note && (
+                    <p className="text-xs text-muted-foreground/80 mb-3 p-2 rounded bg-muted/50 border border-border/50">
+                      {integration.note}
+                    </p>
+                  )}
                   {isLoading ? (
                     <Skeleton className="h-9 w-full" />
                   ) : integration.id === 'stripe' ? (
