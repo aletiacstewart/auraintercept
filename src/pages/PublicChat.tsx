@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { 
   Bot, Send, User, Loader2, Calendar, Clock, DollarSign, 
   AlertTriangle, Star, MessageSquare, Sparkles, Building2,
-  Phone, X
+  Phone, X, MapPin
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -48,7 +48,8 @@ const QUICK_ACTIONS = [
   { id: 'quote', label: 'Get Quote', icon: DollarSign, message: "I need a quote for your services" },
   { id: 'hours', label: 'Business Hours', icon: Clock, message: "What are your business hours?" },
   { id: 'services', label: 'View Services', icon: Sparkles, message: "What services do you offer?" },
-  { id: 'feedback', label: 'Leave Feedback', icon: Star, message: "I'd like to leave feedback" },
+  { id: 'track', label: 'Track Appointment', icon: MapPin, message: "I want to track my appointment status" },
+  { id: 'feedback', label: 'Leave Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
 ];
 
 export default function PublicChat() {

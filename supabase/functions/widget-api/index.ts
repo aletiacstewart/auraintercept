@@ -82,6 +82,7 @@ serve(async (req) => {
           { id: 'hours', label: 'Business Hours', icon: 'clock', message: "What are your business hours?" },
           { id: 'services', label: 'View Services', icon: 'sparkles', message: "What services do you offer?" },
           { id: 'track', label: 'Track Appointment', icon: 'map-pin', message: "I want to track my appointment status" },
+          { id: 'feedback', label: 'Leave Feedback', icon: 'star', message: "I'd like to leave feedback about my service" },
         ]
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
