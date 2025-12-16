@@ -42,6 +42,8 @@ import {
   Calculator,
   TrendingUp,
   BookOpen,
+  Volume2,
+  Bot,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -113,6 +115,30 @@ const INTEGRATIONS: Integration[] = [
       { key: 'resend_api_key', label: 'API Key', placeholder: 're_...', type: 'password', required: true, helpText: 'Get from resend.com/api-keys' },
     ],
     checkConnection: (data) => !!data.resend_api_key,
+  },
+  {
+    id: 'openai-tts',
+    name: 'OpenAI TTS',
+    description: 'Text-to-speech with natural voices.',
+    icon: Bot,
+    color: 'bg-slate-700',
+    docsUrl: 'https://platform.openai.com/api-keys',
+    fields: [
+      { key: 'openai_api_key', label: 'API Key', placeholder: 'sk-...', type: 'password', required: true, helpText: 'Get from platform.openai.com/api-keys' },
+    ],
+    checkConnection: (data) => !!data.openai_api_key,
+  },
+  {
+    id: 'google-tts',
+    name: 'Google TTS',
+    description: 'Cloud Text-to-Speech with WaveNet.',
+    icon: Volume2,
+    color: 'bg-amber-500',
+    docsUrl: 'https://console.cloud.google.com/apis/credentials',
+    fields: [
+      { key: 'google_tts_api_key', label: 'API Key', placeholder: 'Your Google Cloud API key', type: 'password', required: true, helpText: 'Enable Cloud Text-to-Speech API first' },
+    ],
+    checkConnection: (data) => !!data.google_tts_api_key,
   },
 ];
 
@@ -408,6 +434,55 @@ export default function Integrations() {
                     <li>Go to API Keys and create a new key</li>
                     <li>Enter your API key in the Resend card above</li>
                   </ol>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="openai-tts">
+                <AccordionTrigger className="text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-slate-700 flex items-center justify-center">
+                      <Bot className="w-3 h-3 text-white" />
+                    </div>
+                    OpenAI TTS Setup
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground space-y-3">
+                  <ol className="list-decimal list-inside space-y-1">
+                    <li>Create an OpenAI account at platform.openai.com</li>
+                    <li>Go to API Keys section</li>
+                    <li>Create a new secret key and copy it</li>
+                    <li>Enter the API key in the OpenAI TTS card above</li>
+                  </ol>
+                  <div className="p-3 rounded-lg bg-muted/50 border">
+                    <p className="font-medium text-foreground mb-1">Available Voices:</p>
+                    <p className="text-xs">alloy, echo, fable, onyx, nova, shimmer</p>
+                    <p className="text-xs mt-1">Models: tts-1 (fast), tts-1-hd (high quality)</p>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="google-tts">
+                <AccordionTrigger className="text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-amber-500 flex items-center justify-center">
+                      <Volume2 className="w-3 h-3 text-white" />
+                    </div>
+                    Google Cloud TTS Setup
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground space-y-3">
+                  <ol className="list-decimal list-inside space-y-1">
+                    <li>Create a Google Cloud project at console.cloud.google.com</li>
+                    <li>Enable the Cloud Text-to-Speech API</li>
+                    <li>Go to APIs & Services → Credentials</li>
+                    <li>Create an API key and copy it</li>
+                    <li>Enter the API key in the Google TTS card above</li>
+                  </ol>
+                  <div className="p-3 rounded-lg bg-muted/50 border">
+                    <p className="font-medium text-foreground mb-1">Voice Types:</p>
+                    <p className="text-xs">Standard, WaveNet, Neural2 (highest quality)</p>
+                    <p className="text-xs mt-1">1M free chars/month, then $4-16 per million</p>
+                  </div>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
