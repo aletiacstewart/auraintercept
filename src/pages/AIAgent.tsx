@@ -17,10 +17,13 @@ import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { useSubscription } from '@/hooks/useSubscription';
 
 const AIAgent = () => {
-  const { companyId } = useAuth();
+  const { companyId, userRole } = useAuth();
   const { isAtLeastTier } = useSubscription();
   const [viewMode, setViewMode] = useState<'customer' | 'debug'>('customer');
   const [activeTab, setActiveTab] = useState<'console' | 'settings'>('console');
+  
+  // Employees can view but not configure - they inherit company settings
+  const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
 
   // Check integration status
   const { data: integrations } = useQuery({
@@ -157,31 +160,37 @@ const AIAgent = () => {
                 <>
                   <Badge variant="secondary">
                     <XCircle className="w-3 h-3 mr-1" />
-                    Requires Setup
+                    {canManageSettings ? 'Requires Setup' : 'Not Configured'}
                   </Badge>
                   <p className="text-xs text-muted-foreground mt-2">
-                    {!hasTwilio && !hasAnyTTS 
-                      ? 'Configure Twilio & a TTS provider'
-                      : !hasTwilio 
-                        ? 'Configure Twilio'
-                        : 'Configure a TTS provider'}
+                    {canManageSettings ? (
+                      !hasTwilio && !hasAnyTTS 
+                        ? 'Configure Twilio & a TTS provider'
+                        : !hasTwilio 
+                          ? 'Configure Twilio'
+                          : 'Configure a TTS provider'
+                    ) : (
+                      'Contact your admin to enable'
+                    )}
                   </p>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {!hasTwilio && (
-                      <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild>
-                        <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer">
-                          Twilio <ExternalLink className="w-3 h-3 ml-1" />
-                        </a>
-                      </Button>
-                    )}
-                    {!hasAnyTTS && (
-                      <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild>
-                        <a href="/dashboard/integrations">
-                          Setup TTS <ExternalLink className="w-3 h-3 ml-1" />
-                        </a>
-                      </Button>
-                    )}
-                  </div>
+                  {canManageSettings && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {!hasTwilio && (
+                        <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild>
+                          <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer">
+                            Twilio <ExternalLink className="w-3 h-3 ml-1" />
+                          </a>
+                        </Button>
+                      )}
+                      {!hasAnyTTS && (
+                        <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild>
+                          <a href="/dashboard/integrations">
+                            Setup TTS <ExternalLink className="w-3 h-3 ml-1" />
+                          </a>
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </>
               )}
             </CardContent>
@@ -209,16 +218,18 @@ const AIAgent = () => {
                 <>
                   <Badge variant="secondary">
                     <XCircle className="w-3 h-3 mr-1" />
-                    Requires Setup
+                    {canManageSettings ? 'Requires Setup' : 'Not Configured'}
                   </Badge>
                   <p className="text-xs text-muted-foreground mt-2">
-                    Configure Twilio integration
+                    {canManageSettings ? 'Configure Twilio integration' : 'Contact your admin to enable'}
                   </p>
-                  <Button variant="link" size="sm" className="h-auto p-0 text-xs mt-2" asChild>
-                    <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer">
-                      Sign up for Twilio <ExternalLink className="w-3 h-3 ml-1" />
-                    </a>
-                  </Button>
+                  {canManageSettings && (
+                    <Button variant="link" size="sm" className="h-auto p-0 text-xs mt-2" asChild>
+                      <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer">
+                        Sign up for Twilio <ExternalLink className="w-3 h-3 ml-1" />
+                      </a>
+                    </Button>
+                  )}
                 </>
               )}
             </CardContent>
@@ -232,10 +243,12 @@ const AIAgent = () => {
               <Bot className="h-4 w-4 mr-2" />
               Console
             </TabsTrigger>
-            <TabsTrigger value="settings">
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </TabsTrigger>
+            {canManageSettings && (
+              <TabsTrigger value="settings">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="console" className="mt-6">
@@ -325,9 +338,11 @@ const AIAgent = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="settings" className="mt-6">
-            <AIAgentSettings />
-          </TabsContent>
+          {canManageSettings && (
+            <TabsContent value="settings" className="mt-6">
+              <AIAgentSettings />
+            </TabsContent>
+          )}
         </Tabs>
         </div>
       </FeatureGate>
