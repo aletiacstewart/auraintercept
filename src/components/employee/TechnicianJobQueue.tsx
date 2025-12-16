@@ -130,7 +130,16 @@ export function TechnicianJobQueue() {
       status: string; 
       additionalData?: Record<string, any>;
     }) => {
-      const timestampField = `${status}_at`;
+      // Map status to correct timestamp column names
+      const timestampFieldMap: Record<string, string> = {
+        'accepted': 'accepted_at',
+        'declined': 'declined_at',
+        'en_route': 'en_route_at',
+        'arrived': 'arrived_at',
+        'in_progress': 'started_at', // in_progress uses started_at column
+        'completed': 'completed_at',
+      };
+      const timestampField = timestampFieldMap[status] || `${status}_at`;
       const updateData: Record<string, any> = {
         status,
         [timestampField]: new Date().toISOString(),
