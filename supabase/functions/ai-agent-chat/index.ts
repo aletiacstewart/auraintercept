@@ -1137,7 +1137,7 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { agentType, message, companyId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason } = await req.json();
+    const { agentType, message, companyId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo } = await req.json();
 
     console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}`);
 
@@ -1216,22 +1216,43 @@ serve(async (req) => {
     // Build the system prompt with handoff context
     const basePrompt = AGENT_PROMPTS[agentType] || `You are a helpful AI assistant for a service business.`;
     
-    // Add handoff-specific instructions
+    // Add handoff-specific instructions with customer info
     let handoffInstructions = '';
     if (isHandoff && handoffFrom) {
       handoffInstructions = `
 IMPORTANT: You are receiving a handoff from the ${handoffFrom} agent.
 Reason for handoff: ${incomingHandoffReason || 'Customer needs your specialized assistance'}
+`;
+      // Include customer info if provided
+      if (customerInfo) {
+        handoffInstructions += `\nCUSTOMER INFORMATION ALREADY COLLECTED:`;
+        if (customerInfo.name) handoffInstructions += `\n- Name: ${customerInfo.name}`;
+        if (customerInfo.phone) handoffInstructions += `\n- Phone: ${customerInfo.phone}`;
+        if (customerInfo.address) handoffInstructions += `\n- Address: ${customerInfo.address}`;
+        if (customerInfo.email) handoffInstructions += `\n- Email: ${customerInfo.email}`;
+        if (customerInfo.issue) handoffInstructions += `\n- Issue: ${customerInfo.issue}`;
+        
+        const hasAllInfo = customerInfo.name && customerInfo.phone && customerInfo.address;
+        if (hasAllInfo) {
+          handoffInstructions += `\n\nYou ALREADY HAVE all required customer info. DO NOT ask for name, phone, or address again!
+Instead: Greet them by name, confirm the issue, and proceed to help them immediately.`;
+        } else {
+          const missing: string[] = [];
+          if (!customerInfo.name) missing.push('name');
+          if (!customerInfo.phone) missing.push('phone number');
+          if (!customerInfo.address) missing.push('address');
+          handoffInstructions += `\n\nYou still need: ${missing.join(', ')}. Only ask for what's missing.`;
+        }
+      }
+      
+      handoffInstructions += `
 
 YOUR FIRST MESSAGE MUST:
-1. Introduce yourself warmly and professionally
-2. Acknowledge the customer's need that was identified
-3. IMMEDIATELY start collecting the information you need
-
-DO NOT:
-- Ask "how can I help you?" - you already know from the handoff
-- Be generic - be specific about what you're helping with
-- Leave the customer hanging - ask specific questions`;
+1. Greet the customer by name if you have it
+2. Acknowledge their specific issue
+3. Tell them exactly what you're doing to help
+4. If you have their address, confirm it and proceed
+5. Only ask for missing information`;
     }
 
     const systemPrompt = `${basePrompt}
@@ -1245,15 +1266,15 @@ Current Context: ${JSON.stringify(contextData)}
 ${settings.greeting_message ? `Custom Greeting: ${settings.greeting_message}` : ''}
 ${settings.custom_instructions ? `Additional Instructions: ${settings.custom_instructions}` : ''}
 
-IMPORTANT: 
-- Use the available tools to perform actions
-- ALWAYS ask for customer information: name, phone, address (for service calls)
-- Reference the available services and business hours when helping customers
-- Never leave the customer without asking what they need next
+CRITICAL RULES:
+- NEVER ask for information you already have
+- After using a tool (like check_tech_availability), you MUST tell the customer the results and next steps
+- Never leave the conversation hanging after a tool call - always follow up with what you found
+- Be specific about technician names, distances, and ETAs when you have them
 - Be professional but friendly`;
 
     // Build messages array with conversation history
-    const messages = [
+    const messages: any[] = [
       { role: 'system', content: systemPrompt },
       ...conversationHistory.map((msg: any) => ({
         role: msg.role,
@@ -1282,7 +1303,7 @@ IMPORTANT:
     ];
 
     // Call Lovable AI Gateway
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    let response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${LOVABLE_API_KEY}`,
@@ -1321,8 +1342,8 @@ IMPORTANT:
       throw new Error(`AI Gateway error: ${response.status}`);
     }
 
-    const aiResponse = await response.json();
-    const choice = aiResponse.choices?.[0];
+    let aiResponse = await response.json();
+    let choice = aiResponse.choices?.[0];
     
     let responseText = choice?.message?.content || '';
     let handoffTo: string | null = null;
@@ -1349,13 +1370,65 @@ IMPORTANT:
             result: `Handing off to ${(args as any).target_agent}: ${(args as any).reason}`,
           });
         } else {
-          // Execute the tool (simulated for now)
+          // Execute the tool
           const result = await executeAgentTool(supabase, companyId, agentType, funcName, args);
           toolCalls.push({
             name: funcName,
             arguments: args,
             result: JSON.stringify(result),
           });
+        }
+      }
+      
+      // CRITICAL: If we had non-handoff tool calls, make a SECOND AI call to get a natural follow-up
+      if (toolCalls.length > 0 && !handoffTo) {
+        console.log('[AI Agent Chat] Tool calls executed, making follow-up call for natural response');
+        
+        // Add tool results to messages for follow-up
+        messages.push({
+          role: 'assistant',
+          content: responseText || null,
+          tool_calls: choice.message.tool_calls.map((tc: any) => ({
+            id: tc.id,
+            type: 'function',
+            function: { name: tc.function.name, arguments: tc.function.arguments }
+          })),
+        });
+        
+        // Add tool results
+        for (let i = 0; i < choice.message.tool_calls.length; i++) {
+          const tc = choice.message.tool_calls[i];
+          messages.push({
+            role: 'tool',
+            tool_call_id: tc.id,
+            content: toolCalls[i].result,
+          });
+        }
+        
+        // Make follow-up call
+        const followUpResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages,
+            tools,
+            tool_choice: 'auto',
+            temperature: 0.7,
+            max_tokens: 1000,
+          }),
+        });
+        
+        if (followUpResponse.ok) {
+          const followUpData = await followUpResponse.json();
+          const followUpChoice = followUpData.choices?.[0];
+          if (followUpChoice?.message?.content) {
+            responseText = followUpChoice.message.content;
+            console.log('[AI Agent Chat] Follow-up response:', responseText.substring(0, 100));
+          }
         }
       }
     }
