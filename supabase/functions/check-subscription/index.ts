@@ -12,9 +12,9 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
-// Map product IDs to tier names - only Enterprise at $250/month
-const PRODUCT_TO_TIER: Record<string, string> = {
-  "prod_TbzYMyd0yO0shv": "enterprise", // Enterprise Company Subscription - $250/month
+// Map price IDs to tier names - only Enterprise at $250/month
+const PRICE_TO_TIER: Record<string, string> = {
+  "price_1SelZTJ9fo9y8fGHf9Q9RtGr": "enterprise", // Enterprise Company Subscription - $250/month
 };
 
 serve(async (req) => {
@@ -70,48 +70,33 @@ serve(async (req) => {
       customer: customerId,
       status: "active",
       limit: 1,
-      expand: ["data.items.data.price.product"],
     });
 
     const hasActiveSub = subscriptions.data.length > 0;
     let tier = null;
     let subscriptionEnd = null;
-    let productId = null;
+    let priceId = null;
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
-      logStep("Subscription raw data", { 
+      logStep("Subscription data", { 
         subscriptionId: subscription.id,
         currentPeriodEnd: subscription.current_period_end,
-        itemsCount: subscription.items?.data?.length,
-        firstItemPrice: subscription.items?.data?.[0]?.price,
       });
       
       // Safely handle the subscription end date
       if (subscription.current_period_end && typeof subscription.current_period_end === 'number') {
-        try {
-          subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-        } catch (e) {
-          logStep("Error parsing subscription end date", { error: String(e) });
-        }
+        subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       }
       
-      // Safely get product ID from subscription items
-      const priceData = subscription.items?.data?.[0]?.price;
-      if (priceData) {
-        // Product can be a string ID or an expanded object
-        if (typeof priceData.product === 'string') {
-          productId = priceData.product;
-        } else if (priceData.product && typeof priceData.product === 'object' && 'id' in priceData.product) {
-          productId = priceData.product.id;
-        }
-        tier = productId ? (PRODUCT_TO_TIER[productId] || null) : null;
-      }
+      // Get price ID and map to tier
+      priceId = subscription.items?.data?.[0]?.price?.id;
+      tier = priceId ? (PRICE_TO_TIER[priceId] || null) : null;
       
       logStep("Active subscription found", { 
         subscriptionId: subscription.id, 
         endDate: subscriptionEnd,
-        productId,
+        priceId,
         tier,
       });
     } else {
@@ -121,7 +106,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
       tier,
-      product_id: productId,
+      price_id: priceId,
       subscription_end: subscriptionEnd,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
