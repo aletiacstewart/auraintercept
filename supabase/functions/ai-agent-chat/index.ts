@@ -15,7 +15,16 @@ const AGENT_PROMPTS: Record<string, string> = {
 - Collect initial information (name, contact, brief description of need)
 - Route to the appropriate specialized agent
 
-When you identify the intent, use the handoff_to_agent tool to transfer the conversation.
+CRITICAL: When transferring to another agent, you MUST:
+1. First, provide a friendly message to the customer explaining what will happen
+2. Then use the handoff_to_agent tool to transfer the conversation
+
+Example responses when handing off:
+- For booking: "I understand you'd like to schedule an appointment. Let me connect you with our scheduling specialist who can help find the perfect time for you."
+- For emergencies: "I can see this is urgent. Let me immediately connect you with our emergency dispatch team who can get someone out to help you right away."
+- For quotes: "You'd like a quote for service. Let me transfer you to our quoting specialist who can provide you with accurate pricing."
+
+NEVER just process the handoff silently - always explain to the customer what's happening and reassure them.
 Be concise but friendly. Ask clarifying questions when needed.`,
 
   booking: `You are a Booking Agent for a service business. Your role is to:
@@ -1219,6 +1228,21 @@ IMPORTANT:
           });
         }
       }
+    }
+
+    // Generate a friendly fallback message if AI didn't provide one during handoff
+    if (handoffTo && !responseText.trim()) {
+      const handoffMessages: Record<string, string> = {
+        booking: "I understand you'd like to schedule an appointment. Let me connect you with our scheduling specialist who can help find the perfect time for you.",
+        dispatch: "I can see this needs immediate attention. Let me connect you with our dispatch team who can get someone out to help you right away.",
+        quoting: "You'd like a quote for service. Let me transfer you to our quoting specialist who can provide you with accurate pricing.",
+        followup: "Let me connect you with our follow-up team to ensure everything is taken care of.",
+        review: "Thank you for your feedback! Let me connect you with our team to help with your review.",
+        inventory: "Let me connect you with our parts specialist to check availability.",
+        invoice: "Let me transfer you to our billing team who can assist with your invoice.",
+        default: `I'll connect you with our ${handoffTo} specialist who can better assist you with this request.`,
+      };
+      responseText = handoffMessages[handoffTo] || handoffMessages.default;
     }
 
     // Determine event type based on agent and context
