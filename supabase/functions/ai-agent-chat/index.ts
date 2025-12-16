@@ -15,6 +15,10 @@ const AGENT_PROMPTS: Record<string, string> = {
 - Collect initial information (name, contact, brief description of need)
 - Route to the appropriate specialized agent
 
+CRITICAL ROUTING RULES:
+- ONLY hand off to the dispatch agent when the customer explicitly indicates an emergency (e.g., flooding, gas smell, sparks/fire, major water leak "everywhere", no heat in freezing conditions) or says it is urgent/emergency.
+- For normal issues like "sink leaking" or "need service" (not explicitly urgent), route to the booking agent so the customer can pick a date/time.
+
 CRITICAL: When transferring to another agent, you MUST:
 1. First, provide a friendly message to the customer explaining what will happen
 2. Then use the handoff_to_agent tool to transfer the conversation
@@ -87,8 +91,13 @@ Be grateful and professional. Never be pushy about reviews.`,
   dispatch: `You are an Emergency Dispatch Specialist for a field service business. Your role is to:
 - Handle URGENT and emergency service requests
 - Collect critical information to dispatch a technician
+- Create a job/appointment record BEFORE assigning a technician
 - Assign jobs to technicians based on skills, location, and availability
 - Keep the customer informed about what's happening
+
+CRITICAL RULE:
+- Never assign a technician unless there is a real appointment_id from a created appointment.
+- If the issue is NOT clearly an emergency, hand off to the booking agent so the customer can choose a date/time.
 
 WHEN RECEIVING A HANDOFF (ESPECIALLY FOR EMERGENCIES):
 - Start with: "I understand this is urgent - I'm prioritizing your request right now!"
@@ -104,14 +113,16 @@ CONVERSATION FLOW FOR EMERGENCIES:
 2. Ask for their ADDRESS first (most critical for dispatch)
 3. Get their NAME and PHONE NUMBER
 4. Ask what TYPE of issue (AC, plumbing, electrical, etc.)
-5. Use check_tech_availability to find nearest available technician
-6. Use assign_technician to dispatch
-7. Give them an estimated arrival time
-8. Reassure them help is on the way
+5. Create an appointment/job using create_appointment (use a near-term datetime like now+30-90 minutes if truly emergency)
+6. Use check_tech_availability to find nearest available technician
+7. Use assign_technician to dispatch (must include appointment_id)
+8. Give them an estimated arrival time
+9. Reassure them help is on the way
 
 NEVER leave the customer without collecting: Address, Name, Phone, Issue Type
 If they seem stressed, reassure them: "Don't worry, we'll get someone to you as quickly as possible."
 
+Use the create_appointment tool to create the job record.
 Use the assign_technician tool to assign jobs.
 Use the check_tech_availability tool to see who's available.
 Prioritize emergencies and customer convenience.`,
@@ -509,6 +520,26 @@ const AGENT_TOOLS: Record<string, any[]> = {
             location: { type: 'string' },
           },
           required: ['date'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'create_appointment',
+        description: 'Create an emergency/dispatch appointment (required before assigning a technician)',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_name: { type: 'string' },
+            customer_phone: { type: 'string' },
+            customer_email: { type: 'string' },
+            service_type: { type: 'string' },
+            datetime: { type: 'string', description: 'ISO datetime string for the dispatch visit' },
+            duration_minutes: { type: 'number' },
+            notes: { type: 'string' },
+          },
+          required: ['customer_name', 'service_type', 'datetime'],
         },
       },
     },
@@ -1362,12 +1393,28 @@ CRITICAL RULES:
         }
         
         if (funcName === 'handoff_to_agent') {
-          handoffTo = (args as any).target_agent;
-          handoffReason = (args as any).reason;
+          let target = (args as any).target_agent;
+          let reason = (args as any).reason;
+
+          // Guardrail: triage should only handoff to dispatch for true emergencies
+          if (agentType === 'triage' && target === 'dispatch') {
+            const fullText = [
+              ...conversationHistory.map((m: any) => m.content || ''),
+              message,
+            ].join('\n');
+
+            if (!isEmergencyRequest(fullText)) {
+              target = 'booking';
+              reason = `Non-emergency request (rerouted to booking): ${reason || 'needs scheduling'}`;
+            }
+          }
+
+          handoffTo = target;
+          handoffReason = reason;
           toolCalls.push({
             name: 'handoff_to_agent',
-            arguments: args,
-            result: `Handing off to ${(args as any).target_agent}: ${(args as any).reason}`,
+            arguments: { ...(args as any), target_agent: target, reason },
+            result: `Handing off to ${target}: ${reason}`,
           });
         } else {
           // Execute the tool
@@ -1544,6 +1591,29 @@ CRITICAL RULES:
   }
 });
 
+function isEmergencyRequest(text: string) {
+  const t = text.toLowerCase();
+  return [
+    'emergency',
+    'urgent',
+    'flood',
+    'flooding',
+    'water everywhere',
+    'burst',
+    'burst pipe',
+    'gas smell',
+    'smell gas',
+    'sparks',
+    'fire',
+    'smoke',
+    'electrical burning',
+    'no heat',
+    'no ac',
+    'no a/c',
+    'leaking everywhere',
+  ].some((kw) => t.includes(kw));
+}
+
 // Execute agent-specific tools
 async function executeAgentTool(
   supabase: any,
@@ -1599,7 +1669,23 @@ async function executeAgentTool(
         ],
       };
 
-    case 'assign_technician':
+    case 'assign_technician': {
+      if (!args.appointment_id) {
+        return { success: false, error: 'appointment_id is required before assigning a technician' };
+      }
+
+      // Validate appointment exists for this company
+      const { data: appt } = await supabase
+        .from('appointments')
+        .select('id')
+        .eq('company_id', companyId)
+        .eq('id', args.appointment_id)
+        .maybeSingle();
+
+      if (!appt?.id) {
+        return { success: false, error: 'Appointment not found. Create the appointment before assigning a technician.' };
+      }
+
       return {
         success: true,
         assignment_id: crypto.randomUUID(),
@@ -1607,6 +1693,7 @@ async function executeAgentTool(
         appointment: args.appointment_id,
         message: 'Technician assigned successfully',
       };
+    }
 
     case 'calculate_eta':
       return {
