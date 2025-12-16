@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -32,6 +32,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {
   Table,
   TableBody,
   TableCell,
@@ -40,7 +45,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Clock, DollarSign, MapPin, Video, HelpCircle, Eye, Calculator, Copy, MoreHorizontal, FileDown, FileUp, GripVertical } from 'lucide-react';
+import { Plus, Pencil, Trash2, Clock, DollarSign, MapPin, Video, HelpCircle, Eye, Calculator, Copy, MoreHorizontal, FileDown, FileUp, GripVertical, FolderOpen, ChevronDown, ChevronRight, Filter } from 'lucide-react';
 import {
   DndContext,
   closestCenter,
@@ -72,6 +77,7 @@ interface Service {
   hourly_rate: number | null;
   parts_cost: number | null;
   sort_order: number | null;
+  category: string | null;
 }
 
 type ServiceType = 'in_person' | 'virtual' | 'other';
@@ -88,7 +94,7 @@ const SERVICE_TYPE_ICONS: Record<ServiceType, React.ReactNode> = {
   other: <HelpCircle className="w-4 h-4" />,
 };
 
-const CSV_HEADERS = ['name', 'description', 'service_type', 'service_type_other', 'duration_minutes', 'flat_fee', 'hourly_rate', 'parts_cost', 'price', 'is_active'];
+const CSV_HEADERS = ['name', 'category', 'description', 'service_type', 'service_type_other', 'duration_minutes', 'flat_fee', 'hourly_rate', 'parts_cost', 'price', 'is_active'];
 
 interface SortableRowProps {
   service: Service;
@@ -99,6 +105,7 @@ interface SortableRowProps {
   onDuplicate: () => void;
   onDelete: () => void;
   isDuplicating: boolean;
+  showCategory?: boolean;
 }
 
 function SortableRow({
@@ -110,6 +117,7 @@ function SortableRow({
   onDuplicate,
   onDelete,
   isDuplicating,
+  showCategory = false,
 }: SortableRowProps) {
   const {
     attributes,
@@ -148,6 +156,17 @@ function SortableRow({
           )}
         </div>
       </TableCell>
+      {showCategory && (
+        <TableCell>
+          {service.category ? (
+            <Badge variant="outline" className="text-xs">
+              {service.category}
+            </Badge>
+          ) : (
+            <span className="text-muted-foreground text-sm">-</span>
+          )}
+        </TableCell>
+      )}
       <TableCell>
         <div className="flex items-center gap-1.5">
           {SERVICE_TYPE_ICONS[(service.service_type as ServiceType) || 'in_person']}
@@ -217,6 +236,9 @@ export function ServicesManager() {
   const [importPreview, setImportPreview] = useState<Partial<Service>[]>([]);
   const [viewingService, setViewingService] = useState<Service | null>(null);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [groupByCategory, setGroupByCategory] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set());
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -228,6 +250,7 @@ export function ServicesManager() {
     flat_fee: '',
     hourly_rate: '',
     parts_cost: '',
+    category: '',
   });
 
   const { data: services, isLoading } = useQuery({
@@ -241,10 +264,49 @@ export function ServicesManager() {
         .order('sort_order', { ascending: true, nullsFirst: false })
         .order('name');
       if (error) throw error;
-      return data as Service[];
+      return (data || []) as unknown as Service[];
     },
     enabled: !!companyId,
   });
+
+  // Get unique categories from services
+  const categories = useMemo(() => {
+    if (!services) return [];
+    const cats = services
+      .map(s => s.category)
+      .filter((c): c is string => !!c);
+    return [...new Set(cats)].sort();
+  }, [services]);
+
+  // Group services by category
+  const groupedServices = useMemo(() => {
+    if (!services) return {};
+    const filtered = categoryFilter 
+      ? services.filter(s => s.category === categoryFilter)
+      : services;
+    
+    if (!groupByCategory) return { '': filtered };
+    
+    const groups: Record<string, Service[]> = {};
+    filtered.forEach(service => {
+      const cat = service.category || 'Uncategorized';
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(service);
+    });
+    return groups;
+  }, [services, groupByCategory, categoryFilter]);
+
+  const toggleCategory = (category: string) => {
+    setCollapsedCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(category)) {
+        next.delete(category);
+      } else {
+        next.add(category);
+      }
+      return next;
+    });
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -310,6 +372,7 @@ export function ServicesManager() {
         flat_fee: data.flat_fee ? parseFloat(data.flat_fee) : null,
         hourly_rate: data.hourly_rate ? parseFloat(data.hourly_rate) : null,
         parts_cost: data.parts_cost ? parseFloat(data.parts_cost) : null,
+        category: data.category || null,
       };
 
       if (editingService) {
@@ -367,6 +430,7 @@ export function ServicesManager() {
         flat_fee: service.flat_fee,
         hourly_rate: service.hourly_rate,
         parts_cost: service.parts_cost,
+        category: service.category,
       };
 
       const { error } = await supabase.from('services').insert(payload);
@@ -398,6 +462,7 @@ export function ServicesManager() {
         flat_fee: service.flat_fee || null,
         hourly_rate: service.hourly_rate || null,
         parts_cost: service.parts_cost || null,
+        category: service.category || null,
       }));
 
       const { error } = await supabase.from('services').insert(payloads);
@@ -425,6 +490,7 @@ export function ServicesManager() {
       CSV_HEADERS.join(','),
       ...services.map(service => [
         `"${(service.name || '').replace(/"/g, '""')}"`,
+        `"${(service.category || '').replace(/"/g, '""')}"`,
         `"${(service.description || '').replace(/"/g, '""')}"`,
         service.service_type || 'in_person',
         `"${(service.service_type_other || '').replace(/"/g, '""')}"`,
@@ -477,6 +543,7 @@ export function ServicesManager() {
 
           const service: Partial<Service> = {
             name: getCSVValue(values, headers, 'name') || `Service ${i}`,
+            category: getCSVValue(values, headers, 'category') || null,
             description: getCSVValue(values, headers, 'description') || null,
             service_type: getCSVValue(values, headers, 'service_type') || 'in_person',
             service_type_other: getCSVValue(values, headers, 'service_type_other') || null,
@@ -561,6 +628,7 @@ export function ServicesManager() {
         flat_fee: service.flat_fee?.toString() || '',
         hourly_rate: service.hourly_rate?.toString() || '',
         parts_cost: service.parts_cost?.toString() || '',
+        category: service.category || '',
       });
     } else {
       setEditingService(null);
@@ -575,6 +643,7 @@ export function ServicesManager() {
         flat_fee: '',
         hourly_rate: '',
         parts_cost: '',
+        category: '',
       });
     }
     setDialogOpen(true);
@@ -645,6 +714,37 @@ export function ServicesManager() {
             className="hidden"
             onChange={handleFileSelect}
           />
+          {categories.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Filter className="w-4 h-4" />
+                  {categoryFilter || 'All Categories'}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setCategoryFilter(null)}>
+                  All Categories
+                </DropdownMenuItem>
+                {categories.map(cat => (
+                  <DropdownMenuItem key={cat} onClick={() => setCategoryFilter(cat)}>
+                    {cat}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          {categories.length > 0 && (
+            <Button
+              variant={groupByCategory ? 'secondary' : 'outline'}
+              size="sm"
+              className="gap-2"
+              onClick={() => setGroupByCategory(!groupByCategory)}
+            >
+              <FolderOpen className="w-4 h-4" />
+              Group
+            </Button>
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
@@ -679,36 +779,97 @@ export function ServicesManager() {
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
           >
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-10"></TableHead>
-                  <TableHead>Service</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Pricing</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-40">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <SortableContext items={services.map(s => s.id)} strategy={verticalListSortingStrategy}>
-                  {services.map((service) => (
-                    <SortableRow
-                      key={service.id}
-                      service={service}
-                      getServiceTypeDisplay={getServiceTypeDisplay}
-                      getPriceDisplay={getPriceDisplay}
-                      onView={() => handleViewDetails(service)}
-                      onEdit={() => handleOpenDialog(service)}
-                      onDuplicate={() => duplicateMutation.mutate(service)}
-                      onDelete={() => deleteMutation.mutate(service.id)}
-                      isDuplicating={duplicateMutation.isPending}
-                    />
-                  ))}
-                </SortableContext>
-              </TableBody>
-            </Table>
+            {groupByCategory ? (
+              <div className="space-y-4">
+                {Object.entries(groupedServices).map(([category, categoryServices]) => (
+                  <Collapsible
+                    key={category}
+                    open={!collapsedCategories.has(category)}
+                    onOpenChange={() => toggleCategory(category)}
+                  >
+                    <CollapsibleTrigger asChild>
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 cursor-pointer hover:bg-muted">
+                        {collapsedCategories.has(category) ? (
+                          <ChevronRight className="w-4 h-4" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        )}
+                        <FolderOpen className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium">{category}</span>
+                        <Badge variant="secondary" className="ml-auto">
+                          {categoryServices.length}
+                        </Badge>
+                      </div>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-10"></TableHead>
+                            <TableHead>Service</TableHead>
+                            <TableHead>Type</TableHead>
+                            <TableHead>Duration</TableHead>
+                            <TableHead>Pricing</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="w-40">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          <SortableContext items={categoryServices.map(s => s.id)} strategy={verticalListSortingStrategy}>
+                            {categoryServices.map((service) => (
+                              <SortableRow
+                                key={service.id}
+                                service={service}
+                                getServiceTypeDisplay={getServiceTypeDisplay}
+                                getPriceDisplay={getPriceDisplay}
+                                onView={() => handleViewDetails(service)}
+                                onEdit={() => handleOpenDialog(service)}
+                                onDuplicate={() => duplicateMutation.mutate(service)}
+                                onDelete={() => deleteMutation.mutate(service.id)}
+                                isDuplicating={duplicateMutation.isPending}
+                              />
+                            ))}
+                          </SortableContext>
+                        </TableBody>
+                      </Table>
+                    </CollapsibleContent>
+                  </Collapsible>
+                ))}
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-10"></TableHead>
+                    <TableHead>Service</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Duration</TableHead>
+                    <TableHead>Pricing</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="w-40">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <SortableContext items={(groupedServices[''] || []).map(s => s.id)} strategy={verticalListSortingStrategy}>
+                    {(groupedServices[''] || []).map((service) => (
+                      <SortableRow
+                        key={service.id}
+                        service={service}
+                        getServiceTypeDisplay={getServiceTypeDisplay}
+                        getPriceDisplay={getPriceDisplay}
+                        onView={() => handleViewDetails(service)}
+                        onEdit={() => handleOpenDialog(service)}
+                        onDuplicate={() => duplicateMutation.mutate(service)}
+                        onDelete={() => deleteMutation.mutate(service.id)}
+                        isDuplicating={duplicateMutation.isPending}
+                        showCategory
+                      />
+                    ))}
+                  </SortableContext>
+                </TableBody>
+              </Table>
+            )}
           </DndContext>
         ) : (
           <div className="text-center py-8">
@@ -733,6 +894,17 @@ export function ServicesManager() {
           
           {viewingService && (
             <div className="space-y-6 pt-4">
+              {/* Category */}
+              {viewingService.category && (
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                  <FolderOpen className="w-5 h-5 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Category</p>
+                    <p className="font-medium">{viewingService.category}</p>
+                  </div>
+                </div>
+              )}
+
               {/* Service Type */}
               <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
                 {SERVICE_TYPE_ICONS[(viewingService.service_type as ServiceType) || 'in_person']}
@@ -868,6 +1040,22 @@ export function ServicesManager() {
                 onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                 placeholder="e.g., Haircut, Consultation"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="category">Category <span className="text-muted-foreground text-xs">(optional)</span></Label>
+              <Input
+                id="category"
+                value={formData.category}
+                onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
+                placeholder="e.g., Hair, Nails, Consultation"
+                list="category-suggestions"
+              />
+              {categories.length > 0 && (
+                <datalist id="category-suggestions">
+                  {categories.map(cat => <option key={cat} value={cat} />)}
+                </datalist>
+              )}
             </div>
 
             <div className="space-y-2">
