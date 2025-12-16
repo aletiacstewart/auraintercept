@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   Bot, Send, User, Loader2, Trash2, Phone, Mic, Calendar, 
   Clock, MessageSquare, Sparkles, ChevronRight, Building2, Volume2
@@ -101,7 +102,7 @@ export const AIAgentConsole = () => {
       if (!companyId) return null;
       const { data } = await supabase
         .from('tenant_integrations')
-        .select('twilio_phone_number, elevenlabs_api_key, tts_provider, openai_api_key, google_tts_api_key')
+        .select('twilio_phone_number, elevenlabs_api_key, tts_provider, openai_api_key, google_tts_api_key, elevenlabs_voice_id, openai_tts_voice, google_tts_voice')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -112,21 +113,33 @@ export const AIAgentConsole = () => {
   // Get TTS provider info dynamically
   const getTTSProviderInfo = () => {
     const provider = integrations?.tts_provider || 'elevenlabs';
-    const providerConfig: Record<string, { name: string; isConfigured: boolean; icon: typeof Volume2 | typeof Bot }> = {
+    const providerConfig: Record<string, { 
+      name: string; 
+      isConfigured: boolean; 
+      icon: typeof Volume2 | typeof Bot;
+      voiceName: string;
+      costInfo: string;
+    }> = {
       elevenlabs: {
         name: 'ElevenLabs',
         isConfigured: !!integrations?.elevenlabs_api_key,
-        icon: Volume2
+        icon: Volume2,
+        voiceName: integrations?.elevenlabs_voice_id || 'Default voice',
+        costInfo: '~$0.30 per 1K chars'
       },
       openai: {
         name: 'OpenAI TTS',
         isConfigured: !!integrations?.openai_api_key,
-        icon: Bot
+        icon: Bot,
+        voiceName: integrations?.openai_tts_voice || 'alloy',
+        costInfo: '$0.015 per 1K chars (tts-1)'
       },
       google: {
         name: 'Google TTS',
         isConfigured: !!integrations?.google_tts_api_key,
-        icon: Volume2
+        icon: Volume2,
+        voiceName: integrations?.google_tts_voice || 'en-US-Neural2-D',
+        costInfo: '$4-16 per 1M chars'
       }
     };
     return providerConfig[provider] || providerConfig.elevenlabs;
@@ -199,18 +212,40 @@ export const AIAgentConsole = () => {
               <div className="flex items-center gap-2">
                 <p className="text-xs text-white/80">Virtual Assistant</p>
                 {ttsInfo && (
-                  <Badge 
-                    variant="secondary" 
-                    className={cn(
-                      "text-xs py-0 h-5",
-                      ttsInfo.isConfigured 
-                        ? "bg-white/20 text-white border-white/30" 
-                        : "bg-red-500/20 text-red-200 border-red-500/30"
-                    )}
-                  >
-                    <ttsInfo.icon className="h-3 w-3 mr-1" />
-                    {ttsInfo.name}
-                  </Badge>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge 
+                          variant="secondary" 
+                          className={cn(
+                            "text-xs py-0 h-5 cursor-help",
+                            ttsInfo.isConfigured 
+                              ? "bg-white/20 text-white border-white/30" 
+                              : "bg-red-500/20 text-red-200 border-red-500/30"
+                          )}
+                        >
+                          <ttsInfo.icon className="h-3 w-3 mr-1" />
+                          {ttsInfo.name}
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="max-w-[200px]">
+                        <div className="space-y-1">
+                          <p className="font-medium">{ttsInfo.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Voice: {ttsInfo.voiceName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Cost: {ttsInfo.costInfo}
+                          </p>
+                          {!ttsInfo.isConfigured && (
+                            <p className="text-xs text-destructive">
+                              Not configured
+                            </p>
+                          )}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
               </div>
             </div>
