@@ -20,6 +20,7 @@ import {
 import { toast } from 'sonner';
 import { Mic, MessageSquare, Save, Loader2, RotateCcw, Play, Volume2, AlertCircle, ExternalLink, Gauge, Sparkles } from 'lucide-react';
 import { VoiceCloningCard } from './VoiceCloningCard';
+import { TTSProviderSettings } from './TTSProviderSettings';
 
 // Popular ElevenLabs voices
 const ELEVENLABS_VOICES = [
@@ -52,6 +53,15 @@ export const AIAgentSettings = () => {
   const [voiceStyle, setVoiceStyle] = useState(0.5);
   const [voiceSpeed, setVoiceSpeed] = useState(1.0);
 
+  // TTS Provider settings
+  const [ttsProvider, setTtsProvider] = useState('elevenlabs');
+  const [openaiApiKey, setOpenaiApiKey] = useState('');
+  const [openaiVoice, setOpenaiVoice] = useState('alloy');
+  const [openaiModel, setOpenaiModel] = useState('tts-1');
+  const [googleApiKey, setGoogleApiKey] = useState('');
+  const [googleVoice, setGoogleVoice] = useState('en-US-Neural2-D');
+  const [googleModel, setGoogleModel] = useState('neural2');
+
   // Fetch company settings
   const { data: company, isLoading: isLoadingCompany } = useQuery({
     queryKey: ['company-ai-settings', companyId],
@@ -76,7 +86,7 @@ export const AIAgentSettings = () => {
       if (!companyId) return null;
       const { data } = await supabase
         .from('tenant_integrations')
-        .select('id, elevenlabs_api_key, elevenlabs_voice_id, elevenlabs_voice_stability, elevenlabs_voice_similarity, elevenlabs_voice_style, elevenlabs_voice_speed')
+        .select('id, elevenlabs_api_key, elevenlabs_voice_id, elevenlabs_voice_stability, elevenlabs_voice_similarity, elevenlabs_voice_style, elevenlabs_voice_speed, tts_provider, openai_api_key, openai_tts_voice, openai_tts_model, google_tts_api_key, google_tts_voice, google_tts_model')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -113,6 +123,14 @@ export const AIAgentSettings = () => {
       setVoiceSimilarity(integrations.elevenlabs_voice_similarity ?? 0.75);
       setVoiceStyle(integrations.elevenlabs_voice_style ?? 0.5);
       setVoiceSpeed(integrations.elevenlabs_voice_speed ?? 1.0);
+      // Load TTS provider settings
+      setTtsProvider(integrations.tts_provider || 'elevenlabs');
+      setOpenaiApiKey(integrations.openai_api_key || '');
+      setOpenaiVoice(integrations.openai_tts_voice || 'alloy');
+      setOpenaiModel(integrations.openai_tts_model || 'tts-1');
+      setGoogleApiKey(integrations.google_tts_api_key || '');
+      setGoogleVoice(integrations.google_tts_voice || 'en-US-Neural2-D');
+      setGoogleModel(integrations.google_tts_model || 'neural2');
     }
   }, [integrations]);
 
@@ -143,17 +161,31 @@ export const AIAgentSettings = () => {
 
       const voiceId = useCustomVoice ? customVoiceId : selectedVoiceId;
       
+      const updateData: Record<string, unknown> = {
+        elevenlabs_voice_id: voiceId,
+        elevenlabs_voice_stability: voiceStability,
+        elevenlabs_voice_similarity: voiceSimilarity,
+        elevenlabs_voice_style: voiceStyle,
+        elevenlabs_voice_speed: voiceSpeed,
+        tts_provider: ttsProvider,
+        openai_api_key: openaiApiKey || null,
+        openai_tts_voice: openaiVoice,
+        openai_tts_model: openaiModel,
+        google_tts_api_key: googleApiKey || null,
+        google_tts_voice: googleVoice,
+        google_tts_model: googleModel,
+      };
+
       if (integrations?.id) {
         const { error } = await supabase
           .from('tenant_integrations')
-          .update({ 
-            elevenlabs_voice_id: voiceId,
-            elevenlabs_voice_stability: voiceStability,
-            elevenlabs_voice_similarity: voiceSimilarity,
-            elevenlabs_voice_style: voiceStyle,
-            elevenlabs_voice_speed: voiceSpeed,
-          })
+          .update(updateData)
           .eq('id', integrations.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('tenant_integrations')
+          .insert({ company_id: companyId, ...updateData });
         if (error) throw error;
       }
     },
@@ -167,7 +199,7 @@ export const AIAgentSettings = () => {
     try {
       await Promise.all([
         saveCompanyMutation.mutateAsync(),
-        hasElevenLabs ? saveVoiceMutation.mutateAsync() : Promise.resolve(),
+        saveVoiceMutation.mutateAsync(),
       ]);
       toast.success('AI Agent settings saved!');
     } catch (error) {
@@ -186,6 +218,13 @@ export const AIAgentSettings = () => {
     setVoiceSimilarity(0.75);
     setVoiceStyle(0.5);
     setVoiceSpeed(1.0);
+    setTtsProvider('elevenlabs');
+    setOpenaiApiKey('');
+    setOpenaiVoice('alloy');
+    setOpenaiModel('tts-1');
+    setGoogleApiKey('');
+    setGoogleVoice('en-US-Neural2-D');
+    setGoogleModel('neural2');
   };
 
   const handlePreviewGreeting = async () => {
@@ -312,15 +351,36 @@ export const AIAgentSettings = () => {
 
   return (
     <div className="space-y-6">
-      {/* Voice Selection Card */}
+      {/* TTS Provider Selection */}
+      <TTSProviderSettings
+        ttsProvider={ttsProvider}
+        setTtsProvider={setTtsProvider}
+        openaiApiKey={openaiApiKey}
+        setOpenaiApiKey={setOpenaiApiKey}
+        openaiVoice={openaiVoice}
+        setOpenaiVoice={setOpenaiVoice}
+        openaiModel={openaiModel}
+        setOpenaiModel={setOpenaiModel}
+        googleApiKey={googleApiKey}
+        setGoogleApiKey={setGoogleApiKey}
+        googleVoice={googleVoice}
+        setGoogleVoice={setGoogleVoice}
+        googleModel={googleModel}
+        setGoogleModel={setGoogleModel}
+        hasElevenLabs={hasElevenLabs}
+        companyId={companyId}
+      />
+
+      {/* ElevenLabs Voice Selection Card - only show when ElevenLabs is selected */}
+      {ttsProvider === 'elevenlabs' && (
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Volume2 className="h-5 w-5" />
-            AI Voice
+            ElevenLabs Voice Settings
           </CardTitle>
           <CardDescription>
-            Select the voice your AI agent will use for phone calls
+            Fine-tune your ElevenLabs voice settings
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -501,6 +561,7 @@ export const AIAgentSettings = () => {
           )}
         </CardContent>
       </Card>
+      )}
 
       {/* Greeting & Prompt Card */}
       <Card>
