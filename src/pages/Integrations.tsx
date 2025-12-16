@@ -677,58 +677,6 @@ export default function Integrations() {
             </Tabs>
           </CardContent>
         </Card>
-
-        {/* Simplified Pricing Reference */}
-        <Card className="border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <CreditCard className="w-5 h-5 text-primary" />
-              Pricing Quick Reference
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-3 mb-4">
-              <Badge variant="outline" className="py-2 px-3 text-sm">
-                <Mail className="w-3 h-3 mr-2 text-emerald-500" />
-                Email: 3K free/mo
-              </Badge>
-              <Badge variant="outline" className="py-2 px-3 text-sm">
-                <Phone className="w-3 h-3 mr-2 text-red-500" />
-                SMS: $15.50 trial credit
-              </Badge>
-              <Badge variant="outline" className="py-2 px-3 text-sm">
-                <Mic className="w-3 h-3 mr-2 text-blue-500" />
-                Voice: 10K chars free/mo
-              </Badge>
-              <Badge variant="outline" className="py-2 px-3 text-sm">
-                <CreditCard className="w-3 h-3 mr-2 text-purple-500" />
-                Stripe: No monthly fee
-              </Badge>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button variant="ghost" size="sm" asChild>
-                <a href="https://resend.com/pricing" target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="w-3 h-3 mr-1" /> Resend
-                </a>
-              </Button>
-              <Button variant="ghost" size="sm" asChild>
-                <a href="https://www.twilio.com/pricing" target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="w-3 h-3 mr-1" /> Twilio
-                </a>
-              </Button>
-              <Button variant="ghost" size="sm" asChild>
-                <a href="https://elevenlabs.io/pricing" target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="w-3 h-3 mr-1" /> ElevenLabs
-                </a>
-              </Button>
-              <Button variant="ghost" size="sm" asChild>
-                <a href="https://stripe.com/pricing" target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="w-3 h-3 mr-1" /> Stripe
-                </a>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Setup Dialog */}
