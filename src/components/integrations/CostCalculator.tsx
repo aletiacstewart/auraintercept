@@ -1,12 +1,17 @@
 import { useState, useMemo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
   Calculator, 
   Mail, 
@@ -17,19 +22,27 @@ import {
   Award,
   BarChart3,
   Zap,
+  Save,
+  History,
+  ArrowUpRight,
+  ArrowDownRight,
+  Minus,
+  Trash2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
 // Pricing constants (approximate)
 const PRICING = {
   twilio: {
-    phoneNumber: 1.15, // per month
+    phoneNumber: 1.15,
     smsOutbound: 0.0079,
-    voiceOutbound: 0.014, // per minute
-    avgCallDuration: 0.5, // assume 30 seconds per reminder call
+    voiceOutbound: 0.014,
+    avgCallDuration: 0.5,
   },
   elevenlabs: {
-    charsPerMinute: 1000, // approximate
+    charsPerMinute: 1000,
     freeChars: 10000,
     starterPrice: 5,
     starterChars: 30000,
@@ -47,7 +60,6 @@ const PRICING = {
   },
 };
 
-// Effectiveness ratings (approximate based on industry data)
 const EFFECTIVENESS = {
   email: { openRate: 0.45, responseRate: 0.15 },
   sms: { openRate: 0.98, responseRate: 0.45 },
@@ -55,6 +67,8 @@ const EFFECTIVENESS = {
 };
 
 export function CostCalculator() {
+  const { companyId } = useAuth();
+  const queryClient = useQueryClient();
   const [appointments, setAppointments] = useState(100);
   const [avgTransactionValue, setAvgTransactionValue] = useState(50);
   const [channels, setChannels] = useState({
@@ -64,14 +78,147 @@ export function CostCalculator() {
   });
   const [remindersPerAppointment, setRemindersPerAppointment] = useState(2);
 
+  const currentMonth = format(new Date(), 'yyyy-MM');
+
+  // Fetch saved estimates
+  const { data: savedEstimates, isLoading: loadingEstimates } = useQuery({
+    queryKey: ['cost-estimates', companyId],
+    queryFn: async () => {
+      if (!companyId) return [];
+      const { data, error } = await supabase
+        .from('cost_estimates')
+        .select('*')
+        .eq('company_id', companyId)
+        .order('month_year', { ascending: false })
+        .limit(12);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
+  // Fetch actual costs from reminder_logs
+  const { data: actualCosts, isLoading: loadingActual } = useQuery({
+    queryKey: ['actual-costs', companyId],
+    queryFn: async () => {
+      if (!companyId) return [];
+      
+      // Get last 6 months of data
+      const months: { month: string; email: number; sms: number; voice: number; appointments: number }[] = [];
+      
+      for (let i = 0; i < 6; i++) {
+        const date = subMonths(new Date(), i);
+        const monthStr = format(date, 'yyyy-MM');
+        const start = startOfMonth(date).toISOString();
+        const end = endOfMonth(date).toISOString();
+        
+        // Get reminder counts
+        const { data: reminders } = await supabase
+          .from('reminder_logs')
+          .select('channel')
+          .eq('company_id', companyId)
+          .gte('created_at', start)
+          .lte('created_at', end);
+        
+        // Get appointment count
+        const { count: apptCount } = await supabase
+          .from('appointments')
+          .select('id', { count: 'exact', head: true })
+          .eq('company_id', companyId)
+          .gte('datetime', start)
+          .lte('datetime', end);
+        
+        const emailCount = reminders?.filter(r => r.channel === 'email').length || 0;
+        const smsCount = reminders?.filter(r => r.channel === 'sms').length || 0;
+        const voiceCount = reminders?.filter(r => r.channel === 'voice' || r.channel === 'call').length || 0;
+        
+        // Calculate actual costs
+        let emailCost = emailCount > PRICING.resend.freeEmails ? PRICING.resend.proPrice : 0;
+        let smsCost = smsCount > 0 ? PRICING.twilio.phoneNumber + (smsCount * PRICING.twilio.smsOutbound) : 0;
+        let voiceCost = voiceCount > 0 
+          ? PRICING.twilio.phoneNumber + (voiceCount * PRICING.twilio.avgCallDuration * PRICING.twilio.voiceOutbound)
+          : 0;
+        
+        // Add ElevenLabs cost for voice
+        if (voiceCount > 0) {
+          const chars = voiceCount * PRICING.twilio.avgCallDuration * PRICING.elevenlabs.charsPerMinute;
+          if (chars > PRICING.elevenlabs.freeChars) {
+            if (chars <= PRICING.elevenlabs.starterChars) voiceCost += PRICING.elevenlabs.starterPrice;
+            else if (chars <= PRICING.elevenlabs.creatorChars) voiceCost += PRICING.elevenlabs.creatorPrice;
+            else voiceCost += 99;
+          }
+        }
+        
+        months.push({
+          month: monthStr,
+          email: emailCost,
+          sms: smsCost,
+          voice: voiceCost,
+          appointments: apptCount || 0,
+        });
+      }
+      
+      return months;
+    },
+    enabled: !!companyId,
+  });
+
+  // Save estimate mutation
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      if (!companyId) throw new Error('No company ID');
+      
+      const { error } = await supabase
+        .from('cost_estimates')
+        .upsert({
+          company_id: companyId,
+          month_year: currentMonth,
+          appointments_count: appointments,
+          reminders_per_appointment: remindersPerAppointment,
+          avg_transaction_value: avgTransactionValue,
+          channels_email: channels.email,
+          channels_sms: channels.sms,
+          channels_voice: channels.voice,
+          estimated_email_cost: costs.email,
+          estimated_sms_cost: costs.sms,
+          estimated_voice_cost: costs.voice,
+          estimated_stripe_cost: costs.stripe,
+          estimated_total_cost: costs.total,
+        }, {
+          onConflict: 'company_id,month_year',
+        });
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cost-estimates'] });
+      toast.success('Estimate saved for ' + format(new Date(), 'MMMM yyyy'));
+    },
+    onError: () => {
+      toast.error('Failed to save estimate');
+    },
+  });
+
+  // Delete estimate mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('cost_estimates')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cost-estimates'] });
+      toast.success('Estimate deleted');
+    },
+  });
+
   const costs = useMemo(() => {
     const totalReminders = appointments * remindersPerAppointment;
     
-    // Calculate costs for ALL channels (for comparison)
     const calculateEmailCost = (reminders: number) => {
-      if (reminders > PRICING.resend.freeEmails) {
-        return PRICING.resend.proPrice;
-      }
+      if (reminders > PRICING.resend.freeEmails) return PRICING.resend.proPrice;
       return 0;
     };
 
@@ -86,36 +233,28 @@ export function CostCalculator() {
       const totalChars = totalMinutes * PRICING.elevenlabs.charsPerMinute;
       let elevenLabsCost = 0;
       if (totalChars > PRICING.elevenlabs.freeChars) {
-        if (totalChars <= PRICING.elevenlabs.starterChars) {
-          elevenLabsCost = PRICING.elevenlabs.starterPrice;
-        } else if (totalChars <= PRICING.elevenlabs.creatorChars) {
-          elevenLabsCost = PRICING.elevenlabs.creatorPrice;
-        } else {
-          elevenLabsCost = 99;
-        }
+        if (totalChars <= PRICING.elevenlabs.starterChars) elevenLabsCost = PRICING.elevenlabs.starterPrice;
+        else if (totalChars <= PRICING.elevenlabs.creatorChars) elevenLabsCost = PRICING.elevenlabs.creatorPrice;
+        else elevenLabsCost = 99;
       }
       return twilioCost + elevenLabsCost;
     };
 
-    // Costs for enabled channels
     const emailCost = channels.email ? calculateEmailCost(totalReminders) : 0;
     const smsCost = channels.sms ? calculateSmsCost(totalReminders) : 0;
     const voiceCost = channels.voice ? calculateVoiceCost(totalReminders) : 0;
 
-    // Stripe costs
     const stripeRevenue = appointments * avgTransactionValue;
     const stripeCost = stripeRevenue > 0 
       ? (stripeRevenue * PRICING.stripe.percentFee) + (appointments * PRICING.stripe.fixedFee)
       : 0;
 
-    // Comparison costs (all channels at current volume)
     const comparisonCosts = {
       email: calculateEmailCost(totalReminders),
       sms: calculateSmsCost(totalReminders),
       voice: calculateVoiceCost(totalReminders),
     };
 
-    // Per-appointment costs
     const perAppointment = {
       email: comparisonCosts.email / appointments,
       sms: comparisonCosts.sms / appointments,
@@ -123,14 +262,12 @@ export function CostCalculator() {
       stripe: stripeCost / appointments,
     };
 
-    // Per-reminder costs
     const perReminder = {
       email: comparisonCosts.email / totalReminders,
       sms: comparisonCosts.sms / totalReminders,
       voice: comparisonCosts.voice / totalReminders,
     };
 
-    // Cost-effectiveness score (lower cost per effective reach = better)
     const costEffectiveness = {
       email: perReminder.email > 0 ? perReminder.email / EFFECTIVENESS.email.responseRate : 0,
       sms: perReminder.sms / EFFECTIVENESS.sms.responseRate,
@@ -169,7 +306,6 @@ export function CostCalculator() {
     }).format(amount);
   };
 
-  // Determine best value channel
   const getBestValue = () => {
     const scores = [
       { channel: 'email', score: costs.costEffectiveness.email, cost: costs.comparison.email },
@@ -177,7 +313,6 @@ export function CostCalculator() {
       { channel: 'voice', score: costs.costEffectiveness.voice, cost: costs.comparison.voice },
     ].filter(s => s.cost > 0 || s.channel === 'email');
     
-    // Email is free under 3K, so it's best value at low volume
     if (costs.comparison.email === 0 && costs.totalReminders <= PRICING.resend.freeEmails) {
       return 'email';
     }
@@ -188,45 +323,46 @@ export function CostCalculator() {
   const bestValue = getBestValue();
 
   const channelConfig = [
-    { 
-      key: 'email', 
-      label: 'Email', 
-      icon: Mail, 
-      color: 'emerald',
-      bgClass: 'bg-emerald-50/50 dark:bg-emerald-950/20',
-      borderClass: 'border-emerald-200 dark:border-emerald-900/50',
-      textClass: 'text-emerald-600 dark:text-emerald-400',
-    },
-    { 
-      key: 'sms', 
-      label: 'SMS', 
-      icon: MessageSquare, 
-      color: 'red',
-      bgClass: 'bg-red-50/50 dark:bg-red-950/20',
-      borderClass: 'border-red-200 dark:border-red-900/50',
-      textClass: 'text-red-600 dark:text-red-400',
-    },
-    { 
-      key: 'voice', 
-      label: 'Voice', 
-      icon: Phone, 
-      color: 'blue',
-      bgClass: 'bg-blue-50/50 dark:bg-blue-950/20',
-      borderClass: 'border-blue-200 dark:border-blue-900/50',
-      textClass: 'text-blue-600 dark:text-blue-400',
-    },
+    { key: 'email', label: 'Email', icon: Mail, color: 'emerald', bgClass: 'bg-emerald-50/50 dark:bg-emerald-950/20', borderClass: 'border-emerald-200 dark:border-emerald-900/50', textClass: 'text-emerald-600 dark:text-emerald-400' },
+    { key: 'sms', label: 'SMS', icon: MessageSquare, color: 'red', bgClass: 'bg-red-50/50 dark:bg-red-950/20', borderClass: 'border-red-200 dark:border-red-900/50', textClass: 'text-red-600 dark:text-red-400' },
+    { key: 'voice', label: 'Voice', icon: Phone, color: 'blue', bgClass: 'bg-blue-50/50 dark:bg-blue-950/20', borderClass: 'border-blue-200 dark:border-blue-900/50', textClass: 'text-blue-600 dark:text-blue-400' },
   ];
+
+  // Calculate variance for comparison
+  const getVariance = (estimated: number, actual: number) => {
+    if (estimated === 0 && actual === 0) return { value: 0, percent: 0, direction: 'same' as const };
+    if (estimated === 0) return { value: actual, percent: 100, direction: 'over' as const };
+    const diff = actual - estimated;
+    const percent = Math.abs((diff / estimated) * 100);
+    return {
+      value: Math.abs(diff),
+      percent,
+      direction: diff > 0 ? 'over' as const : diff < 0 ? 'under' as const : 'same' as const,
+    };
+  };
 
   return (
     <Card className="border-border/50">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Calculator className="w-5 h-5 text-primary" />
-          Cost Calculator & Comparison
-        </CardTitle>
-        <CardDescription>
-          Estimate costs and compare channel effectiveness to optimize your reminder strategy
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-primary" />
+              Cost Calculator & Tracking
+            </CardTitle>
+            <CardDescription>
+              Estimate costs, save projections, and compare with actual spending
+            </CardDescription>
+          </div>
+          <Button 
+            onClick={() => saveMutation.mutate()} 
+            disabled={saveMutation.isPending || !companyId}
+            size="sm"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            Save Estimate
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Input Controls */}
@@ -295,7 +431,7 @@ export function CostCalculator() {
         </div>
 
         <Tabs defaultValue="summary" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="summary" className="flex items-center gap-1">
               <DollarSign className="w-4 h-4" />
               Summary
@@ -307,6 +443,10 @@ export function CostCalculator() {
             <TabsTrigger value="optimization" className="flex items-center gap-1">
               <Zap className="w-4 h-4" />
               Optimize
+            </TabsTrigger>
+            <TabsTrigger value="history" className="flex items-center gap-1">
+              <History className="w-4 h-4" />
+              History
             </TabsTrigger>
           </TabsList>
 
@@ -382,8 +522,7 @@ export function CostCalculator() {
                     key={ch.key}
                     className={cn(
                       'p-4 rounded-lg border relative',
-                      ch.bgClass,
-                      ch.borderClass,
+                      ch.bgClass, ch.borderClass,
                       isBest && 'ring-2 ring-primary'
                     )}
                   >
@@ -437,13 +576,6 @@ export function CostCalculator() {
                 );
               })}
             </div>
-
-            <div className="p-3 rounded-lg bg-muted/50 border border-dashed">
-              <p className="text-xs text-muted-foreground">
-                <strong className="text-foreground">Note:</strong> Open and response rates are industry averages. 
-                Actual rates depend on message quality, timing, and your customer base.
-              </p>
-            </div>
           </TabsContent>
 
           {/* Optimization Tab */}
@@ -464,13 +596,7 @@ export function CostCalculator() {
                         <Badge variant="secondary" className="text-xs">FREE</Badge>
                       )}
                     </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-muted-foreground ml-6">→ {formatCurrency(costs.perAppointment.email)} per appointment</span>
-                    </li>
                   </ul>
-                  <p className="text-xs text-muted-foreground pt-2">
-                    Best for businesses with email-responsive customers and tight budgets.
-                  </p>
                 </div>
               </div>
 
@@ -486,13 +612,7 @@ export function CostCalculator() {
                       <span>Email + SMS + Voice:</span>
                       <strong>{formatCurrencyShort(costs.comparison.email + costs.comparison.sms + costs.comparison.voice)}/mo</strong>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-muted-foreground">→ {formatCurrency((costs.comparison.email + costs.comparison.sms + costs.comparison.voice) / appointments)} per appointment</span>
-                    </li>
                   </ul>
-                  <p className="text-xs text-muted-foreground pt-2">
-                    Maximizes show rates with ~98% reach. Best for high-value appointments.
-                  </p>
                 </div>
               </div>
             </div>
@@ -518,12 +638,100 @@ export function CostCalculator() {
                     <p className="text-lg font-bold">~98%</p>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Email catches most customers, SMS ensures critical reminders get through. 
-                  Add voice calls only for high-value appointments or chronic no-shows.
-                </p>
               </div>
             </div>
+          </TabsContent>
+
+          {/* History Tab */}
+          <TabsContent value="history" className="space-y-4 mt-4">
+            {loadingEstimates || loadingActual ? (
+              <div className="space-y-3">
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+              </div>
+            ) : savedEstimates && savedEstimates.length > 0 ? (
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Compare your saved estimates with actual costs tracked from reminder logs.
+                </p>
+                
+                <div className="space-y-3">
+                  {savedEstimates.map((estimate) => {
+                    const actual = actualCosts?.find(a => a.month === estimate.month_year);
+                    const actualTotal = actual ? (actual.email + actual.sms + actual.voice) : 0;
+                    const variance = getVariance(Number(estimate.estimated_total_cost), actualTotal);
+                    
+                    return (
+                      <div key={estimate.id} className="p-4 rounded-lg border bg-card">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold">
+                              {format(new Date(estimate.month_year + '-01'), 'MMMM yyyy')}
+                            </span>
+                            <div className="flex gap-1">
+                              {estimate.channels_email && <Mail className="w-3 h-3 text-emerald-500" />}
+                              {estimate.channels_sms && <MessageSquare className="w-3 h-3 text-red-500" />}
+                              {estimate.channels_voice && <Phone className="w-3 h-3 text-blue-500" />}
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                            onClick={() => deleteMutation.mutate(estimate.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        
+                        <div className="grid grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <p className="text-xs text-muted-foreground">Estimated</p>
+                            <p className="font-medium">{formatCurrencyShort(Number(estimate.estimated_total_cost))}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Actual</p>
+                            <p className="font-medium">
+                              {actual ? formatCurrencyShort(actualTotal) : '—'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Variance</p>
+                            {actual ? (
+                              <div className={cn(
+                                'flex items-center gap-1 font-medium',
+                                variance.direction === 'over' && 'text-red-600',
+                                variance.direction === 'under' && 'text-green-600',
+                                variance.direction === 'same' && 'text-muted-foreground'
+                              )}>
+                                {variance.direction === 'over' && <ArrowUpRight className="w-3 h-3" />}
+                                {variance.direction === 'under' && <ArrowDownRight className="w-3 h-3" />}
+                                {variance.direction === 'same' && <Minus className="w-3 h-3" />}
+                                {variance.percent.toFixed(0)}%
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground">—</span>
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Appointments</p>
+                            <p className="font-medium">
+                              {estimate.appointments_count} est / {actual?.appointments || 0} actual
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <History className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p className="font-medium">No saved estimates yet</p>
+                <p className="text-sm">Save your first estimate to start tracking accuracy over time.</p>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </CardContent>
