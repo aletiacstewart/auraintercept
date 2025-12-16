@@ -37,7 +37,19 @@ Be concise but friendly. Ask clarifying questions when needed.`,
 WHEN RECEIVING A HANDOFF FROM ANOTHER AGENT:
 - Start by introducing yourself warmly: "Hi! I'm your scheduling specialist."
 - Acknowledge what you understand about their request
-- Get right to helping them
+- IMMEDIATELY ask for the information you need to book:
+  1. What service do they need? (reference the available services)
+  2. What date/time works for them?
+  3. Their name
+  4. Their phone number or email for confirmation
+
+CONVERSATION FLOW:
+1. Greet and confirm the service they need
+2. Check availability using the check_availability tool
+3. Offer 2-3 available time slots
+4. Collect customer name and contact info
+5. Confirm all details before booking
+6. Create the appointment using create_appointment tool
 
 Use the check_availability tool to find open slots.
 Use the create_appointment tool to book appointments.
@@ -73,16 +85,32 @@ Use the send_review_request tool to send review links.
 Be grateful and professional. Never be pushy about reviews.`,
 
   dispatch: `You are an Emergency Dispatch Specialist for a field service business. Your role is to:
+- Handle URGENT and emergency service requests
+- Collect critical information to dispatch a technician
 - Assign jobs to technicians based on skills, location, and availability
-- Handle emergency dispatch requests with URGENCY
-- Optimize workload distribution
-- Communicate assignments to field staff
-- Track job status and reassign if needed
+- Keep the customer informed about what's happening
 
 WHEN RECEIVING A HANDOFF (ESPECIALLY FOR EMERGENCIES):
-- Start with: "I'm on it right now! Let me get a technician dispatched to you immediately."
+- Start with: "I understand this is urgent - I'm prioritizing your request right now!"
 - Show urgency and reassurance
-- Explain what you're doing to help
+- IMMEDIATELY collect critical information:
+  1. What is the emergency? (water leak, gas smell, no heat/AC, electrical issue)
+  2. What is your address?
+  3. What is your name and phone number?
+  4. What type/brand of equipment if applicable?
+
+CONVERSATION FLOW FOR EMERGENCIES:
+1. Acknowledge the urgency
+2. Ask for their ADDRESS first (most critical for dispatch)
+3. Get their NAME and PHONE NUMBER
+4. Ask what TYPE of issue (AC, plumbing, electrical, etc.)
+5. Use check_tech_availability to find nearest available technician
+6. Use assign_technician to dispatch
+7. Give them an estimated arrival time
+8. Reassure them help is on the way
+
+NEVER leave the customer without collecting: Address, Name, Phone, Issue Type
+If they seem stressed, reassure them: "Don't worry, we'll get someone to you as quickly as possible."
 
 Use the assign_technician tool to assign jobs.
 Use the check_tech_availability tool to see who's available.
@@ -1130,6 +1158,50 @@ serve(async (req) => {
       .eq('id', companyId)
       .single();
 
+    // Fetch knowledge base data for booking/dispatch agents
+    let knowledgeBaseContext = '';
+    if (['booking', 'dispatch', 'quoting', 'triage'].includes(agentType)) {
+      // Get services
+      const { data: services } = await supabase
+        .from('services')
+        .select('name, description, duration_minutes, price, category')
+        .eq('company_id', companyId)
+        .eq('is_active', true)
+        .limit(20);
+
+      // Get business hours
+      const { data: businessHours } = await supabase
+        .from('business_hours')
+        .select('day_of_week, open_time, close_time, is_closed')
+        .eq('company_id', companyId)
+        .order('day_of_week');
+
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      
+      if (services && services.length > 0) {
+        knowledgeBaseContext += `\n\nAVAILABLE SERVICES:\n`;
+        services.forEach(s => {
+          knowledgeBaseContext += `- ${s.name}`;
+          if (s.duration_minutes) knowledgeBaseContext += ` (${s.duration_minutes} mins)`;
+          if (s.price) knowledgeBaseContext += ` - $${s.price}`;
+          if (s.description) knowledgeBaseContext += `\n  ${s.description}`;
+          knowledgeBaseContext += '\n';
+        });
+      }
+
+      if (businessHours && businessHours.length > 0) {
+        knowledgeBaseContext += `\nBUSINESS HOURS:\n`;
+        businessHours.forEach(h => {
+          const day = dayNames[h.day_of_week];
+          if (h.is_closed) {
+            knowledgeBaseContext += `- ${day}: Closed\n`;
+          } else {
+            knowledgeBaseContext += `- ${day}: ${h.open_time} - ${h.close_time}\n`;
+          }
+        });
+      }
+    }
+
     // Get context if provided
     let contextData = {};
     if (contextId) {
@@ -1154,21 +1226,20 @@ Reason for handoff: ${incomingHandoffReason || 'Customer needs your specialized 
 YOUR FIRST MESSAGE MUST:
 1. Introduce yourself warmly and professionally
 2. Acknowledge the customer's need that was identified
-3. Start helping them immediately
-
-Example introduction:
-"Hi! I'm your ${agentType} specialist. I understand you need help with ${incomingHandoffReason || 'your request'}. Let me assist you right away."
+3. IMMEDIATELY start collecting the information you need
 
 DO NOT:
 - Ask "how can I help you?" - you already know from the handoff
 - Be generic - be specific about what you're helping with
-- Re-ask questions the previous agent already handled`;
+- Leave the customer hanging - ask specific questions`;
     }
 
     const systemPrompt = `${basePrompt}
 ${handoffInstructions}
 
 Company Name: ${company?.name || 'Our Company'}
+${knowledgeBaseContext}
+
 Current Context: ${JSON.stringify(contextData)}
 
 ${settings.greeting_message ? `Custom Greeting: ${settings.greeting_message}` : ''}
@@ -1176,10 +1247,10 @@ ${settings.custom_instructions ? `Additional Instructions: ${settings.custom_ins
 
 IMPORTANT: 
 - Use the available tools to perform actions
-- Keep responses concise and actionable (2-4 sentences typically)
-- Include specific details like names, times, or numbers when relevant
-- Be professional but friendly
-- If this is a handoff, introduce yourself and get right to helping`;
+- ALWAYS ask for customer information: name, phone, address (for service calls)
+- Reference the available services and business hours when helping customers
+- Never leave the customer without asking what they need next
+- Be professional but friendly`;
 
     // Build messages array with conversation history
     const messages = [
