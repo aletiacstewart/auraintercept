@@ -20,6 +20,8 @@ interface AuthContextType {
   subscribed: boolean;
   subscriptionTier: SubscriptionTier | null;
   subscriptionEnd: string | null;
+  inTrial: boolean;
+  trialEndsAt: string | null;
   signOut: () => Promise<void>;
   checkSubscription: () => Promise<void>;
 }
@@ -35,6 +37,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [subscribed, setSubscribed] = useState(false);
   const [subscriptionTier, setSubscriptionTier] = useState<SubscriptionTier | null>(null);
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
+  const [inTrial, setInTrial] = useState(false);
+  const [trialEndsAt, setTrialEndsAt] = useState<string | null>(null);
 
   const checkSubscription = useCallback(async () => {
     if (!session?.access_token || !user?.email) return;
@@ -45,6 +49,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSubscribed(true);
       setSubscriptionTier('enterprise');
       setSubscriptionEnd(null);
+      setInTrial(false);
+      setTrialEndsAt(null);
       return;
     }
     
@@ -62,8 +68,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       setSubscribed(data?.subscribed ?? false);
       setSubscriptionEnd(data?.subscription_end ?? null);
+      setInTrial(data?.in_trial ?? false);
+      setTrialEndsAt(data?.trial_ends_at ?? null);
       
-      if (data?.product_id && PRODUCT_TO_TIER[data.product_id]) {
+      if (data?.tier) {
+        setSubscriptionTier(data.tier as SubscriptionTier);
+      } else if (data?.product_id && PRODUCT_TO_TIER[data.product_id]) {
         setSubscriptionTier(PRODUCT_TO_TIER[data.product_id]);
       } else {
         setSubscriptionTier(data?.subscribed ? 'enterprise' : 'free');
@@ -149,6 +159,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSubscribed(false);
     setSubscriptionTier(null);
     setSubscriptionEnd(null);
+    setInTrial(false);
+    setTrialEndsAt(null);
   };
 
   return (
@@ -160,7 +172,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       companyId, 
       subscribed, 
       subscriptionTier, 
-      subscriptionEnd, 
+      subscriptionEnd,
+      inTrial,
+      trialEndsAt,
       signOut, 
       checkSubscription 
     }}>

@@ -268,6 +268,11 @@ export type Database = {
           secondary_color: string | null
           slug: string
           stripe_customer_id: string | null
+          trial_ends_at: string | null
+          trial_expired_sent: boolean | null
+          trial_reminder_1d_sent: boolean | null
+          trial_reminder_3d_sent: boolean | null
+          trial_reminder_7d_sent: boolean | null
           unsubscribe_alert_email: string | null
           unsubscribe_alert_enabled: boolean | null
           unsubscribe_alert_threshold: number | null
@@ -320,6 +325,11 @@ export type Database = {
           secondary_color?: string | null
           slug: string
           stripe_customer_id?: string | null
+          trial_ends_at?: string | null
+          trial_expired_sent?: boolean | null
+          trial_reminder_1d_sent?: boolean | null
+          trial_reminder_3d_sent?: boolean | null
+          trial_reminder_7d_sent?: boolean | null
           unsubscribe_alert_email?: string | null
           unsubscribe_alert_enabled?: boolean | null
           unsubscribe_alert_threshold?: number | null
@@ -372,6 +382,11 @@ export type Database = {
           secondary_color?: string | null
           slug?: string
           stripe_customer_id?: string | null
+          trial_ends_at?: string | null
+          trial_expired_sent?: boolean | null
+          trial_reminder_1d_sent?: boolean | null
+          trial_reminder_3d_sent?: boolean | null
+          trial_reminder_7d_sent?: boolean | null
           unsubscribe_alert_email?: string | null
           unsubscribe_alert_enabled?: boolean | null
           unsubscribe_alert_threshold?: number | null

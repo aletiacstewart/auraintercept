@@ -48,6 +48,47 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
+    // Get user's company to check trial status
+    const { data: profileData } = await supabaseClient
+      .from('profiles')
+      .select('company_id')
+      .eq('id', user.id)
+      .single();
+
+    let inTrial = false;
+    let trialEndsAt = null;
+
+    if (profileData?.company_id) {
+      const { data: companyData } = await supabaseClient
+        .from('companies')
+        .select('trial_ends_at')
+        .eq('id', profileData.company_id)
+        .single();
+
+      if (companyData?.trial_ends_at) {
+        const trialEnd = new Date(companyData.trial_ends_at);
+        const now = new Date();
+        inTrial = trialEnd > now;
+        trialEndsAt = companyData.trial_ends_at;
+        logStep("Trial status checked", { inTrial, trialEndsAt });
+      }
+    }
+
+    // If in trial, return full access
+    if (inTrial) {
+      logStep("User in active trial, granting enterprise access");
+      return new Response(JSON.stringify({
+        subscribed: true,
+        tier: "enterprise",
+        in_trial: true,
+        trial_ends_at: trialEndsAt,
+        subscription_end: trialEndsAt,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
 
@@ -56,6 +97,8 @@ serve(async (req) => {
       return new Response(JSON.stringify({ 
         subscribed: false,
         tier: null,
+        in_trial: false,
+        trial_ends_at: trialEndsAt,
         subscription_end: null,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -107,6 +150,8 @@ serve(async (req) => {
       subscribed: hasActiveSub,
       tier,
       price_id: priceId,
+      in_trial: false,
+      trial_ends_at: trialEndsAt,
       subscription_end: subscriptionEnd,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
