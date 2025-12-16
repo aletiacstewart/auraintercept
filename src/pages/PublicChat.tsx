@@ -65,8 +65,12 @@ export default function PublicChat() {
   const API_BASE = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
   useEffect(() => {
-    if (companySlug) {
+    // Validate slug - must not be empty, contain :, or be a route placeholder
+    if (companySlug && !companySlug.includes(':') && companySlug !== 'companySlug') {
       fetchConfig();
+    } else {
+      setError('Invalid company URL. Please use a valid company link like /chat/your-company-slug');
+      setLoading(false);
     }
   }, [companySlug]);
 
