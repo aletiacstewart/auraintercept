@@ -1012,8 +1012,15 @@ export type Database = {
           elevenlabs_voice_stability: number | null
           elevenlabs_voice_style: number | null
           google_refresh_token: string | null
+          google_tts_api_key: string | null
+          google_tts_model: string | null
+          google_tts_voice: string | null
           id: string
+          openai_api_key: string | null
+          openai_tts_model: string | null
+          openai_tts_voice: string | null
           resend_api_key: string | null
+          tts_provider: string | null
           twilio_account_sid: string | null
           twilio_auth_token: string | null
           twilio_phone_number: string | null
@@ -1030,8 +1037,15 @@ export type Database = {
           elevenlabs_voice_stability?: number | null
           elevenlabs_voice_style?: number | null
           google_refresh_token?: string | null
+          google_tts_api_key?: string | null
+          google_tts_model?: string | null
+          google_tts_voice?: string | null
           id?: string
+          openai_api_key?: string | null
+          openai_tts_model?: string | null
+          openai_tts_voice?: string | null
           resend_api_key?: string | null
+          tts_provider?: string | null
           twilio_account_sid?: string | null
           twilio_auth_token?: string | null
           twilio_phone_number?: string | null
@@ -1048,8 +1062,15 @@ export type Database = {
           elevenlabs_voice_stability?: number | null
           elevenlabs_voice_style?: number | null
           google_refresh_token?: string | null
+          google_tts_api_key?: string | null
+          google_tts_model?: string | null
+          google_tts_voice?: string | null
           id?: string
+          openai_api_key?: string | null
+          openai_tts_model?: string | null
+          openai_tts_voice?: string | null
           resend_api_key?: string | null
+          tts_provider?: string | null
           twilio_account_sid?: string | null
           twilio_auth_token?: string | null
           twilio_phone_number?: string | null

@@ -51,6 +51,16 @@ const PRICING = {
     creatorPrice: 22,
     creatorChars: 100000,
   },
+  openaiTts: {
+    pricePerThousandChars: 0.015,
+    hdPricePerThousandChars: 0.030,
+  },
+  googleTts: {
+    freeChars: 1000000,
+    standardPricePerMillion: 4,
+    wavenetPricePerMillion: 16,
+    neural2PricePerMillion: 16,
+  },
   resend: {
     freeEmails: 3000,
     proPrice: 20,
@@ -281,6 +291,33 @@ export function CostCalculator() {
       return twilioCost + elevenLabsCost;
     };
 
+    // Calculate voice costs for different TTS providers
+    const calculateVoiceCostByProvider = (reminders: number, provider: 'elevenlabs' | 'openai' | 'google') => {
+      const totalMinutes = reminders * PRICING.twilio.avgCallDuration;
+      const twilioCost = PRICING.twilio.phoneNumber + (totalMinutes * PRICING.twilio.voiceOutbound);
+      const totalChars = totalMinutes * PRICING.elevenlabs.charsPerMinute;
+
+      let ttsCost = 0;
+      switch (provider) {
+        case 'elevenlabs':
+          if (totalChars > PRICING.elevenlabs.freeChars) {
+            if (totalChars <= PRICING.elevenlabs.starterChars) ttsCost = PRICING.elevenlabs.starterPrice;
+            else if (totalChars <= PRICING.elevenlabs.creatorChars) ttsCost = PRICING.elevenlabs.creatorPrice;
+            else ttsCost = 99;
+          }
+          break;
+        case 'openai':
+          ttsCost = (totalChars / 1000) * PRICING.openaiTts.pricePerThousandChars;
+          break;
+        case 'google':
+          if (totalChars > PRICING.googleTts.freeChars) {
+            ttsCost = ((totalChars - PRICING.googleTts.freeChars) / 1000000) * PRICING.googleTts.neural2PricePerMillion;
+          }
+          break;
+      }
+      return { twilioCost, ttsCost, total: twilioCost + ttsCost };
+    };
+
     const emailCost = channels.email ? calculateEmailCost(totalReminders) : 0;
     const smsCost = channels.sms ? calculateSmsCost(totalReminders) : 0;
     const voiceCost = channels.voice ? calculateVoiceCost(totalReminders) : 0;
@@ -295,6 +332,13 @@ export function CostCalculator() {
       sms: calculateSmsCost(totalReminders),
       voice: calculateVoiceCost(totalReminders),
     };
+
+    // TTS provider comparison
+    const ttsComparison = channels.voice ? {
+      elevenlabs: calculateVoiceCostByProvider(totalReminders, 'elevenlabs'),
+      openai: calculateVoiceCostByProvider(totalReminders, 'openai'),
+      google: calculateVoiceCostByProvider(totalReminders, 'google'),
+    } : null;
 
     const perAppointment = {
       email: comparisonCosts.email / appointments,
@@ -323,6 +367,7 @@ export function CostCalculator() {
       total: emailCost + smsCost + voiceCost + stripeCost,
       totalReminders,
       comparison: comparisonCosts,
+      ttsComparison,
       perAppointment,
       perReminder,
       costEffectiveness,
