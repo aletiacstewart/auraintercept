@@ -14,6 +14,208 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_agent_configs: {
+        Row: {
+          agent_type: string
+          company_id: string
+          created_at: string | null
+          id: string
+          is_enabled: boolean | null
+          settings: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          agent_type: string
+          company_id: string
+          created_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          agent_type?: string
+          company_id?: string
+          created_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_agent_configs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_agent_context: {
+        Row: {
+          active_agent: string | null
+          appointment_id: string | null
+          company_id: string
+          context_data: Json | null
+          conversation_id: string | null
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          handoff_history: Json | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          active_agent?: string | null
+          appointment_id?: string | null
+          company_id: string
+          context_data?: Json | null
+          conversation_id?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          handoff_history?: Json | null
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          active_agent?: string | null
+          appointment_id?: string | null
+          company_id?: string
+          context_data?: Json | null
+          conversation_id?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          handoff_history?: Json | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_agent_context_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_agent_context_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_agent_events: {
+        Row: {
+          company_id: string
+          created_at: string | null
+          error_message: string | null
+          event_type: string
+          id: string
+          payload: Json
+          processed_at: string | null
+          source_agent: string
+          status: string | null
+          target_agent: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string | null
+          error_message?: string | null
+          event_type: string
+          id?: string
+          payload?: Json
+          processed_at?: string | null
+          source_agent: string
+          status?: string | null
+          target_agent?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed_at?: string | null
+          source_agent?: string
+          status?: string | null
+          target_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_agent_events_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_agent_logs: {
+        Row: {
+          action: string
+          agent_type: string
+          company_id: string
+          context_id: string | null
+          created_at: string | null
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          input_data: Json | null
+          output_data: Json | null
+          success: boolean | null
+        }
+        Insert: {
+          action: string
+          agent_type: string
+          company_id: string
+          context_id?: string | null
+          created_at?: string | null
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          input_data?: Json | null
+          output_data?: Json | null
+          success?: boolean | null
+        }
+        Update: {
+          action?: string
+          agent_type?: string
+          company_id?: string
+          context_id?: string | null
+          created_at?: string | null
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          input_data?: Json | null
+          output_data?: Json | null
+          success?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_agent_logs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_agent_logs_context_id_fkey"
+            columns: ["context_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agent_context"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointments: {
         Row: {
           call_opt_out: boolean
