@@ -368,7 +368,7 @@ export default function Integrations() {
           })}
         </div>
 
-        {/* TTS Provider Comparison Table */}
+        {/* TTS Provider Comparison - Simplified */}
         <Card className="border-border/50">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-lg">
@@ -376,133 +376,79 @@ export default function Integrations() {
               TTS Provider Comparison
             </CardTitle>
             <CardDescription>
-              Choose the right voice provider based on your budget and needs
+              Choose based on your budget and quality needs
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-2 font-medium">Feature</th>
-                    <th className="text-center py-3 px-2">
-                      <div className="flex flex-col items-center gap-1">
-                        <div className="w-8 h-8 rounded bg-blue-500 flex items-center justify-center">
-                          <Mic className="w-4 h-4 text-white" />
-                        </div>
-                        <span className="font-medium">ElevenLabs</span>
-                      </div>
-                    </th>
-                    <th className="text-center py-3 px-2">
-                      <div className="flex flex-col items-center gap-1">
-                        <div className="w-8 h-8 rounded bg-slate-700 flex items-center justify-center">
-                          <Bot className="w-4 h-4 text-white" />
-                        </div>
-                        <span className="font-medium">OpenAI TTS</span>
-                      </div>
-                    </th>
-                    <th className="text-center py-3 px-2">
-                      <div className="flex flex-col items-center gap-1">
-                        <div className="w-8 h-8 rounded bg-amber-500 flex items-center justify-center">
-                          <Volume2 className="w-4 h-4 text-white" />
-                        </div>
-                        <span className="font-medium">Google TTS</span>
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  <tr className="hover:bg-muted/30">
-                    <td className="py-3 px-2 font-medium">Pricing</td>
-                    <td className="py-3 px-2 text-center">
-                      <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/30">
-                        ~$0.30/1K chars
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-2 text-center">
-                      <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
-                        $0.015/1K chars
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-2 text-center">
-                      <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30">
-                        $4-16/1M chars
-                      </Badge>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-muted/30">
-                    <td className="py-3 px-2 font-medium">Free Tier</td>
-                    <td className="py-3 px-2 text-center text-muted-foreground">10K chars/mo</td>
-                    <td className="py-3 px-2 text-center text-muted-foreground">None</td>
-                    <td className="py-3 px-2 text-center">
-                      <span className="text-green-600 font-medium">1M chars/mo</span>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-muted/30">
-                    <td className="py-3 px-2 font-medium">Voice Quality</td>
-                    <td className="py-3 px-2 text-center">
-                      <span className="text-blue-600 font-medium">⭐⭐⭐⭐⭐</span>
-                    </td>
-                    <td className="py-3 px-2 text-center">
-                      <span className="text-slate-600 font-medium">⭐⭐⭐⭐</span>
-                    </td>
-                    <td className="py-3 px-2 text-center">
-                      <span className="text-amber-600 font-medium">⭐⭐⭐⭐</span>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-muted/30">
-                    <td className="py-3 px-2 font-medium">Voice Cloning</td>
-                    <td className="py-3 px-2 text-center">
-                      <Check className="w-4 h-4 text-green-500 mx-auto" />
-                    </td>
-                    <td className="py-3 px-2 text-center">
-                      <span className="text-muted-foreground">—</span>
-                    </td>
-                    <td className="py-3 px-2 text-center">
-                      <span className="text-muted-foreground">—</span>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-muted/30">
-                    <td className="py-3 px-2 font-medium">Emotional Range</td>
-                    <td className="py-3 px-2 text-center">
-                      <span className="text-blue-600 font-medium">Excellent</span>
-                    </td>
-                    <td className="py-3 px-2 text-center text-muted-foreground">Good</td>
-                    <td className="py-3 px-2 text-center text-muted-foreground">Good</td>
-                  </tr>
-                  <tr className="hover:bg-muted/30">
-                    <td className="py-3 px-2 font-medium">Languages</td>
-                    <td className="py-3 px-2 text-center text-muted-foreground">29+</td>
-                    <td className="py-3 px-2 text-center text-muted-foreground">57+</td>
-                    <td className="py-3 px-2 text-center text-muted-foreground">40+</td>
-                  </tr>
-                  <tr className="hover:bg-muted/30">
-                    <td className="py-3 px-2 font-medium">Voice Count</td>
-                    <td className="py-3 px-2 text-center text-muted-foreground">100+ library</td>
-                    <td className="py-3 px-2 text-center text-muted-foreground">6 voices</td>
-                    <td className="py-3 px-2 text-center text-muted-foreground">300+ voices</td>
-                  </tr>
-                  <tr className="hover:bg-muted/30">
-                    <td className="py-3 px-2 font-medium">Best For</td>
-                    <td className="py-3 px-2 text-center">
-                      <span className="text-xs text-muted-foreground">Premium quality, emotional content, custom voices</span>
-                    </td>
-                    <td className="py-3 px-2 text-center">
-                      <span className="text-xs text-muted-foreground">Budget-conscious, high volume, quick setup</span>
-                    </td>
-                    <td className="py-3 px-2 text-center">
-                      <span className="text-xs text-muted-foreground">Enterprise scale, massive volume, cost efficiency</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-border/50">
-              <p className="text-xs text-muted-foreground">
-                <strong className="text-foreground">💡 Recommendation:</strong> Start with <strong>OpenAI TTS</strong> for budget-friendly testing. 
-                Upgrade to <strong>ElevenLabs</strong> for premium voice quality and cloning. 
-                Use <strong>Google TTS</strong> for enterprise-scale deployments with high volume.
-              </p>
+            <div className="grid gap-3 md:grid-cols-3">
+              {/* ElevenLabs */}
+              <div className="p-4 rounded-lg border bg-blue-50/50 dark:bg-blue-950/20 border-blue-200/50 dark:border-blue-900/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded bg-blue-500 flex items-center justify-center">
+                    <Mic className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="font-semibold">ElevenLabs</span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Price</span>
+                    <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/30">~$0.30/1K chars</Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Free</span>
+                    <span>10K chars/mo</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground pt-2 border-t">
+                    Best for premium quality & voice cloning
+                  </p>
+                </div>
+              </div>
+
+              {/* OpenAI TTS */}
+              <div className="p-4 rounded-lg border bg-slate-50/50 dark:bg-slate-950/20 border-slate-200/50 dark:border-slate-900/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded bg-slate-700 flex items-center justify-center">
+                    <Bot className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="font-semibold">OpenAI TTS</span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Price</span>
+                    <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">$0.015/1K chars</Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Free</span>
+                    <span className="text-muted-foreground">None</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground pt-2 border-t">
+                    Best for budget-friendly, high volume
+                  </p>
+                </div>
+              </div>
+
+              {/* Google TTS */}
+              <div className="p-4 rounded-lg border bg-amber-50/50 dark:bg-amber-950/20 border-amber-200/50 dark:border-amber-900/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded bg-amber-500 flex items-center justify-center">
+                    <Volume2 className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="font-semibold">Google TTS</span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Price</span>
+                    <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30">$4-16/1M chars</Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Free</span>
+                    <span className="text-green-600 font-medium">1M chars/mo</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground pt-2 border-t">
+                    Best for enterprise scale & cost efficiency
+                  </p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
