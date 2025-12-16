@@ -17,6 +17,7 @@ import Messages from "./pages/Messages";
 import Integrations from "./pages/Integrations";
 import KnowledgeBase from "./pages/KnowledgeBase";
 import AIAgent from "./pages/AIAgent";
+import AIAgentsHub from "./pages/AIAgentsHub";
 import Widget from "./pages/Widget";
 import CallHistory from "./pages/CallHistory";
 import Analytics from "./pages/Analytics";
@@ -47,6 +48,8 @@ const App = () => (
             <Route path="/dashboard/integrations" element={<Integrations />} />
             <Route path="/dashboard/knowledge" element={<KnowledgeBase />} />
             <Route path="/dashboard/ai-agent" element={<AIAgent />} />
+            <Route path="/dashboard/ai-agents" element={<AIAgentsHub />} />
+            <Route path="/dashboard/ai-agents/:agentId" element={<AIAgentsHub />} />
             <Route path="/dashboard/widget" element={<Widget />} />
             <Route path="/dashboard/calls" element={<CallHistory />} />
             <Route path="/dashboard/analytics" element={<Analytics />} />
