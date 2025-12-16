@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Bot, Send, User, Loader2, Trash2, Phone, Mic, Calendar, 
-  Clock, MessageSquare, Sparkles, ChevronRight, Building2
+  Clock, MessageSquare, Sparkles, ChevronRight, Building2, Volume2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VoiceChat } from './VoiceChat';
@@ -101,7 +101,7 @@ export const AIAgentConsole = () => {
       if (!companyId) return null;
       const { data } = await supabase
         .from('tenant_integrations')
-        .select('twilio_phone_number, elevenlabs_api_key')
+        .select('twilio_phone_number, elevenlabs_api_key, tts_provider, openai_api_key, google_tts_api_key')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -109,8 +109,32 @@ export const AIAgentConsole = () => {
     enabled: !!companyId,
   });
 
-  const hasVoice = !!(integrations?.twilio_phone_number && integrations?.elevenlabs_api_key);
-  const hasVoiceChat = !!integrations?.elevenlabs_api_key;
+  // Get TTS provider info dynamically
+  const getTTSProviderInfo = () => {
+    const provider = integrations?.tts_provider || 'elevenlabs';
+    const providerConfig: Record<string, { name: string; isConfigured: boolean; icon: typeof Volume2 | typeof Bot }> = {
+      elevenlabs: {
+        name: 'ElevenLabs',
+        isConfigured: !!integrations?.elevenlabs_api_key,
+        icon: Volume2
+      },
+      openai: {
+        name: 'OpenAI TTS',
+        isConfigured: !!integrations?.openai_api_key,
+        icon: Bot
+      },
+      google: {
+        name: 'Google TTS',
+        isConfigured: !!integrations?.google_tts_api_key,
+        icon: Volume2
+      }
+    };
+    return providerConfig[provider] || providerConfig.elevenlabs;
+  };
+
+  const ttsInfo = getTTSProviderInfo();
+  const hasVoice = !!(integrations?.twilio_phone_number && ttsInfo.isConfigured);
+  const hasVoiceChat = ttsInfo.isConfigured;
   const twilioPhone = integrations?.twilio_phone_number;
 
   useEffect(() => {
@@ -172,7 +196,23 @@ export const AIAgentConsole = () => {
             )}
             <div>
               <h2 className="font-semibold">{company?.name || 'AI Assistant'}</h2>
-              <p className="text-xs text-white/80">Virtual Assistant</p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs text-white/80">Virtual Assistant</p>
+                {ttsInfo && (
+                  <Badge 
+                    variant="secondary" 
+                    className={cn(
+                      "text-xs py-0 h-5",
+                      ttsInfo.isConfigured 
+                        ? "bg-white/20 text-white border-white/30" 
+                        : "bg-red-500/20 text-red-200 border-red-500/30"
+                    )}
+                  >
+                    <ttsInfo.icon className="h-3 w-3 mr-1" />
+                    {ttsInfo.name}
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
