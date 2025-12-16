@@ -304,7 +304,12 @@ export function TTSProviderSettings({
         )}
 
         {/* Test Voice Button */}
-        <div className="flex justify-end pt-2">
+        <div className="flex items-center justify-between pt-2">
+          <Button variant="ghost" size="sm" asChild>
+            <a href="/dashboard/integrations">
+              Configure more providers <ExternalLink className="w-3 h-3 ml-1" />
+            </a>
+          </Button>
           <Button
             variant="outline"
             onClick={handleTestVoice}
