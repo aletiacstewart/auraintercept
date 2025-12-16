@@ -840,33 +840,48 @@ export type Database = {
           company_id: string
           created_at: string
           description: string | null
-          duration_minutes: number
+          duration_minutes: number | null
+          flat_fee: number | null
+          hourly_rate: number | null
           id: string
           is_active: boolean
           name: string
+          parts_cost: number | null
           price: number | null
+          service_type: string | null
+          service_type_other: string | null
           updated_at: string
         }
         Insert: {
           company_id: string
           created_at?: string
           description?: string | null
-          duration_minutes?: number
+          duration_minutes?: number | null
+          flat_fee?: number | null
+          hourly_rate?: number | null
           id?: string
           is_active?: boolean
           name: string
+          parts_cost?: number | null
           price?: number | null
+          service_type?: string | null
+          service_type_other?: string | null
           updated_at?: string
         }
         Update: {
           company_id?: string
           created_at?: string
           description?: string | null
-          duration_minutes?: number
+          duration_minutes?: number | null
+          flat_fee?: number | null
+          hourly_rate?: number | null
           id?: string
           is_active?: boolean
           name?: string
+          parts_cost?: number | null
           price?: number | null
+          service_type?: string | null
+          service_type_other?: string | null
           updated_at?: string
         }
         Relationships: [
