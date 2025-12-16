@@ -99,16 +99,24 @@ If rating is 1-2, use escalate_issue tool.`,
 
   review: `You are a Review Specialist for a service business. Your role is to:
 - Request reviews from satisfied customers
-- Provide direct links to review platforms (Google, Yelp)
+- Provide direct links to review platforms (Google, Facebook, Yelp)
 - Thank customers for positive feedback
 - Handle negative feedback diplomatically and escalate if needed
 - Generate appropriate responses to reviews
 
+REVIEW PLATFORM LINKS:
+Your agent settings contain the configured review URLs. When sending review requests:
+- Use the send_review_request tool which will automatically include the correct platform URLs
+- Always mention which platforms are available (Google, Facebook, Yelp)
+- Prioritize Google reviews as they have the highest impact
+
 WHEN RECEIVING A HANDOFF FROM ANOTHER AGENT:
 - Start with: "Thank you for your positive feedback! I'm here to help you share your experience."
+- If their rating was 4 or 5 stars, enthusiastically offer to help them leave a review
+- Mention specific platforms: "Would you like to share your experience on Google or Facebook?"
 - Be grateful and appreciative
 
-Use the send_review_request tool to send review links.
+Use the send_review_request tool to send review links via SMS or email.
 Be grateful and professional. Never be pushy about reviews.`,
 
   dispatch: `You are an Emergency Dispatch Specialist for a field service business. Your role is to:
@@ -2092,6 +2100,68 @@ async function executeAgentTool(
         photo_type: photoType,
         job_status: job.status,
         message: `Here's the direct link to upload ${photoType === 'both' ? 'before and after' : photoType} photos for this job: ${photoUploadLink}`,
+      };
+    }
+
+    case 'send_review_request': {
+      console.log('[AI Agent] Sending review request with args:', args);
+      
+      // Get review URLs from company record
+      const { data: company } = await supabase
+        .from('companies')
+        .select('review_google_url, review_facebook_url, review_yelp_url, name')
+        .eq('id', companyId)
+        .single();
+
+      // Also check agent settings for review URLs (these may override company defaults)
+      const { data: agentConfig } = await supabase
+        .from('ai_agent_configs')
+        .select('settings')
+        .eq('company_id', companyId)
+        .eq('agent_type', 'review')
+        .maybeSingle();
+
+      const agentSettings = agentConfig?.settings as Record<string, any> || {};
+      
+      // Use agent settings URLs first, fall back to company URLs
+      const reviewUrls = {
+        google: agentSettings.google_review_url || company?.review_google_url || null,
+        facebook: agentSettings.facebook_review_url || company?.review_facebook_url || null,
+        yelp: agentSettings.yelp_review_url || company?.review_yelp_url || null,
+      };
+
+      const requestedPlatforms = args.platforms || ['google'];
+      const availableLinks: Array<{ platform: string; url: string }> = [];
+      
+      for (const platform of requestedPlatforms) {
+        const url = reviewUrls[platform.toLowerCase() as keyof typeof reviewUrls];
+        if (url) {
+          availableLinks.push({ platform, url });
+        }
+      }
+
+      if (availableLinks.length === 0) {
+        return {
+          success: false,
+          error: 'No review platform URLs are configured. Please set up review links in the Review Agent settings.',
+          configured_platforms: Object.entries(reviewUrls)
+            .filter(([_, url]) => url)
+            .map(([platform]) => platform),
+        };
+      }
+
+      // Format the review links for customer
+      const linksMessage = availableLinks
+        .map(link => `${link.platform.charAt(0).toUpperCase() + link.platform.slice(1)}: ${link.url}`)
+        .join('\n');
+
+      return {
+        success: true,
+        channel: args.channel || 'chat',
+        customer_contact: args.customer_contact,
+        review_links: availableLinks,
+        message: `Here are the review links for ${company?.name || 'our business'}:\n${linksMessage}`,
+        platforms_sent: availableLinks.map(l => l.platform),
       };
     }
 
