@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CostCalculator } from '@/components/integrations/CostCalculator';
 import { RecommendedPlanCalculator } from '@/components/integrations/RecommendedPlanCalculator';
 import { ROICalculator } from '@/components/integrations/ROICalculator';
+import { QuickStartWizard } from '@/components/integrations/QuickStartWizard';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -31,6 +32,7 @@ import {
   EyeOff,
   AlertCircle,
   Loader2,
+  Rocket,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -111,6 +113,7 @@ export default function Integrations() {
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
+  const [showQuickStart, setShowQuickStart] = useState(false);
 
   // Fetch current integrations
   const { data: integrations, isLoading } = useQuery({
@@ -212,12 +215,28 @@ export default function Integrations() {
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Integrations</h1>
-          <p className="text-muted-foreground">
-            Connect external services to power your AI agent
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Integrations</h1>
+            <p className="text-muted-foreground">
+              Connect external services to power your AI agent
+            </p>
+          </div>
+          <Button onClick={() => setShowQuickStart(true)} className="gap-2">
+            <Rocket className="w-4 h-4" />
+            Quick Start Wizard
+          </Button>
         </div>
+
+        {/* Quick Start Wizard */}
+        <QuickStartWizard
+          open={showQuickStart}
+          onOpenChange={setShowQuickStart}
+          onComplete={() => queryClient.invalidateQueries({ queryKey: ['integrations'] })}
+          hasResend={!!integrations?.resend_api_key}
+          hasTwilio={!!(integrations?.twilio_account_sid && integrations?.twilio_auth_token && integrations?.twilio_phone_number)}
+          hasElevenLabs={!!integrations?.elevenlabs_api_key}
+        />
 
         {/* Integration Cards */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
