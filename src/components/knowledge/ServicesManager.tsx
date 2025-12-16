@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Separator } from '@/components/ui/separator';
 import {
   Select,
   SelectContent,
@@ -33,7 +34,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Clock, DollarSign, MapPin, Video, HelpCircle } from 'lucide-react';
+import { Plus, Pencil, Trash2, Clock, DollarSign, MapPin, Video, HelpCircle, Eye, Calculator } from 'lucide-react';
 
 interface Service {
   id: string;
@@ -58,15 +59,17 @@ const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
 };
 
 const SERVICE_TYPE_ICONS: Record<ServiceType, React.ReactNode> = {
-  in_person: <MapPin className="w-3 h-3" />,
-  virtual: <Video className="w-3 h-3" />,
-  other: <HelpCircle className="w-3 h-3" />,
+  in_person: <MapPin className="w-4 h-4" />,
+  virtual: <Video className="w-4 h-4" />,
+  other: <HelpCircle className="w-4 h-4" />,
 };
 
 export function ServicesManager() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [viewingService, setViewingService] = useState<Service | null>(null);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -191,6 +194,11 @@ export function ServicesManager() {
     setEditingService(null);
   };
 
+  const handleViewDetails = (service: Service) => {
+    setViewingService(service);
+    setViewDialogOpen(true);
+  };
+
   const handleSave = () => {
     if (!formData.name.trim()) {
       toast.error('Please enter a service name');
@@ -220,6 +228,17 @@ export function ServicesManager() {
     return prices.length > 0 ? prices.join(' + ') : '-';
   };
 
+  const calculateTotalEstimate = (service: Service) => {
+    let total = 0;
+    if (service.flat_fee) total += service.flat_fee;
+    if (service.hourly_rate && service.duration_minutes) {
+      total += (service.hourly_rate * service.duration_minutes) / 60;
+    }
+    if (service.parts_cost) total += service.parts_cost;
+    if (service.price) total += service.price;
+    return total;
+  };
+
   return (
     <Card className="border-border/50">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -246,7 +265,7 @@ export function ServicesManager() {
                 <TableHead>Duration</TableHead>
                 <TableHead>Pricing</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="w-24">Actions</TableHead>
+                <TableHead className="w-32">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -291,7 +310,10 @@ export function ServicesManager() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
-                      <Button size="icon" variant="ghost" onClick={() => handleOpenDialog(service)}>
+                      <Button size="icon" variant="ghost" onClick={() => handleViewDetails(service)} title="View Details">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button size="icon" variant="ghost" onClick={() => handleOpenDialog(service)} title="Edit">
                         <Pencil className="w-4 h-4" />
                       </Button>
                       <Button
@@ -299,6 +321,7 @@ export function ServicesManager() {
                         variant="ghost"
                         className="text-destructive hover:text-destructive"
                         onClick={() => deleteMutation.mutate(service.id)}
+                        title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -316,6 +339,139 @@ export function ServicesManager() {
         )}
       </CardContent>
 
+      {/* View Details Dialog */}
+      <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {viewingService?.name}
+              <Badge variant={viewingService?.is_active ? 'default' : 'secondary'} className="ml-2">
+                {viewingService?.is_active ? 'Active' : 'Inactive'}
+              </Badge>
+            </DialogTitle>
+            <DialogDescription>Service details and pricing breakdown</DialogDescription>
+          </DialogHeader>
+          
+          {viewingService && (
+            <div className="space-y-6 pt-4">
+              {/* Service Type */}
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                {SERVICE_TYPE_ICONS[(viewingService.service_type as ServiceType) || 'in_person']}
+                <div>
+                  <p className="text-sm text-muted-foreground">Service Type</p>
+                  <p className="font-medium">{getServiceTypeDisplay(viewingService)}</p>
+                </div>
+              </div>
+
+              {/* Description */}
+              {viewingService.description && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Description</p>
+                  <p className="text-sm">{viewingService.description}</p>
+                </div>
+              )}
+
+              {/* Duration */}
+              <div className="flex items-center gap-3">
+                <Clock className="w-5 h-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Duration</p>
+                  <p className="font-medium">
+                    {viewingService.duration_minutes ? `${viewingService.duration_minutes} minutes` : 'Not specified'}
+                  </p>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Pricing Breakdown */}
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <Calculator className="w-5 h-5 text-muted-foreground" />
+                  <p className="font-medium">Pricing Breakdown</p>
+                </div>
+                
+                <div className="space-y-3">
+                  {viewingService.flat_fee && (
+                    <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-muted/30">
+                      <span className="text-sm">Flat Fee</span>
+                      <span className="font-medium">${viewingService.flat_fee.toFixed(2)}</span>
+                    </div>
+                  )}
+                  
+                  {viewingService.hourly_rate && (
+                    <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-muted/30">
+                      <div>
+                        <span className="text-sm">Hourly Rate</span>
+                        {viewingService.duration_minutes && (
+                          <span className="text-xs text-muted-foreground ml-2">
+                            ({viewingService.duration_minutes} min = ${((viewingService.hourly_rate * viewingService.duration_minutes) / 60).toFixed(2)})
+                          </span>
+                        )}
+                      </div>
+                      <span className="font-medium">${viewingService.hourly_rate.toFixed(2)}/hr</span>
+                    </div>
+                  )}
+                  
+                  {viewingService.parts_cost && (
+                    <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-muted/30">
+                      <span className="text-sm">Parts Cost</span>
+                      <span className="font-medium">${viewingService.parts_cost.toFixed(2)}</span>
+                    </div>
+                  )}
+                  
+                  {viewingService.price && (
+                    <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-muted/30">
+                      <span className="text-sm">Base Price</span>
+                      <span className="font-medium">${viewingService.price.toFixed(2)}</span>
+                    </div>
+                  )}
+
+                  {!viewingService.flat_fee && !viewingService.hourly_rate && !viewingService.parts_cost && !viewingService.price && (
+                    <p className="text-sm text-muted-foreground text-center py-2">No pricing set</p>
+                  )}
+
+                  {/* Total Estimate */}
+                  {(viewingService.flat_fee || viewingService.hourly_rate || viewingService.parts_cost || viewingService.price) && (
+                    <>
+                      <Separator className="my-2" />
+                      <div className="flex justify-between items-center py-3 px-3 rounded-lg bg-primary/10">
+                        <span className="font-medium">Estimated Total</span>
+                        <span className="text-lg font-bold text-primary">
+                          ${calculateTotalEstimate(viewingService).toFixed(2)}
+                        </span>
+                      </div>
+                      {viewingService.hourly_rate && !viewingService.duration_minutes && (
+                        <p className="text-xs text-muted-foreground text-center">
+                          * Hourly rate not included in estimate (no duration set)
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <Button variant="outline" className="flex-1" onClick={() => setViewDialogOpen(false)}>
+                  Close
+                </Button>
+                <Button 
+                  className="flex-1" 
+                  onClick={() => {
+                    setViewDialogOpen(false);
+                    handleOpenDialog(viewingService);
+                  }}
+                >
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Edit Service
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Add/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
