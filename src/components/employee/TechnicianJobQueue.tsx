@@ -27,6 +27,7 @@ import {
   Package,
   Car,
   Timer,
+  MessageSquare,
 } from 'lucide-react';
 
 interface JobAssignment {
@@ -572,10 +573,15 @@ function JobCard({
         </div>
       )}
 
+      {/* Customer Notes from Triage/Booking Agent */}
       {appointment.notes && (
-        <p className="text-sm text-muted-foreground bg-muted/50 p-2 rounded mb-3">
-          <span className="font-medium">Customer Notes:</span> {appointment.notes}
-        </p>
+        <div className="bg-blue-500/5 border border-blue-500/20 p-3 rounded-lg mb-3">
+          <p className="text-xs font-medium text-blue-600 uppercase tracking-wide flex items-center gap-1 mb-1">
+            <MessageSquare className="w-3 h-3" />
+            Customer Notes
+          </p>
+          <p className="text-sm whitespace-pre-wrap">{appointment.notes}</p>
+        </div>
       )}
 
       {/* Notes & Parts Section - Show for active jobs */}
