@@ -235,12 +235,16 @@ export type Database = {
           bounce_alert_email: string | null
           bounce_alert_enabled: boolean | null
           bounce_alert_threshold: number | null
+          cost_alert_email: string | null
+          cost_alert_enabled: boolean | null
+          cost_alert_threshold: number | null
           created_at: string
           default_call_enabled: boolean
           default_email_enabled: boolean
           default_sms_enabled: boolean
           id: string
           last_bounce_alert_at: string | null
+          last_cost_alert_at: string | null
           last_monthly_digest_at: string | null
           last_quarterly_digest_at: string | null
           last_unsubscribe_alert_at: string | null
@@ -292,12 +296,16 @@ export type Database = {
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
+          cost_alert_email?: string | null
+          cost_alert_enabled?: boolean | null
+          cost_alert_threshold?: number | null
           created_at?: string
           default_call_enabled?: boolean
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
           id?: string
           last_bounce_alert_at?: string | null
+          last_cost_alert_at?: string | null
           last_monthly_digest_at?: string | null
           last_quarterly_digest_at?: string | null
           last_unsubscribe_alert_at?: string | null
@@ -349,12 +357,16 @@ export type Database = {
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
+          cost_alert_email?: string | null
+          cost_alert_enabled?: boolean | null
+          cost_alert_threshold?: number | null
           created_at?: string
           default_call_enabled?: boolean
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
           id?: string
           last_bounce_alert_at?: string | null
+          last_cost_alert_at?: string | null
           last_monthly_digest_at?: string | null
           last_quarterly_digest_at?: string | null
           last_unsubscribe_alert_at?: string | null
