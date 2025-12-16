@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useAIAgentOrchestrator, AgentInfo } from '@/hooks/useAIAgentOrchestrator';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AgentWorkflowMonitor } from '@/components/ai/agents/AgentWorkflowMonitor';
 import { BatchAgentActivation } from '@/components/ai/agents/BatchAgentActivation';
 import { JobStatusMonitor } from '@/components/ai/agents/JobStatusMonitor';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   Bot, 
   Users, 
@@ -23,7 +25,8 @@ import {
   Zap,
   Activity,
   Rocket,
-  ClipboardList
+  ClipboardList,
+  Lock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -47,9 +50,13 @@ const PHASE_LABELS: Record<number, string> = {
 
 export default function AIAgentsHub() {
   const { agents, groupedAgents, loading, toggleAgent, companyId, refetch } = useAIAgentOrchestrator();
+  const { userRole } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>('agents');
   const [activeCategory, setActiveCategory] = useState<string>('all');
+
+  // Employees can view but not manage agents
+  const canManageAgents = userRole === 'platform_admin' || userRole === 'company_admin';
 
   const enabledCount = agents.filter(a => a.is_enabled).length;
   const totalCount = agents.length;
@@ -129,15 +136,17 @@ export default function AIAgentsHub() {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 max-w-md">
+          <TabsList className={`grid w-full max-w-md ${canManageAgents ? 'grid-cols-3' : 'grid-cols-2'}`}>
             <TabsTrigger value="agents" className="flex items-center gap-2">
               <Bot className="h-4 w-4" />
               Agents
             </TabsTrigger>
-            <TabsTrigger value="activate" className="flex items-center gap-2">
-              <Rocket className="h-4 w-4" />
-              Quick Start
-            </TabsTrigger>
+            {canManageAgents && (
+              <TabsTrigger value="activate" className="flex items-center gap-2">
+                <Rocket className="h-4 w-4" />
+                Quick Start
+              </TabsTrigger>
+            )}
             <TabsTrigger value="monitor" className="flex items-center gap-2">
               <Activity className="h-4 w-4" />
               Monitor
@@ -190,6 +199,7 @@ export default function AIAgentsHub() {
                       agent={agent}
                       onToggle={(enabled) => toggleAgent(agent.type, enabled)}
                       onClick={() => handleAgentClick(agent.type)}
+                      canManage={canManageAgents}
                     />
                   ))}
                 </div>
@@ -254,11 +264,13 @@ export default function AIAgentsHub() {
 function AgentCard({ 
   agent, 
   onToggle, 
-  onClick 
+  onClick,
+  canManage = true
 }: { 
   agent: AgentInfo; 
   onToggle: (enabled: boolean) => void;
   onClick: () => void;
+  canManage?: boolean;
 }) {
   const categoryInfo = CATEGORY_INFO[agent.category];
   const Icon = categoryInfo?.icon || Bot;
@@ -278,11 +290,24 @@ function AgentCard({
               </CardDescription>
             </div>
           </div>
-          <Switch 
-            checked={agent.is_enabled} 
-            onCheckedChange={onToggle}
-            onClick={(e) => e.stopPropagation()}
-          />
+          {canManage ? (
+            <Switch 
+              checked={agent.is_enabled} 
+              onCheckedChange={onToggle}
+              onClick={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <Lock className="h-4 w-4" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Only admins can toggle agents</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
       </CardHeader>
       <CardContent>
