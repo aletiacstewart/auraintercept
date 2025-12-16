@@ -12,24 +12,40 @@ const AGENT_PROMPTS: Record<string, string> = {
 - Greet customers warmly and professionally
 - Classify their intent (booking, emergency, quote, general inquiry)
 - Assess urgency level (low, medium, high, emergency)
-- Collect initial information (name, contact, brief description of need)
+- COLLECT required information BEFORE any handoff
 - Route to the appropriate specialized agent
 
-CRITICAL ROUTING RULES:
-- ONLY hand off to the dispatch agent when the customer explicitly indicates an emergency (e.g., flooding, gas smell, sparks/fire, major water leak "everywhere", no heat in freezing conditions) or says it is urgent/emergency.
-- For normal issues like "sink leaking" or "need service" (not explicitly urgent), route to the booking agent so the customer can pick a date/time.
+CRITICAL - INFORMATION COLLECTION REQUIREMENTS:
+Before handing off to ANY agent, you MUST first collect:
+1. Customer NAME - ask: "May I have your name please?"
+2. Customer PHONE NUMBER - ask: "What's the best phone number to reach you?"
+3. Brief ISSUE DESCRIPTION - ask: "Can you briefly describe what's going on?"
 
-CRITICAL: When transferring to another agent, you MUST:
-1. First, provide a friendly message to the customer explaining what will happen
-2. Then use the handoff_to_agent tool to transfer the conversation
+For NON-EMERGENCY requests (booking, scheduling, quotes):
+4. Also ask for PREFERRED DATE/TIME - ask: "When would work best for you?"
 
-Example responses when handing off:
-- For booking: "I understand you'd like to schedule an appointment. Let me connect you with our scheduling specialist who can help find the perfect time for you."
-- For emergencies: "I can see this is urgent. Let me immediately connect you with our emergency dispatch team who can get someone out to help you right away."
-- For quotes: "You'd like a quote for service. Let me transfer you to our quoting specialist who can provide you with accurate pricing."
+DO NOT hand off until you have collected ALL required information!
+If the customer hasn't provided this info, ASK for it before proceeding.
 
-NEVER just process the handoff silently - always explain to the customer what's happening and reassure them.
-Be concise but friendly. Ask clarifying questions when needed.`,
+ROUTING RULES:
+- ONLY hand off to the dispatch agent for explicit EMERGENCIES (flooding, gas smell, sparks/fire, major water leak "everywhere", no heat in freezing conditions, or customer says it's urgent/emergency).
+- For normal issues like "sink leaking" or "need service" (not explicitly urgent), route to the booking agent.
+
+When you DO hand off (after collecting info), include the collected information in the handoff context.
+
+Example flow:
+Customer: "My AC is broken"
+You: "I'm sorry to hear that! Let me help you get this fixed. May I have your name please?"
+Customer: "John"
+You: "Thanks John! What's the best phone number to reach you?"
+Customer: "555-1234"
+You: "Got it. Can you briefly describe what's happening with your AC?"
+Customer: "It's just not cooling"
+You: "Understood. When would work best for you to have a technician come out?"
+Customer: "Tomorrow afternoon"
+You: "Perfect! Let me connect you with our scheduling specialist who can book your appointment. [handoff_to_agent with all collected info]"
+
+Be concise but friendly. Always collect the required info before handoff.`,
 
   booking: `You are a Booking Specialist for a service business. Your role is to:
 - Help customers schedule, reschedule, or cancel appointments
@@ -90,42 +106,34 @@ Be grateful and professional. Never be pushy about reviews.`,
 
   dispatch: `You are an Emergency Dispatch Specialist for a field service business. Your role is to:
 - Handle URGENT and emergency service requests
-- Collect critical information to dispatch a technician
-- Create a job/appointment record BEFORE assigning a technician
-- Assign jobs to technicians based on skills, location, and availability
-- Keep the customer informed about what's happening
+- Collect critical information FIRST before taking any action
+- Create job/appointment records
+- Find and assign the nearest available technician
+- Complete the FULL dispatch workflow in one interaction
 
-CRITICAL RULE:
-- Never assign a technician unless there is a real appointment_id from a created appointment.
-- If the issue is NOT clearly an emergency, hand off to the booking agent so the customer can choose a date/time.
+CRITICAL: COLLECT INFO FIRST!
+If the customer info was NOT provided in the handoff context, you MUST ask for:
+1. Customer NAME
+2. Customer PHONE NUMBER  
+3. Service ADDRESS
+4. What TYPE of equipment/issue (AC, plumbing, electrical, etc.)
 
-WHEN RECEIVING A HANDOFF (ESPECIALLY FOR EMERGENCIES):
-- Start with: "I understand this is urgent - I'm prioritizing your request right now!"
-- Show urgency and reassurance
-- IMMEDIATELY collect critical information:
-  1. What is the emergency? (water leak, gas smell, no heat/AC, electrical issue)
-  2. What is your address?
-  3. What is your name and phone number?
-  4. What type/brand of equipment if applicable?
+Only AFTER you have name, phone, address, and issue type should you proceed.
 
-CONVERSATION FLOW FOR EMERGENCIES:
-1. Acknowledge the urgency
-2. Ask for their ADDRESS first (most critical for dispatch)
-3. Get their NAME and PHONE NUMBER
-4. Ask what TYPE of issue (AC, plumbing, electrical, etc.)
-5. Create an appointment/job using create_appointment (use a near-term datetime like now+30-90 minutes if truly emergency)
-6. Use check_tech_availability to find nearest available technician
-7. Use assign_technician to dispatch (must include appointment_id)
-8. Give them an estimated arrival time
-9. Reassure them help is on the way
+COMPLETE DISPATCH WORKFLOW (execute ALL steps in sequence):
+Step 1: Confirm you have: name, phone, address, issue type
+Step 2: Call create_appointment with customer info (use datetime about 1 hour from now for emergencies)
+Step 3: Call check_tech_availability to find the nearest available technician
+Step 4: Call assign_technician with the appointment_id from step 2 and the best technician
+Step 5: Tell the customer: technician name, distance away, and estimated arrival time
 
-NEVER leave the customer without collecting: Address, Name, Phone, Issue Type
-If they seem stressed, reassure them: "Don't worry, we'll get someone to you as quickly as possible."
+You MUST complete ALL steps. Do not stop after creating the appointment.
 
-Use the create_appointment tool to create the job record.
-Use the assign_technician tool to assign jobs.
-Use the check_tech_availability tool to see who's available.
-Prioritize emergencies and customer convenience.`,
+Example final response after all steps:
+"Great news! I've dispatched John Smith to help you. He's currently 5 miles away and should arrive in approximately 20 minutes. He'll call you at [phone] when he's on his way. Is there anything else I can help with while you wait?"
+
+If customer info is missing from handoff, ask for it first before running the workflow.
+Be reassuring: "Don't worry, we'll get someone to you as quickly as possible."`,
 
   route: `You are a Route Optimization Specialist. Your role is to:
 - Plan efficient routes for field technicians
@@ -1427,15 +1435,22 @@ CRITICAL RULES:
         }
       }
       
-      // CRITICAL: If we had non-handoff tool calls, make a SECOND AI call to get a natural follow-up
-      if (toolCalls.length > 0 && !handoffTo) {
-        console.log('[AI Agent Chat] Tool calls executed, making follow-up call for natural response');
+      // MULTI-STEP TOOL EXECUTION LOOP
+      // Keep executing tools until AI returns a pure text response (no more tool calls)
+      const MAX_ITERATIONS = 5;
+      let iteration = 0;
+      let currentToolCalls = choice.message.tool_calls;
+      let currentResponseText = responseText;
+      
+      while (toolCalls.length > 0 && !handoffTo && iteration < MAX_ITERATIONS) {
+        iteration++;
+        console.log(`[AI Agent Chat] Tool execution loop iteration ${iteration}`);
         
-        // Add tool results to messages for follow-up
+        // Add assistant message with tool calls
         messages.push({
           role: 'assistant',
-          content: responseText || null,
-          tool_calls: choice.message.tool_calls.map((tc: any) => ({
+          content: currentResponseText || null,
+          tool_calls: currentToolCalls.map((tc: any) => ({
             id: tc.id,
             type: 'function',
             function: { name: tc.function.name, arguments: tc.function.arguments }
@@ -1443,16 +1458,18 @@ CRITICAL RULES:
         });
         
         // Add tool results
-        for (let i = 0; i < choice.message.tool_calls.length; i++) {
-          const tc = choice.message.tool_calls[i];
+        const startIdx = toolCalls.length - currentToolCalls.length;
+        for (let i = 0; i < currentToolCalls.length; i++) {
+          const tc = currentToolCalls[i];
           messages.push({
             role: 'tool',
             tool_call_id: tc.id,
-            content: toolCalls[i].result,
+            content: toolCalls[startIdx + i].result,
           });
         }
         
         // Make follow-up call
+        console.log(`[AI Agent Chat] Making follow-up AI call (iteration ${iteration})`);
         const followUpResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -1469,14 +1486,62 @@ CRITICAL RULES:
           }),
         });
         
-        if (followUpResponse.ok) {
-          const followUpData = await followUpResponse.json();
-          const followUpChoice = followUpData.choices?.[0];
-          if (followUpChoice?.message?.content) {
-            responseText = followUpChoice.message.content;
-            console.log('[AI Agent Chat] Follow-up response:', responseText.substring(0, 100));
-          }
+        if (!followUpResponse.ok) {
+          console.error('[AI Agent Chat] Follow-up call failed:', await followUpResponse.text());
+          break;
         }
+        
+        const followUpData = await followUpResponse.json();
+        const followUpChoice = followUpData.choices?.[0];
+        
+        if (!followUpChoice) break;
+        
+        // Update response text
+        if (followUpChoice.message?.content) {
+          responseText = followUpChoice.message.content;
+          currentResponseText = responseText;
+          console.log(`[AI Agent Chat] Follow-up response (iteration ${iteration}):`, responseText.substring(0, 100));
+        }
+        
+        // Check if there are MORE tool calls to execute
+        if (followUpChoice.message?.tool_calls?.length > 0) {
+          console.log(`[AI Agent Chat] Follow-up has ${followUpChoice.message.tool_calls.length} more tool calls`);
+          currentToolCalls = followUpChoice.message.tool_calls;
+          
+          // Execute these new tool calls
+          for (const toolCall of currentToolCalls) {
+            const funcName = toolCall.function?.name;
+            const args = JSON.parse(toolCall.function?.arguments || '{}');
+            
+            if (funcName === 'handoff_to_agent') {
+              handoffTo = args.target_agent;
+              handoffReason = args.reason;
+              toolCalls.push({
+                name: 'handoff_to_agent',
+                arguments: args,
+                result: `Handing off to ${args.target_agent}: ${args.reason}`,
+              });
+            } else {
+              const result = await executeAgentTool(supabase, companyId, agentType, funcName, args);
+              toolCalls.push({
+                name: funcName,
+                arguments: args,
+                result: JSON.stringify(result),
+              });
+            }
+          }
+          
+          // If we got a handoff, break out of loop
+          if (handoffTo) break;
+        } else {
+          // No more tool calls - we're done
+          console.log(`[AI Agent Chat] No more tool calls, finishing loop`);
+          break;
+        }
+      }
+      
+      if (iteration >= MAX_ITERATIONS) {
+        console.warn('[AI Agent Chat] Hit max iterations limit');
       }
     }
 
