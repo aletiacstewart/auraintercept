@@ -89,3 +89,6 @@ verify_jwt = true
 
 [functions.tts]
 verify_jwt = true
+
+[functions.ai-agent-chat]
+verify_jwt = true
