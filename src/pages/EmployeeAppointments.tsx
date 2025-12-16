@@ -1,5 +1,8 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { AppointmentCalendar } from '@/components/employee/AppointmentCalendar';
+import { TechnicianJobQueue } from '@/components/employee/TechnicianJobQueue';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Calendar, ClipboardList } from 'lucide-react';
 
 export default function EmployeeAppointments() {
   return (
@@ -8,11 +11,28 @@ export default function EmployeeAppointments() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">My Appointments</h1>
           <p className="text-muted-foreground">
-            View and manage your scheduled appointments
+            View and manage your scheduled appointments and job assignments
           </p>
         </div>
 
-        <AppointmentCalendar />
+        <Tabs defaultValue="jobs" className="w-full">
+          <TabsList>
+            <TabsTrigger value="jobs" className="flex items-center gap-2">
+              <ClipboardList className="h-4 w-4" />
+              Job Queue
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Calendar
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="jobs" className="mt-4">
+            <TechnicianJobQueue />
+          </TabsContent>
+          <TabsContent value="calendar" className="mt-4">
+            <AppointmentCalendar />
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   );
