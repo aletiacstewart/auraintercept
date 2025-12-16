@@ -36,7 +36,7 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
-import { CostCalculatorHelp, TTSComparisonTable, ExampleBreakdown } from './CostCalculatorHelp';
+import { CostCalculatorHelp, ExampleBreakdown } from './CostCalculatorHelp';
 
 // Pricing constants (approximate)
 const PRICING = {
@@ -674,14 +674,6 @@ export function CostCalculator() {
               }}
               channels={channels}
             />
-
-            {/* TTS Provider Comparison (only show if voice is enabled) */}
-            {channels.voice && (
-              <TTSComparisonTable 
-                totalReminders={costs.totalReminders}
-                ttsComparison={costs.ttsComparison}
-              />
-            )}
           </TabsContent>
 
           {/* Comparison Tab */}
