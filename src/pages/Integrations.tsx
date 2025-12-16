@@ -354,7 +354,39 @@ export default function Integrations() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {/* Stripe Pricing */}
+              <div className="space-y-3 p-4 rounded-lg border border-purple-200 bg-purple-50/50 dark:border-purple-900/50 dark:bg-purple-950/20">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center">
+                    <CreditCard className="w-4 h-4 text-white" />
+                  </div>
+                  <h4 className="font-semibold">Stripe</h4>
+                </div>
+                <div className="space-y-2">
+                  <div className="p-2 rounded bg-background border">
+                    <p className="text-xs font-medium text-green-600 dark:text-green-400">No Monthly Fee</p>
+                    <p className="text-sm text-muted-foreground">Pay only when you get paid</p>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <p className="font-medium">Transaction Fees:</p>
+                    <ul className="text-muted-foreground space-y-0.5 text-xs">
+                      <li>• Cards: 2.9% + $0.30/txn</li>
+                      <li>• ACH: 0.8% (max $5)</li>
+                      <li>• Invoicing: +0.4%</li>
+                      <li>• Intl cards: +1.5%</li>
+                      <li>• Currency conv: +1%</li>
+                    </ul>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" className="w-full" asChild>
+                  <a href="https://stripe.com/pricing" target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="w-3 h-3 mr-1" />
+                    View Full Pricing
+                  </a>
+                </Button>
+              </div>
+
               {/* Twilio Pricing */}
               <div className="space-y-3 p-4 rounded-lg border border-red-200 bg-red-50/50 dark:border-red-900/50 dark:bg-red-950/20">
                 <div className="flex items-center gap-2">
@@ -371,7 +403,7 @@ export default function Integrations() {
                   <div className="space-y-1 text-sm">
                     <p className="font-medium">Pay-as-you-go Pricing:</p>
                     <ul className="text-muted-foreground space-y-0.5 text-xs">
-                      <li>• Phone numbers: ~$1.15/month</li>
+                      <li>• Phone numbers: ~$1.15/mo</li>
                       <li>• Outbound calls: ~$0.014/min</li>
                       <li>• Inbound calls: ~$0.0085/min</li>
                       <li>• SMS outbound: ~$0.0079/msg</li>
@@ -454,8 +486,8 @@ export default function Integrations() {
 
             <div className="mt-4 p-3 rounded-lg bg-muted/50 border border-dashed">
               <p className="text-sm text-muted-foreground">
-                <strong className="text-foreground">💡 Tip:</strong> All three services offer generous free tiers perfect for small businesses. 
-                Twilio's trial credit, ElevenLabs' 10K characters, and Resend's 3K emails/month should cover most starter needs.
+                <strong className="text-foreground">💡 Tip:</strong> Stripe has no monthly fees—you only pay per transaction. 
+                Twilio, ElevenLabs, and Resend all offer generous free tiers perfect for getting started. 
                 Upgrade only when you exceed these limits.
               </p>
             </div>
