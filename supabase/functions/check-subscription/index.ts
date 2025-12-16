@@ -79,9 +79,23 @@ serve(async (req) => {
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      productId = subscription.items.data[0].price.product as string;
-      tier = PRODUCT_TO_TIER[productId] || null;
+      logStep("Subscription data", { 
+        subscriptionId: subscription.id,
+        currentPeriodEnd: subscription.current_period_end,
+        itemsCount: subscription.items?.data?.length,
+      });
+      
+      // Safely handle the subscription end date
+      if (subscription.current_period_end) {
+        subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+      }
+      
+      // Safely get product ID from subscription items
+      if (subscription.items?.data?.[0]?.price?.product) {
+        productId = subscription.items.data[0].price.product as string;
+        tier = PRODUCT_TO_TIER[productId] || null;
+      }
+      
       logStep("Active subscription found", { 
         subscriptionId: subscription.id, 
         endDate: subscriptionEnd,
