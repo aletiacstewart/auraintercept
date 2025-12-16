@@ -121,14 +121,17 @@ const AGENT_DEFINITIONS: Record<string, {
       'Sentiment analysis'
     ],
     configFields: [
-      { key: 'review_platforms', label: 'Review Platforms', type: 'select', options: [
+      { key: 'google_review_url', label: 'Google Business Profile Review URL', type: 'text', placeholder: 'https://g.page/r/YOUR-BUSINESS/review', description: 'Direct link to your Google Business Profile review page' },
+      { key: 'facebook_review_url', label: 'Facebook Review URL', type: 'text', placeholder: 'https://facebook.com/yourpage/reviews', description: 'Direct link to your Facebook page reviews' },
+      { key: 'yelp_review_url', label: 'Yelp Review URL', type: 'text', placeholder: 'https://yelp.com/biz/your-business', description: 'Direct link to your Yelp business page' },
+      { key: 'review_platforms', label: 'Primary Review Platform', type: 'select', options: [
         { value: 'google', label: 'Google' },
         { value: 'yelp', label: 'Yelp' },
         { value: 'facebook', label: 'Facebook' }
-      ]},
-      { key: 'review_request_delay', label: 'Request Delay (days)', type: 'number', min: 0, max: 14, defaultValue: 1 },
-      { key: 'min_rating_for_request', label: 'Min Rating to Request Review', type: 'slider', min: 1, max: 5, step: 1, defaultValue: 4 },
-      { key: 'auto_respond_reviews', label: 'Auto-Respond to Reviews', type: 'switch', defaultValue: false }
+      ], description: 'Default platform to request reviews on' },
+      { key: 'review_request_delay', label: 'Request Delay (days)', type: 'number', min: 0, max: 14, defaultValue: 1, description: 'Days after service to send review request' },
+      { key: 'min_rating_for_request', label: 'Min Rating to Request Review', type: 'slider', min: 1, max: 5, step: 1, defaultValue: 4, description: 'Only request reviews from customers rating this or higher' },
+      { key: 'auto_respond_reviews', label: 'Auto-Respond to Reviews', type: 'switch', defaultValue: false, description: 'Automatically generate responses to customer reviews' }
     ]
   },
   dispatch: {
