@@ -17,7 +17,7 @@ export const TIER_FEATURES: Record<SubscriptionTier, string[]> = {
 export type Feature = string;
 
 export const useSubscription = () => {
-  const { subscribed, subscriptionTier, subscriptionEnd, checkSubscription } = useAuth();
+  const { subscribed, subscriptionTier, subscriptionEnd, inTrial, trialEndsAt, checkSubscription } = useAuth();
 
   const hasFeature = (feature: Feature): boolean => {
     const tier = (subscriptionTier === 'enterprise' ? 'enterprise' : 'free') as SubscriptionTier;
@@ -32,10 +32,18 @@ export const useSubscription = () => {
     return currentTierIndex >= requiredTierIndex;
   };
 
+  // Calculate trial days remaining
+  const trialDaysRemaining = trialEndsAt 
+    ? Math.max(0, Math.ceil((new Date(trialEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : 0;
+
   return {
     subscribed,
     subscriptionTier: (subscriptionTier === 'enterprise' ? 'enterprise' : 'free') as SubscriptionTier,
     subscriptionEnd,
+    inTrial,
+    trialEndsAt,
+    trialDaysRemaining,
     hasFeature,
     isAtLeastTier,
     refreshSubscription: checkSubscription,

@@ -7,6 +7,7 @@ import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle } from 'luc
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
+import { TrialBanner } from '@/components/dashboard/TrialBanner';
 
 export function CompanyAdminDashboard() {
   const { companyId } = useAuth();
@@ -54,6 +55,9 @@ export function CompanyAdminDashboard() {
 
   return (
     <div className="space-y-8 animate-fade-in">
+      {/* Trial Banner */}
+      <TrialBanner />
+
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>

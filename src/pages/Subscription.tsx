@@ -7,8 +7,9 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { Check, Crown, ExternalLink, Loader2 } from 'lucide-react';
+import { Check, Crown, ExternalLink, Loader2, Clock, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SubscriptionStatus {
@@ -16,6 +17,8 @@ interface SubscriptionStatus {
   tier: string | null;
   product_id: string | null;
   subscription_end: string | null;
+  in_trial?: boolean;
+  trial_ends_at?: string | null;
 }
 
 const ENTERPRISE_FEATURES = [
@@ -30,10 +33,16 @@ const ENTERPRISE_FEATURES = [
 ];
 
 export default function Subscription() {
-  const { user } = useAuth();
+  const { user, inTrial, trialEndsAt } = useAuth();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
+
+  // Calculate trial days remaining
+  const trialDaysRemaining = trialEndsAt 
+    ? Math.max(0, Math.ceil((new Date(trialEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : 0;
+  const trialProgressPercent = Math.min(((30 - trialDaysRemaining) / 30) * 100, 100);
 
   // Check for success/canceled params
   useEffect(() => {
@@ -122,7 +131,8 @@ export default function Subscription() {
     }
   };
 
-  const isSubscribed = subscription?.subscribed;
+  const isSubscribed = subscription?.subscribed && !subscription?.in_trial;
+  const isInTrial = subscription?.in_trial || inTrial;
 
   return (
     <DashboardLayout>
@@ -131,7 +141,7 @@ export default function Subscription() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Subscription</h1>
             <p className="text-muted-foreground">
-              Unlock full access to all platform features
+              {isInTrial ? 'Subscribe to continue after your trial' : 'Unlock full access to all platform features'}
             </p>
           </div>
           {isSubscribed && (
@@ -150,6 +160,44 @@ export default function Subscription() {
           )}
         </div>
 
+        {/* Trial Status Banner */}
+        {isInTrial && (
+          <Card className="border-primary/30 bg-primary/5">
+            <CardContent className="py-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/20 text-primary">
+                      Free Trial
+                    </span>
+                    {trialDaysRemaining <= 3 && (
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-600">
+                        Ending Soon
+                      </span>
+                    )}
+                  </div>
+                  <p className="font-medium">
+                    {trialDaysRemaining} day{trialDaysRemaining !== 1 ? 's' : ''} remaining in your free trial
+                  </p>
+                  <div className="mt-2 space-y-1">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        <span>Trial ends {trialEndsAt ? new Date(trialEndsAt).toLocaleDateString() : ''}</span>
+                      </div>
+                      <span>{Math.round(trialProgressPercent)}% used</span>
+                    </div>
+                    <Progress value={trialProgressPercent} className="h-2" />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Current Status */}
         {isLoading ? (
           <Skeleton className="h-20 w-full" />
@@ -164,7 +212,7 @@ export default function Subscription() {
                   <p className="font-medium">
                     You're on the <span className="text-amber-600 font-semibold">Enterprise</span> plan
                   </p>
-                  {subscription.subscription_end && (
+                  {subscription?.subscription_end && (
                     <p className="text-sm text-muted-foreground">
                       Renews on {new Date(subscription.subscription_end).toLocaleDateString()}
                     </p>
@@ -181,11 +229,17 @@ export default function Subscription() {
         {/* Enterprise Plan Card */}
         <Card className={cn(
           "relative overflow-hidden transition-all max-w-2xl mx-auto",
-          isSubscribed && "border-amber-500 ring-2 ring-amber-500/20"
+          isSubscribed && "border-amber-500 ring-2 ring-amber-500/20",
+          isInTrial && "border-primary ring-2 ring-primary/20"
         )}>
           {isSubscribed && (
             <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs font-medium px-3 py-1 rounded-bl-lg">
               Your Plan
+            </div>
+          )}
+          {isInTrial && !isSubscribed && (
+            <div className="absolute top-0 right-0 bg-primary text-white text-xs font-medium px-3 py-1 rounded-bl-lg">
+              Trial Active
             </div>
           )}
           
@@ -224,24 +278,31 @@ export default function Subscription() {
                   Current Plan
                 </Button>
               ) : (
-                <Button 
-                  className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white" 
-                  size="lg"
-                  onClick={handleSubscribe}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Loading...
-                    </>
-                  ) : (
-                    <>
-                      <Crown className="w-4 h-4 mr-2" />
-                      Subscribe Now
-                    </>
+                <>
+                  <Button 
+                    className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white" 
+                    size="lg"
+                    onClick={handleSubscribe}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      <>
+                        <Crown className="w-4 h-4 mr-2" />
+                        {isInTrial ? 'Subscribe to Continue' : 'Subscribe Now'}
+                      </>
+                    )}
+                  </Button>
+                  {isInTrial && (
+                    <p className="text-xs text-center text-muted-foreground mt-2">
+                      Subscribe now to ensure uninterrupted access when your trial ends
+                    </p>
                   )}
-                </Button>
+                </>
               )}
             </div>
           </CardContent>
@@ -254,15 +315,27 @@ export default function Subscription() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-medium">What's included in the subscription?</h4>
+              <h4 className="font-medium">What happens when my trial ends?</h4>
               <p className="text-sm text-muted-foreground">
-                Everything! Unlimited appointments, all reminder channels (email, SMS, voice), AI agent, chat widget, white-label branding, and priority support.
+                When your 30-day trial ends, you'll need to subscribe to continue using premium features like AI voice calling, SMS reminders, and the chat widget. Your data will be preserved.
               </p>
             </div>
             <div>
-              <h4 className="font-medium">What payment methods do you accept?</h4>
+              <h4 className="font-medium">Can I subscribe during my trial?</h4>
               <p className="text-sm text-muted-foreground">
-                We accept all major credit cards through Stripe, including Visa, Mastercard, and American Express.
+                Yes! You can subscribe at any time. Your billing will start immediately, and you won't be charged again until your subscription renews.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-medium">Will I be charged during the trial?</h4>
+              <p className="text-sm text-muted-foreground">
+                No! The 30-day trial is completely free with no credit card required. You only pay when you choose to subscribe.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-medium">What's included in the subscription?</h4>
+              <p className="text-sm text-muted-foreground">
+                Everything! Unlimited appointments, all reminder channels (email, SMS, voice), AI agent, chat widget, white-label branding, and priority support.
               </p>
             </div>
             <div>

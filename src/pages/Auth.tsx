@@ -227,7 +227,10 @@ export default function Auth() {
         return;
       }
 
-      toast({ title: 'Welcome!', description: 'Your company has been registered!' });
+      toast({ 
+        title: 'Welcome! 🎉', 
+        description: 'Your 30-day free trial has started. Enjoy full access to all features!' 
+      });
       navigate('/dashboard');
     }
 
@@ -331,7 +334,7 @@ export default function Auth() {
       default:
         return {
           title: 'Company Portal',
-          description: 'Subscribe to get your AI Agent',
+          description: 'Start your 30-day free trial',
           icon: Building2,
           showCompanyField: true,
           showCodeField: false,
@@ -471,8 +474,13 @@ export default function Auth() {
                     />
                   </div>
                   <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
-                    {isLoading ? 'Creating account...' : 'Create Account'}
+                    {isLoading ? 'Creating account...' : mode === 'company' ? 'Start Free Trial' : 'Create Account'}
                   </Button>
+                  {mode === 'company' && (
+                    <p className="text-xs text-center text-muted-foreground mt-2">
+                      30 days free • No credit card required • Cancel anytime
+                    </p>
+                  )}
                 </form>
               </TabsContent>
             </Tabs>
