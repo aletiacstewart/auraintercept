@@ -70,6 +70,7 @@ serve(async (req) => {
       customer: customerId,
       status: "active",
       limit: 1,
+      expand: ["data.items.data.price.product"],
     });
 
     const hasActiveSub = subscriptions.data.length > 0;
@@ -79,21 +80,32 @@ serve(async (req) => {
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
-      logStep("Subscription data", { 
+      logStep("Subscription raw data", { 
         subscriptionId: subscription.id,
         currentPeriodEnd: subscription.current_period_end,
         itemsCount: subscription.items?.data?.length,
+        firstItemPrice: subscription.items?.data?.[0]?.price,
       });
       
       // Safely handle the subscription end date
-      if (subscription.current_period_end) {
-        subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+      if (subscription.current_period_end && typeof subscription.current_period_end === 'number') {
+        try {
+          subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+        } catch (e) {
+          logStep("Error parsing subscription end date", { error: String(e) });
+        }
       }
       
       // Safely get product ID from subscription items
-      if (subscription.items?.data?.[0]?.price?.product) {
-        productId = subscription.items.data[0].price.product as string;
-        tier = PRODUCT_TO_TIER[productId] || null;
+      const priceData = subscription.items?.data?.[0]?.price;
+      if (priceData) {
+        // Product can be a string ID or an expanded object
+        if (typeof priceData.product === 'string') {
+          productId = priceData.product;
+        } else if (priceData.product && typeof priceData.product === 'object' && 'id' in priceData.product) {
+          productId = priceData.product.id;
+        }
+        tier = productId ? (PRODUCT_TO_TIER[productId] || null) : null;
       }
       
       logStep("Active subscription found", { 
