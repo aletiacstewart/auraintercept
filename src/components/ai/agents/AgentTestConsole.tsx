@@ -187,7 +187,22 @@ export function AgentTestConsole({
 
       if (error) throw error;
 
-      const responseContent = data.response || 'Agent processed the request successfully.';
+      // Generate a customer-friendly message if none provided
+      let responseContent = data.response;
+      if (!responseContent?.trim() && data.handoff_to) {
+        // Generate fallback based on handoff target
+        const handoffMessages: Record<string, string> = {
+          booking: "I understand you'd like to schedule an appointment. Let me connect you with our scheduling specialist who can help find the perfect time for you.",
+          dispatch: "I can see this needs immediate attention. Let me connect you with our dispatch team who can get someone out to help you right away.",
+          quoting: "You'd like a quote for service. Let me transfer you to our quoting specialist who can provide you with accurate pricing.",
+          followup: "Let me connect you with our follow-up team to ensure everything is taken care of.",
+          review: "Thank you for your feedback! Let me connect you with our team to help with your review.",
+        };
+        responseContent = handoffMessages[data.handoff_to] || 
+          `I'll connect you with our ${data.handoff_to} specialist who can better assist you with this request.`;
+      }
+      
+      responseContent = responseContent || "I'm processing your request. How else can I help you?";
       
       // Update conversation history with assistant response
       setConversationHistory([
