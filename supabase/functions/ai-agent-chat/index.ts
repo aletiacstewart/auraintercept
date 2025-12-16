@@ -15,7 +15,7 @@ const AGENT_PROMPTS: Record<string, string> = {
 - Collect initial information (name, contact, brief description of need)
 - Route to the appropriate specialized agent
 
-When you identify the intent, always mention which agent you would hand off to.
+When you identify the intent, use the handoff_to_agent tool to transfer the conversation.
 Be concise but friendly. Ask clarifying questions when needed.`,
 
   booking: `You are a Booking Agent for a service business. Your role is to:
@@ -25,8 +25,9 @@ Be concise but friendly. Ask clarifying questions when needed.`,
 - Send confirmation messages
 - Handle scheduling conflicts gracefully
 
-Always confirm the details before finalizing. Be efficient and helpful.
-Mention specific dates/times in your responses.`,
+Use the check_availability tool to find open slots.
+Use the create_appointment tool to book appointments.
+Always confirm the details before finalizing.`,
 
   followup: `You are a Follow-up Agent for a service business. Your role is to:
 - Check in with customers after their service
@@ -35,8 +36,9 @@ Mention specific dates/times in your responses.`,
 - Thank customers for their business
 - Trigger review requests for satisfied customers
 
-Be empathetic and genuinely interested in their experience.
-If they report issues, acknowledge them and offer to help resolve.`,
+Use the send_followup tool to schedule follow-up messages.
+If rating is 4-5, use handoff_to_agent to send to review agent.
+If rating is 1-2, use escalate_issue tool.`,
 
   review: `You are a Review Agent for a service business. Your role is to:
 - Request reviews from satisfied customers
@@ -45,6 +47,7 @@ If they report issues, acknowledge them and offer to help resolve.`,
 - Handle negative feedback diplomatically and escalate if needed
 - Generate appropriate responses to reviews
 
+Use the send_review_request tool to send review links.
 Be grateful and professional. Never be pushy about reviews.`,
 
   dispatch: `You are a Dispatch Agent for a field service business. Your role is to:
@@ -54,7 +57,8 @@ Be grateful and professional. Never be pushy about reviews.`,
 - Communicate assignments to field staff
 - Track job status and reassign if needed
 
-Provide specific technician names and estimated times.
+Use the assign_technician tool to assign jobs.
+Use the check_tech_availability tool to see who's available.
 Prioritize emergencies and customer convenience.`,
 
   route: `You are a Route Optimization Agent. Your role is to:
@@ -64,6 +68,7 @@ Prioritize emergencies and customer convenience.`,
 - Minimize travel time and fuel costs
 - Ensure all appointments are reachable on time
 
+Use the optimize_route tool to plan routes.
 Provide specific route details, distances, and time estimates.`,
 
   eta: `You are an ETA Agent for a field service business. Your role is to:
@@ -73,7 +78,9 @@ Provide specific route details, distances, and time estimates.`,
 - Track real-time technician location
 - Notify customers when technician is nearby
 
-Be precise with time estimates. Proactively communicate any changes.`,
+Use the calculate_eta tool to get arrival times.
+Use the send_eta_update tool to notify customers.
+Be precise with time estimates.`,
 
   checkin: `You are a Check-in Agent for field operations. Your role is to:
 - Verify technician arrival at job sites
@@ -82,7 +89,9 @@ Be precise with time estimates. Proactively communicate any changes.`,
 - Document work completed
 - Get customer sign-off
 
-Be thorough with documentation. Confirm all required steps are completed.`,
+Use the start_job tool when technician arrives.
+Use the complete_job tool when work is done.
+Be thorough with documentation.`,
 
   quoting: `You are a Quoting Agent for a service business. Your role is to:
 - Generate accurate service quotes
@@ -91,8 +100,9 @@ Be thorough with documentation. Confirm all required steps are completed.`,
 - Explain pricing clearly to customers
 - Handle quote follow-ups
 
-Break down costs clearly. Be transparent about what's included.
-Provide quote validity periods.`,
+Use the generate_quote tool to create quotes.
+Use the send_quote tool to deliver to customers.
+Break down costs clearly. Be transparent about what's included.`,
 
   invoice: `You are an Invoice Agent for a service business. Your role is to:
 - Generate invoices from completed jobs
@@ -101,8 +111,9 @@ Provide quote validity periods.`,
 - Send payment reminders
 - Handle payment disputes gracefully
 
-Be professional and clear about amounts due and payment terms.
-Provide easy payment options.`,
+Use the generate_invoice tool to create invoices.
+Use the send_payment_link tool for payment collection.
+Be professional and clear about amounts due.`,
 
   inventory: `You are an Inventory Agent for a service business. Your role is to:
 - Track parts and supplies stock levels
@@ -111,8 +122,9 @@ Provide easy payment options.`,
 - Track usage by technician
 - Forecast inventory needs
 
-Provide specific quantities and item names.
-Be proactive about preventing stockouts.`,
+Use the check_inventory tool to see stock levels.
+Use the reorder_parts tool to trigger orders.
+Provide specific quantities and item names.`,
 
   warranty: `You are a Warranty Agent for a service business. Your role is to:
 - Check warranty coverage for equipment/services
@@ -121,8 +133,9 @@ Be proactive about preventing stockouts.`,
 - Alert customers before warranties expire
 - Explain warranty terms clearly
 
-Be helpful in navigating warranty processes.
-Provide clear timelines and expectations.`,
+Use the check_warranty tool to verify coverage.
+Use the submit_warranty_claim tool to process claims.
+Be helpful in navigating warranty processes.`,
 
   promo: `You are a Promotions Agent for a service business. Your role is to:
 - Create targeted promotional campaigns
@@ -131,8 +144,9 @@ Provide clear timelines and expectations.`,
 - Track campaign performance
 - A/B test different approaches
 
-Be creative with promotions. Target the right customers.
-Provide estimated reach and impact.`,
+Use the create_campaign tool to launch promotions.
+Use the send_promo tool to deliver offers.
+Be creative with promotions. Target the right customers.`,
 
   referral: `You are a Referral Agent for a service business. Your role is to:
 - Manage customer referral programs
@@ -141,8 +155,9 @@ Provide estimated reach and impact.`,
 - Process referral rewards
 - Encourage sharing
 
-Make referral programs easy and rewarding.
-Be clear about rewards for both parties.`,
+Use the generate_referral_link tool to create links.
+Use the process_referral_reward tool for successful referrals.
+Make referral programs easy and rewarding.`,
 
   winback: `You are a Win-back Agent for a service business. Your role is to:
 - Identify churned or inactive customers
@@ -151,8 +166,9 @@ Be clear about rewards for both parties.`,
 - Track win-back success rates
 - Learn from churn patterns
 
-Be warm and understanding. Acknowledge the time away.
-Make compelling offers to return.`,
+Use the create_winback_offer tool to create incentives.
+Use the send_winback_campaign tool to reach out.
+Be warm and understanding. Acknowledge the time away.`,
 
   seasonal: `You are a Seasonal Campaign Agent for a service business. Your role is to:
 - Plan seasonal service reminders
@@ -161,8 +177,9 @@ Make compelling offers to return.`,
 - Schedule annual service reminders
 - Optimize timing for customer engagement
 
-Be proactive about seasonal needs.
-Help customers prepare for seasonal changes.`,
+Use the create_seasonal_campaign tool to plan campaigns.
+Use the send_seasonal_reminder tool for reminders.
+Be proactive about seasonal needs.`,
 
   insights: `You are an Insights Agent for a service business. Your role is to:
 - Analyze business performance data
@@ -171,8 +188,9 @@ Help customers prepare for seasonal changes.`,
 - Provide actionable recommendations
 - Generate performance reports
 
-Be data-driven but explain in business terms.
-Focus on actionable insights.`,
+Use the analyze_metrics tool to gather data.
+Use the generate_report tool for detailed reports.
+Be data-driven but explain in business terms.`,
 
   forecast: `You are a Forecast Agent for a service business. Your role is to:
 - Predict future demand based on historical data
@@ -181,8 +199,855 @@ Focus on actionable insights.`,
 - Recommend staffing adjustments
 - Plan for growth or slowdowns
 
-Provide confidence levels with predictions.
-Give practical planning recommendations.`,
+Use the forecast_demand tool for predictions.
+Use the generate_capacity_plan tool for planning.
+Provide confidence levels with predictions.`,
+};
+
+// Tool definitions for each agent category
+const AGENT_TOOLS: Record<string, any[]> = {
+  triage: [
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off the conversation to another specialized agent',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['booking', 'dispatch', 'quoting', 'followup', 'review', 'warranty'] },
+            reason: { type: 'string', description: 'Why the handoff is happening' },
+            urgency: { type: 'string', enum: ['low', 'medium', 'high', 'emergency'] },
+            customer_intent: { type: 'string', description: 'What the customer wants to do' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'collect_customer_info',
+        description: 'Collect and store customer information',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            phone: { type: 'string' },
+            email: { type: 'string' },
+            issue_description: { type: 'string' },
+          },
+        },
+      },
+    },
+  ],
+  booking: [
+    {
+      type: 'function',
+      function: {
+        name: 'check_availability',
+        description: 'Check available appointment slots',
+        parameters: {
+          type: 'object',
+          properties: {
+            service_type: { type: 'string' },
+            preferred_date: { type: 'string' },
+            employee_id: { type: 'string' },
+          },
+          required: ['service_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'create_appointment',
+        description: 'Create a new appointment',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_name: { type: 'string' },
+            customer_phone: { type: 'string' },
+            customer_email: { type: 'string' },
+            service_type: { type: 'string' },
+            datetime: { type: 'string' },
+            duration_minutes: { type: 'number' },
+            notes: { type: 'string' },
+          },
+          required: ['customer_name', 'service_type', 'datetime'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'reschedule_appointment',
+        description: 'Reschedule an existing appointment',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string' },
+            new_datetime: { type: 'string' },
+          },
+          required: ['appointment_id', 'new_datetime'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'cancel_appointment',
+        description: 'Cancel an appointment',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string' },
+            reason: { type: 'string' },
+          },
+          required: ['appointment_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to another agent',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['dispatch', 'quoting', 'triage'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+  followup: [
+    {
+      type: 'function',
+      function: {
+        name: 'send_followup',
+        description: 'Send a follow-up message to customer',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_id: { type: 'string' },
+            channel: { type: 'string', enum: ['sms', 'email', 'call'] },
+            message: { type: 'string' },
+          },
+          required: ['channel', 'message'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'record_feedback',
+        description: 'Record customer satisfaction feedback',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string' },
+            rating: { type: 'number', minimum: 1, maximum: 5 },
+            comments: { type: 'string' },
+          },
+          required: ['rating'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'escalate_issue',
+        description: 'Escalate an issue to management',
+        parameters: {
+          type: 'object',
+          properties: {
+            issue_description: { type: 'string' },
+            urgency: { type: 'string', enum: ['low', 'medium', 'high'] },
+            customer_contact: { type: 'string' },
+          },
+          required: ['issue_description'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to review agent for satisfied customers',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['review', 'winback'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+  review: [
+    {
+      type: 'function',
+      function: {
+        name: 'send_review_request',
+        description: 'Send review request with platform links',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_contact: { type: 'string' },
+            channel: { type: 'string', enum: ['sms', 'email'] },
+            platforms: { type: 'array', items: { type: 'string' } },
+          },
+          required: ['channel', 'platforms'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'respond_to_review',
+        description: 'Generate a response to a customer review',
+        parameters: {
+          type: 'object',
+          properties: {
+            review_text: { type: 'string' },
+            rating: { type: 'number' },
+            response_tone: { type: 'string', enum: ['thankful', 'apologetic', 'professional'] },
+          },
+          required: ['review_text', 'rating'],
+        },
+      },
+    },
+  ],
+  dispatch: [
+    {
+      type: 'function',
+      function: {
+        name: 'check_tech_availability',
+        description: 'Check technician availability',
+        parameters: {
+          type: 'object',
+          properties: {
+            date: { type: 'string' },
+            skills_required: { type: 'array', items: { type: 'string' } },
+            location: { type: 'string' },
+          },
+          required: ['date'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'assign_technician',
+        description: 'Assign a technician to a job',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string' },
+            technician_id: { type: 'string' },
+            priority: { type: 'string', enum: ['normal', 'high', 'emergency'] },
+          },
+          required: ['appointment_id', 'technician_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to route or ETA agent',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['route', 'eta', 'booking'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+  route: [
+    {
+      type: 'function',
+      function: {
+        name: 'optimize_route',
+        description: 'Optimize route for technician',
+        parameters: {
+          type: 'object',
+          properties: {
+            technician_id: { type: 'string' },
+            date: { type: 'string' },
+            appointments: { type: 'array', items: { type: 'string' } },
+          },
+          required: ['technician_id', 'date'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to ETA agent',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['eta', 'dispatch'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+  eta: [
+    {
+      type: 'function',
+      function: {
+        name: 'calculate_eta',
+        description: 'Calculate estimated time of arrival',
+        parameters: {
+          type: 'object',
+          properties: {
+            technician_id: { type: 'string' },
+            appointment_id: { type: 'string' },
+            current_location: { type: 'string' },
+          },
+          required: ['appointment_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'send_eta_update',
+        description: 'Send ETA update to customer',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string' },
+            eta_minutes: { type: 'number' },
+            channel: { type: 'string', enum: ['sms', 'email', 'both'] },
+          },
+          required: ['appointment_id', 'eta_minutes'],
+        },
+      },
+    },
+  ],
+  checkin: [
+    {
+      type: 'function',
+      function: {
+        name: 'start_job',
+        description: 'Start job timer when technician arrives',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string' },
+            technician_id: { type: 'string' },
+            arrival_time: { type: 'string' },
+          },
+          required: ['appointment_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'complete_job',
+        description: 'Complete job and record details',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string' },
+            work_completed: { type: 'string' },
+            parts_used: { type: 'array', items: { type: 'string' } },
+            customer_signature: { type: 'boolean' },
+          },
+          required: ['appointment_id', 'work_completed'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to quoting or invoice agent',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['quoting', 'invoice', 'inventory'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+  quoting: [
+    {
+      type: 'function',
+      function: {
+        name: 'generate_quote',
+        description: 'Generate a service quote',
+        parameters: {
+          type: 'object',
+          properties: {
+            services: { type: 'array', items: { type: 'string' } },
+            labor_hours: { type: 'number' },
+            parts: { type: 'array', items: { type: 'object' } },
+            discount_percent: { type: 'number' },
+          },
+          required: ['services'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'send_quote',
+        description: 'Send quote to customer',
+        parameters: {
+          type: 'object',
+          properties: {
+            quote_id: { type: 'string' },
+            customer_contact: { type: 'string' },
+            channel: { type: 'string', enum: ['sms', 'email'] },
+          },
+          required: ['quote_id', 'channel'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to invoice agent',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['invoice', 'booking'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+  invoice: [
+    {
+      type: 'function',
+      function: {
+        name: 'generate_invoice',
+        description: 'Generate invoice from completed job',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string' },
+            quote_id: { type: 'string' },
+            additional_charges: { type: 'array', items: { type: 'object' } },
+          },
+          required: ['appointment_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'send_payment_link',
+        description: 'Send payment link to customer',
+        parameters: {
+          type: 'object',
+          properties: {
+            invoice_id: { type: 'string' },
+            customer_contact: { type: 'string' },
+            channel: { type: 'string', enum: ['sms', 'email'] },
+          },
+          required: ['invoice_id', 'channel'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'send_payment_reminder',
+        description: 'Send payment reminder',
+        parameters: {
+          type: 'object',
+          properties: {
+            invoice_id: { type: 'string' },
+            days_overdue: { type: 'number' },
+          },
+          required: ['invoice_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to followup agent',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['followup'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+  inventory: [
+    {
+      type: 'function',
+      function: {
+        name: 'check_inventory',
+        description: 'Check current inventory levels',
+        parameters: {
+          type: 'object',
+          properties: {
+            part_ids: { type: 'array', items: { type: 'string' } },
+            category: { type: 'string' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'reorder_parts',
+        description: 'Trigger reorder for parts',
+        parameters: {
+          type: 'object',
+          properties: {
+            part_id: { type: 'string' },
+            quantity: { type: 'number' },
+            priority: { type: 'string', enum: ['normal', 'urgent'] },
+          },
+          required: ['part_id', 'quantity'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'record_usage',
+        description: 'Record parts used on a job',
+        parameters: {
+          type: 'object',
+          properties: {
+            appointment_id: { type: 'string' },
+            parts_used: { type: 'array', items: { type: 'object' } },
+          },
+          required: ['appointment_id', 'parts_used'],
+        },
+      },
+    },
+  ],
+  warranty: [
+    {
+      type: 'function',
+      function: {
+        name: 'check_warranty',
+        description: 'Check warranty status',
+        parameters: {
+          type: 'object',
+          properties: {
+            equipment_id: { type: 'string' },
+            serial_number: { type: 'string' },
+            customer_id: { type: 'string' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'submit_warranty_claim',
+        description: 'Submit a warranty claim',
+        parameters: {
+          type: 'object',
+          properties: {
+            equipment_id: { type: 'string' },
+            issue_description: { type: 'string' },
+            photos: { type: 'array', items: { type: 'string' } },
+          },
+          required: ['equipment_id', 'issue_description'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'handoff_to_agent',
+        description: 'Hand off to other agent',
+        parameters: {
+          type: 'object',
+          properties: {
+            target_agent: { type: 'string', enum: ['booking', 'dispatch'] },
+            reason: { type: 'string' },
+          },
+          required: ['target_agent', 'reason'],
+        },
+      },
+    },
+  ],
+  promo: [
+    {
+      type: 'function',
+      function: {
+        name: 'create_campaign',
+        description: 'Create a promotional campaign',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            target_segment: { type: 'string' },
+            discount_type: { type: 'string', enum: ['percent', 'fixed', 'free_service'] },
+            discount_value: { type: 'number' },
+            valid_until: { type: 'string' },
+          },
+          required: ['name', 'discount_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'send_promo',
+        description: 'Send promotional offer to customers',
+        parameters: {
+          type: 'object',
+          properties: {
+            campaign_id: { type: 'string' },
+            customer_segment: { type: 'string' },
+            channel: { type: 'string', enum: ['sms', 'email', 'both'] },
+          },
+          required: ['campaign_id', 'channel'],
+        },
+      },
+    },
+  ],
+  referral: [
+    {
+      type: 'function',
+      function: {
+        name: 'generate_referral_link',
+        description: 'Generate unique referral link for customer',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_id: { type: 'string' },
+            reward_type: { type: 'string', enum: ['discount', 'credit', 'free_service'] },
+          },
+          required: ['customer_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'process_referral_reward',
+        description: 'Process reward for successful referral',
+        parameters: {
+          type: 'object',
+          properties: {
+            referrer_id: { type: 'string' },
+            referred_id: { type: 'string' },
+            reward_value: { type: 'number' },
+          },
+          required: ['referrer_id', 'referred_id'],
+        },
+      },
+    },
+  ],
+  winback: [
+    {
+      type: 'function',
+      function: {
+        name: 'identify_churned_customers',
+        description: 'Identify customers at risk of churn',
+        parameters: {
+          type: 'object',
+          properties: {
+            days_inactive: { type: 'number' },
+            segment: { type: 'string' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'create_winback_offer',
+        description: 'Create personalized win-back offer',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_id: { type: 'string' },
+            offer_type: { type: 'string', enum: ['discount', 'free_service', 'loyalty_bonus'] },
+            offer_value: { type: 'number' },
+          },
+          required: ['customer_id', 'offer_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'send_winback_campaign',
+        description: 'Send win-back campaign to churned customers',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_ids: { type: 'array', items: { type: 'string' } },
+            channel: { type: 'string', enum: ['sms', 'email', 'both'] },
+            message_template: { type: 'string' },
+          },
+          required: ['channel'],
+        },
+      },
+    },
+  ],
+  seasonal: [
+    {
+      type: 'function',
+      function: {
+        name: 'create_seasonal_campaign',
+        description: 'Create seasonal marketing campaign',
+        parameters: {
+          type: 'object',
+          properties: {
+            season: { type: 'string', enum: ['spring', 'summer', 'fall', 'winter'] },
+            service_focus: { type: 'string' },
+            start_date: { type: 'string' },
+            end_date: { type: 'string' },
+          },
+          required: ['season', 'service_focus'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'send_seasonal_reminder',
+        description: 'Send seasonal service reminder',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_segment: { type: 'string' },
+            service_type: { type: 'string' },
+            channel: { type: 'string', enum: ['sms', 'email', 'both'] },
+          },
+          required: ['service_type', 'channel'],
+        },
+      },
+    },
+  ],
+  insights: [
+    {
+      type: 'function',
+      function: {
+        name: 'analyze_metrics',
+        description: 'Analyze business performance metrics',
+        parameters: {
+          type: 'object',
+          properties: {
+            metrics: { type: 'array', items: { type: 'string' } },
+            date_range: { type: 'string' },
+            comparison_period: { type: 'string' },
+          },
+          required: ['metrics'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'generate_report',
+        description: 'Generate detailed performance report',
+        parameters: {
+          type: 'object',
+          properties: {
+            report_type: { type: 'string', enum: ['daily', 'weekly', 'monthly', 'custom'] },
+            include_charts: { type: 'boolean' },
+            send_to: { type: 'array', items: { type: 'string' } },
+          },
+          required: ['report_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'detect_anomalies',
+        description: 'Detect unusual patterns in data',
+        parameters: {
+          type: 'object',
+          properties: {
+            metric: { type: 'string' },
+            sensitivity: { type: 'string', enum: ['low', 'medium', 'high'] },
+          },
+          required: ['metric'],
+        },
+      },
+    },
+  ],
+  forecast: [
+    {
+      type: 'function',
+      function: {
+        name: 'forecast_demand',
+        description: 'Forecast service demand',
+        parameters: {
+          type: 'object',
+          properties: {
+            service_types: { type: 'array', items: { type: 'string' } },
+            forecast_period: { type: 'string', enum: ['week', 'month', 'quarter'] },
+            confidence_level: { type: 'number' },
+          },
+          required: ['forecast_period'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'generate_capacity_plan',
+        description: 'Generate staffing capacity plan',
+        parameters: {
+          type: 'object',
+          properties: {
+            period: { type: 'string' },
+            include_overtime: { type: 'boolean' },
+            budget_constraint: { type: 'number' },
+          },
+          required: ['period'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'predict_revenue',
+        description: 'Predict future revenue',
+        parameters: {
+          type: 'object',
+          properties: {
+            period: { type: 'string' },
+            scenario: { type: 'string', enum: ['conservative', 'moderate', 'optimistic'] },
+          },
+          required: ['period'],
+        },
+      },
+    },
+  ],
 };
 
 serve(async (req) => {
@@ -200,9 +1065,9 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { agentType, message, companyId, conversationHistory = [] } = await req.json();
+    const { agentType, message, companyId, conversationHistory = [], contextId } = await req.json();
 
-    console.log(`[AI Agent Chat] Agent: ${agentType}, Message: "${message.substring(0, 50)}..."`);
+    console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, Message: "${message.substring(0, 50)}..."`);
 
     // Get agent config for any custom settings
     const { data: config } = await supabase
@@ -221,18 +1086,30 @@ serve(async (req) => {
       .eq('id', companyId)
       .single();
 
+    // Get context if provided
+    let contextData = {};
+    if (contextId) {
+      const { data: context } = await supabase
+        .from('ai_agent_context')
+        .select('*')
+        .eq('id', contextId)
+        .single();
+      contextData = context?.context_data || {};
+    }
+
     // Build the system prompt
     const basePrompt = AGENT_PROMPTS[agentType] || `You are a helpful AI assistant for a service business.`;
     const systemPrompt = `${basePrompt}
 
 Company Name: ${company?.name || 'Our Company'}
+Current Context: ${JSON.stringify(contextData)}
 
 ${settings.greeting_message ? `Custom Greeting: ${settings.greeting_message}` : ''}
 ${settings.custom_instructions ? `Additional Instructions: ${settings.custom_instructions}` : ''}
 
 IMPORTANT: 
+- Use the available tools to perform actions
 - Keep responses concise and actionable (2-4 sentences typically)
-- If you would hand off to another agent, mention which one
 - Include specific details like names, times, or numbers when relevant
 - Be professional but friendly`;
 
@@ -246,8 +1123,8 @@ IMPORTANT:
       { role: 'user', content: message },
     ];
 
-    // Define tools for the agent
-    const tools = [
+    // Get tools for this agent type
+    const tools = AGENT_TOOLS[agentType] || [
       {
         type: 'function',
         function: {
@@ -256,38 +1133,10 @@ IMPORTANT:
           parameters: {
             type: 'object',
             properties: {
-              target_agent: {
-                type: 'string',
-                enum: Object.keys(AGENT_PROMPTS),
-                description: 'The agent to hand off to',
-              },
-              reason: {
-                type: 'string',
-                description: 'Why the handoff is happening',
-              },
+              target_agent: { type: 'string', description: 'The agent to hand off to' },
+              reason: { type: 'string', description: 'Why the handoff is happening' },
             },
             required: ['target_agent', 'reason'],
-          },
-        },
-      },
-      {
-        type: 'function',
-        function: {
-          name: 'create_action',
-          description: 'Create an action item or trigger an event',
-          parameters: {
-            type: 'object',
-            properties: {
-              action_type: {
-                type: 'string',
-                description: 'Type of action (e.g., book_appointment, send_quote, dispatch_tech)',
-              },
-              details: {
-                type: 'object',
-                description: 'Details of the action',
-              },
-            },
-            required: ['action_type'],
           },
         },
       },
@@ -306,7 +1155,7 @@ IMPORTANT:
         tools,
         tool_choice: 'auto',
         temperature: 0.7,
-        max_tokens: 500,
+        max_tokens: 1000,
       }),
     });
 
@@ -339,25 +1188,34 @@ IMPORTANT:
     let responseText = choice?.message?.content || '';
     let handoffTo: string | null = null;
     let handoffReason: string | null = null;
-    const toolCalls: Array<{ name: string; result: string }> = [];
+    const toolCalls: Array<{ name: string; arguments: any; result: string }> = [];
 
     // Process tool calls
     if (choice?.message?.tool_calls) {
       for (const toolCall of choice.message.tool_calls) {
         const funcName = toolCall.function.name;
-        const args = JSON.parse(toolCall.function.arguments);
+        let args = {};
+        try {
+          args = JSON.parse(toolCall.function.arguments);
+        } catch (e) {
+          console.error('Failed to parse tool arguments:', toolCall.function.arguments);
+        }
         
         if (funcName === 'handoff_to_agent') {
-          handoffTo = args.target_agent;
-          handoffReason = args.reason;
+          handoffTo = (args as any).target_agent;
+          handoffReason = (args as any).reason;
           toolCalls.push({
             name: 'handoff_to_agent',
-            result: `Handing off to ${args.target_agent}: ${args.reason}`,
+            arguments: args,
+            result: `Handing off to ${(args as any).target_agent}: ${(args as any).reason}`,
           });
-        } else if (funcName === 'create_action') {
+        } else {
+          // Execute the tool (simulated for now)
+          const result = await executeAgentTool(supabase, companyId, agentType, funcName, args);
           toolCalls.push({
-            name: args.action_type,
-            result: JSON.stringify(args.details || {}),
+            name: funcName,
+            arguments: args,
+            result: JSON.stringify(result),
           });
         }
       }
@@ -367,12 +1225,15 @@ IMPORTANT:
     let eventType = `${agentType}_response`;
     if (handoffTo) {
       eventType = `${agentType}_handoff`;
+    } else if (toolCalls.length > 0) {
+      eventType = `${agentType}_action`;
     }
 
     // Log the interaction
     await supabase.from('ai_agent_logs').insert({
       company_id: companyId,
       agent_type: agentType,
+      context_id: contextId,
       action: 'ai_chat',
       input_data: { message, conversation_length: conversationHistory.length },
       output_data: { 
@@ -395,10 +1256,36 @@ IMPORTANT:
           response: responseText, 
           tool_calls: toolCalls,
           handoff_reason: handoffReason,
+          context_id: contextId,
         },
-        status: 'processed',
-        processed_at: new Date().toISOString(),
+        status: handoffTo ? 'pending' : 'processed',
+        processed_at: handoffTo ? null : new Date().toISOString(),
       });
+    }
+
+    // Update context if handoff occurred
+    if (handoffTo && contextId) {
+      const { data: context } = await supabase
+        .from('ai_agent_context')
+        .select('handoff_history')
+        .eq('id', contextId)
+        .single();
+      
+      const handoffEntry = {
+        from_agent: agentType,
+        to_agent: handoffTo,
+        reason: handoffReason,
+        timestamp: new Date().toISOString(),
+      };
+      
+      await supabase
+        .from('ai_agent_context')
+        .update({
+          active_agent: handoffTo,
+          handoff_history: [...(context?.handoff_history || []), handoffEntry],
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', contextId);
     }
 
     return new Response(JSON.stringify({
@@ -407,6 +1294,7 @@ IMPORTANT:
       handoff_to: handoffTo,
       handoff_reason: handoffReason,
       tool_calls: toolCalls,
+      context_id: contextId,
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -421,3 +1309,126 @@ IMPORTANT:
     });
   }
 });
+
+// Execute agent-specific tools
+async function executeAgentTool(
+  supabase: any,
+  companyId: string,
+  agentType: string,
+  toolName: string,
+  args: any
+): Promise<any> {
+  console.log(`[AI Agent] Executing tool: ${toolName} for ${agentType}`);
+
+  // Simulated tool execution - in production, these would connect to real systems
+  switch (toolName) {
+    case 'check_availability':
+      return {
+        success: true,
+        available_slots: [
+          { date: args.preferred_date || 'tomorrow', time: '9:00 AM', duration: 60 },
+          { date: args.preferred_date || 'tomorrow', time: '2:00 PM', duration: 60 },
+          { date: args.preferred_date || 'day after tomorrow', time: '10:00 AM', duration: 60 },
+        ],
+      };
+
+    case 'create_appointment':
+      const appointmentId = crypto.randomUUID();
+      // Actually create the appointment
+      const { data: appointment, error } = await supabase
+        .from('appointments')
+        .insert({
+          company_id: companyId,
+          customer_name: args.customer_name,
+          customer_phone: args.customer_phone,
+          customer_email: args.customer_email,
+          service_type: args.service_type,
+          datetime: args.datetime,
+          duration_minutes: args.duration_minutes || 60,
+          notes: args.notes,
+          status: 'scheduled',
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+      return { success: true, appointment_id: appointment.id, message: 'Appointment created successfully' };
+
+    case 'check_tech_availability':
+      return {
+        success: true,
+        available_technicians: [
+          { id: 'tech1', name: 'John Smith', skills: ['HVAC', 'Electrical'], distance: '5 miles' },
+          { id: 'tech2', name: 'Sarah Johnson', skills: ['Plumbing', 'HVAC'], distance: '8 miles' },
+        ],
+      };
+
+    case 'assign_technician':
+      return {
+        success: true,
+        assignment_id: crypto.randomUUID(),
+        technician: args.technician_id,
+        appointment: args.appointment_id,
+        message: 'Technician assigned successfully',
+      };
+
+    case 'calculate_eta':
+      return {
+        success: true,
+        eta_minutes: Math.floor(Math.random() * 30) + 15,
+        traffic_conditions: 'moderate',
+        route_distance: '5.2 miles',
+      };
+
+    case 'generate_quote':
+      const laborCost = (args.labor_hours || 2) * 75;
+      const partsCost = args.parts?.reduce((sum: number, p: any) => sum + (p.price || 50), 0) || 100;
+      const discount = args.discount_percent ? ((laborCost + partsCost) * args.discount_percent / 100) : 0;
+      return {
+        success: true,
+        quote_id: crypto.randomUUID(),
+        breakdown: {
+          labor: laborCost,
+          parts: partsCost,
+          discount: discount,
+          total: laborCost + partsCost - discount,
+        },
+        valid_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      };
+
+    case 'analyze_metrics':
+      return {
+        success: true,
+        metrics: {
+          appointments_completed: Math.floor(Math.random() * 100) + 50,
+          revenue: Math.floor(Math.random() * 50000) + 10000,
+          customer_satisfaction: (Math.random() * 2 + 3).toFixed(1),
+          average_response_time: Math.floor(Math.random() * 30) + 10,
+        },
+        trends: {
+          appointments: '+12% vs last period',
+          revenue: '+8% vs last period',
+        },
+      };
+
+    case 'forecast_demand':
+      return {
+        success: true,
+        forecast: {
+          period: args.forecast_period,
+          expected_appointments: Math.floor(Math.random() * 50) + 30,
+          confidence: args.confidence_level || 0.85,
+          peak_days: ['Monday', 'Friday'],
+          recommended_staff: 4,
+        },
+      };
+
+    default:
+      return {
+        success: true,
+        message: `Tool ${toolName} executed with args: ${JSON.stringify(args)}`,
+      };
+  }
+}
