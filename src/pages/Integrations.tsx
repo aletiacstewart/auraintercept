@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CostCalculator } from '@/components/integrations/CostCalculator';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -493,6 +494,9 @@ export default function Integrations() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Cost Calculator */}
+        <CostCalculator />
 
         {/* Setup Instructions */}
         <Card className="border-border/50 border-dashed">
