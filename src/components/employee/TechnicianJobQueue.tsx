@@ -255,7 +255,7 @@ export function TechnicianJobQueue() {
     updateStatusMutation.mutate({ jobId: job.id, status: 'in_progress' });
   };
 
-  const handleCompleteJob = (job: JobAssignment, notes?: string, partsUsed?: string) => {
+  const handleCompleteJob = async (job: JobAssignment, notes?: string, partsUsed?: string) => {
     updateStatusMutation.mutate({ 
       jobId: job.id, 
       status: 'completed',
@@ -264,6 +264,20 @@ export function TechnicianJobQueue() {
         parts_used: partsUsed || job.parts_used,
       },
     });
+
+    // Send review request after job completion
+    try {
+      const { error } = await supabase.functions.invoke('send-review-request', {
+        body: { jobAssignmentId: job.id },
+      });
+      if (error) {
+        console.error('Failed to send review request:', error);
+      } else {
+        toast.success('Review request sent to customer');
+      }
+    } catch (err) {
+      console.error('Error sending review request:', err);
+    }
   };
 
   const handleUpdateNotes = (job: JobAssignment, notes: string, partsUsed: string) => {
