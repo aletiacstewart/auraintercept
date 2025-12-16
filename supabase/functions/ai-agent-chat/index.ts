@@ -56,19 +56,24 @@ WHEN RECEIVING A HANDOFF FROM ANOTHER AGENT:
   1. What service do they need? (reference the available services)
   2. What date/time works for them?
   3. Their name
-  4. Their phone number or email for confirmation
+  4. Their phone number for confirmation
+  5. Their SERVICE ADDRESS (where the technician should go)
+
+CRITICAL: YOU MUST COLLECT THE SERVICE ADDRESS!
+For in-home or on-site services, you MUST ask: "What's the address where you'd like the service performed?"
+DO NOT book an appointment without collecting the service address first.
 
 CONVERSATION FLOW:
 1. Greet and confirm the service they need
 2. Check availability using the check_availability tool
 3. Offer 2-3 available time slots
-4. Collect customer name and contact info
-5. Confirm all details before booking
-6. Create the appointment using create_appointment tool
+4. Collect customer name, phone number, AND service address
+5. Confirm ALL details including address before booking
+6. Create the appointment using create_appointment tool with all info including the address
 
 Use the check_availability tool to find open slots.
-Use the create_appointment tool to book appointments.
-Always confirm the details before finalizing.`,
+Use the create_appointment tool to book appointments - include the address in the notes field.
+Always confirm the details including address before finalizing.`,
 
   followup: `You are a Follow-up Specialist for a service business. Your role is to:
 - Check in with customers after their service
@@ -348,19 +353,20 @@ const AGENT_TOOLS: Record<string, any[]> = {
       type: 'function',
       function: {
         name: 'create_appointment',
-        description: 'Create a new appointment',
+        description: 'Create a new appointment. ALWAYS include customer_address for in-home services.',
         parameters: {
           type: 'object',
           properties: {
-            customer_name: { type: 'string' },
-            customer_phone: { type: 'string' },
-            customer_email: { type: 'string' },
-            service_type: { type: 'string' },
-            datetime: { type: 'string' },
-            duration_minutes: { type: 'number' },
-            notes: { type: 'string' },
+            customer_name: { type: 'string', description: 'Customer full name' },
+            customer_phone: { type: 'string', description: 'Customer phone number' },
+            customer_email: { type: 'string', description: 'Customer email (optional)' },
+            customer_address: { type: 'string', description: 'Service address where technician should go - REQUIRED for in-home services' },
+            service_type: { type: 'string', description: 'Type of service requested' },
+            datetime: { type: 'string', description: 'Appointment date and time' },
+            duration_minutes: { type: 'number', description: 'Duration in minutes' },
+            notes: { type: 'string', description: 'Additional notes about the appointment' },
           },
-          required: ['customer_name', 'service_type', 'datetime'],
+          required: ['customer_name', 'customer_phone', 'customer_address', 'service_type', 'datetime'],
         },
       },
     },
@@ -1714,7 +1720,10 @@ async function executeAgentTool(
         console.log(`[AI Agent] Assigning to employee: ${employees[0].full_name}`);
       }
 
-      // Create the appointment
+      // Create the appointment - include address in notes for visibility
+      const addressNote = args.customer_address ? `Service Address: ${args.customer_address}` : '';
+      const combinedNotes = [addressNote, args.notes].filter(Boolean).join('\n');
+      
       const { data: appointment, error } = await supabase
         .from('appointments')
         .insert({
@@ -1725,7 +1734,7 @@ async function executeAgentTool(
           service_type: args.service_type,
           datetime: args.datetime,
           duration_minutes: args.duration_minutes || 60,
-          notes: args.notes,
+          notes: combinedNotes || null,
           status: 'scheduled',
           employee_id: employeeId,
         })
