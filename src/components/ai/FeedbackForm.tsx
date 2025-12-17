@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Star, ThumbsUp, Minus, ThumbsDown, Send, ExternalLink, CalendarIcon } from 'lucide-react';
@@ -51,71 +50,59 @@ export const FeedbackForm = ({ onSubmit, isLoading, reviewLinks }: FeedbackFormP
   ];
 
   return (
-    <Card className="w-full max-w-md mx-auto border-2 border-primary/20">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Star className="h-5 w-5 text-yellow-500" />
-          Share Your Feedback
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Customer Name */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-muted-foreground">Your Name *</label>
-          <Input
-            value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
-            placeholder="Enter your name"
-            maxLength={100}
-          />
-        </div>
+    <div className="w-full max-w-sm mx-auto p-2">
+      <div className="flex items-center gap-2 mb-3">
+        <Star className="h-4 w-4 text-yellow-500" />
+        <h3 className="font-semibold text-sm">Share Your Feedback</h3>
+      </div>
+      
+      <div className="space-y-2">
+        <Input
+          value={customerName}
+          onChange={(e) => setCustomerName(e.target.value)}
+          placeholder="Your Name *"
+          className="h-8 text-xs"
+          maxLength={100}
+        />
 
-        {/* Customer Phone */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-muted-foreground">Phone Number</label>
-          <Input
-            value={customerPhone}
-            onChange={(e) => setCustomerPhone(e.target.value)}
-            placeholder="Enter your phone number"
-            type="tel"
-            maxLength={20}
-          />
-        </div>
+        <Input
+          value={customerPhone}
+          onChange={(e) => setCustomerPhone(e.target.value)}
+          placeholder="Phone Number"
+          type="tel"
+          className="h-8 text-xs"
+          maxLength={20}
+        />
 
-        {/* Date of Service */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-muted-foreground">Date of Service (optional)</label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !serviceDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {serviceDate ? format(serviceDate, "PPP") : <span>Select date to link to appointment</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={serviceDate}
-                onSelect={setServiceDate}
-                disabled={(date) => date > new Date()}
-                initialFocus
-                className="p-3 pointer-events-auto"
-              />
-            </PopoverContent>
-          </Popover>
-          <p className="text-xs text-muted-foreground">Helps us connect your feedback to your appointment</p>
-        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className={cn(
+                "w-full justify-start text-left font-normal h-8 text-xs",
+                !serviceDate && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-1.5 h-3 w-3" />
+              {serviceDate ? format(serviceDate, "MMM d, yyyy") : "Date of Service (optional)"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={serviceDate}
+              onSelect={setServiceDate}
+              disabled={(date) => date > new Date()}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
 
         {/* Star Rating */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-muted-foreground">Rate your experience</label>
-          <div className="flex gap-1 justify-center">
+        <div>
+          <label className="text-xs text-muted-foreground">Rate your experience</label>
+          <div className="flex gap-0.5 justify-center">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
@@ -123,11 +110,11 @@ export const FeedbackForm = ({ onSubmit, isLoading, reviewLinks }: FeedbackFormP
                 onClick={() => setRating(star)}
                 onMouseEnter={() => setHoveredRating(star)}
                 onMouseLeave={() => setHoveredRating(0)}
-                className="p-1 transition-transform hover:scale-110"
+                className="p-0.5"
               >
                 <Star
                   className={cn(
-                    "h-8 w-8 transition-colors",
+                    "h-6 w-6 transition-colors",
                     (hoveredRating || rating) >= star
                       ? "fill-yellow-400 text-yellow-400"
                       : "text-muted-foreground/30"
@@ -136,85 +123,69 @@ export const FeedbackForm = ({ onSubmit, isLoading, reviewLinks }: FeedbackFormP
               </button>
             ))}
           </div>
-          {rating > 0 && (
-            <p className="text-center text-sm text-muted-foreground">
-              {rating === 5 ? 'Excellent!' : rating === 4 ? 'Great!' : rating === 3 ? 'Good' : rating === 2 ? 'Fair' : 'Needs improvement'}
-            </p>
-          )}
         </div>
 
         {/* Sentiment Buttons */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-muted-foreground">How was your experience?</label>
-          <div className="grid grid-cols-3 gap-2">
+        <div>
+          <label className="text-xs text-muted-foreground">How was your experience?</label>
+          <div className="grid grid-cols-3 gap-1 mt-1">
             {sentimentOptions.map((option) => (
               <button
                 key={option.value}
                 type="button"
                 onClick={() => setSentiment(option.value)}
                 className={cn(
-                  "flex flex-col items-center gap-1 p-3 rounded-lg border-2 transition-all",
+                  "flex flex-col items-center gap-0.5 p-1.5 rounded border text-xs transition-all",
                   sentiment === option.value
                     ? option.activeColor
                     : `border-muted ${option.color}`
                 )}
               >
-                <option.icon className="h-5 w-5" />
-                <span className="text-xs font-medium">{option.label}</span>
+                <option.icon className="h-4 w-4" />
+                <span className="text-[10px]">{option.label}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Optional Note */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-muted-foreground">
-            Additional comments (optional)
-          </label>
-          <Textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Tell us more about your experience..."
-            className="resize-none"
-            rows={3}
-            maxLength={500}
-          />
-          <p className="text-xs text-muted-foreground text-right">{note.length}/500</p>
-        </div>
+        <Textarea
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="Additional comments (optional)"
+          className="resize-none text-xs"
+          rows={2}
+          maxLength={500}
+        />
 
-        {/* Submit Button */}
         <Button
           onClick={handleSubmit}
           disabled={!sentiment || !customerName.trim() || isLoading}
-          className="w-full"
+          className="w-full h-8 text-xs"
         >
-          <Send className="h-4 w-4 mr-2" />
+          <Send className="h-3 w-3 mr-1" />
           Submit Feedback
         </Button>
 
-        {/* Review Links */}
         {reviewLinks && reviewLinks.length > 0 && sentiment === 'positive' && (
-          <div className="pt-2 border-t">
-            <p className="text-sm text-muted-foreground mb-2">
-              Love our service? Share it with others!
-            </p>
-            <div className="flex flex-wrap gap-2">
+          <div className="pt-1 border-t">
+            <p className="text-[10px] text-muted-foreground mb-1">Love our service? Share it!</p>
+            <div className="flex flex-wrap gap-1">
               {reviewLinks.map((link) => (
                 <Button
                   key={link.platform}
                   variant="outline"
                   size="sm"
                   onClick={() => window.open(link.url, '_blank')}
-                  className="text-xs"
+                  className="h-6 text-[10px] px-2"
                 >
-                  <ExternalLink className="h-3 w-3 mr-1" />
+                  <ExternalLink className="h-2.5 w-2.5 mr-1" />
                   {link.platform}
                 </Button>
               ))}
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
