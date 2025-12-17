@@ -300,7 +300,7 @@ async function executeToolCall(supabase: any, companyId: string, toolName: strin
     case "list_services":
       return listServices(knowledge, args);
     case "collect_feedback":
-      return collectFeedback(knowledge, args);
+      return await collectFeedback(supabase, companyId, knowledge, args);
     default:
       return { error: `Unknown tool: ${toolName}` };
   }
@@ -640,8 +640,8 @@ function listServices(knowledge: any, args: any) {
   };
 }
 
-function collectFeedback(knowledge: any, args: any) {
-  const { customer_name, feedback_type, feedback_text, service_received } = args || {};
+async function collectFeedback(supabase: any, companyId: string, knowledge: any, args: any) {
+  const { customer_name, feedback_type, feedback_text, service_received, rating, customer_email, customer_phone, source } = args || {};
   
   const reviewLinks: { platform: string; url: string }[] = [];
   
@@ -655,12 +655,40 @@ function collectFeedback(knowledge: any, args: any) {
     reviewLinks.push({ platform: 'Yelp', url: knowledge.reviewYelpUrl });
   }
   
+  // Save feedback to database
+  try {
+    const { data, error } = await supabase
+      .from('customer_feedback')
+      .insert({
+        company_id: companyId,
+        customer_name: customer_name || null,
+        customer_email: customer_email || null,
+        customer_phone: customer_phone || null,
+        rating: rating || (feedback_type === 'positive' ? 5 : feedback_type === 'neutral' ? 3 : 1),
+        sentiment: feedback_type || 'neutral',
+        feedback_note: feedback_text || null,
+        service_type: service_received || null,
+        source: source || 'chat'
+      })
+      .select()
+      .single();
+      
+    if (error) {
+      console.error('Failed to save feedback:', error);
+    } else {
+      console.log('Feedback saved:', data.id);
+    }
+  } catch (err) {
+    console.error('Error saving feedback:', err);
+  }
+  
   const hasReviewLinks = reviewLinks.length > 0;
   
   if (feedback_type === 'positive' || feedback_type === 'neutral') {
     return {
       success: true,
       feedback_received: true,
+      feedback_saved: true,
       customer_name: customer_name || 'Valued Customer',
       feedback_type,
       feedback_text: feedback_text || '',
@@ -675,6 +703,7 @@ function collectFeedback(knowledge: any, args: any) {
     return {
       success: true,
       feedback_received: true,
+      feedback_saved: true,
       customer_name: customer_name || 'Valued Customer',
       feedback_type,
       feedback_text: feedback_text || '',

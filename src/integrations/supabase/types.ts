@@ -824,6 +824,79 @@ export type Database = {
           },
         ]
       }
+      customer_feedback: {
+        Row: {
+          appointment_id: string | null
+          company_id: string
+          created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          employee_id: string | null
+          feedback_note: string | null
+          id: string
+          rating: number | null
+          review_link_clicked: string | null
+          sentiment: string | null
+          service_type: string | null
+          source: string | null
+        }
+        Insert: {
+          appointment_id?: string | null
+          company_id: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          employee_id?: string | null
+          feedback_note?: string | null
+          id?: string
+          rating?: number | null
+          review_link_clicked?: string | null
+          sentiment?: string | null
+          service_type?: string | null
+          source?: string | null
+        }
+        Update: {
+          appointment_id?: string | null
+          company_id?: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          employee_id?: string | null
+          feedback_note?: string | null
+          id?: string
+          rating?: number | null
+          review_link_clicked?: string | null
+          sentiment?: string | null
+          service_type?: string | null
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_feedback_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_feedback_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_feedback_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_referrals: {
         Row: {
           appointment_id: string | null
