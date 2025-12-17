@@ -44,28 +44,58 @@ interface NavItem {
   roles: ('platform_admin' | 'company_admin' | 'employee')[];
 }
 
-const navItems: NavItem[] = [
-  { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
-  { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin'] },
-  { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'] },
-  { label: 'Employees', icon: Users, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'] },
-  { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin', 'employee'] },
-  { label: 'Availability', icon: Clock, href: '/dashboard/availability', roles: ['employee'] },
-  { label: 'Quotes', icon: FileCheck, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'] },
-  { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'] },
-  { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin', 'company_admin'] },
-  { label: 'Warranties', icon: Shield, href: '/dashboard/warranties', roles: ['platform_admin', 'company_admin'] },
-  { label: 'Campaigns', icon: Megaphone, href: '/dashboard/campaigns', roles: ['platform_admin', 'company_admin'] },
-  { label: 'Referrals', icon: Gift, href: '/dashboard/referrals', roles: ['platform_admin', 'company_admin'] },
-  { label: 'AI Agent', icon: Bot, href: '/dashboard/ai-agent', roles: ['platform_admin', 'company_admin', 'employee'] },
-  { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin', 'employee'] },
-  { label: 'Chat Widget', icon: MessageCircle, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
-  { label: 'Call History', icon: PhoneCall, href: '/dashboard/calls', roles: ['platform_admin', 'company_admin'] },
-  { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
-  { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'] },
-  { label: 'Subscription', icon: CreditCard, href: '/dashboard/subscription', roles: ['platform_admin', 'company_admin'] },
-  { label: 'Communication Logs', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin', 'employee'] },
-  { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin', 'employee'] },
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+const navGroups: NavGroup[] = [
+  {
+    label: 'Overview',
+    items: [
+      { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
+      { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin'] },
+      { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'] },
+      { label: 'Employees', icon: Users, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'] },
+    ],
+  },
+  {
+    label: 'Operations',
+    items: [
+      { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin', 'employee'] },
+      { label: 'Availability', icon: Clock, href: '/dashboard/availability', roles: ['employee'] },
+      { label: 'Quotes', icon: FileCheck, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Warranties', icon: Shield, href: '/dashboard/warranties', roles: ['platform_admin', 'company_admin'] },
+    ],
+  },
+  {
+    label: 'AI & Automation',
+    items: [
+      { label: 'AI Agent', icon: Bot, href: '/dashboard/ai-agent', roles: ['platform_admin', 'company_admin', 'employee'] },
+      { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin', 'employee'] },
+      { label: 'Chat Widget', icon: MessageCircle, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Call History', icon: PhoneCall, href: '/dashboard/calls', roles: ['platform_admin', 'company_admin'] },
+    ],
+  },
+  {
+    label: 'Marketing & Growth',
+    items: [
+      { label: 'Campaigns', icon: Megaphone, href: '/dashboard/campaigns', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Referrals', icon: Gift, href: '/dashboard/referrals', roles: ['platform_admin', 'company_admin'] },
+    ],
+  },
+  {
+    label: 'Configuration',
+    items: [
+      { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Subscription', icon: CreditCard, href: '/dashboard/subscription', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Communication Logs', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin', 'employee'] },
+      { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin', 'employee'] },
+    ],
+  },
 ];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -91,9 +121,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const tierDisplay = getTierDisplay();
   const daysRemaining = getDaysRemaining();
 
-  const filteredNav = navItems.filter((item) =>
-    userRole && item.roles.includes(userRole)
-  );
+  // Filter groups and items based on user role
+  const filteredNavGroups = navGroups.map(group => ({
+    ...group,
+    items: group.items.filter(item => userRole && item.roles.includes(userRole))
+  })).filter(group => group.items.length > 0);
 
   const handleSignOut = async () => {
     await signOut();
@@ -143,27 +175,36 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
         {/* Navigation */}
         <ScrollArea className="flex-1 px-2 py-4">
-          <nav className="space-y-1">
-            {filteredNav.map((item) => {
-              const Icon = item.icon;
-              const isActive = window.location.pathname === item.href;
-              
-              return (
-                <Button
-                  key={item.href}
-                  variant="ghost"
-                  className={cn(
-                    'w-full justify-start gap-3 text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent',
-                    isActive && 'bg-sidebar-accent text-sidebar-foreground',
-                    collapsed && 'justify-center px-2'
-                  )}
-                  onClick={() => navigate(item.href)}
-                >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
-                  {!collapsed && <span className="truncate">{item.label}</span>}
-                </Button>
-              );
-            })}
+          <nav className="space-y-4">
+            {filteredNavGroups.map((group) => (
+              <div key={group.label} className="space-y-1">
+                {!collapsed && (
+                  <p className="px-3 py-1 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider">
+                    {group.label}
+                  </p>
+                )}
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = window.location.pathname === item.href;
+                  
+                  return (
+                    <Button
+                      key={item.href}
+                      variant="ghost"
+                      className={cn(
+                        'w-full justify-start gap-3 text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent',
+                        isActive && 'bg-sidebar-accent text-sidebar-foreground',
+                        collapsed && 'justify-center px-2'
+                      )}
+                      onClick={() => navigate(item.href)}
+                    >
+                      <Icon className="w-5 h-5 flex-shrink-0" />
+                      {!collapsed && <span className="truncate">{item.label}</span>}
+                    </Button>
+                  );
+                })}
+              </div>
+            ))}
           </nav>
         </ScrollArea>
 
