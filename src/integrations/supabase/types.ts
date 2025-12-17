@@ -1050,6 +1050,55 @@ export type Database = {
           },
         ]
       }
+      employee_job_assignments: {
+        Row: {
+          assigned_at: string | null
+          assigned_by: string | null
+          company_id: string
+          employee_id: string
+          id: string
+          job_type: Database["public"]["Enums"]["employee_job_type"]
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          company_id: string
+          employee_id: string
+          id?: string
+          job_type: Database["public"]["Enums"]["employee_job_type"]
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          company_id?: string
+          employee_id?: string
+          id?: string
+          job_type?: Database["public"]["Enums"]["employee_job_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_job_assignments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_job_assignments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_job_assignments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_registration_codes: {
         Row: {
           code: string
@@ -2466,6 +2515,15 @@ export type Database = {
     }
     Enums: {
       app_role: "platform_admin" | "company_admin" | "employee"
+      employee_job_type:
+        | "technician"
+        | "booking_agent"
+        | "dispatch"
+        | "customer_service"
+        | "billing"
+        | "marketing"
+        | "inventory"
+        | "analytics"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2594,6 +2652,16 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["platform_admin", "company_admin", "employee"],
+      employee_job_type: [
+        "technician",
+        "booking_agent",
+        "dispatch",
+        "customer_service",
+        "billing",
+        "marketing",
+        "inventory",
+        "analytics",
+      ],
     },
   },
 } as const
