@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -24,9 +25,28 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { toast } from 'sonner';
-import { Plus, Copy, Users, Mail, Clock, Check } from 'lucide-react';
+import { Plus, Copy, Users, Mail, Clock, Check, Briefcase, Settings2 } from 'lucide-react';
 import { format } from 'date-fns';
+
+// Job types that correspond to AI agent categories
+const JOB_TYPES = [
+  { value: 'technician', label: 'Technician', description: 'Field service & repairs', color: 'bg-blue-500' },
+  { value: 'booking_agent', label: 'Booking Agent', description: 'Scheduling & appointments', color: 'bg-green-500' },
+  { value: 'dispatch', label: 'Dispatch', description: 'Emergency routing & assignment', color: 'bg-red-500' },
+  { value: 'customer_service', label: 'Customer Service', description: 'Triage & follow-up', color: 'bg-purple-500' },
+  { value: 'billing', label: 'Billing', description: 'Invoicing & quotes', color: 'bg-yellow-500' },
+  { value: 'marketing', label: 'Marketing', description: 'Campaigns & outreach', color: 'bg-pink-500' },
+  { value: 'inventory', label: 'Inventory', description: 'Stock management', color: 'bg-orange-500' },
+  { value: 'analytics', label: 'Analytics', description: 'Reports & insights', color: 'bg-cyan-500' },
+] as const;
+
+type JobType = typeof JOB_TYPES[number]['value'];
 
 function generateRegistrationCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -38,7 +58,7 @@ function generateRegistrationCode(): string {
 }
 
 export function EmployeeManagement() {
-  const { companyId } = useAuth();
+  const { companyId, user } = useAuth();
   const queryClient = useQueryClient();
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
@@ -51,6 +71,22 @@ export function EmployeeManagement() {
       if (!companyId) return [];
       const { data, error } = await supabase
         .from('profiles')
+        .select('*')
+        .eq('company_id', companyId);
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  // Fetch employee job assignments
+  const { data: jobAssignments, isLoading: jobsLoading } = useQuery({
+    queryKey: ['employee-job-assignments', companyId],
+    queryFn: async () => {
+      if (!companyId) return [];
+      const { data, error } = await supabase
+        .from('employee_job_assignments')
         .select('*')
         .eq('company_id', companyId);
       
@@ -111,6 +147,43 @@ export function EmployeeManagement() {
     },
   });
 
+  // Toggle job type mutation
+  const toggleJobTypeMutation = useMutation({
+    mutationFn: async ({ employeeId, jobType, isAssigned }: { employeeId: string; jobType: JobType; isAssigned: boolean }) => {
+      if (!companyId) throw new Error('No company ID');
+
+      if (isAssigned) {
+        // Remove job type
+        const { error } = await supabase
+          .from('employee_job_assignments')
+          .delete()
+          .eq('employee_id', employeeId)
+          .eq('job_type', jobType)
+          .eq('company_id', companyId);
+        if (error) throw error;
+      } else {
+        // Add job type
+        const { error } = await supabase
+          .from('employee_job_assignments')
+          .insert({
+            employee_id: employeeId,
+            job_type: jobType,
+            company_id: companyId,
+            assigned_by: user?.id,
+          });
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee-job-assignments'] });
+      toast.success('Job assignments updated');
+    },
+    onError: (error) => {
+      console.error('Error updating job assignment:', error);
+      toast.error('Failed to update job assignment');
+    },
+  });
+
   const handleGenerateCode = () => {
     generateCodeMutation.mutate(inviteEmail);
   };
@@ -128,7 +201,13 @@ export function EmployeeManagement() {
     setGeneratedCode(null);
   };
 
-  const isLoading = employeesLoading || codesLoading;
+  const getEmployeeJobs = (employeeId: string): JobType[] => {
+    return (jobAssignments || [])
+      .filter(ja => ja.employee_id === employeeId)
+      .map(ja => ja.job_type as JobType);
+  };
+
+  const isLoading = employeesLoading || codesLoading || jobsLoading;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -137,7 +216,7 @@ export function EmployeeManagement() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Employees</h1>
           <p className="text-muted-foreground">
-            Manage your team and send invitations
+            Manage your team and assign job roles
           </p>
         </div>
         <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
@@ -243,12 +322,16 @@ export function EmployeeManagement() {
         <Card className="border-border/50">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Available Today
+              Job Roles Assigned
             </CardTitle>
-            <Clock className="w-5 h-5 text-accent" />
+            <Briefcase className="w-5 h-5 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{employees?.length ?? 0}</div>
+            {isLoading ? (
+              <Skeleton className="h-8 w-16" />
+            ) : (
+              <div className="text-3xl font-bold">{jobAssignments?.length ?? 0}</div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -258,7 +341,7 @@ export function EmployeeManagement() {
         <CardHeader>
           <CardTitle>Team Members</CardTitle>
           <CardDescription>
-            All employees in your company
+            Manage employees and their job roles for AI agent access
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -274,32 +357,93 @@ export function EmployeeManagement() {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Job Roles</TableHead>
                   <TableHead>Joined</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead className="w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {employees.map((employee) => (
-                  <TableRow key={employee.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
-                          {employee.full_name?.charAt(0) || 'E'}
+                {employees.map((employee) => {
+                  const employeeJobs = getEmployeeJobs(employee.id);
+                  return (
+                    <TableRow key={employee.id}>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
+                            {employee.full_name?.charAt(0) || 'E'}
+                          </div>
+                          {employee.full_name || 'Unknown'}
                         </div>
-                        {employee.full_name || 'Unknown'}
-                      </div>
-                    </TableCell>
-                    <TableCell>{employee.email}</TableCell>
-                    <TableCell>
-                      {format(new Date(employee.created_at), 'MMM d, yyyy')}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="text-green-600 border-green-600">
-                        Active
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      </TableCell>
+                      <TableCell>{employee.email}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                          {employeeJobs.length > 0 ? (
+                            employeeJobs.map((job) => {
+                              const jobInfo = JOB_TYPES.find(j => j.value === job);
+                              return (
+                                <Badge key={job} variant="secondary" className="text-xs">
+                                  {jobInfo?.label || job}
+                                </Badge>
+                              );
+                            })
+                          ) : (
+                            <span className="text-muted-foreground text-sm">No roles assigned</span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {format(new Date(employee.created_at), 'MMM d, yyyy')}
+                      </TableCell>
+                      <TableCell>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="sm" className="gap-1">
+                              <Settings2 className="w-4 h-4" />
+                              Roles
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-72" align="end">
+                            <div className="space-y-3">
+                              <h4 className="font-medium text-sm">Assign Job Roles</h4>
+                              <p className="text-xs text-muted-foreground">
+                                Selected roles grant access to related AI agents
+                              </p>
+                              <div className="space-y-2">
+                                {JOB_TYPES.map((job) => {
+                                  const isAssigned = employeeJobs.includes(job.value);
+                                  return (
+                                    <div
+                                      key={job.value}
+                                      className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 cursor-pointer"
+                                      onClick={() => toggleJobTypeMutation.mutate({
+                                        employeeId: employee.id,
+                                        jobType: job.value,
+                                        isAssigned,
+                                      })}
+                                    >
+                                      <Checkbox
+                                        checked={isAssigned}
+                                        disabled={toggleJobTypeMutation.isPending}
+                                      />
+                                      <div className="flex-1">
+                                        <div className="flex items-center gap-2">
+                                          <div className={`w-2 h-2 rounded-full ${job.color}`} />
+                                          <span className="text-sm font-medium">{job.label}</span>
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">{job.description}</p>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           ) : (
