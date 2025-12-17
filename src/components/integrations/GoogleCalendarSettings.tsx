@@ -33,7 +33,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette, Pencil, Clock, Trash2, AlertCircle, Share2, Globe, Lock, Users, X } from 'lucide-react';
+import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette, Pencil, Clock, Trash2, AlertCircle, Share2, Globe, Lock, Users, X, Bell, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
 
@@ -54,6 +54,15 @@ interface SharingSettings {
   isPublic: boolean;
   publicRole: string;
   sharedUsers: SharedUser[];
+}
+
+interface Reminder {
+  method: 'email' | 'popup';
+  minutes: number;
+}
+
+interface NotificationSettings {
+  defaultReminders: Reminder[];
 }
 
 // Google Calendar supported colors
@@ -93,8 +102,10 @@ export function GoogleCalendarSettings() {
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [deleteCalendarDialogOpen, setDeleteCalendarDialogOpen] = useState(false);
   const [sharingDialogOpen, setSharingDialogOpen] = useState(false);
+  const [notificationsDialogOpen, setNotificationsDialogOpen] = useState(false);
   const [newShareEmail, setNewShareEmail] = useState('');
   const [newShareRole, setNewShareRole] = useState<'reader' | 'writer'>('reader');
+  const [pendingReminders, setPendingReminders] = useState<Reminder[]>([]);
   const [selectedColor, setSelectedColor] = useState(CALENDAR_COLORS[7].color); // Default to Basil green
   const [newCalendarName, setNewCalendarName] = useState('');
 
@@ -168,6 +179,24 @@ export function GoogleCalendarSettings() {
       });
       if (error) throw error;
       return data as SharingSettings;
+    },
+    enabled: isConnected && !!integration?.google_calendar_id,
+  });
+
+  // Fetch notification settings
+  const { data: notificationSettings, isLoading: notificationsLoading } = useQuery({
+    queryKey: ['google-calendar-notifications', companyId, integration?.google_calendar_id],
+    queryFn: async () => {
+      if (!companyId || !integration?.google_calendar_id) return null;
+      const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: {
+          action: 'get_notifications',
+          companyId,
+          calendarId: integration.google_calendar_id,
+        },
+      });
+      if (error) throw error;
+      return data as NotificationSettings;
     },
     enabled: isConnected && !!integration?.google_calendar_id,
   });
@@ -517,6 +546,34 @@ export function GoogleCalendarSettings() {
     },
   });
 
+  // Update notification settings
+  const updateNotificationsMutation = useMutation({
+    mutationFn: async (reminders: Reminder[]) => {
+      if (!companyId || !integration?.google_calendar_id) throw new Error('No calendar selected');
+      
+      const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: {
+          action: 'update_notifications',
+          companyId,
+          calendarId: integration.google_calendar_id,
+          reminders,
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-notifications'] });
+      setNotificationsDialogOpen(false);
+      toast.success('Notification settings updated');
+    },
+    onError: (error) => {
+      console.error('Failed to update notifications:', error);
+      toast.error('Failed to update notification settings');
+    },
+  });
+
   // Handle OAuth callback (check URL for code parameter)
   const handleOAuthCallback = async () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -743,6 +800,19 @@ export function GoogleCalendarSettings() {
                     >
                       <Share2 className="w-3 h-3" />
                       Share
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setPendingReminders(notificationSettings?.defaultReminders || []);
+                        setNotificationsDialogOpen(true);
+                      }}
+                      disabled={!integration?.google_calendar_id}
+                      className="gap-1 text-xs h-7"
+                    >
+                      <Bell className="w-3 h-3" />
+                      Notifications
                     </Button>
                   </div>
                 </div>
@@ -1203,6 +1273,129 @@ export function GoogleCalendarSettings() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setSharingDialogOpen(false)}>
               Done
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Notifications Settings Dialog */}
+      <Dialog open={notificationsDialogOpen} onOpenChange={setNotificationsDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Event Notifications</DialogTitle>
+            <DialogDescription>
+              Configure default reminders for new calendar events.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {/* Current reminders */}
+            <div className="space-y-3">
+              <label className="text-sm font-medium">Default Reminders</label>
+              {pendingReminders.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4 border border-dashed rounded-lg">
+                  No reminders configured
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {pendingReminders.map((reminder, index) => (
+                    <div key={index} className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
+                      <div className="flex items-center gap-2 flex-1">
+                        {reminder.method === 'email' ? (
+                          <Mail className="w-4 h-4 text-muted-foreground" />
+                        ) : (
+                          <Bell className="w-4 h-4 text-muted-foreground" />
+                        )}
+                        <Select
+                          value={reminder.method}
+                          onValueChange={(value: 'email' | 'popup') => {
+                            const updated = [...pendingReminders];
+                            updated[index] = { ...updated[index], method: value };
+                            setPendingReminders(updated);
+                          }}
+                        >
+                          <SelectTrigger className="w-24 h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="popup">Popup</SelectItem>
+                            <SelectItem value="email">Email</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select
+                          value={reminder.minutes.toString()}
+                          onValueChange={(value) => {
+                            const updated = [...pendingReminders];
+                            updated[index] = { ...updated[index], minutes: parseInt(value) };
+                            setPendingReminders(updated);
+                          }}
+                        >
+                          <SelectTrigger className="w-32 h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="0">At time of event</SelectItem>
+                            <SelectItem value="5">5 minutes before</SelectItem>
+                            <SelectItem value="10">10 minutes before</SelectItem>
+                            <SelectItem value="15">15 minutes before</SelectItem>
+                            <SelectItem value="30">30 minutes before</SelectItem>
+                            <SelectItem value="60">1 hour before</SelectItem>
+                            <SelectItem value="120">2 hours before</SelectItem>
+                            <SelectItem value="1440">1 day before</SelectItem>
+                            <SelectItem value="2880">2 days before</SelectItem>
+                            <SelectItem value="10080">1 week before</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setPendingReminders(pendingReminders.filter((_, i) => i !== index));
+                        }}
+                        className="h-8 w-8 p-0"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Add reminder button */}
+              {pendingReminders.length < 5 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setPendingReminders([...pendingReminders, { method: 'popup', minutes: 30 }]);
+                  }}
+                  className="w-full gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Reminder
+                </Button>
+              )}
+              <p className="text-xs text-muted-foreground">
+                You can add up to 5 reminders. These will be applied to all new events.
+              </p>
+            </div>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setNotificationsDialogOpen(false)}
+              disabled={updateNotificationsMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => updateNotificationsMutation.mutate(pendingReminders)}
+              disabled={updateNotificationsMutation.isPending}
+            >
+              {updateNotificationsMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : null}
+              Save Changes
             </Button>
           </DialogFooter>
         </DialogContent>
