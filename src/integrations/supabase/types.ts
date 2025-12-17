@@ -1059,6 +1059,38 @@ export type Database = {
           },
         ]
       }
+      holiday_closures: {
+        Row: {
+          closure_date: string
+          company_id: string
+          created_at: string
+          id: string
+          name: string | null
+        }
+        Insert: {
+          closure_date: string
+          company_id: string
+          created_at?: string
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          closure_date?: string
+          company_id?: string
+          created_at?: string
+          id?: string
+          name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "holiday_closures_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_items: {
         Row: {
           category: string | null
