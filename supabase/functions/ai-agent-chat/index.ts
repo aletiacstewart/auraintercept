@@ -59,7 +59,7 @@ IMPORTANT: When customers say "tomorrow", "next Monday", "this Friday", "next we
 const AGENT_PROMPTS: Record<string, string> = {
   triage: `You are a Triage Agent for a service business. Your role is to:
 - Greet customers warmly and professionally
-- Classify their intent (booking, emergency, quote, general inquiry)
+- Classify their intent (booking, emergency, quote, general inquiry, appointment tracking)
 - Assess urgency level (low, medium, high, emergency)
 - COLLECT required information BEFORE any handoff
 - Route to the appropriate specialized agent
@@ -73,9 +73,18 @@ Before handing off to ANY agent, you MUST first collect:
 DO NOT ask for preferred date/time - the Booking Agent will handle scheduling details.
 DO NOT hand off until you have collected name, phone, and issue description!
 
+APPOINTMENT TRACKING:
+When a customer wants to TRACK or CHECK their appointment status:
+1. Ask for their phone number or email: "I can look that up for you! What's the phone number or email associated with your appointment?"
+2. Use the track_appointment tool with their phone or email
+3. Present the appointment details clearly including: service type, date/time, status, assigned technician, and ETA if applicable
+4. If they need more ETA details, hand off to the ETA agent
+
 ROUTING RULES:
 - ONLY hand off to the dispatch agent for explicit EMERGENCIES (flooding, gas smell, sparks/fire, major water leak "everywhere", no heat in freezing conditions, or customer says it's urgent/emergency).
 - For normal issues like "sink leaking" or "need service" (not explicitly urgent), route to the booking agent.
+- For appointment tracking/status, use the track_appointment tool directly - no handoff needed.
+- For detailed ETA tracking of a technician already en route, hand off to the ETA agent.
 
 CRITICAL - HANDOFF CONTEXT:
 When you hand off, you MUST include the collected customer info in the handoff context like this:
@@ -83,16 +92,12 @@ handoff_to_agent(target_agent="booking", context="Customer Name: John Smith, Pho
 
 The receiving agent will use this info so the customer doesn't have to repeat themselves!
 
-Example flow:
-Customer: "My AC is broken"
-You: "I'm sorry to hear that! Let me help you get this fixed. May I have your name please?"
-Customer: "John Smith"
-You: "Thanks John! What's the best phone number to reach you?"
+Example flow for tracking:
+Customer: "I want to track my appointment"
+You: "I can look that up for you! What's the phone number associated with your appointment?"
 Customer: "555-1234"
-You: "Got it. Can you briefly describe what's happening with your AC?"
-Customer: "It's just not cooling"
-You: "Perfect, John! Let me connect you with our scheduling specialist who can find the best time for you."
-[Call handoff_to_agent with context="Customer Name: John Smith, Phone: 555-1234, Issue: AC not cooling"]
+You: [Call track_appointment with customer_phone="555-1234"]
+[Present the appointment details from the tool response]
 
 Be concise but friendly. Always collect name, phone, and issue before handoff.`,
 
@@ -376,7 +381,7 @@ const AGENT_TOOLS: Record<string, any[]> = {
         parameters: {
           type: 'object',
           properties: {
-            target_agent: { type: 'string', enum: ['booking', 'dispatch', 'quoting', 'followup', 'review', 'warranty'] },
+            target_agent: { type: 'string', enum: ['booking', 'dispatch', 'quoting', 'followup', 'review', 'warranty', 'eta'] },
             reason: { type: 'string', description: 'Why the handoff is happening' },
             urgency: { type: 'string', enum: ['low', 'medium', 'high', 'emergency'] },
             customer_intent: { type: 'string', description: 'What the customer wants to do' },
@@ -410,6 +415,21 @@ const AGENT_TOOLS: Record<string, any[]> = {
           type: 'object',
           properties: {
             category: { type: 'string', description: 'Optional: filter by service category' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'track_appointment',
+        description: 'Look up and track appointment status by customer phone number or email. Use this when a customer wants to check their appointment status.',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_phone: { type: 'string', description: 'Customer phone number to look up' },
+            customer_email: { type: 'string', description: 'Customer email to look up' },
+            customer_name: { type: 'string', description: 'Customer name for verification' },
           },
         },
       },
@@ -2156,6 +2176,131 @@ async function executeAgentTool(
         services: formattedServices,
         total_count: formattedServices.length,
         message: `Here are our ${formattedServices.length} available services. Please let me know which one(s) you're interested in for a quote.`,
+      };
+    }
+
+    // ==========================================
+    // APPOINTMENT TRACKING TOOLS
+    // ==========================================
+    case 'track_appointment': {
+      console.log('[AI Agent] Tracking appointment for customer:', args);
+      
+      if (!args.customer_phone && !args.customer_email) {
+        return {
+          success: false,
+          error: 'Please provide your phone number or email to look up your appointment.',
+          needs_info: true,
+        };
+      }
+      
+      // Build query to find appointments
+      let query = supabase
+        .from('appointments')
+        .select(`
+          id,
+          customer_name,
+          customer_phone,
+          customer_email,
+          service_type,
+          datetime,
+          status,
+          duration_minutes,
+          customer_address,
+          notes,
+          employee_id
+        `)
+        .eq('company_id', companyId)
+        .in('status', ['scheduled', 'confirmed', 'in_progress'])
+        .order('datetime', { ascending: true });
+      
+      // Filter by phone or email
+      if (args.customer_phone) {
+        query = query.eq('customer_phone', args.customer_phone);
+      } else if (args.customer_email) {
+        query = query.eq('customer_email', args.customer_email);
+      }
+      
+      const { data: appointments, error } = await query;
+      
+      if (error) {
+        console.error('[AI Agent] Error fetching appointments:', error);
+        return { success: false, error: 'Unable to look up appointments. Please try again.' };
+      }
+      
+      if (!appointments || appointments.length === 0) {
+        return {
+          success: true,
+          found: false,
+          message: 'No upcoming appointments found. Would you like to schedule a new appointment?',
+        };
+      }
+      
+      // Get job assignments for these appointments to check technician status
+      const appointmentIds = appointments.map((a: any) => a.id);
+      const { data: jobAssignments } = await supabase
+        .from('job_assignments')
+        .select('appointment_id, status, employee_id, en_route_at, arrived_at, estimated_arrival_minutes')
+        .in('appointment_id', appointmentIds);
+      
+      // Get employee names
+      const employeeIds = appointments
+        .filter((a: any) => a.employee_id)
+        .map((a: any) => a.employee_id);
+      
+      const { data: employees } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', employeeIds.length > 0 ? employeeIds : ['none']);
+      
+      const employeeMap = new Map((employees || []).map((e: any) => [e.id, e.full_name]));
+      const jobMap = new Map((jobAssignments || []).map((j: any) => [j.appointment_id, j]));
+      
+      // Format appointments with status info
+      const formattedAppointments = appointments.map((apt: any) => {
+        const job: any = jobMap.get(apt.id);
+        const technicianName = employeeMap.get(apt.employee_id) || 'Not yet assigned';
+        
+        let statusMessage = apt.status;
+        let eta: string | null = null;
+        
+        if (job) {
+          if (job.status === 'en_route') {
+            statusMessage = 'Technician is on the way!';
+            eta = job.estimated_arrival_minutes ? `${job.estimated_arrival_minutes} minutes` : 'Soon';
+          } else if (job.status === 'arrived') {
+            statusMessage = 'Technician has arrived';
+          } else if (job.status === 'in_progress') {
+            statusMessage = 'Service in progress';
+          } else if (job.status === 'accepted') {
+            statusMessage = 'Technician assigned and confirmed';
+          } else if (job.status === 'pending_acceptance') {
+            statusMessage = 'Awaiting technician confirmation';
+          }
+        }
+        
+        const aptDate = new Date(apt.datetime);
+        
+        return {
+          appointment_id: apt.id,
+          service: apt.service_type,
+          date: aptDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
+          time: aptDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+          duration: `${apt.duration_minutes} minutes`,
+          status: statusMessage,
+          technician: technicianName,
+          address: apt.customer_address,
+          eta: eta,
+        };
+      });
+      
+      return {
+        success: true,
+        found: true,
+        appointments: formattedAppointments,
+        count: formattedAppointments.length,
+        message: formattedAppointments.length === 1 
+          ? `Found your appointment! Here are the details.`
+          : `Found ${formattedAppointments.length} upcoming appointments.`,
       };
     }
 
