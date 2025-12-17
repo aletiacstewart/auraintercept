@@ -249,12 +249,16 @@ Be thorough with documentation.`,
 - Explain pricing clearly to customers
 - Handle quote follow-ups
 
-WHEN RECEIVING A HANDOFF FROM ANOTHER AGENT:
-- Start with: "Hi! I'm your quote specialist. Let me put together accurate pricing for you."
-- Ask clarifying questions about the scope of work
-- Be transparent about what's included
+WHEN RECEIVING A HANDOFF FROM ANOTHER AGENT OR CUSTOMER ASKS FOR A QUOTE:
+1. FIRST: Use the list_services tool to show all available services with prices
+2. Present the services in a clear, numbered list format so customers can easily choose
+3. Ask which service(s) they'd like a quote for
+4. Once they select, use generate_quote to create a detailed quote
 
-Use the generate_quote tool to create quotes.
+CRITICAL: Always call list_services FIRST to show available options before asking what they want!
+Do NOT ask "What services are you interested in?" without first showing them the options.
+
+Use the generate_quote tool to create quotes after they select services.
 Use the send_quote tool to deliver to customers.
 Break down costs clearly. Be transparent about what's included.`,
 
@@ -393,6 +397,19 @@ const AGENT_TOOLS: Record<string, any[]> = {
             phone: { type: 'string' },
             email: { type: 'string' },
             issue_description: { type: 'string' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'list_services',
+        description: 'List all available services with prices to show the customer when they ask about services or pricing',
+        parameters: {
+          type: 'object',
+          properties: {
+            category: { type: 'string', description: 'Optional: filter by service category' },
           },
         },
       },
@@ -786,8 +803,21 @@ const AGENT_TOOLS: Record<string, any[]> = {
     {
       type: 'function',
       function: {
+        name: 'list_services',
+        description: 'List all available services with prices to show to the customer so they can choose',
+        parameters: {
+          type: 'object',
+          properties: {
+            category: { type: 'string', description: 'Optional: filter by service category' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
         name: 'generate_quote',
-        description: 'Generate a service quote',
+        description: 'Generate a service quote after customer selects services',
         parameters: {
           type: 'object',
           properties: {
@@ -2084,6 +2114,51 @@ async function executeAgentTool(
     // ==========================================
     // QUOTING TOOLS
     // ==========================================
+    case 'list_services': {
+      console.log('[AI Agent] Listing available services');
+      
+      let query = supabase
+        .from('services')
+        .select('id, name, description, price, duration_minutes, category, flat_fee, hourly_rate')
+        .eq('company_id', companyId)
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+      
+      if (args.category) {
+        query = query.eq('category', args.category);
+      }
+      
+      const { data: services, error } = await query;
+      
+      if (error) {
+        console.error('[AI Agent] Error fetching services:', error);
+        return { success: false, error: error.message };
+      }
+      
+      if (!services || services.length === 0) {
+        return {
+          success: true,
+          services: [],
+          message: 'No services are currently configured. Please contact us directly for pricing.',
+        };
+      }
+      
+      const formattedServices = services.map((s: any) => ({
+        name: s.name,
+        description: s.description || 'Professional service',
+        price: s.flat_fee || s.price || (s.hourly_rate ? `$${s.hourly_rate}/hr` : 'Contact for pricing'),
+        duration: s.duration_minutes ? `${s.duration_minutes} min` : null,
+        category: s.category,
+      }));
+      
+      return {
+        success: true,
+        services: formattedServices,
+        total_count: formattedServices.length,
+        message: `Here are our ${formattedServices.length} available services. Please let me know which one(s) you're interested in for a quote.`,
+      };
+    }
+
     case 'generate_quote': {
       console.log('[AI Agent] Generating quote with args:', args);
       
