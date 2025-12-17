@@ -496,7 +496,7 @@ export default function Demo() {
               </div>
 
               {/* Quick Actions Bar */}
-              {messages.length > 0 && !showFeedbackForm && !showReviewForm && !showQuoteForm && (
+              {messages.length > 0 && !showFeedbackForm && !showReviewForm && !showQuoteForm && !showTrackForm && (
                 <div className="shrink-0 border-t p-2 bg-muted/30">
                   <div className="flex gap-1 overflow-x-auto">
                     {QUICK_ACTIONS.map((action) => (
@@ -518,6 +518,22 @@ export default function Demo() {
               {/* Input */}
               <form onSubmit={handleSubmit} className="shrink-0 p-4 border-t bg-background">
                 <div className="flex gap-2">
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => { 
+                      setMessages([]); 
+                      setShowFeedbackForm(false); 
+                      setShowReviewForm(false); 
+                      setShowQuoteForm(false); 
+                      setShowTrackForm(false);
+                      setCurrentAgent('triage');
+                    }}
+                    className="shrink-0"
+                  >
+                    <Building2 className="h-4 w-4" />
+                  </Button>
                   <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
