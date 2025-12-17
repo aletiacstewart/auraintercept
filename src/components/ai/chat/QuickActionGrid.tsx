@@ -26,24 +26,22 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
 }) => {
   return (
     <div className={cn(
-      'grid gap-2',
+      'grid gap-1.5',
       columns === 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-4'
     )}>
-      {actions.map((action, index) => (
+      {actions.map((action) => (
         <Button
           key={action.id}
           variant={action.variant || 'outline'}
-          size={compact ? 'sm' : 'default'}
+          size="sm"
           className={cn(
-            'h-auto flex-col gap-1.5 py-3 px-2 text-xs sm:text-sm',
-            'glass-panel hover:neon-border transition-all duration-300',
-            'animate-fade-in',
-            action.variant === 'destructive' && 'bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive/30'
+            'h-auto flex-col gap-1 py-2 px-1.5 text-[11px]',
+            'hover:border-primary/50 transition-colors',
+            action.variant === 'destructive' && 'text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive/30'
           )}
-          style={{ animationDelay: `${index * 50}ms` }}
           onClick={() => onAction(action.message, action.id)}
         >
-          <action.icon className="h-4 w-4 sm:h-5 sm:w-5" />
+          <action.icon className="h-4 w-4" />
           <span className="text-center leading-tight">{action.label}</span>
         </Button>
       ))}
