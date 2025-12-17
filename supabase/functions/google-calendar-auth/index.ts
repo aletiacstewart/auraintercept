@@ -32,7 +32,8 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { action, code, companyId, redirectUri, calendarId, calendarColor, calendarName } = await req.json();
+    const body = await req.json();
+    const { action, code, companyId, redirectUri, calendarId, calendarColor, calendarName, visibility, shareEmail, shareRole, removeRuleId } = body;
     
     const GOOGLE_CLIENT_ID = Deno.env.get('GOOGLE_CLIENT_ID');
     const GOOGLE_CLIENT_SECRET = Deno.env.get('GOOGLE_CLIENT_SECRET');
@@ -589,6 +590,267 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ success: true }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (action === 'get_sharing') {
+      // Get sharing settings for a calendar
+      if (!calendarId) {
+        return new Response(
+          JSON.stringify({ error: 'Calendar ID required' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const { data: integration, error: fetchError } = await supabase
+        .from('tenant_integrations')
+        .select('google_refresh_token')
+        .eq('company_id', companyId)
+        .single();
+
+      if (fetchError || !integration?.google_refresh_token) {
+        return new Response(
+          JSON.stringify({ error: 'Not connected to Google Calendar' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const accessToken = await getAccessToken(
+        integration.google_refresh_token,
+        GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET
+      );
+
+      if (!accessToken) {
+        return new Response(
+          JSON.stringify({ error: 'Failed to refresh access token' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Get ACL list for the calendar
+      const aclResponse = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/acl`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (!aclResponse.ok) {
+        const errorText = await aclResponse.text();
+        console.error('Failed to fetch ACL:', errorText);
+        return new Response(
+          JSON.stringify({ error: 'Failed to fetch sharing settings' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const aclData = await aclResponse.json();
+      const rules = (aclData.items || []).map((rule: any) => ({
+        id: rule.id,
+        role: rule.role,
+        scope: {
+          type: rule.scope?.type,
+          value: rule.scope?.value,
+        },
+      }));
+
+      // Check if calendar is public
+      const isPublic = rules.some((r: any) => r.scope.type === 'default' && r.role !== 'none');
+      const publicRole = rules.find((r: any) => r.scope.type === 'default')?.role || 'none';
+
+      // Get shared users (excluding owner and default)
+      const sharedUsers = rules
+        .filter((r: any) => r.scope.type === 'user' && r.role !== 'owner')
+        .map((r: any) => ({
+          email: r.scope.value,
+          role: r.role,
+          id: r.id,
+        }));
+
+      return new Response(
+        JSON.stringify({ 
+          isPublic,
+          publicRole,
+          sharedUsers,
+          rules,
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (action === 'update_sharing') {
+      // Update sharing settings for a calendar
+      const { visibility, shareEmail, shareRole, removeRuleId } = await req.json().catch(() => ({}));
+      
+      if (!calendarId) {
+        return new Response(
+          JSON.stringify({ error: 'Calendar ID required' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const { data: integration, error: fetchError } = await supabase
+        .from('tenant_integrations')
+        .select('google_refresh_token')
+        .eq('company_id', companyId)
+        .single();
+
+      if (fetchError || !integration?.google_refresh_token) {
+        return new Response(
+          JSON.stringify({ error: 'Not connected to Google Calendar' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const accessToken = await getAccessToken(
+        integration.google_refresh_token,
+        GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET
+      );
+
+      if (!accessToken) {
+        return new Response(
+          JSON.stringify({ error: 'Failed to refresh access token' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Remove a specific ACL rule
+      if (removeRuleId) {
+        const deleteResponse = await fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/acl/${encodeURIComponent(removeRuleId)}`,
+          {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
+
+        if (!deleteResponse.ok) {
+          const errorText = await deleteResponse.text();
+          console.error('Failed to remove sharing:', errorText);
+          return new Response(
+            JSON.stringify({ error: 'Failed to remove sharing' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        return new Response(
+          JSON.stringify({ success: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Share with a specific email
+      if (shareEmail && shareRole) {
+        const aclResponse = await fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/acl`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              role: shareRole,
+              scope: {
+                type: 'user',
+                value: shareEmail,
+              },
+            }),
+          }
+        );
+
+        if (!aclResponse.ok) {
+          const errorText = await aclResponse.text();
+          console.error('Failed to share calendar:', errorText);
+          return new Response(
+            JSON.stringify({ error: 'Failed to share calendar with user' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        return new Response(
+          JSON.stringify({ success: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Update public visibility
+      if (visibility !== undefined) {
+        // First, try to get existing default ACL rule
+        const aclListResponse = await fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/acl`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
+
+        let existingDefaultRule = null;
+        if (aclListResponse.ok) {
+          const aclData = await aclListResponse.json();
+          existingDefaultRule = (aclData.items || []).find((r: any) => r.scope?.type === 'default');
+        }
+
+        if (visibility === 'private') {
+          // Remove default rule if it exists
+          if (existingDefaultRule) {
+            await fetch(
+              `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/acl/${encodeURIComponent(existingDefaultRule.id)}`,
+              {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${accessToken}` },
+              }
+            );
+          }
+        } else {
+          // Set public visibility (reader or freeBusyReader)
+          const role = visibility === 'public' ? 'reader' : 'freeBusyReader';
+          
+          if (existingDefaultRule) {
+            // Update existing rule
+            await fetch(
+              `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/acl/${encodeURIComponent(existingDefaultRule.id)}`,
+              {
+                method: 'PUT',
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  role,
+                  scope: { type: 'default' },
+                }),
+              }
+            );
+          } else {
+            // Create new rule
+            await fetch(
+              `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/acl`,
+              {
+                method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  role,
+                  scope: { type: 'default' },
+                }),
+              }
+            );
+          }
+        }
+
+        return new Response(
+          JSON.stringify({ success: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ error: 'No valid sharing operation specified' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 

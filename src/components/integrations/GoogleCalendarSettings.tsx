@@ -33,7 +33,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette, Pencil, Clock, Trash2, AlertCircle } from 'lucide-react';
+import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette, Pencil, Clock, Trash2, AlertCircle, Share2, Globe, Lock, Users, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
 
@@ -42,6 +42,18 @@ interface GoogleCalendar {
   summary: string;
   primary: boolean;
   backgroundColor?: string;
+}
+
+interface SharedUser {
+  email: string;
+  role: string;
+  id: string;
+}
+
+interface SharingSettings {
+  isPublic: boolean;
+  publicRole: string;
+  sharedUsers: SharedUser[];
 }
 
 // Google Calendar supported colors
@@ -80,6 +92,9 @@ export function GoogleCalendarSettings() {
   const [changeColorDialogOpen, setChangeColorDialogOpen] = useState(false);
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [deleteCalendarDialogOpen, setDeleteCalendarDialogOpen] = useState(false);
+  const [sharingDialogOpen, setSharingDialogOpen] = useState(false);
+  const [newShareEmail, setNewShareEmail] = useState('');
+  const [newShareRole, setNewShareRole] = useState<'reader' | 'writer'>('reader');
   const [selectedColor, setSelectedColor] = useState(CALENDAR_COLORS[7].color); // Default to Basil green
   const [newCalendarName, setNewCalendarName] = useState('');
 
@@ -137,6 +152,24 @@ export function GoogleCalendarSettings() {
       };
     },
     enabled: isConnected,
+  });
+
+  // Fetch sharing settings
+  const { data: sharingSettings, isLoading: sharingLoading } = useQuery({
+    queryKey: ['google-calendar-sharing', companyId, integration?.google_calendar_id],
+    queryFn: async () => {
+      if (!companyId || !integration?.google_calendar_id) return null;
+      const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: {
+          action: 'get_sharing',
+          companyId,
+          calendarId: integration.google_calendar_id,
+        },
+      });
+      if (error) throw error;
+      return data as SharingSettings;
+    },
+    enabled: isConnected && !!integration?.google_calendar_id,
   });
 
   // Fetch failed syncs
@@ -400,6 +433,90 @@ export function GoogleCalendarSettings() {
     },
   });
 
+  // Update visibility (public/private)
+  const updateVisibilityMutation = useMutation({
+    mutationFn: async (visibility: 'private' | 'public' | 'freeBusy') => {
+      if (!companyId || !integration?.google_calendar_id) throw new Error('No calendar selected');
+      
+      const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: {
+          action: 'update_sharing',
+          companyId,
+          calendarId: integration.google_calendar_id,
+          visibility,
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-sharing'] });
+      toast.success('Calendar visibility updated');
+    },
+    onError: (error) => {
+      console.error('Failed to update visibility:', error);
+      toast.error('Failed to update calendar visibility');
+    },
+  });
+
+  // Share with user
+  const shareWithUserMutation = useMutation({
+    mutationFn: async ({ email, role }: { email: string; role: string }) => {
+      if (!companyId || !integration?.google_calendar_id) throw new Error('No calendar selected');
+      
+      const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: {
+          action: 'update_sharing',
+          companyId,
+          calendarId: integration.google_calendar_id,
+          shareEmail: email,
+          shareRole: role,
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-sharing'] });
+      setNewShareEmail('');
+      setNewShareRole('reader');
+      toast.success('Calendar shared successfully');
+    },
+    onError: (error) => {
+      console.error('Failed to share calendar:', error);
+      toast.error('Failed to share calendar');
+    },
+  });
+
+  // Remove sharing
+  const removeSharingMutation = useMutation({
+    mutationFn: async (ruleId: string) => {
+      if (!companyId || !integration?.google_calendar_id) throw new Error('No calendar selected');
+      
+      const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: {
+          action: 'update_sharing',
+          companyId,
+          calendarId: integration.google_calendar_id,
+          removeRuleId: ruleId,
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-sharing'] });
+      toast.success('Access removed');
+    },
+    onError: (error) => {
+      console.error('Failed to remove sharing:', error);
+      toast.error('Failed to remove access');
+    },
+  });
+
   // Handle OAuth callback (check URL for code parameter)
   const handleOAuthCallback = async () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -616,6 +733,16 @@ export function GoogleCalendarSettings() {
                     >
                       <Trash2 className="w-3 h-3" />
                       Delete
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSharingDialogOpen(true)}
+                      disabled={!integration?.google_calendar_id}
+                      className="gap-1 text-xs h-7"
+                    >
+                      <Share2 className="w-3 h-3" />
+                      Share
                     </Button>
                   </div>
                 </div>
@@ -925,6 +1052,161 @@ export function GoogleCalendarSettings() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Sharing Settings Dialog */}
+      <Dialog open={sharingDialogOpen} onOpenChange={setSharingDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Calendar Sharing Settings</DialogTitle>
+            <DialogDescription>
+              Control who can see your calendar events.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            {/* Visibility Settings */}
+            <div className="space-y-3">
+              <label className="text-sm font-medium">Public Visibility</label>
+              <div className="grid gap-2">
+                <button
+                  type="button"
+                  onClick={() => updateVisibilityMutation.mutate('private')}
+                  disabled={updateVisibilityMutation.isPending}
+                  className={cn(
+                    "flex items-center gap-3 p-3 rounded-lg border text-left transition-colors",
+                    !sharingSettings?.isPublic 
+                      ? "border-primary bg-primary/5" 
+                      : "border-border hover:bg-muted/50"
+                  )}
+                >
+                  <Lock className="w-4 h-4 text-muted-foreground" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Private</p>
+                    <p className="text-xs text-muted-foreground">Only people you share with can see events</p>
+                  </div>
+                  {!sharingSettings?.isPublic && <Check className="w-4 h-4 text-primary" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => updateVisibilityMutation.mutate('freeBusy')}
+                  disabled={updateVisibilityMutation.isPending}
+                  className={cn(
+                    "flex items-center gap-3 p-3 rounded-lg border text-left transition-colors",
+                    sharingSettings?.isPublic && sharingSettings?.publicRole === 'freeBusyReader'
+                      ? "border-primary bg-primary/5" 
+                      : "border-border hover:bg-muted/50"
+                  )}
+                >
+                  <Users className="w-4 h-4 text-muted-foreground" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Free/Busy Only</p>
+                    <p className="text-xs text-muted-foreground">Others can see when you're busy but not event details</p>
+                  </div>
+                  {sharingSettings?.isPublic && sharingSettings?.publicRole === 'freeBusyReader' && <Check className="w-4 h-4 text-primary" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => updateVisibilityMutation.mutate('public')}
+                  disabled={updateVisibilityMutation.isPending}
+                  className={cn(
+                    "flex items-center gap-3 p-3 rounded-lg border text-left transition-colors",
+                    sharingSettings?.isPublic && sharingSettings?.publicRole === 'reader'
+                      ? "border-primary bg-primary/5" 
+                      : "border-border hover:bg-muted/50"
+                  )}
+                >
+                  <Globe className="w-4 h-4 text-muted-foreground" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Public</p>
+                    <p className="text-xs text-muted-foreground">Anyone can see all event details</p>
+                  </div>
+                  {sharingSettings?.isPublic && sharingSettings?.publicRole === 'reader' && <Check className="w-4 h-4 text-primary" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Share with specific people */}
+            <div className="space-y-3 pt-2 border-t border-border">
+              <label className="text-sm font-medium">Share with People</label>
+              <div className="flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="Enter email address"
+                  value={newShareEmail}
+                  onChange={(e) => setNewShareEmail(e.target.value)}
+                  className="flex-1"
+                />
+                <Select value={newShareRole} onValueChange={(v) => setNewShareRole(v as 'reader' | 'writer')}>
+                  <SelectTrigger className="w-28">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="reader">View</SelectItem>
+                    <SelectItem value="writer">Edit</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  size="icon"
+                  onClick={() => shareWithUserMutation.mutate({ email: newShareEmail, role: newShareRole })}
+                  disabled={shareWithUserMutation.isPending || !newShareEmail.includes('@')}
+                >
+                  {shareWithUserMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Plus className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+
+              {/* Shared users list */}
+              {sharingLoading ? (
+                <Skeleton className="h-16 w-full" />
+              ) : sharingSettings?.sharedUsers && sharingSettings.sharedUsers.length > 0 ? (
+                <div className="space-y-2">
+                  {sharingSettings.sharedUsers.map((user) => (
+                    <div key={user.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          <span className="text-xs font-medium text-primary">
+                            {user.email.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-sm">{user.email}</p>
+                          <p className="text-xs text-muted-foreground capitalize">
+                            {user.role === 'reader' ? 'Can view' : user.role === 'writer' ? 'Can edit' : user.role}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeSharingMutation.mutate(user.id)}
+                        disabled={removeSharingMutation.isPending}
+                        className="h-8 w-8 p-0"
+                      >
+                        {removeSharingMutation.isPending ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <X className="w-4 h-4" />
+                        )}
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-2">
+                  No one else has access to this calendar
+                </p>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSharingDialogOpen(false)}>
+              Done
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
