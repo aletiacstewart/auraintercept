@@ -481,6 +481,68 @@ export type Database = {
           },
         ]
       }
+      campaign_recipients: {
+        Row: {
+          campaign_id: string
+          channel: string
+          clicked_at: string | null
+          company_id: string
+          converted_at: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          delivered_at: string | null
+          error_message: string | null
+          id: string
+          opened_at: string | null
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          campaign_id: string
+          channel: string
+          clicked_at?: string | null
+          company_id: string
+          converted_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          opened_at?: string | null
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          campaign_id?: string
+          channel?: string
+          clicked_at?: string | null
+          company_id?: string
+          converted_at?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          opened_at?: string | null
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_recipients_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           ai_agent_prompt: string | null
@@ -759,6 +821,74 @@ export type Database = {
           },
         ]
       }
+      customer_referrals: {
+        Row: {
+          appointment_id: string | null
+          company_id: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          referral_code: string
+          referred_email: string | null
+          referred_name: string | null
+          referred_phone: string | null
+          referrer_email: string | null
+          referrer_name: string
+          referrer_phone: string | null
+          reward_issued_at: string | null
+          reward_type: string | null
+          reward_value: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          company_id: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          referral_code: string
+          referred_email?: string | null
+          referred_name?: string | null
+          referred_phone?: string | null
+          referrer_email?: string | null
+          referrer_name: string
+          referrer_phone?: string | null
+          reward_issued_at?: string | null
+          reward_type?: string | null
+          reward_value?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          appointment_id?: string | null
+          company_id?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          referral_code?: string
+          referred_email?: string | null
+          referred_name?: string | null
+          referred_phone?: string | null
+          referrer_email?: string | null
+          referrer_name?: string
+          referrer_phone?: string | null
+          reward_issued_at?: string | null
+          reward_type?: string | null
+          reward_value?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_referrals_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       digest_delivery_logs: {
         Row: {
           company_id: string
@@ -922,6 +1052,240 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_items: {
+        Row: {
+          category: string | null
+          company_id: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          min_quantity: number
+          name: string
+          quantity: number
+          sku: string | null
+          supplier: string | null
+          unit_cost: number | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          company_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          min_quantity?: number
+          name: string
+          quantity?: number
+          sku?: string | null
+          supplier?: string | null
+          unit_cost?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          min_quantity?: number
+          name?: string
+          quantity?: number
+          sku?: string | null
+          supplier?: string | null
+          unit_cost?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      inventory_transactions: {
+        Row: {
+          appointment_id: string | null
+          company_id: string
+          created_at: string
+          employee_id: string | null
+          id: string
+          item_id: string
+          notes: string | null
+          quantity: number
+          transaction_type: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          company_id: string
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          item_id: string
+          notes?: string | null
+          quantity: number
+          transaction_type: string
+        }
+        Update: {
+          appointment_id?: string | null
+          company_id?: string
+          created_at?: string
+          employee_id?: string | null
+          id?: string
+          item_id?: string
+          notes?: string | null
+          quantity?: number
+          transaction_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_transactions_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_transactions_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_line_items: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          quantity: number
+          service_id: string | null
+          total: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          quantity?: number
+          service_id?: string | null
+          total: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          service_id?: string | null
+          total?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_line_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_line_items_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          appointment_id: string | null
+          company_id: string
+          created_at: string
+          customer_address: string | null
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          due_date: string | null
+          id: string
+          invoice_number: string | null
+          notes: string | null
+          paid_at: string | null
+          payment_method: string | null
+          quote_id: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          subtotal: number
+          tax_amount: number | null
+          tax_rate: number | null
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          company_id: string
+          created_at?: string
+          customer_address?: string | null
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          quote_id?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          subtotal?: number
+          tax_amount?: number | null
+          tax_rate?: number | null
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          appointment_id?: string | null
+          company_id?: string
+          created_at?: string
+          customer_address?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          quote_id?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          subtotal?: number
+          tax_amount?: number | null
+          tax_rate?: number | null
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
             referencedColumns: ["id"]
           },
         ]
@@ -1091,6 +1455,75 @@ export type Database = {
           },
         ]
       }
+      marketing_campaigns: {
+        Row: {
+          campaign_type: string
+          channels: string[] | null
+          company_id: string
+          created_at: string
+          discount_type: string | null
+          discount_value: number | null
+          email_subject: string | null
+          end_date: string | null
+          id: string
+          message_template: string | null
+          name: string
+          promo_code: string | null
+          start_date: string | null
+          status: string
+          target_segment: string | null
+          total_clicked: number | null
+          total_converted: number | null
+          total_opened: number | null
+          total_sent: number | null
+          updated_at: string
+        }
+        Insert: {
+          campaign_type: string
+          channels?: string[] | null
+          company_id: string
+          created_at?: string
+          discount_type?: string | null
+          discount_value?: number | null
+          email_subject?: string | null
+          end_date?: string | null
+          id?: string
+          message_template?: string | null
+          name: string
+          promo_code?: string | null
+          start_date?: string | null
+          status?: string
+          target_segment?: string | null
+          total_clicked?: number | null
+          total_converted?: number | null
+          total_opened?: number | null
+          total_sent?: number | null
+          updated_at?: string
+        }
+        Update: {
+          campaign_type?: string
+          channels?: string[] | null
+          company_id?: string
+          created_at?: string
+          discount_type?: string | null
+          discount_value?: number | null
+          email_subject?: string | null
+          end_date?: string | null
+          id?: string
+          message_template?: string | null
+          name?: string
+          promo_code?: string | null
+          start_date?: string | null
+          status?: string
+          target_segment?: string | null
+          total_clicked?: number | null
+          total_converted?: number | null
+          total_opened?: number | null
+          total_sent?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           availability_json: Json | null
@@ -1137,6 +1570,119 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_line_items: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          quantity: number
+          quote_id: string
+          service_id: string | null
+          total: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          quantity?: number
+          quote_id: string
+          service_id?: string | null
+          total: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          quantity?: number
+          quote_id?: string
+          service_id?: string | null
+          total?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_line_items_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_line_items_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          appointment_id: string | null
+          company_id: string
+          created_at: string
+          customer_address: string | null
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          id: string
+          notes: string | null
+          status: string
+          subtotal: number
+          tax_amount: number | null
+          tax_rate: number | null
+          total_amount: number
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          appointment_id?: string | null
+          company_id: string
+          created_at?: string
+          customer_address?: string | null
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          id?: string
+          notes?: string | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number | null
+          tax_rate?: number | null
+          total_amount?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          appointment_id?: string | null
+          company_id?: string
+          created_at?: string
+          customer_address?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          id?: string
+          notes?: string | null
+          status?: string
+          subtotal?: number
+          tax_amount?: number | null
+          tax_rate?: number | null
+          total_amount?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
             referencedColumns: ["id"]
           },
         ]
@@ -1578,6 +2124,223 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      warranty_claims: {
+        Row: {
+          appointment_id: string | null
+          claim_type: string | null
+          company_id: string
+          created_at: string
+          id: string
+          issue_description: string
+          photos: string[] | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          reviewed_at: string | null
+          status: string
+          submitted_at: string
+          updated_at: string
+          warranty_id: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          claim_type?: string | null
+          company_id: string
+          created_at?: string
+          id?: string
+          issue_description: string
+          photos?: string[] | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          reviewed_at?: string | null
+          status?: string
+          submitted_at?: string
+          updated_at?: string
+          warranty_id: string
+        }
+        Update: {
+          appointment_id?: string | null
+          claim_type?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          issue_description?: string
+          photos?: string[] | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          reviewed_at?: string | null
+          status?: string
+          submitted_at?: string
+          updated_at?: string
+          warranty_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "warranty_claims_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "warranty_claims_warranty_id_fkey"
+            columns: ["warranty_id"]
+            isOneToOne: false
+            referencedRelation: "warranty_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      warranty_records: {
+        Row: {
+          appointment_id: string | null
+          company_id: string
+          coverage_details: string | null
+          coverage_type: string | null
+          created_at: string
+          customer_address: string | null
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          equipment_model: string | null
+          equipment_type: string
+          id: string
+          installation_date: string | null
+          is_active: boolean
+          purchase_date: string | null
+          serial_number: string | null
+          updated_at: string
+          warranty_end_date: string
+          warranty_start_date: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          company_id: string
+          coverage_details?: string | null
+          coverage_type?: string | null
+          created_at?: string
+          customer_address?: string | null
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          equipment_model?: string | null
+          equipment_type: string
+          id?: string
+          installation_date?: string | null
+          is_active?: boolean
+          purchase_date?: string | null
+          serial_number?: string | null
+          updated_at?: string
+          warranty_end_date: string
+          warranty_start_date: string
+        }
+        Update: {
+          appointment_id?: string | null
+          company_id?: string
+          coverage_details?: string | null
+          coverage_type?: string | null
+          created_at?: string
+          customer_address?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          equipment_model?: string | null
+          equipment_type?: string
+          id?: string
+          installation_date?: string | null
+          is_active?: boolean
+          purchase_date?: string | null
+          serial_number?: string | null
+          updated_at?: string
+          warranty_end_date?: string
+          warranty_start_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "warranty_records_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      winback_offers: {
+        Row: {
+          appointment_id: string | null
+          channel: string | null
+          company_id: string
+          created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          days_inactive: number | null
+          expires_at: string | null
+          id: string
+          last_appointment_date: string | null
+          message_sent: string | null
+          offer_type: string
+          offer_value: number | null
+          opened_at: string | null
+          promo_code: string | null
+          redeemed_at: string | null
+          sent_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          channel?: string | null
+          company_id: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          days_inactive?: number | null
+          expires_at?: string | null
+          id?: string
+          last_appointment_date?: string | null
+          message_sent?: string | null
+          offer_type: string
+          offer_value?: number | null
+          opened_at?: string | null
+          promo_code?: string | null
+          redeemed_at?: string | null
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          appointment_id?: string | null
+          channel?: string | null
+          company_id?: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          days_inactive?: number | null
+          expires_at?: string | null
+          id?: string
+          last_appointment_date?: string | null
+          message_sent?: string | null
+          offer_type?: string
+          offer_value?: number | null
+          opened_at?: string | null
+          promo_code?: string | null
+          redeemed_at?: string | null
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "winback_offers_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
