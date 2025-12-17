@@ -12,7 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { 
   Bot, Send, User, Loader2, Home, Phone, Mic, Calendar, 
   Clock, MessageSquare, Sparkles, ChevronRight, Building2, Volume2,
-  AlertTriangle, DollarSign, MapPin, Star, CalendarPlus, ArrowRight, Users, CheckCircle2
+  AlertTriangle, DollarSign, MapPin, Star, CalendarPlus, ArrowRight, Users, CheckCircle2, ThumbsUp
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VoiceChat } from './VoiceChat';
@@ -37,7 +37,8 @@ const QUICK_ACTIONS = [
   { id: 'hours', label: 'Business Hours', icon: Clock, message: "What are your business hours?" },
   { id: 'services', label: 'View Services', icon: Sparkles, message: "What services do you offer?" },
   { id: 'track', label: 'Track Appointment', icon: MapPin, message: "I want to track my appointment status" },
-  { id: 'feedback', label: 'Leave Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
+  { id: 'feedback', label: 'Follow Up Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
+  { id: 'review', label: 'Request Review', icon: ThumbsUp, message: "I'd like to leave a review for my recent service" },
 ];
 
 // Agent display configuration for visual indicators
@@ -260,7 +261,7 @@ export const AIAgentConsole = () => {
     await sendMessage(message);
   };
 
-  const handleQuickAction = (action: string, actionId?: string) => {
+  const handleQuickAction = async (action: string, actionId?: string) => {
     // Show feedback form directly instead of sending a message
     if (actionId === 'feedback') {
       setShowFeedbackForm(true);
@@ -289,8 +290,9 @@ export const AIAgentConsole = () => {
       setActiveTab('emergency');
       return;
     }
-    setInput(action);
+    // For chat-based actions (quote, track, review), send message directly
     setActiveTab('chat');
+    await sendMessage(action);
   };
 
   const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string; serviceDate?: Date }) => {
