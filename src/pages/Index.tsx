@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Bot, Building2, Zap, Shield, MessageSquare, Play } from 'lucide-react';
 import logo from '@/assets/logo.png';
+import aiBotBanner from '@/assets/ai-bot-banner.png';
 
 export default function Index() {
   const navigate = useNavigate();
@@ -70,6 +71,12 @@ export default function Index() {
         <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6 animate-fade-in">
           Your Business. <span className="gradient-text">Your AI Agent.</span>
         </h1>
+
+        <img 
+          src={aiBotBanner} 
+          alt="AI Bot Company" 
+          className="mx-auto mb-6 max-w-md object-contain animate-fade-in"
+        />
         
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in">
           Create custom AI agents that handle appointments, calls, and customer service 
