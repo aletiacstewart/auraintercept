@@ -854,6 +854,136 @@ Deno.serve(async (req) => {
       );
     }
 
+    if (action === 'get_notifications') {
+      // Get notification settings for a calendar
+      if (!calendarId) {
+        return new Response(
+          JSON.stringify({ error: 'Calendar ID required' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const { data: integration, error: fetchError } = await supabase
+        .from('tenant_integrations')
+        .select('google_refresh_token')
+        .eq('company_id', companyId)
+        .single();
+
+      if (fetchError || !integration?.google_refresh_token) {
+        return new Response(
+          JSON.stringify({ error: 'Not connected to Google Calendar' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const accessToken = await getAccessToken(
+        integration.google_refresh_token,
+        GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET
+      );
+
+      if (!accessToken) {
+        return new Response(
+          JSON.stringify({ error: 'Failed to refresh access token' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Get calendar list entry to retrieve default reminders
+      const calendarListResponse = await fetch(
+        `https://www.googleapis.com/calendar/v3/users/me/calendarList/${encodeURIComponent(calendarId)}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (!calendarListResponse.ok) {
+        const errorText = await calendarListResponse.text();
+        console.error('Failed to fetch calendar settings:', errorText);
+        return new Response(
+          JSON.stringify({ error: 'Failed to fetch notification settings' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const calendarData = await calendarListResponse.json();
+      
+      return new Response(
+        JSON.stringify({ 
+          defaultReminders: calendarData.defaultReminders || [],
+          notificationSettings: calendarData.notificationSettings || {},
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (action === 'update_notifications') {
+      // Update notification settings for a calendar
+      const { reminders } = body;
+      
+      if (!calendarId) {
+        return new Response(
+          JSON.stringify({ error: 'Calendar ID required' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const { data: integration, error: fetchError } = await supabase
+        .from('tenant_integrations')
+        .select('google_refresh_token')
+        .eq('company_id', companyId)
+        .single();
+
+      if (fetchError || !integration?.google_refresh_token) {
+        return new Response(
+          JSON.stringify({ error: 'Not connected to Google Calendar' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const accessToken = await getAccessToken(
+        integration.google_refresh_token,
+        GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET
+      );
+
+      if (!accessToken) {
+        return new Response(
+          JSON.stringify({ error: 'Failed to refresh access token' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Update calendar list entry with new default reminders
+      const updateResponse = await fetch(
+        `https://www.googleapis.com/calendar/v3/users/me/calendarList/${encodeURIComponent(calendarId)}`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            defaultReminders: reminders || [],
+          }),
+        }
+      );
+
+      if (!updateResponse.ok) {
+        const errorText = await updateResponse.text();
+        console.error('Failed to update notification settings:', errorText);
+        return new Response(
+          JSON.stringify({ error: 'Failed to update notification settings' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     return new Response(
       JSON.stringify({ error: 'Invalid action' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
