@@ -14,6 +14,7 @@ import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
 import EmployeeAvailability from "./pages/EmployeeAvailability";
 import EmployeeAppointments from "./pages/EmployeeAppointments";
+import EmployeeFieldOps from "./pages/EmployeeFieldOps";
 import Messages from "./pages/Messages";
 import Integrations from "./pages/Integrations";
 import KnowledgeBase from "./pages/KnowledgeBase";
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/dashboard/onboarding" element={<Onboarding />} />
             <Route path="/dashboard/availability" element={<EmployeeAvailability />} />
             <Route path="/dashboard/appointments" element={<EmployeeAppointments />} />
+            <Route path="/dashboard/field-ops" element={<EmployeeFieldOps />} />
             <Route path="/dashboard/messages" element={<Messages />} />
             <Route path="/dashboard/integrations" element={<Integrations />} />
             <Route path="/dashboard/knowledge" element={<KnowledgeBase />} />
