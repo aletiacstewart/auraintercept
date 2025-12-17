@@ -360,7 +360,7 @@ export default function Demo() {
           <img 
             src={aiBotCompanyLogo} 
             alt="AI Bot Company" 
-            className="mx-auto mb-4 h-24 sm:h-32 object-contain"
+            className="mx-auto mb-4 h-[175px] w-[175px] object-contain"
           />
           <h1 className="text-2xl sm:text-3xl font-bold mb-2 gradient-text">Try Our AI Agent</h1>
           <p className="text-muted-foreground text-sm sm:text-base">
