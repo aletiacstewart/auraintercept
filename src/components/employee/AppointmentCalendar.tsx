@@ -29,6 +29,13 @@ import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, 
 import { cn } from '@/lib/utils';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { toast } from 'sonner';
+import { CalendarSyncBadge } from '@/components/appointments/CalendarSyncBadge';
+
+interface CalendarEventMapping {
+  google_event_id: string | null;
+  sync_status: string | null;
+  last_synced_at: string | null;
+}
 
 interface Appointment {
   id: string;
@@ -43,6 +50,7 @@ interface Appointment {
   notes: string | null;
   job_status?: string;
   job_id?: string;
+  calendar_sync?: CalendarEventMapping | null;
 }
 
 export function AppointmentCalendar() {
@@ -158,6 +166,21 @@ export function AppointmentCalendar() {
 
       if (directError) throw directError;
 
+      // Fetch calendar sync status for all appointment IDs
+      const allAppointmentIds = [
+        ...(jobAssignments || []).filter(ja => ja.appointments).map(ja => ja.appointments!.id),
+        ...(directAppointments || []).map(apt => apt.id)
+      ];
+
+      const { data: calendarMappings } = await supabase
+        .from('calendar_event_mappings')
+        .select('appointment_id, google_event_id, sync_status, last_synced_at')
+        .in('appointment_id', allAppointmentIds.length > 0 ? allAppointmentIds : ['00000000-0000-0000-0000-000000000000']);
+
+      const syncMap = new Map(
+        (calendarMappings || []).map(m => [m.appointment_id, m])
+      );
+
       // Combine both sources, filtering by date range
       const assignedAppointments: Appointment[] = (jobAssignments || [])
         .filter(ja => ja.appointments)
@@ -174,6 +197,7 @@ export function AppointmentCalendar() {
           notes: ja.appointments!.notes,
           job_status: ja.status,
           job_id: ja.id,
+          calendar_sync: syncMap.get(ja.appointments!.id) || null,
         }))
         .filter(apt => {
           const aptDate = new Date(apt.datetime);
@@ -188,6 +212,7 @@ export function AppointmentCalendar() {
           ...apt,
           job_status: undefined,
           job_id: undefined,
+          calendar_sync: syncMap.get(apt.id) || null,
         }));
 
       const allAppointments = [...assignedAppointments, ...directOnly];
@@ -332,6 +357,12 @@ export function AppointmentCalendar() {
                           {appointment.status}
                         </Badge>
                         {getJobStatusBadge(appointment.job_status)}
+                        <CalendarSyncBadge
+                          syncStatus={appointment.calendar_sync?.sync_status}
+                          lastSyncedAt={appointment.calendar_sync?.last_synced_at}
+                          googleEventId={appointment.calendar_sync?.google_event_id}
+                          compact
+                        />
                       </div>
                     </div>
                   </div>
@@ -380,6 +411,11 @@ export function AppointmentCalendar() {
                       {selectedAppointment.status}
                     </Badge>
                     {getJobStatusBadge(selectedAppointment.job_status)}
+                    <CalendarSyncBadge
+                      syncStatus={selectedAppointment.calendar_sync?.sync_status}
+                      lastSyncedAt={selectedAppointment.calendar_sync?.last_synced_at}
+                      googleEventId={selectedAppointment.calendar_sync?.google_event_id}
+                    />
                   </div>
                 </div>
               </div>
