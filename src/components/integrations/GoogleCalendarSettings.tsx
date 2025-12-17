@@ -31,8 +31,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette } from 'lucide-react';
+import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette, Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface GoogleCalendar {
@@ -76,7 +77,9 @@ export function GoogleCalendarSettings() {
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
   const [createCalendarDialogOpen, setCreateCalendarDialogOpen] = useState(false);
   const [changeColorDialogOpen, setChangeColorDialogOpen] = useState(false);
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(CALENDAR_COLORS[7].color); // Default to Basil green
+  const [newCalendarName, setNewCalendarName] = useState('');
 
   // Fetch current Google Calendar connection status
   const { data: integration, isLoading } = useQuery({
@@ -221,6 +224,36 @@ export function GoogleCalendarSettings() {
       toast.error('Failed to change calendar color');
     },
   });
+
+  // Rename calendar
+  const renameCalendarMutation = useMutation({
+    mutationFn: async (name: string) => {
+      if (!companyId || !integration?.google_calendar_id) throw new Error('No calendar selected');
+      
+      const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: {
+          action: 'rename_calendar',
+          companyId,
+          calendarId: integration.google_calendar_id,
+          calendarName: name,
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['google-calendars'] });
+      setRenameDialogOpen(false);
+      setNewCalendarName('');
+      toast.success('Calendar renamed');
+    },
+    onError: (error) => {
+      console.error('Failed to rename calendar:', error);
+      toast.error('Failed to rename calendar');
+    },
+  });
+
   const disconnectMutation = useMutation({
     mutationFn: async () => {
       if (!companyId) throw new Error('No company ID');
@@ -436,6 +469,22 @@ export function GoogleCalendarSettings() {
                       <Palette className="w-3 h-3" />
                       Change Color
                     </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        const currentName = calendarsData?.calendars?.find(
+                          c => c.id === integration?.google_calendar_id
+                        )?.summary;
+                        if (currentName) setNewCalendarName(currentName);
+                        setRenameDialogOpen(true);
+                      }}
+                      disabled={renameCalendarMutation.isPending || !integration?.google_calendar_id}
+                      className="gap-1 text-xs h-7"
+                    >
+                      <Pencil className="w-3 h-3" />
+                      Rename
+                    </Button>
                   </div>
                 </div>
 
@@ -638,6 +687,49 @@ export function GoogleCalendarSettings() {
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
               ) : null}
               Update Color
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Rename Calendar Dialog */}
+      <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Rename Calendar</DialogTitle>
+            <DialogDescription>
+              Enter a new name for your calendar.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Calendar Name</label>
+              <Input
+                value={newCalendarName}
+                onChange={(e) => setNewCalendarName(e.target.value)}
+                placeholder="Enter calendar name"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setRenameDialogOpen(false);
+                setNewCalendarName('');
+              }}
+              disabled={renameCalendarMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => renameCalendarMutation.mutate(newCalendarName)}
+              disabled={renameCalendarMutation.isPending || !newCalendarName.trim()}
+            >
+              {renameCalendarMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : null}
+              Rename
             </Button>
           </DialogFooter>
         </DialogContent>

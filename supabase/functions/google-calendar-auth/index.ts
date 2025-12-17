@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { action, code, companyId, redirectUri, calendarId, calendarColor } = await req.json();
+    const { action, code, companyId, redirectUri, calendarId, calendarColor, calendarName } = await req.json();
     
     const GOOGLE_CLIENT_ID = Deno.env.get('GOOGLE_CLIENT_ID');
     const GOOGLE_CLIENT_SECRET = Deno.env.get('GOOGLE_CLIENT_SECRET');
@@ -410,6 +410,70 @@ Deno.serve(async (req) => {
 
       return new Response(
         JSON.stringify({ success: true, color: calendarColor }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (action === 'rename_calendar') {
+      // Rename an existing calendar
+      if (!calendarId || !calendarName) {
+        return new Response(
+          JSON.stringify({ error: 'Calendar ID and name required' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const { data: integration, error: fetchError } = await supabase
+        .from('tenant_integrations')
+        .select('google_refresh_token')
+        .eq('company_id', companyId)
+        .single();
+
+      if (fetchError || !integration?.google_refresh_token) {
+        return new Response(
+          JSON.stringify({ error: 'Not connected to Google Calendar' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const accessToken = await getAccessToken(
+        integration.google_refresh_token,
+        GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET
+      );
+
+      if (!accessToken) {
+        return new Response(
+          JSON.stringify({ error: 'Failed to refresh access token' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const renameResponse = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            summary: calendarName,
+          }),
+        }
+      );
+
+      if (!renameResponse.ok) {
+        const errorText = await renameResponse.text();
+        console.error('Failed to rename calendar:', errorText);
+        return new Response(
+          JSON.stringify({ error: 'Failed to rename calendar' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, name: calendarName }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
