@@ -85,18 +85,7 @@ export default function Companies() {
   });
   const [createdCredentials, setCreatedCredentials] = useState<{ email: string; password: string } | null>(null);
 
-  // Redirect non-platform admins
-  if (userRole !== 'platform_admin') {
-    return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">You don't have access to this page.</p>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  // Fetch all companies
+  // Fetch all companies - hooks must be called before any conditional returns
   const { data: companies, isLoading } = useQuery({
     queryKey: ['companies'],
     queryFn: async () => {
@@ -108,6 +97,7 @@ export default function Companies() {
       if (error) throw error;
       return data as Company[];
     },
+    enabled: userRole === 'platform_admin',
   });
 
   // Fetch employee counts per company
@@ -129,6 +119,7 @@ export default function Companies() {
       });
       return counts;
     },
+    enabled: userRole === 'platform_admin',
   });
 
   // Create company mutation
@@ -266,6 +257,17 @@ export default function Companies() {
   const generateSlug = (name: string) => {
     return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
   };
+
+  // Redirect non-platform admins (after all hooks)
+  if (userRole !== 'platform_admin') {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <p className="text-muted-foreground">You don't have access to this page.</p>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   // Filter companies by search
   const filteredCompanies = companies?.filter((company) =>
