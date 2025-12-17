@@ -205,6 +205,11 @@ export const AIAgentConsole = () => {
       setActiveTab('book');
       return;
     }
+    // Navigate to hours tab for business hours action
+    if (actionId === 'hours') {
+      setActiveTab('hours');
+      return;
+    }
     setInput(action);
     setActiveTab('chat');
   };
