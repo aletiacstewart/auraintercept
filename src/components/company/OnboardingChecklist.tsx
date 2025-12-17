@@ -94,6 +94,15 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
     priority: 'optional',
   },
   {
+    id: 'ai-agents',
+    title: 'Enable AI Agents',
+    description: 'Activate intelligent agents for customer support',
+    icon: Sparkles,
+    href: '/dashboard/ai-agents',
+    checkComplete: (data) => (data as any).aiAgentsEnabled > 0,
+    priority: 'recommended',
+  },
+  {
     id: 'twilio',
     title: 'Connect Twilio',
     description: 'Enable voice calls and SMS for your AI agent',
@@ -115,6 +124,15 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
     checkComplete: (data) => !!data.integrations?.elevenlabs_api_key,
     priority: 'required',
   },
+  {
+    id: 'payment',
+    title: 'Set Up Payments',
+    description: 'Configure Stripe for invoices and quotes',
+    icon: CreditCard,
+    href: '/dashboard/integrations',
+    checkComplete: () => false, // Manual check - no stripe column yet
+    priority: 'optional',
+  },
 ];
 
 export function OnboardingChecklist() {
@@ -123,7 +141,7 @@ export function OnboardingChecklist() {
 
   const { data: onboardingData, isLoading } = useQuery({
     queryKey: ['onboarding-progress', companyId],
-    queryFn: async (): Promise<OnboardingData & { inventoryCount: number }> => {
+    queryFn: async (): Promise<OnboardingData & { inventoryCount: number; aiAgentsEnabled: number }> => {
       if (!companyId) {
         return {
           company: null,
@@ -132,16 +150,18 @@ export function OnboardingChecklist() {
           faqsCount: 0,
           businessHoursCount: 0,
           inventoryCount: 0,
+          aiAgentsEnabled: 0,
         };
       }
 
-      const [companyRes, integrationsRes, servicesRes, faqsRes, hoursRes, inventoryRes] = await Promise.all([
+      const [companyRes, integrationsRes, servicesRes, faqsRes, hoursRes, inventoryRes, aiAgentsRes] = await Promise.all([
         supabase.from('companies').select('logo_url, primary_color').eq('id', companyId).single(),
         supabase.from('tenant_integrations').select('twilio_account_sid, twilio_auth_token, twilio_phone_number, elevenlabs_api_key').eq('company_id', companyId).maybeSingle(),
         supabase.from('services').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('is_active', true),
         supabase.from('faqs').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('is_active', true),
         supabase.from('business_hours').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('is_closed', false),
         supabase.from('inventory_items').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('is_active', true),
+        supabase.from('ai_agent_configs').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('is_enabled', true),
       ]);
 
       return {
@@ -151,6 +171,7 @@ export function OnboardingChecklist() {
         faqsCount: faqsRes.count ?? 0,
         businessHoursCount: hoursRes.count ?? 0,
         inventoryCount: inventoryRes.count ?? 0,
+        aiAgentsEnabled: aiAgentsRes.count ?? 0,
       };
     },
     enabled: !!companyId,
