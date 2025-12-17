@@ -533,16 +533,54 @@ export function AgentTestConsole({
     setShowFeedbackForm(false);
   };
 
-  const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string }) => {
+  const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string; serviceDate?: Date }) => {
     if (!companyId) return;
     
     setFeedbackLoading(true);
     try {
-      // Save feedback directly to database
+      let appointmentId: string | null = null;
+      let employeeId: string | null = null;
+      let serviceType: string | null = null;
+
+      // Try to find matching appointment by phone and date
+      if (feedback.customerPhone) {
+        let query = supabase
+          .from('appointments')
+          .select('id, employee_id, service_type, datetime')
+          .eq('company_id', companyId)
+          .eq('customer_phone', feedback.customerPhone);
+
+        if (feedback.serviceDate) {
+          // Match appointments on the same date
+          const startOfDay = new Date(feedback.serviceDate);
+          startOfDay.setHours(0, 0, 0, 0);
+          const endOfDay = new Date(feedback.serviceDate);
+          endOfDay.setHours(23, 59, 59, 999);
+          
+          query = query
+            .gte('datetime', startOfDay.toISOString())
+            .lte('datetime', endOfDay.toISOString());
+        }
+
+        const { data: appointments } = await query
+          .order('datetime', { ascending: false })
+          .limit(1);
+
+        if (appointments && appointments.length > 0) {
+          appointmentId = appointments[0].id;
+          employeeId = appointments[0].employee_id;
+          serviceType = appointments[0].service_type;
+        }
+      }
+
+      // Save feedback with linked appointment data
       const { error } = await supabase
         .from('customer_feedback')
         .insert({
           company_id: companyId,
+          appointment_id: appointmentId,
+          employee_id: employeeId,
+          service_type: serviceType,
           rating: feedback.rating,
           sentiment: feedback.sentiment,
           feedback_note: feedback.note || null,

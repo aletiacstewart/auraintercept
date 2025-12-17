@@ -3,8 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Star, ThumbsUp, Minus, ThumbsDown, Send, ExternalLink } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Star, ThumbsUp, Minus, ThumbsDown, Send, ExternalLink, CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 
 interface FeedbackFormProps {
   onSubmit: (feedback: {
@@ -13,6 +16,7 @@ interface FeedbackFormProps {
     note: string;
     customerName: string;
     customerPhone: string;
+    serviceDate?: Date;
   }) => void;
   isLoading?: boolean;
   reviewLinks?: { platform: string; url: string }[];
@@ -25,6 +29,7 @@ export const FeedbackForm = ({ onSubmit, isLoading, reviewLinks }: FeedbackFormP
   const [note, setNote] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
+  const [serviceDate, setServiceDate] = useState<Date | undefined>(undefined);
 
   const handleSubmit = () => {
     if (!sentiment || !customerName.trim()) return;
@@ -34,7 +39,8 @@ export const FeedbackForm = ({ onSubmit, isLoading, reviewLinks }: FeedbackFormP
       sentiment,
       note: note.trim(),
       customerName: customerName.trim(),
-      customerPhone: customerPhone.trim()
+      customerPhone: customerPhone.trim(),
+      serviceDate
     });
   };
 
@@ -74,6 +80,36 @@ export const FeedbackForm = ({ onSubmit, isLoading, reviewLinks }: FeedbackFormP
             type="tel"
             maxLength={20}
           />
+        </div>
+
+        {/* Date of Service */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-muted-foreground">Date of Service (optional)</label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !serviceDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {serviceDate ? format(serviceDate, "PPP") : <span>Select date to link to appointment</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={serviceDate}
+                onSelect={setServiceDate}
+                disabled={(date) => date > new Date()}
+                initialFocus
+                className="p-3 pointer-events-auto"
+              />
+            </PopoverContent>
+          </Popover>
+          <p className="text-xs text-muted-foreground">Helps us connect your feedback to your appointment</p>
         </div>
 
         {/* Star Rating */}
