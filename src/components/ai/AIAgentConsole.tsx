@@ -3,10 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAIAgent } from '@/hooks/useAIAgent';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -64,11 +63,14 @@ export const AIAgentConsole = () => {
   const [activeTab, setActiveTab] = useState('chat');
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
 
-  const chatScrollAreaRef = useRef<HTMLDivElement>(null);
-  const servicesScrollRef = useRef<HTMLDivElement>(null);
-  const bookScrollRef = useRef<HTMLDivElement>(null);
-  const hoursScrollRef = useRef<HTMLDivElement>(null);
-  const voiceScrollRef = useRef<HTMLDivElement>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll chat to bottom when new messages arrive
+  useEffect(() => {
+    if (chatScrollRef.current && messages.length > 0) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+  }, [messages.length]);
 
   // Fetch company details including review links
   const { data: company } = useQuery({
@@ -180,37 +182,6 @@ export const AIAgentConsole = () => {
   const hasVoiceChat = ttsInfo.isConfigured;
   const twilioPhone = integrations?.twilio_phone_number;
 
-  const getScrollViewport = (root: HTMLDivElement | null) => {
-    if (!root) return null;
-    return root.querySelector('[data-radix-scroll-area-viewport]') as HTMLDivElement | null;
-  };
-
-  useEffect(() => {
-    const viewport = getScrollViewport(chatScrollAreaRef.current);
-    if (!viewport) return;
-
-    // When there are no messages, keep the welcome content pinned to the top.
-    if (messages.length === 0) {
-      viewport.scrollTop = 0;
-      return;
-    }
-
-    viewport.scrollTop = viewport.scrollHeight;
-  }, [messages.length]);
-
-  useEffect(() => {
-    const map: Record<string, React.RefObject<HTMLDivElement>> = {
-      chat: chatScrollAreaRef,
-      services: servicesScrollRef,
-      book: bookScrollRef,
-      hours: hoursScrollRef,
-      voice: voiceScrollRef,
-    };
-
-    const el = map[activeTab]?.current;
-    if (el) el.scrollTop = 0;
-  }, [activeTab]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -298,9 +269,9 @@ export const AIAgentConsole = () => {
   };
 
   return (
-    <Card className="flex flex-col h-[700px] min-h-0 overflow-hidden border-2">
+    <Card className="h-[700px] flex flex-col overflow-hidden border-2">
       {/* Header */}
-      <div className="gradient-primary p-4 text-white">
+      <div className="shrink-0 gradient-primary p-4 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {company?.logo_url ? (
@@ -384,8 +355,8 @@ export const AIAgentConsole = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 min-h-0 flex flex-col overflow-hidden">
-        <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-auto p-0 overflow-x-auto flex-nowrap">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
+        <TabsList className="shrink-0 w-full justify-start rounded-none border-b bg-transparent h-auto p-0 overflow-x-auto flex-nowrap">
           <TabsTrigger 
             value="chat" 
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-3 shrink-0"
@@ -426,235 +397,221 @@ export const AIAgentConsole = () => {
         </TabsList>
 
         {/* Chat Tab */}
-        <TabsContent value="chat" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0">
-          <CardContent className="flex-1 min-h-0 flex flex-col overflow-hidden p-4">
-            <ScrollArea className="flex-1 pr-4" ref={chatScrollAreaRef}>
-              <div className="space-y-4">
-                {messages.length === 0 && (
-                  <div className="text-center py-6">
-                    <div className="h-16 w-16 rounded-full gradient-primary mx-auto mb-4 flex items-center justify-center">
-                      <Bot className="h-8 w-8 text-white" />
-                    </div>
-                    <h3 className="font-semibold text-lg">Hi there! 👋</h3>
-                    <p className="text-muted-foreground mt-1 mb-4">
-                      I'm your virtual assistant at {company?.name || 'this business'}. How can I help you today?
-                    </p>
-                    
-                    {/* Quick Actions */}
-                    <div className="grid grid-cols-2 gap-2 mt-4 max-w-sm mx-auto">
-                      {QUICK_ACTIONS.map((action) => (
-                        <Button 
-                          key={action.id}
-                          variant={action.variant || 'outline'} 
-                          size="sm"
-                          className={cn(
-                            "justify-start gap-2",
-                            action.variant === 'destructive' && "bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive/30"
-                          )}
-                          onClick={() => handleQuickAction(action.message, action.id)}
-                        >
-                          <action.icon className="h-4 w-4" />
-                          <span className="truncate">{action.label}</span>
-                        </Button>
-                      ))}
-                    </div>
+        <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden m-0 p-0 data-[state=inactive]:hidden">
+          <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4">
+            <div className="space-y-4">
+              {messages.length === 0 && (
+                <div className="text-center py-6">
+                  <div className="h-16 w-16 rounded-full gradient-primary mx-auto mb-4 flex items-center justify-center">
+                    <Bot className="h-8 w-8 text-white" />
                   </div>
-                )}
+                  <h3 className="font-semibold text-lg">Hi there! 👋</h3>
+                  <p className="text-muted-foreground mt-1 mb-4">
+                    I'm your virtual assistant at {company?.name || 'this business'}. How can I help you today?
+                  </p>
+                  
+                  {/* Quick Actions */}
+                  <div className="grid grid-cols-2 gap-2 mt-4 max-w-sm mx-auto">
+                    {QUICK_ACTIONS.map((action) => (
+                      <Button 
+                        key={action.id}
+                        variant={action.variant || 'outline'} 
+                        size="sm"
+                        className={cn(
+                          "justify-start gap-2",
+                          action.variant === 'destructive' && "bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive/30"
+                        )}
+                        onClick={() => handleQuickAction(action.message, action.id)}
+                      >
+                        <action.icon className="h-4 w-4" />
+                        <span className="truncate">{action.label}</span>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-                {/* Feedback Form */}
-                {showFeedbackForm && (
-                  <FeedbackForm
-                    onSubmit={handleFeedbackSubmit}
-                    isLoading={isLoading}
-                    reviewLinks={reviewLinks}
-                  />
-                )}
-                
-                {messages.map((message, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      'flex gap-3 p-3 rounded-lg',
-                      message.role === 'user' 
-                        ? 'bg-primary/10 ml-8' 
-                        : 'bg-muted mr-8'
+              {/* Feedback Form */}
+              {showFeedbackForm && (
+                <FeedbackForm
+                  onSubmit={handleFeedbackSubmit}
+                  isLoading={isLoading}
+                  reviewLinks={reviewLinks}
+                />
+              )}
+              
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    'flex gap-3 p-3 rounded-lg',
+                    message.role === 'user' 
+                      ? 'bg-primary/10 ml-8' 
+                      : 'bg-muted mr-8'
+                  )}
+                >
+                  <div className={cn(
+                    'h-8 w-8 rounded-full flex items-center justify-center shrink-0',
+                    message.role === 'user' ? 'bg-primary' : 'gradient-primary'
+                  )}>
+                    {message.role === 'user' ? (
+                      <User className="h-4 w-4 text-primary-foreground" />
+                    ) : (
+                      <Bot className="h-4 w-4 text-white" />
                     )}
-                  >
-                    <div className={cn(
-                      'h-8 w-8 rounded-full flex items-center justify-center shrink-0',
-                      message.role === 'user' ? 'bg-primary' : 'gradient-primary'
-                    )}>
-                      {message.role === 'user' ? (
-                        <User className="h-4 w-4 text-primary-foreground" />
-                      ) : (
-                        <Bot className="h-4 w-4 text-white" />
-                      )}
-                    </div>
-                    <div className="flex-1 whitespace-pre-wrap text-sm">{cleanMessageContent(message.content)}</div>
                   </div>
-                ))}
-                
-                {isLoading && messages[messages.length - 1]?.role === 'user' && (
-                  <div className="flex gap-3 p-3 rounded-lg bg-muted mr-8">
-                    <div className="h-8 w-8 rounded-full gradient-primary flex items-center justify-center">
-                      <Loader2 className="h-4 w-4 animate-spin text-white" />
-                    </div>
-                    <div className="flex-1 text-muted-foreground text-sm">Thinking...</div>
+                  <div className="flex-1 whitespace-pre-wrap text-sm">{cleanMessageContent(message.content)}</div>
+                </div>
+              ))}
+              
+              {isLoading && messages[messages.length - 1]?.role === 'user' && (
+                <div className="flex gap-3 p-3 rounded-lg bg-muted mr-8">
+                  <div className="h-8 w-8 rounded-full gradient-primary flex items-center justify-center">
+                    <Loader2 className="h-4 w-4 animate-spin text-white" />
                   </div>
-                )}
-              </div>
-            </ScrollArea>
+                  <div className="flex-1 text-muted-foreground text-sm">Thinking...</div>
+                </div>
+              )}
+            </div>
+          </div>
 
-            <form onSubmit={handleSubmit} className="flex gap-2 mt-4 pt-4 border-t">
-              <Button 
-                type="button" 
-                variant="ghost" 
-                size="icon"
-                onClick={() => { clearMessages(); setShowFeedbackForm(false); }}
-                className="shrink-0"
-              >
-                <Home className="h-4 w-4" />
-              </Button>
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
-                disabled={isLoading}
-                className="flex-1"
-              />
-              <Button type="submit" disabled={isLoading || !input.trim()} className="shrink-0">
-                <Send className="h-4 w-4" />
-              </Button>
-            </form>
-          </CardContent>
+          <form onSubmit={handleSubmit} className="shrink-0 flex gap-2 p-4 border-t">
+            <Button 
+              type="button" 
+              variant="ghost" 
+              size="icon"
+              onClick={() => { clearMessages(); setShowFeedbackForm(false); }}
+              className="shrink-0"
+            >
+              <Home className="h-4 w-4" />
+            </Button>
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              disabled={isLoading}
+              className="flex-1"
+            />
+            <Button type="submit" disabled={isLoading || !input.trim()} className="shrink-0">
+              <Send className="h-4 w-4" />
+            </Button>
+          </form>
         </TabsContent>
 
         {/* Services Tab */}
-        <TabsContent value="services" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0 mt-0">
-          <div ref={servicesScrollRef} className="flex-1 min-h-0 overflow-y-auto">
-            <div className="p-4 space-y-3">
-              {services?.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">
-                  No services configured yet
-                </p>
-              ) : (
-                services?.map((service) => (
-                  <button
-                    key={service.id}
-                    onClick={() => handleServiceClick(service)}
-                    className="w-full text-left p-4 rounded-lg border hover:border-primary hover:bg-primary/5 transition-colors group"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h4 className="font-medium group-hover:text-primary transition-colors">
-                          {service.name}
-                        </h4>
-                        {service.description && (
-                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                            {service.description}
-                          </p>
+        <TabsContent value="services" className="h-full overflow-y-auto m-0 p-0 data-[state=inactive]:hidden">
+          <div className="p-4 space-y-3">
+            {services?.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">
+                No services configured yet
+              </p>
+            ) : (
+              services?.map((service) => (
+                <button
+                  key={service.id}
+                  onClick={() => handleServiceClick(service)}
+                  className="w-full text-left p-4 rounded-lg border hover:border-primary hover:bg-primary/5 transition-colors group"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h4 className="font-medium group-hover:text-primary transition-colors">
+                        {service.name}
+                      </h4>
+                      {service.description && (
+                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                          {service.description}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {service.duration_minutes} min
+                        </span>
+                        {service.price && (
+                          <Badge variant="secondary" className="text-xs">
+                            ${service.price}
+                          </Badge>
                         )}
-                        <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {service.duration_minutes} min
-                          </span>
-                          {service.price && (
-                            <Badge variant="secondary" className="text-xs">
-                              ${service.price}
-                            </Badge>
-                          )}
-                        </div>
                       </div>
-                      <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                     </div>
-                  </button>
-                ))
-              )}
+                    <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </div>
+                </button>
+              ))
+            )}
 
-              <Button className="w-full mt-4" onClick={() => setActiveTab('book')}>
-                <Calendar className="h-4 w-4 mr-2" />
-                Schedule an Appointment
-              </Button>
-            </div>
+            <Button className="w-full mt-4" onClick={() => setActiveTab('book')}>
+              <Calendar className="h-4 w-4 mr-2" />
+              Schedule an Appointment
+            </Button>
           </div>
         </TabsContent>
 
         {/* Book Tab */}
-        <TabsContent value="book" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0 mt-0">
-          <div ref={bookScrollRef} className="flex-1 min-h-0 overflow-y-auto">
-            <div className="p-4">
-              <BookingForm
-                services={services || []}
-                onSubmit={handleBookingSubmit}
-                isLoading={isLoading}
-              />
-            </div>
-          </div>
+        <TabsContent value="book" className="h-full overflow-y-auto m-0 p-4 data-[state=inactive]:hidden">
+          <BookingForm
+            services={services || []}
+            onSubmit={handleBookingSubmit}
+            isLoading={isLoading}
+          />
         </TabsContent>
 
         {/* Hours Tab */}
-        <TabsContent value="hours" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0 mt-0">
-          <div ref={hoursScrollRef} className="flex-1 min-h-0 overflow-y-auto">
-            <div className="p-4">
-              <div className="bg-primary/10 rounded-lg p-4 mb-4">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-primary" />
-                  <span className="font-medium">Today's Hours</span>
-                </div>
-                <p className="text-lg font-semibold mt-1">{getTodayHours()}</p>
-              </div>
-
-              <h4 className="font-medium mb-3">Weekly Schedule</h4>
-              <div className="space-y-2">
-                {DAYS.map((day, index) => {
-                  const hours = businessHours?.find(h => h.day_of_week === index);
-                  const isToday = new Date().getDay() === index;
-
-                  return (
-                    <div
-                      key={day}
-                      className={cn(
-                        "flex justify-between p-3 rounded-lg",
-                        isToday ? "bg-primary/10 border border-primary/20" : "bg-muted/50"
-                      )}
-                    >
-                      <span className={cn("font-medium", isToday && "text-primary")}>
-                        {day}
-                        {isToday && <Badge variant="outline" className="ml-2 text-xs">Today</Badge>}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {!hours || hours.is_closed
-                          ? 'Closed'
-                          : `${formatTime(hours.open_time)} - ${formatTime(hours.close_time)}`
-                        }
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <Button className="w-full mt-6" onClick={() => setActiveTab('book')}>
-                <Calendar className="h-4 w-4 mr-2" />
-                Schedule an Appointment
-              </Button>
+        <TabsContent value="hours" className="h-full overflow-y-auto m-0 p-4 data-[state=inactive]:hidden">
+          <div className="bg-primary/10 rounded-lg p-4 mb-4">
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-primary" />
+              <span className="font-medium">Today's Hours</span>
             </div>
+            <p className="text-lg font-semibold mt-1">{getTodayHours()}</p>
           </div>
+
+          <h4 className="font-medium mb-3">Weekly Schedule</h4>
+          <div className="space-y-2">
+            {DAYS.map((day, index) => {
+              const hours = businessHours?.find(h => h.day_of_week === index);
+              const isToday = new Date().getDay() === index;
+
+              return (
+                <div
+                  key={day}
+                  className={cn(
+                    "flex justify-between p-3 rounded-lg",
+                    isToday ? "bg-primary/10 border border-primary/20" : "bg-muted/50"
+                  )}
+                >
+                  <span className={cn("font-medium", isToday && "text-primary")}>
+                    {day}
+                    {isToday && <Badge variant="outline" className="ml-2 text-xs">Today</Badge>}
+                  </span>
+                  <span className="text-muted-foreground">
+                    {!hours || hours.is_closed
+                      ? 'Closed'
+                      : `${formatTime(hours.open_time)} - ${formatTime(hours.close_time)}`
+                    }
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          <Button className="w-full mt-6" onClick={() => setActiveTab('book')}>
+            <Calendar className="h-4 w-4 mr-2" />
+            Schedule an Appointment
+          </Button>
         </TabsContent>
 
         {/* Voice Tab */}
         {hasVoiceChat && companyId && (
-          <TabsContent value="voice" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0 mt-0">
-            <div ref={voiceScrollRef} className="flex-1 min-h-0 overflow-y-auto">
-              <div className="min-h-full flex flex-col items-center justify-center p-4">
-                <VoiceChat
-                  companyId={companyId}
-                  companyName={company?.name || 'AI Assistant'}
-                  onTranscript={(role, text) => {
-                    console.log(`Voice transcript [${role}]:`, text);
-                  }}
-                />
-              </div>
+          <TabsContent value="voice" className="h-full overflow-y-auto m-0 p-4 data-[state=inactive]:hidden">
+            <div className="h-full flex flex-col items-center justify-center">
+              <VoiceChat
+                companyId={companyId}
+                companyName={company?.name || 'AI Assistant'}
+                onTranscript={(role, text) => {
+                  console.log(`Voice transcript [${role}]:`, text);
+                }}
+              />
             </div>
           </TabsContent>
         )}
