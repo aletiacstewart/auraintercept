@@ -281,26 +281,28 @@ export default function Demo() {
   const agentInfo = getAgentInfo(currentAgent);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Demo Banner */}
-      <div className="gradient-primary text-primary-foreground py-3 px-6">
-        <div className="container max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Zap className="h-5 w-5" />
-            <span className="font-medium">Live Demo - Test our AI Agent</span>
+      <div className="gradient-primary text-primary-foreground py-2 px-4 sm:py-3 sm:px-6">
+        <div className="container max-w-7xl mx-auto flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <Zap className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
+            <span className="font-medium text-sm sm:text-base truncate">Live Demo</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 shrink-0">
             <Button 
               variant="secondary" 
               size="sm"
+              className="h-7 sm:h-8 text-xs sm:text-sm px-2 sm:px-3"
               onClick={() => navigate('/')}
             >
-              <ArrowLeft className="h-4 w-4 mr-1" />
+              <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
               Back
             </Button>
             <Button 
               variant="secondary" 
               size="sm"
+              className="h-7 sm:h-8 text-xs sm:text-sm px-2 sm:px-3"
               onClick={() => navigate('/auth?mode=company')}
             >
               Sign Up
@@ -309,36 +311,36 @@ export default function Demo() {
         </div>
       </div>
 
-      <div className="container max-w-4xl mx-auto py-8 px-6">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Try Our AI Agent</h1>
-          <p className="text-muted-foreground">
+      <div className="container max-w-4xl mx-auto py-4 sm:py-8 px-3 sm:px-6">
+        <div className="text-center mb-4 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">Try Our AI Agent</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">
             Experience how our AI handles appointments, quotes, and customer inquiries
           </p>
         </div>
 
-        <Card className="h-[650px] flex flex-col overflow-hidden border-2">
+        <Card className="h-[calc(100vh-180px)] sm:h-[650px] min-h-[400px] max-h-[700px] flex flex-col overflow-hidden border-2">
           {/* Header */}
-          <div className="shrink-0 gradient-primary p-4 text-white">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-white p-1 flex items-center justify-center">
-                  <img src={logo} alt="AI Bot Company" className="h-7 w-7 object-contain" />
+          <div className="shrink-0 gradient-primary p-3 sm:p-4 text-white">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white p-1 flex items-center justify-center shrink-0">
+                  <img src={logo} alt="AI Bot Company" className="h-5 w-5 sm:h-7 sm:w-7 object-contain" />
                 </div>
-                <div>
-                  <h2 className="font-semibold">AI Bot Company</h2>
-                  <div className="flex items-center gap-2 text-xs text-white/80">
-                    <span>Virtual Assistant</span>
-                    <span>•</span>
+                <div className="min-w-0">
+                  <h2 className="font-semibold text-sm sm:text-base truncate">AI Bot Company</h2>
+                  <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-white/80">
+                    <span className="hidden sm:inline">Virtual Assistant</span>
+                    <span className="hidden sm:inline">•</span>
                     <Badge className={cn('text-[10px] px-1.5 py-0', agentInfo.bgColor, agentInfo.color)}>
                       {agentInfo.label} Agent
                     </Badge>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Button size="sm" variant="secondary" className="h-8" disabled>
-                  <Phone className="h-4 w-4 mr-1" />
+              <div className="flex items-center shrink-0">
+                <Button size="sm" variant="secondary" className="h-7 sm:h-8 text-xs sm:text-sm" disabled>
+                  <Phone className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                   Call
                 </Button>
               </div>
@@ -347,21 +349,21 @@ export default function Demo() {
 
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0 overflow-hidden">
-            <TabsList className="shrink-0 w-full justify-start rounded-none border-b bg-muted/30 p-0 h-auto overflow-x-auto">
-              <TabsTrigger value="chat" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2">
+            <TabsList className="shrink-0 w-full justify-start rounded-none border-b bg-muted/30 p-0 h-auto flex-nowrap overflow-hidden">
+              <TabsTrigger value="chat" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 sm:px-4 py-2 text-xs sm:text-sm">
                 Chat
               </TabsTrigger>
-              <TabsTrigger value="services" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2">
+              <TabsTrigger value="services" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 sm:px-4 py-2 text-xs sm:text-sm">
                 Services
               </TabsTrigger>
-              <TabsTrigger value="hours" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2">
+              <TabsTrigger value="hours" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 sm:px-4 py-2 text-xs sm:text-sm">
                 Hours
               </TabsTrigger>
-              <TabsTrigger value="book" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2">
+              <TabsTrigger value="book" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 sm:px-4 py-2 text-xs sm:text-sm">
                 Book
               </TabsTrigger>
-              <TabsTrigger value="voice" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2">
-                <Mic className="h-4 w-4 mr-1" />
+              <TabsTrigger value="voice" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 sm:px-4 py-2 text-xs sm:text-sm">
+                <Mic className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                 Voice
               </TabsTrigger>
             </TabsList>
