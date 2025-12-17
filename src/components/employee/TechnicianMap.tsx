@@ -226,21 +226,61 @@ export function TechnicianMap({
   }, [toast]);
 
   const handleSearch = useCallback(async () => {
-    if (!searchAddress.trim()) return;
+    const raw = searchAddress.trim();
+    if (!raw) return;
+
+    // Basic client-side validation (avoid huge requests / abuse)
+    if (raw.length > 200) {
+      toast({
+        title: 'Address Too Long',
+        description: 'Please shorten the address (max 200 characters).',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const buildUrl = (q: string) =>
+      `https://nominatim.openstreetmap.org/search?format=json&limit=5&addressdetails=1&countrycodes=us&q=${encodeURIComponent(q)}`;
+
+    const stripUnit = (q: string) =>
+      q
+        .replace(/\b(apt|apartment|unit|ste|suite|#)\s*\w+\b/gi, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+
     setIsSearching(true);
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchAddress)}`
-      );
-      const data = await response.json();
+      // Try full query first
+      let resp = await fetch(buildUrl(raw), {
+        headers: {
+          // Nominatim recommends identifying the app; harmless if ignored
+          'Accept': 'application/json',
+        },
+      });
+      let data = await resp.json();
+
+      // Fallback: strip apartment/unit info which often causes no-match
+      if (!data?.length) {
+        const simplified = stripUnit(raw);
+        if (simplified && simplified !== raw) {
+          resp = await fetch(buildUrl(simplified), { headers: { Accept: 'application/json' } });
+          data = await resp.json();
+        }
+      }
+
       if (data?.length) {
-        const lat = parseFloat(data[0].lat);
-        const lng = parseFloat(data[0].lon);
-        setRoute([lat, lng]);
+        const best = data[0];
+        const lat = parseFloat(best.lat);
+        const lng = parseFloat(best.lon);
+        setRoute([lat, lng], best.display_name);
+        toast({
+          title: 'Address Found',
+          description: (best.display_name as string).slice(0, 80),
+        });
       } else {
         toast({
           title: 'Address Not Found',
-          description: 'Try a more specific address.',
+          description: 'Try removing the apartment/unit (e.g., “6350 Meadowvista Dr, Corpus Christi, TX 78414”).',
           variant: 'destructive',
         });
       }
