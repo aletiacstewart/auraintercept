@@ -237,6 +237,96 @@ Deno.serve(async (req) => {
       );
     }
 
+    if (action === 'create_calendar') {
+      // Create a new dedicated calendar for appointments
+      const { data: integration, error: fetchError } = await supabase
+        .from('tenant_integrations')
+        .select('google_refresh_token')
+        .eq('company_id', companyId)
+        .single();
+
+      if (fetchError || !integration?.google_refresh_token) {
+        return new Response(
+          JSON.stringify({ error: 'Not connected to Google Calendar' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const accessToken = await getAccessToken(
+        integration.google_refresh_token,
+        GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET
+      );
+
+      if (!accessToken) {
+        return new Response(
+          JSON.stringify({ error: 'Failed to refresh access token' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Get company name for calendar title
+      const { data: company } = await supabase
+        .from('companies')
+        .select('name')
+        .eq('id', companyId)
+        .single();
+
+      const calendarName = company?.name 
+        ? `${company.name} - Appointments` 
+        : 'Business Appointments';
+
+      // Create the calendar
+      const createResponse = await fetch(
+        'https://www.googleapis.com/calendar/v3/calendars',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            summary: calendarName,
+            description: 'Appointments managed by the booking platform',
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York',
+          }),
+        }
+      );
+
+      if (!createResponse.ok) {
+        const errorText = await createResponse.text();
+        console.error('Failed to create calendar:', errorText);
+        return new Response(
+          JSON.stringify({ error: 'Failed to create calendar' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const newCalendar = await createResponse.json();
+      console.log('Created new calendar:', newCalendar.id);
+
+      // Update the selected calendar to the new one
+      const { error: updateError } = await supabase
+        .from('tenant_integrations')
+        .update({ google_calendar_id: newCalendar.id })
+        .eq('company_id', companyId);
+
+      if (updateError) {
+        console.error('Failed to update calendar selection:', updateError);
+      }
+
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          calendar: {
+            id: newCalendar.id,
+            summary: newCalendar.summary,
+          }
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     if (action === 'disconnect') {
       // Disconnect Google Calendar
       const { error } = await supabase
