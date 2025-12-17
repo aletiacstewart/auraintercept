@@ -451,8 +451,42 @@ async function trackAppointment(supabase: any, companyId: string, args: any) {
     technicianName = tech?.full_name || null;
   }
 
+  // Determine the effective status - job status takes precedence if available
+  const effectiveStatus = job?.status || appointment.status;
+  const appointmentDate = new Date(appointment.datetime);
+  const now = new Date();
+  const isPast = appointmentDate < now;
+  
+  // Build a human-readable status message
+  let statusMessage = '';
+  if (effectiveStatus === 'completed') {
+    statusMessage = `This appointment was completed${job?.completed_at ? ` on ${new Date(job.completed_at).toLocaleDateString()}` : ''}`;
+  } else if (effectiveStatus === 'in_progress') {
+    statusMessage = `Your technician${technicianName ? ` (${technicianName})` : ''} is currently working on your service`;
+  } else if (effectiveStatus === 'arrived') {
+    statusMessage = `Your technician${technicianName ? ` (${technicianName})` : ''} has arrived at your location`;
+  } else if (effectiveStatus === 'en_route') {
+    statusMessage = `Your technician${technicianName ? ` (${technicianName})` : ''} is on the way${job?.estimated_arrival_minutes ? ` - ETA: ${job.estimated_arrival_minutes} minutes` : ''}`;
+  } else if (effectiveStatus === 'accepted') {
+    statusMessage = `Your appointment has been accepted by ${technicianName || 'a technician'} and is awaiting service`;
+  } else if (effectiveStatus === 'pending_acceptance') {
+    statusMessage = 'Your appointment is awaiting technician assignment';
+  } else if (effectiveStatus === 'cancelled') {
+    statusMessage = 'This appointment has been cancelled';
+  } else if (effectiveStatus === 'scheduled') {
+    if (isPast) {
+      statusMessage = 'This appointment was scheduled but no job status was recorded';
+    } else {
+      statusMessage = `Your appointment is scheduled for ${appointmentDate.toLocaleDateString()} at ${appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+  } else {
+    statusMessage = `Current status: ${effectiveStatus}`;
+  }
+
   return {
     success: true,
+    status_summary: statusMessage,
+    effective_status: effectiveStatus,
     appointment: {
       id: appointment.id,
       service_type: appointment.service_type,
@@ -469,6 +503,7 @@ async function trackAppointment(supabase: any, companyId: string, args: any) {
           technician_name: technicianName,
           estimated_arrival_minutes: job.estimated_arrival_minutes,
           actual_arrival_minutes: job.actual_arrival_minutes,
+          completed_at: job.completed_at,
         }
       : null,
   };
@@ -636,5 +671,18 @@ ${docsText || 'No additional documents'}
 7. If a customer wants to track an appointment, ask for the phone number or email used when booking, then use track_appointment
 8. If you don't know something, politely say so and offer to help with something else
 9. Keep responses concise but informative
-10. When booking is complete, confirm all details with the customer`;
+10. When booking is complete, confirm all details with the customer
+
+## Appointment Status Guide (for track_appointment results)
+When reporting appointment status, use the "status_summary" field which provides a human-readable message. The "effective_status" shows the actual status:
+- "completed" = Service was finished
+- "in_progress" = Technician is currently working
+- "arrived" = Technician is at the location
+- "en_route" = Technician is traveling to location
+- "accepted" = Technician accepted the job, waiting to start
+- "pending_acceptance" = Waiting for technician assignment
+- "scheduled" = Appointment booked but not yet assigned
+- "cancelled" = Appointment was cancelled
+
+Always use status_summary in your response to the customer as it provides the most accurate and friendly description.`;
 }
