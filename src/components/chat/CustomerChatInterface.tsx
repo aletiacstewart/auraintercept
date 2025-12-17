@@ -42,7 +42,7 @@ interface CustomerChatInterfaceProps {
 }
 
 const DEFAULT_QUICK_ACTIONS: QuickAction[] = [
-  { id: 'schedule', label: 'Book Appointment', icon: <Calendar className="h-4 w-4" />, message: "I'd like to schedule an appointment" },
+  { id: 'schedule', label: 'Request Appointment', icon: <Calendar className="h-4 w-4" />, message: "I'd like to request an appointment" },
   { id: 'emergency', label: 'Emergency', icon: <AlertTriangle className="h-4 w-4" />, message: "I have an urgent emergency situation", variant: 'destructive' },
   { id: 'quote', label: 'Get Quote', icon: <DollarSign className="h-4 w-4" />, message: "I need a quote for your services" },
   { id: 'hours', label: 'Business Hours', icon: <Clock className="h-4 w-4" />, message: "What are your business hours?" },
