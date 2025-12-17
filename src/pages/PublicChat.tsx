@@ -43,7 +43,7 @@ interface CompanyConfig {
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const QUICK_ACTIONS = [
-  { id: 'schedule', label: 'Book Appointment', icon: Calendar, message: "I'd like to schedule an appointment" },
+  { id: 'schedule', label: 'Request Appointment', icon: Calendar, message: "I'd like to request an appointment" },
   { id: 'emergency', label: 'Emergency', icon: AlertTriangle, message: "I have an urgent emergency situation", variant: 'destructive' as const },
   { id: 'quote', label: 'Get Quote', icon: DollarSign, message: "I need a quote for your services" },
   { id: 'hours', label: 'Business Hours', icon: Clock, message: "What are your business hours?" },
