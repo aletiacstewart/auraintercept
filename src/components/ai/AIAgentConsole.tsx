@@ -20,6 +20,8 @@ import { SMSChat } from './SMSChat';
 import { FeedbackForm } from './FeedbackForm';
 import { ReviewForm } from './ReviewForm';
 import { BookingForm, BookingData } from './BookingForm';
+import { QuoteForm, QuoteData } from './QuoteForm';
+import { TrackAppointmentForm, TrackingData } from './TrackAppointmentForm';
 import { format } from 'date-fns';
 
 // Customer Engagement agents definition
@@ -107,6 +109,8 @@ export const AIAgentConsole = () => {
   const [activeTab, setActiveTab] = useState('chat');
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showQuoteForm, setShowQuoteForm] = useState(false);
+  const [showTrackForm, setShowTrackForm] = useState(false);
 
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
@@ -268,6 +272,8 @@ export const AIAgentConsole = () => {
     if (actionId === 'feedback') {
       setShowFeedbackForm(true);
       setShowReviewForm(false);
+      setShowQuoteForm(false);
+      setShowTrackForm(false);
       setActiveTab('chat');
       return;
     }
@@ -275,12 +281,34 @@ export const AIAgentConsole = () => {
     if (actionId === 'review') {
       setShowReviewForm(true);
       setShowFeedbackForm(false);
+      setShowQuoteForm(false);
+      setShowTrackForm(false);
+      setActiveTab('chat');
+      return;
+    }
+    // Show quote form directly
+    if (actionId === 'quote') {
+      setShowQuoteForm(true);
+      setShowFeedbackForm(false);
+      setShowReviewForm(false);
+      setShowTrackForm(false);
+      setActiveTab('chat');
+      return;
+    }
+    // Show track appointment form directly
+    if (actionId === 'track') {
+      setShowTrackForm(true);
+      setShowFeedbackForm(false);
+      setShowReviewForm(false);
+      setShowQuoteForm(false);
       setActiveTab('chat');
       return;
     }
     // Reset forms for all other actions
     setShowFeedbackForm(false);
     setShowReviewForm(false);
+    setShowQuoteForm(false);
+    setShowTrackForm(false);
     // Navigate to booking form for schedule action
     if (actionId === 'schedule') {
       setActiveTab('book');
@@ -301,7 +329,7 @@ export const AIAgentConsole = () => {
       setActiveTab('emergency');
       return;
     }
-    // For chat-based actions (quote, track), send message directly
+    // For other chat-based actions, send message directly
     setActiveTab('chat');
     await sendMessage(action);
   };
@@ -356,6 +384,24 @@ export const AIAgentConsole = () => {
     
     setActiveTab('chat');
     await sendMessage(bookingMessage);
+  };
+
+  const handleQuoteSubmit = async (quote: QuoteData) => {
+    setShowQuoteForm(false);
+    const serviceNames = services
+      ?.filter(s => quote.selectedServices.includes(s.id))
+      .map(s => s.name)
+      .join(', ') || 'service';
+    
+    const quoteMessage = `I'd like to request a quote. My name is ${quote.customerName}, my phone number is ${quote.customerPhone}${quote.customerEmail ? `, email: ${quote.customerEmail}` : ''}${quote.customerAddress ? `, address: ${quote.customerAddress}` : ''}. I'm interested in: ${serviceNames}.${quote.issueDescription ? ` Issue description: ${quote.issueDescription}` : ''}`;
+    
+    await sendMessage(quoteMessage);
+  };
+
+  const handleTrackSubmit = async (tracking: TrackingData) => {
+    setShowTrackForm(false);
+    const trackMessage = `I'd like to track my appointment. My name is ${tracking.customerName}${tracking.customerPhone ? `, phone: ${tracking.customerPhone}` : ''}${tracking.customerEmail ? `, email: ${tracking.customerEmail}` : ''}.`;
+    await sendMessage(trackMessage);
   };
 
   const formatTime = (time: string | null) => {
@@ -530,7 +576,7 @@ export const AIAgentConsole = () => {
         <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden m-0 p-0 data-[state=inactive]:hidden">
           <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4">
             <div className="space-y-4">
-              {messages.length === 0 && !showFeedbackForm && !showReviewForm && (
+              {messages.length === 0 && !showFeedbackForm && !showReviewForm && !showQuoteForm && !showTrackForm && (
                 <div className="text-center py-6">
                   <div className="h-16 w-16 rounded-full gradient-primary mx-auto mb-4 flex items-center justify-center">
                     <Bot className="h-8 w-8 text-white" />
@@ -578,8 +624,23 @@ export const AIAgentConsole = () => {
                   reviewLinks={reviewLinks}
                 />
               )}
+
+              {/* Quote Form */}
+              {showQuoteForm && (
+                <QuoteForm
+                  services={services || []}
+                  onSubmit={handleQuoteSubmit}
+                />
+              )}
+
+              {/* Track Appointment Form */}
+              {showTrackForm && (
+                <TrackAppointmentForm
+                  onSubmit={handleTrackSubmit}
+                />
+              )}
               
-              {messages.map((message, index) => {
+              {!showFeedbackForm && !showReviewForm && !showQuoteForm && !showTrackForm && messages.map((message, index) => {
                 const agentInfo = message.agent ? getAgentInfo(message.agent) : null;
                 const prevMessage = index > 0 ? messages[index - 1] : null;
                 const showHandoffIndicator = message.role === 'assistant' &&
@@ -658,7 +719,7 @@ export const AIAgentConsole = () => {
               type="button" 
               variant="ghost" 
               size="icon"
-              onClick={() => { clearMessages(); setShowFeedbackForm(false); }}
+              onClick={() => { clearMessages(); setShowFeedbackForm(false); setShowReviewForm(false); setShowQuoteForm(false); setShowTrackForm(false); }}
               className="shrink-0"
             >
               <Home className="h-4 w-4" />
