@@ -12,13 +12,22 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { 
   Bot, Send, User, Loader2, Home, Phone, Mic, Calendar, 
   Clock, MessageSquare, Sparkles, ChevronRight, Building2, Volume2,
-  AlertTriangle, DollarSign, MapPin, Star, CalendarPlus, ArrowRight
+  AlertTriangle, DollarSign, MapPin, Star, CalendarPlus, ArrowRight, Users, CheckCircle2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VoiceChat } from './VoiceChat';
+import { SMSChat } from './SMSChat';
 import { FeedbackForm } from './FeedbackForm';
 import { BookingForm, BookingData } from './BookingForm';
 import { format } from 'date-fns';
+
+// Customer Engagement agents definition
+const CUSTOMER_ENGAGEMENT_AGENTS = [
+  { type: 'triage', name: 'Triage Agent', description: 'Routes customers to the right specialist' },
+  { type: 'booking', name: 'Booking Agent', description: 'Handles appointment scheduling' },
+  { type: 'followup', name: 'Follow-up Agent', description: 'Post-service engagement' },
+  { type: 'review', name: 'Review Agent', description: 'Collects customer reviews' },
+];
 
 // Quick actions matching customer-facing widget/public chat features
 const QUICK_ACTIONS = [
@@ -105,6 +114,32 @@ export const AIAgentConsole = () => {
     }
   }, [messages.length]);
 
+  // Fetch Customer Engagement agent configs
+  const { data: agentConfigs } = useQuery({
+    queryKey: ['customer-engagement-agents', companyId],
+    queryFn: async () => {
+      if (!companyId) return [];
+      const { data } = await supabase
+        .from('ai_agent_configs')
+        .select('agent_type, is_enabled')
+        .eq('company_id', companyId)
+        .in('agent_type', CUSTOMER_ENGAGEMENT_AGENTS.map(a => a.type));
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
+  // Merge agent configs with defaults
+  const customerEngagementAgents = CUSTOMER_ENGAGEMENT_AGENTS.map(agent => {
+    const config = agentConfigs?.find(c => c.agent_type === agent.type);
+    return {
+      ...agent,
+      isEnabled: config?.is_enabled ?? true, // Default to enabled
+    };
+  });
+
+  const enabledAgentsCount = customerEngagementAgents.filter(a => a.isEnabled).length;
+
   // Fetch company details including review links
   const { data: company } = useQuery({
     queryKey: ['company-details', companyId],
@@ -167,7 +202,7 @@ export const AIAgentConsole = () => {
       if (!companyId) return null;
       const { data } = await supabase
         .from('tenant_integrations')
-        .select('twilio_phone_number, elevenlabs_api_key, tts_provider, openai_api_key, google_tts_api_key, elevenlabs_voice_id, openai_tts_voice, google_tts_voice')
+        .select('twilio_phone_number, twilio_account_sid, twilio_auth_token, elevenlabs_api_key, tts_provider, openai_api_key, google_tts_api_key, elevenlabs_voice_id, openai_tts_voice, google_tts_voice')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -213,6 +248,7 @@ export const AIAgentConsole = () => {
   const ttsInfo = getTTSProviderInfo();
   const hasVoice = !!(integrations?.twilio_phone_number && ttsInfo.isConfigured);
   const hasVoiceChat = ttsInfo.isConfigured;
+  const hasSMS = !!(integrations?.twilio_phone_number && integrations?.twilio_account_sid && integrations?.twilio_auth_token);
   const twilioPhone = integrations?.twilio_phone_number;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -337,7 +373,35 @@ export const AIAgentConsole = () => {
             )}
             <div>
               <h2 className="font-semibold">{company?.name || 'AI Assistant'}</h2>
-              <p className="text-xs text-white/80">Virtual Assistant</p>
+              <div className="flex items-center gap-2 text-xs text-white/80">
+                <span>Virtual Assistant</span>
+                <span>•</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="flex items-center gap-1 cursor-help">
+                        <Users className="h-3 w-3" />
+                        {enabledAgentsCount}/{CUSTOMER_ENGAGEMENT_AGENTS.length} Agents
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-xs">
+                      <p className="font-medium mb-2">Customer Engagement Agents</p>
+                      <div className="space-y-1">
+                        {customerEngagementAgents.map(agent => (
+                          <div key={agent.type} className="flex items-center gap-2 text-xs">
+                            {agent.isEnabled ? (
+                              <CheckCircle2 className="h-3 w-3 text-green-500" />
+                            ) : (
+                              <div className="h-3 w-3 rounded-full border border-muted-foreground" />
+                            )}
+                            <span className={cn(!agent.isEnabled && "text-muted-foreground")}>{agent.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -364,6 +428,24 @@ export const AIAgentConsole = () => {
             )}
           </div>
         </div>
+        
+        {/* Current Agent Indicator */}
+        {messages.length > 0 && (
+          <div className="mt-2 pt-2 border-t border-white/20 flex items-center gap-2">
+            <span className="text-xs text-white/70">Active:</span>
+            <Badge 
+              variant="outline" 
+              className={cn(
+                "text-xs border-white/30",
+                getAgentInfo(currentAgent).bgColor,
+                getAgentInfo(currentAgent).color
+              )}
+            >
+              <Bot className="h-3 w-3 mr-1" />
+              {getAgentInfo(currentAgent).label} Agent
+            </Badge>
+          </div>
+        )}
       </div>
 
       {/* Navigation Tabs */}
@@ -411,6 +493,15 @@ export const AIAgentConsole = () => {
             >
               <Mic className="h-4 w-4 mr-1.5" />
               Voice
+            </TabsTrigger>
+          )}
+          {hasSMS && (
+            <TabsTrigger 
+              value="sms"
+              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-3 shrink-0"
+            >
+              <Phone className="h-4 w-4 mr-1.5" />
+              SMS
             </TabsTrigger>
           )}
         </TabsList>
@@ -750,6 +841,16 @@ export const AIAgentConsole = () => {
                 }}
               />
             </div>
+          </TabsContent>
+        )}
+
+        {/* SMS Tab */}
+        {hasSMS && companyId && (
+          <TabsContent value="sms" className="h-full overflow-hidden m-0 data-[state=inactive]:hidden">
+            <SMSChat
+              companyId={companyId}
+              companyName={company?.name || 'AI Assistant'}
+            />
           </TabsContent>
         )}
       </Tabs>

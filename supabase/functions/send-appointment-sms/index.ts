@@ -5,10 +5,19 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface SmsRequest {
+interface AppointmentSmsRequest {
   appointmentId: string;
   type: 'confirmation' | 'cancellation' | 'reminder';
 }
+
+interface CustomSmsRequest {
+  companyId: string;
+  toPhone: string;
+  message: string;
+  type: 'custom';
+}
+
+type SmsRequest = AppointmentSmsRequest | CustomSmsRequest;
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -20,7 +29,74 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    const { appointmentId, type }: SmsRequest = await req.json();
+    const body: SmsRequest = await req.json();
+
+    // Handle custom SMS (direct message)
+    if (body.type === 'custom' && 'companyId' in body && 'toPhone' in body && 'message' in body) {
+      const { companyId, toPhone, message } = body;
+
+      console.log(`Processing custom SMS to ${toPhone} for company ${companyId}`);
+
+      // Fetch company's Twilio credentials
+      const { data: integrations, error: integrationsError } = await supabase
+        .from('tenant_integrations')
+        .select('twilio_account_sid, twilio_auth_token, twilio_phone_number')
+        .eq('company_id', companyId)
+        .maybeSingle();
+
+      if (integrationsError) {
+        console.error('Integration fetch error:', integrationsError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to fetch integrations' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (!integrations?.twilio_account_sid || !integrations?.twilio_auth_token || !integrations?.twilio_phone_number) {
+        return new Response(
+          JSON.stringify({ error: 'Twilio not configured for this company' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Send SMS via Twilio
+      const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${integrations.twilio_account_sid}/Messages.json`;
+      const credentials = btoa(`${integrations.twilio_account_sid}:${integrations.twilio_auth_token}`);
+
+      const formData = new URLSearchParams();
+      formData.append('To', toPhone);
+      formData.append('From', integrations.twilio_phone_number);
+      formData.append('Body', message);
+
+      const twilioResponse = await fetch(twilioUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${credentials}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData.toString(),
+      });
+
+      const twilioResult = await twilioResponse.json();
+
+      if (!twilioResponse.ok) {
+        console.error('Twilio error:', twilioResult);
+        return new Response(
+          JSON.stringify({ error: 'Failed to send SMS', details: twilioResult }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      console.log('Custom SMS sent successfully:', twilioResult.sid);
+
+      return new Response(
+        JSON.stringify({ success: true, messageSid: twilioResult.sid }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Handle appointment-based SMS
+    const { appointmentId, type } = body as AppointmentSmsRequest;
 
     if (!appointmentId || !type) {
       return new Response(
@@ -162,7 +238,7 @@ Deno.serve(async (req) => {
     );
 
   } catch (error: unknown) {
-    console.error('Error sending appointment SMS:', error);
+    console.error('Error sending SMS:', error);
     const errorMessage = error instanceof Error ? error.message : 'Failed to send SMS';
     return new Response(
       JSON.stringify({ error: errorMessage }),
