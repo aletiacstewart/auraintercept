@@ -228,6 +228,7 @@ GUIDELINES:
                 customer_name: { type: "string", description: "Customer's full name" },
                 customer_phone: { type: "string", description: "Customer's phone number" },
                 customer_email: { type: "string", description: "Customer's email (optional)" },
+                customer_address: { type: "string", description: "Customer's service address" },
                 service_type: { type: "string", description: "The service they want" },
                 preferred_datetime: { type: "string", description: "Preferred date and time in ISO format" },
                 notes: { type: "string", description: "Any additional notes or special requests" },
@@ -264,6 +265,36 @@ GUIDELINES:
                 details: { type: "string", description: "Additional details about the job" },
               },
               required: ["services"],
+            },
+          },
+        },
+        {
+          type: "function",
+          function: {
+            name: "check_tech_availability",
+            description: "Check available technicians for emergency dispatch",
+            parameters: {
+              type: "object",
+              properties: {
+                service_type: { type: "string", description: "Type of service needed" },
+                location: { type: "string", description: "Customer location/address" },
+              },
+              required: ["service_type"],
+            },
+          },
+        },
+        {
+          type: "function",
+          function: {
+            name: "assign_technician",
+            description: "Assign a technician to an emergency job",
+            parameters: {
+              type: "object",
+              properties: {
+                appointment_id: { type: "string", description: "The appointment ID to assign" },
+                technician_id: { type: "string", description: "The technician to assign (optional, auto-assigns if not provided)" },
+              },
+              required: ["appointment_id"],
             },
           },
         },
@@ -344,6 +375,7 @@ GUIDELINES:
                 customer_name: args.customer_name || 'Customer',
                 customer_phone: args.customer_phone || '',
                 customer_email: args.customer_email || null,
+                customer_address: args.customer_address || null,
                 service_type: args.service_type || 'General',
                 datetime: args.preferred_datetime || new Date().toISOString(),
                 duration_minutes: service?.duration_minutes || 60,
@@ -357,14 +389,27 @@ GUIDELINES:
               console.error('Booking error:', bookError);
               result = JSON.stringify({ success: false, error: 'Failed to book appointment' });
             } else {
+              // Create job assignment for emergency
+              if (args.is_emergency && appointment) {
+                await supabase.from('job_assignments').insert({
+                  company_id: company.id,
+                  appointment_id: appointment.id,
+                  customer_address: args.customer_address || null,
+                  status: 'pending_acceptance',
+                });
+              }
               result = JSON.stringify({ success: true, appointment_id: appointment.id, message: 'Appointment booked successfully' });
             }
           } else if (funcName === 'check_availability') {
-            // Return available slots
-            result = JSON.stringify({ 
-              available_slots: ['9:00 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:00 PM', '4:00 PM'],
-              date: args.date 
-            });
+            // Return available slots based on business hours
+            const { data: hours } = await supabase
+              .from('business_hours')
+              .select('*')
+              .eq('company_id', company.id)
+              .eq('is_closed', false);
+            
+            const slots = hours?.length ? ['9:00 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:00 PM', '4:00 PM'] : [];
+            result = JSON.stringify({ available_slots: slots, date: args.date });
           } else if (funcName === 'get_quote') {
             // Generate quote based on services
             const servicesList = args.services || [];
@@ -383,6 +428,42 @@ GUIDELINES:
             });
             
             result = JSON.stringify({ items, total, note: 'Final price may vary based on inspection' });
+          } else if (funcName === 'check_tech_availability') {
+            // Find available technicians
+            const { data: techs } = await supabase
+              .from('profiles')
+              .select('id, full_name, availability_json')
+              .eq('company_id', company.id)
+              .not('availability_json', 'is', null);
+            
+            const available = (techs || []).filter(t => t.availability_json).slice(0, 3);
+            result = JSON.stringify({ 
+              available_technicians: available.map(t => ({ id: t.id, name: t.full_name })),
+              count: available.length 
+            });
+          } else if (funcName === 'assign_technician') {
+            // Assign technician to job
+            const { data: techs } = await supabase
+              .from('profiles')
+              .select('id, full_name')
+              .eq('company_id', company.id)
+              .limit(1);
+            
+            const techId = args.technician_id || techs?.[0]?.id;
+            if (techId && args.appointment_id) {
+              const { error: assignError } = await supabase
+                .from('job_assignments')
+                .update({ employee_id: techId, status: 'assigned', assigned_at: new Date().toISOString() })
+                .eq('appointment_id', args.appointment_id);
+              
+              if (assignError) {
+                result = JSON.stringify({ success: false, error: 'Failed to assign technician' });
+              } else {
+                result = JSON.stringify({ success: true, technician_name: techs?.[0]?.full_name, message: 'Technician assigned' });
+              }
+            } else {
+              result = JSON.stringify({ success: false, error: 'No technician available' });
+            }
           }
           
           toolResults.push({

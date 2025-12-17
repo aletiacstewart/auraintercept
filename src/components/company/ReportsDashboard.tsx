@@ -17,6 +17,8 @@ import { DigestDeliveryHistory } from './DigestDeliveryHistory';
 import { DigestDeliveryStats } from './DigestDeliveryStats';
 import { SuppressedEmailsManager } from './SuppressedEmailsManager';
 import { DigestMetricsSelector } from './DigestMetricsSelector';
+import { FinancialReports } from './FinancialReports';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface ReportConfig {
   id: string;
@@ -325,18 +327,24 @@ export function ReportsDashboard() {
   }
 
   return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Scheduled Reports
-          </CardTitle>
-          <CardDescription>
-            Configure automated digest reports for performance insights
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+    <Tabs defaultValue="digests" className="space-y-6">
+      <TabsList>
+        <TabsTrigger value="digests">Scheduled Digests</TabsTrigger>
+        <TabsTrigger value="financial">Financial Reports</TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="digests">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Scheduled Reports
+            </CardTitle>
+            <CardDescription>
+              Configure automated digest reports for performance insights
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
           <div className="space-y-4">
             {reports.map(report => {
               const edit = editState[report.id] || report;
@@ -566,6 +574,11 @@ export function ReportsDashboard() {
       <div className="mt-6">
         <DigestDeliveryHistory />
       </div>
-    </>
+      </TabsContent>
+      
+      <TabsContent value="financial">
+        <FinancialReports />
+      </TabsContent>
+    </Tabs>
   );
 }
