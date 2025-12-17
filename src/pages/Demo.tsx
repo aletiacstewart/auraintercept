@@ -9,13 +9,14 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Bot, Send, User, Loader2, Phone, Calendar, 
-  Clock, Sparkles, Building2, ArrowLeft,
+  Clock, Sparkles, Building2, ArrowLeft, Mic,
   AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FeedbackForm } from '@/components/ai/FeedbackForm';
 import { ReviewForm } from '@/components/ai/ReviewForm';
 import { BookingForm, BookingData } from '@/components/ai/BookingForm';
+import { VoiceChat } from '@/components/ai/VoiceChat';
 import { format } from 'date-fns';
 import logo from '@/assets/logo.png';
 
@@ -322,7 +323,7 @@ export default function Demo() {
 
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0 overflow-hidden">
-            <TabsList className="shrink-0 w-full justify-start rounded-none border-b bg-muted/30 p-0 h-auto">
+            <TabsList className="shrink-0 w-full justify-start rounded-none border-b bg-muted/30 p-0 h-auto overflow-x-auto">
               <TabsTrigger value="chat" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2">
                 Chat
               </TabsTrigger>
@@ -334,6 +335,10 @@ export default function Demo() {
               </TabsTrigger>
               <TabsTrigger value="book" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2">
                 Book
+              </TabsTrigger>
+              <TabsTrigger value="voice" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2">
+                <Mic className="h-4 w-4 mr-1" />
+                Voice
               </TabsTrigger>
             </TabsList>
 
@@ -553,6 +558,26 @@ export default function Demo() {
                 <BookingForm
                   services={services || []}
                   onSubmit={handleBookingSubmit}
+                />
+              </div>
+            </TabsContent>
+
+            {/* Voice Tab */}
+            <TabsContent value="voice" className="flex-1 overflow-y-auto p-4 m-0 data-[state=inactive]:hidden">
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className="text-center mb-6">
+                  <h3 className="font-semibold text-lg mb-2">Voice AI Assistant</h3>
+                  <p className="text-muted-foreground text-sm max-w-md">
+                    Talk directly with our AI assistant using your microphone. 
+                    Click the button below to start a voice conversation.
+                  </p>
+                </div>
+                <VoiceChat
+                  companyId={DEMO_COMPANY_ID}
+                  companyName="AI Bot Company"
+                  onTranscript={(role, text) => {
+                    console.log(`[${role}]: ${text}`);
+                  }}
                 />
               </div>
             </TabsContent>
