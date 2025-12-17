@@ -125,4 +125,111 @@
   .shadow-glow {
     box-shadow: var(--shadow-glow);
   }
+
+  /* Glassmorphism effects */
+  .glass-panel {
+    background: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .glass-dark {
+    background: hsl(220 20% 10% / 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border) / 0.2);
+  }
+
+  .glass-primary {
+    background: linear-gradient(135deg, hsl(199 89% 48% / 0.9) 0%, hsl(262 83% 58% / 0.9) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(199 89% 48% / 0.4), 0 0 40px hsl(199 89% 48% / 0.2);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 15px hsl(262 83% 58% / 0.3);
+  }
+
+  /* Neon border */
+  .neon-border {
+    box-shadow: inset 0 0 0 1px hsl(199 89% 48% / 0.3), 0 0 15px hsl(199 89% 48% / 0.15);
+  }
+
+  /* Pulse animation for status dots */
+  .pulse-dot {
+    animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 1;
+      box-shadow: 0 0 0 0 hsl(142 76% 36% / 0.7);
+    }
+    50% {
+      opacity: 0.8;
+      box-shadow: 0 0 0 8px hsl(142 76% 36% / 0);
+    }
+  }
+
+  /* Tech grid background */
+  .tech-grid {
+    background-image: 
+      linear-gradient(hsl(var(--border) / 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Floating animation */
+  .float-subtle {
+    animation: float-subtle 3s ease-in-out infinite;
+  }
+
+  @keyframes float-subtle {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  /* Shimmer effect for loading */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--muted-foreground) / 0.1) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  /* Message bubble styles */
+  .message-bubble-user {
+    background: linear-gradient(135deg, hsl(199 89% 48%) 0%, hsl(262 83% 58%) 100%);
+    border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+  }
+
+  .message-bubble-assistant {
+    background: hsl(var(--muted) / 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid hsl(var(--border) / 0.5);
+    border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+  }
 }
