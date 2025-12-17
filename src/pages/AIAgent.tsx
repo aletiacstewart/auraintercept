@@ -9,7 +9,7 @@ import { AIAgentSettings } from '@/components/ai/AIAgentSettings';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall } from 'lucide-react';
+import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall, FileText, Star, ThumbsUp, Globe } from 'lucide-react';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { TestCallDialog } from '@/components/ai/TestCallDialog';
 import { Button } from '@/components/ui/button';
@@ -282,55 +282,116 @@ const AIAgent = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Bot className="h-5 w-5" />
-                    Agent Capabilities
+                    Customer Engagement Agents
                   </CardTitle>
                   <CardDescription>
-                    What your AI agent can do
+                    Specialized AI agents that handle customer interactions
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                      <Calendar className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <h4 className="font-medium">Appointment Booking</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Check availability, find first available slots, and book appointments based on service duration and employee schedules.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                      <Brain className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <h4 className="font-medium">RAG-Powered Responses</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Answers questions using your knowledge base including services, FAQs, business hours, and uploaded documents.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                      <Phone className="h-5 w-5 text-primary mt-0.5" />
+                  {/* Customer Engagement Agents Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
+                      <Bot className="h-5 w-5 text-primary mt-0.5" />
                       <div>
                         <h4 className="font-medium flex items-center gap-2">
-                          Voice Calling
-                          {hasVoice && <Badge variant="outline" className="text-xs">Live</Badge>}
+                          Triage Agent
+                          <Badge variant="secondary" className="text-xs">Entry Point</Badge>
                         </h4>
                         <p className="text-sm text-muted-foreground">
-                          AI-powered phone conversations using Twilio for telephony and {getProviderName(selectedProvider)} for natural voice synthesis.
+                          Initial customer interaction, collects information, and routes to specialized agents.
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                      <MessageSquare className="h-5 w-5 text-primary mt-0.5" />
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
+                      <Calendar className="h-5 w-5 text-primary mt-0.5" />
                       <div>
-                        <h4 className="font-medium">Multi-Channel Support</h4>
+                        <h4 className="font-medium flex items-center gap-2">
+                          Booking Agent
+                          <Badge variant="secondary" className="text-xs">Scheduling</Badge>
+                        </h4>
                         <p className="text-sm text-muted-foreground">
-                          Works across text chat, SMS, and voice channels with consistent responses and context.
+                          Checks availability, finds first available slots, and schedules appointments.
                         </p>
                       </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
+                      <FileText className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <h4 className="font-medium flex items-center gap-2">
+                          Quoting Agent
+                          <Badge variant="secondary" className="text-xs">Pricing</Badge>
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          Generates service quotes, provides pricing information, and presents options.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
+                      <Star className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <h4 className="font-medium flex items-center gap-2">
+                          Follow-up Agent
+                          <Badge variant="secondary" className="text-xs">Feedback</Badge>
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          Collects customer feedback, tracks satisfaction, and handles post-service follow-up.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
+                      <ThumbsUp className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <h4 className="font-medium flex items-center gap-2">
+                          Review Agent
+                          <Badge variant="secondary" className="text-xs">Reputation</Badge>
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          Requests customer reviews and provides links to Google, Facebook, and Yelp.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
+                      <Brain className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <h4 className="font-medium flex items-center gap-2">
+                          Knowledge Base
+                          <Badge variant="secondary" className="text-xs">RAG</Badge>
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          Answers using your services, FAQs, business hours, and uploaded documents.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Technical Capabilities */}
+                  <div className="pt-3 border-t border-border/50">
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Communication Channels</h4>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="outline" className="flex items-center gap-1.5">
+                        <MessageSquare className="h-3.5 w-3.5" />
+                        Text Chat
+                      </Badge>
+                      <Badge variant="outline" className="flex items-center gap-1.5">
+                        <Phone className="h-3.5 w-3.5" />
+                        Voice Calls
+                        {hasVoice && <span className="text-green-500">●</span>}
+                      </Badge>
+                      <Badge variant="outline" className="flex items-center gap-1.5">
+                        <MessageSquare className="h-3.5 w-3.5" />
+                        SMS
+                        {hasTwilio && <span className="text-green-500">●</span>}
+                      </Badge>
+                      <Badge variant="outline" className="flex items-center gap-1.5">
+                        <Globe className="h-3.5 w-3.5" />
+                        Web Widget
+                      </Badge>
                     </div>
                   </div>
                 </CardContent>
