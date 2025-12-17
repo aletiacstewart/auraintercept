@@ -205,12 +205,13 @@ serve(async (req) => {
       }
 
       // Make follow-up request with tool results
+      // Note: Clear the assistant content when there are tool calls to avoid raw tool descriptions
       const followUpMessages = [
         { role: "system", content: systemPrompt },
         ...messages,
         {
           role: "assistant",
-          content: assistantMessage.content || "",
+          content: null, // Clear content to prevent raw tool code from appearing
           tool_calls: assistantMessage.tool_calls
         },
         ...toolResults
