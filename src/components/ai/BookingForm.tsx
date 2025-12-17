@@ -6,7 +6,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { CalendarIcon, Clock, User, Phone, MapPin, Loader2, Send } from 'lucide-react';
 import { format } from 'date-fns';
@@ -90,18 +89,17 @@ export const BookingForm: React.FC<BookingFormProps> = ({
     .map(s => s.name);
 
   return (
-    <Card className="border-0 shadow-none">
-      <CardHeader className="px-0 pt-0">
-        <CardTitle className="text-lg flex items-center gap-2">
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-semibold flex items-center gap-2">
           <CalendarIcon className="h-5 w-5 text-primary" />
           Book an Appointment
-        </CardTitle>
-        <CardDescription>
+        </h3>
+        <p className="text-sm text-muted-foreground mt-1">
           Select services, choose a date and time, and provide your contact information
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="px-0 pb-0">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        </p>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
           {/* Services Selection */}
           <div className="space-y-3">
             <Label className="text-sm font-medium">Select Services *</Label>
@@ -279,8 +277,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
               </>
             )}
           </Button>
-        </form>
-      </CardContent>
-    </Card>
+      </form>
+    </div>
   );
 };
