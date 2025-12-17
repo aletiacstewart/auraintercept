@@ -98,6 +98,22 @@ serve(async (req) => {
             required: ["service_names"]
           }
         }
+      },
+      {
+        type: "function",
+        function: {
+          name: "track_appointment",
+          description: "Look up a customer's appointment and job status (including technician status/ETA if available).",
+          parameters: {
+            type: "object",
+            properties: {
+              customer_phone: { type: "string", description: "Customer phone number (recommended)" },
+              customer_email: { type: "string", description: "Customer email (optional)" },
+              customer_name: { type: "string", description: "Customer full name (optional)" }
+            },
+            required: []
+          }
+        }
       }
     ];
 
@@ -247,6 +263,8 @@ async function executeToolCall(supabase: any, companyId: string, toolName: strin
       return getBusinessHours(knowledge, args.day_of_week);
     case "get_quote":
       return getQuote(knowledge, args);
+    case "track_appointment":
+      return await trackAppointment(supabase, companyId, args);
     default:
       return { error: `Unknown tool: ${toolName}` };
   }
@@ -374,6 +392,86 @@ async function bookAppointment(supabase: any, companyId: string, args: any, know
     console.error("Booking exception:", err);
     return { success: false, message: "An error occurred while booking" };
   }
+}
+
+async function trackAppointment(supabase: any, companyId: string, args: any) {
+  const customer_phone = (args?.customer_phone || '').trim();
+  const customer_email = (args?.customer_email || '').trim();
+  const customer_name = (args?.customer_name || '').trim();
+
+  if (!customer_phone && !customer_email && !customer_name) {
+    return {
+      success: false,
+      needs_verification: true,
+      message: "To look up your appointment, please share the phone number or email you used when booking."
+    };
+  }
+
+  let query = supabase
+    .from('appointments')
+    .select('id, datetime, duration_minutes, service_type, status, customer_name, customer_email, customer_phone, customer_address')
+    .eq('company_id', companyId)
+    .neq('status', 'cancelled')
+    .order('datetime', { ascending: false })
+    .limit(5);
+
+  if (customer_phone) query = query.eq('customer_phone', customer_phone);
+  if (customer_email) query = query.eq('customer_email', customer_email);
+  if (!customer_phone && !customer_email && customer_name) query = query.ilike('customer_name', `%${customer_name}%`);
+
+  const { data: appts, error: apptError } = await query;
+  if (apptError) {
+    console.error('track_appointment appointments error:', apptError);
+    return { success: false, message: 'I had trouble looking up your appointment. Please try again.' };
+  }
+
+  const appointment = appts?.[0];
+  if (!appointment) {
+    return {
+      success: false,
+      not_found: true,
+      message: "I couldn't find an appointment with that info. Could you double-check the phone/email used when booking?"
+    };
+  }
+
+  const { data: job } = await supabase
+    .from('job_assignments')
+    .select('id, status, assigned_at, accepted_at, en_route_at, arrived_at, started_at, completed_at, estimated_arrival_minutes, actual_arrival_minutes, employee_id')
+    .eq('company_id', companyId)
+    .eq('appointment_id', appointment.id)
+    .maybeSingle();
+
+  let technicianName: string | null = null;
+  if (job?.employee_id) {
+    const { data: tech } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', job.employee_id)
+      .maybeSingle();
+    technicianName = tech?.full_name || null;
+  }
+
+  return {
+    success: true,
+    appointment: {
+      id: appointment.id,
+      service_type: appointment.service_type,
+      datetime: appointment.datetime,
+      status: appointment.status,
+      customer_name: appointment.customer_name,
+      customer_phone: appointment.customer_phone,
+      customer_email: appointment.customer_email,
+      customer_address: appointment.customer_address,
+    },
+    job: job
+      ? {
+          status: job.status,
+          technician_name: technicianName,
+          estimated_arrival_minutes: job.estimated_arrival_minutes,
+          actual_arrival_minutes: job.actual_arrival_minutes,
+        }
+      : null,
+  };
 }
 
 function getBusinessHours(knowledge: any, dayOfWeek: number) {
@@ -535,7 +633,8 @@ ${docsText || 'No additional documents'}
 4. If a specific employee is requested, check their availability specifically
 5. If no slots are available, suggest alternative dates or times
 6. Answer questions using the knowledge base above
-7. If you don't know something, politely say so and offer to help with something else
-8. Keep responses concise but informative
-9. When booking is complete, confirm all details with the customer`;
+7. If a customer wants to track an appointment, ask for the phone number or email used when booking, then use track_appointment
+8. If you don't know something, politely say so and offer to help with something else
+9. Keep responses concise but informative
+10. When booking is complete, confirm all details with the customer`;
 }
