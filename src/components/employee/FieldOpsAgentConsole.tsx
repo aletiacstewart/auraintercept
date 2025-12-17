@@ -88,6 +88,25 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Fetch company dispatch phone
+  const { data: companyData } = useQuery({
+    queryKey: ['company-dispatch-phone', effectiveCompanyId],
+    queryFn: async () => {
+      if (!effectiveCompanyId) return null;
+      const { data, error } = await supabase
+        .from('companies')
+        .select('dispatch_phone, name')
+        .eq('id', effectiveCompanyId)
+        .single();
+      if (error) {
+        console.error('Error fetching company data:', error);
+        return null;
+      }
+      return data;
+    },
+    enabled: !!effectiveCompanyId,
+  });
+
   const { messages, isLoading, currentAgent, sendMessage } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     onAgentChange: (agent) => {
@@ -175,8 +194,21 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       setEtaMinutes('');
       return;
     }
+    if (action.id === 'dispatch') {
+      if (companyData?.dispatch_phone) {
+        // Clean the phone number and initiate call
+        const cleanPhone = companyData.dispatch_phone.replace(/[^\d+]/g, '');
+        window.location.href = `tel:${cleanPhone}`;
+        toast.success('Calling Dispatch', { description: companyData.name || 'Company dispatch line' });
+      } else {
+        toast.error('Dispatch phone not configured', { 
+          description: 'Please contact your administrator to set up the dispatch number' 
+        });
+      }
+      return;
+    }
     await sendMessage(action.message);
-  }, [sendMessage]);
+  }, [sendMessage, companyData]);
 
   const handleSelectJobForDirections = useCallback((job: JobAssignment) => {
     const address = job.customer_address || job.appointments?.customer_address;
