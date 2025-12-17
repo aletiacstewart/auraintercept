@@ -13,11 +13,13 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { 
   Bot, Send, User, Loader2, Home, Phone, Mic, Calendar, 
   Clock, MessageSquare, Sparkles, ChevronRight, Building2, Volume2,
-  AlertTriangle, DollarSign, MapPin, Star
+  AlertTriangle, DollarSign, MapPin, Star, CalendarPlus
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VoiceChat } from './VoiceChat';
 import { FeedbackForm } from './FeedbackForm';
+import { BookingForm, BookingData } from './BookingForm';
+import { format } from 'date-fns';
 
 // Quick actions matching customer-facing widget/public chat features
 const QUICK_ACTIONS = [
@@ -195,6 +197,11 @@ export const AIAgentConsole = () => {
       setActiveTab('chat');
       return;
     }
+    // Navigate to booking form for schedule action
+    if (actionId === 'schedule') {
+      setActiveTab('book');
+      return;
+    }
     setInput(action);
     setActiveTab('chat');
   };
@@ -223,6 +230,25 @@ export const AIAgentConsole = () => {
 
   const handleServiceClick = (service: Service) => {
     handleQuickAction(`Tell me about ${service.name}`);
+  };
+
+  const handleBookingSubmit = async (booking: BookingData) => {
+    const serviceNames = services
+      ?.filter(s => booking.selectedServices.includes(s.id))
+      .map(s => s.name)
+      .join(', ') || 'service';
+    
+    const formattedDate = format(booking.date, 'MMMM d, yyyy');
+    const [hours, minutes] = booking.time.split(':');
+    const hour = parseInt(hours);
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+    const formattedTime = `${displayHour}:${minutes} ${period}`;
+    
+    const bookingMessage = `I'd like to book an appointment. My name is ${booking.customerName}, my phone number is ${booking.customerPhone}, and I need service at ${booking.customerAddress}. I'm interested in: ${serviceNames}. I'd like to schedule for ${formattedDate} at ${formattedTime}.`;
+    
+    setActiveTab('chat');
+    await sendMessage(bookingMessage);
   };
 
   const formatTime = (time: string | null) => {
@@ -343,6 +369,13 @@ export const AIAgentConsole = () => {
           >
             <Sparkles className="h-4 w-4 mr-1.5" />
             Services
+          </TabsTrigger>
+          <TabsTrigger 
+            value="book"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-3 shrink-0"
+          >
+            <CalendarPlus className="h-4 w-4 mr-1.5" />
+            Book
           </TabsTrigger>
           <TabsTrigger 
             value="hours"
@@ -511,11 +544,24 @@ export const AIAgentConsole = () => {
               
               <Button 
                 className="w-full mt-4"
-                onClick={() => handleQuickAction("I'd like to book an appointment")}
+                onClick={() => setActiveTab('book')}
               >
                 <Calendar className="h-4 w-4 mr-2" />
                 Schedule an Appointment
               </Button>
+            </div>
+          </ScrollArea>
+        </TabsContent>
+
+        {/* Book Tab */}
+        <TabsContent value="book" className="flex-1 overflow-hidden m-0">
+          <ScrollArea className="h-full">
+            <div className="p-4">
+              <BookingForm
+                services={services || []}
+                onSubmit={handleBookingSubmit}
+                isLoading={isLoading}
+              />
             </div>
           </ScrollArea>
         </TabsContent>
@@ -563,7 +609,7 @@ export const AIAgentConsole = () => {
 
               <Button 
                 className="w-full mt-6"
-                onClick={() => handleQuickAction("I'd like to book an appointment")}
+                onClick={() => setActiveTab('book')}
               >
                 <Calendar className="h-4 w-4 mr-2" />
                 Schedule an Appointment
