@@ -369,7 +369,7 @@ export default function Demo() {
             {/* Chat Tab */}
             <TabsContent value="chat" className="flex-1 flex flex-col min-h-0 m-0 p-0 data-[state=inactive]:hidden">
               <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.length === 0 && !showFeedbackForm && !showReviewForm && (
+                {messages.length === 0 && !showFeedbackForm && !showReviewForm && !showQuoteForm && (
                   <div className="text-center py-8">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
                       <Bot className="h-8 w-8 text-primary" />
