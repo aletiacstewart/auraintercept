@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine';
@@ -7,30 +6,17 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Navigation, MapPin, Search, X, Clock, Route as RouteIcon, Locate } from 'lucide-react';
+import { Clock, Locate, MapPin, Navigation, Route as RouteIcon, Search, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-// Fix Leaflet default marker icon issue
+// Fix Leaflet default marker icon issue in Vite
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
-
-// Custom marker icons
-const createCustomIcon = (color: string) => {
-  return L.divIcon({
-    className: 'custom-marker',
-    html: `<div style="background-color: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
-    iconSize: [24, 24],
-    iconAnchor: [12, 12],
-  });
-};
-
-const technicianIcon = createCustomIcon('#3b82f6');
-const jobIcon = createCustomIcon('#22c55e');
-const destinationIcon = createCustomIcon('#ef4444');
 
 interface JobLocation {
   id: string;
@@ -50,150 +36,207 @@ interface TechnicianMapProps {
   onJobSelect?: (jobId: string) => void;
 }
 
-interface RoutingControlProps {
-  from: [number, number];
-  to: [number, number];
-  onRouteFound?: (distance: string, duration: string) => void;
-}
-
-function RoutingControl({ from, to, onRouteFound }: RoutingControlProps) {
-  const map = useMap();
-  const routingControlRef = useRef<any>(null);
-
-  useEffect(() => {
-    if (!map || !from || !to) return;
-
-    // Remove existing routing control
-    if (routingControlRef.current) {
-      try {
-        map.removeControl(routingControlRef.current);
-      } catch (e) {
-        console.log('Could not remove routing control');
-      }
-    }
-
-    // Create new routing control using any type to avoid TS issues
-    const RoutingModule = (L as any).Routing;
-    
-    if (!RoutingModule) {
-      console.error('Leaflet Routing Machine not loaded');
-      return;
-    }
-
-    const routingControl = RoutingModule.control({
-      waypoints: [
-        L.latLng(from[0], from[1]),
-        L.latLng(to[0], to[1])
-      ],
-      routeWhileDragging: false,
-      addWaypoints: false,
-      fitSelectedRoutes: true,
-      showAlternatives: false,
-      lineOptions: {
-        styles: [{ color: '#3b82f6', weight: 5, opacity: 0.8 }],
-        extendToWaypoints: true,
-        missingRouteTolerance: 0
-      },
-      router: RoutingModule.osrmv1({
-        serviceUrl: 'https://router.project-osrm.org/route/v1'
-      }),
-      show: false,
-      createMarker: () => null, // Don't create default markers
-    });
-
-    routingControl.on('routesfound', (e: any) => {
-      const routes = e.routes;
-      if (routes && routes.length > 0) {
-        const route = routes[0];
-        const distanceMiles = (route.summary.totalDistance / 1609.34).toFixed(1);
-        const durationMins = Math.round(route.summary.totalTime / 60);
-        onRouteFound?.(`${distanceMiles} mi`, `${durationMins} min`);
-      }
-    });
-
-    routingControl.addTo(map);
-    routingControlRef.current = routingControl;
-
-    return () => {
-      if (routingControlRef.current) {
-        try {
-          map.removeControl(routingControlRef.current);
-        } catch (e) {
-          // ignore
-        }
-      }
-    };
-  }, [map, from, to, onRouteFound]);
-
-  return null;
-}
-
-function MapController({ position, onLocationFound }: { position: [number, number] | null; onLocationFound: (pos: [number, number]) => void }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (position) {
-      map.flyTo(position, 14);
-    }
-  }, [map, position]);
-
-  useMapEvents({
-    locationfound(e) {
-      onLocationFound([e.latlng.lat, e.latlng.lng]);
-      map.flyTo(e.latlng, 14);
-    },
-  });
-
-  return null;
-}
-
-export function TechnicianMap({ jobs = [], onRouteCalculated, selectedJobId, onJobSelect }: TechnicianMapProps) {
+export function TechnicianMap({
+  jobs = [],
+  onRouteCalculated,
+  selectedJobId,
+  onJobSelect,
+}: TechnicianMapProps) {
   const { toast } = useToast();
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
+  const routingRef = useRef<any>(null);
+  const jobMarkersRef = useRef<Map<string, L.Marker>>(new Map());
+  const currentMarkerRef = useRef<L.Marker | null>(null);
+  const destinationMarkerRef = useRef<L.Marker | null>(null);
+
   const [currentPosition, setCurrentPosition] = useState<[number, number] | null>(null);
   const [destination, setDestination] = useState<[number, number] | null>(null);
   const [searchAddress, setSearchAddress] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [routeInfo, setRouteInfo] = useState<{ distance: string; duration: string } | null>(null);
 
-  // Get user's current location
+  const defaultCenter: [number, number] = useMemo(() => {
+    return currentPosition || [39.8283, -98.5795];
+  }, [currentPosition]);
+
+  const ensureMap = useCallback(() => {
+    if (!containerRef.current) return null;
+    if (mapRef.current) return mapRef.current;
+
+    const map = L.map(containerRef.current, {
+      center: defaultCenter,
+      zoom: currentPosition ? 14 : 4,
+      zoomControl: true,
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap',
+      maxZoom: 19,
+    }).addTo(map);
+
+    mapRef.current = map;
+    return map;
+  }, [currentPosition, defaultCenter]);
+
+  // Init map once
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setCurrentPosition([pos.coords.latitude, pos.coords.longitude]);
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-        }
-      );
-    }
+    const map = ensureMap();
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [ensureMap]);
+
+  // Get user location once (best-effort)
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setCurrentPosition([pos.coords.latitude, pos.coords.longitude]),
+      () => {
+        // Silent fail; user can still search / use job pins
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
   }, []);
+
+  // Keep map centered if we get a location
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (currentPosition) {
+      map.setView(currentPosition, 14, { animate: true });
+    }
+  }, [currentPosition]);
+
+  const clearRoute = useCallback(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    if (routingRef.current) {
+      try {
+        map.removeControl(routingRef.current);
+      } catch {
+        // ignore
+      }
+      routingRef.current = null;
+    }
+
+    if (destinationMarkerRef.current) {
+      destinationMarkerRef.current.remove();
+      destinationMarkerRef.current = null;
+    }
+
+    setDestination(null);
+    setSearchAddress('');
+    setRouteInfo(null);
+  }, []);
+
+  const setRoute = useCallback(
+    (to: [number, number], addressLabel?: string) => {
+      const map = mapRef.current;
+      if (!map) return;
+
+      setDestination(to);
+      if (addressLabel) setSearchAddress(addressLabel);
+
+      // Destination marker
+      if (destinationMarkerRef.current) destinationMarkerRef.current.remove();
+      destinationMarkerRef.current = L.marker(to).addTo(map);
+
+      // Routing
+      if (!currentPosition) {
+        toast({
+          title: 'Location Needed',
+          description: 'Enable location services to calculate routes and ETA.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      // Remove old
+      if (routingRef.current) {
+        try {
+          map.removeControl(routingRef.current);
+        } catch {
+          // ignore
+        }
+      }
+
+      const primaryColor = 'hsl(var(--primary))';
+      const RoutingModule = (L as any).Routing;
+      if (!RoutingModule) {
+        toast({
+          title: 'Routing Unavailable',
+          description: 'Routing module failed to load.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      const ctrl = RoutingModule.control({
+        waypoints: [L.latLng(currentPosition[0], currentPosition[1]), L.latLng(to[0], to[1])],
+        routeWhileDragging: false,
+        addWaypoints: false,
+        fitSelectedRoutes: true,
+        showAlternatives: false,
+        show: false,
+        lineOptions: {
+          styles: [{ color: primaryColor, weight: 5, opacity: 0.85 }],
+        },
+        router: RoutingModule.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' }),
+        createMarker: () => null,
+      });
+
+      ctrl.on('routesfound', (e: any) => {
+        const routes = e.routes;
+        if (!routes?.length) return;
+        const route = routes[0];
+        const distanceMiles = (route.summary.totalDistance / 1609.34).toFixed(1);
+        const durationMins = Math.round(route.summary.totalTime / 60);
+        const nextInfo = { distance: `${distanceMiles} mi`, duration: `${durationMins} min` };
+        setRouteInfo(nextInfo);
+        onRouteCalculated?.(nextInfo.distance, nextInfo.duration);
+      });
+
+      ctrl.addTo(map);
+      routingRef.current = ctrl;
+    },
+    [currentPosition, onRouteCalculated, toast]
+  );
 
   const locateMe = useCallback(() => {
-    if (mapRef.current) {
-      mapRef.current.locate();
-    }
-  }, []);
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCurrentPosition([pos.coords.latitude, pos.coords.longitude]);
+      },
+      () => {
+        toast({
+          title: 'Location Access',
+          description: 'Enable location services for navigation features.',
+          variant: 'destructive',
+        });
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  }, [toast]);
 
-  // Handle address search using Nominatim
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if (!searchAddress.trim()) return;
-    
     setIsSearching(true);
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchAddress)}`
       );
       const data = await response.json();
-      
-      if (data && data.length > 0) {
-        const { lat, lon } = data[0];
-        setDestination([parseFloat(lat), parseFloat(lon)]);
-        toast({
-          title: 'Address Found',
-          description: data[0].display_name.substring(0, 60) + '...',
-        });
+      if (data?.length) {
+        const lat = parseFloat(data[0].lat);
+        const lng = parseFloat(data[0].lon);
+        setRoute([lat, lng]);
       } else {
         toast({
           title: 'Address Not Found',
@@ -201,7 +244,7 @@ export function TechnicianMap({ jobs = [], onRouteCalculated, selectedJobId, onJ
           variant: 'destructive',
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         title: 'Search Failed',
         description: 'Could not search for address.',
@@ -210,28 +253,66 @@ export function TechnicianMap({ jobs = [], onRouteCalculated, selectedJobId, onJ
     } finally {
       setIsSearching(false);
     }
-  };
+  }, [searchAddress, setRoute, toast]);
 
-  // Navigate to a job location
-  const navigateToJob = (job: JobLocation) => {
-    setDestination([job.lat, job.lng]);
-    setSearchAddress(job.address);
-    onJobSelect?.(job.id);
-  };
+  // Render/update current position marker
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
 
-  // Clear route
-  const clearRoute = () => {
-    setDestination(null);
-    setSearchAddress('');
-    setRouteInfo(null);
-  };
+    if (!currentPosition) return;
 
-  const handleRouteFound = useCallback((distance: string, duration: string) => {
-    setRouteInfo({ distance, duration });
-    onRouteCalculated?.(distance, duration);
-  }, [onRouteCalculated]);
+    if (currentMarkerRef.current) {
+      currentMarkerRef.current.setLatLng(currentPosition);
+    } else {
+      currentMarkerRef.current = L.marker(currentPosition).addTo(map).bindPopup('Your current location');
+    }
+  }, [currentPosition]);
 
-  const defaultCenter: [number, number] = currentPosition || [39.8283, -98.5795];
+  // Render/update job markers
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    // Remove markers that no longer exist
+    for (const [id, marker] of jobMarkersRef.current.entries()) {
+      if (!jobs.some((j) => j.id === id)) {
+        marker.remove();
+        jobMarkersRef.current.delete(id);
+      }
+    }
+
+    // Add/update markers
+    for (const job of jobs) {
+      const existing = jobMarkersRef.current.get(job.id);
+      if (existing) {
+        existing.setLatLng([job.lat, job.lng]);
+      } else {
+        const marker = L.marker([job.lat, job.lng]).addTo(map);
+        marker.on('click', () => {
+          onJobSelect?.(job.id);
+          setRoute([job.lat, job.lng], job.address);
+        });
+        marker.bindPopup(
+          `<div style="min-width:180px">
+            <div style="font-weight:600">${job.customerName}</div>
+            <div style="font-size:12px;opacity:.8">${job.serviceType}</div>
+            <div style="font-size:12px;opacity:.9">${job.address}</div>
+          </div>`
+        );
+        jobMarkersRef.current.set(job.id, marker);
+      }
+    }
+  }, [jobs, onJobSelect, setRoute]);
+
+  // Highlight selected job marker (simple bounce)
+  useEffect(() => {
+    if (!selectedJobId) return;
+    const marker = jobMarkersRef.current.get(selectedJobId);
+    if (!marker) return;
+
+    marker.openPopup();
+  }, [selectedJobId]);
 
   return (
     <div className="flex flex-col h-full">
@@ -262,8 +343,7 @@ export function TechnicianMap({ jobs = [], onRouteCalculated, selectedJobId, onJ
               </Button>
             )}
           </div>
-          
-          {/* Route Info */}
+
           {routeInfo && (
             <div className="flex items-center gap-4 mt-3 p-2 bg-primary/10 rounded-lg">
               <div className="flex items-center gap-1 text-sm">
@@ -279,73 +359,9 @@ export function TechnicianMap({ jobs = [], onRouteCalculated, selectedJobId, onJ
         </CardContent>
       </Card>
 
-      {/* Map */}
+      {/* Map canvas */}
       <div className="flex-1 relative">
-        <MapContainer
-          center={defaultCenter}
-          zoom={currentPosition ? 14 : 4}
-          style={{ height: '100%', width: '100%' }}
-          className="z-0"
-          ref={mapRef}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          
-          <MapController position={currentPosition} onLocationFound={setCurrentPosition} />
-          
-          {/* Current position marker */}
-          {currentPosition && (
-            <Marker position={currentPosition} icon={technicianIcon}>
-              <Popup>Your current location</Popup>
-            </Marker>
-          )}
-          
-          {/* Job markers */}
-          {jobs.map((job) => (
-            <Marker
-              key={job.id}
-              position={[job.lat, job.lng]}
-              icon={selectedJobId === job.id ? destinationIcon : jobIcon}
-              eventHandlers={{
-                click: () => navigateToJob(job),
-              }}
-            >
-              <Popup>
-                <div className="p-1">
-                  <p className="font-semibold">{job.customerName}</p>
-                  <p className="text-xs text-muted-foreground">{job.serviceType}</p>
-                  <p className="text-xs">{job.address}</p>
-                  <Button 
-                    size="sm" 
-                    className="w-full mt-2 h-7 text-xs"
-                    onClick={() => navigateToJob(job)}
-                  >
-                    <Navigation className="h-3 w-3 mr-1" />
-                    Get Directions
-                  </Button>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-
-          {/* Destination marker */}
-          {destination && !jobs.some(j => j.lat === destination[0] && j.lng === destination[1]) && (
-            <Marker position={destination} icon={destinationIcon}>
-              <Popup>Destination</Popup>
-            </Marker>
-          )}
-
-          {/* Routing */}
-          {currentPosition && destination && (
-            <RoutingControl
-              from={currentPosition}
-              to={destination}
-              onRouteFound={handleRouteFound}
-            />
-          )}
-        </MapContainer>
+        <div ref={containerRef} className="absolute inset-0" />
       </div>
 
       {/* Jobs List */}
@@ -362,10 +378,13 @@ export function TechnicianMap({ jobs = [], onRouteCalculated, selectedJobId, onJ
               {jobs.map((job) => (
                 <div
                   key={job.id}
-                  onClick={() => navigateToJob(job)}
+                  onClick={() => {
+                    onJobSelect?.(job.id);
+                    setRoute([job.lat, job.lng], job.address);
+                  }}
                   className={`p-2 rounded-lg cursor-pointer transition-colors ${
-                    selectedJobId === job.id 
-                      ? 'bg-primary/10 border border-primary/30' 
+                    selectedJobId === job.id
+                      ? 'bg-primary/10 border border-primary/30'
                       : 'bg-muted/50 hover:bg-muted'
                   }`}
                 >
