@@ -117,20 +117,23 @@ export function GoogleCalendarSettings() {
     enabled: isConnected,
   });
 
-  // Fetch last sync timestamp
-  const { data: lastSyncData } = useQuery({
-    queryKey: ['google-calendar-last-sync', companyId],
+  // Fetch last sync timestamp and count
+  const { data: syncStats } = useQuery({
+    queryKey: ['google-calendar-sync-stats', companyId],
     queryFn: async () => {
       if (!companyId) return null;
-      const { data, error } = await supabase
+      const { data, error, count } = await supabase
         .from('calendar_event_mappings')
-        .select('last_synced_at')
+        .select('last_synced_at', { count: 'exact' })
         .eq('company_id', companyId)
+        .eq('sync_status', 'synced')
         .order('last_synced_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .limit(1);
       if (error && error.code !== 'PGRST116') throw error;
-      return data;
+      return {
+        lastSyncedAt: data?.[0]?.last_synced_at,
+        totalSynced: count || 0
+      };
     },
     enabled: isConnected,
   });
@@ -314,7 +317,7 @@ export function GoogleCalendarSettings() {
       return data;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['google-calendar-last-sync'] });
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-sync-stats'] });
       toast.success(`Synced ${data?.synced || 0} appointments to Google Calendar`);
     },
     onError: (error) => {
@@ -416,13 +419,22 @@ export function GoogleCalendarSettings() {
                     ? `Syncing with ${selectedCalendarName}`
                     : 'Sync appointments with your Google Calendar (two-way sync)'
                   }
-                  {isConnected && lastSyncData?.last_synced_at && (
-                    <span className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
-                      <Clock className="w-3 h-3" />
-                      Last synced {formatDistanceToNow(new Date(lastSyncData.last_synced_at), { addSuffix: true })}
-                      <span className="text-muted-foreground/60">
-                        ({format(new Date(lastSyncData.last_synced_at), 'MMM d, h:mm a')})
-                      </span>
+                  {isConnected && (
+                    <span className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                      {syncStats?.totalSynced !== undefined && syncStats.totalSynced > 0 && (
+                        <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                          {syncStats.totalSynced} synced
+                        </Badge>
+                      )}
+                      {syncStats?.lastSyncedAt && (
+                        <>
+                          <Clock className="w-3 h-3" />
+                          Last synced {formatDistanceToNow(new Date(syncStats.lastSyncedAt), { addSuffix: true })}
+                          <span className="text-muted-foreground/60">
+                            ({format(new Date(syncStats.lastSyncedAt), 'MMM d, h:mm a')})
+                          </span>
+                        </>
+                      )}
                     </span>
                   )}
                 </CardDescription>
