@@ -25,7 +25,9 @@ import {
   Calendar,
   MessageSquare,
   AlertTriangle,
-  Zap
+  Zap,
+  Eye,
+  FileText
 } from 'lucide-react';
 
 // Agent display names
@@ -685,7 +687,7 @@ export function AgentTestConsole({
           <div className="border rounded-lg">
             {/* Messages */}
             <ScrollArea className="h-[400px] p-4" ref={scrollRef}>
-              {messages.length === 0 ? (
+              {messages.length === 0 && !showFeedbackForm ? (
                 <div className="text-center text-muted-foreground py-12">
                   <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>Send a message to test the agent</p>
@@ -758,30 +760,54 @@ export function AgentTestConsole({
                                       key={i}
                                       size="sm"
                                       variant={action.type === 'call' ? 'default' : 'outline'}
-                                      className="text-xs h-7"
-                                      onClick={() => handleActionClick(action)}
+                                      className="h-7 text-xs"
+                                      onClick={() => {
+                                        // Extract customer context from conversation
+                                        const customerInfo = extractCustomerInfo(conversationHistory);
+                                        
+                                        // Build context-aware message based on action type and customer info
+                                        let contextMessage = action.label;
+                                        if (action.type === 'call' && customerInfo.address) {
+                                          contextMessage = `Please dispatch someone to ${customerInfo.address}${customerInfo.name ? ` for ${customerInfo.name}` : ''}`;
+                                        } else if (action.type === 'schedule') {
+                                          contextMessage = customerInfo.name 
+                                            ? `I'd like to schedule an appointment. My name is ${customerInfo.name}${customerInfo.phone ? ` and my phone is ${customerInfo.phone}` : ''}`
+                                            : "I'd like to schedule an appointment";
+                                        } else if (action.type === 'track') {
+                                          contextMessage = customerInfo.phone 
+                                            ? `I'd like to track my appointment. My phone number is ${customerInfo.phone}`
+                                            : "I'd like to track my appointment status";
+                                        } else if (action.type === 'quote') {
+                                          contextMessage = customerInfo.issue 
+                                            ? `I'd like a quote for: ${customerInfo.issue}`
+                                            : "I'd like to get a quote for service";
+                                        }
+                                        
+                                        sendMessage(contextMessage);
+                                      }}
                                     >
                                       {action.type === 'call' && <Phone className="h-3 w-3 mr-1" />}
-                                      {action.type === 'action' && action.value === 'show_calendar' && <Calendar className="h-3 w-3 mr-1" />}
+                                      {action.type === 'schedule' && <Calendar className="h-3 w-3 mr-1" />}
+                                      {action.type === 'track' && <Eye className="h-3 w-3 mr-1" />}
+                                      {action.type === 'quote' && <FileText className="h-3 w-3 mr-1" />}
                                       {action.label}
                                     </Button>
                                   ))}
                                 </div>
                               </div>
                             )}
-                            
-                            {/* Handoff Badge - smaller, below next steps */}
-                            <div className="flex items-center gap-1 flex-wrap pt-2 border-t border-border/50">
-                              <Badge variant="outline" className="text-xs gap-1 opacity-70">
-                                <ArrowRight className="h-3 w-3" />
-                                Transferred to {message.metadata.handoff_to}
-                              </Badge>
-                            </div>
+                            <Badge variant="outline" className="text-xs gap-1">
+                              <ArrowRight className="h-3 w-3" />
+                              Handoff to {message.metadata.handoff_to}: {message.metadata.handoff_reason}
+                            </Badge>
                           </div>
                         )}
-                        <p className="text-xs opacity-50 mt-1">
-                          {message.timestamp.toLocaleTimeString()}
-                        </p>
+                        {message.metadata?.tool_calls && (
+                          <div className="mt-2 text-xs text-muted-foreground border-t pt-2">
+                            <span className="font-semibold">Tools:</span>{' '}
+                            {message.metadata.tool_calls.join(', ')}
+                          </div>
+                        )}
                       </div>
                       {message.role === 'user' && (
                         <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
