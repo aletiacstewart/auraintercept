@@ -39,6 +39,7 @@ interface CalendarEventMapping {
 
 interface Appointment {
   id: string;
+  company_id: string;
   customer_name: string;
   customer_email: string | null;
   customer_phone: string | null;
@@ -140,6 +141,7 @@ export function AppointmentCalendar() {
           status,
           appointments:appointment_id (
             id,
+            company_id,
             customer_name,
             customer_email,
             customer_phone,
@@ -186,6 +188,7 @@ export function AppointmentCalendar() {
         .filter(ja => ja.appointments)
         .map(ja => ({
           id: ja.appointments!.id,
+          company_id: ja.appointments!.company_id,
           customer_name: ja.appointments!.customer_name,
           customer_email: ja.appointments!.customer_email,
           customer_phone: ja.appointments!.customer_phone,
@@ -361,6 +364,9 @@ export function AppointmentCalendar() {
                           syncStatus={appointment.calendar_sync?.sync_status}
                           lastSyncedAt={appointment.calendar_sync?.last_synced_at}
                           googleEventId={appointment.calendar_sync?.google_event_id}
+                          appointmentId={appointment.id}
+                          companyId={appointment.company_id}
+                          onRetrySuccess={() => queryClient.invalidateQueries({ queryKey: ['employee-calendar-appointments'] })}
                           compact
                         />
                       </div>
@@ -415,6 +421,9 @@ export function AppointmentCalendar() {
                       syncStatus={selectedAppointment.calendar_sync?.sync_status}
                       lastSyncedAt={selectedAppointment.calendar_sync?.last_synced_at}
                       googleEventId={selectedAppointment.calendar_sync?.google_event_id}
+                      appointmentId={selectedAppointment.id}
+                      companyId={selectedAppointment.company_id}
+                      onRetrySuccess={() => queryClient.invalidateQueries({ queryKey: ['employee-calendar-appointments'] })}
                     />
                   </div>
                 </div>
