@@ -12,6 +12,8 @@ import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
 import { ReviewRequestSettings } from '@/components/company/ReviewRequestSettings';
 import { ProfileSettings } from '@/components/employee/ProfileSettings';
+import { WarrantySettings } from '@/components/settings/WarrantySettings';
+import { CampaignSettings } from '@/components/settings/CampaignSettings';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -42,6 +44,8 @@ export default function Settings() {
               <TabsTrigger value="emails">Email Templates</TabsTrigger>
               <TabsTrigger value="sms">SMS Templates</TabsTrigger>
               <TabsTrigger value="reviews">Reviews</TabsTrigger>
+              <TabsTrigger value="warranties">Warranties</TabsTrigger>
+              <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
             </TabsList>
             <TabsContent value="branding">
               <BrandingSettings />
@@ -78,6 +82,12 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="reviews">
               <ReviewRequestSettings />
+            </TabsContent>
+            <TabsContent value="warranties">
+              <WarrantySettings />
+            </TabsContent>
+            <TabsContent value="campaigns">
+              <CampaignSettings />
             </TabsContent>
           </Tabs>
         </div>

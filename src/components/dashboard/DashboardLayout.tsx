@@ -29,7 +29,9 @@ import {
   Cpu,
   Package,
   FileCheck,
-  Receipt
+  Receipt,
+  Megaphone,
+  Gift
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/logo.png';
@@ -52,6 +54,9 @@ const navItems: NavItem[] = [
   { label: 'Quotes', icon: FileCheck, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'] },
   { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'] },
   { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin', 'company_admin'] },
+  { label: 'Warranties', icon: Shield, href: '/dashboard/warranties', roles: ['platform_admin', 'company_admin'] },
+  { label: 'Campaigns', icon: Megaphone, href: '/dashboard/campaigns', roles: ['platform_admin', 'company_admin'] },
+  { label: 'Referrals', icon: Gift, href: '/dashboard/referrals', roles: ['platform_admin', 'company_admin'] },
   { label: 'AI Agent', icon: Bot, href: '/dashboard/ai-agent', roles: ['platform_admin', 'company_admin', 'employee'] },
   { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin', 'employee'] },
   { label: 'Chat Widget', icon: MessageCircle, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
