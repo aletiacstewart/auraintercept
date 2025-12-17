@@ -6,10 +6,9 @@ import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
-  Bot, Calendar, Clock, MessageSquare, Sparkles, ChevronRight, Building2, 
-  AlertTriangle, DollarSign, MapPin, Star, Users, CheckCircle2, ThumbsUp, Mic, Phone
+  Calendar, Clock, MessageSquare, Sparkles, ChevronRight,
+  AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Mic, Phone
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { GlassHeader } from './chat/GlassHeader';
@@ -425,7 +424,7 @@ export const AIAgentConsole = () => {
   const isShowingForm = showFeedbackForm || showReviewForm || showQuoteForm || showTrackForm;
 
   return (
-    <Card className="h-[600px] flex flex-col overflow-hidden border-0 shadow-xl">
+    <Card className="h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden border-0 shadow-xl">
       {/* Header */}
       <GlassHeader
         companyName={company?.name || 'AI Assistant'}
@@ -439,50 +438,6 @@ export const AIAgentConsole = () => {
         onVoiceClick={() => setActiveTab('voice')}
       />
 
-      {/* Agent stats tooltip in header area */}
-      {messages.length > 0 && (
-        <div className="px-4 py-2 border-b glass-panel flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">Active:</span>
-          <Badge 
-            className={cn(
-              'text-xs font-medium border-0',
-              agentInfo.bgColor,
-              agentInfo.color
-            )}
-          >
-            <Bot className="h-3 w-3 mr-1" />
-            {agentInfo.label} Agent
-          </Badge>
-          <div className="ml-auto">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="flex items-center gap-1 text-xs text-muted-foreground cursor-help">
-                    <Users className="h-3 w-3" />
-                    {enabledAgentsCount}/{CUSTOMER_ENGAGEMENT_AGENTS.length}
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="max-w-xs">
-                  <p className="font-medium mb-2">Customer Engagement Agents</p>
-                  <div className="space-y-1">
-                    {customerEngagementAgents.map(agent => (
-                      <div key={agent.type} className="flex items-center gap-2 text-xs">
-                        {agent.isEnabled ? (
-                          <CheckCircle2 className="h-3 w-3 text-green-500" />
-                        ) : (
-                          <div className="h-3 w-3 rounded-full border border-muted-foreground" />
-                        )}
-                        <span className={cn(!agent.isEnabled && "text-muted-foreground")}>{agent.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-      )}
-
       {/* Tab Navigation */}
       <MobileTabNav
         tabs={TABS}
@@ -491,15 +446,16 @@ export const AIAgentConsole = () => {
       />
 
       {/* Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden tech-grid">
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* Chat Tab */}
         {activeTab === 'chat' && (
-          <div className="flex-1 flex flex-col min-h-0">
-            <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+            <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
               {messages.length === 0 && !isShowingForm && (
                 <WelcomeScreen
                   companyName={company?.name}
-                  title="Hi there! 👋"
+                  title="Welcome!"
+                  subtitle="I'm your AI assistant. How can I help you today?"
                   actions={QUICK_ACTIONS}
                   onAction={handleQuickAction}
                 />
