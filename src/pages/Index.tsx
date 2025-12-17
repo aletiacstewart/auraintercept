@@ -36,10 +36,8 @@ export default function Index() {
       <header className="border-b border-border/50">
         <nav className="container max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
           <div className="flex items-center gap-3">
-            <div className="w-[175px] h-[175px] rounded-xl gradient-primary p-0.5">
-              <div className="w-full h-full rounded-xl bg-background flex items-center justify-center overflow-hidden">
-                <img src={logo} alt="AI Bot Company" className="w-[160px] h-[160px] object-contain" />
-              </div>
+            <div className="w-[175px] h-[175px] flex items-center justify-center overflow-hidden">
+              <img src={logo} alt="AI Bot Company" className="w-[175px] h-[175px] object-contain" />
             </div>
             <div>
               <h1 className="font-bold text-lg">AI Bot Company</h1>
