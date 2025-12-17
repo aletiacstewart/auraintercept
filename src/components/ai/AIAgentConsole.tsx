@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VoiceChat } from './VoiceChat';
+import { FeedbackForm } from './FeedbackForm';
 
 // Quick actions matching customer-facing widget/public chat features
 const QUICK_ACTIONS = [
@@ -59,22 +60,32 @@ export const AIAgentConsole = () => {
   const { messages, isLoading, sendMessage, clearMessages } = useAIAgent();
   const [input, setInput] = useState('');
   const [activeTab, setActiveTab] = useState('chat');
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Fetch company details
+  // Fetch company details including review links
   const { data: company } = useQuery({
     queryKey: ['company-details', companyId],
     queryFn: async () => {
       if (!companyId) return null;
       const { data } = await supabase
         .from('companies')
-        .select('id, name, logo_url, primary_color, secondary_color')
+        .select('id, name, logo_url, primary_color, secondary_color, review_google_url, review_facebook_url, review_yelp_url')
         .eq('id', companyId)
         .single();
-      return data as Company | null;
+      return data as (Company & { review_google_url?: string; review_facebook_url?: string; review_yelp_url?: string }) | null;
     },
     enabled: !!companyId,
   });
+
+  // Build review links from company data
+  const reviewLinks = React.useMemo(() => {
+    const links: { platform: string; url: string }[] = [];
+    if (company?.review_google_url) links.push({ platform: 'Google', url: company.review_google_url });
+    if (company?.review_facebook_url) links.push({ platform: 'Facebook', url: company.review_facebook_url });
+    if (company?.review_yelp_url) links.push({ platform: 'Yelp', url: company.review_yelp_url });
+    return links;
+  }, [company]);
 
   // Fetch services
   const { data: services } = useQuery({
@@ -177,9 +188,37 @@ export const AIAgentConsole = () => {
     await sendMessage(message);
   };
 
-  const handleQuickAction = (action: string) => {
+  const handleQuickAction = (action: string, actionId?: string) => {
+    // Show feedback form directly instead of sending a message
+    if (actionId === 'feedback') {
+      setShowFeedbackForm(true);
+      setActiveTab('chat');
+      return;
+    }
     setInput(action);
     setActiveTab('chat');
+  };
+
+  const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string }) => {
+    setShowFeedbackForm(false);
+    const feedbackMessage = `I'd like to leave feedback. My rating is ${feedback.rating} stars and my experience was ${feedback.sentiment}.${feedback.note ? ` Additional comments: ${feedback.note}` : ''}`;
+    await sendMessage(feedbackMessage);
+  };
+
+  // Filter out raw tool code from message content
+  const cleanMessageContent = (content: string): string => {
+    // Remove raw tool call artifacts like "getType: 'tool_code'" etc.
+    if (content.includes("getType:") || content.includes("tool_code") || content.includes("args: {")) {
+      // Try to extract just the meaningful text after the tool code
+      const cleanedLines = content.split('\n').filter(line => 
+        !line.includes("getType:") && 
+        !line.includes("tool_code") && 
+        !line.includes("args: {") &&
+        !line.includes("}>")
+      );
+      return cleanedLines.join('\n').trim() || content;
+    }
+    return content;
   };
 
   const handleServiceClick = (service: Service) => {
@@ -349,7 +388,7 @@ export const AIAgentConsole = () => {
                             "justify-start gap-2",
                             action.variant === 'destructive' && "bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive/30"
                           )}
-                          onClick={() => handleQuickAction(action.message)}
+                          onClick={() => handleQuickAction(action.message, action.id)}
                         >
                           <action.icon className="h-4 w-4" />
                           <span className="truncate">{action.label}</span>
@@ -357,6 +396,15 @@ export const AIAgentConsole = () => {
                       ))}
                     </div>
                   </div>
+                )}
+
+                {/* Feedback Form */}
+                {showFeedbackForm && (
+                  <FeedbackForm
+                    onSubmit={handleFeedbackSubmit}
+                    isLoading={isLoading}
+                    reviewLinks={reviewLinks}
+                  />
                 )}
                 
                 {messages.map((message, index) => (
@@ -379,7 +427,7 @@ export const AIAgentConsole = () => {
                         <Bot className="h-4 w-4 text-white" />
                       )}
                     </div>
-                    <div className="flex-1 whitespace-pre-wrap text-sm">{message.content}</div>
+                    <div className="flex-1 whitespace-pre-wrap text-sm">{cleanMessageContent(message.content)}</div>
                   </div>
                 ))}
                 
@@ -399,7 +447,7 @@ export const AIAgentConsole = () => {
                 type="button" 
                 variant="ghost" 
                 size="icon"
-                onClick={clearMessages}
+                onClick={() => { clearMessages(); setShowFeedbackForm(false); }}
                 className="shrink-0"
               >
                 <Home className="h-4 w-4" />
