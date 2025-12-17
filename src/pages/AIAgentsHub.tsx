@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useAIAgentOrchestrator, AgentInfo } from '@/hooks/useAIAgentOrchestrator';
 import { useAuth } from '@/contexts/AuthContext';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
@@ -48,22 +49,71 @@ const PHASE_LABELS: Record<number, string> = {
   5: 'Phase 5',
 };
 
+// Map job types to agent types they can access
+const JOB_TYPE_TO_AGENTS: Record<string, string[]> = {
+  technician: ['dispatch', 'route', 'eta', 'checkin', 'inventory'],
+  booking_agent: ['triage', 'booking', 'followup', 'review'],
+  dispatch: ['dispatch', 'route', 'eta', 'triage'],
+  customer_service: ['triage', 'followup', 'review', 'booking'],
+  billing: ['quoting', 'invoice', 'warranty'],
+  marketing: ['promo', 'referral', 'winback', 'seasonal'],
+  inventory: ['inventory', 'warranty'],
+  analytics: ['insights', 'forecast'],
+};
+
 export default function AIAgentsHub() {
   const { agents, groupedAgents, loading, toggleAgent, companyId, refetch } = useAIAgentOrchestrator();
-  const { userRole } = useAuth();
+  const { userRole, user } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>('agents');
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
+  // Fetch employee's job assignments
+  const { data: userJobAssignments } = useQuery({
+    queryKey: ['user-job-assignments', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from('employee_job_assignments')
+        .select('job_type')
+        .eq('employee_id', user.id);
+      
+      if (error) throw error;
+      return data?.map(d => d.job_type) || [];
+    },
+    enabled: !!user?.id && userRole === 'employee',
+  });
+
   // Employees can view but not manage agents
   const canManageAgents = userRole === 'platform_admin' || userRole === 'company_admin';
 
-  const enabledCount = agents.filter(a => a.is_enabled).length;
-  const totalCount = agents.length;
+  // Filter agents based on job roles for employees
+  const accessibleAgents = useMemo(() => {
+    // Admins see all agents
+    if (userRole === 'platform_admin' || userRole === 'company_admin') {
+      return agents;
+    }
+    
+    // Employees see only agents matching their job roles
+    if (userJobAssignments && userJobAssignments.length > 0) {
+      const allowedAgentTypes = new Set<string>();
+      userJobAssignments.forEach(jobType => {
+        const agentTypes = JOB_TYPE_TO_AGENTS[jobType] || [];
+        agentTypes.forEach(at => allowedAgentTypes.add(at));
+      });
+      return agents.filter(a => allowedAgentTypes.has(a.type));
+    }
+    
+    // No job roles assigned - show nothing
+    return [];
+  }, [agents, userRole, userJobAssignments]);
+
+  const enabledCount = accessibleAgents.filter(a => a.is_enabled).length;
+  const totalCount = accessibleAgents.length;
 
   const filteredAgents = activeCategory === 'all' 
-    ? agents 
-    : agents.filter(a => a.category === activeCategory);
+    ? accessibleAgents 
+    : accessibleAgents.filter(a => a.category === activeCategory);
 
   const handleAgentClick = (agentType: string) => {
     navigate(`/dashboard/ai-agents/${agentType}`);
@@ -119,7 +169,9 @@ export default function AIAgentsHub() {
               AI Agents Hub
             </h1>
             <p className="text-muted-foreground mt-1">
-              18 specialized AI agents powering your business automation
+              {canManageAgents 
+                ? '18 specialized AI agents powering your business automation'
+                : `${totalCount} AI agents available based on your job roles`}
             </p>
           </div>
           <div className="flex items-center gap-4">
@@ -158,7 +210,8 @@ export default function AIAgentsHub() {
             {/* Quick Stats */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {Object.entries(CATEGORY_INFO).map(([key, { label, icon: Icon, color }]) => {
-                const categoryAgents = groupedAgents[key] || [];
+                const categoryAgents = accessibleAgents.filter(a => a.category === key);
+                if (categoryAgents.length === 0) return null;
                 const enabled = categoryAgents.filter(a => a.is_enabled).length;
                 return (
                   <Card 
@@ -186,9 +239,11 @@ export default function AIAgentsHub() {
             <Tabs value={activeCategory} onValueChange={setActiveCategory}>
               <TabsList>
                 <TabsTrigger value="all">All Agents</TabsTrigger>
-                {Object.entries(CATEGORY_INFO).map(([key, { label }]) => (
-                  <TabsTrigger key={key} value={key}>{label}</TabsTrigger>
-                ))}
+                {Object.entries(CATEGORY_INFO).map(([key, { label }]) => {
+                  const hasAgentsInCategory = accessibleAgents.some(a => a.category === key);
+                  if (!hasAgentsInCategory) return null;
+                  return <TabsTrigger key={key} value={key}>{label}</TabsTrigger>;
+                })}
               </TabsList>
 
               <TabsContent value={activeCategory} className="mt-6">
@@ -210,9 +265,11 @@ export default function AIAgentsHub() {
             {filteredAgents.length === 0 && (
               <Card className="p-12 text-center">
                 <Bot className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Agents Found</h3>
+                <h3 className="text-lg font-semibold mb-2">No Agents Available</h3>
                 <p className="text-muted-foreground">
-                  Select a different category to view available agents.
+                  {userRole === 'employee' 
+                    ? 'No AI agents are assigned to your job roles. Contact your admin to get access.'
+                    : 'Select a different category to view available agents.'}
                 </p>
               </Card>
             )}
