@@ -4,15 +4,18 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Bot, Send, User, Loader2, Phone, Calendar, 
-  Clock, Sparkles, Building2, ArrowLeft, Mic,
-  AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Zap
+  Bot, Calendar, Clock, Sparkles, Building2, ArrowLeft, Mic,
+  AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Zap, MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { GlassHeader } from '@/components/ai/chat/GlassHeader';
+import { ChatBubble } from '@/components/ai/chat/ChatBubble';
+import { FloatingInput } from '@/components/ai/chat/FloatingInput';
+import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
+import { QuickActionBar } from '@/components/ai/chat/QuickActionGrid';
+import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
 import { FeedbackForm } from '@/components/ai/FeedbackForm';
 import { ReviewForm } from '@/components/ai/ReviewForm';
 import { BookingForm, BookingData } from '@/components/ai/BookingForm';
@@ -27,14 +30,23 @@ const DEMO_COMPANY_ID = '00000000-0000-0000-0000-000000000001';
 
 // Quick actions for demo
 const QUICK_ACTIONS = [
-  { id: 'schedule', label: 'Request Appointment', icon: Calendar, message: "I'd like to request an appointment" },
+  { id: 'schedule', label: 'Book Appointment', icon: Calendar, message: "I'd like to request an appointment" },
   { id: 'emergency', label: 'Emergency', icon: AlertTriangle, message: "I have an urgent emergency situation", variant: 'destructive' as const },
   { id: 'quote', label: 'Get Quote', icon: DollarSign, message: "I need a quote for your services" },
-  { id: 'hours', label: 'Business Hours', icon: Clock, message: "What are your business hours?" },
-  { id: 'services', label: 'View Services', icon: Sparkles, message: "What services do you offer?" },
-  { id: 'track', label: 'Track Appointment', icon: MapPin, message: "I want to track my appointment status" },
-  { id: 'feedback', label: 'Leave Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
-  { id: 'review', label: 'Leave Review', icon: ThumbsUp, message: "I'd like to leave a review for my recent service" },
+  { id: 'hours', label: 'Hours', icon: Clock, message: "What are your business hours?" },
+  { id: 'services', label: 'Services', icon: Sparkles, message: "What services do you offer?" },
+  { id: 'track', label: 'Track', icon: MapPin, message: "I want to track my appointment status" },
+  { id: 'feedback', label: 'Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
+  { id: 'review', label: 'Review', icon: ThumbsUp, message: "I'd like to leave a review for my recent service" },
+];
+
+// Tab configuration
+const TABS = [
+  { id: 'chat', label: 'Chat', icon: MessageSquare },
+  { id: 'services', label: 'Services', icon: Sparkles },
+  { id: 'hours', label: 'Hours', icon: Clock },
+  { id: 'book', label: 'Book', icon: Calendar },
+  { id: 'voice', label: 'Voice', icon: Mic },
 ];
 
 // Agent display configuration
@@ -233,6 +245,16 @@ export default function Demo() {
     await sendMessage(action);
   };
 
+  const handleHome = () => {
+    setMessages([]);
+    setShowFeedbackForm(false);
+    setShowReviewForm(false);
+    setShowQuoteForm(false);
+    setShowTrackForm(false);
+    setCurrentAgent('triage');
+    setActiveTab('chat');
+  };
+
   const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string; serviceDate?: Date }) => {
     setShowFeedbackForm(false);
     const feedbackMessage = `I'd like to leave feedback. My name is ${feedback.customerName}. My rating is ${feedback.rating} stars and my experience was ${feedback.sentiment}.${feedback.note ? ` Additional comments: ${feedback.note}` : ''}`;
@@ -299,11 +321,12 @@ export default function Demo() {
   };
 
   const agentInfo = getAgentInfo(currentAgent);
+  const isShowingForm = showFeedbackForm || showReviewForm || showQuoteForm || showTrackForm;
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Demo Banner */}
-      <div className="gradient-primary text-primary-foreground py-2 px-4 sm:py-3 sm:px-6">
+      <div className="glass-primary text-primary-foreground py-2 px-4 sm:py-3 sm:px-6">
         <div className="container max-w-7xl mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <Zap className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
@@ -313,7 +336,7 @@ export default function Demo() {
             <Button 
               variant="secondary" 
               size="sm"
-              className="h-7 sm:h-8 text-xs sm:text-sm px-2 sm:px-3"
+              className="h-7 sm:h-8 text-xs sm:text-sm px-2 sm:px-3 glass-panel border-white/20"
               onClick={() => navigate('/')}
             >
               <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
@@ -332,232 +355,129 @@ export default function Demo() {
       </div>
 
       <div className="container max-w-4xl mx-auto py-4 sm:py-8 px-3 sm:px-6">
-        <div className="text-center mb-4 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-2">Try Our AI Agent</h1>
+        <div className="text-center mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2 gradient-text">Try Our AI Agent</h1>
           <p className="text-muted-foreground text-sm sm:text-base">
             Experience how our AI handles appointments, quotes, and customer inquiries
           </p>
         </div>
 
-        <Card className="h-[calc(100vh-180px)] sm:h-[650px] min-h-[400px] max-h-[700px] flex flex-col overflow-hidden border-2">
+        <Card className="h-[calc(100vh-200px)] sm:h-[650px] min-h-[450px] max-h-[750px] flex flex-col overflow-hidden border-0 shadow-xl neon-border">
           {/* Header */}
-          <div className="shrink-0 gradient-primary p-3 sm:p-4 text-white">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white p-1 flex items-center justify-center shrink-0">
-                  <img src={logo} alt="AI Bot Company" className="h-5 w-5 sm:h-7 sm:w-7 object-contain" />
-                </div>
-                <div className="min-w-0">
-                  <h2 className="font-semibold text-sm sm:text-base truncate">AI Bot Company</h2>
-                  <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-white/80">
-                    <span className="hidden sm:inline">Virtual Assistant</span>
-                    <span className="hidden sm:inline">•</span>
-                    <Badge className={cn('text-[10px] px-1.5 py-0', agentInfo.bgColor, agentInfo.color)}>
-                      {agentInfo.label} Agent
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center shrink-0">
-                <Button size="sm" variant="secondary" className="h-7 sm:h-8 text-xs sm:text-sm" disabled>
-                  <Phone className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                  Call
-                </Button>
-              </div>
-            </div>
-          </div>
+          <GlassHeader
+            companyName="AI Bot Company"
+            logoUrl={logo}
+            agentLabel={agentInfo.label}
+            agentColor={agentInfo.color}
+            agentBgColor={agentInfo.bgColor}
+            showVoice
+            onVoiceClick={() => setActiveTab('voice')}
+          />
 
-          {/* Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0 overflow-hidden">
-            <TabsList className="shrink-0 w-full justify-start rounded-none border-b bg-muted/30 p-0 h-auto flex-nowrap overflow-hidden">
-              <TabsTrigger value="chat" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 sm:px-4 py-2 text-xs sm:text-sm">
-                Chat
-              </TabsTrigger>
-              <TabsTrigger value="services" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 sm:px-4 py-2 text-xs sm:text-sm">
-                Services
-              </TabsTrigger>
-              <TabsTrigger value="hours" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 sm:px-4 py-2 text-xs sm:text-sm">
-                Hours
-              </TabsTrigger>
-              <TabsTrigger value="book" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 sm:px-4 py-2 text-xs sm:text-sm">
-                Book
-              </TabsTrigger>
-              <TabsTrigger value="voice" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 sm:px-4 py-2 text-xs sm:text-sm">
-                <Mic className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                Voice
-              </TabsTrigger>
-            </TabsList>
+          {/* Tab Navigation */}
+          <MobileTabNav
+            tabs={TABS}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
 
+          {/* Content Area */}
+          <div className="flex-1 flex flex-col min-h-0 overflow-hidden tech-grid">
             {/* Chat Tab */}
-            <TabsContent value="chat" className="flex-1 flex flex-col min-h-0 m-0 p-0 data-[state=inactive]:hidden">
-              <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.length === 0 && !showFeedbackForm && !showReviewForm && !showQuoteForm && !showTrackForm && (
-                  <div className="text-center py-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-                      <Bot className="h-8 w-8 text-primary" />
-                    </div>
-                    <h3 className="font-semibold text-lg mb-2">Welcome to our Demo!</h3>
-                    <p className="text-muted-foreground text-sm mb-6 max-w-md mx-auto">
-                      Test our AI-powered assistant. Try scheduling an appointment, getting a quote, or asking about our services.
-                    </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 max-w-xl mx-auto">
-                      {QUICK_ACTIONS.map((action) => (
-                        <Button
-                          key={action.id}
-                          variant={action.variant || 'outline'}
-                          size="sm"
-                          className="text-xs h-auto py-2 flex-col gap-1"
-                          onClick={() => handleQuickAction(action.message, action.id)}
-                        >
-                          <action.icon className="h-4 w-4" />
-                          {action.label}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+            {activeTab === 'chat' && (
+              <div className="flex-1 flex flex-col min-h-0">
+                <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+                  {messages.length === 0 && !isShowingForm && (
+                    <WelcomeScreen
+                      companyName="AI Bot Company"
+                      title="Welcome to our Demo!"
+                      subtitle="Test our AI-powered assistant. Try scheduling an appointment, getting a quote, or asking about our services."
+                      actions={QUICK_ACTIONS}
+                      onAction={handleQuickAction}
+                    />
+                  )}
 
-                {showFeedbackForm && (
-                  <FeedbackForm 
-                    onSubmit={handleFeedbackSubmit}
-                    reviewLinks={[]}
+                  {showFeedbackForm && (
+                    <FeedbackForm 
+                      onSubmit={handleFeedbackSubmit}
+                      reviewLinks={[]}
+                    />
+                  )}
+
+                  {showReviewForm && (
+                    <ReviewForm 
+                      onSubmit={handleReviewSubmit}
+                      reviewLinks={[
+                        { platform: 'Google', url: 'https://google.com/review' },
+                        { platform: 'Facebook', url: 'https://facebook.com/review' },
+                      ]}
+                    />
+                  )}
+
+                  {showQuoteForm && (
+                    <QuoteForm 
+                      services={services || []}
+                      onSubmit={handleQuoteSubmit}
+                    />
+                  )}
+
+                  {showTrackForm && (
+                    <TrackAppointmentForm 
+                      onSubmit={handleTrackSubmit}
+                    />
+                  )}
+
+                  {!isShowingForm && messages.map((message, index) => (
+                    <ChatBubble
+                      key={index}
+                      role={message.role}
+                      content={message.content}
+                      agentLabel={message.agent ? getAgentInfo(message.agent).label : undefined}
+                      agentColor={message.agent ? getAgentInfo(message.agent).color : undefined}
+                      agentBgColor={message.agent ? getAgentInfo(message.agent).bgColor : undefined}
+                      isHandoff={message.isHandoff}
+                    />
+                  ))}
+
+                  {isLoading && (
+                    <ChatBubble
+                      role="assistant"
+                      content=""
+                      isLoading
+                    />
+                  )}
+                </div>
+
+                {/* Quick Actions Bar */}
+                {messages.length > 0 && !isShowingForm && (
+                  <QuickActionBar
+                    actions={QUICK_ACTIONS}
+                    onAction={handleQuickAction}
                   />
                 )}
 
-                {showReviewForm && (
-                  <ReviewForm 
-                    onSubmit={handleReviewSubmit}
-                    reviewLinks={[
-                      { platform: 'Google', url: 'https://google.com/review' },
-                      { platform: 'Facebook', url: 'https://facebook.com/review' },
-                    ]}
-                  />
-                )}
-
-                {showQuoteForm && (
-                  <QuoteForm 
-                    services={services || []}
-                    onSubmit={handleQuoteSubmit}
-                  />
-                )}
-
-                {showTrackForm && (
-                  <TrackAppointmentForm 
-                    onSubmit={handleTrackSubmit}
-                  />
-                )}
-
-                {!showFeedbackForm && !showReviewForm && !showQuoteForm && !showTrackForm && messages.map((message, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      'flex gap-3',
-                      message.role === 'user' ? 'justify-end' : 'justify-start'
-                    )}
-                  >
-                    {message.role === 'assistant' && (
-                      <div className="shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Bot className="h-4 w-4 text-primary" />
-                      </div>
-                    )}
-                    <div
-                      className={cn(
-                        'max-w-[80%] rounded-2xl px-4 py-2',
-                        message.role === 'user'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted'
-                      )}
-                    >
-                      {message.isHandoff && message.agent && (
-                        <Badge className={cn('text-[10px] mb-1', getAgentInfo(message.agent).bgColor, getAgentInfo(message.agent).color)}>
-                          {getAgentInfo(message.agent).label} Agent
-                        </Badge>
-                      )}
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                    </div>
-                    {message.role === 'user' && (
-                      <div className="shrink-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                        <User className="h-4 w-4" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-                {isLoading && (
-                  <div className="flex gap-3 justify-start">
-                    <div className="shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Bot className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="bg-muted rounded-2xl px-4 py-2">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    </div>
-                  </div>
-                )}
+                {/* Input */}
+                <FloatingInput
+                  value={input}
+                  onChange={setInput}
+                  onSubmit={handleSubmit}
+                  onHome={handleHome}
+                  isLoading={isLoading}
+                />
               </div>
-
-              {/* Quick Actions Bar */}
-              {messages.length > 0 && !showFeedbackForm && !showReviewForm && !showQuoteForm && !showTrackForm && (
-                <div className="shrink-0 border-t p-2 bg-muted/30">
-                  <div className="flex gap-1 overflow-x-auto">
-                    {QUICK_ACTIONS.map((action) => (
-                      <Button
-                        key={action.id}
-                        variant={action.variant || 'ghost'}
-                        size="sm"
-                        className="text-xs shrink-0"
-                        onClick={() => handleQuickAction(action.message, action.id)}
-                      >
-                        <action.icon className="h-3 w-3 mr-1" />
-                        {action.label}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Input */}
-              <form onSubmit={handleSubmit} className="shrink-0 p-4 border-t bg-background">
-                <div className="flex gap-2">
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
-                    size="icon"
-                    onClick={() => { 
-                      setMessages([]); 
-                      setShowFeedbackForm(false); 
-                      setShowReviewForm(false); 
-                      setShowQuoteForm(false); 
-                      setShowTrackForm(false);
-                      setCurrentAgent('triage');
-                    }}
-                    className="shrink-0"
-                  >
-                    <Building2 className="h-4 w-4" />
-                  </Button>
-                  <Input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Type your message..."
-                    disabled={isLoading}
-                    className="flex-1"
-                  />
-                  <Button type="submit" disabled={isLoading || !input.trim()}>
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-              </form>
-            </TabsContent>
+            )}
 
             {/* Services Tab */}
-            <TabsContent value="services" className="flex-1 overflow-y-auto p-4 m-0 data-[state=inactive]:hidden">
-              <div>
-                <h3 className="font-semibold mb-4">Our Services</h3>
+            {activeTab === 'services' && (
+              <div className="flex-1 overflow-y-auto p-4">
+                <h3 className="font-semibold text-lg mb-4 gradient-text">Our Services</h3>
                 {services && services.length > 0 ? (
                   <div className="space-y-3">
-                    {services.map((service) => (
-                      <div
+                    {services.map((service, index) => (
+                      <button
                         key={service.id}
-                        className="p-4 border rounded-lg hover:border-primary/50 cursor-pointer transition-colors"
+                        className="w-full text-left p-4 rounded-xl glass-panel hover:neon-border transition-all duration-300 animate-fade-in"
+                        style={{ animationDelay: `${index * 50}ms` }}
                         onClick={() => {
                           setActiveTab('chat');
                           sendMessage(`Tell me about ${service.name}`);
@@ -567,35 +487,35 @@ export default function Demo() {
                           <div>
                             <h4 className="font-medium">{service.name}</h4>
                             {service.description && (
-                              <p className="text-sm text-muted-foreground mt-1">{service.description}</p>
+                              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{service.description}</p>
                             )}
                           </div>
-                          <div className="text-right">
+                          <div className="text-right ml-4">
                             {service.price && (
-                              <span className="font-semibold">${service.price}</span>
+                              <Badge variant="secondary" className="font-semibold">${service.price}</Badge>
                             )}
                             {service.duration_minutes && (
-                              <p className="text-xs text-muted-foreground">{service.duration_minutes} min</p>
+                              <p className="text-xs text-muted-foreground mt-1">{service.duration_minutes} min</p>
                             )}
                           </div>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-center py-8">No services configured for demo</p>
                 )}
               </div>
-            </TabsContent>
+            )}
 
             {/* Hours Tab */}
-            <TabsContent value="hours" className="flex-1 overflow-y-auto p-4 m-0 data-[state=inactive]:hidden">
-              <div>
-                <h3 className="font-semibold mb-4">Business Hours</h3>
-                <div className="p-3 rounded-lg bg-primary/10 mb-4">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-medium">Today: {getTodayHours()}</span>
+            {activeTab === 'hours' && (
+              <div className="flex-1 overflow-y-auto p-4">
+                <h3 className="font-semibold text-lg mb-4 gradient-text">Business Hours</h3>
+                <div className="p-4 rounded-xl glass-primary mb-4 glow-primary">
+                  <div className="flex items-center gap-2 text-white">
+                    <Clock className="h-5 w-5" />
+                    <span className="font-medium">Today: {getTodayHours()}</span>
                   </div>
                 </div>
                 {businessHours && businessHours.length > 0 ? (
@@ -607,11 +527,12 @@ export default function Demo() {
                         <div
                           key={day}
                           className={cn(
-                            'flex justify-between items-center py-2 px-3 rounded-lg',
-                            isToday && 'bg-primary/5 font-medium'
+                            'flex justify-between items-center py-3 px-4 rounded-xl transition-all animate-fade-in',
+                            isToday ? 'glass-panel neon-border font-medium' : 'glass-panel'
                           )}
+                          style={{ animationDelay: `${index * 50}ms` }}
                         >
-                          <span>{day}</span>
+                          <span className={isToday ? 'text-primary' : ''}>{day}</span>
                           <span className="text-muted-foreground">
                             {hours?.is_closed
                               ? 'Closed'
@@ -625,23 +546,23 @@ export default function Demo() {
                   <p className="text-muted-foreground text-center py-8">Hours not configured for demo</p>
                 )}
               </div>
-            </TabsContent>
+            )}
 
             {/* Book Tab */}
-            <TabsContent value="book" className="flex-1 overflow-y-auto p-4 m-0 data-[state=inactive]:hidden">
-              <div>
+            {activeTab === 'book' && (
+              <div className="flex-1 overflow-y-auto p-4">
                 <BookingForm
                   services={services || []}
                   onSubmit={handleBookingSubmit}
                 />
               </div>
-            </TabsContent>
+            )}
 
             {/* Voice Tab */}
-            <TabsContent value="voice" className="flex-1 overflow-y-auto p-4 m-0 data-[state=inactive]:hidden">
-              <div className="flex flex-col items-center justify-center h-full">
+            {activeTab === 'voice' && (
+              <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center">
                 <div className="text-center mb-6">
-                  <h3 className="font-semibold text-lg mb-2">Voice AI Assistant</h3>
+                  <h3 className="font-semibold text-lg mb-2 gradient-text">Voice AI Assistant</h3>
                   <p className="text-muted-foreground text-sm max-w-md">
                     Talk directly with our AI assistant using your microphone. 
                     Click the button below to start a voice conversation.
@@ -655,8 +576,8 @@ export default function Demo() {
                   }}
                 />
               </div>
-            </TabsContent>
-          </Tabs>
+            )}
+          </div>
         </Card>
 
         {/* CTA */}
@@ -666,7 +587,7 @@ export default function Demo() {
           </p>
           <Button 
             size="lg" 
-            className="gradient-primary shadow-glow"
+            className="glass-primary glow-primary text-white hover:opacity-90 transition-opacity"
             onClick={() => navigate('/auth?mode=company')}
           >
             <Building2 className="h-5 w-5 mr-2" />
