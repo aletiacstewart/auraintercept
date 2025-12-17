@@ -29,10 +29,12 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 
 const FIELD_OPS_AGENTS = [
-  { id: 'dispatch', name: 'Dispatch', color: 'bg-blue-500' },
-  { id: 'route', name: 'Route', color: 'bg-green-500' },
-  { id: 'eta', name: 'ETA', color: 'bg-yellow-500' },
+  { id: 'directions', name: 'Get Directions', color: 'bg-green-500' },
+  { id: 'enroute', name: 'En Route', color: 'bg-orange-500' },
+  { id: 'eta', name: 'Update ETA', color: 'bg-yellow-500' },
   { id: 'checkin', name: 'Check-In', color: 'bg-purple-500' },
+  { id: 'complete', name: 'Complete Job', color: 'bg-emerald-500' },
+  { id: 'dispatch', name: 'Contact Dispatch', color: 'bg-blue-500' },
 ];
 
 interface QuickAction {
