@@ -500,8 +500,8 @@ export const AIAgentConsole = () => {
         </TabsContent>
 
         {/* Services Tab */}
-        <TabsContent value="services" className="flex-1 min-h-0 relative m-0">
-          <div className="absolute inset-0 overflow-y-auto">
+        <TabsContent value="services" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0 mt-0">
+          <div className="flex-1 min-h-0 overflow-y-auto">
             <div className="p-4 space-y-3">
               {services?.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">
@@ -551,8 +551,8 @@ export const AIAgentConsole = () => {
         </TabsContent>
 
         {/* Book Tab */}
-        <TabsContent value="book" className="flex-1 min-h-0 relative m-0">
-          <div className="absolute inset-0 overflow-y-auto">
+        <TabsContent value="book" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0 mt-0">
+          <div className="flex-1 min-h-0 overflow-y-auto">
             <div className="p-4">
               <BookingForm
                 services={services || []}
@@ -564,8 +564,8 @@ export const AIAgentConsole = () => {
         </TabsContent>
 
         {/* Hours Tab */}
-        <TabsContent value="hours" className="flex-1 min-h-0 relative m-0">
-          <div className="absolute inset-0 overflow-y-auto">
+        <TabsContent value="hours" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0 mt-0">
+          <div className="flex-1 min-h-0 overflow-y-auto">
             <div className="p-4">
               <div className="bg-primary/10 rounded-lg p-4 mb-4">
                 <div className="flex items-center gap-2">
@@ -614,8 +614,8 @@ export const AIAgentConsole = () => {
 
         {/* Voice Tab */}
         {hasVoiceChat && companyId && (
-          <TabsContent value="voice" className="flex-1 min-h-0 relative m-0">
-            <div className="absolute inset-0 overflow-y-auto">
+          <TabsContent value="voice" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0 mt-0">
+            <div className="flex-1 min-h-0 overflow-y-auto">
               <div className="min-h-full flex flex-col items-center justify-center p-4">
                 <VoiceChat
                   companyId={companyId}
