@@ -96,6 +96,30 @@ export function GoogleCalendarSettings() {
     },
   });
 
+  // Sync all appointments to Google Calendar
+  const syncAllMutation = useMutation({
+    mutationFn: async () => {
+      if (!companyId) throw new Error('No company ID');
+      
+      const { data, error } = await supabase.functions.invoke('google-calendar-sync', {
+        body: {
+          action: 'full_sync',
+          companyId,
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(`Synced ${data?.synced || 0} appointments to Google Calendar`);
+    },
+    onError: (error) => {
+      console.error('Failed to sync appointments:', error);
+      toast.error('Failed to sync appointments to Google Calendar');
+    },
+  });
+
   // Handle OAuth callback (check URL for code parameter)
   const handleOAuthCallback = async () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -191,19 +215,34 @@ export function GoogleCalendarSettings() {
         <CardContent>
           <div className="flex flex-col gap-4">
             {isConnected ? (
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setDisconnectDialogOpen(true)}
-                  className="gap-2"
-                >
-                  <Unlink className="w-4 h-4" />
-                  Disconnect
-                </Button>
+              <>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <Button
+                    variant="outline"
+                    onClick={() => syncAllMutation.mutate()}
+                    disabled={syncAllMutation.isPending}
+                    className="gap-2"
+                  >
+                    {syncAllMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="w-4 h-4" />
+                    )}
+                    Sync All Appointments
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setDisconnectDialogOpen(true)}
+                    className="gap-2"
+                  >
+                    <Unlink className="w-4 h-4" />
+                    Disconnect
+                  </Button>
+                </div>
                 <p className="text-sm text-muted-foreground">
-                  Appointments will automatically sync to your Google Calendar
+                  Appointments automatically sync to Google Calendar. Use "Sync All" to force-sync existing appointments.
                 </p>
-              </div>
+              </>
             ) : (
               <div className="flex flex-col gap-3">
                 <Button
