@@ -24,6 +24,7 @@ import { TrackAppointmentForm, TrackingData } from '@/components/ai/TrackAppoint
 import { VoiceChat } from '@/components/ai/VoiceChat';
 import { format } from 'date-fns';
 import logo from '@/assets/logo.png';
+import aiBotCompanyLogo from '@/assets/ai-bot-company-logo.png';
 
 // Demo company ID - AI Bot Company
 const DEMO_COMPANY_ID = '00000000-0000-0000-0000-000000000001';
@@ -356,6 +357,11 @@ export default function Demo() {
 
       <div className="container max-w-4xl mx-auto py-4 sm:py-8 px-3 sm:px-6">
         <div className="text-center mb-4 sm:mb-6">
+          <img 
+            src={aiBotCompanyLogo} 
+            alt="AI Bot Company" 
+            className="mx-auto mb-4 h-24 sm:h-32 object-contain"
+          />
           <h1 className="text-2xl sm:text-3xl font-bold mb-2 gradient-text">Try Our AI Agent</h1>
           <p className="text-muted-foreground text-sm sm:text-base">
             Experience how our AI handles appointments, quotes, and customer inquiries
