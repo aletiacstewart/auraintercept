@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Star, ThumbsUp, Minus, ThumbsDown, Send, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -10,6 +11,8 @@ interface FeedbackFormProps {
     rating: number;
     sentiment: 'positive' | 'neutral' | 'negative';
     note: string;
+    customerName: string;
+    customerPhone: string;
   }) => void;
   isLoading?: boolean;
   reviewLinks?: { platform: string; url: string }[];
@@ -20,14 +23,18 @@ export const FeedbackForm = ({ onSubmit, isLoading, reviewLinks }: FeedbackFormP
   const [hoveredRating, setHoveredRating] = useState<number>(0);
   const [sentiment, setSentiment] = useState<'positive' | 'neutral' | 'negative' | null>(null);
   const [note, setNote] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
 
   const handleSubmit = () => {
-    if (!sentiment) return;
+    if (!sentiment || !customerName.trim()) return;
     
     onSubmit({
       rating: rating || (sentiment === 'positive' ? 5 : sentiment === 'neutral' ? 3 : 1),
       sentiment,
-      note: note.trim()
+      note: note.trim(),
+      customerName: customerName.trim(),
+      customerPhone: customerPhone.trim()
     });
   };
 
@@ -46,6 +53,29 @@ export const FeedbackForm = ({ onSubmit, isLoading, reviewLinks }: FeedbackFormP
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Customer Name */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-muted-foreground">Your Name *</label>
+          <Input
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            placeholder="Enter your name"
+            maxLength={100}
+          />
+        </div>
+
+        {/* Customer Phone */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-muted-foreground">Phone Number</label>
+          <Input
+            value={customerPhone}
+            onChange={(e) => setCustomerPhone(e.target.value)}
+            placeholder="Enter your phone number"
+            type="tel"
+            maxLength={20}
+          />
+        </div>
+
         {/* Star Rating */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-muted-foreground">Rate your experience</label>
@@ -119,7 +149,7 @@ export const FeedbackForm = ({ onSubmit, isLoading, reviewLinks }: FeedbackFormP
         {/* Submit Button */}
         <Button
           onClick={handleSubmit}
-          disabled={!sentiment || isLoading}
+          disabled={!sentiment || !customerName.trim() || isLoading}
           className="w-full"
         >
           <Send className="h-4 w-4 mr-2" />

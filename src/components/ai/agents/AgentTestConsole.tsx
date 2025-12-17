@@ -533,7 +533,7 @@ export function AgentTestConsole({
     setShowFeedbackForm(false);
   };
 
-  const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string }) => {
+  const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string }) => {
     if (!companyId) return;
     
     setFeedbackLoading(true);
@@ -546,6 +546,8 @@ export function AgentTestConsole({
           rating: feedback.rating,
           sentiment: feedback.sentiment,
           feedback_note: feedback.note || null,
+          customer_name: feedback.customerName,
+          customer_phone: feedback.customerPhone || null,
           source: 'agent_console'
         });
 
@@ -555,8 +557,8 @@ export function AgentTestConsole({
       addMessage({
         role: 'agent',
         content: feedback.sentiment === 'negative' 
-          ? "Thank you for sharing your feedback. We're sorry to hear about your experience and will use this to improve our services."
-          : "Thank you for your feedback! We truly appreciate you taking the time to share your experience with us.",
+          ? `Thank you for sharing your feedback, ${feedback.customerName}. We're sorry to hear about your experience and will use this to improve our services.`
+          : `Thank you for your feedback, ${feedback.customerName}! We truly appreciate you taking the time to share your experience with us.`,
         metadata: { current_agent: activeAgent }
       });
       toast.success('Feedback submitted successfully!');
