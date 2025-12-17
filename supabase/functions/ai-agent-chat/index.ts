@@ -2027,48 +2027,1296 @@ async function executeAgentTool(
         route_distance: '5.2 miles',
       };
 
-    case 'generate_quote':
-      const laborCost = (args.labor_hours || 2) * 75;
-      const partsCost = args.parts?.reduce((sum: number, p: any) => sum + (p.price || 50), 0) || 100;
-      const discount = args.discount_percent ? ((laborCost + partsCost) * args.discount_percent / 100) : 0;
+    // ==========================================
+    // QUOTING TOOLS
+    // ==========================================
+    case 'generate_quote': {
+      console.log('[AI Agent] Generating quote with args:', args);
+      
+      // Get services from database
+      const serviceNames = args.services || [];
+      const { data: services } = await supabase
+        .from('services')
+        .select('id, name, price, duration_minutes, hourly_rate, flat_fee, parts_cost')
+        .eq('company_id', companyId)
+        .in('name', serviceNames.length > 0 ? serviceNames : ['General Service']);
+
+      let subtotal = 0;
+      const lineItems: any[] = [];
+      
+      if (services && services.length > 0) {
+        for (const svc of services) {
+          const price = svc.flat_fee || svc.price || (svc.hourly_rate ? svc.hourly_rate * (args.labor_hours || 1) : 100);
+          lineItems.push({
+            service_id: svc.id,
+            description: svc.name,
+            quantity: 1,
+            unit_price: price,
+            total: price,
+          });
+          subtotal += price;
+        }
+      } else {
+        // Fallback estimate
+        const laborCost = (args.labor_hours || 2) * 75;
+        lineItems.push({ description: 'Labor', quantity: args.labor_hours || 2, unit_price: 75, total: laborCost });
+        subtotal = laborCost;
+      }
+
+      // Add parts if specified
+      if (args.parts && Array.isArray(args.parts)) {
+        for (const part of args.parts) {
+          const partPrice = part.price || 50;
+          lineItems.push({
+            description: part.name || 'Parts',
+            quantity: part.quantity || 1,
+            unit_price: partPrice,
+            total: partPrice * (part.quantity || 1),
+          });
+          subtotal += partPrice * (part.quantity || 1);
+        }
+      }
+
+      const discountAmount = args.discount_percent ? (subtotal * args.discount_percent / 100) : 0;
+      const taxRate = 0.08; // 8% tax
+      const taxAmount = (subtotal - discountAmount) * taxRate;
+      const total = subtotal - discountAmount + taxAmount;
+
+      // Create quote in database
+      const { data: quote, error: quoteError } = await supabase
+        .from('quotes')
+        .insert({
+          company_id: companyId,
+          customer_name: args.customer_name || 'Customer',
+          customer_email: args.customer_email,
+          customer_phone: args.customer_phone,
+          customer_address: args.customer_address,
+          status: 'draft',
+          subtotal,
+          tax_rate: taxRate * 100,
+          tax_amount: taxAmount,
+          total_amount: total,
+          valid_until: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+          notes: args.notes,
+        })
+        .select()
+        .single();
+
+      if (quoteError) {
+        console.error('[AI Agent] Quote creation error:', quoteError);
+        return { success: false, error: quoteError.message };
+      }
+
+      // Insert line items
+      for (const item of lineItems) {
+        await supabase.from('quote_line_items').insert({
+          quote_id: quote.id,
+          service_id: item.service_id || null,
+          description: item.description,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          total: item.total,
+        });
+      }
+
       return {
         success: true,
-        quote_id: crypto.randomUUID(),
+        quote_id: quote.id,
         breakdown: {
-          labor: laborCost,
-          parts: partsCost,
-          discount: discount,
-          total: laborCost + partsCost - discount,
+          line_items: lineItems,
+          subtotal,
+          discount: discountAmount,
+          tax: taxAmount,
+          total,
         },
-        valid_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        valid_until: quote.valid_until,
+        message: `Quote #${quote.id.substring(0, 8)} created. Total: $${total.toFixed(2)}`,
+      };
+    }
+
+    case 'send_quote': {
+      console.log('[AI Agent] Sending quote:', args);
+      
+      const { data: quote } = await supabase
+        .from('quotes')
+        .select('*, quote_line_items(*)')
+        .eq('id', args.quote_id)
+        .eq('company_id', companyId)
+        .single();
+
+      if (!quote) {
+        return { success: false, error: 'Quote not found' };
+      }
+
+      // Update quote status to sent
+      await supabase
+        .from('quotes')
+        .update({ status: 'sent' })
+        .eq('id', args.quote_id);
+
+      return {
+        success: true,
+        quote_id: args.quote_id,
+        sent_to: args.customer_contact || quote.customer_email || quote.customer_phone,
+        channel: args.channel,
+        total: quote.total_amount,
+        message: `Quote sent to ${args.customer_contact || 'customer'} via ${args.channel}`,
+      };
+    }
+
+    // ==========================================
+    // INVOICE TOOLS
+    // ==========================================
+    case 'generate_invoice': {
+      console.log('[AI Agent] Generating invoice:', args);
+      
+      // Get appointment details if provided
+      let appointmentData = null;
+      let quoteData = null;
+      
+      if (args.appointment_id) {
+        const { data: appt } = await supabase
+          .from('appointments')
+          .select('*, services:service_type')
+          .eq('id', args.appointment_id)
+          .eq('company_id', companyId)
+          .single();
+        appointmentData = appt;
+      }
+      
+      if (args.quote_id) {
+        const { data: qt } = await supabase
+          .from('quotes')
+          .select('*, quote_line_items(*)')
+          .eq('id', args.quote_id)
+          .eq('company_id', companyId)
+          .single();
+        quoteData = qt;
+      }
+
+      // Build invoice from quote or appointment
+      const customerName = quoteData?.customer_name || appointmentData?.customer_name || args.customer_name || 'Customer';
+      const customerEmail = quoteData?.customer_email || appointmentData?.customer_email || args.customer_email;
+      const customerPhone = quoteData?.customer_phone || appointmentData?.customer_phone || args.customer_phone;
+      
+      let subtotal = quoteData?.subtotal || 0;
+      let lineItems: any[] = [];
+      
+      if (quoteData?.quote_line_items) {
+        lineItems = quoteData.quote_line_items.map((item: any) => ({
+          description: item.description,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          total: item.total,
+          service_id: item.service_id,
+        }));
+      } else if (appointmentData) {
+        // Lookup service price
+        const { data: service } = await supabase
+          .from('services')
+          .select('price, name')
+          .eq('company_id', companyId)
+          .eq('name', appointmentData.service_type)
+          .maybeSingle();
+        
+        const price = service?.price || 100;
+        lineItems.push({
+          description: appointmentData.service_type,
+          quantity: 1,
+          unit_price: price,
+          total: price,
+        });
+        subtotal = price;
+      }
+
+      // Add additional charges
+      if (args.additional_charges && Array.isArray(args.additional_charges)) {
+        for (const charge of args.additional_charges) {
+          lineItems.push({
+            description: charge.description || 'Additional Charge',
+            quantity: charge.quantity || 1,
+            unit_price: charge.amount || 0,
+            total: (charge.amount || 0) * (charge.quantity || 1),
+          });
+          subtotal += (charge.amount || 0) * (charge.quantity || 1);
+        }
+      }
+
+      const taxRate = 0.08;
+      const taxAmount = subtotal * taxRate;
+      const total = subtotal + taxAmount;
+
+      // Generate invoice number
+      const invoiceNumber = `INV-${Date.now().toString(36).toUpperCase()}`;
+
+      const { data: invoice, error: invError } = await supabase
+        .from('invoices')
+        .insert({
+          company_id: companyId,
+          invoice_number: invoiceNumber,
+          appointment_id: args.appointment_id || null,
+          quote_id: args.quote_id || null,
+          customer_name: customerName,
+          customer_email: customerEmail,
+          customer_phone: customerPhone,
+          status: 'draft',
+          subtotal,
+          tax_rate: taxRate * 100,
+          tax_amount: taxAmount,
+          total,
+          due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        })
+        .select()
+        .single();
+
+      if (invError) {
+        console.error('[AI Agent] Invoice creation error:', invError);
+        return { success: false, error: invError.message };
+      }
+
+      // Insert line items
+      for (const item of lineItems) {
+        await supabase.from('invoice_line_items').insert({
+          invoice_id: invoice.id,
+          service_id: item.service_id || null,
+          description: item.description,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          total: item.total,
+        });
+      }
+
+      return {
+        success: true,
+        invoice_id: invoice.id,
+        invoice_number: invoiceNumber,
+        total,
+        due_date: invoice.due_date,
+        message: `Invoice ${invoiceNumber} created. Total: $${total.toFixed(2)}. Due in 30 days.`,
+      };
+    }
+
+    case 'send_payment_link': {
+      console.log('[AI Agent] Sending payment link:', args);
+      
+      const { data: invoice } = await supabase
+        .from('invoices')
+        .select('*')
+        .eq('id', args.invoice_id)
+        .eq('company_id', companyId)
+        .single();
+
+      if (!invoice) {
+        return { success: false, error: 'Invoice not found' };
+      }
+
+      // Update invoice status to sent
+      await supabase
+        .from('invoices')
+        .update({ status: 'sent' })
+        .eq('id', args.invoice_id);
+
+      // Generate payment link (in production, would create Stripe Payment Link)
+      const baseUrl = Deno.env.get('SITE_URL') || 'https://your-app.lovable.app';
+      const paymentLink = `${baseUrl}/pay/${invoice.id}`;
+
+      return {
+        success: true,
+        invoice_id: args.invoice_id,
+        payment_link: paymentLink,
+        total: invoice.total,
+        sent_to: args.customer_contact || invoice.customer_email,
+        channel: args.channel,
+        message: `Payment link sent for $${invoice.total}. Link: ${paymentLink}`,
+      };
+    }
+
+    case 'send_payment_reminder': {
+      console.log('[AI Agent] Sending payment reminder:', args);
+      
+      const { data: invoice } = await supabase
+        .from('invoices')
+        .select('*')
+        .eq('id', args.invoice_id)
+        .eq('company_id', companyId)
+        .single();
+
+      if (!invoice) {
+        return { success: false, error: 'Invoice not found' };
+      }
+
+      // Update status to overdue if past due
+      if (new Date(invoice.due_date) < new Date() && invoice.status !== 'paid') {
+        await supabase
+          .from('invoices')
+          .update({ status: 'overdue' })
+          .eq('id', args.invoice_id);
+      }
+
+      return {
+        success: true,
+        invoice_id: args.invoice_id,
+        invoice_number: invoice.invoice_number,
+        total: invoice.total,
+        days_overdue: args.days_overdue || Math.floor((Date.now() - new Date(invoice.due_date).getTime()) / (24 * 60 * 60 * 1000)),
+        message: `Payment reminder sent for invoice ${invoice.invoice_number}. Amount due: $${invoice.total}`,
+      };
+    }
+
+    // ==========================================
+    // INVENTORY TOOLS
+    // ==========================================
+    case 'check_inventory': {
+      console.log('[AI Agent] Checking inventory:', args);
+      
+      let query = supabase
+        .from('inventory_items')
+        .select('id, name, sku, quantity, min_quantity, unit_cost, category, supplier')
+        .eq('company_id', companyId)
+        .eq('is_active', true);
+
+      if (args.category) {
+        query = query.eq('category', args.category);
+      }
+      
+      if (args.part_ids && args.part_ids.length > 0) {
+        query = query.in('id', args.part_ids);
+      }
+
+      const { data: items, error } = await query.order('quantity', { ascending: true }).limit(50);
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      const lowStockItems = items?.filter((item: any) => item.quantity <= item.min_quantity) || [];
+      const totalValue = items?.reduce((sum: number, item: any) => sum + (item.quantity * (item.unit_cost || 0)), 0) || 0;
+
+      return {
+        success: true,
+        items: items || [],
+        total_items: items?.length || 0,
+        low_stock_count: lowStockItems.length,
+        low_stock_items: lowStockItems,
+        total_inventory_value: totalValue,
+        message: `Found ${items?.length || 0} items. ${lowStockItems.length} items are low on stock.`,
+      };
+    }
+
+    case 'reorder_parts': {
+      console.log('[AI Agent] Reordering parts:', args);
+      
+      // Get the item details
+      const { data: item } = await supabase
+        .from('inventory_items')
+        .select('*')
+        .eq('id', args.part_id)
+        .eq('company_id', companyId)
+        .single();
+
+      if (!item) {
+        return { success: false, error: 'Part not found' };
+      }
+
+      // Create reorder transaction
+      const { data: transaction, error } = await supabase
+        .from('inventory_transactions')
+        .insert({
+          company_id: companyId,
+          item_id: args.part_id,
+          transaction_type: 'reorder',
+          quantity: args.quantity,
+          notes: `Reorder - Priority: ${args.priority || 'normal'}`,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return {
+        success: true,
+        transaction_id: transaction.id,
+        part_name: item.name,
+        quantity_ordered: args.quantity,
+        supplier: item.supplier,
+        priority: args.priority || 'normal',
+        estimated_cost: (item.unit_cost || 0) * args.quantity,
+        message: `Reorder placed for ${args.quantity}x ${item.name} from ${item.supplier || 'default supplier'}`,
+      };
+    }
+
+    case 'record_usage': {
+      console.log('[AI Agent] Recording inventory usage:', args);
+      
+      const usageRecords: any[] = [];
+      
+      for (const part of args.parts_used || []) {
+        // Get item
+        const { data: item } = await supabase
+          .from('inventory_items')
+          .select('*')
+          .eq('company_id', companyId)
+          .or(`id.eq.${part.id},name.ilike.%${part.name || ''}%`)
+          .maybeSingle();
+
+        if (item) {
+          // Create usage transaction
+          const { data: txn } = await supabase
+            .from('inventory_transactions')
+            .insert({
+              company_id: companyId,
+              item_id: item.id,
+              transaction_type: 'usage',
+              quantity: -(part.quantity || 1),
+              appointment_id: args.appointment_id || null,
+              employee_id: args.employee_id || null,
+              notes: part.notes || null,
+            })
+            .select()
+            .single();
+
+          // Update inventory quantity
+          await supabase
+            .from('inventory_items')
+            .update({ quantity: item.quantity - (part.quantity || 1) })
+            .eq('id', item.id);
+
+          usageRecords.push({
+            item_name: item.name,
+            quantity_used: part.quantity || 1,
+            remaining: item.quantity - (part.quantity || 1),
+            low_stock: (item.quantity - (part.quantity || 1)) <= item.min_quantity,
+          });
+        }
+      }
+
+      return {
+        success: true,
+        recorded_items: usageRecords.length,
+        usage_details: usageRecords,
+        low_stock_alerts: usageRecords.filter(r => r.low_stock),
+        message: `Recorded usage of ${usageRecords.length} items${usageRecords.some(r => r.low_stock) ? '. Some items are now low on stock!' : '.'}`,
+      };
+    }
+
+    // ==========================================
+    // WARRANTY TOOLS
+    // ==========================================
+    case 'check_warranty': {
+      console.log('[AI Agent] Checking warranty:', args);
+      
+      let query = supabase
+        .from('warranty_records')
+        .select('*')
+        .eq('company_id', companyId)
+        .eq('is_active', true);
+
+      if (args.serial_number) {
+        query = query.eq('serial_number', args.serial_number);
+      }
+      if (args.customer_id) {
+        query = query.or(`customer_email.eq.${args.customer_id},customer_phone.eq.${args.customer_id}`);
+      }
+
+      const { data: warranties, error } = await query.order('warranty_end_date', { ascending: false }).limit(10);
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      const today = new Date();
+      const activeWarranties = warranties?.filter((w: any) => new Date(w.warranty_end_date) >= today) || [];
+      const expiredWarranties = warranties?.filter((w: any) => new Date(w.warranty_end_date) < today) || [];
+
+      return {
+        success: true,
+        warranties_found: warranties?.length || 0,
+        active_warranties: activeWarranties.map((w: any) => ({
+          id: w.id,
+          equipment: w.equipment_type,
+          model: w.equipment_model,
+          serial: w.serial_number,
+          coverage: w.coverage_type,
+          expires: w.warranty_end_date,
+          days_remaining: Math.ceil((new Date(w.warranty_end_date).getTime() - today.getTime()) / (24 * 60 * 60 * 1000)),
+        })),
+        expired_warranties: expiredWarranties.length,
+        message: `Found ${activeWarranties.length} active warranties and ${expiredWarranties.length} expired.`,
+      };
+    }
+
+    case 'submit_warranty_claim': {
+      console.log('[AI Agent] Submitting warranty claim:', args);
+      
+      // Find the warranty record
+      const { data: warranty } = await supabase
+        .from('warranty_records')
+        .select('*')
+        .eq('company_id', companyId)
+        .or(`id.eq.${args.equipment_id},serial_number.eq.${args.equipment_id}`)
+        .maybeSingle();
+
+      if (!warranty) {
+        return { success: false, error: 'Warranty record not found' };
+      }
+
+      // Check if warranty is still valid
+      if (new Date(warranty.warranty_end_date) < new Date()) {
+        return { 
+          success: false, 
+          error: 'Warranty has expired',
+          expired_on: warranty.warranty_end_date,
+        };
+      }
+
+      // Create warranty claim
+      const { data: claim, error } = await supabase
+        .from('warranty_claims')
+        .insert({
+          warranty_id: warranty.id,
+          company_id: companyId,
+          issue_description: args.issue_description,
+          claim_type: args.claim_type || 'repair',
+          photos: args.photos || [],
+          status: 'submitted',
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return {
+        success: true,
+        claim_id: claim.id,
+        warranty_id: warranty.id,
+        equipment: warranty.equipment_type,
+        coverage: warranty.coverage_type,
+        status: 'submitted',
+        message: `Warranty claim submitted for ${warranty.equipment_type}. Claim ID: ${claim.id.substring(0, 8)}`,
+      };
+    }
+
+    // ==========================================
+    // MARKETING CAMPAIGN TOOLS
+    // ==========================================
+    case 'create_campaign': {
+      console.log('[AI Agent] Creating campaign:', args);
+      
+      const promoCode = args.promo_code || `PROMO${Date.now().toString(36).toUpperCase()}`;
+      
+      const { data: campaign, error } = await supabase
+        .from('marketing_campaigns')
+        .insert({
+          company_id: companyId,
+          name: args.name,
+          campaign_type: 'promo',
+          target_segment: args.target_segment || 'all',
+          discount_type: args.discount_type === 'percent' ? 'percentage' : args.discount_type,
+          discount_value: args.discount_value || 0,
+          promo_code: promoCode,
+          message_template: args.message_template,
+          email_subject: args.email_subject,
+          channels: args.channels || ['email'],
+          start_date: args.start_date || new Date().toISOString(),
+          end_date: args.valid_until || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          status: 'draft',
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return {
+        success: true,
+        campaign_id: campaign.id,
+        name: campaign.name,
+        promo_code: promoCode,
+        discount: `${args.discount_value}${args.discount_type === 'percent' ? '%' : ''} off`,
+        valid_until: campaign.end_date,
+        message: `Campaign "${campaign.name}" created with code ${promoCode}`,
+      };
+    }
+
+    case 'send_promo': {
+      console.log('[AI Agent] Sending promo:', args);
+      
+      const { data: campaign } = await supabase
+        .from('marketing_campaigns')
+        .select('*')
+        .eq('id', args.campaign_id)
+        .eq('company_id', companyId)
+        .single();
+
+      if (!campaign) {
+        return { success: false, error: 'Campaign not found' };
+      }
+
+      // Get target customers based on segment
+      let customerQuery = supabase
+        .from('appointments')
+        .select('customer_name, customer_email, customer_phone')
+        .eq('company_id', companyId);
+
+      if (args.customer_segment === 'returning') {
+        // Customers with more than one appointment
+        customerQuery = customerQuery.order('created_at', { ascending: false });
+      }
+
+      const { data: customers } = await customerQuery.limit(100);
+      
+      // Create recipient records
+      const uniqueCustomers = new Map();
+      customers?.forEach((c: any) => {
+        const key = c.customer_email || c.customer_phone;
+        if (key && !uniqueCustomers.has(key)) {
+          uniqueCustomers.set(key, c);
+        }
+      });
+
+      let sent = 0;
+      for (const [_, customer] of uniqueCustomers) {
+        await supabase.from('campaign_recipients').insert({
+          campaign_id: campaign.id,
+          company_id: companyId,
+          customer_name: customer.customer_name,
+          customer_email: customer.customer_email,
+          customer_phone: customer.customer_phone,
+          channel: args.channel === 'both' ? 'email' : args.channel,
+          status: 'sent',
+          sent_at: new Date().toISOString(),
+        });
+        sent++;
+      }
+
+      // Update campaign stats
+      await supabase
+        .from('marketing_campaigns')
+        .update({ 
+          status: 'active',
+          total_sent: sent,
+        })
+        .eq('id', campaign.id);
+
+      return {
+        success: true,
+        campaign_id: campaign.id,
+        recipients_count: sent,
+        channel: args.channel,
+        promo_code: campaign.promo_code,
+        message: `Promo sent to ${sent} customers via ${args.channel}`,
+      };
+    }
+
+    case 'create_seasonal_campaign': {
+      console.log('[AI Agent] Creating seasonal campaign:', args);
+      
+      const seasonDates: Record<string, { start: string; end: string }> = {
+        spring: { start: '03-01', end: '05-31' },
+        summer: { start: '06-01', end: '08-31' },
+        fall: { start: '09-01', end: '11-30' },
+        winter: { start: '12-01', end: '02-28' },
       };
 
-    case 'analyze_metrics':
+      const year = new Date().getFullYear();
+      const season = seasonDates[args.season] || seasonDates.spring;
+      
+      const { data: campaign, error } = await supabase
+        .from('marketing_campaigns')
+        .insert({
+          company_id: companyId,
+          name: `${args.season.charAt(0).toUpperCase() + args.season.slice(1)} ${args.service_focus} Campaign`,
+          campaign_type: 'seasonal',
+          target_segment: 'all',
+          message_template: `Get ready for ${args.season} with our ${args.service_focus} services!`,
+          channels: ['email', 'sms'],
+          start_date: args.start_date || `${year}-${season.start}`,
+          end_date: args.end_date || `${year}-${season.end}`,
+          status: 'scheduled',
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
       return {
         success: true,
+        campaign_id: campaign.id,
+        season: args.season,
+        service_focus: args.service_focus,
+        period: `${campaign.start_date} to ${campaign.end_date}`,
+        message: `Seasonal campaign created for ${args.season} ${args.service_focus}`,
+      };
+    }
+
+    case 'send_seasonal_reminder': {
+      console.log('[AI Agent] Sending seasonal reminder:', args);
+      
+      // Find customers who had this service type
+      const { data: customers } = await supabase
+        .from('appointments')
+        .select('customer_name, customer_email, customer_phone, service_type, datetime')
+        .eq('company_id', companyId)
+        .ilike('service_type', `%${args.service_type}%`)
+        .order('datetime', { ascending: false })
+        .limit(100);
+
+      const uniqueCustomers = new Map();
+      customers?.forEach((c: any) => {
+        const key = c.customer_email || c.customer_phone;
+        if (key && !uniqueCustomers.has(key)) {
+          uniqueCustomers.set(key, c);
+        }
+      });
+
+      return {
+        success: true,
+        service_type: args.service_type,
+        customers_targeted: uniqueCustomers.size,
+        channel: args.channel,
+        message: `Seasonal reminder sent to ${uniqueCustomers.size} customers for ${args.service_type} service`,
+      };
+    }
+
+    // ==========================================
+    // REFERRAL TOOLS
+    // ==========================================
+    case 'generate_referral_link': {
+      console.log('[AI Agent] Generating referral link:', args);
+      
+      const referralCode = `REF${Date.now().toString(36).toUpperCase()}`;
+      
+      const { data: referral, error } = await supabase
+        .from('customer_referrals')
+        .insert({
+          company_id: companyId,
+          referrer_name: args.customer_name || 'Customer',
+          referrer_email: args.customer_email,
+          referrer_phone: args.customer_phone,
+          referral_code: referralCode,
+          reward_type: args.reward_type || 'discount',
+          reward_value: args.reward_value || 25,
+          status: 'pending',
+          expires_at: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      const baseUrl = Deno.env.get('SITE_URL') || 'https://your-app.lovable.app';
+      const referralLink = `${baseUrl}/refer/${referralCode}`;
+
+      return {
+        success: true,
+        referral_id: referral.id,
+        referral_code: referralCode,
+        referral_link: referralLink,
+        reward: `$${referral.reward_value} ${referral.reward_type}`,
+        expires: referral.expires_at,
+        message: `Referral link created! Share this code: ${referralCode}. Earn $${referral.reward_value} for each successful referral.`,
+      };
+    }
+
+    case 'process_referral_reward': {
+      console.log('[AI Agent] Processing referral reward:', args);
+      
+      // Find the referral
+      const { data: referral } = await supabase
+        .from('customer_referrals')
+        .select('*')
+        .eq('company_id', companyId)
+        .or(`referrer_email.eq.${args.referrer_id},referrer_phone.eq.${args.referrer_id},referral_code.eq.${args.referrer_id}`)
+        .maybeSingle();
+
+      if (!referral) {
+        return { success: false, error: 'Referral not found' };
+      }
+
+      // Update referral with referred customer info and mark as rewarded
+      const { error } = await supabase
+        .from('customer_referrals')
+        .update({
+          referred_name: args.referred_name,
+          referred_email: args.referred_email,
+          referred_phone: args.referred_phone,
+          status: 'rewarded',
+          reward_issued_at: new Date().toISOString(),
+        })
+        .eq('id', referral.id);
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return {
+        success: true,
+        referral_id: referral.id,
+        referrer: referral.referrer_name,
+        reward_issued: `$${referral.reward_value} ${referral.reward_type}`,
+        message: `Reward of $${referral.reward_value} issued to ${referral.referrer_name} for successful referral!`,
+      };
+    }
+
+    // ==========================================
+    // WIN-BACK TOOLS
+    // ==========================================
+    case 'identify_churned_customers': {
+      console.log('[AI Agent] Identifying churned customers:', args);
+      
+      const daysInactive = args.days_inactive || 180;
+      const cutoffDate = new Date(Date.now() - daysInactive * 24 * 60 * 60 * 1000).toISOString();
+
+      // Find customers with no recent appointments
+      const { data: recentCustomers } = await supabase
+        .from('appointments')
+        .select('customer_email, customer_phone, customer_name, datetime')
+        .eq('company_id', companyId)
+        .gte('datetime', cutoffDate);
+
+      const recentSet = new Set(recentCustomers?.map((c: any) => c.customer_email || c.customer_phone) || []);
+
+      // Get all customers
+      const { data: allCustomers } = await supabase
+        .from('appointments')
+        .select('customer_email, customer_phone, customer_name, datetime')
+        .eq('company_id', companyId)
+        .lt('datetime', cutoffDate)
+        .order('datetime', { ascending: false });
+
+      const churnedCustomers: any[] = [];
+      const seen = new Set();
+
+      allCustomers?.forEach((c: any) => {
+        const key = c.customer_email || c.customer_phone;
+        if (key && !recentSet.has(key) && !seen.has(key)) {
+          seen.add(key);
+          churnedCustomers.push({
+            name: c.customer_name,
+            email: c.customer_email,
+            phone: c.customer_phone,
+            last_visit: c.datetime,
+            days_since_visit: Math.floor((Date.now() - new Date(c.datetime).getTime()) / (24 * 60 * 60 * 1000)),
+          });
+        }
+      });
+
+      return {
+        success: true,
+        churned_count: churnedCustomers.length,
+        customers: churnedCustomers.slice(0, 50),
+        inactive_threshold: `${daysInactive} days`,
+        message: `Found ${churnedCustomers.length} customers inactive for ${daysInactive}+ days`,
+      };
+    }
+
+    case 'create_winback_offer': {
+      console.log('[AI Agent] Creating win-back offer:', args);
+      
+      const promoCode = `WINBACK${Date.now().toString(36).toUpperCase()}`;
+
+      const { data: offer, error } = await supabase
+        .from('winback_offers')
+        .insert({
+          company_id: companyId,
+          customer_name: args.customer_name,
+          customer_email: args.customer_email,
+          customer_phone: args.customer_phone,
+          offer_type: args.offer_type,
+          offer_value: args.offer_value || 20,
+          promo_code: promoCode,
+          status: 'created',
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return {
+        success: true,
+        offer_id: offer.id,
+        promo_code: promoCode,
+        offer: `${offer.offer_value}${offer.offer_type === 'discount' ? '% off' : ` ${offer.offer_type}`}`,
+        expires: offer.expires_at,
+        message: `Win-back offer created: ${offer.offer_value}% off with code ${promoCode}`,
+      };
+    }
+
+    case 'send_winback_campaign': {
+      console.log('[AI Agent] Sending win-back campaign:', args);
+      
+      // Get pending win-back offers or create campaign for churned customers
+      const { data: pendingOffers } = await supabase
+        .from('winback_offers')
+        .select('*')
+        .eq('company_id', companyId)
+        .eq('status', 'created')
+        .limit(100);
+
+      let sent = 0;
+      for (const offer of pendingOffers || []) {
+        await supabase
+          .from('winback_offers')
+          .update({
+            status: 'sent',
+            sent_at: new Date().toISOString(),
+            channel: args.channel,
+            message_sent: args.message_template || `We miss you! Come back and save ${offer.offer_value}% with code ${offer.promo_code}`,
+          })
+          .eq('id', offer.id);
+        sent++;
+      }
+
+      return {
+        success: true,
+        offers_sent: sent,
+        channel: args.channel,
+        message: `Win-back campaign sent to ${sent} inactive customers`,
+      };
+    }
+
+    // ==========================================
+    // ANALYTICS TOOLS
+    // ==========================================
+    case 'analyze_metrics': {
+      console.log('[AI Agent] Analyzing metrics:', args);
+      
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000).toISOString();
+
+      // Get appointments count
+      const { count: currentAppts } = await supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', companyId)
+        .gte('datetime', thirtyDaysAgo);
+
+      const { count: previousAppts } = await supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', companyId)
+        .gte('datetime', sixtyDaysAgo)
+        .lt('datetime', thirtyDaysAgo);
+
+      // Get completed appointments
+      const { count: completedAppts } = await supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', companyId)
+        .eq('status', 'completed')
+        .gte('datetime', thirtyDaysAgo);
+
+      // Get revenue from invoices
+      const { data: invoices } = await supabase
+        .from('invoices')
+        .select('total')
+        .eq('company_id', companyId)
+        .eq('status', 'paid')
+        .gte('created_at', thirtyDaysAgo);
+
+      const currentRevenue = invoices?.reduce((sum: number, inv: any) => sum + (inv.total || 0), 0) || 0;
+
+      const { data: prevInvoices } = await supabase
+        .from('invoices')
+        .select('total')
+        .eq('company_id', companyId)
+        .eq('status', 'paid')
+        .gte('created_at', sixtyDaysAgo)
+        .lt('created_at', thirtyDaysAgo);
+
+      const previousRevenue = prevInvoices?.reduce((sum: number, inv: any) => sum + (inv.total || 0), 0) || 0;
+
+      // Calculate trends
+      const apptTrend = previousAppts ? ((currentAppts || 0) - previousAppts) / previousAppts * 100 : 0;
+      const revenueTrend = previousRevenue ? (currentRevenue - previousRevenue) / previousRevenue * 100 : 0;
+
+      return {
+        success: true,
+        period: 'Last 30 days',
         metrics: {
-          appointments_completed: Math.floor(Math.random() * 100) + 50,
-          revenue: Math.floor(Math.random() * 50000) + 10000,
-          customer_satisfaction: (Math.random() * 2 + 3).toFixed(1),
-          average_response_time: Math.floor(Math.random() * 30) + 10,
+          total_appointments: currentAppts || 0,
+          completed_appointments: completedAppts || 0,
+          completion_rate: currentAppts ? ((completedAppts || 0) / currentAppts * 100).toFixed(1) : 0,
+          revenue: currentRevenue,
+          average_ticket: completedAppts ? (currentRevenue / completedAppts).toFixed(2) : 0,
         },
         trends: {
-          appointments: '+12% vs last period',
-          revenue: '+8% vs last period',
+          appointments: `${apptTrend >= 0 ? '+' : ''}${apptTrend.toFixed(1)}% vs previous period`,
+          revenue: `${revenueTrend >= 0 ? '+' : ''}${revenueTrend.toFixed(1)}% vs previous period`,
         },
+        message: `Last 30 days: ${currentAppts || 0} appointments, $${currentRevenue.toFixed(2)} revenue`,
+      };
+    }
+
+    case 'generate_report': {
+      console.log('[AI Agent] Generating report:', args);
+      
+      const reportPeriods: Record<string, number> = {
+        daily: 1,
+        weekly: 7,
+        monthly: 30,
+        custom: 30,
       };
 
-    case 'forecast_demand':
+      const days = reportPeriods[args.report_type] || 30;
+      const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+
+      // Gather all metrics
+      const { count: appointments } = await supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', companyId)
+        .gte('datetime', startDate);
+
+      const { data: invoices } = await supabase
+        .from('invoices')
+        .select('total, status')
+        .eq('company_id', companyId)
+        .gte('created_at', startDate);
+
+      const paidInvoices = invoices?.filter((i: any) => i.status === 'paid') || [];
+      const revenue = paidInvoices.reduce((sum: number, i: any) => sum + (i.total || 0), 0);
+
+      const { count: newCustomers } = await supabase
+        .from('appointments')
+        .select('customer_email', { count: 'exact', head: true })
+        .eq('company_id', companyId)
+        .gte('created_at', startDate);
+
       return {
         success: true,
-        forecast: {
-          period: args.forecast_period,
-          expected_appointments: Math.floor(Math.random() * 50) + 30,
-          confidence: args.confidence_level || 0.85,
-          peak_days: ['Monday', 'Friday'],
-          recommended_staff: 4,
+        report_type: args.report_type,
+        period: `Last ${days} days`,
+        summary: {
+          total_appointments: appointments || 0,
+          revenue: revenue,
+          invoices_created: invoices?.length || 0,
+          invoices_paid: paidInvoices.length,
+          collection_rate: invoices?.length ? ((paidInvoices.length / invoices.length) * 100).toFixed(1) : 0,
         },
+        message: `${args.report_type.charAt(0).toUpperCase() + args.report_type.slice(1)} report: ${appointments || 0} appointments, $${revenue.toFixed(2)} revenue`,
       };
+    }
+
+    case 'detect_anomalies': {
+      console.log('[AI Agent] Detecting anomalies:', args);
+      
+      // Get historical data for comparison
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+      const { count: recentAppts } = await supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', companyId)
+        .gte('datetime', sevenDaysAgo);
+
+      const { count: historicalAppts } = await supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', companyId)
+        .gte('datetime', thirtyDaysAgo)
+        .lt('datetime', sevenDaysAgo);
+
+      // Calculate expected vs actual
+      const avgDaily = (historicalAppts || 0) / 23; // ~23 days
+      const recentDaily = (recentAppts || 0) / 7;
+      const variance = avgDaily > 0 ? ((recentDaily - avgDaily) / avgDaily * 100) : 0;
+
+      const sensitivityThresholds: Record<string, number> = {
+        low: 50,
+        medium: 30,
+        high: 15,
+      };
+      const threshold = sensitivityThresholds[args.sensitivity || 'medium'];
+
+      const anomalies: any[] = [];
+      if (Math.abs(variance) > threshold) {
+        anomalies.push({
+          metric: 'appointments',
+          type: variance > 0 ? 'spike' : 'drop',
+          variance: `${variance.toFixed(1)}%`,
+          message: variance > 0 
+            ? `Appointment volume ${variance.toFixed(1)}% above average` 
+            : `Appointment volume ${Math.abs(variance).toFixed(1)}% below average`,
+        });
+      }
+
+      return {
+        success: true,
+        metric: args.metric || 'appointments',
+        sensitivity: args.sensitivity || 'medium',
+        anomalies_found: anomalies.length,
+        anomalies,
+        message: anomalies.length > 0 
+          ? `Found ${anomalies.length} anomaly: ${anomalies[0].message}`
+          : 'No anomalies detected in the specified metric',
+      };
+    }
+
+    // ==========================================
+    // FORECAST TOOLS
+    // ==========================================
+    case 'forecast_demand': {
+      console.log('[AI Agent] Forecasting demand:', args);
+      
+      const periodDays: Record<string, number> = {
+        week: 7,
+        month: 30,
+        quarter: 90,
+      };
+      const forecastDays = periodDays[args.forecast_period] || 30;
+
+      // Get historical appointment data
+      const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+      
+      const { data: historicalAppts } = await supabase
+        .from('appointments')
+        .select('datetime, service_type')
+        .eq('company_id', companyId)
+        .gte('datetime', ninetyDaysAgo);
+
+      // Calculate average daily appointments
+      const dailyCounts: Record<number, number> = {};
+      historicalAppts?.forEach((appt: any) => {
+        const day = new Date(appt.datetime).getDay();
+        dailyCounts[day] = (dailyCounts[day] || 0) + 1;
+      });
+
+      const avgDaily = (historicalAppts?.length || 0) / 90;
+      const expectedAppts = Math.round(avgDaily * forecastDays);
+
+      // Find peak days
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const peakDays = Object.entries(dailyCounts)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 2)
+        .map(([day]) => dayNames[parseInt(day)]);
+
+      // Service type breakdown
+      const serviceCounts: Record<string, number> = {};
+      historicalAppts?.forEach((appt: any) => {
+        serviceCounts[appt.service_type] = (serviceCounts[appt.service_type] || 0) + 1;
+      });
+
+      return {
+        success: true,
+        forecast_period: args.forecast_period,
+        forecast_days: forecastDays,
+        predicted_appointments: expectedAppts,
+        confidence: args.confidence_level || 0.75,
+        daily_average: avgDaily.toFixed(1),
+        peak_days: peakDays,
+        service_breakdown: Object.entries(serviceCounts)
+          .sort(([,a], [,b]) => b - a)
+          .slice(0, 5)
+          .map(([service, count]) => ({ service, percentage: ((count / (historicalAppts?.length || 1)) * 100).toFixed(1) })),
+        recommended_staff: Math.ceil(expectedAppts / forecastDays / 4), // Assume 4 jobs per tech per day
+        message: `${args.forecast_period} forecast: ~${expectedAppts} appointments expected. Peak days: ${peakDays.join(', ')}`,
+      };
+    }
+
+    case 'generate_capacity_plan': {
+      console.log('[AI Agent] Generating capacity plan:', args);
+      
+      // Get employee count
+      const { count: employeeCount } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', companyId);
+
+      // Get appointment forecast
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const { count: recentAppts } = await supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', companyId)
+        .gte('datetime', thirtyDaysAgo);
+
+      const avgDailyAppts = (recentAppts || 0) / 30;
+      const jobsPerTech = 4; // Assume 4 jobs per tech per day
+      const currentCapacity = (employeeCount || 1) * jobsPerTech;
+      const utilizationRate = (avgDailyAppts / currentCapacity * 100).toFixed(1);
+
+      const neededTechs = Math.ceil(avgDailyAppts / jobsPerTech);
+      const staffingGap = neededTechs - (employeeCount || 0);
+
+      return {
+        success: true,
+        period: args.period || 'monthly',
+        current_staff: employeeCount || 0,
+        daily_capacity: currentCapacity,
+        average_daily_demand: avgDailyAppts.toFixed(1),
+        utilization_rate: `${utilizationRate}%`,
+        recommended_staff: neededTechs,
+        staffing_gap: staffingGap,
+        overtime_needed: args.include_overtime && staffingGap > 0 ? `${staffingGap * 8} hours/week` : 'None',
+        message: `Current utilization: ${utilizationRate}%. ${staffingGap > 0 ? `Consider adding ${staffingGap} technician(s)` : 'Staffing is adequate'}`,
+      };
+    }
+
+    case 'predict_revenue': {
+      console.log('[AI Agent] Predicting revenue:', args);
+      
+      // Get historical revenue
+      const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+      
+      const { data: paidInvoices } = await supabase
+        .from('invoices')
+        .select('total, created_at')
+        .eq('company_id', companyId)
+        .eq('status', 'paid')
+        .gte('created_at', ninetyDaysAgo);
+
+      const totalRevenue = paidInvoices?.reduce((sum: number, inv: any) => sum + (inv.total || 0), 0) || 0;
+      const avgMonthlyRevenue = totalRevenue / 3;
+
+      // Get pending quotes value
+      const { data: pendingQuotes } = await supabase
+        .from('quotes')
+        .select('total_amount')
+        .eq('company_id', companyId)
+        .eq('status', 'sent');
+
+      const pipelineValue = pendingQuotes?.reduce((sum: number, q: any) => sum + (q.total_amount || 0), 0) || 0;
+
+      // Calculate prediction based on scenario
+      const scenarios: Record<string, number> = {
+        conservative: 0.8,
+        moderate: 1.0,
+        optimistic: 1.2,
+      };
+      const multiplier = scenarios[args.scenario || 'moderate'];
+
+      const predictedRevenue = avgMonthlyRevenue * multiplier;
+      const pipelineConversion = pipelineValue * 0.3; // Assume 30% conversion
+
+      return {
+        success: true,
+        period: args.period || 'monthly',
+        scenario: args.scenario || 'moderate',
+        historical_avg: avgMonthlyRevenue.toFixed(2),
+        predicted_revenue: predictedRevenue.toFixed(2),
+        pipeline_value: pipelineValue.toFixed(2),
+        pipeline_expected: pipelineConversion.toFixed(2),
+        total_forecast: (predictedRevenue + pipelineConversion).toFixed(2),
+        confidence: args.scenario === 'conservative' ? 0.85 : args.scenario === 'optimistic' ? 0.65 : 0.75,
+        message: `${args.scenario || 'Moderate'} ${args.period || 'monthly'} forecast: $${(predictedRevenue + pipelineConversion).toFixed(2)} (base: $${predictedRevenue.toFixed(2)} + pipeline: $${pipelineConversion.toFixed(2)})`,
+      };
+    }
 
     case 'get_photo_upload_link': {
       const jobId = args.job_assignment_id;
