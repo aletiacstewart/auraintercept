@@ -337,53 +337,7 @@ export const AIAgentConsole = () => {
             )}
             <div>
               <h2 className="font-semibold">{company?.name || 'AI Assistant'}</h2>
-              <div className="flex items-center gap-2">
-                <p className="text-xs text-white/80">Virtual Assistant</p>
-                {/* Current Agent Badge */}
-                <Badge 
-                  variant="secondary" 
-                  className="text-xs py-0 h-5 bg-white/20 text-white border-white/30"
-                >
-                  <Bot className="h-3 w-3 mr-1" />
-                  {getAgentInfo(currentAgent).label} Agent
-                </Badge>
-                {ttsInfo && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Badge 
-                          variant="secondary" 
-                          className={cn(
-                            "text-xs py-0 h-5 cursor-help",
-                            ttsInfo.isConfigured 
-                              ? "bg-white/20 text-white border-white/30" 
-                              : "bg-red-500/20 text-red-200 border-red-500/30"
-                          )}
-                        >
-                          <ttsInfo.icon className="h-3 w-3 mr-1" />
-                          {ttsInfo.name}
-                        </Badge>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" className="max-w-[200px]">
-                        <div className="space-y-1">
-                          <p className="font-medium">{ttsInfo.name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            Voice: {ttsInfo.voiceName}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            Cost: {ttsInfo.costInfo}
-                          </p>
-                          {!ttsInfo.isConfigured && (
-                            <p className="text-xs text-destructive">
-                              Not configured
-                            </p>
-                          )}
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-              </div>
+              <p className="text-xs text-white/80">Virtual Assistant</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
