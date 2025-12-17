@@ -215,6 +215,11 @@ export const AIAgentConsole = () => {
       setActiveTab('services');
       return;
     }
+    // Navigate to emergency tab for emergency action
+    if (actionId === 'emergency') {
+      setActiveTab('emergency');
+      return;
+    }
     setInput(action);
     setActiveTab('chat');
   };
@@ -396,6 +401,13 @@ export const AIAgentConsole = () => {
           >
             <Clock className="h-4 w-4 mr-1.5" />
             Hours
+          </TabsTrigger>
+          <TabsTrigger 
+            value="emergency"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-destructive data-[state=active]:bg-transparent px-3 py-3 shrink-0"
+          >
+            <AlertTriangle className="h-4 w-4 mr-1.5 text-destructive" />
+            Emergency
           </TabsTrigger>
           {hasVoiceChat && (
             <TabsTrigger 
@@ -611,6 +623,85 @@ export const AIAgentConsole = () => {
             <Calendar className="h-4 w-4 mr-2" />
             Schedule an Appointment
           </Button>
+        </TabsContent>
+
+        {/* Emergency Tab */}
+        <TabsContent value="emergency" className="h-full overflow-y-auto m-0 p-4 data-[state=inactive]:hidden">
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="h-16 w-16 rounded-full bg-destructive/10 mx-auto mb-4 flex items-center justify-center">
+                <AlertTriangle className="h-8 w-8 text-destructive" />
+              </div>
+              <h3 className="font-semibold text-lg">Emergency Contact</h3>
+              <p className="text-muted-foreground mt-1">
+                For urgent situations, please contact us directly
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {integrations?.twilio_phone_number ? (
+                <a 
+                  href={`tel:${integrations.twilio_phone_number}`}
+                  className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors"
+                >
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Phone className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Call Now</p>
+                    <p className="text-lg text-primary">{integrations.twilio_phone_number}</p>
+                  </div>
+                </a>
+              ) : (
+                <div className="flex items-center gap-4 p-4 border rounded-lg bg-muted/50">
+                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
+                    <Phone className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-muted-foreground">Phone Not Configured</p>
+                    <p className="text-sm text-muted-foreground">Contact admin to set up phone service</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center gap-4 p-4 border rounded-lg">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Building2 className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">{company?.name || 'Company'}</p>
+                  <p className="text-sm text-muted-foreground">We're here to help</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4">
+              <h4 className="font-medium text-destructive flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4" />
+                Emergency Instructions
+              </h4>
+              <ul className="mt-2 text-sm text-muted-foreground space-y-1">
+                <li>• Call us directly for immediate assistance</li>
+                <li>• Describe your emergency situation clearly</li>
+                <li>• Have your address ready for dispatch</li>
+                <li>• We'll dispatch a technician as soon as possible</li>
+              </ul>
+            </div>
+
+            <Button 
+              variant="destructive" 
+              className="w-full"
+              onClick={() => {
+                if (integrations?.twilio_phone_number) {
+                  window.location.href = `tel:${integrations.twilio_phone_number}`;
+                }
+              }}
+              disabled={!integrations?.twilio_phone_number}
+            >
+              <Phone className="h-4 w-4 mr-2" />
+              Call Emergency Line
+            </Button>
+          </div>
         </TabsContent>
 
         {/* Voice Tab */}
