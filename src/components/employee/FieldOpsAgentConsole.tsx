@@ -29,12 +29,13 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 
 const FIELD_OPS_AGENTS = [
+  { id: 'accept', name: 'Accept Job', color: 'bg-blue-500' },
   { id: 'directions', name: 'Get Directions', color: 'bg-green-500' },
   { id: 'enroute', name: 'En Route', color: 'bg-orange-500' },
   { id: 'eta', name: 'Update ETA', color: 'bg-yellow-500' },
-  { id: 'checkin', name: 'Check-In', color: 'bg-purple-500' },
+  { id: 'arrived', name: 'Arrived', color: 'bg-purple-500' },
   { id: 'complete', name: 'Complete Job', color: 'bg-emerald-500' },
-  { id: 'dispatch', name: 'Contact Dispatch', color: 'bg-blue-500' },
+  { id: 'dispatch', name: 'Contact Dispatch', color: 'bg-cyan-500' },
 ];
 
 interface QuickAction {
@@ -46,10 +47,11 @@ interface QuickAction {
 }
 
 const QUICK_ACTIONS: QuickAction[] = [
+  { id: 'accept', label: 'Accept Job', icon: CheckCircle, message: '' },
   { id: 'directions', label: 'Get Directions', icon: Navigation, message: '' },
-  { id: 'eta', label: 'Update ETA', icon: Clock, message: '' },
-  { id: 'checkin', label: 'Check In', icon: CheckCircle, message: '' },
   { id: 'enroute', label: 'En Route', icon: Truck, message: '' },
+  { id: 'eta', label: 'Update ETA', icon: Clock, message: '' },
+  { id: 'arrived', label: 'Arrived', icon: MapPin, message: '' },
   { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: '', variant: 'default' },
   { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: '' },
 ];
@@ -76,7 +78,7 @@ interface FieldOpsAgentConsoleProps {
   className?: string;
 }
 
-type SelectorMode = 'directions' | 'enroute' | 'eta' | 'checkin' | 'complete' | null;
+type SelectorMode = 'accept' | 'directions' | 'enroute' | 'eta' | 'arrived' | 'complete' | null;
 
 export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }: FieldOpsAgentConsoleProps) {
   const { user, companyId: authCompanyId } = useAuth();
@@ -156,13 +158,16 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
   // Filter jobs based on selector mode
   const getFilteredJobs = () => {
+    if (selectorMode === 'accept') {
+      return assignedJobs.filter(job => job.status === 'pending_acceptance');
+    }
     if (selectorMode === 'enroute') {
       return assignedJobs.filter(job => job.status === 'accepted');
     }
     if (selectorMode === 'eta') {
       return assignedJobs.filter(job => ['accepted', 'en_route'].includes(job.status));
     }
-    if (selectorMode === 'checkin') {
+    if (selectorMode === 'arrived') {
       return assignedJobs.filter(job => job.status === 'en_route');
     }
     if (selectorMode === 'complete') {
@@ -188,6 +193,10 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   };
 
   const handleQuickAction = useCallback(async (action: QuickAction) => {
+    if (action.id === 'accept') {
+      setSelectorMode('accept');
+      return;
+    }
     if (action.id === 'directions') {
       setSelectorMode('directions');
       return;
@@ -202,8 +211,8 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       setEtaMinutes('');
       return;
     }
-    if (action.id === 'checkin') {
-      setSelectorMode('checkin');
+    if (action.id === 'arrived') {
+      setSelectorMode('arrived');
       return;
     }
     if (action.id === 'complete') {
@@ -325,7 +334,46 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     }
   }, [selectedJobForEta, etaMinutes, processingJobId, refetchJobs, sendMessage]);
 
-  const handleSelectJobForCheckIn = useCallback(async (job: JobAssignment) => {
+  const handleSelectJobForAccept = useCallback(async (job: JobAssignment) => {
+    if (processingJobId) return;
+    
+    setProcessingJobId(job.id);
+    const customerName = job.appointments?.customer_name || 'Customer';
+    
+    try {
+      const { error: updateError } = await supabase
+        .from('job_assignments')
+        .update({ 
+          status: 'accepted',
+          accepted_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', job.id);
+
+      if (updateError) throw updateError;
+
+      await supabase.functions.invoke('send-job-notification', {
+        body: {
+          jobAssignmentId: job.id,
+          notificationType: 'accepted',
+          recipientType: 'customer'
+        }
+      });
+
+      toast.success(`Job accepted for ${customerName}`, { description: 'Customer has been notified' });
+      refetchJobs();
+      setSelectorMode(null);
+      sendMessage(`I have accepted the ${job.appointments?.service_type || 'service'} job for ${customerName}.`);
+
+    } catch (error) {
+      console.error('Accept job error:', error);
+      toast.error('Failed to accept job', { description: 'Please try again' });
+    } finally {
+      setProcessingJobId(null);
+    }
+  }, [processingJobId, refetchJobs, sendMessage]);
+
+  const handleSelectJobForArrived = useCallback(async (job: JobAssignment) => {
     if (processingJobId) return;
     
     setProcessingJobId(job.id);
@@ -351,14 +399,14 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         }
       });
 
-      toast.success(`Checked in at ${customerName}'s location`, { description: 'Customer has been notified of your arrival' });
+      toast.success(`Arrived at ${customerName}'s location`, { description: 'Customer has been notified of your arrival' });
       refetchJobs();
       setSelectorMode(null);
-      sendMessage(`I have arrived and checked in at ${customerName}'s location for their ${job.appointments?.service_type || 'service'} appointment.`);
+      sendMessage(`I have arrived at ${customerName}'s location for their ${job.appointments?.service_type || 'service'} appointment.`);
 
     } catch (error) {
-      console.error('Check-in error:', error);
-      toast.error('Failed to check in', { description: 'Please try again' });
+      console.error('Arrived error:', error);
+      toast.error('Failed to update status', { description: 'Please try again' });
     } finally {
       setProcessingJobId(null);
     }
@@ -472,6 +520,15 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   };
 
   const getSelectorConfig = () => {
+    if (selectorMode === 'accept') {
+      return {
+        icon: CheckCircle,
+        title: 'Select job to accept',
+        emptyMessage: 'No pending jobs to accept',
+        actionIcon: CheckCircle,
+        onSelect: handleSelectJobForAccept,
+      };
+    }
     if (selectorMode === 'directions') {
       return {
         icon: Navigation,
@@ -499,13 +556,13 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         onSelect: handleSelectJobForEta,
       };
     }
-    if (selectorMode === 'checkin') {
+    if (selectorMode === 'arrived') {
       return {
-        icon: CheckCircle,
-        title: 'Select appointment to check in',
-        emptyMessage: 'No en route appointments to check in',
-        actionIcon: CheckCircle,
-        onSelect: handleSelectJobForCheckIn,
+        icon: MapPin,
+        title: 'Select appointment to mark as arrived',
+        emptyMessage: 'No en route appointments to mark as arrived',
+        actionIcon: MapPin,
+        onSelect: handleSelectJobForArrived,
       };
     }
     if (selectorMode === 'complete') {
@@ -534,7 +591,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
               </div>
               <div>
                 <CardTitle className="text-base">Field Ops Assistant</CardTitle>
-                <p className="text-xs text-muted-foreground">Route • ETA • Check-In • Dispatch</p>
+                <p className="text-xs text-muted-foreground">Accept • Directions • En Route • ETA • Arrived • Complete • Dispatch</p>
               </div>
             </div>
             <Badge variant="outline" className="text-xs">
