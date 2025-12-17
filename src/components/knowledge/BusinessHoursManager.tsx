@@ -9,9 +9,13 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Calendar } from '@/components/ui/calendar';
 import { toast } from 'sonner';
-import { Save, Clock, Building2, Truck, AlertTriangle, CalendarHeart } from 'lucide-react';
+import { Save, Clock, Building2, Truck, AlertTriangle, CalendarHeart, X, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { format, addMonths, startOfMonth, isSameDay } from 'date-fns';
 
 interface BusinessHour {
   id?: string;
@@ -22,13 +26,34 @@ interface BusinessHour {
   hour_type: string;
 }
 
+interface HolidayClosure {
+  id?: string;
+  closure_date: string;
+  name: string | null;
+}
+
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const HOUR_TYPES = [
   { value: 'office', label: 'Office Hours', icon: Building2, description: 'Regular office/business hours' },
   { value: 'field', label: 'Field Hours', icon: Truck, description: 'Service/field technician hours' },
   { value: 'emergency', label: 'Emergency Hours', icon: AlertTriangle, description: '24/7 emergency availability' },
-  { value: 'holiday', label: 'Holiday Hours', icon: CalendarHeart, description: 'Special holiday schedule' },
+  { value: 'holiday', label: 'Holiday Hours', icon: CalendarHeart, description: 'Select specific dates your business will be closed' },
+];
+
+const COMMON_HOLIDAYS = [
+  { name: "New Year's Day", month: 0, day: 1 },
+  { name: "Martin Luther King Jr. Day", month: 0, day: 20 },
+  { name: "Presidents' Day", month: 1, day: 17 },
+  { name: "Memorial Day", month: 4, day: 26 },
+  { name: "Independence Day", month: 6, day: 4 },
+  { name: "Labor Day", month: 8, day: 1 },
+  { name: "Columbus Day", month: 9, day: 14 },
+  { name: "Veterans Day", month: 10, day: 11 },
+  { name: "Thanksgiving Day", month: 10, day: 28 },
+  { name: "Christmas Eve", month: 11, day: 24 },
+  { name: "Christmas Day", month: 11, day: 25 },
+  { name: "New Year's Eve", month: 11, day: 31 },
 ];
 
 const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
@@ -42,7 +67,6 @@ const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
 
 const getDefaultHours = (hourType: string): BusinessHour[] => {
   if (hourType === 'emergency') {
-    // Emergency hours default to 24/7
     return DAYS.map((_, index) => ({
       day_of_week: index,
       open_time: '00:00:00',
@@ -51,19 +75,7 @@ const getDefaultHours = (hourType: string): BusinessHour[] => {
       hour_type: hourType,
     }));
   }
-  
-  if (hourType === 'holiday') {
-    // Holiday hours default to closed
-    return DAYS.map((_, index) => ({
-      day_of_week: index,
-      open_time: null,
-      close_time: null,
-      is_closed: true,
-      hour_type: hourType,
-    }));
-  }
 
-  // Office and Field hours default to weekdays 9-5
   return DAYS.map((_, index) => ({
     day_of_week: index,
     open_time: index === 0 || index === 6 ? null : '09:00:00',
@@ -81,8 +93,10 @@ export function BusinessHoursManager() {
     office: getDefaultHours('office'),
     field: getDefaultHours('field'),
     emergency: getDefaultHours('emergency'),
-    holiday: getDefaultHours('holiday'),
   });
+  const [holidayClosures, setHolidayClosures] = useState<HolidayClosure[]>([]);
+  const [newHolidayName, setNewHolidayName] = useState('');
+  const [calendarMonth, setCalendarMonth] = useState(new Date());
 
   const { data: savedHours, isLoading } = useQuery({
     queryKey: ['business-hours', companyId],
@@ -99,17 +113,30 @@ export function BusinessHoursManager() {
     enabled: !!companyId,
   });
 
+  const { data: savedClosures, isLoading: isLoadingClosures } = useQuery({
+    queryKey: ['holiday-closures', companyId],
+    queryFn: async () => {
+      if (!companyId) return [];
+      const { data, error } = await supabase
+        .from('holiday_closures')
+        .select('*')
+        .eq('company_id', companyId)
+        .order('closure_date');
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
   useEffect(() => {
     if (savedHours && savedHours.length > 0) {
       const newHoursByType: Record<string, BusinessHour[]> = {
         office: getDefaultHours('office'),
         field: getDefaultHours('field'),
         emergency: getDefaultHours('emergency'),
-        holiday: getDefaultHours('holiday'),
       };
 
-      // Group saved hours by type and merge
-      HOUR_TYPES.forEach(({ value: hourType }) => {
+      ['office', 'field', 'emergency'].forEach((hourType) => {
         const savedForType = savedHours.filter((h) => (h.hour_type || 'office') === hourType);
         if (savedForType.length > 0) {
           newHoursByType[hourType] = getDefaultHours(hourType).map((defaultHour) => {
@@ -122,6 +149,16 @@ export function BusinessHoursManager() {
       setHoursByType(newHoursByType);
     }
   }, [savedHours]);
+
+  useEffect(() => {
+    if (savedClosures) {
+      setHolidayClosures(savedClosures.map(c => ({
+        id: c.id,
+        closure_date: c.closure_date,
+        name: c.name,
+      })));
+    }
+  }, [savedClosures]);
 
   const saveMutation = useMutation({
     mutationFn: async (hourType: string) => {
@@ -155,6 +192,50 @@ export function BusinessHoursManager() {
     },
   });
 
+  const addClosureMutation = useMutation({
+    mutationFn: async ({ date, name }: { date: Date; name: string }) => {
+      if (!companyId) throw new Error('No company ID');
+
+      const { error } = await supabase
+        .from('holiday_closures')
+        .insert({
+          company_id: companyId,
+          closure_date: format(date, 'yyyy-MM-dd'),
+          name: name || null,
+        });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['holiday-closures'] });
+      setNewHolidayName('');
+      toast.success('Holiday closure added!');
+    },
+    onError: (error: Error) => {
+      if (error.message.includes('duplicate')) {
+        toast.error('This date is already marked as closed');
+      } else {
+        toast.error('Failed to add closure');
+      }
+    },
+  });
+
+  const removeClosureMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('holiday_closures')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['holiday-closures'] });
+      toast.success('Holiday closure removed!');
+    },
+    onError: () => {
+      toast.error('Failed to remove closure');
+    },
+  });
+
   const updateHour = (hourType: string, dayIndex: number, field: keyof BusinessHour, value: unknown) => {
     setHoursByType((prev) => ({
       ...prev,
@@ -178,6 +259,30 @@ export function BusinessHoursManager() {
           : h
       ),
     }));
+  };
+
+  const closedDates = holidayClosures.map(c => new Date(c.closure_date + 'T00:00:00'));
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (!date) return;
+    
+    const existingClosure = holidayClosures.find(c => 
+      isSameDay(new Date(c.closure_date + 'T00:00:00'), date)
+    );
+
+    if (existingClosure) {
+      if (existingClosure.id) {
+        removeClosureMutation.mutate(existingClosure.id);
+      }
+    } else {
+      addClosureMutation.mutate({ date, name: newHolidayName });
+    }
+  };
+
+  const addCommonHoliday = (holiday: typeof COMMON_HOLIDAYS[0]) => {
+    const year = new Date().getFullYear();
+    const date = new Date(year, holiday.month, holiday.day);
+    addClosureMutation.mutate({ date, name: holiday.name });
   };
 
   const renderHoursGrid = (hourType: string) => {
@@ -257,6 +362,118 @@ export function BusinessHoursManager() {
     );
   };
 
+  const renderHolidayCalendar = () => {
+    const months = Array.from({ length: 12 }, (_, i) => addMonths(startOfMonth(new Date()), i));
+
+    return (
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <Label>Holiday Name (optional)</Label>
+          <div className="flex gap-2">
+            <Input 
+              placeholder="e.g., Christmas Day"
+              value={newHolidayName}
+              onChange={(e) => setNewHolidayName(e.target.value)}
+              className="max-w-xs"
+            />
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Click on dates in the calendar to mark them as closed. Click again to remove.
+          </p>
+        </div>
+
+        {/* Quick Add Common Holidays */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Quick Add Common Holidays</Label>
+          <div className="flex flex-wrap gap-2">
+            {COMMON_HOLIDAYS.map((holiday) => (
+              <Button
+                key={holiday.name}
+                variant="outline"
+                size="sm"
+                onClick={() => addCommonHoliday(holiday)}
+                disabled={addClosureMutation.isPending}
+                className="gap-1"
+              >
+                <Plus className="w-3 h-3" />
+                {holiday.name}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* 12 Month Calendar Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {months.map((month) => (
+            <div key={month.toISOString()} className="border rounded-lg p-2">
+              <Calendar
+                mode="single"
+                month={month}
+                onMonthChange={() => {}}
+                selected={undefined}
+                onSelect={handleDateSelect}
+                modifiers={{
+                  closed: closedDates,
+                }}
+                modifiersStyles={{
+                  closed: { 
+                    backgroundColor: 'hsl(var(--destructive))', 
+                    color: 'hsl(var(--destructive-foreground))',
+                    borderRadius: '50%',
+                  },
+                }}
+                className={cn("p-1 pointer-events-auto text-xs")}
+                classNames={{
+                  months: "flex flex-col",
+                  month: "space-y-1",
+                  caption: "flex justify-center pt-1 relative items-center",
+                  caption_label: "text-sm font-medium",
+                  nav: "hidden",
+                  table: "w-full border-collapse",
+                  head_row: "flex",
+                  head_cell: "text-muted-foreground rounded-md w-7 font-normal text-[0.65rem]",
+                  row: "flex w-full mt-1",
+                  cell: "h-7 w-7 text-center text-xs p-0 relative",
+                  day: "h-7 w-7 p-0 font-normal text-xs hover:bg-accent rounded-full",
+                  day_selected: "bg-primary text-primary-foreground",
+                  day_today: "bg-accent text-accent-foreground",
+                  day_outside: "text-muted-foreground opacity-50",
+                }}
+                disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* List of Closed Dates */}
+        {holidayClosures.length > 0 && (
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Scheduled Closures ({holidayClosures.length})</Label>
+            <div className="flex flex-wrap gap-2">
+              {holidayClosures.map((closure) => (
+                <Badge 
+                  key={closure.id || closure.closure_date} 
+                  variant="secondary"
+                  className="gap-1 py-1 px-2"
+                >
+                  {format(new Date(closure.closure_date + 'T00:00:00'), 'MMM d, yyyy')}
+                  {closure.name && <span className="text-muted-foreground">- {closure.name}</span>}
+                  <button
+                    onClick={() => closure.id && removeClosureMutation.mutate(closure.id)}
+                    className="ml-1 hover:text-destructive"
+                    disabled={removeClosureMutation.isPending}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <Card className="border-border/50">
       <CardHeader>
@@ -267,7 +484,7 @@ export function BusinessHoursManager() {
         <CardDescription>Set your operating hours for different scenarios</CardDescription>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
+        {isLoading || isLoadingClosures ? (
           <div className="space-y-3">
             {[1, 2, 3, 4, 5, 6, 7].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
           </div>
@@ -282,12 +499,19 @@ export function BusinessHoursManager() {
               ))}
             </TabsList>
 
-            {HOUR_TYPES.map(({ value, description }) => (
+            {HOUR_TYPES.filter(t => t.value !== 'holiday').map(({ value, description }) => (
               <TabsContent key={value} value={value}>
                 <p className="text-sm text-muted-foreground mb-4">{description}</p>
                 {renderHoursGrid(value)}
               </TabsContent>
             ))}
+
+            <TabsContent value="holiday">
+              <p className="text-sm text-muted-foreground mb-4">
+                {HOUR_TYPES.find(t => t.value === 'holiday')?.description}
+              </p>
+              {renderHolidayCalendar()}
+            </TabsContent>
           </Tabs>
         )}
       </CardContent>
