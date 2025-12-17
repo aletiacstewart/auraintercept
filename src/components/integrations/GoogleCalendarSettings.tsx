@@ -16,9 +16,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Calendar, Check, ExternalLink, Loader2, Unlink, RefreshCw } from 'lucide-react';
+import { Calendar, Check, Loader2, Unlink, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+interface GoogleCalendar {
+  id: string;
+  summary: string;
+  primary: boolean;
+  backgroundColor?: string;
+}
 
 export function GoogleCalendarSettings() {
   const { companyId } = useAuth();
@@ -42,6 +56,23 @@ export function GoogleCalendarSettings() {
   });
 
   const isConnected = !!integration?.google_refresh_token && integration?.google_calendar_enabled;
+
+  // Fetch available calendars when connected
+  const { data: calendarsData, isLoading: calendarsLoading } = useQuery({
+    queryKey: ['google-calendars', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: {
+          action: 'list_calendars',
+          companyId,
+        },
+      });
+      if (error) throw error;
+      return data as { calendars: GoogleCalendar[] };
+    },
+    enabled: isConnected,
+  });
 
   // Connect to Google Calendar
   const connectMutation = useMutation({
@@ -71,6 +102,31 @@ export function GoogleCalendarSettings() {
     },
   });
 
+  // Select calendar
+  const selectCalendarMutation = useMutation({
+    mutationFn: async (calendarId: string) => {
+      if (!companyId) throw new Error('No company ID');
+      
+      const { error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: {
+          action: 'select_calendar',
+          companyId,
+          calendarId,
+        },
+      });
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-integration'] });
+      toast.success('Calendar updated');
+    },
+    onError: (error) => {
+      console.error('Failed to update calendar:', error);
+      toast.error('Failed to update calendar selection');
+    },
+  });
+
   // Disconnect from Google Calendar
   const disconnectMutation = useMutation({
     mutationFn: async () => {
@@ -87,6 +143,7 @@ export function GoogleCalendarSettings() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['google-calendar-integration'] });
+      queryClient.invalidateQueries({ queryKey: ['google-calendars'] });
       toast.success('Google Calendar disconnected');
       setDisconnectDialogOpen(false);
     },
@@ -145,6 +202,7 @@ export function GoogleCalendarSettings() {
         window.history.replaceState({}, document.title, window.location.pathname);
         
         queryClient.invalidateQueries({ queryKey: ['google-calendar-integration'] });
+        queryClient.invalidateQueries({ queryKey: ['google-calendars'] });
         toast.success('Google Calendar connected successfully!');
       } catch (error) {
         console.error('Failed to complete Google Calendar connection:', error);
@@ -159,6 +217,11 @@ export function GoogleCalendarSettings() {
   useEffect(() => {
     handleOAuthCallback();
   }, []);
+
+  // Find selected calendar name
+  const selectedCalendarName = calendarsData?.calendars?.find(
+    (c) => c.id === integration?.google_calendar_id
+  )?.summary || integration?.google_calendar_id || 'primary calendar';
 
   if (isLoading) {
     return (
@@ -204,7 +267,7 @@ export function GoogleCalendarSettings() {
                 </CardTitle>
                 <CardDescription>
                   {isConnected 
-                    ? `Syncing with ${integration?.google_calendar_id || 'primary calendar'}`
+                    ? `Syncing with ${selectedCalendarName}`
                     : 'Sync appointments with your Google Calendar (two-way sync)'
                   }
                 </CardDescription>
@@ -216,6 +279,45 @@ export function GoogleCalendarSettings() {
           <div className="flex flex-col gap-4">
             {isConnected ? (
               <>
+                {/* Calendar Selector */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Select Calendar</label>
+                  {calendarsLoading ? (
+                    <Skeleton className="h-10 w-full" />
+                  ) : (
+                    <Select
+                      value={integration?.google_calendar_id || 'primary'}
+                      onValueChange={(value) => selectCalendarMutation.mutate(value)}
+                      disabled={selectCalendarMutation.isPending}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a calendar" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {calendarsData?.calendars?.map((calendar) => (
+                          <SelectItem key={calendar.id} value={calendar.id}>
+                            <div className="flex items-center gap-2">
+                              {calendar.backgroundColor && (
+                                <div 
+                                  className="w-3 h-3 rounded-full" 
+                                  style={{ backgroundColor: calendar.backgroundColor }}
+                                />
+                              )}
+                              <span>{calendar.summary}</span>
+                              {calendar.primary && (
+                                <Badge variant="secondary" className="ml-1 text-xs">Primary</Badge>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Choose which calendar to sync appointments with
+                  </p>
+                </div>
+
                 <div className="flex items-center gap-3 flex-wrap">
                   <Button
                     variant="outline"

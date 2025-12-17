@@ -5,13 +5,34 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+async function getAccessToken(refreshToken: string, clientId: string, clientSecret: string): Promise<string | null> {
+  const response = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      refresh_token: refreshToken,
+      grant_type: 'refresh_token',
+    }),
+  });
+
+  if (!response.ok) {
+    console.error('Failed to refresh token:', await response.text());
+    return null;
+  }
+
+  const data = await response.json();
+  return data.access_token;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { action, code, companyId, redirectUri } = await req.json();
+    const { action, code, companyId, redirectUri, calendarId } = await req.json();
     
     const GOOGLE_CLIENT_ID = Deno.env.get('GOOGLE_CLIENT_ID');
     const GOOGLE_CLIENT_SECRET = Deno.env.get('GOOGLE_CLIENT_SECRET');
@@ -31,7 +52,8 @@ Deno.serve(async (req) => {
       // Generate OAuth URL for Google Calendar
       const scopes = [
         'https://www.googleapis.com/auth/calendar',
-        'https://www.googleapis.com/auth/calendar.events'
+        'https://www.googleapis.com/auth/calendar.events',
+        'https://www.googleapis.com/auth/calendar.readonly'
       ].join(' ');
 
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
@@ -83,10 +105,10 @@ Deno.serve(async (req) => {
         }
       );
 
-      let calendarId = 'primary';
+      let primaryCalendarId = 'primary';
       if (calendarResponse.ok) {
         const calendarData = await calendarResponse.json();
-        calendarId = calendarData.id || 'primary';
+        primaryCalendarId = calendarData.id || 'primary';
       }
 
       // Save tokens to tenant_integrations
@@ -94,7 +116,7 @@ Deno.serve(async (req) => {
         .from('tenant_integrations')
         .update({
           google_refresh_token: tokens.refresh_token || null,
-          google_calendar_id: calendarId,
+          google_calendar_id: primaryCalendarId,
           google_calendar_enabled: true,
         })
         .eq('company_id', companyId);
@@ -106,7 +128,7 @@ Deno.serve(async (req) => {
           .insert({
             company_id: companyId,
             google_refresh_token: tokens.refresh_token || null,
-            google_calendar_id: calendarId,
+            google_calendar_id: primaryCalendarId,
             google_calendar_enabled: true,
           });
 
@@ -120,7 +142,97 @@ Deno.serve(async (req) => {
       }
 
       return new Response(
-        JSON.stringify({ success: true, calendarId }),
+        JSON.stringify({ success: true, calendarId: primaryCalendarId }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (action === 'list_calendars') {
+      // Fetch list of available calendars
+      const { data: integration, error: fetchError } = await supabase
+        .from('tenant_integrations')
+        .select('google_refresh_token')
+        .eq('company_id', companyId)
+        .single();
+
+      if (fetchError || !integration?.google_refresh_token) {
+        return new Response(
+          JSON.stringify({ error: 'Not connected to Google Calendar' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const accessToken = await getAccessToken(
+        integration.google_refresh_token,
+        GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET
+      );
+
+      if (!accessToken) {
+        return new Response(
+          JSON.stringify({ error: 'Failed to refresh access token' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const calendarListResponse = await fetch(
+        'https://www.googleapis.com/calendar/v3/users/me/calendarList',
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (!calendarListResponse.ok) {
+        const errorText = await calendarListResponse.text();
+        console.error('Failed to fetch calendars:', errorText);
+        return new Response(
+          JSON.stringify({ error: 'Failed to fetch calendars' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const calendarListData = await calendarListResponse.json();
+      
+      // Filter to only calendars user can write to
+      const calendars = (calendarListData.items || [])
+        .filter((cal: any) => cal.accessRole === 'owner' || cal.accessRole === 'writer')
+        .map((cal: any) => ({
+          id: cal.id,
+          summary: cal.summary,
+          primary: cal.primary || false,
+          backgroundColor: cal.backgroundColor,
+        }));
+
+      return new Response(
+        JSON.stringify({ calendars }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (action === 'select_calendar') {
+      // Update selected calendar
+      if (!calendarId) {
+        return new Response(
+          JSON.stringify({ error: 'Calendar ID required' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const { error } = await supabase
+        .from('tenant_integrations')
+        .update({ google_calendar_id: calendarId })
+        .eq('company_id', companyId);
+
+      if (error) {
+        console.error('Failed to update calendar:', error);
+        return new Response(
+          JSON.stringify({ error: 'Failed to update calendar selection' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
