@@ -199,9 +199,9 @@ export const AIAgentConsole = () => {
     setActiveTab('chat');
   };
 
-  const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string }) => {
+  const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string }) => {
     setShowFeedbackForm(false);
-    const feedbackMessage = `I'd like to leave feedback. My rating is ${feedback.rating} stars and my experience was ${feedback.sentiment}.${feedback.note ? ` Additional comments: ${feedback.note}` : ''}`;
+    const feedbackMessage = `I'd like to leave feedback. My name is ${feedback.customerName}${feedback.customerPhone ? ` and my phone number is ${feedback.customerPhone}` : ''}. My rating is ${feedback.rating} stars and my experience was ${feedback.sentiment}.${feedback.note ? ` Additional comments: ${feedback.note}` : ''}`;
     await sendMessage(feedbackMessage);
   };
 
