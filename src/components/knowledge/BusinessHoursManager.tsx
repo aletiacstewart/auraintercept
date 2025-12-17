@@ -8,8 +8,9 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Save, Clock } from 'lucide-react';
+import { Save, Clock, Building2, Truck, AlertTriangle, CalendarHeart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface BusinessHour {
@@ -18,9 +19,17 @@ interface BusinessHour {
   open_time: string | null;
   close_time: string | null;
   is_closed: boolean;
+  hour_type: string;
 }
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+const HOUR_TYPES = [
+  { value: 'office', label: 'Office Hours', icon: Building2, description: 'Regular office/business hours' },
+  { value: 'field', label: 'Field Hours', icon: Truck, description: 'Service/field technician hours' },
+  { value: 'emergency', label: 'Emergency Hours', icon: AlertTriangle, description: '24/7 emergency availability' },
+  { value: 'holiday', label: 'Holiday Hours', icon: CalendarHeart, description: 'Special holiday schedule' },
+];
 
 const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
   const hour = Math.floor(i / 2);
@@ -31,17 +40,49 @@ const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
   return { value: time, label: `${displayHour}:${minute} ${ampm}` };
 });
 
-const DEFAULT_HOURS: BusinessHour[] = DAYS.map((_, index) => ({
-  day_of_week: index,
-  open_time: index === 0 || index === 6 ? null : '09:00:00',
-  close_time: index === 0 || index === 6 ? null : '17:00:00',
-  is_closed: index === 0 || index === 6,
-}));
+const getDefaultHours = (hourType: string): BusinessHour[] => {
+  if (hourType === 'emergency') {
+    // Emergency hours default to 24/7
+    return DAYS.map((_, index) => ({
+      day_of_week: index,
+      open_time: '00:00:00',
+      close_time: '23:30:00',
+      is_closed: false,
+      hour_type: hourType,
+    }));
+  }
+  
+  if (hourType === 'holiday') {
+    // Holiday hours default to closed
+    return DAYS.map((_, index) => ({
+      day_of_week: index,
+      open_time: null,
+      close_time: null,
+      is_closed: true,
+      hour_type: hourType,
+    }));
+  }
+
+  // Office and Field hours default to weekdays 9-5
+  return DAYS.map((_, index) => ({
+    day_of_week: index,
+    open_time: index === 0 || index === 6 ? null : '09:00:00',
+    close_time: index === 0 || index === 6 ? null : '17:00:00',
+    is_closed: index === 0 || index === 6,
+    hour_type: hourType,
+  }));
+};
 
 export function BusinessHoursManager() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
-  const [hours, setHours] = useState<BusinessHour[]>(DEFAULT_HOURS);
+  const [activeTab, setActiveTab] = useState('office');
+  const [hoursByType, setHoursByType] = useState<Record<string, BusinessHour[]>>({
+    office: getDefaultHours('office'),
+    field: getDefaultHours('field'),
+    emergency: getDefaultHours('emergency'),
+    holiday: getDefaultHours('holiday'),
+  });
 
   const { data: savedHours, isLoading } = useQuery({
     queryKey: ['business-hours', companyId],
@@ -60,19 +101,34 @@ export function BusinessHoursManager() {
 
   useEffect(() => {
     if (savedHours && savedHours.length > 0) {
-      const merged = DEFAULT_HOURS.map((defaultHour) => {
-        const saved = savedHours.find((h) => h.day_of_week === defaultHour.day_of_week);
-        return saved || defaultHour;
+      const newHoursByType: Record<string, BusinessHour[]> = {
+        office: getDefaultHours('office'),
+        field: getDefaultHours('field'),
+        emergency: getDefaultHours('emergency'),
+        holiday: getDefaultHours('holiday'),
+      };
+
+      // Group saved hours by type and merge
+      HOUR_TYPES.forEach(({ value: hourType }) => {
+        const savedForType = savedHours.filter((h) => (h.hour_type || 'office') === hourType);
+        if (savedForType.length > 0) {
+          newHoursByType[hourType] = getDefaultHours(hourType).map((defaultHour) => {
+            const saved = savedForType.find((h) => h.day_of_week === defaultHour.day_of_week);
+            return saved ? { ...saved, hour_type: hourType } : defaultHour;
+          });
+        }
       });
-      setHours(merged);
+
+      setHoursByType(newHoursByType);
     }
   }, [savedHours]);
 
   const saveMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (hourType: string) => {
       if (!companyId) throw new Error('No company ID');
 
-      // Upsert all hours
+      const hours = hoursByType[hourType];
+      
       for (const hour of hours) {
         const payload = {
           company_id: companyId,
@@ -80,35 +136,38 @@ export function BusinessHoursManager() {
           open_time: hour.is_closed ? null : hour.open_time,
           close_time: hour.is_closed ? null : hour.close_time,
           is_closed: hour.is_closed,
+          hour_type: hourType,
         };
 
         const { error } = await supabase
           .from('business_hours')
-          .upsert(payload, { onConflict: 'company_id,day_of_week' });
+          .upsert(payload, { onConflict: 'company_id,day_of_week,hour_type' });
         if (error) throw error;
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['business-hours'] });
-      toast.success('Business hours saved!');
+      toast.success('Hours saved successfully!');
     },
     onError: (error) => {
-      console.error('Error saving business hours:', error);
-      toast.error('Failed to save business hours');
+      console.error('Error saving hours:', error);
+      toast.error('Failed to save hours');
     },
   });
 
-  const updateHour = (dayIndex: number, field: keyof BusinessHour, value: unknown) => {
-    setHours((prev) =>
-      prev.map((h) =>
+  const updateHour = (hourType: string, dayIndex: number, field: keyof BusinessHour, value: unknown) => {
+    setHoursByType((prev) => ({
+      ...prev,
+      [hourType]: prev[hourType].map((h) =>
         h.day_of_week === dayIndex ? { ...h, [field]: value } : h
-      )
-    );
+      ),
+    }));
   };
 
-  const toggleDay = (dayIndex: number) => {
-    setHours((prev) =>
-      prev.map((h) =>
+  const toggleDay = (hourType: string, dayIndex: number) => {
+    setHoursByType((prev) => ({
+      ...prev,
+      [hourType]: prev[hourType].map((h) =>
         h.day_of_week === dayIndex
           ? {
               ...h,
@@ -117,7 +176,84 @@ export function BusinessHoursManager() {
               close_time: h.is_closed ? '17:00:00' : null,
             }
           : h
-      )
+      ),
+    }));
+  };
+
+  const renderHoursGrid = (hourType: string) => {
+    const hours = hoursByType[hourType];
+    
+    return (
+      <div className="space-y-3">
+        {hours.map((hour) => (
+          <div
+            key={hour.day_of_week}
+            className={cn(
+              'flex items-center gap-4 p-3 rounded-lg border transition-colors',
+              hour.is_closed ? 'bg-muted/30 border-transparent' : 'bg-card border-border'
+            )}
+          >
+            <div className="w-28 flex items-center gap-2">
+              <Switch
+                checked={!hour.is_closed}
+                onCheckedChange={() => toggleDay(hourType, hour.day_of_week)}
+              />
+              <Label className={cn('font-medium', hour.is_closed && 'text-muted-foreground')}>
+                {DAYS[hour.day_of_week]}
+              </Label>
+            </div>
+
+            {hour.is_closed ? (
+              <span className="text-muted-foreground text-sm">Closed</span>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Select
+                  value={hour.open_time || '09:00:00'}
+                  onValueChange={(value) => updateHour(hourType, hour.day_of_week, 'open_time', value)}
+                >
+                  <SelectTrigger className="w-28">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_OPTIONS.map((time) => (
+                      <SelectItem key={time.value} value={time.value}>
+                        {time.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <span className="text-muted-foreground">to</span>
+                <Select
+                  value={hour.close_time || '17:00:00'}
+                  onValueChange={(value) => updateHour(hourType, hour.day_of_week, 'close_time', value)}
+                >
+                  <SelectTrigger className="w-28">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_OPTIONS.map((time) => (
+                      <SelectItem key={time.value} value={time.value}>
+                        {time.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+        ))}
+
+        <div className="flex justify-end pt-4">
+          <Button 
+            onClick={() => saveMutation.mutate(hourType)} 
+            disabled={saveMutation.isPending} 
+            className="gap-2"
+          >
+            <Save className="w-4 h-4" />
+            {saveMutation.isPending ? 'Saving...' : 'Save Hours'}
+          </Button>
+        </div>
+      </div>
     );
   };
 
@@ -128,80 +264,31 @@ export function BusinessHoursManager() {
           <Clock className="w-5 h-5" />
           Business Hours
         </CardTitle>
-        <CardDescription>Set your operating hours for each day</CardDescription>
+        <CardDescription>Set your operating hours for different scenarios</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent>
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4, 5, 6, 7].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
           </div>
         ) : (
-          <>
-            {hours.map((hour) => (
-              <div
-                key={hour.day_of_week}
-                className={cn(
-                  'flex items-center gap-4 p-3 rounded-lg border transition-colors',
-                  hour.is_closed ? 'bg-muted/30 border-transparent' : 'bg-card border-border'
-                )}
-              >
-                <div className="w-24 flex items-center gap-2">
-                  <Switch
-                    checked={!hour.is_closed}
-                    onCheckedChange={() => toggleDay(hour.day_of_week)}
-                  />
-                  <Label className={cn('font-medium', hour.is_closed && 'text-muted-foreground')}>
-                    {DAYS[hour.day_of_week]}
-                  </Label>
-                </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-6">
+              {HOUR_TYPES.map(({ value, label, icon: Icon }) => (
+                <TabsTrigger key={value} value={value} className="gap-2">
+                  <Icon className="w-4 h-4" />
+                  <span className="hidden sm:inline">{label}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-                {hour.is_closed ? (
-                  <span className="text-muted-foreground text-sm">Closed</span>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Select
-                      value={hour.open_time || '09:00:00'}
-                      onValueChange={(value) => updateHour(hour.day_of_week, 'open_time', value)}
-                    >
-                      <SelectTrigger className="w-28">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {TIME_OPTIONS.map((time) => (
-                          <SelectItem key={time.value} value={time.value}>
-                            {time.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <span className="text-muted-foreground">to</span>
-                    <Select
-                      value={hour.close_time || '17:00:00'}
-                      onValueChange={(value) => updateHour(hour.day_of_week, 'close_time', value)}
-                    >
-                      <SelectTrigger className="w-28">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {TIME_OPTIONS.map((time) => (
-                          <SelectItem key={time.value} value={time.value}>
-                            {time.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-              </div>
+            {HOUR_TYPES.map(({ value, description }) => (
+              <TabsContent key={value} value={value}>
+                <p className="text-sm text-muted-foreground mb-4">{description}</p>
+                {renderHoursGrid(value)}
+              </TabsContent>
             ))}
-
-            <div className="flex justify-end pt-4">
-              <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} className="gap-2">
-                <Save className="w-4 h-4" />
-                {saveMutation.isPending ? 'Saving...' : 'Save Hours'}
-              </Button>
-            </div>
-          </>
+          </Tabs>
         )}
       </CardContent>
     </Card>

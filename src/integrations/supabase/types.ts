@@ -305,6 +305,7 @@ export type Database = {
           company_id: string
           created_at: string
           day_of_week: number
+          hour_type: string
           id: string
           is_closed: boolean
           open_time: string | null
@@ -315,6 +316,7 @@ export type Database = {
           company_id: string
           created_at?: string
           day_of_week: number
+          hour_type?: string
           id?: string
           is_closed?: boolean
           open_time?: string | null
@@ -325,6 +327,7 @@ export type Database = {
           company_id?: string
           created_at?: string
           day_of_week?: number
+          hour_type?: string
           id?: string
           is_closed?: boolean
           open_time?: string | null
