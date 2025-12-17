@@ -35,9 +35,9 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
         <div className="flex items-center gap-2 min-w-0">
           {/* Logo */}
           <div className="relative shrink-0">
-            <div className="h-9 w-9 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden">
+            <div className="h-[175px] w-[175px] rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden">
               {logoUrl && (
-                <img src={logoUrl} alt={companyName} className="h-6 w-6 object-contain" />
+                <img src={logoUrl} alt={companyName} className="h-[150px] w-[150px] object-contain" />
               )}
             </div>
             {/* Online status indicator */}
