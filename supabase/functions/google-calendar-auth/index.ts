@@ -478,6 +478,90 @@ Deno.serve(async (req) => {
       );
     }
 
+    if (action === 'delete_calendar') {
+      // Delete a user-created calendar
+      if (!calendarId) {
+        return new Response(
+          JSON.stringify({ error: 'Calendar ID required' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const { data: integration, error: fetchError } = await supabase
+        .from('tenant_integrations')
+        .select('google_refresh_token, google_calendar_id')
+        .eq('company_id', companyId)
+        .single();
+
+      if (fetchError || !integration?.google_refresh_token) {
+        return new Response(
+          JSON.stringify({ error: 'Not connected to Google Calendar' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const accessToken = await getAccessToken(
+        integration.google_refresh_token,
+        GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_SECRET
+      );
+
+      if (!accessToken) {
+        return new Response(
+          JSON.stringify({ error: 'Failed to refresh access token' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Cannot delete primary calendar
+      if (calendarId === 'primary' || calendarId.includes('@gmail.com') || calendarId.includes('@googlemail.com')) {
+        return new Response(
+          JSON.stringify({ error: 'Cannot delete primary calendar' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const deleteResponse = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (!deleteResponse.ok) {
+        const errorText = await deleteResponse.text();
+        console.error('Failed to delete calendar:', errorText);
+        return new Response(
+          JSON.stringify({ error: 'Failed to delete calendar. You can only delete calendars you created.' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // If the deleted calendar was the selected one, reset to primary
+      if (integration.google_calendar_id === calendarId) {
+        await supabase
+          .from('tenant_integrations')
+          .update({ google_calendar_id: 'primary' })
+          .eq('company_id', companyId);
+      }
+
+      // Delete any event mappings for this calendar
+      await supabase
+        .from('calendar_event_mappings')
+        .delete()
+        .eq('company_id', companyId);
+
+      console.log('Deleted calendar:', calendarId);
+
+      return new Response(
+        JSON.stringify({ success: true }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     if (action === 'disconnect') {
       // Disconnect Google Calendar
       const { error } = await supabase
