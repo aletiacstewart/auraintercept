@@ -34,6 +34,8 @@ interface TechnicianMapProps {
   onRouteCalculated?: (distance: string, duration: string) => void;
   selectedJobId?: string;
   onJobSelect?: (jobId: string) => void;
+  initialAddress?: string | null;
+  onAddressSearched?: () => void;
 }
 
 export function TechnicianMap({
@@ -41,6 +43,8 @@ export function TechnicianMap({
   onRouteCalculated,
   selectedJobId,
   onJobSelect,
+  initialAddress,
+  onAddressSearched,
 }: TechnicianMapProps) {
   const { toast } = useToast();
 
@@ -207,6 +211,62 @@ export function TechnicianMap({
     },
     [currentPosition, onRouteCalculated, toast]
   );
+
+  // Handle initial address from parent (when user selects a job from console)
+  useEffect(() => {
+    if (!initialAddress) return;
+    
+    // Set the search address
+    setSearchAddress(initialAddress);
+    
+    // Delay to ensure map is ready
+    const timer = setTimeout(async () => {
+      // Find matching job first
+      const matchingJob = jobs.find(j => 
+        j.address.toLowerCase().includes(initialAddress.toLowerCase()) ||
+        initialAddress.toLowerCase().includes(j.address.toLowerCase())
+      );
+      
+      if (matchingJob) {
+        // If we have coordinates for this job, use them directly
+        setRoute([matchingJob.lat, matchingJob.lng], matchingJob.address);
+        onJobSelect?.(matchingJob.id);
+      } else {
+        // Otherwise trigger a geocode search
+        const buildUrl = (q: string) =>
+          `https://nominatim.openstreetmap.org/search?format=json&limit=5&addressdetails=1&countrycodes=us&q=${encodeURIComponent(q)}`;
+
+        const stripUnit = (q: string) =>
+          q.replace(/\b(apt|apartment|unit|ste|suite|#)\s*\w+\b/gi, '').replace(/\s{2,}/g, ' ').trim();
+
+        try {
+          let resp = await fetch(buildUrl(initialAddress), { headers: { Accept: 'application/json' } });
+          let data = await resp.json();
+
+          if (!data?.length) {
+            const simplified = stripUnit(initialAddress);
+            if (simplified && simplified !== initialAddress) {
+              resp = await fetch(buildUrl(simplified), { headers: { Accept: 'application/json' } });
+              data = await resp.json();
+            }
+          }
+
+          if (data?.length) {
+            const best = data[0];
+            const lat = parseFloat(best.lat);
+            const lng = parseFloat(best.lon);
+            setRoute([lat, lng], best.display_name);
+          }
+        } catch (e) {
+          console.error('Geocode search failed:', e);
+        }
+      }
+      
+      onAddressSearched?.();
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [initialAddress, jobs, onJobSelect, onAddressSearched, setRoute]);
 
   const locateMe = useCallback(() => {
     if (!navigator.geolocation) return;
