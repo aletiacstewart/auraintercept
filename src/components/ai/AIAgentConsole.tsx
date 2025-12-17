@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
-  Bot, Send, User, Loader2, Trash2, Phone, Mic, Calendar, 
+  Bot, Send, User, Loader2, Home, Phone, Mic, Calendar, 
   Clock, MessageSquare, Sparkles, ChevronRight, Building2, Volume2,
   AlertTriangle, DollarSign, MapPin, Star
 } from 'lucide-react';
@@ -402,7 +402,7 @@ export const AIAgentConsole = () => {
                 onClick={clearMessages}
                 className="shrink-0"
               >
-                <Trash2 className="h-4 w-4" />
+                <Home className="h-4 w-4" />
               </Button>
               <Input
                 value={input}
