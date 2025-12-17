@@ -33,7 +33,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette, Pencil, Clock, Trash2 } from 'lucide-react';
+import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette, Pencil, Clock, Trash2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
 
@@ -135,6 +135,24 @@ export function GoogleCalendarSettings() {
         lastSyncedAt: data?.[0]?.last_synced_at,
         totalSynced: count || 0
       };
+    },
+    enabled: isConnected,
+  });
+
+  // Fetch failed syncs
+  const { data: failedSyncs } = useQuery({
+    queryKey: ['google-calendar-failed-syncs', companyId],
+    queryFn: async () => {
+      if (!companyId) return [];
+      const { data, error } = await supabase
+        .from('calendar_event_mappings')
+        .select('id, appointment_id, last_synced_at')
+        .eq('company_id', companyId)
+        .eq('sync_status', 'failed')
+        .order('last_synced_at', { ascending: false })
+        .limit(10);
+      if (error && error.code !== 'PGRST116') throw error;
+      return data || [];
     },
     enabled: isConnected,
   });
@@ -353,6 +371,32 @@ export function GoogleCalendarSettings() {
     onError: (error) => {
       console.error('Failed to sync appointments:', error);
       toast.error('Failed to sync appointments to Google Calendar');
+    },
+  });
+
+  // Retry failed syncs
+  const retryFailedMutation = useMutation({
+    mutationFn: async () => {
+      if (!companyId) throw new Error('No company ID');
+      
+      const { data, error } = await supabase.functions.invoke('google-calendar-sync', {
+        body: {
+          action: 'retry_failed',
+          companyId,
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-sync-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-failed-syncs'] });
+      toast.success(`Retried ${data?.retried || 0} failed syncs`);
+    },
+    onError: (error) => {
+      console.error('Failed to retry syncs:', error);
+      toast.error('Failed to retry failed syncs');
     },
   });
 
@@ -602,6 +646,37 @@ export function GoogleCalendarSettings() {
                 <p className="text-sm text-muted-foreground">
                   Appointments automatically sync to Google Calendar. Use "Sync All" to force-sync existing appointments.
                 </p>
+
+                {/* Failed Syncs Section */}
+                {failedSyncs && failedSyncs.length > 0 && (
+                  <div className="mt-4 p-3 rounded-lg border border-destructive/30 bg-destructive/5">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-destructive" />
+                        <span className="text-sm font-medium text-destructive">
+                          {failedSyncs.length} sync{failedSyncs.length > 1 ? 's' : ''} failed
+                        </span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => retryFailedMutation.mutate()}
+                        disabled={retryFailedMutation.isPending}
+                        className="gap-2 text-xs h-7"
+                      >
+                        {retryFailedMutation.isPending ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <RefreshCw className="w-3 h-3" />
+                        )}
+                        Retry All
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Some appointments failed to sync. Click "Retry All" to attempt syncing again.
+                    </p>
+                  </div>
+                )}
               </>
             ) : (
               <div className="flex flex-col gap-3">
