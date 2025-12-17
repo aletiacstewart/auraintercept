@@ -114,6 +114,20 @@ serve(async (req) => {
             required: []
           }
         }
+      },
+      {
+        type: "function",
+        function: {
+          name: "list_services",
+          description: "Get the list of available services with pricing and descriptions. Use this when a customer wants to see what services are offered or needs to pick services for a quote.",
+          parameters: {
+            type: "object",
+            properties: {
+              category: { type: "string", description: "Optional category to filter services" }
+            },
+            required: []
+          }
+        }
       }
     ];
 
@@ -265,6 +279,8 @@ async function executeToolCall(supabase: any, companyId: string, toolName: strin
       return getQuote(knowledge, args);
     case "track_appointment":
       return await trackAppointment(supabase, companyId, args);
+    case "list_services":
+      return listServices(knowledge, args);
     default:
       return { error: `Unknown tool: ${toolName}` };
   }
@@ -559,6 +575,51 @@ function getQuote(knowledge: any, args: any) {
   };
 }
 
+function listServices(knowledge: any, args: any) {
+  const { category } = args || {};
+  let services = knowledge.services || [];
+  
+  // Filter by category if provided
+  if (category) {
+    services = services.filter((s: any) => 
+      s.category?.toLowerCase().includes(category.toLowerCase())
+    );
+  }
+  
+  // Group services by category for better presentation
+  const categories: Record<string, any[]> = {};
+  for (const service of services) {
+    const cat = service.category || 'General';
+    if (!categories[cat]) categories[cat] = [];
+    categories[cat].push({
+      name: service.name,
+      description: service.description || '',
+      price: service.price || null,
+      flat_fee: service.flat_fee || null,
+      hourly_rate: service.hourly_rate || null,
+      duration_minutes: service.duration_minutes || 60,
+      service_type: service.service_type || 'in_person'
+    });
+  }
+  
+  return {
+    total_services: services.length,
+    categories,
+    services: services.map((s: any) => ({
+      name: s.name,
+      description: s.description || '',
+      price: s.price || null,
+      flat_fee: s.flat_fee || null,
+      hourly_rate: s.hourly_rate || null,
+      duration_minutes: s.duration_minutes || 60,
+      category: s.category || 'General'
+    })),
+    message: services.length > 0 
+      ? `Found ${services.length} available service(s)`
+      : "No services are currently available"
+  };
+}
+
 async function fetchKnowledgeBase(supabase: any, companyId: string) {
   const [servicesRes, faqsRes, hoursRes, docsRes, companyRes] = await Promise.all([
     supabase.from('services').select('*').eq('company_id', companyId).eq('is_active', true),
@@ -672,6 +733,14 @@ ${docsText || 'No additional documents'}
 8. If you don't know something, politely say so and offer to help with something else
 9. Keep responses concise but informative
 10. When booking is complete, confirm all details with the customer
+
+## Quote Generation Instructions
+When a customer asks for a quote or wants to know pricing:
+1. FIRST use list_services to get the available services and show them to the customer
+2. Present the services in a clear, organized list with names, descriptions, and prices
+3. Ask which service(s) they're interested in
+4. Once they select service(s), use get_quote to generate the final quote with totals
+5. If a service has pricing as flat_fee or hourly_rate instead of price, mention how pricing works
 
 ## Appointment Status Guide (for track_appointment results)
 When reporting appointment status, use the "status_summary" field which provides a human-readable message. The "effective_status" shows the actual status:
