@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { FeedbackForm } from '@/components/ai/FeedbackForm';
 import { ReviewForm } from '@/components/ai/ReviewForm';
 import { BookingForm, BookingData } from '@/components/ai/BookingForm';
+import { QuoteForm, QuoteData } from '@/components/ai/QuoteForm';
 import { VoiceChat } from '@/components/ai/VoiceChat';
 import { format } from 'date-fns';
 import logo from '@/assets/logo.png';
@@ -82,6 +83,7 @@ export default function Demo() {
   const [activeTab, setActiveTab] = useState('chat');
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showQuoteForm, setShowQuoteForm] = useState(false);
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll chat
@@ -174,17 +176,27 @@ export default function Demo() {
     if (actionId === 'feedback') {
       setShowFeedbackForm(true);
       setShowReviewForm(false);
+      setShowQuoteForm(false);
       setActiveTab('chat');
       return;
     }
     if (actionId === 'review') {
       setShowReviewForm(true);
       setShowFeedbackForm(false);
+      setShowQuoteForm(false);
+      setActiveTab('chat');
+      return;
+    }
+    if (actionId === 'quote') {
+      setShowQuoteForm(true);
+      setShowFeedbackForm(false);
+      setShowReviewForm(false);
       setActiveTab('chat');
       return;
     }
     setShowFeedbackForm(false);
     setShowReviewForm(false);
+    setShowQuoteForm(false);
     
     if (actionId === 'schedule') {
       setActiveTab('book');
@@ -236,6 +248,18 @@ export default function Demo() {
     
     setActiveTab('chat');
     await sendMessage(bookingMessage);
+  };
+
+  const handleQuoteSubmit = async (quote: QuoteData) => {
+    setShowQuoteForm(false);
+    const serviceNames = services
+      ?.filter(s => quote.selectedServices.includes(s.id))
+      .map(s => s.name)
+      .join(', ') || 'service';
+    
+    const quoteMessage = `I'd like to request a quote. My name is ${quote.customerName}, my phone number is ${quote.customerPhone}${quote.customerEmail ? `, email: ${quote.customerEmail}` : ''}${quote.customerAddress ? `, address: ${quote.customerAddress}` : ''}. I'm interested in: ${serviceNames}.${quote.issueDescription ? ` Issue description: ${quote.issueDescription}` : ''}`;
+    
+    await sendMessage(quoteMessage);
   };
 
   const formatTime = (time: string | null) => {
@@ -388,7 +412,14 @@ export default function Demo() {
                   />
                 )}
 
-                {!showFeedbackForm && !showReviewForm && messages.map((message, index) => (
+                {showQuoteForm && (
+                  <QuoteForm 
+                    services={services || []}
+                    onSubmit={handleQuoteSubmit}
+                  />
+                )}
+
+                {!showFeedbackForm && !showReviewForm && !showQuoteForm && messages.map((message, index) => (
                   <div
                     key={index}
                     className={cn(
@@ -437,7 +468,7 @@ export default function Demo() {
               </div>
 
               {/* Quick Actions Bar */}
-              {messages.length > 0 && !showFeedbackForm && !showReviewForm && (
+              {messages.length > 0 && !showFeedbackForm && !showReviewForm && !showQuoteForm && (
                 <div className="shrink-0 border-t p-2 bg-muted/30">
                   <div className="flex gap-1 overflow-x-auto">
                     {QUICK_ACTIONS.map((action) => (
