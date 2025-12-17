@@ -17,6 +17,7 @@ import { FeedbackForm } from '@/components/ai/FeedbackForm';
 import { ReviewForm } from '@/components/ai/ReviewForm';
 import { BookingForm, BookingData } from '@/components/ai/BookingForm';
 import { QuoteForm, QuoteData } from '@/components/ai/QuoteForm';
+import { TrackAppointmentForm, TrackingData } from '@/components/ai/TrackAppointmentForm';
 import { VoiceChat } from '@/components/ai/VoiceChat';
 import { format } from 'date-fns';
 import logo from '@/assets/logo.png';
@@ -84,6 +85,7 @@ export default function Demo() {
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showQuoteForm, setShowQuoteForm] = useState(false);
+  const [showTrackForm, setShowTrackForm] = useState(false);
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll chat
@@ -177,6 +179,7 @@ export default function Demo() {
       setShowFeedbackForm(true);
       setShowReviewForm(false);
       setShowQuoteForm(false);
+      setShowTrackForm(false);
       setActiveTab('chat');
       return;
     }
@@ -184,6 +187,7 @@ export default function Demo() {
       setShowReviewForm(true);
       setShowFeedbackForm(false);
       setShowQuoteForm(false);
+      setShowTrackForm(false);
       setActiveTab('chat');
       return;
     }
@@ -191,12 +195,22 @@ export default function Demo() {
       setShowQuoteForm(true);
       setShowFeedbackForm(false);
       setShowReviewForm(false);
+      setShowTrackForm(false);
+      setActiveTab('chat');
+      return;
+    }
+    if (actionId === 'track') {
+      setShowTrackForm(true);
+      setShowFeedbackForm(false);
+      setShowReviewForm(false);
+      setShowQuoteForm(false);
       setActiveTab('chat');
       return;
     }
     setShowFeedbackForm(false);
     setShowReviewForm(false);
     setShowQuoteForm(false);
+    setShowTrackForm(false);
     
     if (actionId === 'schedule') {
       setActiveTab('book');
@@ -260,6 +274,12 @@ export default function Demo() {
     const quoteMessage = `I'd like to request a quote. My name is ${quote.customerName}, my phone number is ${quote.customerPhone}${quote.customerEmail ? `, email: ${quote.customerEmail}` : ''}${quote.customerAddress ? `, address: ${quote.customerAddress}` : ''}. I'm interested in: ${serviceNames}.${quote.issueDescription ? ` Issue description: ${quote.issueDescription}` : ''}`;
     
     await sendMessage(quoteMessage);
+  };
+
+  const handleTrackSubmit = async (tracking: TrackingData) => {
+    setShowTrackForm(false);
+    const trackMessage = `I'd like to track my appointment. My name is ${tracking.customerName}${tracking.customerPhone ? `, phone: ${tracking.customerPhone}` : ''}${tracking.customerEmail ? `, email: ${tracking.customerEmail}` : ''}.`;
+    await sendMessage(trackMessage);
   };
 
   const formatTime = (time: string | null) => {
@@ -371,7 +391,7 @@ export default function Demo() {
             {/* Chat Tab */}
             <TabsContent value="chat" className="flex-1 flex flex-col min-h-0 m-0 p-0 data-[state=inactive]:hidden">
               <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.length === 0 && !showFeedbackForm && !showReviewForm && !showQuoteForm && (
+                {messages.length === 0 && !showFeedbackForm && !showReviewForm && !showQuoteForm && !showTrackForm && (
                   <div className="text-center py-8">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
                       <Bot className="h-8 w-8 text-primary" />
@@ -421,7 +441,13 @@ export default function Demo() {
                   />
                 )}
 
-                {!showFeedbackForm && !showReviewForm && !showQuoteForm && messages.map((message, index) => (
+                {showTrackForm && (
+                  <TrackAppointmentForm 
+                    onSubmit={handleTrackSubmit}
+                  />
+                )}
+
+                {!showFeedbackForm && !showReviewForm && !showQuoteForm && !showTrackForm && messages.map((message, index) => (
                   <div
                     key={index}
                     className={cn(
