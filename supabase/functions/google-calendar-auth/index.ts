@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { action, code, companyId, redirectUri, calendarId } = await req.json();
+    const { action, code, companyId, redirectUri, calendarId, calendarColor } = await req.json();
     
     const GOOGLE_CLIENT_ID = Deno.env.get('GOOGLE_CLIENT_ID');
     const GOOGLE_CLIENT_SECRET = Deno.env.get('GOOGLE_CLIENT_SECRET');
@@ -305,6 +305,27 @@ Deno.serve(async (req) => {
       const newCalendar = await createResponse.json();
       console.log('Created new calendar:', newCalendar.id);
 
+      // Set calendar color if provided
+      if (calendarColor) {
+        const colorResponse = await fetch(
+          `https://www.googleapis.com/calendar/v3/users/me/calendarList/${encodeURIComponent(newCalendar.id)}`,
+          {
+            method: 'PATCH',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              backgroundColor: calendarColor,
+              foregroundColor: '#ffffff',
+            }),
+          }
+        );
+        if (!colorResponse.ok) {
+          console.warn('Failed to set calendar color:', await colorResponse.text());
+        }
+      }
+
       // Update the selected calendar to the new one
       const { error: updateError } = await supabase
         .from('tenant_integrations')
@@ -321,6 +342,7 @@ Deno.serve(async (req) => {
           calendar: {
             id: newCalendar.id,
             summary: newCalendar.summary,
+            backgroundColor: calendarColor,
           }
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

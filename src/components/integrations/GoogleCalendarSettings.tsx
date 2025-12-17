@@ -17,6 +17,14 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -34,10 +42,40 @@ interface GoogleCalendar {
   backgroundColor?: string;
 }
 
+// Google Calendar supported colors
+const CALENDAR_COLORS = [
+  { id: '1', color: '#ac725e', name: 'Cocoa' },
+  { id: '2', color: '#d06b64', name: 'Flamingo' },
+  { id: '3', color: '#f83a22', name: 'Tomato' },
+  { id: '4', color: '#fa573c', name: 'Tangerine' },
+  { id: '5', color: '#ff7537', name: 'Pumpkin' },
+  { id: '6', color: '#ffad46', name: 'Mango' },
+  { id: '7', color: '#42d692', name: 'Eucalyptus' },
+  { id: '8', color: '#16a765', name: 'Basil' },
+  { id: '9', color: '#7bd148', name: 'Pistachio' },
+  { id: '10', color: '#b3dc6c', name: 'Avocado' },
+  { id: '11', color: '#fbe983', name: 'Citron' },
+  { id: '12', color: '#fad165', name: 'Banana' },
+  { id: '13', color: '#92e1c0', name: 'Sage' },
+  { id: '14', color: '#9fe1e7', name: 'Peacock' },
+  { id: '15', color: '#9fc6e7', name: 'Cobalt' },
+  { id: '16', color: '#4986e7', name: 'Blueberry' },
+  { id: '17', color: '#9a9cff', name: 'Lavender' },
+  { id: '18', color: '#b99aff', name: 'Wisteria' },
+  { id: '19', color: '#c2c2c2', name: 'Graphite' },
+  { id: '20', color: '#cabdbf', name: 'Birch' },
+  { id: '21', color: '#cca6ac', name: 'Cherry Blossom' },
+  { id: '22', color: '#f691b2', name: 'Grape' },
+  { id: '23', color: '#cd74e6', name: 'Amethyst' },
+  { id: '24', color: '#a47ae2', name: 'Violet' },
+];
+
 export function GoogleCalendarSettings() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
+  const [createCalendarDialogOpen, setCreateCalendarDialogOpen] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(CALENDAR_COLORS[7].color); // Default to Basil green
 
   // Fetch current Google Calendar connection status
   const { data: integration, isLoading } = useQuery({
@@ -129,13 +167,14 @@ export function GoogleCalendarSettings() {
 
   // Create dedicated calendar
   const createCalendarMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (color: string) => {
       if (!companyId) throw new Error('No company ID');
       
       const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
         body: {
           action: 'create_calendar',
           companyId,
+          calendarColor: color,
         },
       });
 
@@ -145,6 +184,7 @@ export function GoogleCalendarSettings() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['google-calendar-integration'] });
       queryClient.invalidateQueries({ queryKey: ['google-calendars'] });
+      setCreateCalendarDialogOpen(false);
       toast.success(`Created calendar: ${data?.calendar?.summary || 'Appointments'}`);
     },
     onError: (error) => {
@@ -346,15 +386,11 @@ export function GoogleCalendarSettings() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => createCalendarMutation.mutate()}
+                      onClick={() => setCreateCalendarDialogOpen(true)}
                       disabled={createCalendarMutation.isPending}
                       className="gap-1 text-xs h-7"
                     >
-                      {createCalendarMutation.isPending ? (
-                        <Loader2 className="w-3 h-3 animate-spin" />
-                      ) : (
-                        <Plus className="w-3 h-3" />
-                      )}
+                      <Plus className="w-3 h-3" />
                       Create New
                     </Button>
                   </div>
@@ -453,6 +489,61 @@ export function GoogleCalendarSettings() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Create Calendar Dialog with Color Picker */}
+      <Dialog open={createCalendarDialogOpen} onOpenChange={setCreateCalendarDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create Dedicated Calendar</DialogTitle>
+            <DialogDescription>
+              Create a new Google Calendar for your appointments. Choose a color to help identify it.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Calendar Color</label>
+              <div className="grid grid-cols-6 gap-2">
+                {CALENDAR_COLORS.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setSelectedColor(c.color)}
+                    className={cn(
+                      "w-8 h-8 rounded-full border-2 transition-all hover:scale-110",
+                      selectedColor === c.color 
+                        ? "border-foreground ring-2 ring-foreground/20" 
+                        : "border-transparent"
+                    )}
+                    style={{ backgroundColor: c.color }}
+                    title={c.name}
+                  />
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Selected: {CALENDAR_COLORS.find(c => c.color === selectedColor)?.name || 'Custom'}
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setCreateCalendarDialogOpen(false)}
+              disabled={createCalendarMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => createCalendarMutation.mutate(selectedColor)}
+              disabled={createCalendarMutation.isPending}
+            >
+              {createCalendarMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : null}
+              Create Calendar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
