@@ -28,6 +28,9 @@ import PublicChat from "./pages/PublicChat";
 import Inventory from "./pages/Inventory";
 import Quotes from "./pages/Quotes";
 import Invoices from "./pages/Invoices";
+import Warranties from "./pages/Warranties";
+import Referrals from "./pages/Referrals";
+import Campaigns from "./pages/Campaigns";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -62,6 +65,9 @@ const App = () => (
             <Route path="/dashboard/inventory" element={<Inventory />} />
             <Route path="/dashboard/quotes" element={<Quotes />} />
             <Route path="/dashboard/invoices" element={<Invoices />} />
+            <Route path="/dashboard/warranties" element={<Warranties />} />
+            <Route path="/dashboard/referrals" element={<Referrals />} />
+            <Route path="/dashboard/campaigns" element={<Campaigns />} />
             <Route path="/appointment" element={<CustomerPortal />} />
             <Route path="/chat/:companySlug" element={<PublicChat />} />
             <Route path="*" element={<NotFound />} />
