@@ -261,11 +261,12 @@ export function PlatformAnalytics() {
         ))}
       </div>
 
-      {/* Charts */}
       <Tabs defaultValue="appointments" className="space-y-4">
         <TabsList>
           <TabsTrigger value="appointments">Appointments</TabsTrigger>
           <TabsTrigger value="calls">AI Agent Calls</TabsTrigger>
+          <TabsTrigger value="revenue">Revenue</TabsTrigger>
+          <TabsTrigger value="quotes">Quotes</TabsTrigger>
           <TabsTrigger value="companies">Company Activity</TabsTrigger>
         </TabsList>
 
@@ -428,6 +429,84 @@ export function PlatformAnalytics() {
                     <span>Success Rate</span>
                     <span className="font-medium">{stats?.callCompletionRate ?? 0}%</span>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="revenue" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card className="border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Revenue Overview
+                </CardTitle>
+                <CardDescription>Platform-wide financial metrics</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <span className="text-sm">Total Platform Revenue</span>
+                  <span className="font-medium text-green-600">Coming Soon</span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <span className="text-sm">Outstanding Invoices</span>
+                  <span className="font-medium">Coming Soon</span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <span className="text-sm">Collection Rate</span>
+                  <span className="font-medium">Coming Soon</span>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-border/50">
+              <CardHeader>
+                <CardTitle>Revenue by Company</CardTitle>
+                <CardDescription>Top performing companies</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+                  Revenue data visualization coming soon
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="quotes" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card className="border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5" />
+                  Quote Metrics
+                </CardTitle>
+                <CardDescription>Quote performance across platform</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <span className="text-sm">Total Quotes</span>
+                  <span className="font-medium">Coming Soon</span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <span className="text-sm">Conversion Rate</span>
+                  <span className="font-medium">Coming Soon</span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <span className="text-sm">Average Quote Value</span>
+                  <span className="font-medium">Coming Soon</span>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-border/50">
+              <CardHeader>
+                <CardTitle>Quote Volume Trend</CardTitle>
+                <CardDescription>Daily quote activity</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+                  Quote trends coming soon
                 </div>
               </CardContent>
             </Card>

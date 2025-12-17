@@ -85,6 +85,15 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
     priority: 'recommended',
   },
   {
+    id: 'inventory',
+    title: 'Set Up Inventory',
+    description: 'Track parts and supplies for jobs',
+    icon: Upload,
+    href: '/dashboard/inventory',
+    checkComplete: (data) => (data as any).inventoryCount > 0,
+    priority: 'optional',
+  },
+  {
     id: 'twilio',
     title: 'Connect Twilio',
     description: 'Enable voice calls and SMS for your AI agent',
@@ -114,7 +123,7 @@ export function OnboardingChecklist() {
 
   const { data: onboardingData, isLoading } = useQuery({
     queryKey: ['onboarding-progress', companyId],
-    queryFn: async (): Promise<OnboardingData> => {
+    queryFn: async (): Promise<OnboardingData & { inventoryCount: number }> => {
       if (!companyId) {
         return {
           company: null,
@@ -122,15 +131,17 @@ export function OnboardingChecklist() {
           servicesCount: 0,
           faqsCount: 0,
           businessHoursCount: 0,
+          inventoryCount: 0,
         };
       }
 
-      const [companyRes, integrationsRes, servicesRes, faqsRes, hoursRes] = await Promise.all([
+      const [companyRes, integrationsRes, servicesRes, faqsRes, hoursRes, inventoryRes] = await Promise.all([
         supabase.from('companies').select('logo_url, primary_color').eq('id', companyId).single(),
         supabase.from('tenant_integrations').select('twilio_account_sid, twilio_auth_token, twilio_phone_number, elevenlabs_api_key').eq('company_id', companyId).maybeSingle(),
         supabase.from('services').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('is_active', true),
         supabase.from('faqs').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('is_active', true),
         supabase.from('business_hours').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('is_closed', false),
+        supabase.from('inventory_items').select('id', { count: 'exact', head: true }).eq('company_id', companyId).eq('is_active', true),
       ]);
 
       return {
@@ -139,6 +150,7 @@ export function OnboardingChecklist() {
         servicesCount: servicesRes.count ?? 0,
         faqsCount: faqsRes.count ?? 0,
         businessHoursCount: hoursRes.count ?? 0,
+        inventoryCount: inventoryRes.count ?? 0,
       };
     },
     enabled: !!companyId,
