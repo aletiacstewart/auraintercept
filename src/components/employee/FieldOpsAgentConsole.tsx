@@ -46,10 +46,10 @@ interface QuickAction {
 const QUICK_ACTIONS: QuickAction[] = [
   { id: 'directions', label: 'Get Directions', icon: Navigation, message: '' },
   { id: 'eta', label: 'Update ETA', icon: Clock, message: '' },
-  { id: 'checkin', label: 'Check In', icon: CheckCircle, message: 'I have arrived at the job site and want to check in' },
+  { id: 'checkin', label: 'Check In', icon: CheckCircle, message: '' },
   { id: 'enroute', label: 'En Route', icon: Truck, message: '' },
-  { id: 'photos', label: 'Upload Photos', icon: Camera, message: 'I need to upload before/after photos for this job' },
-  { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: 'I need to speak with dispatch about my current job' },
+  { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: '', variant: 'default' },
+  { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: '' },
 ];
 
 interface JobAssignment {
@@ -74,7 +74,7 @@ interface FieldOpsAgentConsoleProps {
   className?: string;
 }
 
-type SelectorMode = 'directions' | 'enroute' | 'eta' | null;
+type SelectorMode = 'directions' | 'enroute' | 'eta' | 'checkin' | 'complete' | null;
 
 export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }: FieldOpsAgentConsoleProps) {
   const { user, companyId: authCompanyId } = useAuth();
@@ -160,6 +160,12 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (selectorMode === 'eta') {
       return assignedJobs.filter(job => ['accepted', 'en_route'].includes(job.status));
     }
+    if (selectorMode === 'checkin') {
+      return assignedJobs.filter(job => job.status === 'en_route');
+    }
+    if (selectorMode === 'complete') {
+      return assignedJobs.filter(job => ['arrived', 'in_progress'].includes(job.status));
+    }
     return assignedJobs;
   };
 
@@ -194,9 +200,16 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       setEtaMinutes('');
       return;
     }
+    if (action.id === 'checkin') {
+      setSelectorMode('checkin');
+      return;
+    }
+    if (action.id === 'complete') {
+      setSelectorMode('complete');
+      return;
+    }
     if (action.id === 'dispatch') {
       if (companyData?.dispatch_phone) {
-        // Clean the phone number and initiate call
         const cleanPhone = companyData.dispatch_phone.replace(/[^\d+]/g, '');
         window.location.href = `tel:${cleanPhone}`;
         toast.success('Calling Dispatch', { description: companyData.name || 'Company dispatch line' });
@@ -310,6 +323,84 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     }
   }, [selectedJobForEta, etaMinutes, processingJobId, refetchJobs, sendMessage]);
 
+  const handleSelectJobForCheckIn = useCallback(async (job: JobAssignment) => {
+    if (processingJobId) return;
+    
+    setProcessingJobId(job.id);
+    const customerName = job.appointments?.customer_name || 'Customer';
+    
+    try {
+      const { error: updateError } = await supabase
+        .from('job_assignments')
+        .update({ 
+          status: 'arrived',
+          arrived_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', job.id);
+
+      if (updateError) throw updateError;
+
+      await supabase.functions.invoke('send-job-notification', {
+        body: {
+          jobAssignmentId: job.id,
+          notificationType: 'arrived',
+          recipientType: 'customer'
+        }
+      });
+
+      toast.success(`Checked in at ${customerName}'s location`, { description: 'Customer has been notified of your arrival' });
+      refetchJobs();
+      setSelectorMode(null);
+      sendMessage(`I have arrived and checked in at ${customerName}'s location for their ${job.appointments?.service_type || 'service'} appointment.`);
+
+    } catch (error) {
+      console.error('Check-in error:', error);
+      toast.error('Failed to check in', { description: 'Please try again' });
+    } finally {
+      setProcessingJobId(null);
+    }
+  }, [processingJobId, refetchJobs, sendMessage]);
+
+  const handleSelectJobForComplete = useCallback(async (job: JobAssignment) => {
+    if (processingJobId) return;
+    
+    setProcessingJobId(job.id);
+    const customerName = job.appointments?.customer_name || 'Customer';
+    
+    try {
+      const { error: updateError } = await supabase
+        .from('job_assignments')
+        .update({ 
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', job.id);
+
+      if (updateError) throw updateError;
+
+      await supabase.functions.invoke('send-job-notification', {
+        body: {
+          jobAssignmentId: job.id,
+          notificationType: 'completed',
+          recipientType: 'customer'
+        }
+      });
+
+      toast.success(`Job completed for ${customerName}`, { description: 'Customer has been notified' });
+      refetchJobs();
+      setSelectorMode(null);
+      sendMessage(`I have completed the ${job.appointments?.service_type || 'service'} job for ${customerName}.`);
+
+    } catch (error) {
+      console.error('Complete job error:', error);
+      toast.error('Failed to complete job', { description: 'Please try again' });
+    } finally {
+      setProcessingJobId(null);
+    }
+  }, [processingJobId, refetchJobs, sendMessage]);
+
   const getAgentBadge = (agentType?: string) => {
     const agent = FIELD_OPS_AGENTS.find(a => a.id === agentType);
     if (!agent) return null;
@@ -404,6 +495,24 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         emptyMessage: 'No active appointments to update ETA',
         actionIcon: Clock,
         onSelect: handleSelectJobForEta,
+      };
+    }
+    if (selectorMode === 'checkin') {
+      return {
+        icon: CheckCircle,
+        title: 'Select appointment to check in',
+        emptyMessage: 'No en route appointments to check in',
+        actionIcon: CheckCircle,
+        onSelect: handleSelectJobForCheckIn,
+      };
+    }
+    if (selectorMode === 'complete') {
+      return {
+        icon: CheckCircle,
+        title: 'Select job to mark as completed',
+        emptyMessage: 'No active jobs to complete',
+        actionIcon: CheckCircle,
+        onSelect: handleSelectJobForComplete,
       };
     }
     return null;
