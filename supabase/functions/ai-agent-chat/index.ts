@@ -6,6 +6,55 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Helper function to generate date/time context for AI agents
+function getDateTimeContext(): string {
+  const now = new Date();
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  
+  const today = now;
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  
+  // Get this week's dates starting from Sunday
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - now.getDay());
+  
+  const weekDates: string[] = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(startOfWeek);
+    d.setDate(startOfWeek.getDate() + i);
+    const isToday = d.toDateString() === today.toDateString();
+    const isTomorrow = d.toDateString() === tomorrow.toDateString();
+    let label = '';
+    if (isToday) label = ' (TODAY)';
+    else if (isTomorrow) label = ' (TOMORROW)';
+    weekDates.push(`${dayNames[i]}: ${monthNames[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}${label}`);
+  }
+  
+  // Get next week's dates
+  const nextWeekDates: string[] = [];
+  for (let i = 7; i < 14; i++) {
+    const d = new Date(startOfWeek);
+    d.setDate(startOfWeek.getDate() + i);
+    nextWeekDates.push(`${dayNames[i % 7]}: ${monthNames[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`);
+  }
+  
+  return `
+CURRENT DATE/TIME CONTEXT:
+- TODAY is: ${dayNames[today.getDay()]}, ${monthNames[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}
+- TOMORROW is: ${dayNames[tomorrow.getDay()]}, ${monthNames[tomorrow.getMonth()]} ${tomorrow.getDate()}, ${tomorrow.getFullYear()}
+- Current time: ${now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+
+THIS WEEK:
+${weekDates.join('\n')}
+
+NEXT WEEK:
+${nextWeekDates.join('\n')}
+
+IMPORTANT: When customers say "tomorrow", "next Monday", "this Friday", "next week", etc., use these dates to determine the actual calendar date. NEVER ask "what is tomorrow's date?" - you already know it!`;
+}
+
 // Agent system prompts with their specific behaviors and capabilities
 const AGENT_PROMPTS: Record<string, string> = {
   triage: `You are a Triage Agent for a service business. Your role is to:
@@ -1327,10 +1376,14 @@ YOUR FIRST MESSAGE MUST:
 5. Only ask for missing information`;
     }
 
+    const dateTimeContext = getDateTimeContext();
+    
     const systemPrompt = `${basePrompt}
 ${handoffInstructions}
 
 Company Name: ${company?.name || 'Our Company'}
+${dateTimeContext}
+
 ${knowledgeBaseContext}
 
 Current Context: ${JSON.stringify(contextData)}
@@ -1340,6 +1393,7 @@ ${settings.custom_instructions ? `Additional Instructions: ${settings.custom_ins
 
 CRITICAL RULES:
 - NEVER ask for information you already have
+- When customers say "tomorrow", "next Monday", etc., use the date context above to determine the actual date. NEVER ask what tomorrow's date is!
 - After using a tool (like check_tech_availability), you MUST tell the customer the results and next steps
 - Never leave the conversation hanging after a tool call - always follow up with what you found
 - Be specific about technician names, distances, and ETAs when you have them

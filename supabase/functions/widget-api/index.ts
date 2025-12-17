@@ -172,12 +172,48 @@ You are the ETA Agent. Help track technician arrival.
 - Offer to send text updates`;
       }
 
+      // Generate detailed date context (reusing dayNames from above)
+      const now = new Date();
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      
+      const weekDates: string[] = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(startOfWeek);
+        d.setDate(startOfWeek.getDate() + i);
+        const isToday = d.toDateString() === now.toDateString();
+        const isTomorrow = d.toDateString() === tomorrow.toDateString();
+        let label = '';
+        if (isToday) label = ' (TODAY)';
+        else if (isTomorrow) label = ' (TOMORROW)';
+        weekDates.push(`${dayNames[i]}: ${monthNames[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}${label}`);
+      }
+      
+      const nextWeekDates: string[] = [];
+      for (let i = 7; i < 14; i++) {
+        const d = new Date(startOfWeek);
+        d.setDate(startOfWeek.getDate() + i);
+        nextWeekDates.push(`${dayNames[i % 7]}: ${monthNames[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`);
+      }
+
       const systemPrompt = `You are a friendly AI assistant for ${company.name}. 
 
-CURRENT CONTEXT:
-- Today is ${currentDay}
+CURRENT DATE/TIME CONTEXT:
+- TODAY is: ${dayNames[now.getDay()]}, ${monthNames[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}
+- TOMORROW is: ${dayNames[tomorrow.getDay()]}, ${monthNames[tomorrow.getMonth()]} ${tomorrow.getDate()}, ${tomorrow.getFullYear()}
 - Current time: ${currentTime}
 - Agent Role: ${agentContext.charAt(0).toUpperCase() + agentContext.slice(1)} Agent
+
+THIS WEEK:
+${weekDates.join('\n')}
+
+NEXT WEEK:
+${nextWeekDates.join('\n')}
+
+IMPORTANT: When customers say "tomorrow", "next Monday", "this Friday", etc., use these dates. NEVER ask what tomorrow's date is!
 
 ${agentInstructions}
 

@@ -444,6 +444,52 @@ async function fetchKnowledgeBase(supabase: any, companyId: string) {
   };
 }
 
+function getDateTimeContext(): string {
+  const now = new Date();
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  
+  const today = now;
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - now.getDay());
+  
+  const weekDates: string[] = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(startOfWeek);
+    d.setDate(startOfWeek.getDate() + i);
+    const isToday = d.toDateString() === today.toDateString();
+    const isTomorrow = d.toDateString() === tomorrow.toDateString();
+    let label = '';
+    if (isToday) label = ' (TODAY)';
+    else if (isTomorrow) label = ' (TOMORROW)';
+    weekDates.push(`${dayNames[i]}: ${monthNames[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}${label}`);
+  }
+  
+  const nextWeekDates: string[] = [];
+  for (let i = 7; i < 14; i++) {
+    const d = new Date(startOfWeek);
+    d.setDate(startOfWeek.getDate() + i);
+    nextWeekDates.push(`${dayNames[i % 7]}: ${monthNames[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`);
+  }
+  
+  return `
+CURRENT DATE/TIME:
+- TODAY: ${dayNames[today.getDay()]}, ${monthNames[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}
+- TOMORROW: ${dayNames[tomorrow.getDay()]}, ${monthNames[tomorrow.getMonth()]} ${tomorrow.getDate()}, ${tomorrow.getFullYear()}
+- Time: ${now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+
+THIS WEEK:
+${weekDates.join('\n')}
+
+NEXT WEEK:
+${nextWeekDates.join('\n')}
+
+When customers say "tomorrow", "next Monday", etc., use these dates. NEVER ask what tomorrow's date is!`;
+}
+
 function buildSystemPrompt(knowledge: any) {
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   
@@ -464,7 +510,11 @@ function buildSystemPrompt(knowledge: any) {
     d.content_text ? `Document "${d.name}":\n${d.content_text}` : ''
   ).filter(Boolean).join('\n\n');
 
+  const dateTimeContext = getDateTimeContext();
+
   return `You are a helpful AI assistant for ${knowledge.companyName}. Your role is to help customers book appointments, answer questions about services, and provide information about the business.
+
+${dateTimeContext}
 
 ## Business Hours
 ${hoursText || 'Not specified'}
