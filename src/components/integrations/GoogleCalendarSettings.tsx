@@ -33,7 +33,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette, Pencil, Clock } from 'lucide-react';
+import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette, Pencil, Clock, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
 
@@ -79,6 +79,7 @@ export function GoogleCalendarSettings() {
   const [createCalendarDialogOpen, setCreateCalendarDialogOpen] = useState(false);
   const [changeColorDialogOpen, setChangeColorDialogOpen] = useState(false);
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [deleteCalendarDialogOpen, setDeleteCalendarDialogOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(CALENDAR_COLORS[7].color); // Default to Basil green
   const [newCalendarName, setNewCalendarName] = useState('');
 
@@ -273,6 +274,35 @@ export function GoogleCalendarSettings() {
     onError: (error) => {
       console.error('Failed to rename calendar:', error);
       toast.error('Failed to rename calendar');
+    },
+  });
+
+  // Delete calendar
+  const deleteCalendarMutation = useMutation({
+    mutationFn: async () => {
+      if (!companyId || !integration?.google_calendar_id) throw new Error('No calendar selected');
+      
+      const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: {
+          action: 'delete_calendar',
+          companyId,
+          calendarId: integration.google_calendar_id,
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['google-calendars'] });
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-integration'] });
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-sync-stats'] });
+      setDeleteCalendarDialogOpen(false);
+      toast.success('Calendar deleted');
+    },
+    onError: (error: any) => {
+      console.error('Failed to delete calendar:', error);
+      toast.error(error?.message || 'Failed to delete calendar. You can only delete calendars you created.');
     },
   });
 
@@ -526,6 +556,23 @@ export function GoogleCalendarSettings() {
                       <Pencil className="w-3 h-3" />
                       Rename
                     </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDeleteCalendarDialogOpen(true)}
+                      disabled={
+                        deleteCalendarMutation.isPending || 
+                        !integration?.google_calendar_id ||
+                        integration?.google_calendar_id === 'primary' ||
+                        integration?.google_calendar_id?.includes('@gmail.com') ||
+                        integration?.google_calendar_id?.includes('@googlemail.com') ||
+                        calendarsData?.calendars?.find(c => c.id === integration?.google_calendar_id)?.primary
+                      }
+                      className="gap-1 text-xs h-7 text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      Delete
+                    </Button>
                   </div>
                 </div>
 
@@ -775,6 +822,34 @@ export function GoogleCalendarSettings() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Calendar Dialog */}
+      <AlertDialog open={deleteCalendarDialogOpen} onOpenChange={setDeleteCalendarDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Calendar</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{selectedCalendarName}"? This will permanently delete 
+              the calendar and all its events from Google Calendar. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteCalendarMutation.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteCalendarMutation.mutate()}
+              disabled={deleteCalendarMutation.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteCalendarMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : null}
+              Delete Calendar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
