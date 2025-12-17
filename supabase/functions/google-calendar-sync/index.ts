@@ -512,6 +512,108 @@ Deno.serve(async (req) => {
       );
     }
 
+    if (action === 'retry_failed') {
+      // Retry failed syncs
+      const { data: failedMappings, error: fetchError } = await supabase
+        .from('calendar_event_mappings')
+        .select('appointment_id, google_event_id')
+        .eq('company_id', companyId)
+        .eq('sync_status', 'failed');
+
+      if (fetchError) {
+        return new Response(
+          JSON.stringify({ error: 'Failed to fetch failed syncs' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (!failedMappings || failedMappings.length === 0) {
+        return new Response(
+          JSON.stringify({ success: true, retried: 0, message: 'No failed syncs to retry' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      let retried = 0;
+      let errors = 0;
+
+      for (const mapping of failedMappings) {
+        try {
+          // Get appointment data
+          const { data: appt, error: apptError } = await supabase
+            .from('appointments')
+            .select('*')
+            .eq('id', mapping.appointment_id)
+            .single();
+
+          if (apptError || !appt) {
+            // Appointment no longer exists, remove mapping
+            await supabase
+              .from('calendar_event_mappings')
+              .delete()
+              .eq('appointment_id', mapping.appointment_id);
+            continue;
+          }
+
+          const eventData = appointmentToGoogleEvent(appt, companyName);
+
+          let response;
+          if (mapping.google_event_id) {
+            // Try to update existing event
+            response = await fetch(
+              `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${mapping.google_event_id}`,
+              {
+                method: 'PUT',
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(eventData),
+              }
+            );
+          } else {
+            // Create new event
+            response = await fetch(
+              `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`,
+              {
+                method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(eventData),
+              }
+            );
+          }
+
+          if (response.ok) {
+            const eventResult = await response.json();
+            await supabase
+              .from('calendar_event_mappings')
+              .update({ 
+                sync_status: 'synced', 
+                last_synced_at: new Date().toISOString(),
+                google_event_id: eventResult.id
+              })
+              .eq('appointment_id', mapping.appointment_id);
+            retried++;
+          } else {
+            errors++;
+          }
+        } catch (e) {
+          console.error(`Error retrying sync for ${mapping.appointment_id}:`, e);
+          errors++;
+        }
+      }
+
+      console.log(`Retry complete: ${retried} synced, ${errors} errors`);
+
+      return new Response(
+        JSON.stringify({ success: true, retried, errors }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     return new Response(
       JSON.stringify({ error: 'Invalid action' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
