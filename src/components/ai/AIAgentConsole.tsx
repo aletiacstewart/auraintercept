@@ -500,8 +500,8 @@ export const AIAgentConsole = () => {
         </TabsContent>
 
         {/* Services Tab */}
-        <TabsContent value="services" className="flex-1 min-h-0 overflow-hidden m-0">
-          <ScrollArea className="h-full">
+        <TabsContent value="services" className="flex-1 min-h-0 relative m-0">
+          <div className="absolute inset-0 overflow-y-auto">
             <div className="p-4 space-y-3">
               {services?.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">
@@ -541,32 +541,31 @@ export const AIAgentConsole = () => {
                   </button>
                 ))
               )}
-              
-              <Button 
-                className="w-full mt-4"
-                onClick={() => setActiveTab('book')}
-              >
+
+              <Button className="w-full mt-4" onClick={() => setActiveTab('book')}>
                 <Calendar className="h-4 w-4 mr-2" />
                 Schedule an Appointment
               </Button>
             </div>
-          </ScrollArea>
+          </div>
         </TabsContent>
 
         {/* Book Tab */}
-        <TabsContent value="book" className="flex-1 min-h-0 overflow-y-auto m-0">
-          <div className="p-4">
-            <BookingForm
-              services={services || []}
-              onSubmit={handleBookingSubmit}
-              isLoading={isLoading}
-            />
+        <TabsContent value="book" className="flex-1 min-h-0 relative m-0">
+          <div className="absolute inset-0 overflow-y-auto">
+            <div className="p-4">
+              <BookingForm
+                services={services || []}
+                onSubmit={handleBookingSubmit}
+                isLoading={isLoading}
+              />
+            </div>
           </div>
         </TabsContent>
 
         {/* Hours Tab */}
-        <TabsContent value="hours" className="flex-1 min-h-0 overflow-hidden m-0">
-          <ScrollArea className="h-full">
+        <TabsContent value="hours" className="flex-1 min-h-0 relative m-0">
+          <div className="absolute inset-0 overflow-y-auto">
             <div className="p-4">
               <div className="bg-primary/10 rounded-lg p-4 mb-4">
                 <div className="flex items-center gap-2">
@@ -581,9 +580,9 @@ export const AIAgentConsole = () => {
                 {DAYS.map((day, index) => {
                   const hours = businessHours?.find(h => h.day_of_week === index);
                   const isToday = new Date().getDay() === index;
-                  
+
                   return (
-                    <div 
+                    <div
                       key={day}
                       className={cn(
                         "flex justify-between p-3 rounded-lg",
@@ -595,8 +594,8 @@ export const AIAgentConsole = () => {
                         {isToday && <Badge variant="outline" className="ml-2 text-xs">Today</Badge>}
                       </span>
                       <span className="text-muted-foreground">
-                        {!hours || hours.is_closed 
-                          ? 'Closed' 
+                        {!hours || hours.is_closed
+                          ? 'Closed'
                           : `${formatTime(hours.open_time)} - ${formatTime(hours.close_time)}`
                         }
                       </span>
@@ -605,28 +604,27 @@ export const AIAgentConsole = () => {
                 })}
               </div>
 
-              <Button 
-                className="w-full mt-6"
-                onClick={() => setActiveTab('book')}
-              >
+              <Button className="w-full mt-6" onClick={() => setActiveTab('book')}>
                 <Calendar className="h-4 w-4 mr-2" />
                 Schedule an Appointment
               </Button>
             </div>
-          </ScrollArea>
+          </div>
         </TabsContent>
 
         {/* Voice Tab */}
         {hasVoiceChat && companyId && (
-          <TabsContent value="voice" className="flex-1 overflow-hidden m-0">
-            <div className="h-full flex flex-col items-center justify-center p-4">
-              <VoiceChat 
-                companyId={companyId}
-                companyName={company?.name || 'AI Assistant'}
-                onTranscript={(role, text) => {
-                  console.log(`Voice transcript [${role}]:`, text);
-                }}
-              />
+          <TabsContent value="voice" className="flex-1 min-h-0 relative m-0">
+            <div className="absolute inset-0 overflow-y-auto">
+              <div className="min-h-full flex flex-col items-center justify-center p-4">
+                <VoiceChat
+                  companyId={companyId}
+                  companyName={company?.name || 'AI Assistant'}
+                  onTranscript={(role, text) => {
+                    console.log(`Voice transcript [${role}]:`, text);
+                  }}
+                />
+              </div>
             </div>
           </TabsContent>
         )}
