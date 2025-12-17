@@ -25,7 +25,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { format, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
-import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare, RefreshCw, CloudOff, Cloud, AlertTriangle } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare, RefreshCw, CloudOff, Cloud, AlertTriangle, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { toast } from 'sonner';
@@ -143,6 +143,27 @@ export function AppointmentCalendar() {
     onError: (error: any) => {
       console.error('Bulk sync failed:', error);
       toast.error(error.message || 'Failed to sync appointments');
+    },
+  });
+
+  // Import events from Google Calendar
+  const importMutation = useMutation({
+    mutationFn: async () => {
+      if (!companyId) throw new Error('No company ID');
+      const { data, error } = await supabase.functions.invoke('google-calendar-sync', {
+        body: { action: 'import_events', companyId }
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['employee-calendar-appointments'] });
+      const results = data?.results || { imported: 0, skipped: 0 };
+      toast.success(`Imported ${results.imported} events from Google Calendar (${results.skipped} skipped)`);
+    },
+    onError: (error: any) => {
+      console.error('Import failed:', error);
+      toast.error(error.message || 'Failed to import from Google Calendar');
     },
   });
 
@@ -420,19 +441,34 @@ export function AppointmentCalendar() {
                   )}
                 </div>
               )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => bulkSyncMutation.mutate()}
-                disabled={bulkSyncMutation.isPending}
-              >
-                {bulkSyncMutation.isPending ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                )}
-                Sync All to Calendar
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => importMutation.mutate()}
+                  disabled={importMutation.isPending}
+                >
+                  {importMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4 mr-2" />
+                  )}
+                  Import from Google
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => bulkSyncMutation.mutate()}
+                  disabled={bulkSyncMutation.isPending}
+                >
+                  {bulkSyncMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                  )}
+                  Sync All to Calendar
+                </Button>
+              </div>
             </div>
           )}
         </CardHeader>
