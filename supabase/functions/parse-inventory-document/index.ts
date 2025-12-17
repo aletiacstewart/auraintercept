@@ -1,0 +1,192 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const { documentContent, companyId } = await req.json();
+
+    if (!documentContent || !companyId) {
+      return new Response(
+        JSON.stringify({ error: "Document content and company ID are required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
+    }
+
+    console.log("Parsing inventory document for company:", companyId);
+    console.log("Document content length:", documentContent.length);
+
+    // Use AI to extract inventory items from the document
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          {
+            role: "system",
+            content: `You are an inventory data extraction assistant. Your job is to extract inventory items from documents (CSV, text tables, lists, etc.) and return them in a structured format.
+
+Extract the following fields for each item:
+- name (required): The item name
+- sku: Stock keeping unit / product code (optional)
+- description: Item description (optional)
+- quantity: Current stock quantity (default to 0 if not specified)
+- min_quantity: Minimum stock threshold (default to 5 if not specified)
+- unit_cost: Cost per unit in dollars (optional)
+- supplier: Supplier name (optional)
+- category: Item category (optional)
+
+Return ONLY a valid JSON array of items. Do not include any explanations or markdown formatting.
+If no valid inventory data is found, return an empty array: []
+
+Example output format:
+[
+  {"name": "Air Filter", "sku": "AF-001", "quantity": 50, "min_quantity": 10, "unit_cost": 12.99, "category": "Filters", "supplier": "HVAC Supplies Inc"},
+  {"name": "Capacitor 35/5", "sku": "CAP-355", "quantity": 25, "min_quantity": 5, "unit_cost": 8.50, "category": "Electrical"}
+]`
+          },
+          {
+            role: "user",
+            content: `Extract inventory items from this document:\n\n${documentContent}`
+          }
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "Payment required. Please add credits to continue." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const errorText = await response.text();
+      console.error("AI gateway error:", response.status, errorText);
+      throw new Error(`AI gateway error: ${response.status}`);
+    }
+
+    const aiResult = await response.json();
+    const aiContent = aiResult.choices?.[0]?.message?.content || "[]";
+    
+    console.log("AI response:", aiContent);
+
+    // Parse the AI response
+    let extractedItems;
+    try {
+      // Clean up potential markdown formatting
+      let cleanContent = aiContent.trim();
+      if (cleanContent.startsWith("```json")) {
+        cleanContent = cleanContent.slice(7);
+      }
+      if (cleanContent.startsWith("```")) {
+        cleanContent = cleanContent.slice(3);
+      }
+      if (cleanContent.endsWith("```")) {
+        cleanContent = cleanContent.slice(0, -3);
+      }
+      extractedItems = JSON.parse(cleanContent.trim());
+    } catch (parseError) {
+      console.error("Failed to parse AI response:", parseError);
+      return new Response(
+        JSON.stringify({ error: "Failed to parse inventory data from document", aiResponse: aiContent }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!Array.isArray(extractedItems)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid inventory data format", aiResponse: aiContent }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate and normalize items
+    const validatedItems = extractedItems
+      .filter((item: any) => item && typeof item.name === 'string' && item.name.trim())
+      .map((item: any) => ({
+        company_id: companyId,
+        name: item.name.trim(),
+        sku: item.sku?.toString().trim() || null,
+        description: item.description?.toString().trim() || null,
+        quantity: typeof item.quantity === 'number' ? Math.max(0, Math.floor(item.quantity)) : 0,
+        min_quantity: typeof item.min_quantity === 'number' ? Math.max(0, Math.floor(item.min_quantity)) : 5,
+        unit_cost: typeof item.unit_cost === 'number' ? Math.max(0, item.unit_cost) : null,
+        supplier: item.supplier?.toString().trim() || null,
+        category: item.category?.toString().trim() || null,
+        is_active: true,
+      }));
+
+    console.log(`Extracted ${validatedItems.length} valid inventory items`);
+
+    // Insert items into database
+    if (validatedItems.length > 0) {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      const { data: insertedData, error: insertError } = await supabase
+        .from("inventory_items")
+        .insert(validatedItems)
+        .select();
+
+      if (insertError) {
+        console.error("Database insert error:", insertError);
+        return new Response(
+          JSON.stringify({ error: "Failed to save inventory items", details: insertError.message }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      console.log(`Successfully inserted ${insertedData?.length || 0} items`);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          itemsExtracted: validatedItems.length,
+          itemsInserted: insertedData?.length || 0,
+          items: insertedData,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        itemsExtracted: 0,
+        itemsInserted: 0,
+        message: "No valid inventory items found in the document",
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    console.error("Error parsing inventory document:", error);
+    return new Response(
+      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+});
