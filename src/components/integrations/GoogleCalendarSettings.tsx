@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Calendar, Check, Loader2, Unlink, RefreshCw } from 'lucide-react';
+import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface GoogleCalendar {
@@ -124,6 +124,32 @@ export function GoogleCalendarSettings() {
     onError: (error) => {
       console.error('Failed to update calendar:', error);
       toast.error('Failed to update calendar selection');
+    },
+  });
+
+  // Create dedicated calendar
+  const createCalendarMutation = useMutation({
+    mutationFn: async () => {
+      if (!companyId) throw new Error('No company ID');
+      
+      const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: {
+          action: 'create_calendar',
+          companyId,
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-integration'] });
+      queryClient.invalidateQueries({ queryKey: ['google-calendars'] });
+      toast.success(`Created calendar: ${data?.calendar?.summary || 'Appointments'}`);
+    },
+    onError: (error) => {
+      console.error('Failed to create calendar:', error);
+      toast.error('Failed to create dedicated calendar');
     },
   });
 
@@ -313,9 +339,25 @@ export function GoogleCalendarSettings() {
                       </SelectContent>
                     </Select>
                   )}
-                  <p className="text-xs text-muted-foreground">
-                    Choose which calendar to sync appointments with
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-muted-foreground flex-1">
+                      Choose which calendar to sync appointments with
+                    </p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => createCalendarMutation.mutate()}
+                      disabled={createCalendarMutation.isPending}
+                      className="gap-1 text-xs h-7"
+                    >
+                      {createCalendarMutation.isPending ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Plus className="w-3 h-3" />
+                      )}
+                      Create New
+                    </Button>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-3 flex-wrap">
