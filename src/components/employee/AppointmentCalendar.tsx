@@ -25,11 +25,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { format, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
-import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare, RefreshCw, CloudOff, Cloud, AlertTriangle, Download } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare, RefreshCw, CloudOff, Cloud, AlertTriangle, Download, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { toast } from 'sonner';
 import { CalendarSyncBadge } from '@/components/appointments/CalendarSyncBadge';
+import { TechnicianAssignmentDialog } from '@/components/appointments/TechnicianAssignmentDialog';
 
 interface CalendarEventMapping {
   google_event_id: string | null;
@@ -51,6 +52,8 @@ interface Appointment {
   notes: string | null;
   job_status?: string;
   job_id?: string;
+  job_employee_id?: string | null;
+  job_employee_name?: string | null;
   calendar_sync?: CalendarEventMapping | null;
 }
 
@@ -62,6 +65,7 @@ export function AppointmentCalendar() {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [month, setMonth] = useState<Date>(new Date());
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [assignDialogOpen, setAssignDialogOpen] = useState(false);
 
   // Cancel appointment mutation
   const cancelMutation = useMutation({
@@ -197,14 +201,17 @@ export function AppointmentCalendar() {
           (calendarMappings || []).map(m => [m.appointment_id, m])
         );
 
-        // Fetch job assignments for status info
+        // Fetch job assignments for status info with employee names
         const { data: jobAssignments } = await supabase
           .from('job_assignments')
-          .select('appointment_id, status, id')
+          .select('appointment_id, status, id, employee_id, profiles:employee_id(full_name)')
           .in('appointment_id', appointmentIds.length > 0 ? appointmentIds : ['00000000-0000-0000-0000-000000000000']);
 
         const jobMap = new Map(
-          (jobAssignments || []).map(ja => [ja.appointment_id, ja])
+          (jobAssignments || []).map(ja => [ja.appointment_id, {
+            ...ja,
+            employee_name: (ja.profiles as any)?.full_name || null
+          }])
         );
 
         return (allCompanyAppointments || [])
@@ -212,6 +219,8 @@ export function AppointmentCalendar() {
             ...apt,
             job_status: jobMap.get(apt.id)?.status,
             job_id: jobMap.get(apt.id)?.id,
+            job_employee_id: jobMap.get(apt.id)?.employee_id,
+            job_employee_name: jobMap.get(apt.id)?.employee_name,
             calendar_sync: syncMap.get(apt.id) || null,
           }))
           .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
@@ -630,6 +639,38 @@ export function AppointmentCalendar() {
                 )}
               </div>
 
+              {/* Assigned Technician Info */}
+              {selectedAppointment.job_employee_name && (
+                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                  <User className="w-4 h-4 text-muted-foreground" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Assigned Technician</p>
+                    <p className="text-sm text-muted-foreground">{selectedAppointment.job_employee_name}</p>
+                  </div>
+                  {isAdmin && selectedAppointment.status === 'scheduled' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setAssignDialogOpen(true)}
+                    >
+                      Reassign
+                    </Button>
+                  )}
+                </div>
+              )}
+
+              {/* Assign Technician Button for Admins */}
+              {isAdmin && selectedAppointment.status === 'scheduled' && !selectedAppointment.job_employee_id && (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setAssignDialogOpen(true)}
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Assign Technician
+                </Button>
+              )}
+
               {selectedAppointment.status === 'scheduled' && (
                 <div className="flex gap-2 pt-4">
                   <Button 
@@ -711,6 +752,27 @@ export function AppointmentCalendar() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Technician Assignment Dialog */}
+      {selectedAppointment && (
+        <TechnicianAssignmentDialog
+          open={assignDialogOpen}
+          onOpenChange={setAssignDialogOpen}
+          appointment={{
+            id: selectedAppointment.id,
+            customer_name: selectedAppointment.customer_name,
+            customer_address: selectedAppointment.customer_address,
+            service_type: selectedAppointment.service_type,
+            datetime: selectedAppointment.datetime,
+            company_id: selectedAppointment.company_id,
+          }}
+          existingAssignment={selectedAppointment.job_id ? {
+            id: selectedAppointment.job_id,
+            employee_id: selectedAppointment.job_employee_id || null,
+            status: selectedAppointment.job_status || 'pending_acceptance',
+          } : null}
+        />
+      )}
     </div>
   );
 }
