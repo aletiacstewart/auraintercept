@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Bot, Building2, Users, Zap, Shield, MessageSquare } from 'lucide-react';
+import { Bot, Building2, Zap, Shield, MessageSquare, Play } from 'lucide-react';
 import logo from '@/assets/logo.png';
 
 export default function Index() {
@@ -46,6 +46,10 @@ export default function Index() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <Button variant="ghost" onClick={() => navigate('/demo')}>
+              <Play className="w-4 h-4 mr-1" />
+              Try Demo
+            </Button>
             <Button variant="ghost" onClick={() => navigate('/auth')}>
               Sign In
             </Button>
@@ -85,10 +89,10 @@ export default function Index() {
             size="lg" 
             variant="outline"
             className="text-lg px-8 py-6"
-            onClick={() => navigate('/auth?mode=platform_admin')}
+            onClick={() => navigate('/demo')}
           >
-            <Shield className="w-5 h-5 mr-2" />
-            Platform Admin
+            <Play className="w-5 h-5 mr-2" />
+            Try Live Demo
           </Button>
         </div>
       </section>
