@@ -403,7 +403,7 @@ export function EmployeeManagement() {
                               Roles
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-72" align="end">
+                          <PopoverContent className="w-72 max-h-[400px] overflow-y-auto" align="end" side="left">
                             <div className="space-y-3">
                               <h4 className="font-medium text-sm">Assign Job Roles</h4>
                               <p className="text-xs text-muted-foreground">
