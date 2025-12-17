@@ -321,7 +321,7 @@ export default function Demo() {
           </div>
 
           {/* Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0 overflow-hidden">
             <TabsList className="shrink-0 w-full justify-start rounded-none border-b bg-muted/30 p-0 h-auto">
               <TabsTrigger value="chat" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2">
                 Chat
@@ -338,7 +338,7 @@ export default function Demo() {
             </TabsList>
 
             {/* Chat Tab */}
-            <TabsContent value="chat" className="flex-1 flex flex-col min-h-0 m-0 p-0">
+            <TabsContent value="chat" className="flex-1 flex flex-col min-h-0 m-0 p-0 data-[state=inactive]:hidden">
               <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 && !showFeedbackForm && !showReviewForm && (
                   <div className="text-center py-8">
@@ -469,86 +469,92 @@ export default function Demo() {
             </TabsContent>
 
             {/* Services Tab */}
-            <TabsContent value="services" className="flex-1 overflow-y-auto p-4 m-0">
-              <h3 className="font-semibold mb-4">Our Services</h3>
-              {services && services.length > 0 ? (
-                <div className="space-y-3">
-                  {services.map((service) => (
-                    <div
-                      key={service.id}
-                      className="p-4 border rounded-lg hover:border-primary/50 cursor-pointer transition-colors"
-                      onClick={() => {
-                        setActiveTab('chat');
-                        sendMessage(`Tell me about ${service.name}`);
-                      }}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="font-medium">{service.name}</h4>
-                          {service.description && (
-                            <p className="text-sm text-muted-foreground mt-1">{service.description}</p>
-                          )}
-                        </div>
-                        <div className="text-right">
-                          {service.price && (
-                            <span className="font-semibold">${service.price}</span>
-                          )}
-                          {service.duration_minutes && (
-                            <p className="text-xs text-muted-foreground">{service.duration_minutes} min</p>
-                          )}
+            <TabsContent value="services" className="flex-1 overflow-y-auto p-4 m-0 data-[state=inactive]:hidden">
+              <div>
+                <h3 className="font-semibold mb-4">Our Services</h3>
+                {services && services.length > 0 ? (
+                  <div className="space-y-3">
+                    {services.map((service) => (
+                      <div
+                        key={service.id}
+                        className="p-4 border rounded-lg hover:border-primary/50 cursor-pointer transition-colors"
+                        onClick={() => {
+                          setActiveTab('chat');
+                          sendMessage(`Tell me about ${service.name}`);
+                        }}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-medium">{service.name}</h4>
+                            {service.description && (
+                              <p className="text-sm text-muted-foreground mt-1">{service.description}</p>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            {service.price && (
+                              <span className="font-semibold">${service.price}</span>
+                            )}
+                            {service.duration_minutes && (
+                              <p className="text-xs text-muted-foreground">{service.duration_minutes} min</p>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-muted-foreground text-center py-8">No services configured for demo</p>
-              )}
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-center py-8">No services configured for demo</p>
+                )}
+              </div>
             </TabsContent>
 
             {/* Hours Tab */}
-            <TabsContent value="hours" className="flex-1 overflow-y-auto p-4 m-0">
-              <h3 className="font-semibold mb-4">Business Hours</h3>
-              <div className="p-3 rounded-lg bg-primary/10 mb-4">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium">Today: {getTodayHours()}</span>
+            <TabsContent value="hours" className="flex-1 overflow-y-auto p-4 m-0 data-[state=inactive]:hidden">
+              <div>
+                <h3 className="font-semibold mb-4">Business Hours</h3>
+                <div className="p-3 rounded-lg bg-primary/10 mb-4">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium">Today: {getTodayHours()}</span>
+                  </div>
                 </div>
+                {businessHours && businessHours.length > 0 ? (
+                  <div className="space-y-2">
+                    {DAYS.map((day, index) => {
+                      const hours = businessHours.find(h => h.day_of_week === index);
+                      const isToday = new Date().getDay() === index;
+                      return (
+                        <div
+                          key={day}
+                          className={cn(
+                            'flex justify-between items-center py-2 px-3 rounded-lg',
+                            isToday && 'bg-primary/5 font-medium'
+                          )}
+                        >
+                          <span>{day}</span>
+                          <span className="text-muted-foreground">
+                            {hours?.is_closed
+                              ? 'Closed'
+                              : `${formatTime(hours?.open_time)} - ${formatTime(hours?.close_time)}`}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-center py-8">Hours not configured for demo</p>
+                )}
               </div>
-              {businessHours && businessHours.length > 0 ? (
-                <div className="space-y-2">
-                  {DAYS.map((day, index) => {
-                    const hours = businessHours.find(h => h.day_of_week === index);
-                    const isToday = new Date().getDay() === index;
-                    return (
-                      <div
-                        key={day}
-                        className={cn(
-                          'flex justify-between items-center py-2 px-3 rounded-lg',
-                          isToday && 'bg-primary/5 font-medium'
-                        )}
-                      >
-                        <span>{day}</span>
-                        <span className="text-muted-foreground">
-                          {hours?.is_closed
-                            ? 'Closed'
-                            : `${formatTime(hours?.open_time)} - ${formatTime(hours?.close_time)}`}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="text-muted-foreground text-center py-8">Hours not configured for demo</p>
-              )}
             </TabsContent>
 
             {/* Book Tab */}
-            <TabsContent value="book" className="flex-1 overflow-y-auto p-4 m-0">
-              <BookingForm
-                services={services || []}
-                onSubmit={handleBookingSubmit}
-              />
+            <TabsContent value="book" className="flex-1 overflow-y-auto p-4 m-0 data-[state=inactive]:hidden">
+              <div>
+                <BookingForm
+                  services={services || []}
+                  onSubmit={handleBookingSubmit}
+                />
+              </div>
             </TabsContent>
           </Tabs>
         </Card>
