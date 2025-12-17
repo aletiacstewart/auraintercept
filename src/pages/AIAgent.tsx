@@ -377,6 +377,7 @@ const AIAgent = () => {
                       <Badge variant="outline" className="flex items-center gap-1.5">
                         <MessageSquare className="h-3.5 w-3.5" />
                         Text Chat
+                        <span className="text-green-500">●</span>
                       </Badge>
                       <Badge variant="outline" className="flex items-center gap-1.5">
                         <Phone className="h-3.5 w-3.5" />
@@ -391,6 +392,7 @@ const AIAgent = () => {
                       <Badge variant="outline" className="flex items-center gap-1.5">
                         <Globe className="h-3.5 w-3.5" />
                         Web Widget
+                        <span className="text-green-500">●</span>
                       </Badge>
                     </div>
                   </div>
