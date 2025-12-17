@@ -63,7 +63,12 @@ export const AIAgentConsole = () => {
   const [input, setInput] = useState('');
   const [activeTab, setActiveTab] = useState('chat');
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const chatScrollAreaRef = useRef<HTMLDivElement>(null);
+  const servicesScrollRef = useRef<HTMLDivElement>(null);
+  const bookScrollRef = useRef<HTMLDivElement>(null);
+  const hoursScrollRef = useRef<HTMLDivElement>(null);
+  const voiceScrollRef = useRef<HTMLDivElement>(null);
 
   // Fetch company details including review links
   const { data: company } = useQuery({
@@ -175,11 +180,36 @@ export const AIAgentConsole = () => {
   const hasVoiceChat = ttsInfo.isConfigured;
   const twilioPhone = integrations?.twilio_phone_number;
 
+  const getScrollViewport = (root: HTMLDivElement | null) => {
+    if (!root) return null;
+    return root.querySelector('[data-radix-scroll-area-viewport]') as HTMLDivElement | null;
+  };
+
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    const viewport = getScrollViewport(chatScrollAreaRef.current);
+    if (!viewport) return;
+
+    // When there are no messages, keep the welcome content pinned to the top.
+    if (messages.length === 0) {
+      viewport.scrollTop = 0;
+      return;
     }
-  }, [messages]);
+
+    viewport.scrollTop = viewport.scrollHeight;
+  }, [messages.length]);
+
+  useEffect(() => {
+    const map: Record<string, React.RefObject<HTMLDivElement>> = {
+      chat: chatScrollAreaRef,
+      services: servicesScrollRef,
+      book: bookScrollRef,
+      hours: hoursScrollRef,
+      voice: voiceScrollRef,
+    };
+
+    const el = map[activeTab]?.current;
+    if (el) el.scrollTop = 0;
+  }, [activeTab]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -398,7 +428,7 @@ export const AIAgentConsole = () => {
         {/* Chat Tab */}
         <TabsContent value="chat" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0">
           <CardContent className="flex-1 min-h-0 flex flex-col overflow-hidden p-4">
-            <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
+            <ScrollArea className="flex-1 pr-4" ref={chatScrollAreaRef}>
               <div className="space-y-4">
                 {messages.length === 0 && (
                   <div className="text-center py-6">
@@ -501,7 +531,7 @@ export const AIAgentConsole = () => {
 
         {/* Services Tab */}
         <TabsContent value="services" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0 mt-0">
-          <div className="flex-1 min-h-0 overflow-y-auto">
+          <div ref={servicesScrollRef} className="flex-1 min-h-0 overflow-y-auto">
             <div className="p-4 space-y-3">
               {services?.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">
@@ -552,7 +582,7 @@ export const AIAgentConsole = () => {
 
         {/* Book Tab */}
         <TabsContent value="book" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0 mt-0">
-          <div className="flex-1 min-h-0 overflow-y-auto">
+          <div ref={bookScrollRef} className="flex-1 min-h-0 overflow-y-auto">
             <div className="p-4">
               <BookingForm
                 services={services || []}
@@ -565,7 +595,7 @@ export const AIAgentConsole = () => {
 
         {/* Hours Tab */}
         <TabsContent value="hours" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0 mt-0">
-          <div className="flex-1 min-h-0 overflow-y-auto">
+          <div ref={hoursScrollRef} className="flex-1 min-h-0 overflow-y-auto">
             <div className="p-4">
               <div className="bg-primary/10 rounded-lg p-4 mb-4">
                 <div className="flex items-center gap-2">
@@ -615,7 +645,7 @@ export const AIAgentConsole = () => {
         {/* Voice Tab */}
         {hasVoiceChat && companyId && (
           <TabsContent value="voice" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0 mt-0">
-            <div className="flex-1 min-h-0 overflow-y-auto">
+            <div ref={voiceScrollRef} className="flex-1 min-h-0 overflow-y-auto">
               <div className="min-h-full flex flex-col items-center justify-center p-4">
                 <VoiceChat
                   companyId={companyId}
