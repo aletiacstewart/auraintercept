@@ -37,7 +37,7 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
           className={cn(
             'h-auto flex-col gap-1 py-2 px-1.5 text-[11px]',
             'hover:border-primary/50 transition-colors',
-            action.variant === 'destructive' && 'text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive/30'
+            action.variant === 'destructive' && 'bg-destructive text-destructive-foreground hover:bg-destructive/90 border-destructive'
           )}
           onClick={() => onAction(action.message, action.id)}
         >
