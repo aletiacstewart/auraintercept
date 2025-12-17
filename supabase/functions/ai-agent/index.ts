@@ -128,6 +128,23 @@ serve(async (req) => {
             required: []
           }
         }
+      },
+      {
+        type: "function",
+        function: {
+          name: "collect_feedback",
+          description: "Collect customer feedback and provide review platform links. Use this when a customer wants to leave feedback, write a review, or share their experience.",
+          parameters: {
+            type: "object",
+            properties: {
+              customer_name: { type: "string", description: "Customer's name" },
+              feedback_type: { type: "string", enum: ["positive", "neutral", "negative"], description: "Overall sentiment of the feedback" },
+              feedback_text: { type: "string", description: "The customer's feedback or comments" },
+              service_received: { type: "string", description: "The service the customer received (if mentioned)" }
+            },
+            required: ["feedback_type"]
+          }
+        }
       }
     ];
 
@@ -281,6 +298,8 @@ async function executeToolCall(supabase: any, companyId: string, toolName: strin
       return await trackAppointment(supabase, companyId, args);
     case "list_services":
       return listServices(knowledge, args);
+    case "collect_feedback":
+      return collectFeedback(knowledge, args);
     default:
       return { error: `Unknown tool: ${toolName}` };
   }
@@ -620,13 +639,59 @@ function listServices(knowledge: any, args: any) {
   };
 }
 
+function collectFeedback(knowledge: any, args: any) {
+  const { customer_name, feedback_type, feedback_text, service_received } = args || {};
+  
+  const reviewLinks: { platform: string; url: string }[] = [];
+  
+  if (knowledge.reviewGoogleUrl) {
+    reviewLinks.push({ platform: 'Google', url: knowledge.reviewGoogleUrl });
+  }
+  if (knowledge.reviewFacebookUrl) {
+    reviewLinks.push({ platform: 'Facebook', url: knowledge.reviewFacebookUrl });
+  }
+  if (knowledge.reviewYelpUrl) {
+    reviewLinks.push({ platform: 'Yelp', url: knowledge.reviewYelpUrl });
+  }
+  
+  const hasReviewLinks = reviewLinks.length > 0;
+  
+  if (feedback_type === 'positive' || feedback_type === 'neutral') {
+    return {
+      success: true,
+      feedback_received: true,
+      customer_name: customer_name || 'Valued Customer',
+      feedback_type,
+      feedback_text: feedback_text || '',
+      service: service_received || '',
+      review_links: reviewLinks,
+      message: hasReviewLinks 
+        ? `Thank you for your feedback! We'd love it if you could share your experience on one of our review platforms.`
+        : `Thank you for your feedback! We truly appreciate you taking the time to share your experience.`,
+      action_recommended: hasReviewLinks ? 'share_review' : 'thank_customer'
+    };
+  } else {
+    return {
+      success: true,
+      feedback_received: true,
+      customer_name: customer_name || 'Valued Customer',
+      feedback_type,
+      feedback_text: feedback_text || '',
+      service: service_received || '',
+      review_links: [],
+      message: `We're sorry to hear about your experience. Your feedback is important to us and we'll use it to improve our services.`,
+      action_recommended: 'escalate_to_manager'
+    };
+  }
+}
+
 async function fetchKnowledgeBase(supabase: any, companyId: string) {
   const [servicesRes, faqsRes, hoursRes, docsRes, companyRes] = await Promise.all([
     supabase.from('services').select('*').eq('company_id', companyId).eq('is_active', true),
     supabase.from('faqs').select('*').eq('company_id', companyId).eq('is_active', true),
     supabase.from('business_hours').select('*').eq('company_id', companyId),
     supabase.from('knowledge_documents').select('name, content_text').eq('company_id', companyId),
-    supabase.from('companies').select('name').eq('id', companyId).single()
+    supabase.from('companies').select('name, review_google_url, review_facebook_url, review_yelp_url').eq('id', companyId).single()
   ]);
 
   return {
@@ -634,7 +699,10 @@ async function fetchKnowledgeBase(supabase: any, companyId: string) {
     services: servicesRes.data || [],
     faqs: faqsRes.data || [],
     businessHours: hoursRes.data || [],
-    documents: docsRes.data || []
+    documents: docsRes.data || [],
+    reviewGoogleUrl: companyRes.data?.review_google_url || null,
+    reviewFacebookUrl: companyRes.data?.review_facebook_url || null,
+    reviewYelpUrl: companyRes.data?.review_yelp_url || null
   };
 }
 
@@ -753,5 +821,14 @@ When reporting appointment status, use the "status_summary" field which provides
 - "scheduled" = Appointment booked but not yet assigned
 - "cancelled" = Appointment was cancelled
 
-Always use status_summary in your response to the customer as it provides the most accurate and friendly description.`;
+Always use status_summary in your response to the customer as it provides the most accurate and friendly description.
+
+## Feedback & Review Instructions
+When a customer wants to leave feedback, share their experience, or write a review:
+1. Use the collect_feedback tool to process their feedback
+2. Ask about their experience to determine if it's positive, neutral, or negative
+3. For positive/neutral feedback: Thank them warmly and provide any available review platform links (Google, Facebook, Yelp)
+4. For negative feedback: Apologize sincerely, thank them for sharing, and assure them their feedback will be addressed
+5. If review links are available, encourage them to share their positive experience online
+6. Always be empathetic and appreciative of their time`;
 }
