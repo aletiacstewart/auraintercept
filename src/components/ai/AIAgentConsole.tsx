@@ -554,16 +554,14 @@ export const AIAgentConsole = () => {
         </TabsContent>
 
         {/* Book Tab */}
-        <TabsContent value="book" className="flex-1 overflow-hidden m-0">
-          <ScrollArea className="h-full">
-            <div className="p-4">
-              <BookingForm
-                services={services || []}
-                onSubmit={handleBookingSubmit}
-                isLoading={isLoading}
-              />
-            </div>
-          </ScrollArea>
+        <TabsContent value="book" className="flex-1 overflow-y-auto m-0">
+          <div className="p-4">
+            <BookingForm
+              services={services || []}
+              onSubmit={handleBookingSubmit}
+              isLoading={isLoading}
+            />
+          </div>
         </TabsContent>
 
         {/* Hours Tab */}
