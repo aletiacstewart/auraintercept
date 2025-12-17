@@ -1,23 +1,44 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Users, Calendar, Bot, TrendingUp, Activity } from 'lucide-react';
+import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { startOfMonth, endOfMonth } from 'date-fns';
 
 export function PlatformAdminDashboard() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['platform-stats'],
     queryFn: async () => {
-      const [companies, profiles, appointments] = await Promise.all([
+      const now = new Date();
+      const monthStart = startOfMonth(now).toISOString();
+      const monthEnd = endOfMonth(now).toISOString();
+
+      const [companies, profiles, appointments, quotes, invoices, campaigns] = await Promise.all([
         supabase.from('companies').select('id', { count: 'exact', head: true }),
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('appointments').select('id', { count: 'exact', head: true }),
+        supabase.from('quotes').select('id, status', { count: 'exact' }).in('status', ['draft', 'sent']),
+        supabase.from('invoices').select('total, status, paid_at'),
+        supabase.from('marketing_campaigns').select('id, status').eq('status', 'active'),
       ]);
+
+      // Calculate platform revenue
+      const paidInvoices = (invoices.data ?? []).filter(i => i.status === 'paid');
+      const totalRevenue = paidInvoices.reduce((sum, i) => sum + (i.total || 0), 0);
+      const monthlyRevenue = paidInvoices
+        .filter(i => i.paid_at && new Date(i.paid_at) >= new Date(monthStart) && new Date(i.paid_at) <= new Date(monthEnd))
+        .reduce((sum, i) => sum + (i.total || 0), 0);
+
+      const pendingQuotes = (quotes.data ?? []).filter(q => q.status === 'sent').length;
 
       return {
         companies: companies.count ?? 0,
         users: profiles.count ?? 0,
         appointments: appointments.count ?? 0,
+        pendingQuotes,
+        totalRevenue,
+        monthlyRevenue,
+        activeCampaigns: campaigns.data?.length ?? 0,
       };
     },
   });
@@ -51,6 +72,36 @@ export function PlatformAdminDashboard() {
       description: 'Deployed AI agents',
       gradient: 'from-primary to-secondary'
     },
+    { 
+      title: 'Platform Revenue', 
+      value: `$${(stats?.totalRevenue ?? 0).toLocaleString()}`, 
+      icon: DollarSign, 
+      description: 'Total collected',
+      gradient: 'from-green-500 to-green-600',
+      isString: true
+    },
+    { 
+      title: 'Monthly Revenue', 
+      value: `$${(stats?.monthlyRevenue ?? 0).toLocaleString()}`, 
+      icon: TrendingUp, 
+      description: 'This month',
+      gradient: 'from-green-400 to-green-500',
+      isString: true
+    },
+    { 
+      title: 'Pending Quotes', 
+      value: stats?.pendingQuotes ?? 0, 
+      icon: FileText, 
+      description: 'Awaiting customer response',
+      gradient: 'from-yellow-500 to-yellow-600'
+    },
+    { 
+      title: 'Active Campaigns', 
+      value: stats?.activeCampaigns ?? 0, 
+      icon: Megaphone, 
+      description: 'Marketing campaigns running',
+      gradient: 'from-purple-500 to-purple-600'
+    },
   ];
 
   return (
@@ -79,7 +130,9 @@ export function PlatformAdminDashboard() {
               {isLoading ? (
                 <Skeleton className="h-8 w-20" />
               ) : (
-                <div className="text-3xl font-bold">{stat.value}</div>
+                <div className="text-3xl font-bold">
+                  {stat.isString ? stat.value : (stat.value as number).toLocaleString()}
+                </div>
               )}
               <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
             </CardContent>
