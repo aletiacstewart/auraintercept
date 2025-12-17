@@ -25,7 +25,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { format, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
-import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare, RefreshCw } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare, RefreshCw, CloudOff, Cloud, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { toast } from 'sonner';
@@ -298,6 +298,21 @@ export function AppointmentCalendar() {
   // Get dates with appointments for highlighting
   const datesWithAppointments = appointments?.map((apt) => new Date(apt.datetime)) ?? [];
 
+  // Calculate sync status summary
+  const syncSummary = appointments?.reduce(
+    (acc, apt) => {
+      if (!apt.calendar_sync?.google_event_id) {
+        acc.notSynced++;
+      } else if (apt.calendar_sync.sync_status === 'failed') {
+        acc.failed++;
+      } else {
+        acc.synced++;
+      }
+      return acc;
+    },
+    { synced: 0, notSynced: 0, failed: 0 }
+  ) ?? { synced: 0, notSynced: 0, failed: 0 };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'scheduled':
@@ -385,19 +400,40 @@ export function AppointmentCalendar() {
             </CardDescription>
           </div>
           {isAdmin && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => bulkSyncMutation.mutate()}
-              disabled={bulkSyncMutation.isPending}
-            >
-              {bulkSyncMutation.isPending ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <RefreshCw className="w-4 h-4 mr-2" />
+            <div className="flex flex-col items-end gap-2">
+              {/* Sync Status Summary */}
+              {appointments && appointments.length > 0 && (
+                <div className="flex items-center gap-3 text-xs">
+                  <div className="flex items-center gap-1 text-green-600">
+                    <Cloud className="w-3 h-3" />
+                    <span>{syncSummary.synced} synced</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <CloudOff className="w-3 h-3" />
+                    <span>{syncSummary.notSynced} not synced</span>
+                  </div>
+                  {syncSummary.failed > 0 && (
+                    <div className="flex items-center gap-1 text-red-600">
+                      <AlertTriangle className="w-3 h-3" />
+                      <span>{syncSummary.failed} failed</span>
+                    </div>
+                  )}
+                </div>
               )}
-              Sync All to Calendar
-            </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => bulkSyncMutation.mutate()}
+                disabled={bulkSyncMutation.isPending}
+              >
+                {bulkSyncMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                )}
+                Sync All to Calendar
+              </Button>
+            </div>
           )}
         </CardHeader>
         <CardContent>
