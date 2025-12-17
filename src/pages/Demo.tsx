@@ -354,8 +354,8 @@ export default function Demo() {
                     <p className="text-muted-foreground text-sm mb-6 max-w-md mx-auto">
                       Test our AI-powered assistant. Try scheduling an appointment, getting a quote, or asking about our services.
                     </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 max-w-lg mx-auto">
-                      {QUICK_ACTIONS.slice(0, 4).map((action) => (
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 max-w-xl mx-auto">
+                      {QUICK_ACTIONS.map((action) => (
                         <Button
                           key={action.id}
                           variant={action.variant || 'outline'}
