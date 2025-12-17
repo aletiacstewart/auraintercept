@@ -402,7 +402,7 @@ export const AIAgentConsole = () => {
         <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden m-0 p-0 data-[state=inactive]:hidden">
           <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4">
             <div className="space-y-4">
-              {messages.length === 0 && (
+              {messages.length === 0 && !showFeedbackForm && (
                 <div className="text-center py-6">
                   <div className="h-16 w-16 rounded-full gradient-primary mx-auto mb-4 flex items-center justify-center">
                     <Bot className="h-8 w-8 text-white" />
