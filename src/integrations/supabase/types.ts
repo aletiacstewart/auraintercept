@@ -560,6 +560,7 @@ export type Database = {
           default_call_enabled: boolean
           default_email_enabled: boolean
           default_sms_enabled: boolean
+          dispatch_phone: string | null
           id: string
           last_bounce_alert_at: string | null
           last_cost_alert_at: string | null
@@ -629,6 +630,7 @@ export type Database = {
           default_call_enabled?: boolean
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
+          dispatch_phone?: string | null
           id?: string
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
@@ -698,6 +700,7 @@ export type Database = {
           default_call_enabled?: boolean
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
+          dispatch_phone?: string | null
           id?: string
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
