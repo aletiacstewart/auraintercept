@@ -45,7 +45,7 @@ interface QuickAction {
 
 const QUICK_ACTIONS: QuickAction[] = [
   { id: 'directions', label: 'Get Directions', icon: Navigation, message: '' },
-  { id: 'eta', label: 'Update ETA', icon: Clock, message: 'I need to update my ETA for the current job' },
+  { id: 'eta', label: 'Update ETA', icon: Clock, message: '' },
   { id: 'checkin', label: 'Check In', icon: CheckCircle, message: 'I have arrived at the job site and want to check in' },
   { id: 'enroute', label: 'En Route', icon: Truck, message: '' },
   { id: 'photos', label: 'Upload Photos', icon: Camera, message: 'I need to upload before/after photos for this job' },
@@ -56,6 +56,7 @@ interface JobAssignment {
   id: string;
   status: string;
   customer_address: string | null;
+  estimated_arrival_minutes: number | null;
   appointments: {
     id: string;
     customer_name: string;
@@ -73,7 +74,7 @@ interface FieldOpsAgentConsoleProps {
   className?: string;
 }
 
-type SelectorMode = 'directions' | 'enroute' | null;
+type SelectorMode = 'directions' | 'enroute' | 'eta' | null;
 
 export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }: FieldOpsAgentConsoleProps) {
   const { user, companyId: authCompanyId } = useAuth();
@@ -82,6 +83,8 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const [inputValue, setInputValue] = useState('');
   const [selectorMode, setSelectorMode] = useState<SelectorMode>(null);
   const [processingJobId, setProcessingJobId] = useState<string | null>(null);
+  const [selectedJobForEta, setSelectedJobForEta] = useState<JobAssignment | null>(null);
+  const [etaMinutes, setEtaMinutes] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -104,6 +107,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           id,
           status,
           customer_address,
+          estimated_arrival_minutes,
           appointments (
             id,
             customer_name,
@@ -130,9 +134,17 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   });
 
   // Filter jobs based on selector mode
-  const filteredJobs = selectorMode === 'enroute' 
-    ? assignedJobs.filter(job => job.status === 'accepted') // Only accepted jobs can go to en_route
-    : assignedJobs;
+  const getFilteredJobs = () => {
+    if (selectorMode === 'enroute') {
+      return assignedJobs.filter(job => job.status === 'accepted');
+    }
+    if (selectorMode === 'eta') {
+      return assignedJobs.filter(job => ['accepted', 'en_route'].includes(job.status));
+    }
+    return assignedJobs;
+  };
+
+  const filteredJobs = getFilteredJobs();
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -157,6 +169,12 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       setSelectorMode('enroute');
       return;
     }
+    if (action.id === 'eta') {
+      setSelectorMode('eta');
+      setSelectedJobForEta(null);
+      setEtaMinutes('');
+      return;
+    }
     await sendMessage(action.message);
   }, [sendMessage]);
 
@@ -176,7 +194,6 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     const customerName = job.appointments?.customer_name || 'Customer';
     
     try {
-      // Update job status to en_route
       const { error: updateError } = await supabase
         .from('job_assignments')
         .update({ 
@@ -186,12 +203,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         })
         .eq('id', job.id);
 
-      if (updateError) {
-        throw updateError;
-      }
+      if (updateError) throw updateError;
 
-      // Send notification to customer
-      const { error: notifyError } = await supabase.functions.invoke('send-job-notification', {
+      await supabase.functions.invoke('send-job-notification', {
         body: {
           jobAssignmentId: job.id,
           notificationType: 'en_route',
@@ -199,31 +213,70 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         }
       });
 
-      if (notifyError) {
-        console.error('Notification error:', notifyError);
-        // Don't throw - status update succeeded, notification is secondary
-      }
-
-      toast.success(`En route to ${customerName}`, {
-        description: 'Customer has been notified'
-      });
-
-      // Refetch jobs to update UI
+      toast.success(`En route to ${customerName}`, { description: 'Customer has been notified' });
       refetchJobs();
-      
-      // Close selector and send chat message
       setSelectorMode(null);
       sendMessage(`I am now en route to ${customerName}'s location for their ${job.appointments?.service_type || 'service'} appointment.`);
 
     } catch (error) {
       console.error('En route update error:', error);
-      toast.error('Failed to update status', {
-        description: 'Please try again'
-      });
+      toast.error('Failed to update status', { description: 'Please try again' });
     } finally {
       setProcessingJobId(null);
     }
   }, [processingJobId, refetchJobs, sendMessage]);
+
+  const handleSelectJobForEta = useCallback((job: JobAssignment) => {
+    setSelectedJobForEta(job);
+    setEtaMinutes(job.estimated_arrival_minutes?.toString() || '');
+  }, []);
+
+  const handleSendEtaUpdate = useCallback(async () => {
+    if (!selectedJobForEta || !etaMinutes || processingJobId) return;
+    
+    const minutes = parseInt(etaMinutes, 10);
+    if (isNaN(minutes) || minutes < 1) {
+      toast.error('Please enter a valid number of minutes');
+      return;
+    }
+
+    setProcessingJobId(selectedJobForEta.id);
+    const customerName = selectedJobForEta.appointments?.customer_name || 'Customer';
+    
+    try {
+      const { error: updateError } = await supabase
+        .from('job_assignments')
+        .update({ 
+          estimated_arrival_minutes: minutes,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', selectedJobForEta.id);
+
+      if (updateError) throw updateError;
+
+      // Send ETA notification to customer
+      await supabase.functions.invoke('send-job-notification', {
+        body: {
+          jobAssignmentId: selectedJobForEta.id,
+          notificationType: 'en_route', // Uses en_route template which includes ETA
+          recipientType: 'customer'
+        }
+      });
+
+      toast.success(`ETA updated to ${minutes} minutes`, { description: `${customerName} has been notified` });
+      refetchJobs();
+      setSelectorMode(null);
+      setSelectedJobForEta(null);
+      setEtaMinutes('');
+      sendMessage(`I updated my ETA for ${customerName} to ${minutes} minutes. The customer has been notified.`);
+
+    } catch (error) {
+      console.error('ETA update error:', error);
+      toast.error('Failed to update ETA', { description: 'Please try again' });
+    } finally {
+      setProcessingJobId(null);
+    }
+  }, [selectedJobForEta, etaMinutes, processingJobId, refetchJobs, sendMessage]);
 
   const getAgentBadge = (agentType?: string) => {
     const agent = FIELD_OPS_AGENTS.find(a => a.id === agentType);
@@ -312,6 +365,15 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         onSelect: handleSelectJobForEnRoute,
       };
     }
+    if (selectorMode === 'eta') {
+      return {
+        icon: Clock,
+        title: selectedJobForEta ? 'Enter estimated arrival time' : 'Select appointment to update ETA',
+        emptyMessage: 'No active appointments to update ETA',
+        actionIcon: Clock,
+        onSelect: handleSelectJobForEta,
+      };
+    }
     return null;
   };
 
@@ -366,10 +428,57 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
               <selectorConfig.icon className="h-4 w-4 text-primary" />
               {selectorConfig.title}
             </p>
-            <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => setSelectorMode(null)}>
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => {
+              setSelectorMode(null);
+              setSelectedJobForEta(null);
+              setEtaMinutes('');
+            }}>
               <X className="h-4 w-4" />
             </Button>
           </div>
+
+          {/* ETA Input Form - shown after job selection */}
+          {selectorMode === 'eta' && selectedJobForEta && (
+            <div className="mb-3 p-2.5 rounded-lg border bg-background">
+              <div className="flex items-center gap-2 mb-2">
+                <div className={cn('w-2 h-2 rounded-full shrink-0', getStatusColor(selectedJobForEta.status))} />
+                <span className="font-medium text-sm">{selectedJobForEta.appointments?.customer_name}</span>
+                <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
+                  {selectedJobForEta.status.replace('_', ' ')}
+                </Badge>
+              </div>
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <Input
+                    type="number"
+                    placeholder="ETA in minutes"
+                    value={etaMinutes}
+                    onChange={(e) => setEtaMinutes(e.target.value)}
+                    min="1"
+                    className="h-8 text-sm"
+                  />
+                </div>
+                <Button 
+                  size="sm" 
+                  className="h-8"
+                  onClick={handleSendEtaUpdate}
+                  disabled={!etaMinutes || processingJobId === selectedJobForEta.id}
+                >
+                  {processingJobId === selectedJobForEta.id ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <>
+                      <Send className="h-3.5 w-3.5 mr-1" />
+                      Send
+                    </>
+                  )}
+                </Button>
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Customer will be notified via SMS & email
+              </p>
+            </div>
+          )}
           
           {jobsLoading ? (
             <div className="flex items-center justify-center py-4">
@@ -385,15 +494,17 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                 const address = job.customer_address || job.appointments?.customer_address;
                 const appointment = job.appointments;
                 const isProcessing = processingJobId === job.id;
+                const isSelected = selectedJobForEta?.id === job.id;
                 
                 return (
                   <div
                     key={job.id}
-                    onClick={() => !isProcessing && address && selectorConfig.onSelect(job)}
+                    onClick={() => !isProcessing && (selectorMode !== 'eta' || !selectedJobForEta) && selectorConfig.onSelect(job)}
                     className={cn(
                       'p-2.5 rounded-lg border cursor-pointer transition-all',
                       'hover:border-primary/50 hover:bg-primary/5',
-                      (!address || isProcessing) && 'opacity-50 cursor-not-allowed'
+                      isSelected && 'border-primary bg-primary/5',
+                      (isProcessing || (selectorMode === 'eta' && selectedJobForEta && !isSelected)) && 'opacity-50 cursor-not-allowed'
                     )}
                   >
                     <div className="flex items-start gap-2">
@@ -418,18 +529,26 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                         ) : (
                           <p className="text-xs text-destructive mt-1">No address available</p>
                         )}
-                        {appointment?.datetime && (
-                          <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
-                            <Calendar className="h-3 w-3" />
-                            {format(new Date(appointment.datetime), 'h:mm a')}
-                          </p>
-                        )}
+                        <div className="flex items-center gap-2 mt-0.5">
+                          {appointment?.datetime && (
+                            <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              {format(new Date(appointment.datetime), 'h:mm a')}
+                            </p>
+                          )}
+                          {job.estimated_arrival_minutes && (
+                            <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              ETA: {job.estimated_arrival_minutes}m
+                            </p>
+                          )}
+                        </div>
                       </div>
                       <Button 
                         size="sm" 
                         variant="ghost" 
                         className="h-7 px-2 shrink-0" 
-                        disabled={!address || isProcessing}
+                        disabled={isProcessing || (selectorMode === 'eta' && selectedJobForEta && !isSelected)}
                       >
                         {isProcessing ? (
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
