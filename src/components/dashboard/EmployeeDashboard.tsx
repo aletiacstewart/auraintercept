@@ -295,13 +295,21 @@ export function EmployeeDashboard() {
       </Card>
 
       {/* Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-5">
+        <Button
+          variant="outline"
+          className="h-auto py-6 flex flex-col items-center gap-2"
+          onClick={() => navigate('/dashboard/field-ops')}
+        >
+          <Wrench className="w-6 h-6 text-primary" />
+          <span>Field Ops Console</span>
+        </Button>
         <Button
           variant="outline"
           className="h-auto py-6 flex flex-col items-center gap-2"
           onClick={() => navigate('/dashboard/availability')}
         >
-          <Clock className="w-6 h-6 text-primary" />
+          <Clock className="w-6 h-6 text-secondary" />
           <span>Manage Availability</span>
         </Button>
         <Button
@@ -309,7 +317,7 @@ export function EmployeeDashboard() {
           className="h-auto py-6 flex flex-col items-center gap-2"
           onClick={() => navigate('/dashboard/appointments')}
         >
-          <Calendar className="w-6 h-6 text-secondary" />
+          <Calendar className="w-6 h-6 text-accent" />
           <span>View Calendar</span>
         </Button>
         <Button
@@ -317,7 +325,7 @@ export function EmployeeDashboard() {
           className="h-auto py-6 flex flex-col items-center gap-2"
           onClick={() => navigate('/dashboard/inventory')}
         >
-          <Package className="w-6 h-6 text-accent" />
+          <Package className="w-6 h-6 text-primary" />
           <span>View Inventory</span>
         </Button>
         <Button
@@ -325,7 +333,7 @@ export function EmployeeDashboard() {
           className="h-auto py-6 flex flex-col items-center gap-2"
           onClick={() => navigate('/dashboard/messages')}
         >
-          <MessageSquare className="w-6 h-6 text-primary" />
+          <MessageSquare className="w-6 h-6 text-secondary" />
           <span>View Messages</span>
         </Button>
       </div>
