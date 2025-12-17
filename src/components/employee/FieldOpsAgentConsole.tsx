@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 
 const FIELD_OPS_AGENTS = [
   { id: 'dispatch', name: 'Dispatch', color: 'bg-blue-500' },
@@ -46,7 +47,7 @@ const QUICK_ACTIONS: QuickAction[] = [
   { id: 'directions', label: 'Get Directions', icon: Navigation, message: '' },
   { id: 'eta', label: 'Update ETA', icon: Clock, message: 'I need to update my ETA for the current job' },
   { id: 'checkin', label: 'Check In', icon: CheckCircle, message: 'I have arrived at the job site and want to check in' },
-  { id: 'enroute', label: 'En Route', icon: Truck, message: 'I am now en route to my next appointment' },
+  { id: 'enroute', label: 'En Route', icon: Truck, message: '' },
   { id: 'photos', label: 'Upload Photos', icon: Camera, message: 'I need to upload before/after photos for this job' },
   { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: 'I need to speak with dispatch about my current job' },
 ];
@@ -58,6 +59,8 @@ interface JobAssignment {
   appointments: {
     id: string;
     customer_name: string;
+    customer_phone: string | null;
+    customer_email: string | null;
     service_type: string;
     datetime: string;
     customer_address: string | null;
@@ -70,12 +73,15 @@ interface FieldOpsAgentConsoleProps {
   className?: string;
 }
 
+type SelectorMode = 'directions' | 'enroute' | null;
+
 export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }: FieldOpsAgentConsoleProps) {
   const { user, companyId: authCompanyId } = useAuth();
   const effectiveCompanyId = companyId || authCompanyId;
   
   const [inputValue, setInputValue] = useState('');
-  const [showJobSelector, setShowJobSelector] = useState(false);
+  const [selectorMode, setSelectorMode] = useState<SelectorMode>(null);
+  const [processingJobId, setProcessingJobId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -87,8 +93,8 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   });
 
   // Fetch employee's assigned jobs
-  const { data: assignedJobs = [], isLoading: jobsLoading } = useQuery({
-    queryKey: ['employee-jobs-for-directions', user?.id],
+  const { data: assignedJobs = [], isLoading: jobsLoading, refetch: refetchJobs } = useQuery({
+    queryKey: ['employee-jobs-for-fieldops', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
 
@@ -101,6 +107,8 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           appointments (
             id,
             customer_name,
+            customer_phone,
+            customer_email,
             service_type,
             datetime,
             customer_address
@@ -121,6 +129,11 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     refetchInterval: 30000,
   });
 
+  // Filter jobs based on selector mode
+  const filteredJobs = selectorMode === 'enroute' 
+    ? assignedJobs.filter(job => job.status === 'accepted') // Only accepted jobs can go to en_route
+    : assignedJobs;
+
   // Auto-scroll to bottom on new messages
   useEffect(() => {
     if (scrollRef.current) {
@@ -137,22 +150,80 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
   const handleQuickAction = useCallback(async (action: QuickAction) => {
     if (action.id === 'directions') {
-      // Show job selector instead of sending message
-      setShowJobSelector(true);
+      setSelectorMode('directions');
+      return;
+    }
+    if (action.id === 'enroute') {
+      setSelectorMode('enroute');
       return;
     }
     await sendMessage(action.message);
   }, [sendMessage]);
 
-  const handleSelectJob = useCallback((job: JobAssignment) => {
+  const handleSelectJobForDirections = useCallback((job: JobAssignment) => {
     const address = job.customer_address || job.appointments?.customer_address;
     if (address) {
       onNavigateRequest?.(address);
-      setShowJobSelector(false);
-      // Also send a message to the chat for context
+      setSelectorMode(null);
       sendMessage(`I need directions to ${job.appointments?.customer_name || 'my appointment'} at ${address}`);
     }
   }, [onNavigateRequest, sendMessage]);
+
+  const handleSelectJobForEnRoute = useCallback(async (job: JobAssignment) => {
+    if (processingJobId) return;
+    
+    setProcessingJobId(job.id);
+    const customerName = job.appointments?.customer_name || 'Customer';
+    
+    try {
+      // Update job status to en_route
+      const { error: updateError } = await supabase
+        .from('job_assignments')
+        .update({ 
+          status: 'en_route',
+          en_route_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', job.id);
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      // Send notification to customer
+      const { error: notifyError } = await supabase.functions.invoke('send-job-notification', {
+        body: {
+          jobAssignmentId: job.id,
+          notificationType: 'en_route',
+          recipientType: 'customer'
+        }
+      });
+
+      if (notifyError) {
+        console.error('Notification error:', notifyError);
+        // Don't throw - status update succeeded, notification is secondary
+      }
+
+      toast.success(`En route to ${customerName}`, {
+        description: 'Customer has been notified'
+      });
+
+      // Refetch jobs to update UI
+      refetchJobs();
+      
+      // Close selector and send chat message
+      setSelectorMode(null);
+      sendMessage(`I am now en route to ${customerName}'s location for their ${job.appointments?.service_type || 'service'} appointment.`);
+
+    } catch (error) {
+      console.error('En route update error:', error);
+      toast.error('Failed to update status', {
+        description: 'Please try again'
+      });
+    } finally {
+      setProcessingJobId(null);
+    }
+  }, [processingJobId, refetchJobs, sendMessage]);
 
   const getAgentBadge = (agentType?: string) => {
     const agent = FIELD_OPS_AGENTS.find(a => a.id === agentType);
@@ -222,6 +293,30 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     }
   };
 
+  const getSelectorConfig = () => {
+    if (selectorMode === 'directions') {
+      return {
+        icon: Navigation,
+        title: 'Select appointment for directions',
+        emptyMessage: 'No appointments assigned to you',
+        actionIcon: Navigation,
+        onSelect: handleSelectJobForDirections,
+      };
+    }
+    if (selectorMode === 'enroute') {
+      return {
+        icon: Truck,
+        title: 'Select appointment to mark as en route',
+        emptyMessage: 'No accepted appointments to mark as en route',
+        actionIcon: Truck,
+        onSelect: handleSelectJobForEnRoute,
+      };
+    }
+    return null;
+  };
+
+  const selectorConfig = getSelectorConfig();
+
   return (
     <div className={cn('flex flex-col h-full bg-background', className)}>
       {/* Header */}
@@ -264,14 +359,14 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       </div>
 
       {/* Job Selector Panel */}
-      {showJobSelector && (
+      {selectorMode && selectorConfig && (
         <div className="shrink-0 border-b bg-muted/30 p-3">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium flex items-center gap-1.5">
-              <Navigation className="h-4 w-4 text-primary" />
-              Select appointment for directions
+              <selectorConfig.icon className="h-4 w-4 text-primary" />
+              {selectorConfig.title}
             </p>
-            <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => setShowJobSelector(false)}>
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => setSelectorMode(null)}>
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -280,24 +375,25 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
             <div className="flex items-center justify-center py-4">
               <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             </div>
-          ) : assignedJobs.length === 0 ? (
+          ) : filteredJobs.length === 0 ? (
             <div className="text-center py-4 text-sm text-muted-foreground">
-              No appointments assigned to you today
+              {selectorConfig.emptyMessage}
             </div>
           ) : (
             <div className="space-y-2 max-h-[200px] overflow-auto">
-              {assignedJobs.map((job) => {
+              {filteredJobs.map((job) => {
                 const address = job.customer_address || job.appointments?.customer_address;
                 const appointment = job.appointments;
+                const isProcessing = processingJobId === job.id;
                 
                 return (
                   <div
                     key={job.id}
-                    onClick={() => address && handleSelectJob(job)}
+                    onClick={() => !isProcessing && address && selectorConfig.onSelect(job)}
                     className={cn(
                       'p-2.5 rounded-lg border cursor-pointer transition-all',
                       'hover:border-primary/50 hover:bg-primary/5',
-                      !address && 'opacity-50 cursor-not-allowed'
+                      (!address || isProcessing) && 'opacity-50 cursor-not-allowed'
                     )}
                   >
                     <div className="flex items-start gap-2">
@@ -329,8 +425,17 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                           </p>
                         )}
                       </div>
-                      <Button size="sm" variant="ghost" className="h-7 px-2 shrink-0" disabled={!address}>
-                        <Navigation className="h-3.5 w-3.5" />
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="h-7 px-2 shrink-0" 
+                        disabled={!address || isProcessing}
+                      >
+                        {isProcessing ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <selectorConfig.actionIcon className="h-3.5 w-3.5" />
+                        )}
                       </Button>
                     </div>
                   </div>
