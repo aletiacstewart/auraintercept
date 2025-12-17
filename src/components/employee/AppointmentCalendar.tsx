@@ -25,7 +25,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { format, startOfMonth, endOfMonth, isSameDay } from 'date-fns';
-import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, User, Phone, Mail, FileText, XCircle, CheckCircle, Loader2, MapPin, MessageSquare, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { toast } from 'sonner';
@@ -123,6 +123,26 @@ export function AppointmentCalendar() {
     onError: (error) => {
       console.error('Failed to complete appointment:', error);
       toast.error('Failed to update appointment');
+    },
+  });
+
+  // Bulk sync all appointments to Google Calendar
+  const bulkSyncMutation = useMutation({
+    mutationFn: async () => {
+      if (!companyId) throw new Error('No company ID');
+      const { data, error } = await supabase.functions.invoke('google-calendar-sync', {
+        body: { action: 'full_sync', companyId }
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['employee-calendar-appointments'] });
+      toast.success(`Synced ${data?.synced || 0} appointments to Google Calendar`);
+    },
+    onError: (error: any) => {
+      console.error('Bulk sync failed:', error);
+      toast.error(error.message || 'Failed to sync appointments');
     },
   });
 
@@ -355,13 +375,30 @@ export function AppointmentCalendar() {
 
       {/* Appointments List */}
       <Card className="border-border/50 lg:col-span-2">
-        <CardHeader>
-          <CardTitle>
-            {format(selectedDate, 'EEEE, MMMM d, yyyy')}
-          </CardTitle>
-          <CardDescription>
-            {selectedDayAppointments.length} appointment{selectedDayAppointments.length !== 1 ? 's' : ''} scheduled
-          </CardDescription>
+        <CardHeader className="flex flex-row items-start justify-between space-y-0">
+          <div>
+            <CardTitle>
+              {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+            </CardTitle>
+            <CardDescription>
+              {selectedDayAppointments.length} appointment{selectedDayAppointments.length !== 1 ? 's' : ''} scheduled
+            </CardDescription>
+          </div>
+          {isAdmin && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => bulkSyncMutation.mutate()}
+              disabled={bulkSyncMutation.isPending}
+            >
+              {bulkSyncMutation.isPending ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4 mr-2" />
+              )}
+              Sync All to Calendar
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
           {isLoading ? (
