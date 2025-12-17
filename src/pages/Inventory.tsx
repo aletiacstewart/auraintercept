@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Plus, Package, AlertTriangle, Edit, Trash2, Search } from 'lucide-react';
+import { InventoryUploadDialog } from '@/components/inventory/InventoryUploadDialog';
 
 interface InventoryItem {
   id: string;
@@ -186,14 +187,16 @@ export default function Inventory() {
             <h1 className="text-3xl font-bold">Inventory Management</h1>
             <p className="text-muted-foreground">Track parts, supplies, and equipment</p>
           </div>
-          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={resetForm}>
-                <Plus className="w-4 h-4 mr-2" />
-                Add Item
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
+          <div className="flex gap-2">
+            {companyId && <InventoryUploadDialog companyId={companyId} />}
+            <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={resetForm}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Item
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add Inventory Item</DialogTitle>
                 <DialogDescription>Add a new part or supply to your inventory.</DialogDescription>
@@ -244,6 +247,7 @@ export default function Inventory() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {/* Stats Cards */}
