@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine';
@@ -7,31 +7,8 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Navigation, MapPin, Search, X, Clock, Route as RouteIcon } from 'lucide-react';
+import { Navigation, MapPin, Search, X, Clock, Route as RouteIcon, Locate } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-// Extend L namespace for routing machine
-declare module 'leaflet' {
-  namespace Routing {
-    interface ControlOptions {
-      waypoints: L.LatLng[];
-      routeWhileDragging?: boolean;
-      addWaypoints?: boolean;
-      fitSelectedRoutes?: boolean;
-      showAlternatives?: boolean;
-      lineOptions?: any;
-      router?: any;
-      show?: boolean;
-    }
-    
-    function control(options: ControlOptions): Control;
-    function osrmv1(options?: { serviceUrl?: string }): any;
-    
-    interface Control extends L.Control {
-      on(type: string, fn: (e: any) => void): this;
-    }
-  }
-}
 
 // Fix Leaflet default marker icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -81,19 +58,28 @@ interface RoutingControlProps {
 
 function RoutingControl({ from, to, onRouteFound }: RoutingControlProps) {
   const map = useMap();
-  const routingControlRef = useRef<L.Routing.Control | null>(null);
+  const routingControlRef = useRef<any>(null);
 
   useEffect(() => {
     if (!map || !from || !to) return;
 
     // Remove existing routing control
     if (routingControlRef.current) {
-      map.removeControl(routingControlRef.current);
+      try {
+        map.removeControl(routingControlRef.current);
+      } catch (e) {
+        console.log('Could not remove routing control');
+      }
     }
 
     // Create new routing control using any type to avoid TS issues
     const RoutingModule = (L as any).Routing;
     
+    if (!RoutingModule) {
+      console.error('Leaflet Routing Machine not loaded');
+      return;
+    }
+
     const routingControl = RoutingModule.control({
       waypoints: [
         L.latLng(from[0], from[1]),
@@ -112,6 +98,7 @@ function RoutingControl({ from, to, onRouteFound }: RoutingControlProps) {
         serviceUrl: 'https://router.project-osrm.org/route/v1'
       }),
       show: false,
+      createMarker: () => null, // Don't create default markers
     });
 
     routingControl.on('routesfound', (e: any) => {
@@ -129,7 +116,11 @@ function RoutingControl({ from, to, onRouteFound }: RoutingControlProps) {
 
     return () => {
       if (routingControlRef.current) {
-        map.removeControl(routingControlRef.current);
+        try {
+          map.removeControl(routingControlRef.current);
+        } catch (e) {
+          // ignore
+        }
       }
     };
   }, [map, from, to, onRouteFound]);
@@ -137,7 +128,7 @@ function RoutingControl({ from, to, onRouteFound }: RoutingControlProps) {
   return null;
 }
 
-function LocationMarker({ position, onLocationFound }: { position: [number, number] | null; onLocationFound: (pos: [number, number]) => void }) {
+function MapController({ position, onLocationFound }: { position: [number, number] | null; onLocationFound: (pos: [number, number]) => void }) {
   const map = useMap();
 
   useEffect(() => {
@@ -146,22 +137,19 @@ function LocationMarker({ position, onLocationFound }: { position: [number, numb
     }
   }, [map, position]);
 
-  useEffect(() => {
-    map.locate().on('locationfound', (e) => {
+  useMapEvents({
+    locationfound(e) {
       onLocationFound([e.latlng.lat, e.latlng.lng]);
       map.flyTo(e.latlng, 14);
-    });
-  }, [map, onLocationFound]);
+    },
+  });
 
-  return position ? (
-    <Marker position={position} icon={technicianIcon}>
-      <Popup>Your current location</Popup>
-    </Marker>
-  ) : null;
+  return null;
 }
 
 export function TechnicianMap({ jobs = [], onRouteCalculated, selectedJobId, onJobSelect }: TechnicianMapProps) {
   const { toast } = useToast();
+  const mapRef = useRef<L.Map | null>(null);
   const [currentPosition, setCurrentPosition] = useState<[number, number] | null>(null);
   const [destination, setDestination] = useState<[number, number] | null>(null);
   const [searchAddress, setSearchAddress] = useState('');
@@ -177,15 +165,16 @@ export function TechnicianMap({ jobs = [], onRouteCalculated, selectedJobId, onJ
         },
         (error) => {
           console.error('Error getting location:', error);
-          toast({
-            title: 'Location Access',
-            description: 'Enable location services for navigation features.',
-            variant: 'destructive',
-          });
         }
       );
     }
-  }, [toast]);
+  }, []);
+
+  const locateMe = useCallback(() => {
+    if (mapRef.current) {
+      mapRef.current.locate();
+    }
+  }, []);
 
   // Handle address search using Nominatim
   const handleSearch = async () => {
@@ -237,10 +226,10 @@ export function TechnicianMap({ jobs = [], onRouteCalculated, selectedJobId, onJ
     setRouteInfo(null);
   };
 
-  const handleRouteFound = (distance: string, duration: string) => {
+  const handleRouteFound = useCallback((distance: string, duration: string) => {
     setRouteInfo({ distance, duration });
     onRouteCalculated?.(distance, duration);
-  };
+  }, [onRouteCalculated]);
 
   const defaultCenter: [number, number] = currentPosition || [39.8283, -98.5795];
 
@@ -250,6 +239,9 @@ export function TechnicianMap({ jobs = [], onRouteCalculated, selectedJobId, onJ
       <Card className="rounded-none border-x-0 border-t-0">
         <CardContent className="p-3">
           <div className="flex gap-2">
+            <Button variant="outline" onClick={locateMe} size="sm" className="h-10 w-10 p-0 shrink-0">
+              <Locate className="h-4 w-4" />
+            </Button>
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -294,13 +286,21 @@ export function TechnicianMap({ jobs = [], onRouteCalculated, selectedJobId, onJ
           zoom={currentPosition ? 14 : 4}
           style={{ height: '100%', width: '100%' }}
           className="z-0"
+          ref={mapRef}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           
-          <LocationMarker position={currentPosition} onLocationFound={setCurrentPosition} />
+          <MapController position={currentPosition} onLocationFound={setCurrentPosition} />
+          
+          {/* Current position marker */}
+          {currentPosition && (
+            <Marker position={currentPosition} icon={technicianIcon}>
+              <Popup>Your current location</Popup>
+            </Marker>
+          )}
           
           {/* Job markers */}
           {jobs.map((job) => (
