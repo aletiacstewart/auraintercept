@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useAIAgent } from '@/hooks/useAIAgent';
+import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { 
   Bot, Send, User, Loader2, Home, Phone, Mic, Calendar, 
   Clock, MessageSquare, Sparkles, ChevronRight, Building2, Volume2,
-  AlertTriangle, DollarSign, MapPin, Star, CalendarPlus
+  AlertTriangle, DollarSign, MapPin, Star, CalendarPlus, ArrowRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VoiceChat } from './VoiceChat';
@@ -30,6 +30,30 @@ const QUICK_ACTIONS = [
   { id: 'track', label: 'Track Appointment', icon: MapPin, message: "I want to track my appointment status" },
   { id: 'feedback', label: 'Leave Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
 ];
+
+// Agent display configuration for visual indicators
+const AGENT_CONFIG: Record<string, { label: string; color: string; bgColor: string }> = {
+  triage: { label: 'Triage', color: 'text-blue-700', bgColor: 'bg-blue-100' },
+  booking: { label: 'Booking', color: 'text-blue-700', bgColor: 'bg-blue-100' },
+  dispatch: { label: 'Dispatch', color: 'text-green-700', bgColor: 'bg-green-100' },
+  followup: { label: 'Follow-up', color: 'text-blue-700', bgColor: 'bg-blue-100' },
+  review: { label: 'Review', color: 'text-blue-700', bgColor: 'bg-blue-100' },
+  quoting: { label: 'Quoting', color: 'text-purple-700', bgColor: 'bg-purple-100' },
+  invoice: { label: 'Invoice', color: 'text-purple-700', bgColor: 'bg-purple-100' },
+  inventory: { label: 'Inventory', color: 'text-purple-700', bgColor: 'bg-purple-100' },
+  marketing: { label: 'Marketing', color: 'text-orange-700', bgColor: 'bg-orange-100' },
+  referral: { label: 'Referral', color: 'text-orange-700', bgColor: 'bg-orange-100' },
+  winback: { label: 'Win-back', color: 'text-orange-700', bgColor: 'bg-orange-100' },
+  checkin: { label: 'Check-in', color: 'text-green-700', bgColor: 'bg-green-100' },
+  route: { label: 'Route', color: 'text-green-700', bgColor: 'bg-green-100' },
+  eta: { label: 'ETA', color: 'text-green-700', bgColor: 'bg-green-100' },
+  warranty: { label: 'Warranty', color: 'text-purple-700', bgColor: 'bg-purple-100' },
+  analytics: { label: 'Analytics', color: 'text-purple-700', bgColor: 'bg-purple-100' },
+};
+
+const getAgentInfo = (agent: string) => {
+  return AGENT_CONFIG[agent] || { label: agent, color: 'text-gray-700', bgColor: 'bg-gray-100' };
+};
 
 interface Service {
   id: string;
@@ -58,7 +82,16 @@ const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 
 export const AIAgentConsole = () => {
   const { companyId } = useAuth();
-  const { messages, isLoading, sendMessage, clearMessages } = useAIAgent();
+  const [previousAgent, setPreviousAgent] = useState<string>('triage');
+  
+  const { messages, isLoading, currentAgent, sessionId, sendMessage, clearMessages } = useMultiAgentChat({
+    companyId,
+    onAgentChange: (agent) => {
+      console.log(`Agent changed from ${previousAgent} to: ${agent}`);
+      setPreviousAgent(currentAgent);
+    }
+  });
+  
   const [input, setInput] = useState('');
   const [activeTab, setActiveTab] = useState('chat');
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
@@ -306,6 +339,14 @@ export const AIAgentConsole = () => {
               <h2 className="font-semibold">{company?.name || 'AI Assistant'}</h2>
               <div className="flex items-center gap-2">
                 <p className="text-xs text-white/80">Virtual Assistant</p>
+                {/* Current Agent Badge */}
+                <Badge 
+                  variant="secondary" 
+                  className="text-xs py-0 h-5 bg-white/20 text-white border-white/30"
+                >
+                  <Bot className="h-3 w-3 mr-1" />
+                  {getAgentInfo(currentAgent).label} Agent
+                </Badge>
                 {ttsInfo && (
                   <TooltipProvider>
                     <Tooltip>
@@ -464,36 +505,75 @@ export const AIAgentConsole = () => {
                 />
               )}
               
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={cn(
-                    'flex gap-3 p-3 rounded-lg',
-                    message.role === 'user' 
-                      ? 'bg-primary/10 ml-8' 
-                      : 'bg-muted mr-8'
-                  )}
-                >
-                  <div className={cn(
-                    'h-8 w-8 rounded-full flex items-center justify-center shrink-0',
-                    message.role === 'user' ? 'bg-primary' : 'gradient-primary'
-                  )}>
-                    {message.role === 'user' ? (
-                      <User className="h-4 w-4 text-primary-foreground" />
-                    ) : (
-                      <Bot className="h-4 w-4 text-white" />
+              {messages.map((message, index) => {
+                const agentInfo = message.agent ? getAgentInfo(message.agent) : null;
+                const prevMessage = index > 0 ? messages[index - 1] : null;
+                const showHandoffIndicator = message.role === 'assistant' && 
+                  prevMessage?.role === 'assistant' && 
+                  message.agent && 
+                  prevMessage?.agent && 
+                  message.agent !== prevMessage.agent;
+
+                return (
+                  <React.Fragment key={index}>
+                    {/* Handoff indicator */}
+                    {showHandoffIndicator && (
+                      <div className="flex items-center justify-center gap-2 py-2 text-xs text-muted-foreground">
+                        <div className="h-px flex-1 bg-border" />
+                        <span className="flex items-center gap-1">
+                          <ArrowRight className="h-3 w-3" />
+                          Transferred to {agentInfo?.label} Agent
+                        </span>
+                        <div className="h-px flex-1 bg-border" />
+                      </div>
                     )}
-                  </div>
-                  <div className="flex-1 whitespace-pre-wrap text-sm">{cleanMessageContent(message.content)}</div>
-                </div>
-              ))}
+                    
+                    <div
+                      className={cn(
+                        'flex gap-3 p-3 rounded-lg',
+                        message.role === 'user' 
+                          ? 'bg-primary/10 ml-8' 
+                          : 'bg-muted mr-8'
+                      )}
+                    >
+                      <div className={cn(
+                        'h-8 w-8 rounded-full flex items-center justify-center shrink-0',
+                        message.role === 'user' ? 'bg-primary' : 'gradient-primary'
+                      )}>
+                        {message.role === 'user' ? (
+                          <User className="h-4 w-4 text-primary-foreground" />
+                        ) : (
+                          <Bot className="h-4 w-4 text-white" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        {/* Agent badge for assistant messages */}
+                        {message.role === 'assistant' && agentInfo && (
+                          <Badge 
+                            variant="outline" 
+                            className={cn("text-xs mb-1", agentInfo.color, agentInfo.bgColor)}
+                          >
+                            {agentInfo.label}
+                          </Badge>
+                        )}
+                        <div className="whitespace-pre-wrap text-sm">{cleanMessageContent(message.content)}</div>
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              })}
               
               {isLoading && messages[messages.length - 1]?.role === 'user' && (
                 <div className="flex gap-3 p-3 rounded-lg bg-muted mr-8">
                   <div className="h-8 w-8 rounded-full gradient-primary flex items-center justify-center">
                     <Loader2 className="h-4 w-4 animate-spin text-white" />
                   </div>
-                  <div className="flex-1 text-muted-foreground text-sm">Thinking...</div>
+                  <div className="flex-1 text-muted-foreground text-sm">
+                    <Badge variant="outline" className={cn("text-xs mb-1", getAgentInfo(currentAgent).color, getAgentInfo(currentAgent).bgColor)}>
+                      {getAgentInfo(currentAgent).label}
+                    </Badge>
+                    <div>Thinking...</div>
+                  </div>
                 </div>
               )}
             </div>
