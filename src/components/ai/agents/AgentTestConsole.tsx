@@ -6,6 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
+import { FeedbackForm } from '@/components/ai/FeedbackForm';
+import { toast } from 'sonner';
 import { 
   Send, 
   Bot, 
@@ -100,11 +103,13 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
     { label: 'After Service', message: "The technician just left. Following up on the service." },
     { label: 'Satisfaction Check', message: "How would you rate your recent service experience?" },
     { label: 'Issue Report', message: "The issue came back after the technician left yesterday" },
+    { label: 'Leave Feedback', message: "I'd like to leave feedback about my experience" },
   ],
   review: [
     { label: 'Request Review', message: "Could you share your feedback about our service?" },
     { label: 'Positive Feedback', message: "The service was excellent! Very professional team." },
     { label: 'Negative Feedback', message: "I'm disappointed with the service quality. 2 stars." },
+    { label: 'Leave Feedback', message: "I want to share my feedback" },
   ],
   dispatch: [
     { label: 'New Job', message: "Need to dispatch a technician for a new HVAC repair job" },
@@ -245,8 +250,31 @@ export function AgentTestConsole({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [activeAgent, setActiveAgent] = useState(initialAgentType);
   const [activeAgentName, setActiveAgentName] = useState(initialAgentName);
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const scenarios = TEST_SCENARIOS[initialAgentType] || [];
+
+  // Fetch company review links
+  const { data: companyData } = useQuery({
+    queryKey: ['company-review-links', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data } = await supabase
+        .from('companies')
+        .select('review_google_url, review_facebook_url, review_yelp_url')
+        .eq('id', companyId)
+        .single();
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  const reviewLinks = [
+    companyData?.review_google_url && { platform: 'Google', url: companyData.review_google_url },
+    companyData?.review_facebook_url && { platform: 'Facebook', url: companyData.review_facebook_url },
+    companyData?.review_yelp_url && { platform: 'Yelp', url: companyData.review_yelp_url },
+  ].filter(Boolean) as { platform: string; url: string }[];
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -260,6 +288,7 @@ export function AgentTestConsole({
     setActiveAgentName(initialAgentName);
     setMessages([]);
     setConversationHistory([]);
+    setShowFeedbackForm(false);
   }, [initialAgentType, initialAgentName]);
 
   const addMessage = useCallback((message: Omit<Message, 'id' | 'timestamp'>) => {
@@ -501,6 +530,50 @@ export function AgentTestConsole({
     setConversationHistory([]);
     setActiveAgent(initialAgentType);
     setActiveAgentName(initialAgentName);
+    setShowFeedbackForm(false);
+  };
+
+  const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string }) => {
+    if (!companyId) return;
+    
+    setFeedbackLoading(true);
+    try {
+      // Save feedback directly to database
+      const { error } = await supabase
+        .from('customer_feedback')
+        .insert({
+          company_id: companyId,
+          rating: feedback.rating,
+          sentiment: feedback.sentiment,
+          feedback_note: feedback.note || null,
+          source: 'agent_console'
+        });
+
+      if (error) throw error;
+      
+      setShowFeedbackForm(false);
+      addMessage({
+        role: 'agent',
+        content: feedback.sentiment === 'negative' 
+          ? "Thank you for sharing your feedback. We're sorry to hear about your experience and will use this to improve our services."
+          : "Thank you for your feedback! We truly appreciate you taking the time to share your experience with us.",
+        metadata: { current_agent: activeAgent }
+      });
+      toast.success('Feedback submitted successfully!');
+    } catch (error) {
+      console.error('Feedback submission error:', error);
+      toast.error('Failed to submit feedback');
+    } finally {
+      setFeedbackLoading(false);
+    }
+  };
+
+  const handleScenarioClick = (scenario: { label: string; message: string }) => {
+    if (scenario.label === 'Leave Feedback') {
+      setShowFeedbackForm(true);
+    } else {
+      sendMessage(scenario.message);
+    }
   };
 
   if (!isEnabled) {
@@ -532,7 +605,7 @@ export function AgentTestConsole({
                 key={scenario.label}
                 variant="outline"
                 className="w-full justify-start text-left h-auto py-3"
-                onClick={() => sendMessage(scenario.message)}
+                onClick={() => handleScenarioClick(scenario)}
                 disabled={isLoading}
               >
                 <Terminal className="h-4 w-4 mr-2 flex-shrink-0" />
@@ -680,6 +753,15 @@ export function AgentTestConsole({
                       )}
                     </div>
                   ))}
+                  {showFeedbackForm && (
+                    <div className="py-4">
+                      <FeedbackForm
+                        onSubmit={handleFeedbackSubmit}
+                        isLoading={feedbackLoading}
+                        reviewLinks={reviewLinks}
+                      />
+                    </div>
+                  )}
                   {isLoading && (
                     <div className="flex gap-3">
                       <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
