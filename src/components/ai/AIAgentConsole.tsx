@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { VoiceChat } from './VoiceChat';
 import { SMSChat } from './SMSChat';
 import { FeedbackForm } from './FeedbackForm';
+import { ReviewForm } from './ReviewForm';
 import { BookingForm, BookingData } from './BookingForm';
 import { format } from 'date-fns';
 
@@ -105,6 +106,7 @@ export const AIAgentConsole = () => {
   const [input, setInput] = useState('');
   const [activeTab, setActiveTab] = useState('chat');
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
 
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
@@ -265,11 +267,20 @@ export const AIAgentConsole = () => {
     // Show feedback form directly instead of sending a message
     if (actionId === 'feedback') {
       setShowFeedbackForm(true);
+      setShowReviewForm(false);
       setActiveTab('chat');
       return;
     }
-    // Reset feedback form for all other actions
+    // Show review form directly instead of sending a message
+    if (actionId === 'review') {
+      setShowReviewForm(true);
+      setShowFeedbackForm(false);
+      setActiveTab('chat');
+      return;
+    }
+    // Reset forms for all other actions
     setShowFeedbackForm(false);
+    setShowReviewForm(false);
     // Navigate to booking form for schedule action
     if (actionId === 'schedule') {
       setActiveTab('book');
@@ -290,7 +301,7 @@ export const AIAgentConsole = () => {
       setActiveTab('emergency');
       return;
     }
-    // For chat-based actions (quote, track, review), send message directly
+    // For chat-based actions (quote, track), send message directly
     setActiveTab('chat');
     await sendMessage(action);
   };
@@ -299,6 +310,13 @@ export const AIAgentConsole = () => {
     setShowFeedbackForm(false);
     const feedbackMessage = `I'd like to leave feedback. My name is ${feedback.customerName}${feedback.customerPhone ? ` and my phone number is ${feedback.customerPhone}` : ''}${feedback.serviceDate ? ` for my appointment on ${feedback.serviceDate.toLocaleDateString()}` : ''}. My rating is ${feedback.rating} stars and my experience was ${feedback.sentiment}.${feedback.note ? ` Additional comments: ${feedback.note}` : ''}`;
     await sendMessage(feedbackMessage);
+  };
+
+  const handleReviewSubmit = async (review: { rating: number; comment: string; customerName: string; customerPhone: string; selectedPlatforms: string[] }) => {
+    setShowReviewForm(false);
+    const platformsText = review.selectedPlatforms.join(' and ');
+    const reviewMessage = `I've submitted a review. My name is ${review.customerName}${review.customerPhone ? ` and my phone number is ${review.customerPhone}` : ''}. I gave ${review.rating} stars and left a review on ${platformsText}.${review.comment ? ` My comment: ${review.comment}` : ''}`;
+    await sendMessage(reviewMessage);
   };
 
   // Filter out raw tool code from message content
@@ -551,11 +569,20 @@ export const AIAgentConsole = () => {
                   reviewLinks={reviewLinks}
                 />
               )}
+
+              {/* Review Form */}
+              {showReviewForm && (
+                <ReviewForm
+                  onSubmit={handleReviewSubmit}
+                  isLoading={isLoading}
+                  reviewLinks={reviewLinks}
+                />
+              )}
               
               {messages.map((message, index) => {
                 const agentInfo = message.agent ? getAgentInfo(message.agent) : null;
                 const prevMessage = index > 0 ? messages[index - 1] : null;
-                const showHandoffIndicator = message.role === 'assistant' && 
+                const showHandoffIndicator = message.role === 'assistant' &&
                   prevMessage?.role === 'assistant' && 
                   message.agent && 
                   prevMessage?.agent && 
