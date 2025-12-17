@@ -33,8 +33,9 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette, Pencil } from 'lucide-react';
+import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette, Pencil, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { format, formatDistanceToNow } from 'date-fns';
 
 interface GoogleCalendar {
   id: string;
@@ -112,6 +113,24 @@ export function GoogleCalendarSettings() {
       });
       if (error) throw error;
       return data as { calendars: GoogleCalendar[] };
+    },
+    enabled: isConnected,
+  });
+
+  // Fetch last sync timestamp
+  const { data: lastSyncData } = useQuery({
+    queryKey: ['google-calendar-last-sync', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data, error } = await supabase
+        .from('calendar_event_mappings')
+        .select('last_synced_at')
+        .eq('company_id', companyId)
+        .order('last_synced_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
     },
     enabled: isConnected,
   });
@@ -295,6 +314,7 @@ export function GoogleCalendarSettings() {
       return data;
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-last-sync'] });
       toast.success(`Synced ${data?.synced || 0} appointments to Google Calendar`);
     },
     onError: (error) => {
@@ -396,6 +416,15 @@ export function GoogleCalendarSettings() {
                     ? `Syncing with ${selectedCalendarName}`
                     : 'Sync appointments with your Google Calendar (two-way sync)'
                   }
+                  {isConnected && lastSyncData?.last_synced_at && (
+                    <span className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+                      <Clock className="w-3 h-3" />
+                      Last synced {formatDistanceToNow(new Date(lastSyncData.last_synced_at), { addSuffix: true })}
+                      <span className="text-muted-foreground/60">
+                        ({format(new Date(lastSyncData.last_synced_at), 'MMM d, h:mm a')})
+                      </span>
+                    </span>
+                  )}
                 </CardDescription>
               </div>
             </div>
