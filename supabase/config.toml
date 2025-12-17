@@ -98,3 +98,6 @@ verify_jwt = false
 
 [functions.send-review-request]
 verify_jwt = false
+
+[functions.generate-campaign-content]
+verify_jwt = true

@@ -28,12 +28,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { Megaphone, Plus, Send, TrendingUp, Eye, MousePointer, Users, Mail, MessageSquare } from 'lucide-react';
+import { Megaphone, Plus, Send, TrendingUp, Eye, MousePointer, Users, Mail, MessageSquare, Sparkles, Loader2 } from 'lucide-react';
 
 export default function Campaigns() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [generatingSubject, setGeneratingSubject] = useState(false);
+  const [generatingMessage, setGeneratingMessage] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     campaign_type: 'promotional',
@@ -44,6 +46,35 @@ export default function Campaigns() {
     discount_type: '',
     discount_value: 0,
   });
+
+  const generateContent = async (field: 'subject' | 'message') => {
+    const setLoading = field === 'subject' ? setGeneratingSubject : setGeneratingMessage;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-campaign-content', {
+        body: {
+          campaignType: formData.campaign_type,
+          targetSegment: formData.target_segment,
+          companyName: 'our company',
+          field,
+        },
+      });
+      if (error) throw error;
+      if (data?.content) {
+        if (field === 'subject') {
+          setFormData(p => ({ ...p, email_subject: data.content }));
+        } else {
+          setFormData(p => ({ ...p, message_template: data.content }));
+        }
+        toast.success('Content generated!');
+      }
+    } catch (err) {
+      console.error('AI generation error:', err);
+      toast.error('Failed to generate content');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const { data: campaigns, isLoading } = useQuery({
     queryKey: ['campaigns', companyId],
@@ -192,7 +223,20 @@ export default function Campaigns() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Email Subject</Label>
+                  <div className="flex items-center justify-between">
+                    <Label>Email Subject</Label>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => generateContent('subject')}
+                      disabled={generatingSubject}
+                      className="h-7 text-xs gap-1"
+                    >
+                      {generatingSubject ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                      AI Generate
+                    </Button>
+                  </div>
                   <Input
                     value={formData.email_subject}
                     onChange={(e) => setFormData(p => ({ ...p, email_subject: e.target.value }))}
@@ -200,7 +244,20 @@ export default function Campaigns() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Message Template</Label>
+                  <div className="flex items-center justify-between">
+                    <Label>Message Template</Label>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => generateContent('message')}
+                      disabled={generatingMessage}
+                      className="h-7 text-xs gap-1"
+                    >
+                      {generatingMessage ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                      AI Generate
+                    </Button>
+                  </div>
                   <Textarea
                     value={formData.message_template}
                     onChange={(e) => setFormData(p => ({ ...p, message_template: e.target.value }))}
