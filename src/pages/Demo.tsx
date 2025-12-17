@@ -362,7 +362,7 @@ export default function Demo() {
           </p>
         </div>
 
-        <Card className="h-[calc(100vh-200px)] sm:h-[650px] min-h-[450px] max-h-[750px] flex flex-col overflow-hidden border-0 shadow-xl neon-border">
+        <Card className="h-[calc(100vh-180px)] sm:h-[600px] flex flex-col overflow-hidden border-0 shadow-xl">
           {/* Header */}
           <GlassHeader
             companyName="AI Bot Company"
@@ -382,11 +382,11 @@ export default function Demo() {
           />
 
           {/* Content Area */}
-          <div className="flex-1 flex flex-col min-h-0 overflow-hidden tech-grid">
+          <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
             {/* Chat Tab */}
             {activeTab === 'chat' && (
-              <div className="flex-1 flex flex-col min-h-0">
-                <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+                <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
                   {messages.length === 0 && !isShowingForm && (
                     <WelcomeScreen
                       companyName="AI Bot Company"
@@ -469,15 +469,17 @@ export default function Demo() {
 
             {/* Services Tab */}
             {activeTab === 'services' && (
-              <div className="flex-1 overflow-y-auto p-4">
-                <h3 className="font-semibold text-lg mb-4 gradient-text">Our Services</h3>
+              <div className="flex-1 overflow-y-auto p-3">
+                <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  Our Services
+                </h3>
                 {services && services.length > 0 ? (
-                  <div className="space-y-3">
-                    {services.map((service, index) => (
+                  <div className="space-y-2">
+                    {services.map((service) => (
                       <button
                         key={service.id}
-                        className="w-full text-left p-4 rounded-xl glass-panel hover:neon-border transition-all duration-300 animate-fade-in"
-                        style={{ animationDelay: `${index * 50}ms` }}
+                        className="w-full text-left p-2.5 rounded-lg border bg-card hover:border-primary/50 transition-colors"
                         onClick={() => {
                           setActiveTab('chat');
                           sendMessage(`Tell me about ${service.name}`);
@@ -485,17 +487,17 @@ export default function Demo() {
                       >
                         <div className="flex justify-between items-start">
                           <div>
-                            <h4 className="font-medium">{service.name}</h4>
+                            <h4 className="font-medium text-sm">{service.name}</h4>
                             {service.description && (
-                              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{service.description}</p>
+                              <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{service.description}</p>
                             )}
                           </div>
-                          <div className="text-right ml-4">
+                          <div className="text-right ml-2">
                             {service.price && (
-                              <Badge variant="secondary" className="font-semibold">${service.price}</Badge>
+                              <Badge variant="secondary" className="text-xs">${service.price}</Badge>
                             )}
                             {service.duration_minutes && (
-                              <p className="text-xs text-muted-foreground mt-1">{service.duration_minutes} min</p>
+                              <p className="text-[10px] text-muted-foreground mt-0.5">{service.duration_minutes} min</p>
                             )}
                           </div>
                         </div>
@@ -503,23 +505,26 @@ export default function Demo() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-center py-8">No services configured for demo</p>
+                  <p className="text-muted-foreground text-xs text-center py-4">No services configured</p>
                 )}
               </div>
             )}
 
             {/* Hours Tab */}
             {activeTab === 'hours' && (
-              <div className="flex-1 overflow-y-auto p-4">
-                <h3 className="font-semibold text-lg mb-4 gradient-text">Business Hours</h3>
-                <div className="p-4 rounded-xl glass-primary mb-4 glow-primary">
-                  <div className="flex items-center gap-2 text-white">
-                    <Clock className="h-5 w-5" />
-                    <span className="font-medium">Today: {getTodayHours()}</span>
+              <div className="flex-1 overflow-y-auto p-3">
+                <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-primary" />
+                  Business Hours
+                </h3>
+                <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 mb-3">
+                  <div className="flex items-center gap-2 text-primary">
+                    <Clock className="h-4 w-4" />
+                    <span className="font-medium text-sm">Today: {getTodayHours()}</span>
                   </div>
                 </div>
                 {businessHours && businessHours.length > 0 ? (
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {DAYS.map((day, index) => {
                       const hours = businessHours.find(h => h.day_of_week === index);
                       const isToday = new Date().getDay() === index;
@@ -527,30 +532,31 @@ export default function Demo() {
                         <div
                           key={day}
                           className={cn(
-                            'flex justify-between items-center py-3 px-4 rounded-xl transition-all animate-fade-in',
-                            isToday ? 'glass-panel neon-border font-medium' : 'glass-panel'
+                            'flex justify-between items-center py-2 px-3 rounded-lg text-sm',
+                            isToday ? 'bg-primary/10 text-primary font-medium' : 'bg-muted/30'
                           )}
-                          style={{ animationDelay: `${index * 50}ms` }}
                         >
-                          <span className={isToday ? 'text-primary' : ''}>{day}</span>
-                          <span className="text-muted-foreground">
+                          <span>{day}</span>
+                          <span className="text-xs">
                             {hours?.is_closed
                               ? 'Closed'
-                              : `${formatTime(hours?.open_time)} - ${formatTime(hours?.close_time)}`}
+                              : hours
+                                ? `${formatTime(hours.open_time)} - ${formatTime(hours.close_time)}`
+                                : 'Not set'}
                           </span>
                         </div>
                       );
                     })}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground text-center py-8">Hours not configured for demo</p>
+                  <p className="text-muted-foreground text-xs text-center py-4">Hours not configured</p>
                 )}
               </div>
             )}
 
             {/* Book Tab */}
             {activeTab === 'book' && (
-              <div className="flex-1 overflow-y-auto p-4">
+              <div className="flex-1 overflow-y-auto p-3">
                 <BookingForm
                   services={services || []}
                   onSubmit={handleBookingSubmit}
@@ -560,12 +566,11 @@ export default function Demo() {
 
             {/* Voice Tab */}
             {activeTab === 'voice' && (
-              <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center">
-                <div className="text-center mb-6">
-                  <h3 className="font-semibold text-lg mb-2 gradient-text">Voice AI Assistant</h3>
-                  <p className="text-muted-foreground text-sm max-w-md">
-                    Talk directly with our AI assistant using your microphone. 
-                    Click the button below to start a voice conversation.
+              <div className="flex-1 overflow-y-auto p-3 flex flex-col items-center justify-center">
+                <div className="text-center mb-4">
+                  <h3 className="font-semibold text-sm mb-1">Voice AI Assistant</h3>
+                  <p className="text-muted-foreground text-xs">
+                    Talk directly with our AI using your microphone.
                   </p>
                 </div>
                 <VoiceChat
@@ -581,16 +586,16 @@ export default function Demo() {
         </Card>
 
         {/* CTA */}
-        <div className="mt-8 text-center">
-          <p className="text-muted-foreground mb-4">
+        <div className="mt-4 text-center">
+          <p className="text-muted-foreground text-xs mb-2">
             Like what you see? Get your own AI agent for your business.
           </p>
           <Button 
-            size="lg" 
-            className="glass-primary glow-primary text-white hover:opacity-90 transition-opacity"
+            size="sm" 
+            className="bg-primary text-primary-foreground"
             onClick={() => navigate('/auth?mode=company')}
           >
-            <Building2 className="h-5 w-5 mr-2" />
+            <Building2 className="h-4 w-4 mr-1" />
             Start Free Trial
           </Button>
         </div>

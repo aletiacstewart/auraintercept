@@ -425,12 +425,11 @@ export const AIAgentConsole = () => {
   const isShowingForm = showFeedbackForm || showReviewForm || showQuoteForm || showTrackForm;
 
   return (
-    <Card className="h-[700px] flex flex-col overflow-hidden border-0 shadow-xl neon-border">
+    <Card className="h-[600px] flex flex-col overflow-hidden border-0 shadow-xl">
       {/* Header */}
       <GlassHeader
         companyName={company?.name || 'AI Assistant'}
         logoUrl={company?.logo_url}
-        logoFallback={<Building2 className="h-5 w-5" />}
         agentLabel={agentInfo.label}
         agentColor={agentInfo.color}
         agentBgColor={agentInfo.bgColor}
