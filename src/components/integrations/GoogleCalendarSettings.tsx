@@ -32,7 +32,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus } from 'lucide-react';
+import { Calendar, Check, Loader2, Unlink, RefreshCw, Plus, Palette } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface GoogleCalendar {
@@ -75,6 +75,7 @@ export function GoogleCalendarSettings() {
   const queryClient = useQueryClient();
   const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
   const [createCalendarDialogOpen, setCreateCalendarDialogOpen] = useState(false);
+  const [changeColorDialogOpen, setChangeColorDialogOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(CALENDAR_COLORS[7].color); // Default to Basil green
 
   // Fetch current Google Calendar connection status
@@ -193,7 +194,33 @@ export function GoogleCalendarSettings() {
     },
   });
 
-  // Disconnect from Google Calendar
+  // Change calendar color
+  const changeColorMutation = useMutation({
+    mutationFn: async (color: string) => {
+      if (!companyId || !integration?.google_calendar_id) throw new Error('No calendar selected');
+      
+      const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: {
+          action: 'change_color',
+          companyId,
+          calendarId: integration.google_calendar_id,
+          calendarColor: color,
+        },
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['google-calendars'] });
+      setChangeColorDialogOpen(false);
+      toast.success('Calendar color updated');
+    },
+    onError: (error) => {
+      console.error('Failed to change color:', error);
+      toast.error('Failed to change calendar color');
+    },
+  });
   const disconnectMutation = useMutation({
     mutationFn: async () => {
       if (!companyId) throw new Error('No company ID');
@@ -393,6 +420,22 @@ export function GoogleCalendarSettings() {
                       <Plus className="w-3 h-3" />
                       Create New
                     </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        const currentColor = calendarsData?.calendars?.find(
+                          c => c.id === integration?.google_calendar_id
+                        )?.backgroundColor;
+                        if (currentColor) setSelectedColor(currentColor);
+                        setChangeColorDialogOpen(true);
+                      }}
+                      disabled={changeColorMutation.isPending || !integration?.google_calendar_id}
+                      className="gap-1 text-xs h-7"
+                    >
+                      <Palette className="w-3 h-3" />
+                      Change Color
+                    </Button>
                   </div>
                 </div>
 
@@ -540,6 +583,61 @@ export function GoogleCalendarSettings() {
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
               ) : null}
               Create Calendar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Change Color Dialog */}
+      <Dialog open={changeColorDialogOpen} onOpenChange={setChangeColorDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Change Calendar Color</DialogTitle>
+            <DialogDescription>
+              Select a new color for your calendar.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Calendar Color</label>
+              <div className="grid grid-cols-6 gap-2">
+                {CALENDAR_COLORS.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setSelectedColor(c.color)}
+                    className={cn(
+                      "w-8 h-8 rounded-full border-2 transition-all hover:scale-110",
+                      selectedColor === c.color 
+                        ? "border-foreground ring-2 ring-foreground/20" 
+                        : "border-transparent"
+                    )}
+                    style={{ backgroundColor: c.color }}
+                    title={c.name}
+                  />
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Selected: {CALENDAR_COLORS.find(c => c.color === selectedColor)?.name || 'Custom'}
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setChangeColorDialogOpen(false)}
+              disabled={changeColorMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => changeColorMutation.mutate(selectedColor)}
+              disabled={changeColorMutation.isPending}
+            >
+              {changeColorMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : null}
+              Update Color
             </Button>
           </DialogFooter>
         </DialogContent>
