@@ -268,7 +268,7 @@ export const AIAgentConsole = () => {
   };
 
   return (
-    <Card className="flex flex-col h-[700px] overflow-hidden border-2">
+    <Card className="flex flex-col h-[700px] min-h-0 overflow-hidden border-2">
       {/* Header */}
       <div className="gradient-primary p-4 text-white">
         <div className="flex items-center justify-between">
@@ -354,7 +354,7 @@ export const AIAgentConsole = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 min-h-0 flex flex-col overflow-hidden">
         <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-auto p-0 overflow-x-auto flex-nowrap">
           <TabsTrigger 
             value="chat" 
@@ -396,7 +396,7 @@ export const AIAgentConsole = () => {
         </TabsList>
 
         {/* Chat Tab */}
-        <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden m-0 p-0">
+        <TabsContent value="chat" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0">
           <CardContent className="flex-1 flex flex-col overflow-hidden p-4">
             <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
               <div className="space-y-4">
@@ -500,7 +500,7 @@ export const AIAgentConsole = () => {
         </TabsContent>
 
         {/* Services Tab */}
-        <TabsContent value="services" className="flex-1 overflow-hidden m-0">
+        <TabsContent value="services" className="flex-1 min-h-0 overflow-hidden m-0">
           <ScrollArea className="h-full">
             <div className="p-4 space-y-3">
               {services?.length === 0 ? (
@@ -554,7 +554,7 @@ export const AIAgentConsole = () => {
         </TabsContent>
 
         {/* Book Tab */}
-        <TabsContent value="book" className="flex-1 overflow-y-auto m-0">
+        <TabsContent value="book" className="flex-1 min-h-0 overflow-y-auto m-0">
           <div className="p-4">
             <BookingForm
               services={services || []}
@@ -565,7 +565,7 @@ export const AIAgentConsole = () => {
         </TabsContent>
 
         {/* Hours Tab */}
-        <TabsContent value="hours" className="flex-1 overflow-hidden m-0">
+        <TabsContent value="hours" className="flex-1 min-h-0 overflow-hidden m-0">
           <ScrollArea className="h-full">
             <div className="p-4">
               <div className="bg-primary/10 rounded-lg p-4 mb-4">
