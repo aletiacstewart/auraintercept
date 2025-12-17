@@ -210,6 +210,11 @@ export const AIAgentConsole = () => {
       setActiveTab('hours');
       return;
     }
+    // Navigate to services tab for view services action
+    if (actionId === 'services') {
+      setActiveTab('services');
+      return;
+    }
     setInput(action);
     setActiveTab('chat');
   };
