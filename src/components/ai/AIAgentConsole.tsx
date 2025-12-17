@@ -397,7 +397,7 @@ export const AIAgentConsole = () => {
 
         {/* Chat Tab */}
         <TabsContent value="chat" className="flex-1 min-h-0 flex flex-col overflow-hidden m-0 p-0">
-          <CardContent className="flex-1 flex flex-col overflow-hidden p-4">
+          <CardContent className="flex-1 min-h-0 flex flex-col overflow-hidden p-4">
             <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
               <div className="space-y-4">
                 {messages.length === 0 && (
