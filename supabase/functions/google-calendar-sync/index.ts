@@ -393,6 +393,125 @@ Deno.serve(async (req) => {
       );
     }
 
+    if (action === 'import_events') {
+      // Import events from Google Calendar that don't exist in platform
+      const now = new Date();
+      const timeMin = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(); // Last 7 days
+      const timeMax = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString(); // Next 90 days
+
+      const response = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?` +
+        `timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&maxResults=100`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Failed to fetch Google Calendar events:', errorText);
+        return new Response(
+          JSON.stringify({ error: 'Failed to fetch Google Calendar events' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const calendarData = await response.json();
+      const events = calendarData.items || [];
+
+      // Get existing mappings to skip already-linked events
+      const { data: existingMappings } = await supabase
+        .from('calendar_event_mappings')
+        .select('google_event_id')
+        .eq('company_id', companyId);
+
+      const existingEventIds = new Set(existingMappings?.map(m => m.google_event_id) || []);
+
+      const importResults = {
+        imported: 0,
+        skipped: 0,
+        errors: 0,
+      };
+
+      for (const event of events) {
+        // Skip if already linked to platform
+        if (existingEventIds.has(event.id)) {
+          importResults.skipped++;
+          continue;
+        }
+
+        // Skip events created by this platform
+        if (event.extendedProperties?.private?.source === 'lovable-platform') {
+          importResults.skipped++;
+          continue;
+        }
+
+        // Skip all-day events or events without proper datetime
+        const startTime = event.start?.dateTime;
+        const endTime = event.end?.dateTime;
+        if (!startTime || !endTime) {
+          importResults.skipped++;
+          continue;
+        }
+
+        try {
+          // Calculate duration
+          const startDate = new Date(startTime);
+          const endDate = new Date(endTime);
+          const durationMinutes = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60));
+
+          // Extract customer name from event summary
+          const customerName = event.summary || 'Imported Event';
+
+          // Create appointment from Google Calendar event
+          const { data: newAppointment, error: insertError } = await supabase
+            .from('appointments')
+            .insert({
+              company_id: companyId,
+              customer_name: customerName,
+              customer_email: null,
+              customer_phone: null,
+              customer_address: event.location || null,
+              service_type: 'Imported from Google Calendar',
+              datetime: startDate.toISOString(),
+              duration_minutes: durationMinutes || 60,
+              status: 'scheduled',
+              notes: event.description || `Imported from Google Calendar: ${event.summary}`,
+            })
+            .select()
+            .single();
+
+          if (insertError) {
+            console.error('Error creating appointment:', insertError);
+            importResults.errors++;
+            continue;
+          }
+
+          // Create mapping to link Google event with new appointment
+          await supabase
+            .from('calendar_event_mappings')
+            .insert({
+              company_id: companyId,
+              appointment_id: newAppointment.id,
+              google_event_id: event.id,
+              sync_status: 'synced',
+            });
+
+          importResults.imported++;
+        } catch (e) {
+          console.error(`Error importing event ${event.id}:`, e);
+          importResults.errors++;
+        }
+      }
+
+      console.log(`Import complete: ${importResults.imported} imported, ${importResults.skipped} skipped, ${importResults.errors} errors`);
+
+      return new Response(
+        JSON.stringify({ success: true, results: importResults }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     return new Response(
       JSON.stringify({ error: 'Invalid action' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
