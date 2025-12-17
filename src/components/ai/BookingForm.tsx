@@ -7,7 +7,9 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { CalendarIcon, Clock, User, Phone, MapPin, Loader2, Send } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CalendarIcon, Clock, User, Phone, MapPin, Loader2, Send, FileText, Info } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -32,6 +34,7 @@ export interface BookingData {
   customerName: string;
   customerPhone: string;
   customerAddress: string;
+  notes?: string;
 }
 
 // Generate time slots from 8 AM to 6 PM
@@ -57,6 +60,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
+  const [notes, setNotes] = useState('');
 
   const handleServiceToggle = (serviceId: string) => {
     setSelectedServices(prev => 
@@ -79,6 +83,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       customerName,
       customerPhone,
       customerAddress,
+      notes: notes.trim() || undefined,
     });
   };
 
@@ -93,12 +98,21 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       <div>
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <CalendarIcon className="h-5 w-5 text-primary" />
-          Book an Appointment
+          Request an Appointment
         </h3>
         <p className="text-sm text-muted-foreground mt-1">
-          Select services, choose a date and time, and provide your contact information
+          Submit your preferred date and time. Our team will review and confirm your appointment.
         </p>
       </div>
+
+      {/* Approval Notice */}
+      <Alert className="border-primary/20 bg-primary/5">
+        <Info className="h-4 w-4 text-primary" />
+        <AlertDescription className="text-sm">
+          <strong>Note:</strong> This is a request, not a confirmed booking. Our team will review your request and contact you to confirm availability or suggest alternative times.
+        </AlertDescription>
+      </Alert>
+
       <form onSubmit={handleSubmit} className="space-y-6">
           {/* Services Selection */}
           <div className="space-y-3">
@@ -158,7 +172,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
           <div className="grid grid-cols-2 gap-4">
             {/* Date Picker */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Date *</Label>
+              <Label className="text-sm font-medium">Preferred Date *</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -186,7 +200,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
 
             {/* Time Picker */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Time *</Label>
+              <Label className="text-sm font-medium">Preferred Time *</Label>
               <Select value={time} onValueChange={setTime}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select time">
@@ -259,6 +273,21 @@ export const BookingForm: React.FC<BookingFormProps> = ({
             </div>
           </div>
 
+          {/* Notes */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium flex items-center gap-2">
+              <FileText className="h-4 w-4 text-muted-foreground" />
+              Additional Notes (Optional)
+            </Label>
+            <Textarea
+              placeholder="Any special instructions, equipment details, or notes for our team..."
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+              className="resize-none"
+            />
+          </div>
+
           {/* Submit Button */}
           <Button 
             type="submit" 
@@ -268,12 +297,12 @@ export const BookingForm: React.FC<BookingFormProps> = ({
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Booking...
+                Submitting Request...
               </>
             ) : (
               <>
                 <Send className="h-4 w-4 mr-2" />
-                Book Appointment
+                Request Appointment
               </>
             )}
           </Button>
