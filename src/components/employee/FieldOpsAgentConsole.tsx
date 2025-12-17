@@ -1,4 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -18,9 +20,12 @@ import {
   MessageSquare,
   Bot,
   User,
-  Loader2
+  Loader2,
+  X,
+  Calendar
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 
 const FIELD_OPS_AGENTS = [
   { id: 'dispatch', name: 'Dispatch', color: 'bg-blue-500' },
@@ -38,13 +43,26 @@ interface QuickAction {
 }
 
 const QUICK_ACTIONS: QuickAction[] = [
-  { id: 'directions', label: 'Get Directions', icon: Navigation, message: 'I need directions to my next appointment' },
+  { id: 'directions', label: 'Get Directions', icon: Navigation, message: '' },
   { id: 'eta', label: 'Update ETA', icon: Clock, message: 'I need to update my ETA for the current job' },
   { id: 'checkin', label: 'Check In', icon: CheckCircle, message: 'I have arrived at the job site and want to check in' },
   { id: 'enroute', label: 'En Route', icon: Truck, message: 'I am now en route to my next appointment' },
   { id: 'photos', label: 'Upload Photos', icon: Camera, message: 'I need to upload before/after photos for this job' },
   { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: 'I need to speak with dispatch about my current job' },
 ];
+
+interface JobAssignment {
+  id: string;
+  status: string;
+  customer_address: string | null;
+  appointments: {
+    id: string;
+    customer_name: string;
+    service_type: string;
+    datetime: string;
+    customer_address: string | null;
+  } | null;
+}
 
 interface FieldOpsAgentConsoleProps {
   companyId?: string;
@@ -53,18 +71,54 @@ interface FieldOpsAgentConsoleProps {
 }
 
 export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }: FieldOpsAgentConsoleProps) {
-  const { companyId: authCompanyId } = useAuth();
+  const { user, companyId: authCompanyId } = useAuth();
   const effectiveCompanyId = companyId || authCompanyId;
   
   const [inputValue, setInputValue] = useState('');
+  const [showJobSelector, setShowJobSelector] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
+  const { messages, isLoading, currentAgent, sendMessage } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     onAgentChange: (agent) => {
       console.log('[FieldOps] Agent changed to:', agent);
     },
+  });
+
+  // Fetch employee's assigned jobs
+  const { data: assignedJobs = [], isLoading: jobsLoading } = useQuery({
+    queryKey: ['employee-jobs-for-directions', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+
+      const { data, error } = await supabase
+        .from('job_assignments')
+        .select(`
+          id,
+          status,
+          customer_address,
+          appointments (
+            id,
+            customer_name,
+            service_type,
+            datetime,
+            customer_address
+          )
+        `)
+        .eq('employee_id', user.id)
+        .in('status', ['pending_acceptance', 'accepted', 'en_route', 'arrived', 'in_progress'])
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching jobs:', error);
+        return [];
+      }
+
+      return (data || []) as JobAssignment[];
+    },
+    enabled: !!user?.id,
+    refetchInterval: 30000,
   });
 
   // Auto-scroll to bottom on new messages
@@ -81,9 +135,24 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     await sendMessage(message);
   };
 
-  const handleQuickAction = async (action: QuickAction) => {
+  const handleQuickAction = useCallback(async (action: QuickAction) => {
+    if (action.id === 'directions') {
+      // Show job selector instead of sending message
+      setShowJobSelector(true);
+      return;
+    }
     await sendMessage(action.message);
-  };
+  }, [sendMessage]);
+
+  const handleSelectJob = useCallback((job: JobAssignment) => {
+    const address = job.customer_address || job.appointments?.customer_address;
+    if (address) {
+      onNavigateRequest?.(address);
+      setShowJobSelector(false);
+      // Also send a message to the chat for context
+      sendMessage(`I need directions to ${job.appointments?.customer_name || 'my appointment'} at ${address}`);
+    }
+  }, [onNavigateRequest, sendMessage]);
 
   const getAgentBadge = (agentType?: string) => {
     const agent = FIELD_OPS_AGENTS.find(a => a.id === agentType);
@@ -143,6 +212,16 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     );
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'accepted': return 'bg-blue-500';
+      case 'en_route': return 'bg-yellow-500';
+      case 'arrived': return 'bg-green-500';
+      case 'in_progress': return 'bg-purple-500';
+      default: return 'bg-muted-foreground';
+    }
+  };
+
   return (
     <div className={cn('flex flex-col h-full bg-background', className)}>
       {/* Header */}
@@ -183,6 +262,84 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           ))}
         </div>
       </div>
+
+      {/* Job Selector Panel */}
+      {showJobSelector && (
+        <div className="shrink-0 border-b bg-muted/30 p-3">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-medium flex items-center gap-1.5">
+              <Navigation className="h-4 w-4 text-primary" />
+              Select appointment for directions
+            </p>
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => setShowJobSelector(false)}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          {jobsLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : assignedJobs.length === 0 ? (
+            <div className="text-center py-4 text-sm text-muted-foreground">
+              No appointments assigned to you today
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-[200px] overflow-auto">
+              {assignedJobs.map((job) => {
+                const address = job.customer_address || job.appointments?.customer_address;
+                const appointment = job.appointments;
+                
+                return (
+                  <div
+                    key={job.id}
+                    onClick={() => address && handleSelectJob(job)}
+                    className={cn(
+                      'p-2.5 rounded-lg border cursor-pointer transition-all',
+                      'hover:border-primary/50 hover:bg-primary/5',
+                      !address && 'opacity-50 cursor-not-allowed'
+                    )}
+                  >
+                    <div className="flex items-start gap-2">
+                      <div className={cn('w-2 h-2 rounded-full mt-1.5 shrink-0', getStatusColor(job.status))} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm truncate">
+                            {appointment?.customer_name || 'Customer'}
+                          </span>
+                          <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
+                            {job.status.replace('_', ' ')}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {appointment?.service_type || 'Service'}
+                        </p>
+                        {address ? (
+                          <p className="text-xs flex items-center gap-1 mt-1">
+                            <MapPin className="h-3 w-3 text-primary shrink-0" />
+                            <span className="truncate">{address}</span>
+                          </p>
+                        ) : (
+                          <p className="text-xs text-destructive mt-1">No address available</p>
+                        )}
+                        {appointment?.datetime && (
+                          <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                            <Calendar className="h-3 w-3" />
+                            {format(new Date(appointment.datetime), 'h:mm a')}
+                          </p>
+                        )}
+                      </div>
+                      <Button size="sm" variant="ghost" className="h-7 px-2 shrink-0" disabled={!address}>
+                        <Navigation className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Messages */}
       <ScrollArea className="flex-1 p-3" ref={scrollRef}>

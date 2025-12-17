@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -6,7 +6,6 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
 import { TechnicianMap } from '@/components/employee/TechnicianMap';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare, Map, Navigation, Clock, CheckCircle, Truck } from 'lucide-react';
 import { format } from 'date-fns';
@@ -27,16 +26,14 @@ export default function EmployeeFieldOps() {
   const [activeTab, setActiveTab] = useState('console');
   const [selectedJobId, setSelectedJobId] = useState<string | undefined>();
   const [routeInfo, setRouteInfo] = useState<{ distance: string; duration: string } | null>(null);
+  const [pendingAddress, setPendingAddress] = useState<string | null>(null);
+  const mapRef = useRef<{ searchAddress: (address: string) => void } | null>(null);
 
   // Fetch today's job assignments with coordinates
   const { data: jobs = [] } = useQuery({
     queryKey: ['field-ops-jobs', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-
-      const today = new Date();
-      const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
-      const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
 
       const { data, error } = await supabase
         .from('job_assignments')
@@ -56,8 +53,6 @@ export default function EmployeeFieldOps() {
         `)
         .eq('employee_id', user.id)
         .in('status', ['pending_acceptance', 'accepted', 'en_route', 'arrived', 'in_progress'])
-        .gte('created_at', startOfDay)
-        .lte('created_at', endOfDay)
         .order('created_at', { ascending: true });
 
       if (error) {
@@ -80,7 +75,7 @@ export default function EmployeeFieldOps() {
           // Geocode the address using Nominatim
           try {
             const response = await fetch(
-              `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
+              `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1&countrycodes=us`
             );
             const geoData = await response.json();
             if (geoData && geoData.length > 0) {
@@ -115,21 +110,42 @@ export default function EmployeeFieldOps() {
       return jobLocations;
     },
     enabled: !!user?.id,
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 30000,
   });
 
-  const handleRouteCalculated = (distance: string, duration: string) => {
+  const handleRouteCalculated = useCallback((distance: string, duration: string) => {
     setRouteInfo({ distance, duration });
-  };
+  }, []);
 
-  const handleJobSelect = (jobId: string) => {
+  const handleJobSelect = useCallback((jobId: string) => {
     setSelectedJobId(jobId);
-  };
+  }, []);
 
-  const handleNavigateRequest = (address: string) => {
-    // Switch to map tab when navigation is requested
+  const handleNavigateRequest = useCallback((address: string) => {
+    // Switch to map tab when navigation is requested (mobile)
     setActiveTab('map');
-  };
+    // Store address to trigger search in map
+    setPendingAddress(address);
+  }, []);
+
+  // Find job by address and select it, or trigger address search
+  const handleMapReady = useCallback((searchFn: (address: string) => void) => {
+    if (pendingAddress) {
+      // Find if there's a matching job
+      const matchingJob = jobs.find(j => 
+        j.address.toLowerCase().includes(pendingAddress.toLowerCase()) ||
+        pendingAddress.toLowerCase().includes(j.address.toLowerCase())
+      );
+      
+      if (matchingJob) {
+        setSelectedJobId(matchingJob.id);
+      }
+      
+      // Always search for the address
+      searchFn(pendingAddress);
+      setPendingAddress(null);
+    }
+  }, [pendingAddress, jobs]);
 
   const activeJobsCount = jobs.filter(j => ['en_route', 'arrived', 'in_progress'].includes(j.status)).length;
   const pendingJobsCount = jobs.filter(j => j.status === 'pending_acceptance' || j.status === 'accepted').length;
@@ -207,6 +223,8 @@ export default function EmployeeFieldOps() {
                   onRouteCalculated={handleRouteCalculated}
                   selectedJobId={selectedJobId}
                   onJobSelect={handleJobSelect}
+                  initialAddress={pendingAddress}
+                  onAddressSearched={() => setPendingAddress(null)}
                 />
               </TabsContent>
             </Tabs>
@@ -230,6 +248,8 @@ export default function EmployeeFieldOps() {
                 onRouteCalculated={handleRouteCalculated}
                 selectedJobId={selectedJobId}
                 onJobSelect={handleJobSelect}
+                initialAddress={pendingAddress}
+                onAddressSearched={() => setPendingAddress(null)}
               />
             </div>
           </div>
