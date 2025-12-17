@@ -55,8 +55,9 @@ interface Appointment {
 }
 
 export function AppointmentCalendar() {
-  const { user } = useAuth();
+  const { user, userRole, companyId } = useAuth();
   const queryClient = useQueryClient();
+  const isAdmin = userRole === 'company_admin' || userRole === 'platform_admin';
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [month, setMonth] = useState<Date>(new Date());
@@ -125,15 +126,57 @@ export function AppointmentCalendar() {
     },
   });
 
-  // Fetch appointments for the month - via job_assignments for assigned jobs
+  // Fetch appointments for the month - all company appointments for admins, or assigned jobs for employees
   const { data: appointments, isLoading } = useQuery({
-    queryKey: ['employee-calendar-appointments', user?.id, month],
+    queryKey: ['employee-calendar-appointments', user?.id, month, isAdmin, companyId],
     queryFn: async () => {
       if (!user?.id) return [];
       const start = startOfMonth(month);
       const end = endOfMonth(month);
+
+      // For admins: fetch ALL company appointments directly
+      if (isAdmin && companyId) {
+        const { data: allCompanyAppointments, error: companyError } = await supabase
+          .from('appointments')
+          .select('*')
+          .eq('company_id', companyId)
+          .gte('datetime', start.toISOString())
+          .lte('datetime', end.toISOString());
+
+        if (companyError) throw companyError;
+
+        // Fetch calendar sync status
+        const appointmentIds = (allCompanyAppointments || []).map(apt => apt.id);
+        const { data: calendarMappings } = await supabase
+          .from('calendar_event_mappings')
+          .select('appointment_id, google_event_id, sync_status, last_synced_at')
+          .in('appointment_id', appointmentIds.length > 0 ? appointmentIds : ['00000000-0000-0000-0000-000000000000']);
+
+        const syncMap = new Map(
+          (calendarMappings || []).map(m => [m.appointment_id, m])
+        );
+
+        // Fetch job assignments for status info
+        const { data: jobAssignments } = await supabase
+          .from('job_assignments')
+          .select('appointment_id, status, id')
+          .in('appointment_id', appointmentIds.length > 0 ? appointmentIds : ['00000000-0000-0000-0000-000000000000']);
+
+        const jobMap = new Map(
+          (jobAssignments || []).map(ja => [ja.appointment_id, ja])
+        );
+
+        return (allCompanyAppointments || [])
+          .map(apt => ({
+            ...apt,
+            job_status: jobMap.get(apt.id)?.status,
+            job_id: jobMap.get(apt.id)?.id,
+            calendar_sync: syncMap.get(apt.id) || null,
+          }))
+          .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+      }
       
-      // Fetch via job_assignments to get assigned jobs
+      // For employees: fetch via job_assignments to get assigned jobs
       const { data: jobAssignments, error: jobError } = await supabase
         .from('job_assignments')
         .select(`
