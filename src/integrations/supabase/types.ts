@@ -340,6 +340,54 @@ export type Database = {
           },
         ]
       }
+      calendar_event_mappings: {
+        Row: {
+          appointment_id: string
+          company_id: string
+          created_at: string | null
+          google_event_id: string
+          id: string
+          last_synced_at: string | null
+          sync_status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          appointment_id: string
+          company_id: string
+          created_at?: string | null
+          google_event_id: string
+          id?: string
+          last_synced_at?: string | null
+          sync_status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          appointment_id?: string
+          company_id?: string
+          created_at?: string | null
+          google_event_id?: string
+          id?: string
+          last_synced_at?: string | null
+          sync_status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_event_mappings_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: true
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_event_mappings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       call_logs: {
         Row: {
           answered_at: string | null
@@ -1391,6 +1439,8 @@ export type Database = {
           elevenlabs_voice_speed: number | null
           elevenlabs_voice_stability: number | null
           elevenlabs_voice_style: number | null
+          google_calendar_enabled: boolean | null
+          google_calendar_id: string | null
           google_refresh_token: string | null
           google_tts_api_key: string | null
           google_tts_model: string | null
@@ -1416,6 +1466,8 @@ export type Database = {
           elevenlabs_voice_speed?: number | null
           elevenlabs_voice_stability?: number | null
           elevenlabs_voice_style?: number | null
+          google_calendar_enabled?: boolean | null
+          google_calendar_id?: string | null
           google_refresh_token?: string | null
           google_tts_api_key?: string | null
           google_tts_model?: string | null
@@ -1441,6 +1493,8 @@ export type Database = {
           elevenlabs_voice_speed?: number | null
           elevenlabs_voice_stability?: number | null
           elevenlabs_voice_style?: number | null
+          google_calendar_enabled?: boolean | null
+          google_calendar_id?: string | null
           google_refresh_token?: string | null
           google_tts_api_key?: string | null
           google_tts_model?: string | null
