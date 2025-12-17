@@ -198,6 +198,8 @@ export const AIAgentConsole = () => {
       setActiveTab('chat');
       return;
     }
+    // Reset feedback form for all other actions
+    setShowFeedbackForm(false);
     // Navigate to booking form for schedule action
     if (actionId === 'schedule') {
       setActiveTab('book');
