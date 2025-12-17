@@ -100,9 +100,6 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
     { label: 'Cancel', message: "I need to cancel my appointment for tomorrow morning" },
   ],
   followup: [
-    { label: 'After Service', message: "The technician just left. Following up on the service." },
-    { label: 'Satisfaction Check', message: "How would you rate your recent service experience?" },
-    { label: 'Issue Report', message: "The issue came back after the technician left yesterday" },
     { label: 'Leave Feedback', message: "I'd like to leave feedback about my experience" },
   ],
   review: [
