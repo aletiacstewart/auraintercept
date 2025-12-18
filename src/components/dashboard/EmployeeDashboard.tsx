@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, MessageSquare, CheckCircle, Settings, Wrench, AlertCircle, Package, Timer } from 'lucide-react';
@@ -9,9 +11,31 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { format, startOfWeek, endOfWeek, differenceInMinutes } from 'date-fns';
 import { TechnicianJobQueue } from '@/components/employee/TechnicianJobQueue';
 
+// Map job types to their dashboard routes
+const JOB_TYPE_ROUTES: Record<string, string> = {
+  billing_specialist: '/dashboard/billing',
+  booking_agent: '/dashboard/booking-agent',
+  dispatch: '/dashboard/dispatch',
+  marketing_manager: '/dashboard/marketing',
+  sales_rep: '/dashboard/sales',
+  customer_service: '/dashboard/customer-service',
+  inventory_manager: '/dashboard/inventory-manager',
+  compliance_officer: '/dashboard/compliance',
+  analytics_manager: '/dashboard/analytics-manager',
+  // technician stays on default employee dashboard
+};
+
 export function EmployeeDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { primaryJobType, loading: jobRoleLoading } = useEmployeeJobRole();
+
+  // Redirect to role-specific dashboard if employee has a non-technician job type
+  useEffect(() => {
+    if (!jobRoleLoading && primaryJobType && JOB_TYPE_ROUTES[primaryJobType]) {
+      navigate(JOB_TYPE_ROUTES[primaryJobType], { replace: true });
+    }
+  }, [primaryJobType, jobRoleLoading, navigate]);
 
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['profile', user?.id],
