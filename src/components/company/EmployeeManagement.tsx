@@ -31,7 +31,18 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { toast } from 'sonner';
-import { Plus, Copy, Users, Mail, Clock, Check, Briefcase, Settings2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Plus, Copy, Users, Mail, Clock, Check, Briefcase, Settings2, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 
 // Job types that correspond to AI agent categories
@@ -181,6 +192,37 @@ export function EmployeeManagement() {
     onError: (error) => {
       console.error('Error updating job assignment:', error);
       toast.error('Failed to update job assignment');
+    },
+  });
+
+  // Remove employee mutation
+  const removeEmployeeMutation = useMutation({
+    mutationFn: async (employeeId: string) => {
+      if (!companyId) throw new Error('No company ID');
+
+      // First delete job assignments
+      await supabase
+        .from('employee_job_assignments')
+        .delete()
+        .eq('employee_id', employeeId)
+        .eq('company_id', companyId);
+
+      // Then remove company_id from profile (unlink from company)
+      const { error } = await supabase
+        .from('profiles')
+        .update({ company_id: null })
+        .eq('id', employeeId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
+      queryClient.invalidateQueries({ queryKey: ['employee-job-assignments'] });
+      toast.success('Employee removed successfully');
+    },
+    onError: (error) => {
+      console.error('Error removing employee:', error);
+      toast.error('Failed to remove employee');
     },
   });
 
@@ -396,50 +438,78 @@ export function EmployeeManagement() {
                         {format(new Date(employee.created_at), 'MMM d, yyyy')}
                       </TableCell>
                       <TableCell>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button variant="ghost" size="sm" className="gap-1">
-                              <Settings2 className="w-4 h-4" />
-                              Roles
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-72 max-h-[400px] overflow-y-auto" align="end" side="left">
-                            <div className="space-y-3">
-                              <h4 className="font-medium text-sm">Assign Job Roles</h4>
-                              <p className="text-xs text-muted-foreground">
-                                Selected roles grant access to related AI agents
-                              </p>
-                              <div className="space-y-2">
-                                {JOB_TYPES.map((job) => {
-                                  const isAssigned = employeeJobs.includes(job.value);
-                                  return (
-                                    <div
-                                      key={job.value}
-                                      className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 cursor-pointer"
-                                      onClick={() => toggleJobTypeMutation.mutate({
-                                        employeeId: employee.id,
-                                        jobType: job.value,
-                                        isAssigned,
-                                      })}
-                                    >
-                                      <Checkbox
-                                        checked={isAssigned}
-                                        disabled={toggleJobTypeMutation.isPending}
-                                      />
-                                      <div className="flex-1">
-                                        <div className="flex items-center gap-2">
-                                          <div className={`w-2 h-2 rounded-full ${job.color}`} />
-                                          <span className="text-sm font-medium">{job.label}</span>
+                        <div className="flex items-center gap-1">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button variant="ghost" size="sm" className="gap-1">
+                                <Settings2 className="w-4 h-4" />
+                                Roles
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-72 max-h-[400px] overflow-y-auto" align="end" side="left">
+                              <div className="space-y-3">
+                                <h4 className="font-medium text-sm">Assign Job Roles</h4>
+                                <p className="text-xs text-muted-foreground">
+                                  Selected roles grant access to related AI agents
+                                </p>
+                                <div className="space-y-2">
+                                  {JOB_TYPES.map((job) => {
+                                    const isAssigned = employeeJobs.includes(job.value);
+                                    return (
+                                      <div
+                                        key={job.value}
+                                        className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 cursor-pointer"
+                                        onClick={() => toggleJobTypeMutation.mutate({
+                                          employeeId: employee.id,
+                                          jobType: job.value,
+                                          isAssigned,
+                                        })}
+                                      >
+                                        <Checkbox
+                                          checked={isAssigned}
+                                          disabled={toggleJobTypeMutation.isPending}
+                                        />
+                                        <div className="flex-1">
+                                          <div className="flex items-center gap-2">
+                                            <div className={`w-2 h-2 rounded-full ${job.color}`} />
+                                            <span className="text-sm font-medium">{job.label}</span>
+                                          </div>
+                                          <p className="text-xs text-muted-foreground">{job.description}</p>
                                         </div>
-                                        <p className="text-xs text-muted-foreground">{job.description}</p>
                                       </div>
-                                    </div>
-                                  );
-                                })}
+                                    );
+                                  })}
+                                </div>
                               </div>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
+                            </PopoverContent>
+                          </Popover>
+                          
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Remove Employee</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to remove <strong>{employee.full_name || employee.email}</strong> from your company? 
+                                  This will revoke their access and remove all job role assignments. This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => removeEmployeeMutation.mutate(employee.id)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Remove
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
