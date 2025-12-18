@@ -6,10 +6,11 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
 import { AIAgentChat } from '@/components/ai/AIAgentChat';
 import { AIAgentSettings } from '@/components/ai/AIAgentSettings';
+import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall, FileText, Star, ThumbsUp, Globe } from 'lucide-react';
+import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall, FileText, Star, ThumbsUp, Globe, Truck, MapPin, Clock, CheckSquare, Navigation, HeadphonesIcon } from 'lucide-react';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { TestCallDialog } from '@/components/ai/TestCallDialog';
 import { Button } from '@/components/ui/button';
@@ -253,151 +254,161 @@ const AIAgent = () => {
 
           <TabsContent value="console" className="mt-6">
             {/* Console with View Toggle */}
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className={`grid gap-6 ${userRole === 'employee' ? '' : 'lg:grid-cols-2'}`}>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">AI Agent Console</h2>
-                  <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
-                    <TabsList className="h-8">
-                      <TabsTrigger value="customer" className="text-xs h-7 px-3">
-                        <Monitor className="h-3 w-3 mr-1" />
-                        Customer View
-                      </TabsTrigger>
-                      <TabsTrigger value="debug" className="text-xs h-7 px-3">
-                        <Code className="h-3 w-3 mr-1" />
-                        Debug
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
+                  <h2 className="text-lg font-semibold">
+                    {userRole === 'employee' ? 'Field Operations Console' : 'AI Agent Console'}
+                  </h2>
+                  {userRole !== 'employee' && (
+                    <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
+                      <TabsList className="h-8">
+                        <TabsTrigger value="customer" className="text-xs h-7 px-3">
+                          <Monitor className="h-3 w-3 mr-1" />
+                          Customer View
+                        </TabsTrigger>
+                        <TabsTrigger value="debug" className="text-xs h-7 px-3">
+                          <Code className="h-3 w-3 mr-1" />
+                          Debug
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
+                  )}
                 </div>
                 
-                {viewMode === 'customer' ? (
-                  <AIAgentConsole />
+                {userRole === 'employee' ? (
+                  <FieldOpsAgentConsole />
                 ) : (
-                  <AIAgentChat />
+                  viewMode === 'customer' ? (
+                    <AIAgentConsole />
+                  ) : (
+                    <AIAgentChat />
+                  )
                 )}
               </div>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Bot className="h-5 w-5" />
-                    Customer Engagement Agents
-                  </CardTitle>
-                  <CardDescription>
-                    Specialized AI agents that handle customer interactions
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Customer Engagement Agents Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
-                      <Bot className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <h4 className="font-medium flex items-center gap-2">
-                          Triage Agent
-                          <Badge variant="secondary" className="text-xs">Entry Point</Badge>
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          Initial customer interaction, collects information, and routes to specialized agents.
-                        </p>
+              {userRole !== 'employee' && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Bot className="h-5 w-5" />
+                      Customer Engagement Agents
+                    </CardTitle>
+                    <CardDescription>
+                      Specialized AI agents that handle customer interactions
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Customer Engagement Agents Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
+                        <Bot className="h-5 w-5 text-primary mt-0.5" />
+                        <div>
+                          <h4 className="font-medium flex items-center gap-2">
+                            Triage Agent
+                            <Badge variant="secondary" className="text-xs">Entry Point</Badge>
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            Initial customer interaction, collects information, and routes to specialized agents.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
+                        <Calendar className="h-5 w-5 text-primary mt-0.5" />
+                        <div>
+                          <h4 className="font-medium flex items-center gap-2">
+                            Booking Agent
+                            <Badge variant="secondary" className="text-xs">Scheduling</Badge>
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            Checks availability, finds first available slots, and schedules appointments.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
+                        <FileText className="h-5 w-5 text-primary mt-0.5" />
+                        <div>
+                          <h4 className="font-medium flex items-center gap-2">
+                            Quoting Agent
+                            <Badge variant="secondary" className="text-xs">Pricing</Badge>
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            Generates service quotes, provides pricing information, and presents options.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
+                        <Star className="h-5 w-5 text-primary mt-0.5" />
+                        <div>
+                          <h4 className="font-medium flex items-center gap-2">
+                            Follow-up Agent
+                            <Badge variant="secondary" className="text-xs">Feedback</Badge>
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            Collects customer feedback, tracks satisfaction, and handles post-service follow-up.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
+                        <ThumbsUp className="h-5 w-5 text-primary mt-0.5" />
+                        <div>
+                          <h4 className="font-medium flex items-center gap-2">
+                            Review Agent
+                            <Badge variant="secondary" className="text-xs">Reputation</Badge>
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            Requests customer reviews and provides links to Google, Facebook, and Yelp.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
+                        <Brain className="h-5 w-5 text-primary mt-0.5" />
+                        <div>
+                          <h4 className="font-medium flex items-center gap-2">
+                            Knowledge Base
+                            <Badge variant="secondary" className="text-xs">RAG</Badge>
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            Answers using your services, FAQs, business hours, and uploaded documents.
+                          </p>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
-                      <Calendar className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <h4 className="font-medium flex items-center gap-2">
-                          Booking Agent
-                          <Badge variant="secondary" className="text-xs">Scheduling</Badge>
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          Checks availability, finds first available slots, and schedules appointments.
-                        </p>
+                    {/* Technical Capabilities */}
+                    <div className="pt-3 border-t border-border/50">
+                      <h4 className="text-sm font-medium text-muted-foreground mb-3">Communication Channels</h4>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge variant="outline" className="flex items-center gap-1.5">
+                          <MessageSquare className="h-3.5 w-3.5" />
+                          Text Chat
+                          <span className="text-green-500">●</span>
+                        </Badge>
+                        <Badge variant="outline" className="flex items-center gap-1.5">
+                          <Phone className="h-3.5 w-3.5" />
+                          Voice Calls
+                          {hasVoice && <span className="text-green-500">●</span>}
+                        </Badge>
+                        <Badge variant="outline" className="flex items-center gap-1.5">
+                          <MessageSquare className="h-3.5 w-3.5" />
+                          SMS
+                          {hasTwilio && <span className="text-green-500">●</span>}
+                        </Badge>
+                        <Badge variant="outline" className="flex items-center gap-1.5">
+                          <Globe className="h-3.5 w-3.5" />
+                          Web Widget
+                          <span className="text-green-500">●</span>
+                        </Badge>
                       </div>
                     </div>
-
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
-                      <FileText className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <h4 className="font-medium flex items-center gap-2">
-                          Quoting Agent
-                          <Badge variant="secondary" className="text-xs">Pricing</Badge>
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          Generates service quotes, provides pricing information, and presents options.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
-                      <Star className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <h4 className="font-medium flex items-center gap-2">
-                          Follow-up Agent
-                          <Badge variant="secondary" className="text-xs">Feedback</Badge>
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          Collects customer feedback, tracks satisfaction, and handles post-service follow-up.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
-                      <ThumbsUp className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <h4 className="font-medium flex items-center gap-2">
-                          Review Agent
-                          <Badge variant="secondary" className="text-xs">Reputation</Badge>
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          Requests customer reviews and provides links to Google, Facebook, and Yelp.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border/50">
-                      <Brain className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <h4 className="font-medium flex items-center gap-2">
-                          Knowledge Base
-                          <Badge variant="secondary" className="text-xs">RAG</Badge>
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          Answers using your services, FAQs, business hours, and uploaded documents.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Technical Capabilities */}
-                  <div className="pt-3 border-t border-border/50">
-                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Communication Channels</h4>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline" className="flex items-center gap-1.5">
-                        <MessageSquare className="h-3.5 w-3.5" />
-                        Text Chat
-                        <span className="text-green-500">●</span>
-                      </Badge>
-                      <Badge variant="outline" className="flex items-center gap-1.5">
-                        <Phone className="h-3.5 w-3.5" />
-                        Voice Calls
-                        {hasVoice && <span className="text-green-500">●</span>}
-                      </Badge>
-                      <Badge variant="outline" className="flex items-center gap-1.5">
-                        <MessageSquare className="h-3.5 w-3.5" />
-                        SMS
-                        {hasTwilio && <span className="text-green-500">●</span>}
-                      </Badge>
-                      <Badge variant="outline" className="flex items-center gap-1.5">
-                        <Globe className="h-3.5 w-3.5" />
-                        Web Widget
-                        <span className="text-green-500">●</span>
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </TabsContent>
 
