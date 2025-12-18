@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,7 +10,7 @@ import {
   FileText, DollarSign, Package, Award, Megaphone, 
   Gift, RotateCcw, Sun, BarChart3, Target, CheckCircle2,
   ArrowRight, Sparkles, Wrench, Home, Flame, Droplet,
-  ChevronRight, Star
+  ChevronRight, Star, Volume2, VolumeX
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import aiBotBanner from '@/assets/ai-bot-banner.png';
@@ -166,6 +166,22 @@ export default function Index() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('customer');
   const [currentSubtitle, setCurrentSubtitle] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleUnmute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = false;
+      setIsMuted(false);
+    }
+  };
+
+  const handleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      setIsMuted(true);
+    }
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -204,8 +220,9 @@ export default function Index() {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Video */}
-        <div className="w-full">
+        <div className="w-full relative">
           <video 
+            ref={videoRef}
             autoPlay
             loop 
             muted
@@ -214,6 +231,15 @@ export default function Index() {
           >
             <source src="/videos/hero-demo.mp4" type="video/mp4" />
           </video>
+          
+          {/* Unmute/Mute Button */}
+          <button
+            onClick={isMuted ? handleUnmute : handleMute}
+            className="absolute bottom-4 right-4 p-3 rounded-full bg-black/70 hover:bg-black/90 text-white transition-all duration-200 z-10"
+            aria-label={isMuted ? "Unmute video" : "Mute video"}
+          >
+            {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+          </button>
         </div>
         
         {/* Hero Content */}
