@@ -8,7 +8,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Receipt, DollarSign, FileText, BarChart3, TrendingUp, Bot } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { BillingAgentConsole } from '@/components/billing/BillingAgentConsole';
 
 export default function BillingDashboard() {
   const { user, loading: authLoading, companyId } = useAuth();
@@ -175,9 +174,6 @@ export default function BillingDashboard() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Billing AI Console */}
-        <BillingAgentConsole companyId={companyId || undefined} />
 
         {/* Quick Actions */}
         <div className="grid gap-4 md:grid-cols-5">
