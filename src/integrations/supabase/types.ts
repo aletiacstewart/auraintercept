@@ -1053,6 +1053,60 @@ export type Database = {
           },
         ]
       }
+      employee_availability: {
+        Row: {
+          close_time: string | null
+          company_id: string
+          created_at: string
+          day_of_week: number
+          employee_id: string
+          hour_type: string
+          id: string
+          is_closed: boolean
+          open_time: string | null
+          updated_at: string
+        }
+        Insert: {
+          close_time?: string | null
+          company_id: string
+          created_at?: string
+          day_of_week: number
+          employee_id: string
+          hour_type?: string
+          id?: string
+          is_closed?: boolean
+          open_time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          close_time?: string | null
+          company_id?: string
+          created_at?: string
+          day_of_week?: number
+          employee_id?: string
+          hour_type?: string
+          id?: string
+          is_closed?: boolean
+          open_time?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_availability_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_availability_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_job_assignments: {
         Row: {
           assigned_at: string | null
@@ -1136,6 +1190,48 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employee_time_off: {
+        Row: {
+          company_id: string
+          created_at: string
+          employee_id: string
+          id: string
+          name: string | null
+          time_off_date: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          employee_id: string
+          id?: string
+          name?: string | null
+          time_off_date: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          employee_id?: string
+          id?: string
+          name?: string | null
+          time_off_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_time_off_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_time_off_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
