@@ -40,6 +40,8 @@ import TechnicianDashboard from "./pages/roles/TechnicianDashboard";
 import TechnicianFieldOps from "./pages/roles/TechnicianFieldOps";
 import TechnicianJobs from "./pages/roles/TechnicianJobs";
 import TechnicianCalendar from "./pages/roles/TechnicianCalendar";
+import TechnicianAvailability from "./pages/roles/TechnicianAvailability";
+import TechnicianMessages from "./pages/roles/TechnicianMessages";
 import BookingAgentDashboard from "./pages/roles/BookingAgentDashboard";
 import DispatchDashboard from "./pages/roles/DispatchDashboard";
 import MarketingDashboard from "./pages/roles/MarketingDashboard";
@@ -95,6 +97,8 @@ const App = () => (
             <Route path="/dashboard/technician/field-ops" element={<TechnicianFieldOps />} />
             <Route path="/dashboard/technician/jobs" element={<TechnicianJobs />} />
             <Route path="/dashboard/technician/calendar" element={<TechnicianCalendar />} />
+            <Route path="/dashboard/technician/availability" element={<TechnicianAvailability />} />
+            <Route path="/dashboard/technician/messages" element={<TechnicianMessages />} />
             <Route path="/dashboard/booking-agent" element={<BookingAgentDashboard />} />
             <Route path="/dashboard/dispatch" element={<DispatchDashboard />} />
             <Route path="/dashboard/marketing" element={<MarketingDashboard />} />
