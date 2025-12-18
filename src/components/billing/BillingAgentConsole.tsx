@@ -15,7 +15,6 @@ import {
   Receipt, 
   DollarSign, 
   FileText, 
-  TrendingUp, 
   Bell,
   BarChart3,
   RefreshCw,
@@ -55,7 +54,6 @@ const QUICK_ACTIONS: QuickAction[] = [
   { id: 'overdue_followup', label: 'Overdue Follow-up', icon: AlertCircle, message: 'Show me all overdue invoices that need follow-up and help me send payment reminders.', variant: 'destructive' },
   { id: 'create_quote', label: 'Create Quote', icon: FileText, message: '' },
   { id: 'revenue_report', label: 'Revenue Report', icon: BarChart3, message: '' },
-  { id: 'payment_forecast', label: 'Payment Forecast', icon: TrendingUp, message: 'Forecast expected payments and cash flow for the next 30 days based on outstanding invoices and historical data.' },
   { id: 'process_refund', label: 'Process Refund', icon: RefreshCw, message: '' },
 ];
 
