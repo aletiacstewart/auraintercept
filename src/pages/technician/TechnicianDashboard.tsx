@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { TechnicianDashboardLayout } from '@/components/dashboard/TechnicianDashboardLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -16,7 +16,9 @@ import {
   MapPin,
   Bot,
   ArrowRight,
-  Phone
+  Phone,
+  Activity,
+  TrendingUp
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -57,39 +59,67 @@ export default function TechnicianDashboard() {
   const completedJobs = jobs?.filter(j => j.status === 'completed') || [];
   const nextJob = activeJobs[0] || pendingJobs[0];
 
-  const stats = [
-    { label: 'Pending', value: pendingJobs.length, icon: Clock, color: 'text-yellow-500' },
-    { label: 'Active', value: activeJobs.length, icon: Navigation, color: 'text-blue-500' },
-    { label: 'Completed', value: completedJobs.length, icon: CheckCircle2, color: 'text-green-500' },
+  const statCards = [
+    { 
+      label: 'Pending', 
+      value: pendingJobs.length, 
+      icon: Clock, 
+      description: 'Awaiting action',
+      gradient: 'from-yellow-500 to-yellow-600'
+    },
+    { 
+      label: 'Active', 
+      value: activeJobs.length, 
+      icon: Navigation, 
+      description: 'In progress',
+      gradient: 'from-blue-500 to-blue-600'
+    },
+    { 
+      label: 'Completed', 
+      value: completedJobs.length, 
+      icon: CheckCircle2, 
+      description: 'Done today',
+      gradient: 'from-green-500 to-green-600'
+    },
+  ];
+
+  const quickActions = [
+    { label: 'AI Assistant', icon: Bot, href: '/technician/ai-console', gradient: 'from-purple-500 to-purple-600' },
+    { label: 'My Jobs', icon: ClipboardList, href: '/technician/jobs', gradient: 'from-primary to-primary/80' },
   ];
 
   return (
     <TechnicianDashboardLayout>
-      <div className="p-4 md:p-6 space-y-6">
-        {/* Welcome Header */}
+      <div className="p-4 md:p-6 space-y-6 animate-fade-in">
+        {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold">Good {getGreeting()}!</h1>
-          <p className="text-muted-foreground">Here's your day at a glance</p>
+          <h1 className="text-3xl font-bold tracking-tight">Good {getGreeting()}!</h1>
+          <p className="text-muted-foreground mt-1">Here's your day at a glance</p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-3 gap-3">
-          {stats.map((stat) => (
-            <Card key={stat.label} className="text-center">
+          {statCards.map((stat) => (
+            <Card key={stat.label} className="relative overflow-hidden border-border/50">
               <CardContent className="pt-4 pb-3">
-                <stat.icon className={`h-6 w-6 mx-auto mb-1 ${stat.color}`} />
-                <p className="text-2xl font-bold">{isLoading ? '-' : stat.value}</p>
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center mx-auto mb-2`}>
+                  <stat.icon className="w-5 h-5 text-primary-foreground" />
+                </div>
+                <p className="text-2xl font-bold text-center">{isLoading ? '-' : stat.value}</p>
+                <p className="text-xs text-muted-foreground text-center">{stat.label}</p>
               </CardContent>
+              <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`} />
             </Card>
           ))}
         </div>
 
         {/* Next Job Card */}
-        <Card>
+        <Card className="relative overflow-hidden border-border/50">
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
-              <ClipboardList className="h-5 w-5" />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
+                <ClipboardList className="h-4 w-4 text-primary-foreground" />
+              </div>
               Next Job
             </CardTitle>
           </CardHeader>
@@ -145,7 +175,9 @@ export default function TechnicianDashboard() {
               </div>
             ) : (
               <div className="text-center py-4">
-                <CheckCircle2 className="h-10 w-10 mx-auto text-muted-foreground/50 mb-2" />
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-muted to-muted/80 flex items-center justify-center mx-auto mb-2">
+                  <CheckCircle2 className="h-6 w-6 text-muted-foreground" />
+                </div>
                 <p className="text-muted-foreground">No jobs scheduled</p>
                 <Button 
                   variant="link" 
@@ -157,26 +189,70 @@ export default function TechnicianDashboard() {
               </div>
             )}
           </CardContent>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-primary/80" />
         </Card>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 gap-3">
-          <Button 
-            variant="outline" 
-            className="h-auto py-4 flex-col gap-2"
-            onClick={() => navigate('/technician/ai-console')}
-          >
-            <Bot className="h-6 w-6" />
-            <span>AI Assistant</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            className="h-auto py-4 flex-col gap-2"
-            onClick={() => navigate('/technician/jobs')}
-          >
-            <ClipboardList className="h-6 w-6" />
-            <span>My Jobs</span>
-          </Button>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card className="border-border/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="w-5 h-5 text-primary" />
+                Quick Actions
+              </CardTitle>
+              <CardDescription>Fast access to key features</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                {quickActions.map((action) => (
+                  <Button
+                    key={action.label}
+                    variant="outline"
+                    className="h-auto py-4 flex flex-col items-center gap-2 hover:border-primary"
+                    onClick={() => navigate(action.href)}
+                  >
+                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${action.gradient} flex items-center justify-center`}>
+                      <action.icon className="w-5 h-5 text-primary-foreground" />
+                    </div>
+                    <span className="font-medium text-xs">{action.label}</span>
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-secondary" />
+                Today's Progress
+              </CardTitle>
+              <CardDescription>Your performance overview</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Jobs Completed</span>
+                    <span className="font-medium">{completedJobs.length}/{jobs?.length || 0}</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-muted">
+                    <div 
+                      className="h-full rounded-full bg-gradient-to-r from-green-500 to-green-600" 
+                      style={{ width: jobs?.length ? `${(completedJobs.length / jobs.length) * 100}%` : '0%' }} 
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <span className="text-sm">Status</span>
+                  <span className="text-sm font-medium text-green-500 flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-green-500" />
+                    On Track
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* View All Jobs Link */}
