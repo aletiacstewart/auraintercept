@@ -39,6 +39,7 @@ import { differenceInDays, parseISO } from 'date-fns';
 
 interface NavItem {
   label: string;
+  labelForEmployee?: string;
   icon: React.ElementType;
   href: string;
   roles: ('platform_admin' | 'company_admin' | 'employee')[];
@@ -73,7 +74,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'AI & Automation',
     items: [
-      { label: 'AI Agent', icon: Bot, href: '/dashboard/ai-agent', roles: ['platform_admin', 'company_admin', 'employee'] },
+      { label: 'AI Agent', labelForEmployee: 'Field Ops Agent', icon: Bot, href: '/dashboard/ai-agent', roles: ['platform_admin', 'company_admin', 'employee'] },
       { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin', 'employee'] },
       { label: 'Chat Widget', icon: MessageCircle, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
       { label: 'Call History', icon: PhoneCall, href: '/dashboard/calls', roles: ['platform_admin', 'company_admin'] },
@@ -186,6 +187,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 {group.items.map((item) => {
                   const Icon = item.icon;
                   const isActive = window.location.pathname === item.href;
+                  const displayLabel = userRole === 'employee' && item.labelForEmployee ? item.labelForEmployee : item.label;
                   
                   return (
                     <Button
@@ -199,7 +201,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                       onClick={() => navigate(item.href)}
                     >
                       <Icon className="w-5 h-5 flex-shrink-0" />
-                      {!collapsed && <span className="truncate">{item.label}</span>}
+                      {!collapsed && <span className="truncate">{displayLabel}</span>}
                     </Button>
                   );
                 })}
