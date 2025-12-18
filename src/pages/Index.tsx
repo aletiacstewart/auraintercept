@@ -263,11 +263,18 @@ export default function Index() {
           </div>
 
           <div className="mt-12 flex justify-center animate-fade-in">
-            <img 
-              src={aiBotBanner} 
-              alt="AI Bot Platform" 
-              className="max-w-xs sm:max-w-sm object-contain float-subtle"
-            />
+            <div className="w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl border border-border/50 bg-card">
+              <video 
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+                className="w-full h-auto"
+              >
+                <source src="/videos/hero-demo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
           </div>
         </div>
       </section>
