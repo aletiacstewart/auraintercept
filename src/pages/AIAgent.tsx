@@ -271,7 +271,7 @@ const AIAgent = () => {
             )}
 
             {/* Console with View Toggle */}
-            <div className={`grid gap-6 ${userRole === 'employee' || consoleType === 'fieldops' ? '' : 'lg:grid-cols-2'}`}>
+            <div className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold">
