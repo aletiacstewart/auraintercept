@@ -1,8 +1,3 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
-import { JOB_ROLE_ROUTES } from '@/config/jobRoleDashboards';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { AppointmentCalendar } from '@/components/employee/AppointmentCalendar';
 import { TechnicianJobQueue } from '@/components/employee/TechnicianJobQueue';
@@ -11,39 +6,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar, ClipboardList, History } from 'lucide-react';
 
 export default function EmployeeAppointments() {
-  const { userRole } = useAuth();
-  const { primaryJobType, loading } = useEmployeeJobRole();
-  const navigate = useNavigate();
-
-  // Redirect employees to their role-specific calendar page
-  useEffect(() => {
-    if (userRole === 'employee' && !loading && primaryJobType) {
-      const roleRoute = JOB_ROLE_ROUTES[primaryJobType];
-      if (roleRoute) {
-        navigate(`${roleRoute}/calendar`, { replace: true });
-      }
-    }
-  }, [userRole, primaryJobType, loading, navigate]);
-
-  // Show loading while checking role
-  if (userRole === 'employee' && loading) {
-    return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  // For admins, show the full appointments page
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Appointments</h1>
           <p className="text-muted-foreground">
-            View and manage all scheduled appointments
+            View and manage scheduled appointments
           </p>
         </div>
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { RoleAwareDashboardLayout } from '@/components/dashboard/RoleAwareDashboardLayout';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -237,7 +237,7 @@ export default function Quotes() {
   const pendingQuotes = quotes.filter(q => q.status === 'sent').length;
 
   return (
-    <RoleAwareDashboardLayout>
+    <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -544,6 +544,6 @@ export default function Quotes() {
           </DialogContent>
         </Dialog>
       </div>
-    </RoleAwareDashboardLayout>
+    </DashboardLayout>
   );
 }
