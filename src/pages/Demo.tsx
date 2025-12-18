@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   Bot, Calendar, Clock, Sparkles, Building2, ArrowLeft, Mic,
-  AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Zap, MessageSquare
+  AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Zap, MessageSquare, Home
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { GlassHeader } from '@/components/ai/chat/GlassHeader';
@@ -43,6 +43,7 @@ const QUICK_ACTIONS = [
 
 // Tab configuration
 const TABS = [
+  { id: 'home', label: 'Home', icon: Home },
   { id: 'chat', label: 'Chat', icon: MessageSquare },
   { id: 'services', label: 'Services', icon: Sparkles },
   { id: 'hours', label: 'Hours', icon: Clock },
@@ -94,7 +95,7 @@ export default function Demo() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentAgent, setCurrentAgent] = useState('triage');
   const [input, setInput] = useState('');
-  const [activeTab, setActiveTab] = useState('chat');
+  const [activeTab, setActiveTab] = useState('home');
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showQuoteForm, setShowQuoteForm] = useState(false);
@@ -253,7 +254,7 @@ export default function Demo() {
     setShowQuoteForm(false);
     setShowTrackForm(false);
     setCurrentAgent('triage');
-    setActiveTab('chat');
+    setActiveTab('home');
   };
 
   const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string; serviceDate?: Date }) => {
@@ -384,16 +385,22 @@ export default function Demo() {
           <MobileTabNav
             tabs={TABS}
             activeTab={activeTab}
-            onTabChange={setActiveTab}
+            onTabChange={(tabId) => {
+              if (tabId === 'home') {
+                handleHome();
+              } else {
+                setActiveTab(tabId);
+              }
+            }}
           />
 
           {/* Content Area */}
           <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
             {/* Chat Tab */}
-            {activeTab === 'chat' && (
+            {(activeTab === 'chat' || activeTab === 'home') && (
               <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
-                  {messages.length === 0 && !isShowingForm && (
+                  {activeTab === 'home' && messages.length === 0 && !isShowingForm && (
                     <WelcomeScreen
                       companyName="AI Bot Company"
                       title="Welcome to our Demo!"
