@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
       auth: { autoRefreshToken: false, persistSession: false }
     });
 
-    const { email, password, fullName, companyId } = await req.json();
+    const { email, password, fullName, companyId, jobType } = await req.json();
 
     if (!email || !password || !companyId) {
       return new Response(
@@ -65,11 +65,27 @@ Deno.serve(async (req) => {
       console.error('Error assigning role:', roleError);
     }
 
+    // Assign job type if provided
+    if (jobType) {
+      const { error: jobTypeError } = await supabaseAdmin
+        .from('employee_job_assignments')
+        .insert({ 
+          employee_id: userId, 
+          company_id: companyId,
+          job_type: jobType 
+        });
+
+      if (jobTypeError) {
+        console.error('Error assigning job type:', jobTypeError);
+      }
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
         userId, 
         email,
+        jobType: jobType || null,
         message: 'Demo employee account created successfully' 
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
