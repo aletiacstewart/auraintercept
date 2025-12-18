@@ -64,7 +64,7 @@ export const JOB_ROLE_CONFIGS: Record<JobRoleType, JobRoleConfig> = {
     navItems: [
       { label: 'Overview', icon: 'LayoutDashboard', path: '/dashboard/booking-agent' },
       { label: 'Booking Console', icon: 'Bot', path: '/dashboard/booking-agent/console' },
-      { label: 'Appointments', icon: 'Calendar', path: '/dashboard/appointments' },
+      { label: 'Appointments', icon: 'Calendar', path: '/dashboard/booking-agent/appointments' },
       { label: 'Call History', icon: 'Phone', path: '/dashboard/calls' },
       { label: 'Messages', icon: 'MessageSquare', path: '/dashboard/messages' },
     ],
