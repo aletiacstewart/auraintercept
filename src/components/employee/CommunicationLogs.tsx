@@ -1,11 +1,15 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 import { MessageSquare, Phone, Mail, Search, Filter, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface CommunicationLog {
   id: string;
@@ -16,49 +20,88 @@ interface CommunicationLog {
   summary: string;
   timestamp: Date;
   duration?: number;
-  status: 'completed' | 'missed' | 'pending';
+  status: 'completed' | 'missed' | 'pending' | 'sent' | 'failed';
 }
 
-// Mock data - will be replaced with real data when integrations are built
-const MOCK_LOGS: CommunicationLog[] = [
-  {
-    id: '1',
-    type: 'call',
-    direction: 'inbound',
-    customerName: 'John Smith',
-    customerPhone: '+1 (555) 123-4567',
-    summary: 'Inquired about appointment rescheduling',
-    timestamp: new Date(Date.now() - 1000 * 60 * 30),
-    duration: 180,
-    status: 'completed',
-  },
-  {
-    id: '2',
-    type: 'sms',
-    direction: 'outbound',
-    customerName: 'Sarah Johnson',
-    customerPhone: '+1 (555) 987-6543',
-    summary: 'Appointment reminder sent for tomorrow at 2:00 PM',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-    status: 'completed',
-  },
-  {
-    id: '3',
-    type: 'call',
-    direction: 'inbound',
-    customerName: 'Michael Brown',
-    customerPhone: '+1 (555) 456-7890',
-    summary: 'Missed call - follow-up SMS sent automatically',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4),
-    status: 'missed',
-  },
-];
-
 export function CommunicationLogs() {
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
 
-  const filteredLogs = MOCK_LOGS.filter((log) => {
+  // Fetch call logs for this employee
+  const { data: callLogs, isLoading: callsLoading } = useQuery({
+    queryKey: ['employee-call-logs', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data } = await supabase
+        .from('call_logs')
+        .select('*')
+        .eq('employee_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      return data ?? [];
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch reminder logs (SMS/email) for appointments assigned to this employee
+  const { data: reminderLogs, isLoading: remindersLoading } = useQuery({
+    queryKey: ['employee-reminder-logs', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      
+      // Get appointments for this employee
+      const { data: appointments } = await supabase
+        .from('appointments')
+        .select('id')
+        .eq('employee_id', user.id);
+      
+      if (!appointments || appointments.length === 0) return [];
+      
+      const appointmentIds = appointments.map(a => a.id);
+      
+      const { data } = await supabase
+        .from('reminder_logs')
+        .select('*, appointments(customer_name, customer_phone, customer_email)')
+        .in('appointment_id', appointmentIds)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      
+      return data ?? [];
+    },
+    enabled: !!user?.id,
+  });
+
+  const isLoading = callsLoading || remindersLoading;
+
+  // Transform data into unified format
+  const communicationLogs: CommunicationLog[] = [
+    // Call logs
+    ...(callLogs ?? []).map((log): CommunicationLog => ({
+      id: log.id,
+      type: 'call',
+      direction: log.direction as 'inbound' | 'outbound',
+      customerName: log.customer_name || 'Unknown',
+      customerPhone: log.customer_phone || log.from_number || log.to_number || undefined,
+      summary: log.summary || `${log.direction} call - ${log.status}`,
+      timestamp: new Date(log.created_at),
+      duration: log.duration_seconds || undefined,
+      status: log.status === 'completed' ? 'completed' : log.status === 'missed' ? 'missed' : 'pending',
+    })),
+    // Reminder logs (SMS and email)
+    ...(reminderLogs ?? []).map((log): CommunicationLog => ({
+      id: log.id,
+      type: log.channel as 'sms' | 'email',
+      direction: 'outbound',
+      customerName: (log.appointments as any)?.customer_name || 'Unknown',
+      customerPhone: log.recipient || (log.appointments as any)?.customer_phone || undefined,
+      summary: log.message_preview || `${log.reminder_type} reminder sent`,
+      timestamp: new Date(log.created_at),
+      status: log.status === 'sent' ? 'sent' : log.status === 'failed' ? 'failed' : 'pending',
+    })),
+  ].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+
+  const filteredLogs = communicationLogs.filter((log) => {
     const matchesSearch =
       log.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.summary.toLowerCase().includes(searchQuery.toLowerCase());
@@ -84,8 +127,10 @@ export function CommunicationLogs() {
   const getStatusStyle = (status: CommunicationLog['status']) => {
     switch (status) {
       case 'completed':
+      case 'sent':
         return 'bg-green-500/10 text-green-600 border-green-500/30';
       case 'missed':
+      case 'failed':
         return 'bg-red-500/10 text-red-600 border-red-500/30';
       case 'pending':
         return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/30';
@@ -119,7 +164,7 @@ export function CommunicationLogs() {
               Communication Logs
             </CardTitle>
             <CardDescription>
-              View call, SMS, and email history with customers
+              View your call, SMS, and email history with customers
             </CardDescription>
           </div>
         </div>
@@ -160,7 +205,13 @@ export function CommunicationLogs() {
           </TabsList>
 
           <TabsContent value={activeTab} className="mt-4">
-            {filteredLogs.length > 0 ? (
+            {isLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-24 w-full" />
+                ))}
+              </div>
+            ) : filteredLogs.length > 0 ? (
               <div className="space-y-3">
                 {filteredLogs.map((log) => {
                   const Icon = getTypeIcon(log.type);
@@ -213,7 +264,7 @@ export function CommunicationLogs() {
                 <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
                 <p className="text-muted-foreground">No communication logs found</p>
                 <p className="text-sm text-muted-foreground">
-                  Logs will appear here once integrations are connected
+                  Your calls, SMS, and emails will appear here
                 </p>
               </div>
             )}
