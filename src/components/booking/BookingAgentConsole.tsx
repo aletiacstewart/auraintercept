@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { BookingForm, BookingData } from '@/components/ai/BookingForm';
 import { 
   Send, 
   Calendar, 
@@ -23,7 +24,7 @@ import {
   RotateCcw,
   XCircle,
   Search,
-  UserPlus
+  ArrowLeft
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -45,7 +46,7 @@ interface QuickAction {
 }
 
 const QUICK_ACTIONS: QuickAction[] = [
-  { id: 'book', label: 'Book Appointment', icon: Calendar, message: 'I need to schedule a new appointment for a customer' },
+  { id: 'book', label: 'Book Appointment', icon: Calendar, message: '' },
   { id: 'reschedule', label: 'Reschedule', icon: RotateCcw, message: 'I need to reschedule an existing appointment' },
   { id: 'cancel', label: 'Cancel', icon: XCircle, message: 'I need to cancel an appointment', variant: 'destructive' },
   { id: 'followup', label: 'Follow Up', icon: Phone, message: 'I need to follow up with a customer about their recent service' },
@@ -65,6 +66,14 @@ interface AppointmentInfo {
   customer_address: string | null;
 }
 
+interface Service {
+  id: string;
+  name: string;
+  description: string | null;
+  duration_minutes: number;
+  price: number | null;
+}
+
 interface BookingAgentConsoleProps {
   companyId?: string;
   className?: string;
@@ -76,6 +85,8 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
   
   const [inputValue, setInputValue] = useState('');
   const [showAppointmentSelector, setShowAppointmentSelector] = useState(false);
+  const [showBookingForm, setShowBookingForm] = useState(false);
+  const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
   const [selectorAction, setSelectorAction] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -87,8 +98,29 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
     },
   });
 
+  // Fetch services for booking form
+  const { data: services = [] } = useQuery({
+    queryKey: ['services-booking-console', effectiveCompanyId],
+    queryFn: async () => {
+      if (!effectiveCompanyId) return [];
+      const { data, error } = await supabase
+        .from('services')
+        .select('id, name, description, duration_minutes, price')
+        .eq('company_id', effectiveCompanyId)
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+      
+      if (error) {
+        console.error('Error fetching services:', error);
+        return [];
+      }
+      return (data || []) as Service[];
+    },
+    enabled: !!effectiveCompanyId,
+  });
+
   // Fetch today's appointments for quick selection
-  const { data: todayAppointments = [], isLoading: appointmentsLoading } = useQuery({
+  const { data: todayAppointments = [] } = useQuery({
     queryKey: ['today-appointments-booking', effectiveCompanyId],
     queryFn: async () => {
       if (!effectiveCompanyId) return [];
@@ -154,6 +186,10 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
   };
 
   const handleQuickAction = useCallback(async (action: QuickAction) => {
+    if (action.id === 'book') {
+      setShowBookingForm(true);
+      return;
+    }
     if (action.id === 'reschedule' || action.id === 'cancel' || action.id === 'lookup') {
       setShowAppointmentSelector(true);
       setSelectorAction(action.id);
@@ -161,6 +197,67 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
     }
     await sendMessage(action.message);
   }, [sendMessage]);
+
+  const handleBookingSubmit = async (bookingData: BookingData) => {
+    if (!effectiveCompanyId) return;
+    
+    setIsSubmittingBooking(true);
+    try {
+      // Get selected service names
+      const selectedServiceNames = services
+        .filter(s => bookingData.selectedServices.includes(s.id))
+        .map(s => s.name)
+        .join(', ');
+
+      // Calculate total duration
+      const totalDuration = services
+        .filter(s => bookingData.selectedServices.includes(s.id))
+        .reduce((sum, s) => sum + (s.duration_minutes || 60), 0);
+
+      // Create the appointment datetime
+      const appointmentDate = new Date(bookingData.date);
+      const [hours, minutes] = bookingData.time.split(':');
+      appointmentDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+      // Insert the appointment directly
+      const { data: appointment, error } = await supabase
+        .from('appointments')
+        .insert({
+          company_id: effectiveCompanyId,
+          customer_name: bookingData.customerName.trim(),
+          customer_phone: bookingData.customerPhone.trim(),
+          customer_address: bookingData.customerAddress.trim(),
+          service_type: selectedServiceNames,
+          datetime: appointmentDate.toISOString(),
+          duration_minutes: totalDuration,
+          notes: bookingData.notes || null,
+          status: 'scheduled',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast.success('Appointment booked successfully!', {
+        description: `${bookingData.customerName} - ${format(appointmentDate, 'MMM d, yyyy h:mm a')}`
+      });
+
+      setShowBookingForm(false);
+      
+      // Send a message to the chat about the booking
+      await sendMessage(
+        `I just booked an appointment for ${bookingData.customerName} on ${format(appointmentDate, 'MMMM d, yyyy')} at ${format(appointmentDate, 'h:mm a')} for ${selectedServiceNames}. The service address is ${bookingData.customerAddress}.`
+      );
+
+    } catch (error) {
+      console.error('Error booking appointment:', error);
+      toast.error('Failed to book appointment', {
+        description: 'Please try again or contact support'
+      });
+    } finally {
+      setIsSubmittingBooking(false);
+    }
+  };
 
   const handleSelectAppointment = useCallback(async (appointment: AppointmentInfo) => {
     setShowAppointmentSelector(false);
@@ -241,9 +338,21 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
+          {showBookingForm && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowBookingForm(false)}
+              className="mr-1"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+          )}
           <Bot className="w-5 h-5 text-primary" />
-          <span className="font-medium">Booking AI Assistant</span>
-          {currentAgent && (
+          <span className="font-medium">
+            {showBookingForm ? 'Book New Appointment' : 'Booking AI Assistant'}
+          </span>
+          {!showBookingForm && currentAgent && (
             <Badge variant="outline" className="text-xs">
               {BOOKING_AGENTS.find(a => a.id === currentAgent)?.name || currentAgent}
             </Badge>
@@ -256,122 +365,135 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="px-4 py-3 border-b border-border bg-muted/30">
-        <div className="flex flex-wrap gap-2">
-          {QUICK_ACTIONS.map((action) => (
-            <Button
-              key={action.id}
-              variant={action.variant || 'outline'}
-              size="sm"
-              onClick={() => handleQuickAction(action)}
-              className="text-xs"
-            >
-              <action.icon className="w-3 h-3 mr-1" />
-              {action.label}
-            </Button>
-          ))}
+      {/* Booking Form View */}
+      {showBookingForm ? (
+        <div className="flex-1 overflow-auto p-4">
+          <BookingForm
+            services={services}
+            onSubmit={handleBookingSubmit}
+            isLoading={isSubmittingBooking}
+          />
         </div>
-      </div>
-
-      {/* Appointment Selector Modal */}
-      {showAppointmentSelector && (
-        <div className="px-4 py-3 border-b border-border bg-muted/50">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">
-              Select Appointment to {selectorAction === 'reschedule' ? 'Reschedule' : selectorAction === 'cancel' ? 'Cancel' : 'View'}
-            </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setShowAppointmentSelector(false);
-                setSelectorAction(null);
-              }}
-            >
-              <X className="w-4 h-4" />
-            </Button>
+      ) : (
+        <>
+          {/* Quick Actions */}
+          <div className="px-4 py-3 border-b border-border bg-muted/30">
+            <div className="flex flex-wrap gap-2">
+              {QUICK_ACTIONS.map((action) => (
+                <Button
+                  key={action.id}
+                  variant={action.variant || 'outline'}
+                  size="sm"
+                  onClick={() => handleQuickAction(action)}
+                  className="text-xs"
+                >
+                  <action.icon className="w-3 h-3 mr-1" />
+                  {action.label}
+                </Button>
+              ))}
+            </div>
           </div>
-          <ScrollArea className="h-48">
-            <div className="space-y-2">
-              {recentAppointments.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-4">No appointments found</p>
+
+          {/* Appointment Selector Modal */}
+          {showAppointmentSelector && (
+            <div className="px-4 py-3 border-b border-border bg-muted/50">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">
+                  Select Appointment to {selectorAction === 'reschedule' ? 'Reschedule' : selectorAction === 'cancel' ? 'Cancel' : 'View'}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setShowAppointmentSelector(false);
+                    setSelectorAction(null);
+                  }}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              <ScrollArea className="h-48">
+                <div className="space-y-2">
+                  {recentAppointments.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">No appointments found</p>
+                  ) : (
+                    recentAppointments.map((apt) => (
+                      <Card
+                        key={apt.id}
+                        className="cursor-pointer hover:bg-accent transition-colors"
+                        onClick={() => handleSelectAppointment(apt)}
+                      >
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium text-sm">{apt.customer_name}</p>
+                              <p className="text-xs text-muted-foreground">{apt.service_type}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-xs font-medium">{format(new Date(apt.datetime), 'MMM d')}</p>
+                              <p className="text-xs text-muted-foreground">{format(new Date(apt.datetime), 'h:mm a')}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
+
+          {/* Messages */}
+          <ScrollArea ref={scrollRef} className="flex-1 p-4">
+            <div className="space-y-4">
+              {messages.length === 0 ? (
+                <div className="text-center py-12">
+                  <Bot className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
+                  <h3 className="font-medium mb-1">Booking AI Assistant</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Use the quick actions above or type a message to get started
+                  </p>
+                </div>
               ) : (
-                recentAppointments.map((apt) => (
-                  <Card
-                    key={apt.id}
-                    className="cursor-pointer hover:bg-accent transition-colors"
-                    onClick={() => handleSelectAppointment(apt)}
-                  >
-                    <CardContent className="p-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium text-sm">{apt.customer_name}</p>
-                          <p className="text-xs text-muted-foreground">{apt.service_type}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-xs font-medium">{format(new Date(apt.datetime), 'MMM d')}</p>
-                          <p className="text-xs text-muted-foreground">{format(new Date(apt.datetime), 'h:mm a')}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
+                messages.map((msg, index) => renderMessage(msg, index))
+              )}
+              {isLoading && (
+                <div className="flex gap-2 justify-start">
+                  <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Bot className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="bg-muted rounded-2xl rounded-bl-md px-3 py-2">
+                    <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                  </div>
+                </div>
               )}
             </div>
           </ScrollArea>
-        </div>
+
+          {/* Input */}
+          <div className="p-4 border-t border-border">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSend();
+              }}
+              className="flex gap-2"
+            >
+              <Input
+                ref={inputRef}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Type a message or use quick actions..."
+                disabled={isLoading}
+                className="flex-1"
+              />
+              <Button type="submit" disabled={isLoading || !inputValue.trim()}>
+                <Send className="w-4 h-4" />
+              </Button>
+            </form>
+          </div>
+        </>
       )}
-
-      {/* Messages */}
-      <ScrollArea ref={scrollRef} className="flex-1 p-4">
-        <div className="space-y-4">
-          {messages.length === 0 ? (
-            <div className="text-center py-12">
-              <Bot className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-              <h3 className="font-medium mb-1">Booking AI Assistant</h3>
-              <p className="text-sm text-muted-foreground">
-                Use the quick actions above or type a message to get started
-              </p>
-            </div>
-          ) : (
-            messages.map((msg, index) => renderMessage(msg, index))
-          )}
-          {isLoading && (
-            <div className="flex gap-2 justify-start">
-              <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
-                <Bot className="w-4 h-4 text-primary" />
-              </div>
-              <div className="bg-muted rounded-2xl rounded-bl-md px-3 py-2">
-                <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-              </div>
-            </div>
-          )}
-        </div>
-      </ScrollArea>
-
-      {/* Input */}
-      <div className="p-4 border-t border-border">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSend();
-          }}
-          className="flex gap-2"
-        >
-          <Input
-            ref={inputRef}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Type a message or use quick actions..."
-            disabled={isLoading}
-            className="flex-1"
-          />
-          <Button type="submit" disabled={isLoading || !inputValue.trim()}>
-            <Send className="w-4 h-4" />
-          </Button>
-        </form>
-      </div>
     </div>
   );
 }
