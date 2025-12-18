@@ -265,9 +265,8 @@ export default function Index() {
           <div className="mt-12 flex justify-center animate-fade-in">
             <div className="w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl border border-border/50 bg-card">
               <video 
-                autoPlay 
+                controls
                 loop 
-                muted 
                 playsInline
                 className="w-full h-auto"
               >
