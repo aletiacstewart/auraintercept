@@ -11,7 +11,6 @@ import {
   Building2,
   Users,
   Calendar,
-  Clock,
   MessageSquare,
   Settings,
   LogOut,
@@ -39,10 +38,9 @@ import { differenceInDays, parseISO } from 'date-fns';
 
 interface NavItem {
   label: string;
-  labelForEmployee?: string;
   icon: React.ElementType;
   href: string;
-  roles: ('platform_admin' | 'company_admin' | 'employee')[];
+  roles: ('platform_admin' | 'company_admin')[];
 }
 
 interface NavGroup {
@@ -54,7 +52,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Overview',
     items: [
-      { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
+      { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin'] },
       { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin'] },
       { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'] },
       { label: 'Employees', icon: Users, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'] },
@@ -63,8 +61,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Operations',
     items: [
-      { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin', 'employee'] },
-      { label: 'Availability', icon: Clock, href: '/dashboard/availability', roles: ['employee'] },
+      { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'] },
       { label: 'Quotes', icon: FileCheck, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'] },
       { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'] },
       { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin', 'company_admin'] },
@@ -74,7 +71,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'AI & Automation',
     items: [
-      { label: 'AI Agent', labelForEmployee: 'Field Ops Agent', icon: Bot, href: '/dashboard/ai-agent', roles: ['platform_admin', 'company_admin', 'employee'] },
+      { label: 'AI Agent', icon: Bot, href: '/dashboard/ai-agent', roles: ['platform_admin', 'company_admin'] },
       { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'] },
       { label: 'Chat Widget', icon: MessageCircle, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
       { label: 'Call History', icon: PhoneCall, href: '/dashboard/calls', roles: ['platform_admin', 'company_admin'] },
@@ -93,8 +90,8 @@ const navGroups: NavGroup[] = [
       { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
       { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'] },
       { label: 'Subscription', icon: CreditCard, href: '/dashboard/subscription', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Communication Logs', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin', 'employee'] },
-      { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin', 'employee'] },
+      { label: 'Communication Logs', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin'] },
     ],
   },
 ];
@@ -122,10 +119,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const tierDisplay = getTierDisplay();
   const daysRemaining = getDaysRemaining();
 
-  // Filter groups and items based on user role
+  // Filter groups and items based on user role (admins only)
   const filteredNavGroups = navGroups.map(group => ({
     ...group,
-    items: group.items.filter(item => userRole && item.roles.includes(userRole))
+    items: group.items.filter(item => userRole && (userRole === 'platform_admin' || userRole === 'company_admin') && item.roles.includes(userRole))
   })).filter(group => group.items.length > 0);
 
   const handleSignOut = async () => {
@@ -187,7 +184,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 {group.items.map((item) => {
                   const Icon = item.icon;
                   const isActive = window.location.pathname === item.href;
-                  const displayLabel = userRole === 'employee' && item.labelForEmployee ? item.labelForEmployee : item.label;
+                  const displayLabel = item.label;
                   
                   return (
                     <Button
