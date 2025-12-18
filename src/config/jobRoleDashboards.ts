@@ -51,7 +51,7 @@ export const JOB_ROLE_CONFIGS: Record<JobRoleType, JobRoleConfig> = {
       { label: 'Overview', icon: 'LayoutDashboard', path: '/dashboard/technician' },
       { label: 'Field Ops Console', icon: 'Bot', path: '/dashboard/technician/field-ops' },
       { label: 'Job Queue', icon: 'ClipboardList', path: '/dashboard/technician/jobs' },
-      { label: 'My Calendar', icon: 'Calendar', path: '/dashboard/appointments' },
+      { label: 'My Calendar', icon: 'Calendar', path: '/dashboard/technician/calendar' },
       { label: 'Availability', icon: 'Clock', path: '/dashboard/availability' },
       { label: 'Messages', icon: 'MessageSquare', path: '/dashboard/messages' },
     ],
