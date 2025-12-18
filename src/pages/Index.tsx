@@ -214,7 +214,6 @@ export default function Index() {
           >
             <source src="/videos/hero-demo.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
         </div>
         
         <div className="absolute inset-0 tech-grid opacity-30 z-[1]" />
