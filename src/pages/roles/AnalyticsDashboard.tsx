@@ -5,7 +5,7 @@ import { RoleDashboardLayout } from '@/components/dashboard/RoleDashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { BarChart3, TrendingUp, FileBarChart, Calendar } from 'lucide-react';
+import { BarChart3, TrendingUp, FileBarChart, Calendar, Bot, DollarSign } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -19,12 +19,26 @@ export default function AnalyticsDashboard() {
     }
   }, [user, authLoading, navigate]);
 
-  const { data: stats } = useQuery({
+  const { data: profile, isLoading: profileLoading } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase
+        .from('profiles')
+        .select('*, companies(*)')
+        .eq('id', user.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['analytics-manager-stats', companyId],
     queryFn: async () => {
       if (!companyId) return null;
       
-      const [appointments, revenue] = await Promise.all([
+      const [appointments, revenue, completedJobs] = await Promise.all([
         supabase
           .from('appointments')
           .select('id', { count: 'exact' })
@@ -36,6 +50,12 @@ export default function AnalyticsDashboard() {
           .eq('company_id', companyId)
           .eq('status', 'paid')
           .gte('paid_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
+        supabase
+          .from('job_assignments')
+          .select('id', { count: 'exact' })
+          .eq('company_id', companyId)
+          .eq('status', 'completed')
+          .gte('completed_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
       ]);
       
       const monthlyRevenue = revenue.data?.reduce((sum, inv) => sum + Number(inv.total), 0) || 0;
@@ -43,10 +63,13 @@ export default function AnalyticsDashboard() {
       return {
         monthlyAppointments: appointments.count || 0,
         monthlyRevenue,
+        completedJobs: completedJobs.count || 0,
       };
     },
     enabled: !!companyId,
   });
+
+  const isLoading = profileLoading || statsLoading;
 
   if (authLoading) {
     return (
@@ -58,35 +81,73 @@ export default function AnalyticsDashboard() {
 
   return (
     <RoleDashboardLayout jobRole="analytics_manager">
-      <div className="space-y-6">
+      <div className="space-y-8 animate-fade-in">
+        {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
-          <p className="text-muted-foreground">Business intelligence and forecasting</p>
+          {isLoading ? (
+            <>
+              <Skeleton className="h-8 w-48 mb-2" />
+              <Skeleton className="h-4 w-64" />
+            </>
+          ) : (
+            <>
+              <h1 className="text-3xl font-bold tracking-tight">
+                Welcome, {profile?.full_name || 'Analytics Manager'}
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                {profile?.companies?.name || 'Analytics Dashboard'}
+              </p>
+            </>
+          )}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card>
+        {/* Quick Stats */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          <Card className="border-border/50">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Monthly Appointments</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Monthly Appointments
+              </CardTitle>
+              <Calendar className="w-5 h-5 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats?.monthlyAppointments || 0}</div>
+              <div className="text-3xl font-bold">{stats?.monthlyAppointments ?? 0}</div>
+              <p className="text-xs text-muted-foreground mt-1">This month</p>
             </CardContent>
           </Card>
-          <Card>
+
+          <Card className="border-border/50">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Monthly Revenue
+              </CardTitle>
+              <DollarSign className="w-5 h-5 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${stats?.monthlyRevenue?.toLocaleString() || 0}</div>
+              <div className="text-3xl font-bold text-green-600">${stats?.monthlyRevenue?.toLocaleString() ?? 0}</div>
+              <p className="text-xs text-muted-foreground mt-1">Total collected</p>
             </CardContent>
           </Card>
-          <Card>
+
+          <Card className="border-border/50">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Analytics</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Jobs Completed
+              </CardTitle>
+              <TrendingUp className="w-5 h-5 text-secondary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{stats?.completedJobs ?? 0}</div>
+              <p className="text-xs text-muted-foreground mt-1">This month</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/50">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Analytics
+              </CardTitle>
+              <BarChart3 className="w-5 h-5 text-accent" />
             </CardHeader>
             <CardContent>
               <Button size="sm" className="w-full" onClick={() => navigate('/dashboard/analytics')}>
@@ -94,10 +155,13 @@ export default function AnalyticsDashboard() {
               </Button>
             </CardContent>
           </Card>
-          <Card>
+
+          <Card className="border-border/50">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Reports</CardTitle>
-              <FileBarChart className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Reports
+              </CardTitle>
+              <FileBarChart className="w-5 h-5 text-primary" />
             </CardHeader>
             <CardContent>
               <Button size="sm" className="w-full" onClick={() => navigate('/dashboard/ai-agent')}>
@@ -107,17 +171,62 @@ export default function AnalyticsDashboard() {
           </Card>
         </div>
 
-        <Card>
+        {/* Analytics AI Console Card */}
+        <Card className="border-border/50">
           <CardHeader>
             <CardTitle>Analytics AI Console</CardTitle>
+            <p className="text-sm text-muted-foreground">Use AI to generate reports, run forecasts, and analyze business data</p>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground mb-4">Use AI to generate reports, run forecasts, and analyze business data.</p>
             <Button onClick={() => navigate('/dashboard/ai-agent')}>
               Open AI Console
             </Button>
           </CardContent>
         </Card>
+
+        {/* Quick Actions */}
+        <div className="grid gap-4 md:grid-cols-5">
+          <Button
+            variant="outline"
+            className="h-auto py-6 flex flex-col items-center gap-2"
+            onClick={() => navigate('/dashboard/ai-agent')}
+          >
+            <Bot className="w-6 h-6 text-primary" />
+            <span>AI Console</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-auto py-6 flex flex-col items-center gap-2"
+            onClick={() => navigate('/dashboard/analytics')}
+          >
+            <BarChart3 className="w-6 h-6 text-secondary" />
+            <span>Analytics</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-auto py-6 flex flex-col items-center gap-2"
+            onClick={() => navigate('/dashboard/invoices')}
+          >
+            <DollarSign className="w-6 h-6 text-accent" />
+            <span>Revenue</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-auto py-6 flex flex-col items-center gap-2"
+            onClick={() => navigate('/dashboard/ai-agents')}
+          >
+            <TrendingUp className="w-6 h-6 text-primary" />
+            <span>AI Agents Hub</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-auto py-6 flex flex-col items-center gap-2"
+            onClick={() => navigate('/dashboard/settings')}
+          >
+            <FileBarChart className="w-6 h-6 text-secondary" />
+            <span>Settings</span>
+          </Button>
+        </div>
       </div>
     </RoleDashboardLayout>
   );
