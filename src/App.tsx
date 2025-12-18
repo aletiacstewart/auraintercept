@@ -35,6 +35,18 @@ import Referrals from "./pages/Referrals";
 import Campaigns from "./pages/Campaigns";
 import NotFound from "./pages/NotFound";
 
+// Technician Dashboard Pages
+import {
+  TechnicianDashboard,
+  TechnicianAIConsole,
+  TechnicianJobs,
+  TechnicianCalendar,
+  TechnicianSettings,
+  TechnicianAvailability,
+  TechnicianHistory,
+  TechnicianProfile,
+} from "./pages/technician";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -75,6 +87,17 @@ const App = () => (
             
             <Route path="/appointment" element={<CustomerPortal />} />
             <Route path="/chat/:companySlug" element={<PublicChat />} />
+            
+            {/* Technician Dashboard Routes */}
+            <Route path="/technician" element={<TechnicianDashboard />} />
+            <Route path="/technician/ai-console" element={<TechnicianAIConsole />} />
+            <Route path="/technician/jobs" element={<TechnicianJobs />} />
+            <Route path="/technician/calendar" element={<TechnicianCalendar />} />
+            <Route path="/technician/settings" element={<TechnicianSettings />} />
+            <Route path="/technician/availability" element={<TechnicianAvailability />} />
+            <Route path="/technician/history" element={<TechnicianHistory />} />
+            <Route path="/technician/profile" element={<TechnicianProfile />} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
