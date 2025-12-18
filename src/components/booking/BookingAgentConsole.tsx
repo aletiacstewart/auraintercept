@@ -9,6 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { BookingForm, BookingData } from '@/components/ai/BookingForm';
+import { FeedbackForm } from '@/components/ai/FeedbackForm';
 import { 
   Send, 
   Calendar, 
@@ -86,7 +87,9 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
   const [inputValue, setInputValue] = useState('');
   const [showAppointmentSelector, setShowAppointmentSelector] = useState(false);
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
   const [selectorAction, setSelectorAction] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -190,6 +193,10 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
       setShowBookingForm(true);
       return;
     }
+    if (action.id === 'followup') {
+      setShowFeedbackForm(true);
+      return;
+    }
     if (action.id === 'reschedule' || action.id === 'cancel' || action.id === 'lookup') {
       setShowAppointmentSelector(true);
       setSelectorAction(action.id);
@@ -256,6 +263,54 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
       });
     } finally {
       setIsSubmittingBooking(false);
+    }
+  };
+
+  const handleFeedbackSubmit = async (feedbackData: {
+    rating: number;
+    sentiment: 'positive' | 'neutral' | 'negative';
+    note: string;
+    customerName: string;
+    customerPhone: string;
+    serviceDate?: Date;
+  }) => {
+    if (!effectiveCompanyId) return;
+    
+    setIsSubmittingFeedback(true);
+    try {
+      // Insert feedback into database
+      const { error } = await supabase
+        .from('customer_feedback')
+        .insert({
+          company_id: effectiveCompanyId,
+          customer_name: feedbackData.customerName,
+          customer_phone: feedbackData.customerPhone || null,
+          rating: feedbackData.rating,
+          sentiment: feedbackData.sentiment,
+          feedback_note: feedbackData.note || null,
+          source: 'booking_console',
+        });
+
+      if (error) throw error;
+
+      toast.success('Feedback recorded successfully!', {
+        description: `${feedbackData.customerName} - ${feedbackData.sentiment} (${feedbackData.rating} stars)`
+      });
+
+      setShowFeedbackForm(false);
+      
+      // Send a message to the chat about the feedback
+      await sendMessage(
+        `I recorded follow-up feedback from ${feedbackData.customerName}. They rated their experience ${feedbackData.rating}/5 stars (${feedbackData.sentiment}). ${feedbackData.note ? `Note: "${feedbackData.note}"` : ''}`
+      );
+
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      toast.error('Failed to submit feedback', {
+        description: 'Please try again or contact support'
+      });
+    } finally {
+      setIsSubmittingFeedback(false);
     }
   };
 
@@ -338,11 +393,14 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
-          {showBookingForm && (
+          {(showBookingForm || showFeedbackForm) && (
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => setShowBookingForm(false)}
+              onClick={() => {
+                setShowBookingForm(false);
+                setShowFeedbackForm(false);
+              }}
               className="mr-1"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -350,9 +408,9 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
           )}
           <Bot className="w-5 h-5 text-primary" />
           <span className="font-medium">
-            {showBookingForm ? 'Book New Appointment' : 'Booking AI Assistant'}
+            {showBookingForm ? 'Book New Appointment' : showFeedbackForm ? 'Customer Follow Up' : 'Booking AI Assistant'}
           </span>
-          {!showBookingForm && currentAgent && (
+          {!showBookingForm && !showFeedbackForm && currentAgent && (
             <Badge variant="outline" className="text-xs">
               {BOOKING_AGENTS.find(a => a.id === currentAgent)?.name || currentAgent}
             </Badge>
@@ -372,6 +430,13 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
             services={services}
             onSubmit={handleBookingSubmit}
             isLoading={isSubmittingBooking}
+          />
+        </div>
+      ) : showFeedbackForm ? (
+        <div className="flex-1 overflow-auto p-4">
+          <FeedbackForm
+            onSubmit={handleFeedbackSubmit}
+            isLoading={isSubmittingFeedback}
           />
         </div>
       ) : (
