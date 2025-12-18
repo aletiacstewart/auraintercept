@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
@@ -42,14 +43,15 @@ interface QuickAction {
   icon: React.ElementType;
   message: string;
   variant?: 'default' | 'destructive' | 'outline' | 'secondary';
+  navigateTo?: string;
 }
 
 const QUICK_ACTIONS: QuickAction[] = [
-  { id: 'create_invoice', label: 'Create Invoice', icon: Receipt, message: 'I need to create a new invoice for a customer.' },
+  { id: 'create_invoice', label: 'Create Invoice', icon: Receipt, message: '', navigateTo: '/dashboard/invoices' },
   { id: 'send_reminder', label: 'Send Reminder', icon: Bell, message: '' },
   { id: 'overdue_followup', label: 'Overdue Follow-up', icon: AlertCircle, message: 'Show me all overdue invoices that need follow-up and help me send payment reminders.', variant: 'destructive' },
-  { id: 'create_quote', label: 'Create Quote', icon: FileText, message: 'I need to create a new quote for a customer.' },
-  { id: 'revenue_report', label: 'Revenue Report', icon: BarChart3, message: 'Generate a revenue report showing income trends, payment patterns, and key billing metrics.' },
+  { id: 'create_quote', label: 'Create Quote', icon: FileText, message: '', navigateTo: '/dashboard/quotes' },
+  { id: 'revenue_report', label: 'Revenue Report', icon: BarChart3, message: '', navigateTo: '/dashboard/billing/reports' },
   { id: 'payment_forecast', label: 'Payment Forecast', icon: TrendingUp, message: 'Forecast expected payments and cash flow for the next 30 days based on outstanding invoices and historical data.' },
   { id: 'process_refund', label: 'Process Refund', icon: RefreshCw, message: '' },
 ];
@@ -73,6 +75,7 @@ interface BillingAgentConsoleProps {
 type SelectorMode = 'send_reminder' | 'process_refund' | null;
 
 export function BillingAgentConsole({ companyId, className }: BillingAgentConsoleProps) {
+  const navigate = useNavigate();
   const { user, companyId: authCompanyId } = useAuth();
   const effectiveCompanyId = companyId || authCompanyId;
   
@@ -142,6 +145,12 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
   };
 
   const handleQuickAction = useCallback(async (action: QuickAction) => {
+    // Navigate actions
+    if (action.navigateTo) {
+      navigate(action.navigateTo);
+      return;
+    }
+    // Selector actions
     if (action.id === 'send_reminder') {
       setSelectorMode('send_reminder');
       return;
@@ -150,8 +159,11 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
       setSelectorMode('process_refund');
       return;
     }
-    await sendMessage(action.message);
-  }, [sendMessage]);
+    // Chat message actions
+    if (action.message) {
+      await sendMessage(action.message);
+    }
+  }, [sendMessage, navigate]);
 
   const handleSelectInvoiceForReminder = useCallback(async (invoice: Invoice) => {
     if (processingInvoiceId) return;
