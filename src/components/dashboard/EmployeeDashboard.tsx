@@ -299,7 +299,7 @@ export function EmployeeDashboard() {
         <Button
           variant="outline"
           className="h-auto py-6 flex flex-col items-center gap-2"
-          onClick={() => navigate('/dashboard/field-ops')}
+          onClick={() => navigate('/dashboard/ai-agent')}
         >
           <Wrench className="w-6 h-6 text-primary" />
           <span>Field Ops Console</span>
