@@ -180,7 +180,7 @@ export default function Index() {
       <header className="bg-black border-b border-border/50 sticky top-0 z-50">
         <nav className="container max-w-7xl mx-auto flex items-center justify-between py-3 px-6">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="AI Bot Company" className="object-contain" style={{ width: '75px', height: '75px' }} />
+            <img src={logo} alt="AI Bot Company" className="object-contain" style={{ width: '175px', height: '175px' }} />
             <div>
               <h1 className="font-bold text-lg text-white">AI Bot Company</h1>
               <p className="text-xs text-gray-400">The Future of Work</p>
