@@ -11,6 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { BookingForm, BookingData } from '@/components/ai/BookingForm';
 import { FeedbackForm } from '@/components/ai/FeedbackForm';
 import { QuoteForm, QuoteData } from '@/components/ai/QuoteForm';
+import { ReviewForm } from '@/components/ai/ReviewForm';
 import { 
   Send, 
   Calendar, 
@@ -90,9 +91,11 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [showQuoteForm, setShowQuoteForm] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
   const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
   const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [selectorAction, setSelectorAction] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -177,7 +180,32 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
     enabled: !!effectiveCompanyId && showAppointmentSelector,
   });
 
-  // Auto-scroll to bottom on new messages
+  // Fetch company review links
+  const { data: companySettings } = useQuery({
+    queryKey: ['company-review-links', effectiveCompanyId],
+    queryFn: async () => {
+      if (!effectiveCompanyId) return null;
+      const { data, error } = await supabase
+        .from('companies')
+        .select('review_google_url, review_facebook_url, review_yelp_url')
+        .eq('id', effectiveCompanyId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching company settings:', error);
+        return null;
+      }
+      return data;
+    },
+    enabled: !!effectiveCompanyId,
+  });
+
+  const reviewLinks = [
+    { platform: 'Google', url: companySettings?.review_google_url || '' },
+    { platform: 'Facebook', url: companySettings?.review_facebook_url || '' },
+    { platform: 'Yelp', url: companySettings?.review_yelp_url || '' },
+  ].filter(link => link.url);
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -202,6 +230,10 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
     }
     if (action.id === 'quote') {
       setShowQuoteForm(true);
+      return;
+    }
+    if (action.id === 'review') {
+      setShowReviewForm(true);
       return;
     }
     if (action.id === 'reschedule' || action.id === 'cancel' || action.id === 'lookup') {
@@ -385,6 +417,36 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
     }
   };
 
+  const handleReviewSubmit = async (reviewData: {
+    rating: number;
+    comment: string;
+    customerName: string;
+    customerPhone: string;
+    selectedPlatforms: string[];
+  }) => {
+    setIsSubmittingReview(true);
+    try {
+      toast.success('Review request sent!', {
+        description: `${reviewData.customerName} - ${reviewData.selectedPlatforms.join(', ')}`
+      });
+
+      setShowReviewForm(false);
+      
+      // Send a message to the chat about the review request
+      await sendMessage(
+        `I sent a review request to ${reviewData.customerName} for ${reviewData.selectedPlatforms.join(', ')}. ${reviewData.comment ? `They commented: "${reviewData.comment}"` : ''}`
+      );
+
+    } catch (error) {
+      console.error('Error sending review request:', error);
+      toast.error('Failed to send review request', {
+        description: 'Please try again or contact support'
+      });
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
   const handleSelectAppointment = useCallback(async (appointment: AppointmentInfo) => {
     setShowAppointmentSelector(false);
     
@@ -464,7 +526,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
-          {(showBookingForm || showFeedbackForm || showQuoteForm) && (
+          {(showBookingForm || showFeedbackForm || showQuoteForm || showReviewForm) && (
             <Button 
               variant="ghost" 
               size="sm" 
@@ -472,6 +534,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
                 setShowBookingForm(false);
                 setShowFeedbackForm(false);
                 setShowQuoteForm(false);
+                setShowReviewForm(false);
               }}
               className="mr-1"
             >
@@ -480,9 +543,9 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
           )}
           <Bot className="w-5 h-5 text-primary" />
           <span className="font-medium">
-            {showBookingForm ? 'Book New Appointment' : showFeedbackForm ? 'Customer Follow Up' : showQuoteForm ? 'Create Quote' : 'Booking AI Assistant'}
+            {showBookingForm ? 'Book New Appointment' : showFeedbackForm ? 'Customer Follow Up' : showQuoteForm ? 'Create Quote' : showReviewForm ? 'Request Review' : 'Booking AI Assistant'}
           </span>
-          {!showBookingForm && !showFeedbackForm && !showQuoteForm && currentAgent && (
+          {!showBookingForm && !showFeedbackForm && !showQuoteForm && !showReviewForm && currentAgent && (
             <Badge variant="outline" className="text-xs">
               {BOOKING_AGENTS.find(a => a.id === currentAgent)?.name || currentAgent}
             </Badge>
@@ -516,6 +579,14 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
           <QuoteForm
             services={services}
             onSubmit={handleQuoteSubmit}
+          />
+        </div>
+      ) : showReviewForm ? (
+        <div className="flex-1 overflow-auto p-4">
+          <ReviewForm
+            onSubmit={handleReviewSubmit}
+            isLoading={isSubmittingReview}
+            reviewLinks={reviewLinks}
           />
         </div>
       ) : (
