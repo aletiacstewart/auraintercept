@@ -44,8 +44,19 @@ import {
   ExternalLink,
   Copy,
   Check,
-  Mail
+  Mail,
+  Trash2
 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -84,6 +95,7 @@ export default function Companies() {
     admin_name: '',
   });
   const [createdCredentials, setCreatedCredentials] = useState<{ email: string; password: string } | null>(null);
+  const [deletingCompany, setDeletingCompany] = useState<Company | null>(null);
 
   // Fetch all companies - hooks must be called before any conditional returns
   const { data: companies, isLoading } = useQuery({
@@ -210,6 +222,28 @@ export default function Companies() {
     onError: (error: any) => {
       console.error('Update error:', error);
       toast.error('Failed to update company');
+    },
+  });
+
+  // Delete company mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (companyId: string) => {
+      const { error } = await supabase
+        .from('companies')
+        .delete()
+        .eq('id', companyId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['companies'] });
+      queryClient.invalidateQueries({ queryKey: ['company-employee-counts'] });
+      toast.success('Company deleted successfully');
+      setDeletingCompany(null);
+    },
+    onError: (error: any) => {
+      console.error('Delete error:', error);
+      toast.error(error.message || 'Failed to delete company');
     },
   });
 
@@ -462,6 +496,13 @@ export default function Companies() {
                                 <Settings className="w-4 h-4 mr-2" />
                                 Settings
                               </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => setDeletingCompany(company)}
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
@@ -503,6 +544,36 @@ export default function Companies() {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingCompany} onOpenChange={() => setDeletingCompany(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Company</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete <strong>{deletingCompany?.name}</strong>? 
+              This action cannot be undone. All associated data including employees, 
+              appointments, and settings will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deletingCompany && deleteMutation.mutate(deletingCompany.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardLayout>
   );
 }
