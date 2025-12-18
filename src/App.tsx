@@ -44,6 +44,7 @@ import SalesDashboard from "./pages/roles/SalesDashboard";
 import CustomerServiceDashboard from "./pages/roles/CustomerServiceDashboard";
 import InventoryManagerDashboard from "./pages/roles/InventoryManagerDashboard";
 import BillingDashboard from "./pages/roles/BillingDashboard";
+import BillingReports from "./pages/roles/BillingReports";
 import ComplianceDashboard from "./pages/roles/ComplianceDashboard";
 import AnalyticsDashboard from "./pages/roles/AnalyticsDashboard";
 
@@ -94,6 +95,8 @@ const App = () => (
             <Route path="/dashboard/customer-service" element={<CustomerServiceDashboard />} />
             <Route path="/dashboard/inventory-manager" element={<InventoryManagerDashboard />} />
             <Route path="/dashboard/billing" element={<BillingDashboard />} />
+            <Route path="/dashboard/billing/reports" element={<BillingReports />} />
+            <Route path="/dashboard/billing/report" element={<BillingReports />} />
             <Route path="/dashboard/compliance" element={<ComplianceDashboard />} />
             <Route path="/dashboard/analytics-manager" element={<AnalyticsDashboard />} />
             
