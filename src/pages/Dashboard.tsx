@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PlatformAdminDashboard } from '@/components/dashboard/PlatformAdminDashboard';
 import { CompanyAdminDashboard } from '@/components/dashboard/CompanyAdminDashboard';
@@ -8,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Dashboard() {
   const { user, loading, userRole } = useAuth();
+  const { hasJobType, loading: jobRoleLoading } = useEmployeeJobRole();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,6 +17,13 @@ export default function Dashboard() {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  // Redirect technicians to their dedicated dashboard
+  useEffect(() => {
+    if (!loading && !jobRoleLoading && userRole === 'employee' && hasJobType('technician')) {
+      navigate('/technician', { replace: true });
+    }
+  }, [loading, jobRoleLoading, userRole, hasJobType, navigate]);
 
   if (loading) {
     return (
