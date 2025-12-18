@@ -5,8 +5,11 @@ import { AppointmentCalendar } from '@/components/employee/AppointmentCalendar';
 export default function TechnicianCalendar() {
   return (
     <TechnicianDashboardLayout>
-      <div className="p-4 md:p-6">
-        <h1 className="text-2xl font-bold mb-4">My Calendar</h1>
+      <div className="space-y-6 animate-fade-in">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">My Calendar</h1>
+          <p className="text-muted-foreground mt-1">View and manage your schedule</p>
+        </div>
         <AppointmentCalendar />
       </div>
     </TechnicianDashboardLayout>
