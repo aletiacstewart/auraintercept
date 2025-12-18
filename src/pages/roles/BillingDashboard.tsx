@@ -196,10 +196,10 @@ export default function BillingDashboard() {
           <Button
             variant="outline"
             className="h-auto py-6 flex flex-col items-center gap-2"
-            onClick={() => navigate('/dashboard/ai-agent')}
+            onClick={() => navigate('/dashboard/billing/ai-console')}
           >
             <Bot className="w-6 h-6 text-accent" />
-            <span>AI Console</span>
+            <span>Billing AI Console</span>
           </Button>
           <Button
             variant="outline"
