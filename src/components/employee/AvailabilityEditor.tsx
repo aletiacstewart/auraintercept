@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -7,258 +7,499 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Calendar } from '@/components/ui/calendar';
 import { toast } from 'sonner';
-import { Save, Plus, Trash2, Clock } from 'lucide-react';
+import { Save, Clock, Truck, AlertTriangle, CalendarHeart, X, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { format, addMonths, startOfMonth, isSameDay } from 'date-fns';
 
-interface TimeSlot {
-  start: string;
-  end: string;
+interface AvailabilityHour {
+  id?: string;
+  day_of_week: number;
+  open_time: string | null;
+  close_time: string | null;
+  is_closed: boolean;
+  hour_type: string;
 }
 
-interface AvailabilityData {
-  monday: TimeSlot[];
-  tuesday: TimeSlot[];
-  wednesday: TimeSlot[];
-  thursday: TimeSlot[];
-  friday: TimeSlot[];
-  saturday: TimeSlot[];
-  sunday: TimeSlot[];
+interface TimeOff {
+  id?: string;
+  time_off_date: string;
+  name: string | null;
 }
 
-const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
-const DAY_LABELS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+const HOUR_TYPES = [
+  { value: 'field', label: 'Field Hours', icon: Truck, description: 'Regular working/field service hours' },
+  { value: 'emergency', label: 'Emergency Hours', icon: AlertTriangle, description: 'On-call emergency availability' },
+  { value: 'timeoff', label: 'Time Off', icon: CalendarHeart, description: 'Personal days off and holidays' },
+];
 
 const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
   const hour = Math.floor(i / 2);
   const minute = i % 2 === 0 ? '00' : '30';
-  const time = `${hour.toString().padStart(2, '0')}:${minute}`;
+  const time = `${hour.toString().padStart(2, '0')}:${minute}:00`;
   const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
   const ampm = hour < 12 ? 'AM' : 'PM';
   return { value: time, label: `${displayHour}:${minute} ${ampm}` };
 });
 
-const DEFAULT_AVAILABILITY: AvailabilityData = {
-  monday: [{ start: '09:00', end: '17:00' }],
-  tuesday: [{ start: '09:00', end: '17:00' }],
-  wednesday: [{ start: '09:00', end: '17:00' }],
-  thursday: [{ start: '09:00', end: '17:00' }],
-  friday: [{ start: '09:00', end: '17:00' }],
-  saturday: [],
-  sunday: [],
+const getDefaultHours = (hourType: string): AvailabilityHour[] => {
+  if (hourType === 'emergency') {
+    return DAYS.map((_, index) => ({
+      day_of_week: index,
+      open_time: null,
+      close_time: null,
+      is_closed: true,
+      hour_type: hourType,
+    }));
+  }
+
+  return DAYS.map((_, index) => ({
+    day_of_week: index,
+    open_time: index === 0 || index === 6 ? null : '09:00:00',
+    close_time: index === 0 || index === 6 ? null : '17:00:00',
+    is_closed: index === 0 || index === 6,
+    hour_type: hourType,
+  }));
 };
 
 interface AvailabilityEditorProps {
-  initialAvailability?: AvailabilityData | null;
+  initialAvailability?: any;
 }
 
 export function AvailabilityEditor({ initialAvailability }: AvailabilityEditorProps) {
-  const { user } = useAuth();
+  const { user, companyId } = useAuth();
   const queryClient = useQueryClient();
-  const [availability, setAvailability] = useState<AvailabilityData>(
-    initialAvailability || DEFAULT_AVAILABILITY
-  );
-  const [enabledDays, setEnabledDays] = useState<Record<string, boolean>>({
-    monday: true,
-    tuesday: true,
-    wednesday: true,
-    thursday: true,
-    friday: true,
-    saturday: false,
-    sunday: false,
+  const [activeTab, setActiveTab] = useState('field');
+  const [hoursByType, setHoursByType] = useState<Record<string, AvailabilityHour[]>>({
+    field: getDefaultHours('field'),
+    emergency: getDefaultHours('emergency'),
+  });
+  const [timeOffs, setTimeOffs] = useState<TimeOff[]>([]);
+  const [newTimeOffName, setNewTimeOffName] = useState('');
+
+  // Fetch saved availability
+  const { data: savedHours, isLoading } = useQuery({
+    queryKey: ['employee-availability', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from('employee_availability')
+        .select('*')
+        .eq('employee_id', user.id)
+        .order('day_of_week');
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch saved time offs
+  const { data: savedTimeOffs, isLoading: isLoadingTimeOffs } = useQuery({
+    queryKey: ['employee-time-off', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from('employee_time_off')
+        .select('*')
+        .eq('employee_id', user.id)
+        .order('time_off_date');
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
   });
 
   useEffect(() => {
-    if (initialAvailability) {
-      setAvailability(initialAvailability);
-      const enabled: Record<string, boolean> = {};
-      DAYS.forEach(day => {
-        enabled[day] = initialAvailability[day]?.length > 0;
+    if (savedHours && savedHours.length > 0) {
+      const newHoursByType: Record<string, AvailabilityHour[]> = {
+        field: getDefaultHours('field'),
+        emergency: getDefaultHours('emergency'),
+      };
+
+      ['field', 'emergency'].forEach((hourType) => {
+        const savedForType = savedHours.filter((h: any) => (h.hour_type || 'field') === hourType);
+        if (savedForType.length > 0) {
+          newHoursByType[hourType] = getDefaultHours(hourType).map((defaultHour) => {
+            const saved = savedForType.find((h: any) => h.day_of_week === defaultHour.day_of_week);
+            return saved ? { ...saved, hour_type: hourType } : defaultHour;
+          });
+        }
       });
-      setEnabledDays(enabled);
+
+      setHoursByType(newHoursByType);
     }
-  }, [initialAvailability]);
+  }, [savedHours]);
+
+  useEffect(() => {
+    if (savedTimeOffs) {
+      setTimeOffs(savedTimeOffs.map((t: any) => ({
+        id: t.id,
+        time_off_date: t.time_off_date,
+        name: t.name,
+      })));
+    }
+  }, [savedTimeOffs]);
 
   const saveMutation = useMutation({
-    mutationFn: async () => {
-      if (!user?.id) throw new Error('Not authenticated');
+    mutationFn: async (hourType: string) => {
+      if (!user?.id || !companyId) throw new Error('Not authenticated');
 
-      // Clean up disabled days - convert to JSON-compatible format
-      const cleanedAvailability = Object.fromEntries(
-        DAYS.map(day => [
-          day,
-          enabledDays[day] 
-            ? availability[day].map(slot => ({ start: slot.start, end: slot.end }))
-            : []
-        ])
-      );
+      const hours = hoursByType[hourType];
+      
+      for (const hour of hours) {
+        const payload = {
+          employee_id: user.id,
+          company_id: companyId,
+          day_of_week: hour.day_of_week,
+          open_time: hour.is_closed ? null : hour.open_time,
+          close_time: hour.is_closed ? null : hour.close_time,
+          is_closed: hour.is_closed,
+          hour_type: hourType,
+        };
 
-      const { error } = await supabase
-        .from('profiles')
-        // @ts-ignore - availability_json is a valid JSONB column
-        .update({ availability_json: cleanedAvailability })
-        .eq('id', user.id);
-
-      if (error) throw error;
+        const { error } = await supabase
+          .from('employee_availability')
+          .upsert(payload, { onConflict: 'employee_id,day_of_week,hour_type' });
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
-      toast.success('Availability saved!');
+      queryClient.invalidateQueries({ queryKey: ['employee-availability'] });
+      toast.success('Hours saved successfully!');
     },
     onError: (error) => {
-      console.error('Error saving availability:', error);
-      toast.error('Failed to save availability');
+      console.error('Error saving hours:', error);
+      toast.error('Failed to save hours');
     },
   });
 
-  const toggleDay = (day: string) => {
-    setEnabledDays(prev => {
-      const newState = { ...prev, [day]: !prev[day] };
-      if (!prev[day]) {
-        // Enable day with default slot
-        setAvailability(a => ({
-          ...a,
-          [day]: [{ start: '09:00', end: '17:00' }],
-        }));
+  const addTimeOffMutation = useMutation({
+    mutationFn: async ({ date, name }: { date: Date; name: string }) => {
+      if (!user?.id || !companyId) throw new Error('Not authenticated');
+
+      const { error } = await supabase
+        .from('employee_time_off')
+        .insert({
+          employee_id: user.id,
+          company_id: companyId,
+          time_off_date: format(date, 'yyyy-MM-dd'),
+          name: name || null,
+        });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee-time-off'] });
+      setNewTimeOffName('');
+      toast.success('Time off added!');
+    },
+    onError: (error: Error) => {
+      if (error.message.includes('duplicate')) {
+        toast.error('This date is already marked as time off');
+      } else {
+        toast.error('Failed to add time off');
       }
-      return newState;
-    });
-  };
+    },
+  });
 
-  const addTimeSlot = (day: typeof DAYS[number]) => {
-    setAvailability(prev => ({
-      ...prev,
-      [day]: [...prev[day], { start: '09:00', end: '17:00' }],
-    }));
-  };
+  const removeTimeOffMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('employee_time_off')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employee-time-off'] });
+      toast.success('Time off removed!');
+    },
+    onError: () => {
+      toast.error('Failed to remove time off');
+    },
+  });
 
-  const removeTimeSlot = (day: typeof DAYS[number], index: number) => {
-    setAvailability(prev => ({
+  const updateHour = (hourType: string, dayIndex: number, field: keyof AvailabilityHour, value: unknown) => {
+    setHoursByType((prev) => ({
       ...prev,
-      [day]: prev[day].filter((_, i) => i !== index),
-    }));
-  };
-
-  const updateTimeSlot = (day: typeof DAYS[number], index: number, field: 'start' | 'end', value: string) => {
-    setAvailability(prev => ({
-      ...prev,
-      [day]: prev[day].map((slot, i) =>
-        i === index ? { ...slot, [field]: value } : slot
+      [hourType]: prev[hourType].map((h) =>
+        h.day_of_week === dayIndex ? { ...h, [field]: value } : h
       ),
     }));
   };
 
-  return (
-    <Card className="border-border/50">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Clock className="w-5 h-5" />
-          Weekly Availability
-        </CardTitle>
-        <CardDescription>
-          Set your working hours for each day of the week
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {DAYS.map((day, dayIndex) => (
+  const toggleDay = (hourType: string, dayIndex: number) => {
+    setHoursByType((prev) => ({
+      ...prev,
+      [hourType]: prev[hourType].map((h) =>
+        h.day_of_week === dayIndex
+          ? {
+              ...h,
+              is_closed: !h.is_closed,
+              open_time: h.is_closed ? '09:00:00' : null,
+              close_time: h.is_closed ? '17:00:00' : null,
+            }
+          : h
+      ),
+    }));
+  };
+
+  const timeOffDates = timeOffs.map(t => new Date(t.time_off_date + 'T00:00:00'));
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (!date) return;
+    
+    const existingTimeOff = timeOffs.find(t => 
+      isSameDay(new Date(t.time_off_date + 'T00:00:00'), date)
+    );
+
+    if (existingTimeOff) {
+      if (existingTimeOff.id) {
+        removeTimeOffMutation.mutate(existingTimeOff.id);
+      }
+    } else {
+      addTimeOffMutation.mutate({ date, name: newTimeOffName });
+    }
+  };
+
+  const renderHoursGrid = (hourType: string) => {
+    const hours = hoursByType[hourType];
+    
+    return (
+      <div className="space-y-3">
+        {hours.map((hour) => (
           <div
-            key={day}
+            key={hour.day_of_week}
             className={cn(
-              'p-4 rounded-lg border transition-colors',
-              enabledDays[day] ? 'bg-card border-border' : 'bg-muted/30 border-transparent'
+              'flex items-center gap-4 p-3 rounded-lg border transition-colors',
+              hour.is_closed ? 'bg-muted/30 border-transparent' : 'bg-card border-border'
             )}
           >
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <Switch
-                  checked={enabledDays[day]}
-                  onCheckedChange={() => toggleDay(day)}
-                />
-                <Label className={cn('font-medium', !enabledDays[day] && 'text-muted-foreground')}>
-                  {DAY_LABELS[dayIndex]}
-                </Label>
-              </div>
-              {enabledDays[day] && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => addTimeSlot(day)}
-                  className="text-primary"
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Add Slot
-                </Button>
-              )}
+            <div className="w-28 flex items-center gap-2">
+              <Switch
+                checked={!hour.is_closed}
+                onCheckedChange={() => toggleDay(hourType, hour.day_of_week)}
+              />
+              <Label className={cn('font-medium', hour.is_closed && 'text-muted-foreground')}>
+                {DAYS[hour.day_of_week]}
+              </Label>
             </div>
 
-            {enabledDays[day] && (
-              <div className="space-y-2 pl-10">
-                {availability[day].length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No time slots. Add one to set availability.</p>
-                ) : (
-                  availability[day].map((slot, slotIndex) => (
-                    <div key={slotIndex} className="flex items-center gap-2">
-                      <Select
-                        value={slot.start}
-                        onValueChange={(value) => updateTimeSlot(day, slotIndex, 'start', value)}
-                      >
-                        <SelectTrigger className="w-28">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {TIME_OPTIONS.map((time) => (
-                            <SelectItem key={time.value} value={time.value}>
-                              {time.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <span className="text-muted-foreground">to</span>
-                      <Select
-                        value={slot.end}
-                        onValueChange={(value) => updateTimeSlot(day, slotIndex, 'end', value)}
-                      >
-                        <SelectTrigger className="w-28">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {TIME_OPTIONS.map((time) => (
-                            <SelectItem key={time.value} value={time.value}>
-                              {time.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {availability[day].length > 1 && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeTimeSlot(day, slotIndex)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  ))
-                )}
+            {hour.is_closed ? (
+              <span className="text-muted-foreground text-sm">Not Available</span>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Select
+                  value={hour.open_time || '09:00:00'}
+                  onValueChange={(value) => updateHour(hourType, hour.day_of_week, 'open_time', value)}
+                >
+                  <SelectTrigger className="w-28">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_OPTIONS.map((time) => (
+                      <SelectItem key={time.value} value={time.value}>
+                        {time.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <span className="text-muted-foreground">to</span>
+                <Select
+                  value={hour.close_time || '17:00:00'}
+                  onValueChange={(value) => updateHour(hourType, hour.day_of_week, 'close_time', value)}
+                >
+                  <SelectTrigger className="w-28">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_OPTIONS.map((time) => (
+                      <SelectItem key={time.value} value={time.value}>
+                        {time.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             )}
           </div>
         ))}
 
         <div className="flex justify-end pt-4">
-          <Button
-            onClick={() => saveMutation.mutate()}
-            disabled={saveMutation.isPending}
+          <Button 
+            onClick={() => saveMutation.mutate(hourType)} 
+            disabled={saveMutation.isPending} 
             className="gap-2"
           >
             <Save className="w-4 h-4" />
-            {saveMutation.isPending ? 'Saving...' : 'Save Availability'}
+            {saveMutation.isPending ? 'Saving...' : 'Save Hours'}
           </Button>
         </div>
+      </div>
+    );
+  };
+
+  const renderTimeOffCalendar = () => {
+    const months = Array.from({ length: 12 }, (_, i) => addMonths(startOfMonth(new Date()), i));
+
+    return (
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <Label>Time Off Name (optional)</Label>
+          <div className="flex gap-2">
+            <Input 
+              placeholder="e.g., Vacation, Personal Day"
+              value={newTimeOffName}
+              onChange={(e) => setNewTimeOffName(e.target.value)}
+              className="max-w-xs"
+            />
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Click on dates in the calendar to mark them as time off. Click again to remove.
+          </p>
+        </div>
+
+        {/* 12 Month Calendar Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {months.map((month) => (
+            <div key={month.toISOString()} className="border rounded-lg p-2">
+              <Calendar
+                mode="single"
+                month={month}
+                onMonthChange={() => {}}
+                selected={undefined}
+                onSelect={handleDateSelect}
+                modifiers={{
+                  timeOff: timeOffDates,
+                }}
+                modifiersStyles={{
+                  timeOff: { 
+                    backgroundColor: 'hsl(var(--destructive))', 
+                    color: 'hsl(var(--destructive-foreground))',
+                    borderRadius: '50%',
+                  },
+                }}
+                className={cn("p-1 pointer-events-auto text-xs")}
+                classNames={{
+                  months: "flex flex-col",
+                  month: "space-y-1",
+                  caption: "flex justify-center pt-1 relative items-center",
+                  caption_label: "text-sm font-medium",
+                  nav: "hidden",
+                  table: "w-full border-collapse",
+                  head_row: "flex",
+                  head_cell: "text-muted-foreground rounded-md w-7 font-normal text-[0.65rem]",
+                  row: "flex w-full mt-1",
+                  cell: "h-7 w-7 text-center text-xs p-0 relative",
+                  day: "h-7 w-7 p-0 font-normal text-xs hover:bg-accent rounded-full",
+                  day_selected: "bg-primary text-primary-foreground",
+                  day_today: "bg-accent text-accent-foreground",
+                  day_outside: "text-muted-foreground opacity-50",
+                }}
+                disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* List of Time Off Dates */}
+        {timeOffs.length > 0 && (
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Scheduled Time Off ({timeOffs.length})</Label>
+            <div className="flex flex-wrap gap-2">
+              {timeOffs.map((timeOff) => (
+                <Badge 
+                  key={timeOff.id || timeOff.time_off_date} 
+                  variant="secondary"
+                  className="gap-1 py-1 px-2"
+                >
+                  {format(new Date(timeOff.time_off_date + 'T00:00:00'), 'MMM d, yyyy')}
+                  {timeOff.name && <span className="text-muted-foreground">- {timeOff.name}</span>}
+                  <button
+                    onClick={() => timeOff.id && removeTimeOffMutation.mutate(timeOff.id)}
+                    className="ml-1 hover:text-destructive"
+                    disabled={removeTimeOffMutation.isPending}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  if (isLoading || isLoadingTimeOffs) {
+    return (
+      <Card className="border-border/50">
+        <CardContent className="p-6">
+          <div className="space-y-3">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <div key={i} className="h-14 bg-muted/50 rounded-lg animate-pulse" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="border-border/50">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Clock className="w-5 h-5" />
+          My Availability
+        </CardTitle>
+        <CardDescription>Set your working hours for different scenarios</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid grid-cols-3 mb-6">
+            {HOUR_TYPES.map((type) => (
+              <TabsTrigger key={type.value} value={type.value} className="gap-2">
+                <type.icon className="w-4 h-4" />
+                {type.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          <TabsContent value="field">
+            <div className="mb-4 p-3 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                <Truck className="w-4 h-4 inline mr-2" />
+                Set your regular working hours for field service appointments.
+              </p>
+            </div>
+            {renderHoursGrid('field')}
+          </TabsContent>
+
+          <TabsContent value="emergency">
+            <div className="mb-4 p-3 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                <AlertTriangle className="w-4 h-4 inline mr-2" />
+                Set your on-call availability for emergency service requests.
+              </p>
+            </div>
+            {renderHoursGrid('emergency')}
+          </TabsContent>
+
+          <TabsContent value="timeoff">
+            <div className="mb-4 p-3 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                <CalendarHeart className="w-4 h-4 inline mr-2" />
+                Mark specific dates when you will be unavailable (vacation, personal days, etc.).
+              </p>
+            </div>
+            {renderTimeOffCalendar()}
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   );
