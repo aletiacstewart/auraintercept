@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { RoleAwareDashboardLayout } from '@/components/dashboard/RoleAwareDashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -256,7 +256,7 @@ export default function Invoices() {
   const overdueCount = invoices.filter(i => i.status === 'overdue' || (i.status === 'sent' && i.due_date && new Date(i.due_date) < new Date())).length;
 
   return (
-    <DashboardLayout>
+    <RoleAwareDashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -565,6 +565,6 @@ export default function Invoices() {
           </DialogContent>
         </Dialog>
       </div>
-    </DashboardLayout>
+    </RoleAwareDashboardLayout>
   );
 }
