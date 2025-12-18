@@ -8,11 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
-import { User, Mail, Camera, Lock, Loader2, Save } from 'lucide-react';
+import { User, Mail, Camera, Lock, Loader2, Save, Building2, Briefcase } from 'lucide-react';
 
 export function ProfileSettings() {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -40,6 +41,39 @@ export function ProfileSettings() {
         setFullName(data.full_name || '');
       }
       return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch company info
+  const { data: company } = useQuery({
+    queryKey: ['user-company', profile?.company_id],
+    queryFn: async () => {
+      if (!profile?.company_id) return null;
+      const { data, error } = await supabase
+        .from('companies')
+        .select('id, name, slug, logo_url, primary_color')
+        .eq('id', profile.company_id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!profile?.company_id,
+  });
+
+  // Fetch job assignments
+  const { data: jobAssignments } = useQuery({
+    queryKey: ['user-job-assignments', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data, error } = await supabase
+        .from('employee_job_assignments')
+        .select('job_type')
+        .eq('employee_id', user.id);
+      
+      if (error) throw error;
+      return data || [];
     },
     enabled: !!user?.id,
   });
@@ -159,8 +193,76 @@ export function ProfileSettings() {
     );
   }
 
+  const formatJobType = (type: string) => {
+    return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  };
+
   return (
     <div className="space-y-6">
+      {/* Company Information */}
+      <Card className="border-border/50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Building2 className="w-5 h-5" />
+            Company Information
+          </CardTitle>
+          <CardDescription>
+            Your company affiliation and assigned roles
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {company ? (
+            <div className="flex items-center gap-4">
+              <div 
+                className="w-14 h-14 rounded-xl flex items-center justify-center text-white font-bold text-xl"
+                style={{ backgroundColor: company.primary_color || '#0EA5E9' }}
+              >
+                {company.logo_url ? (
+                  <img src={company.logo_url} alt={company.name} className="w-full h-full object-cover rounded-xl" />
+                ) : (
+                  company.name.charAt(0).toUpperCase()
+                )}
+              </div>
+              <div>
+                <p className="font-semibold text-lg">{company.name}</p>
+                <p className="text-sm text-muted-foreground">/{company.slug}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="text-muted-foreground text-sm">
+              Not assigned to a company. Contact your administrator.
+            </div>
+          )}
+
+          {/* Job Roles */}
+          <div className="pt-2">
+            <Label className="text-sm text-muted-foreground flex items-center gap-2 mb-2">
+              <Briefcase className="w-4 h-4" />
+              Assigned Roles
+            </Label>
+            {jobAssignments && jobAssignments.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {jobAssignments.map((job, i) => (
+                  <Badge key={i} variant="secondary">
+                    {formatJobType(job.job_type)}
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No roles assigned yet</p>
+            )}
+          </div>
+
+          {/* User Role */}
+          <div className="pt-2">
+            <Label className="text-sm text-muted-foreground mb-2">Account Type</Label>
+            <Badge variant="outline" className="capitalize">
+              {userRole?.replace(/_/g, ' ') || 'Employee'}
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Profile Information */}
       <Card className="border-border/50">
         <CardHeader>
