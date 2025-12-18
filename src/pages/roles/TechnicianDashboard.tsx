@@ -1,25 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { RoleDashboardLayout } from '@/components/dashboard/RoleDashboardLayout';
 import { TechnicianJobQueue } from '@/components/employee/TechnicianJobQueue';
-import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
-import { TechnicianMap } from '@/components/employee/TechnicianMap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ClipboardList, MapPin, Clock, CheckCircle, Wrench, Calendar, Bot, Map } from 'lucide-react';
+import { ClipboardList, MapPin, Clock, CheckCircle, Calendar, Bot } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfWeek, endOfWeek, differenceInMinutes } from 'date-fns';
 
 export default function TechnicianDashboard() {
-  const { user, loading: authLoading, companyId } = useAuth();
-  const { hasJobType, loading: roleLoading } = useEmployeeJobRole();
+  const { user, loading: authLoading } = useAuth();
+  const { loading: roleLoading } = useEmployeeJobRole();
   const navigate = useNavigate();
-  const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -95,10 +91,6 @@ export default function TechnicianDashboard() {
     const mins = minutes % 60;
     if (hours === 0) return `${mins}m`;
     return `${hours}h ${mins}m`;
-  };
-
-  const handleNavigateRequest = (address: string) => {
-    setSelectedAddress(address);
   };
 
   if (authLoading || roleLoading) {
@@ -186,79 +178,27 @@ export default function TechnicianDashboard() {
           </Card>
         </div>
 
-        {/* Main Content - Tabs */}
-        <Tabs defaultValue="console" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="console" className="flex items-center gap-2">
-              <Bot className="w-4 h-4" />
-              Field Ops Console
-            </TabsTrigger>
-            <TabsTrigger value="jobs" className="flex items-center gap-2">
-              <ClipboardList className="w-4 h-4" />
-              Job Queue
-            </TabsTrigger>
-            <TabsTrigger value="map" className="flex items-center gap-2">
-              <Map className="w-4 h-4" />
-              Navigation
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="console" className="space-y-4">
-            <Card className="border-border/50">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2">
-                  <Bot className="w-5 h-5 text-primary" />
-                  Field Operations AI Console
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Manage your jobs with AI assistance - accept jobs, update status, get directions
-                </p>
-              </CardHeader>
-              <CardContent className="p-0">
-                <FieldOpsAgentConsole 
-                  companyId={companyId || undefined}
-                  onNavigateRequest={handleNavigateRequest}
-                  className="h-[500px]"
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="jobs" className="space-y-4">
-            <Card className="border-border/50">
-              <CardHeader>
-                <CardTitle>Active Jobs</CardTitle>
-                <p className="text-sm text-muted-foreground">Your current job assignments</p>
-              </CardHeader>
-              <CardContent>
-                <TechnicianJobQueue />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="map" className="space-y-4">
-            <Card className="border-border/50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Map className="w-5 h-5 text-primary" />
-                  Navigation Map
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Get directions to customer locations
-                </p>
-              </CardHeader>
-              <CardContent>
-                <TechnicianMap 
-                  initialAddress={selectedAddress}
-                  onAddressSearched={() => setSelectedAddress(null)}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+        {/* Job Queue */}
+        <Card className="border-border/50">
+          <CardHeader>
+            <CardTitle>Active Jobs</CardTitle>
+            <p className="text-sm text-muted-foreground">Your current job assignments</p>
+          </CardHeader>
+          <CardContent>
+            <TechnicianJobQueue />
+          </CardContent>
+        </Card>
 
         {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
+          <Button
+            variant="outline"
+            className="h-auto py-6 flex flex-col items-center gap-2"
+            onClick={() => navigate('/dashboard/technician/field-ops')}
+          >
+            <Bot className="w-6 h-6 text-primary" />
+            <span>Field Ops Console</span>
+          </Button>
           <Button
             variant="outline"
             className="h-auto py-6 flex flex-col items-center gap-2"
