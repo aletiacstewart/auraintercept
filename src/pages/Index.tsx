@@ -202,9 +202,24 @@ export default function Index() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 tech-grid opacity-50" />
-        <div className="container max-w-7xl mx-auto px-6 py-20 relative">
+      <section className="relative overflow-hidden min-h-[90vh] flex items-center">
+        {/* Video Background */}
+        <div className="absolute inset-0 z-0">
+          <video 
+            autoPlay
+            loop 
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            <source src="/videos/hero-demo.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
+        </div>
+        
+        <div className="absolute inset-0 tech-grid opacity-30 z-[1]" />
+        
+        <div className="container max-w-7xl mx-auto px-6 py-20 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 animate-fade-in">
               <Sparkles className="w-4 h-4" />
@@ -232,7 +247,7 @@ export default function Index() {
               {heroStats.map((stat, index) => (
                 <div 
                   key={stat.label} 
-                  className="p-4 rounded-xl border border-border/50 bg-card/50"
+                  className="p-4 rounded-xl border border-border/50 bg-card/80 backdrop-blur-sm"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div className="text-2xl sm:text-3xl font-bold gradient-text">{stat.value}</div>
@@ -253,26 +268,12 @@ export default function Index() {
               <Button 
                 size="lg" 
                 variant="outline"
-                className="text-lg px-8 py-6 w-full sm:w-auto"
+                className="text-lg px-8 py-6 w-full sm:w-auto bg-background/80 backdrop-blur-sm"
                 onClick={() => navigate('/demo')}
               >
                 <Play className="w-5 h-5 mr-2" />
                 Try Live Demo
               </Button>
-            </div>
-          </div>
-
-          <div className="mt-12 flex justify-center animate-fade-in">
-            <div className="w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl border border-border/50 bg-card">
-              <video 
-                controls
-                loop 
-                playsInline
-                className="w-full h-auto"
-              >
-                <source src="/videos/hero-demo.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
             </div>
           </div>
         </div>
