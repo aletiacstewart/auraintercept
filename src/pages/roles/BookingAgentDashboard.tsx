@@ -159,7 +159,7 @@ export default function BookingAgentDashboard() {
               <Bot className="w-5 h-5 text-accent" />
             </CardHeader>
             <CardContent>
-              <Button size="sm" className="w-full" onClick={() => navigate('/dashboard/ai-agent')}>
+              <Button size="sm" className="w-full" onClick={() => navigate('/dashboard/booking-agent/console')}>
                 Open Console
               </Button>
             </CardContent>
@@ -215,10 +215,10 @@ export default function BookingAgentDashboard() {
           <Button
             variant="outline"
             className="h-auto py-6 flex flex-col items-center gap-2"
-            onClick={() => navigate('/dashboard/ai-agent')}
+            onClick={() => navigate('/dashboard/booking-agent/console')}
           >
             <Bot className="w-6 h-6 text-primary" />
-            <span>AI Console</span>
+            <span>Booking Console</span>
           </Button>
           <Button
             variant="outline"
