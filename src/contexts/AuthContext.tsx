@@ -84,62 +84,85 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [session?.access_token, user?.email, userRole]);
 
   const fetchUserData = async (userId: string) => {
-    const { data: roleData } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', userId)
-      .maybeSingle();
-    
-    if (roleData) {
-      setUserRole(roleData.role);
-    }
+    try {
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .maybeSingle();
 
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('company_id')
-      .eq('id', userId)
-      .maybeSingle();
-    
-    if (profileData) {
-      setCompanyId(profileData.company_id);
+      if (roleError) {
+        console.error('Failed to load user role:', roleError);
+      }
+
+      setUserRole(roleData?.role ?? null);
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('company_id')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (profileError) {
+        console.error('Failed to load user profile:', profileError);
+      }
+
+      setCompanyId(profileData?.company_id ?? null);
+    } catch (err) {
+      console.error('Failed to load user data:', err);
+      setUserRole(null);
+      setCompanyId(null);
     }
   };
 
   useEffect(() => {
     // Set up auth state listener - MUST NOT be async to prevent deadlocks
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        // Only synchronous state updates in callback
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          // Defer Supabase calls with setTimeout to prevent deadlock
-          setTimeout(() => {
-            fetchUserData(session.user.id);
-          }, 0);
-        } else {
-          setUserRole(null);
-          setCompanyId(null);
-          setSubscribed(false);
-          setSubscriptionTier(null);
-          setSubscriptionEnd(null);
-        }
-        
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      // Only synchronous state updates in callback
+      setLoading(true);
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        // Defer Supabase calls with setTimeout to prevent deadlock
+        setTimeout(async () => {
+          try {
+            await fetchUserData(session.user.id);
+          } finally {
+            setLoading(false);
+          }
+        }, 0);
+      } else {
+        setUserRole(null);
+        setCompanyId(null);
+        setSubscribed(false);
+        setSubscriptionTier(null);
+        setSubscriptionEnd(null);
+        setInTrial(false);
+        setTrialEndsAt(null);
         setLoading(false);
       }
-    );
+    });
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      setLoading(true);
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
-        fetchUserData(session.user.id);
+        setTimeout(async () => {
+          try {
+            await fetchUserData(session.user.id);
+          } finally {
+            setLoading(false);
+          }
+        }, 0);
+      } else {
+        setLoading(false);
       }
-      
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
