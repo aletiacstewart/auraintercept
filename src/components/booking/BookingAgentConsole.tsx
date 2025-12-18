@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { BookingForm, BookingData } from '@/components/ai/BookingForm';
 import { FeedbackForm } from '@/components/ai/FeedbackForm';
+import { QuoteForm, QuoteData } from '@/components/ai/QuoteForm';
 import { 
   Send, 
   Calendar, 
@@ -88,8 +89,10 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
   const [showAppointmentSelector, setShowAppointmentSelector] = useState(false);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+  const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
   const [selectorAction, setSelectorAction] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -195,6 +198,10 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
     }
     if (action.id === 'followup') {
       setShowFeedbackForm(true);
+      return;
+    }
+    if (action.id === 'quote') {
+      setShowQuoteForm(true);
       return;
     }
     if (action.id === 'reschedule' || action.id === 'cancel' || action.id === 'lookup') {
@@ -314,6 +321,70 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
     }
   };
 
+  const handleQuoteSubmit = async (quoteData: QuoteData) => {
+    if (!effectiveCompanyId) return;
+    
+    setIsSubmittingQuote(true);
+    try {
+      // Get selected service names and calculate total
+      const selectedServiceDetails = services.filter(s => quoteData.selectedServices.includes(s.id));
+      const selectedServiceNames = selectedServiceDetails.map(s => s.name).join(', ');
+      const estimatedTotal = selectedServiceDetails.reduce((sum, s) => sum + (s.price || 0), 0);
+
+      // Insert quote into database
+      const { data: quote, error } = await supabase
+        .from('quotes')
+        .insert({
+          company_id: effectiveCompanyId,
+          customer_name: quoteData.customerName,
+          customer_phone: quoteData.customerPhone || null,
+          customer_email: quoteData.customerEmail || null,
+          customer_address: quoteData.customerAddress || null,
+          notes: quoteData.issueDescription || null,
+          subtotal: estimatedTotal,
+          total_amount: estimatedTotal,
+          status: 'draft',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Insert quote line items
+      if (quote && selectedServiceDetails.length > 0) {
+        const lineItems = selectedServiceDetails.map(service => ({
+          quote_id: quote.id,
+          service_id: service.id,
+          description: service.name,
+          quantity: 1,
+          unit_price: service.price || 0,
+          total: service.price || 0,
+        }));
+
+        await supabase.from('quote_line_items').insert(lineItems);
+      }
+
+      toast.success('Quote created successfully!', {
+        description: `${quoteData.customerName} - $${estimatedTotal.toFixed(2)}`
+      });
+
+      setShowQuoteForm(false);
+      
+      // Send a message to the chat about the quote
+      await sendMessage(
+        `I created a quote for ${quoteData.customerName} for ${selectedServiceNames}. Total: $${estimatedTotal.toFixed(2)}. ${quoteData.issueDescription ? `Issue: "${quoteData.issueDescription}"` : ''}`
+      );
+
+    } catch (error) {
+      console.error('Error creating quote:', error);
+      toast.error('Failed to create quote', {
+        description: 'Please try again or contact support'
+      });
+    } finally {
+      setIsSubmittingQuote(false);
+    }
+  };
+
   const handleSelectAppointment = useCallback(async (appointment: AppointmentInfo) => {
     setShowAppointmentSelector(false);
     
@@ -393,13 +464,14 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
-          {(showBookingForm || showFeedbackForm) && (
+          {(showBookingForm || showFeedbackForm || showQuoteForm) && (
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={() => {
                 setShowBookingForm(false);
                 setShowFeedbackForm(false);
+                setShowQuoteForm(false);
               }}
               className="mr-1"
             >
@@ -408,9 +480,9 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
           )}
           <Bot className="w-5 h-5 text-primary" />
           <span className="font-medium">
-            {showBookingForm ? 'Book New Appointment' : showFeedbackForm ? 'Customer Follow Up' : 'Booking AI Assistant'}
+            {showBookingForm ? 'Book New Appointment' : showFeedbackForm ? 'Customer Follow Up' : showQuoteForm ? 'Create Quote' : 'Booking AI Assistant'}
           </span>
-          {!showBookingForm && !showFeedbackForm && currentAgent && (
+          {!showBookingForm && !showFeedbackForm && !showQuoteForm && currentAgent && (
             <Badge variant="outline" className="text-xs">
               {BOOKING_AGENTS.find(a => a.id === currentAgent)?.name || currentAgent}
             </Badge>
@@ -437,6 +509,13 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
           <FeedbackForm
             onSubmit={handleFeedbackSubmit}
             isLoading={isSubmittingFeedback}
+          />
+        </div>
+      ) : showQuoteForm ? (
+        <div className="flex-1 overflow-auto p-4">
+          <QuoteForm
+            services={services}
+            onSubmit={handleQuoteSubmit}
           />
         </div>
       ) : (
