@@ -85,7 +85,7 @@ const platformFeatures = [
   {
     icon: Building2,
     title: 'White-Label Branding',
-    description: 'Custom logos, colors, and domains. Your brand, your AI agents.'
+    description: 'Custom logos and colors. Your brand, your AI agents.'
   },
   {
     icon: Zap,
