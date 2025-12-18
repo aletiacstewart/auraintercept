@@ -33,23 +33,23 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <header className="border-b border-border/50">
+      <header className="bg-black border-b border-border/50">
         <nav className="container max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
           <div className="flex items-center gap-3">
             <div className="w-[175px] h-[175px] flex items-center justify-center overflow-hidden">
               <img src={logo} alt="AI Bot Company" className="w-[175px] h-[175px] object-contain" />
             </div>
             <div>
-              <h1 className="font-bold text-lg">AI Bot Company</h1>
-              <p className="text-xs text-muted-foreground">The Future of Work</p>
+              <h1 className="font-bold text-lg text-white">AI Bot Company</h1>
+              <p className="text-xs text-gray-400">The Future of Work</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate('/demo')}>
+            <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/demo')}>
               <Play className="w-4 h-4 mr-1" />
               Try Demo
             </Button>
-            <Button variant="ghost" onClick={() => navigate('/auth')}>
+            <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/auth')}>
               Sign In
             </Button>
             <Button className="gradient-primary" onClick={() => navigate('/auth?mode=company')}>
