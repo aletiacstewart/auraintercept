@@ -10,7 +10,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { 
   Send, 
   Receipt, 
@@ -27,7 +26,8 @@ import {
   Calendar,
   AlertCircle,
   Plus,
-  Trash2
+  Trash2,
+  ArrowLeft
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -75,7 +75,7 @@ interface BillingAgentConsoleProps {
   className?: string;
 }
 
-type SelectorMode = 'send_reminder' | 'process_refund' | null;
+type ViewMode = 'chat' | 'invoice_form' | 'quote_form' | 'reports' | 'send_reminder' | 'process_refund';
 
 const defaultInvoiceForm = {
   customer_name: '',
@@ -105,15 +105,12 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
   const effectiveCompanyId = companyId || authCompanyId;
   
   const [inputValue, setInputValue] = useState('');
-  const [selectorMode, setSelectorMode] = useState<SelectorMode>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('chat');
   const [processingInvoiceId, setProcessingInvoiceId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Form dialogs state
-  const [isInvoiceFormOpen, setIsInvoiceFormOpen] = useState(false);
-  const [isQuoteFormOpen, setIsQuoteFormOpen] = useState(false);
-  const [isReportsOpen, setIsReportsOpen] = useState(false);
+  // Form data state
   const [invoiceFormData, setInvoiceFormData] = useState(defaultInvoiceForm);
   const [quoteFormData, setQuoteFormData] = useState(defaultQuoteForm);
 
@@ -125,7 +122,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
   });
 
   // Fetch pending and overdue invoices
-  const { data: invoices = [], isLoading: invoicesLoading, refetch: refetchInvoices } = useQuery({
+  const { data: invoices = [], isLoading: invoicesLoading } = useQuery({
     queryKey: ['billing-invoices', effectiveCompanyId],
     queryFn: async () => {
       if (!effectiveCompanyId) return [];
@@ -162,7 +159,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
       if (error) throw error;
       return data || [];
     },
-    enabled: !!effectiveCompanyId && isReportsOpen,
+    enabled: !!effectiveCompanyId && viewMode === 'reports',
   });
 
   // Invoice mutation
@@ -218,7 +215,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
       queryClient.invalidateQueries({ queryKey: ['billing-invoices'] });
       queryClient.invalidateQueries({ queryKey: ['all-invoices'] });
       toast.success('Invoice created successfully');
-      setIsInvoiceFormOpen(false);
+      setViewMode('chat');
       setInvoiceFormData(defaultInvoiceForm);
     },
     onError: () => toast.error('Failed to create invoice'),
@@ -273,18 +270,18 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quotes'] });
       toast.success('Quote created successfully');
-      setIsQuoteFormOpen(false);
+      setViewMode('chat');
       setQuoteFormData(defaultQuoteForm);
     },
     onError: () => toast.error('Failed to create quote'),
   });
 
-  // Filter invoices based on selector mode
+  // Filter invoices based on view mode
   const getFilteredInvoices = () => {
-    if (selectorMode === 'send_reminder') {
+    if (viewMode === 'send_reminder') {
       return invoices.filter(inv => ['pending', 'overdue'].includes(inv.status));
     }
-    if (selectorMode === 'process_refund') {
+    if (viewMode === 'process_refund') {
       return invoices.filter(inv => inv.status === 'paid');
     }
     return invoices;
@@ -294,10 +291,10 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && viewMode === 'chat') {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, viewMode]);
 
   const handleSend = async () => {
     if (!inputValue.trim() || isLoading) return;
@@ -307,31 +304,28 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
   };
 
   const handleQuickAction = useCallback(async (action: QuickAction) => {
-    // Dialog actions
     if (action.id === 'create_invoice') {
       setInvoiceFormData(defaultInvoiceForm);
-      setIsInvoiceFormOpen(true);
+      setViewMode('invoice_form');
       return;
     }
     if (action.id === 'create_quote') {
       setQuoteFormData(defaultQuoteForm);
-      setIsQuoteFormOpen(true);
+      setViewMode('quote_form');
       return;
     }
     if (action.id === 'revenue_report') {
-      setIsReportsOpen(true);
+      setViewMode('reports');
       return;
     }
-    // Selector actions
     if (action.id === 'send_reminder') {
-      setSelectorMode('send_reminder');
+      setViewMode('send_reminder');
       return;
     }
     if (action.id === 'process_refund') {
-      setSelectorMode('process_refund');
+      setViewMode('process_refund');
       return;
     }
-    // Chat message actions
     if (action.message) {
       await sendMessage(action.message);
     }
@@ -345,7 +339,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
     try {
       const message = `Send a payment reminder for invoice ${invoice.invoice_number || invoice.id} to ${invoice.customer_name}${invoice.customer_email ? ` (${invoice.customer_email})` : ''}. The invoice total is $${invoice.total.toLocaleString()} and is currently ${invoice.status}.`;
       
-      setSelectorMode(null);
+      setViewMode('chat');
       await sendMessage(message);
       toast.success('Preparing payment reminder', { description: `For ${invoice.customer_name}` });
     } catch (error) {
@@ -364,7 +358,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
     try {
       const message = `I need to process a refund for invoice ${invoice.invoice_number || invoice.id} for ${invoice.customer_name}. The original amount was $${invoice.total.toLocaleString()}.`;
       
-      setSelectorMode(null);
+      setViewMode('chat');
       await sendMessage(message);
       toast.success('Processing refund request', { description: `For ${invoice.customer_name}` });
     } catch (error) {
@@ -394,7 +388,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
     }
   };
 
-  // Line item helpers
+  // Line item helpers for Invoice
   const addInvoiceLineItem = () => {
     setInvoiceFormData({
       ...invoiceFormData,
@@ -416,6 +410,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
     });
   };
 
+  // Line item helpers for Quote
   const addQuoteLineItem = () => {
     setQuoteFormData({
       ...quoteFormData,
@@ -499,18 +494,16 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
   };
 
   const renderInvoiceSelector = () => {
-    if (!selectorMode) return null;
-
-    const title = selectorMode === 'send_reminder' ? 'Select Invoice for Reminder' : 'Select Invoice for Refund';
-    const onSelect = selectorMode === 'send_reminder' ? handleSelectInvoiceForReminder : handleSelectInvoiceForRefund;
+    const title = viewMode === 'send_reminder' ? 'Select Invoice for Reminder' : 'Select Invoice for Refund';
+    const onSelect = viewMode === 'send_reminder' ? handleSelectInvoiceForReminder : handleSelectInvoiceForRefund;
 
     return (
-      <div className="absolute inset-0 bg-background/95 backdrop-blur-sm z-10 flex flex-col">
-        <div className="flex items-center justify-between p-3 border-b">
-          <h3 className="font-medium text-sm">{title}</h3>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setSelectorMode(null)}>
-            <X className="h-4 w-4" />
+      <div className="flex flex-col h-full">
+        <div className="flex items-center gap-2 p-3 border-b">
+          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setViewMode('chat')}>
+            <ArrowLeft className="h-4 w-4" />
           </Button>
+          <h3 className="font-medium text-sm">{title}</h3>
         </div>
         
         <ScrollArea className="flex-1 p-3">
@@ -570,375 +563,410 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
     );
   };
 
-  return (
-    <>
-      <Card className={cn('flex flex-col h-[600px] relative', className)}>
-        <CardHeader className="pb-2 border-b shrink-0">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Bot className="h-5 w-5 text-primary" />
-              Billing AI Console
-            </CardTitle>
-            {currentAgent && (
-              <Badge variant="outline" className="text-xs">
-                {BILLING_AGENTS.find(a => a.id === currentAgent)?.name || currentAgent}
-              </Badge>
-            )}
-          </div>
-        </CardHeader>
-
-        <CardContent className="flex-1 flex flex-col p-0 overflow-hidden relative">
-          {renderInvoiceSelector()}
-          
-          {/* Messages Area */}
-          <ScrollArea ref={scrollRef} className="flex-1 p-3">
-            <div className="space-y-3">
-              {messages.length === 0 ? (
-                <div className="text-center py-8">
-                  <DollarSign className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-                  <p className="text-sm text-muted-foreground">
-                    Hello! I'm your Billing AI Assistant. I can help you:
-                  </p>
-                  <ul className="text-xs text-muted-foreground mt-2 space-y-1">
-                    <li>• Create and manage invoices</li>
-                    <li>• Send payment reminders</li>
-                    <li>• Generate revenue reports</li>
-                    <li>• Forecast payments and cash flow</li>
-                    <li>• Process refunds</li>
-                  </ul>
-                </div>
-              ) : (
-                messages.map((msg, index) => renderMessage(msg, index))
-              )}
-              {isLoading && (
-                <div className="flex gap-2 justify-start">
-                  <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Bot className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="bg-muted rounded-2xl rounded-bl-md px-3 py-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  </div>
-                </div>
-              )}
+  const renderInvoiceForm = () => (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-2 p-3 border-b">
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setViewMode('chat')}>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <h3 className="font-medium text-sm">Create Invoice</h3>
+      </div>
+      
+      <ScrollArea className="flex-1 p-3">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs">Customer Name *</Label>
+              <Input className="h-8 text-sm" value={invoiceFormData.customer_name} onChange={e => setInvoiceFormData({ ...invoiceFormData, customer_name: e.target.value })} />
             </div>
-          </ScrollArea>
+            <div className="space-y-1">
+              <Label className="text-xs">Email</Label>
+              <Input className="h-8 text-sm" type="email" value={invoiceFormData.customer_email} onChange={e => setInvoiceFormData({ ...invoiceFormData, customer_email: e.target.value })} />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs">Phone</Label>
+              <Input className="h-8 text-sm" value={invoiceFormData.customer_phone} onChange={e => setInvoiceFormData({ ...invoiceFormData, customer_phone: e.target.value })} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Due in (days)</Label>
+              <Input className="h-8 text-sm" type="number" value={invoiceFormData.due_days} onChange={e => setInvoiceFormData({ ...invoiceFormData, due_days: parseInt(e.target.value) || 30 })} />
+            </div>
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs">Billing Address</Label>
+            <Textarea className="text-sm min-h-[60px]" value={invoiceFormData.customer_address} onChange={e => setInvoiceFormData({ ...invoiceFormData, customer_address: e.target.value })} />
+          </div>
 
-          {/* Quick Actions */}
-          <div className="border-t p-2 shrink-0">
-            <div className="flex flex-wrap gap-1.5">
-              {QUICK_ACTIONS.map((action) => (
-                <Button
-                  key={action.id}
-                  variant={action.variant || 'outline'}
-                  size="sm"
-                  className="h-7 text-xs gap-1"
-                  onClick={() => handleQuickAction(action)}
-                  disabled={isLoading}
-                >
-                  <action.icon className="h-3 w-3" />
-                  {action.label}
-                </Button>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="text-xs">Line Items</Label>
+              <Button type="button" variant="outline" size="sm" className="h-6 text-xs" onClick={addInvoiceLineItem}>
+                <Plus className="w-3 h-3 mr-1" /> Add
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {invoiceFormData.line_items.map((item, index) => (
+                <div key={index} className="grid grid-cols-12 gap-1 items-center">
+                  <Input
+                    className="col-span-5 h-7 text-xs"
+                    placeholder="Description"
+                    value={item.description}
+                    onChange={e => updateInvoiceLineItem(index, 'description', e.target.value)}
+                  />
+                  <Input
+                    className="col-span-2 h-7 text-xs"
+                    type="number"
+                    placeholder="Qty"
+                    value={item.quantity}
+                    onChange={e => updateInvoiceLineItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                  />
+                  <Input
+                    className="col-span-3 h-7 text-xs"
+                    type="number"
+                    step="0.01"
+                    placeholder="Price"
+                    value={item.unit_price}
+                    onChange={e => updateInvoiceLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
+                  />
+                  <div className="col-span-1 text-right text-[10px]">${(item.quantity * item.unit_price).toFixed(0)}</div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="col-span-1 h-6 w-6"
+                    onClick={() => removeInvoiceLineItem(index)}
+                    disabled={invoiceFormData.line_items.length === 1}
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
               ))}
             </div>
           </div>
 
-          {/* Input Area */}
-          <div className="border-t p-3 shrink-0">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSend();
-              }}
-              className="flex gap-2"
-            >
-              <Input
-                ref={inputRef}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask about invoices, payments, or reports..."
-                className="flex-1 h-9 text-sm"
-                disabled={isLoading}
-              />
-              <Button type="submit" size="icon" className="h-9 w-9 shrink-0" disabled={isLoading || !inputValue.trim()}>
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs">Tax Rate (%)</Label>
+              <Input className="h-8 text-sm" type="number" step="0.01" value={invoiceFormData.tax_rate} onChange={e => setInvoiceFormData({ ...invoiceFormData, tax_rate: parseFloat(e.target.value) || 0 })} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Notes</Label>
+              <Input className="h-8 text-sm" value={invoiceFormData.notes} onChange={e => setInvoiceFormData({ ...invoiceFormData, notes: e.target.value })} />
+            </div>
+          </div>
+
+          <div className="border-t pt-3 space-y-1 text-right">
+            <div className="text-xs">Subtotal: ${invoiceSubtotal.toFixed(2)}</div>
+            <div className="text-xs text-muted-foreground">Tax ({invoiceFormData.tax_rate}%): ${invoiceTaxAmount.toFixed(2)}</div>
+            <div className="text-sm font-bold">Total: ${invoiceTotal.toFixed(2)}</div>
+          </div>
+        </div>
+      </ScrollArea>
+
+      <div className="border-t p-3 flex gap-2">
+        <Button variant="outline" size="sm" className="flex-1" onClick={() => setViewMode('chat')}>Cancel</Button>
+        <Button size="sm" className="flex-1" onClick={() => {
+          if (!invoiceFormData.customer_name) {
+            toast.error('Customer name is required');
+            return;
+          }
+          createInvoiceMutation.mutate(invoiceFormData);
+        }} disabled={createInvoiceMutation.isPending}>
+          {createInvoiceMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
+          Create
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderQuoteForm = () => (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-2 p-3 border-b">
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setViewMode('chat')}>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <h3 className="font-medium text-sm">Create Quote</h3>
+      </div>
+      
+      <ScrollArea className="flex-1 p-3">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs">Customer Name *</Label>
+              <Input className="h-8 text-sm" value={quoteFormData.customer_name} onChange={e => setQuoteFormData({ ...quoteFormData, customer_name: e.target.value })} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Email</Label>
+              <Input className="h-8 text-sm" type="email" value={quoteFormData.customer_email} onChange={e => setQuoteFormData({ ...quoteFormData, customer_email: e.target.value })} />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs">Phone</Label>
+              <Input className="h-8 text-sm" value={quoteFormData.customer_phone} onChange={e => setQuoteFormData({ ...quoteFormData, customer_phone: e.target.value })} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Valid Days</Label>
+              <Input className="h-8 text-sm" type="number" value={quoteFormData.valid_days} onChange={e => setQuoteFormData({ ...quoteFormData, valid_days: parseInt(e.target.value) || 30 })} />
+            </div>
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs">Address</Label>
+            <Textarea className="text-sm min-h-[60px]" value={quoteFormData.customer_address} onChange={e => setQuoteFormData({ ...quoteFormData, customer_address: e.target.value })} />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="text-xs">Line Items</Label>
+              <Button type="button" variant="outline" size="sm" className="h-6 text-xs" onClick={addQuoteLineItem}>
+                <Plus className="w-3 h-3 mr-1" /> Add
               </Button>
-            </form>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Invoice Form Dialog */}
-      <Dialog open={isInvoiceFormOpen} onOpenChange={setIsInvoiceFormOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Create Invoice</DialogTitle>
-            <DialogDescription>Create a new invoice for a customer.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Customer Name *</Label>
-                <Input value={invoiceFormData.customer_name} onChange={e => setInvoiceFormData({ ...invoiceFormData, customer_name: e.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <Label>Email</Label>
-                <Input type="email" value={invoiceFormData.customer_email} onChange={e => setInvoiceFormData({ ...invoiceFormData, customer_email: e.target.value })} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Phone</Label>
-                <Input value={invoiceFormData.customer_phone} onChange={e => setInvoiceFormData({ ...invoiceFormData, customer_phone: e.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <Label>Due in (days)</Label>
-                <Input type="number" value={invoiceFormData.due_days} onChange={e => setInvoiceFormData({ ...invoiceFormData, due_days: parseInt(e.target.value) || 30 })} />
-              </div>
             </div>
             <div className="space-y-2">
-              <Label>Billing Address</Label>
-              <Textarea value={invoiceFormData.customer_address} onChange={e => setInvoiceFormData({ ...invoiceFormData, customer_address: e.target.value })} />
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Line Items</Label>
-                <Button type="button" variant="outline" size="sm" onClick={addInvoiceLineItem}>
-                  <Plus className="w-4 h-4 mr-1" /> Add Item
-                </Button>
-              </div>
-              <div className="space-y-2">
-                {invoiceFormData.line_items.map((item, index) => (
-                  <div key={index} className="grid grid-cols-12 gap-2 items-center">
-                    <Input
-                      className="col-span-5"
-                      placeholder="Description"
-                      value={item.description}
-                      onChange={e => updateInvoiceLineItem(index, 'description', e.target.value)}
-                    />
-                    <Input
-                      className="col-span-2"
-                      type="number"
-                      placeholder="Qty"
-                      value={item.quantity}
-                      onChange={e => updateInvoiceLineItem(index, 'quantity', parseInt(e.target.value) || 1)}
-                    />
-                    <Input
-                      className="col-span-3"
-                      type="number"
-                      step="0.01"
-                      placeholder="Price"
-                      value={item.unit_price}
-                      onChange={e => updateInvoiceLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
-                    />
-                    <div className="col-span-1 text-right text-sm">${(item.quantity * item.unit_price).toFixed(2)}</div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="col-span-1"
-                      onClick={() => removeInvoiceLineItem(index)}
-                      disabled={invoiceFormData.line_items.length === 1}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Tax Rate (%)</Label>
-                <Input type="number" step="0.01" value={invoiceFormData.tax_rate} onChange={e => setInvoiceFormData({ ...invoiceFormData, tax_rate: parseFloat(e.target.value) || 0 })} />
-              </div>
-              <div className="space-y-2">
-                <Label>Notes</Label>
-                <Input value={invoiceFormData.notes} onChange={e => setInvoiceFormData({ ...invoiceFormData, notes: e.target.value })} />
-              </div>
-            </div>
-
-            <div className="border-t pt-4 space-y-1 text-right">
-              <div className="text-sm">Subtotal: ${invoiceSubtotal.toFixed(2)}</div>
-              <div className="text-sm text-muted-foreground">Tax ({invoiceFormData.tax_rate}%): ${invoiceTaxAmount.toFixed(2)}</div>
-              <div className="text-lg font-bold">Total: ${invoiceTotal.toFixed(2)}</div>
+              {quoteFormData.line_items.map((item, index) => (
+                <div key={index} className="grid grid-cols-12 gap-1 items-center">
+                  <Input
+                    className="col-span-5 h-7 text-xs"
+                    placeholder="Description"
+                    value={item.description}
+                    onChange={e => updateQuoteLineItem(index, 'description', e.target.value)}
+                  />
+                  <Input
+                    className="col-span-2 h-7 text-xs"
+                    type="number"
+                    placeholder="Qty"
+                    value={item.quantity}
+                    onChange={e => updateQuoteLineItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                  />
+                  <Input
+                    className="col-span-3 h-7 text-xs"
+                    type="number"
+                    step="0.01"
+                    placeholder="Price"
+                    value={item.unit_price}
+                    onChange={e => updateQuoteLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
+                  />
+                  <div className="col-span-1 text-right text-[10px]">${(item.quantity * item.unit_price).toFixed(0)}</div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="col-span-1 h-6 w-6"
+                    onClick={() => removeQuoteLineItem(index)}
+                    disabled={quoteFormData.line_items.length === 1}
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </div>
+              ))}
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsInvoiceFormOpen(false)}>Cancel</Button>
-            <Button onClick={() => {
-              if (!invoiceFormData.customer_name) {
-                toast.error('Customer name is required');
-                return;
-              }
-              createInvoiceMutation.mutate(invoiceFormData);
-            }} disabled={createInvoiceMutation.isPending}>
-              {createInvoiceMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              Create Invoice
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs">Tax Rate (%)</Label>
+              <Input className="h-8 text-sm" type="number" step="0.01" value={quoteFormData.tax_rate} onChange={e => setQuoteFormData({ ...quoteFormData, tax_rate: parseFloat(e.target.value) || 0 })} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Notes</Label>
+              <Input className="h-8 text-sm" value={quoteFormData.notes} onChange={e => setQuoteFormData({ ...quoteFormData, notes: e.target.value })} />
+            </div>
+          </div>
+
+          <div className="border-t pt-3 space-y-1 text-right">
+            <div className="text-xs">Subtotal: ${quoteSubtotal.toFixed(2)}</div>
+            <div className="text-xs text-muted-foreground">Tax ({quoteFormData.tax_rate}%): ${quoteTaxAmount.toFixed(2)}</div>
+            <div className="text-sm font-bold">Total: ${quoteTotal.toFixed(2)}</div>
+          </div>
+        </div>
+      </ScrollArea>
+
+      <div className="border-t p-3 flex gap-2">
+        <Button variant="outline" size="sm" className="flex-1" onClick={() => setViewMode('chat')}>Cancel</Button>
+        <Button size="sm" className="flex-1" onClick={() => {
+          if (!quoteFormData.customer_name) {
+            toast.error('Customer name is required');
+            return;
+          }
+          createQuoteMutation.mutate(quoteFormData);
+        }} disabled={createQuoteMutation.isPending}>
+          {createQuoteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
+          Create
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderReports = () => (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-2 p-3 border-b">
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setViewMode('chat')}>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <h3 className="font-medium text-sm">Revenue Report</h3>
+      </div>
+      
+      <ScrollArea className="flex-1 p-3">
+        <div className="grid grid-cols-2 gap-3">
+          <Card>
+            <CardHeader className="pb-2 p-3">
+              <CardTitle className="text-xs font-medium text-muted-foreground">Total Invoices</CardTitle>
+            </CardHeader>
+            <CardContent className="p-3 pt-0">
+              <div className="text-xl font-bold">{allInvoices.length}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2 p-3">
+              <CardTitle className="text-xs font-medium text-muted-foreground">Total Paid</CardTitle>
+            </CardHeader>
+            <CardContent className="p-3 pt-0">
+              <div className="text-xl font-bold text-green-600">${totalPaid.toFixed(2)}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2 p-3">
+              <CardTitle className="text-xs font-medium text-muted-foreground">Outstanding</CardTitle>
+            </CardHeader>
+            <CardContent className="p-3 pt-0">
+              <div className="text-xl font-bold">${totalOutstanding.toFixed(2)}</div>
+            </CardContent>
+          </Card>
+          <Card className={overdueCount > 0 ? 'border-destructive' : ''}>
+            <CardHeader className="pb-2 p-3">
+              <CardTitle className="text-xs font-medium text-muted-foreground">Overdue</CardTitle>
+            </CardHeader>
+            <CardContent className="p-3 pt-0">
+              <div className="text-xl font-bold text-destructive">{overdueCount}</div>
+            </CardContent>
+          </Card>
+        </div>
+      </ScrollArea>
+
+      <div className="border-t p-3">
+        <Button variant="outline" size="sm" className="w-full" onClick={() => setViewMode('chat')}>
+          Back to Chat
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderChatView = () => (
+    <>
+      {/* Messages Area */}
+      <ScrollArea ref={scrollRef} className="flex-1 p-3">
+        <div className="space-y-3">
+          {messages.length === 0 ? (
+            <div className="text-center py-8">
+              <DollarSign className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+              <p className="text-sm text-muted-foreground">
+                Hello! I'm your Billing AI Assistant. I can help you:
+              </p>
+              <ul className="text-xs text-muted-foreground mt-2 space-y-1">
+                <li>• Create and manage invoices</li>
+                <li>• Send payment reminders</li>
+                <li>• Generate revenue reports</li>
+                <li>• Forecast payments and cash flow</li>
+                <li>• Process refunds</li>
+              </ul>
+            </div>
+          ) : (
+            messages.map((msg, index) => renderMessage(msg, index))
+          )}
+          {isLoading && (
+            <div className="flex gap-2 justify-start">
+              <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                <Bot className="w-4 h-4 text-primary" />
+              </div>
+              <div className="bg-muted rounded-2xl rounded-bl-md px-3 py-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+              </div>
+            </div>
+          )}
+        </div>
+      </ScrollArea>
+
+      {/* Quick Actions */}
+      <div className="border-t p-2 shrink-0">
+        <div className="flex flex-wrap gap-1.5">
+          {QUICK_ACTIONS.map((action) => (
+            <Button
+              key={action.id}
+              variant={action.variant || 'outline'}
+              size="sm"
+              className="h-7 text-xs gap-1"
+              onClick={() => handleQuickAction(action)}
+              disabled={isLoading}
+            >
+              <action.icon className="h-3 w-3" />
+              {action.label}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          ))}
+        </div>
+      </div>
 
-      {/* Quote Form Dialog */}
-      <Dialog open={isQuoteFormOpen} onOpenChange={setIsQuoteFormOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Create Quote</DialogTitle>
-            <DialogDescription>Create a new quote for a customer.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Customer Name *</Label>
-                <Input value={quoteFormData.customer_name} onChange={e => setQuoteFormData({ ...quoteFormData, customer_name: e.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <Label>Email</Label>
-                <Input type="email" value={quoteFormData.customer_email} onChange={e => setQuoteFormData({ ...quoteFormData, customer_email: e.target.value })} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Phone</Label>
-                <Input value={quoteFormData.customer_phone} onChange={e => setQuoteFormData({ ...quoteFormData, customer_phone: e.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <Label>Valid Days</Label>
-                <Input type="number" value={quoteFormData.valid_days} onChange={e => setQuoteFormData({ ...quoteFormData, valid_days: parseInt(e.target.value) || 30 })} />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Address</Label>
-              <Textarea value={quoteFormData.customer_address} onChange={e => setQuoteFormData({ ...quoteFormData, customer_address: e.target.value })} />
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>Line Items</Label>
-                <Button type="button" variant="outline" size="sm" onClick={addQuoteLineItem}>
-                  <Plus className="w-4 h-4 mr-1" /> Add Item
-                </Button>
-              </div>
-              <div className="space-y-2">
-                {quoteFormData.line_items.map((item, index) => (
-                  <div key={index} className="grid grid-cols-12 gap-2 items-center">
-                    <Input
-                      className="col-span-5"
-                      placeholder="Description"
-                      value={item.description}
-                      onChange={e => updateQuoteLineItem(index, 'description', e.target.value)}
-                    />
-                    <Input
-                      className="col-span-2"
-                      type="number"
-                      placeholder="Qty"
-                      value={item.quantity}
-                      onChange={e => updateQuoteLineItem(index, 'quantity', parseInt(e.target.value) || 1)}
-                    />
-                    <Input
-                      className="col-span-3"
-                      type="number"
-                      step="0.01"
-                      placeholder="Price"
-                      value={item.unit_price}
-                      onChange={e => updateQuoteLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
-                    />
-                    <div className="col-span-1 text-right text-sm">${(item.quantity * item.unit_price).toFixed(2)}</div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="col-span-1"
-                      onClick={() => removeQuoteLineItem(index)}
-                      disabled={quoteFormData.line_items.length === 1}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Tax Rate (%)</Label>
-                <Input type="number" step="0.01" value={quoteFormData.tax_rate} onChange={e => setQuoteFormData({ ...quoteFormData, tax_rate: parseFloat(e.target.value) || 0 })} />
-              </div>
-              <div className="space-y-2">
-                <Label>Notes</Label>
-                <Input value={quoteFormData.notes} onChange={e => setQuoteFormData({ ...quoteFormData, notes: e.target.value })} />
-              </div>
-            </div>
-
-            <div className="border-t pt-4 space-y-1 text-right">
-              <div className="text-sm">Subtotal: ${quoteSubtotal.toFixed(2)}</div>
-              <div className="text-sm text-muted-foreground">Tax ({quoteFormData.tax_rate}%): ${quoteTaxAmount.toFixed(2)}</div>
-              <div className="text-lg font-bold">Total: ${quoteTotal.toFixed(2)}</div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsQuoteFormOpen(false)}>Cancel</Button>
-            <Button onClick={() => {
-              if (!quoteFormData.customer_name) {
-                toast.error('Customer name is required');
-                return;
-              }
-              createQuoteMutation.mutate(quoteFormData);
-            }} disabled={createQuoteMutation.isPending}>
-              {createQuoteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              Create Quote
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Revenue Report Dialog */}
-      <Dialog open={isReportsOpen} onOpenChange={setIsReportsOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Revenue Report</DialogTitle>
-            <DialogDescription>Overview of invoices and revenue.</DialogDescription>
-          </DialogHeader>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Total Invoices</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{allInvoices.length}</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Total Paid</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-600">${totalPaid.toFixed(2)}</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Outstanding</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">${totalOutstanding.toFixed(2)}</div>
-              </CardContent>
-            </Card>
-            <Card className={overdueCount > 0 ? 'border-destructive' : ''}>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Overdue</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-destructive">{overdueCount}</div>
-              </CardContent>
-            </Card>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsReportsOpen(false)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Input Area */}
+      <div className="border-t p-3 shrink-0">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSend();
+          }}
+          className="flex gap-2"
+        >
+          <Input
+            ref={inputRef}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder="Ask about invoices, payments, or reports..."
+            className="flex-1 h-9 text-sm"
+            disabled={isLoading}
+          />
+          <Button type="submit" size="icon" className="h-9 w-9 shrink-0" disabled={isLoading || !inputValue.trim()}>
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          </Button>
+        </form>
+      </div>
     </>
+  );
+
+  const renderContent = () => {
+    switch (viewMode) {
+      case 'invoice_form':
+        return renderInvoiceForm();
+      case 'quote_form':
+        return renderQuoteForm();
+      case 'reports':
+        return renderReports();
+      case 'send_reminder':
+      case 'process_refund':
+        return renderInvoiceSelector();
+      default:
+        return renderChatView();
+    }
+  };
+
+  return (
+    <Card className={cn('flex flex-col h-[600px]', className)}>
+      <CardHeader className="pb-2 border-b shrink-0">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Bot className="h-5 w-5 text-primary" />
+            Billing AI Console
+          </CardTitle>
+          {viewMode === 'chat' && currentAgent && (
+            <Badge variant="outline" className="text-xs">
+              {BILLING_AGENTS.find(a => a.id === currentAgent)?.name || currentAgent}
+            </Badge>
+          )}
+        </div>
+      </CardHeader>
+
+      <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+        {renderContent()}
+      </CardContent>
+    </Card>
   );
 }
