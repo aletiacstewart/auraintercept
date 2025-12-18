@@ -20,7 +20,16 @@ export function RoleAwareDashboardLayout({ children }: { children: ReactNode }) 
   }, [userRole, primaryJobType, loading]);
 
 
-  if (userRole === "employee" && !loading && primaryJobType && primaryJobType !== "technician") {
+  // Wait for job role to load before deciding which layout to show
+  if (userRole === "employee" && loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (userRole === "employee" && primaryJobType && primaryJobType !== "technician") {
     return <RoleDashboardLayout jobRole={primaryJobType as JobRoleType}>{children}</RoleDashboardLayout>;
   }
 
