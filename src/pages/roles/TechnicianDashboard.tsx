@@ -7,7 +7,7 @@ import { TechnicianJobQueue } from '@/components/employee/TechnicianJobQueue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ClipboardList, MapPin, Clock, CheckCircle, Wrench, Bot, Calendar, Package } from 'lucide-react';
+import { ClipboardList, MapPin, Clock, CheckCircle, Wrench, Calendar } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfWeek, endOfWeek, differenceInMinutes } from 'date-fns';
@@ -204,7 +204,7 @@ export default function TechnicianDashboard() {
         </Card>
 
         {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-5">
+        <div className="grid gap-4 md:grid-cols-3">
           <Button
             variant="outline"
             className="h-auto py-6 flex flex-col items-center gap-2"
@@ -228,22 +228,6 @@ export default function TechnicianDashboard() {
           >
             <Calendar className="w-6 h-6 text-accent" />
             <span>Calendar</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="h-auto py-6 flex flex-col items-center gap-2"
-            onClick={() => navigate('/dashboard/inventory')}
-          >
-            <Package className="w-6 h-6 text-primary" />
-            <span>Inventory</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="h-auto py-6 flex flex-col items-center gap-2"
-            onClick={() => navigate('/dashboard/ai-agents')}
-          >
-            <Bot className="w-6 h-6 text-secondary" />
-            <span>AI Agents Hub</span>
           </Button>
         </div>
       </div>
