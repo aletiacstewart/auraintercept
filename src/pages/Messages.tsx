@@ -1,9 +1,9 @@
-import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { RoleAwareDashboardLayout } from '@/components/dashboard/RoleAwareDashboardLayout';
 import { CommunicationLogs } from '@/components/employee/CommunicationLogs';
 
 export default function Messages() {
   return (
-    <DashboardLayout>
+    <RoleAwareDashboardLayout>
       <div className="space-y-6 animate-fade-in">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Messages & Calls</h1>
@@ -14,6 +14,6 @@ export default function Messages() {
 
         <CommunicationLogs />
       </div>
-    </DashboardLayout>
+    </RoleAwareDashboardLayout>
   );
 }
