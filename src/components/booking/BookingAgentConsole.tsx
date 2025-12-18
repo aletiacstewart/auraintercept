@@ -92,6 +92,10 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showCustomerSearch, setShowCustomerSearch] = useState(false);
+  const [customerSearchQuery, setCustomerSearchQuery] = useState('');
+  const [customerSearchResults, setCustomerSearchResults] = useState<AppointmentInfo[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
   const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
@@ -236,9 +240,15 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
       setShowReviewForm(true);
       return;
     }
-    if (action.id === 'reschedule' || action.id === 'cancel' || action.id === 'lookup') {
+    if (action.id === 'reschedule' || action.id === 'cancel') {
       setShowAppointmentSelector(true);
       setSelectorAction(action.id);
+      return;
+    }
+    if (action.id === 'lookup') {
+      setShowCustomerSearch(true);
+      setCustomerSearchQuery('');
+      setCustomerSearchResults([]);
       return;
     }
     await sendMessage(action.message);
@@ -455,13 +465,37 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
       message = `I need to reschedule the appointment for ${appointment.customer_name} (${appointment.service_type}) currently scheduled for ${format(new Date(appointment.datetime), 'MMM d, yyyy h:mm a')}`;
     } else if (selectorAction === 'cancel') {
       message = `I need to cancel the appointment for ${appointment.customer_name} (${appointment.service_type}) scheduled for ${format(new Date(appointment.datetime), 'MMM d, yyyy h:mm a')}`;
-    } else if (selectorAction === 'lookup') {
-      message = `I need to look up information for ${appointment.customer_name}. Their last appointment was ${appointment.service_type} on ${format(new Date(appointment.datetime), 'MMM d, yyyy')}`;
     }
     
     setSelectorAction(null);
     await sendMessage(message);
   }, [selectorAction, sendMessage]);
+
+  const handleCustomerSearch = async () => {
+    if (!customerSearchQuery.trim() || !effectiveCompanyId) return;
+    
+    setIsSearching(true);
+    try {
+      const searchTerm = customerSearchQuery.trim().toLowerCase();
+      
+      const { data, error } = await supabase
+        .from('appointments')
+        .select('*')
+        .eq('company_id', effectiveCompanyId)
+        .or(`customer_name.ilike.%${searchTerm}%,customer_phone.ilike.%${searchTerm}%,customer_email.ilike.%${searchTerm}%`)
+        .order('datetime', { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+      
+      setCustomerSearchResults((data || []) as AppointmentInfo[]);
+    } catch (error) {
+      console.error('Error searching customers:', error);
+      toast.error('Search failed', { description: 'Please try again' });
+    } finally {
+      setIsSearching(false);
+    }
+  };
 
   const getAgentBadge = (agentType?: string) => {
     const agent = BOOKING_AGENTS.find(a => a.id === agentType);
@@ -526,7 +560,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
-          {(showBookingForm || showFeedbackForm || showQuoteForm || showReviewForm) && (
+          {(showBookingForm || showFeedbackForm || showQuoteForm || showReviewForm || showCustomerSearch) && (
             <Button 
               variant="ghost" 
               size="sm" 
@@ -535,6 +569,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
                 setShowFeedbackForm(false);
                 setShowQuoteForm(false);
                 setShowReviewForm(false);
+                setShowCustomerSearch(false);
               }}
               className="mr-1"
             >
@@ -543,9 +578,9 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
           )}
           <Bot className="w-5 h-5 text-primary" />
           <span className="font-medium">
-            {showBookingForm ? 'Book New Appointment' : showFeedbackForm ? 'Customer Follow Up' : showQuoteForm ? 'Create Quote' : showReviewForm ? 'Request Review' : 'Booking AI Assistant'}
+            {showBookingForm ? 'Book New Appointment' : showFeedbackForm ? 'Customer Follow Up' : showQuoteForm ? 'Create Quote' : showReviewForm ? 'Request Review' : showCustomerSearch ? 'Look Up Customer' : 'Booking AI Assistant'}
           </span>
-          {!showBookingForm && !showFeedbackForm && !showQuoteForm && !showReviewForm && currentAgent && (
+          {!showBookingForm && !showFeedbackForm && !showQuoteForm && !showReviewForm && !showCustomerSearch && currentAgent && (
             <Badge variant="outline" className="text-xs">
               {BOOKING_AGENTS.find(a => a.id === currentAgent)?.name || currentAgent}
             </Badge>
@@ -589,6 +624,68 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
             reviewLinks={reviewLinks}
           />
         </div>
+      ) : showCustomerSearch ? (
+        <div className="flex-1 overflow-auto p-4">
+          <div className="space-y-4">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleCustomerSearch();
+              }}
+              className="flex gap-2"
+            >
+              <Input
+                value={customerSearchQuery}
+                onChange={(e) => setCustomerSearchQuery(e.target.value)}
+                placeholder="Search by name, phone, or email..."
+                className="flex-1"
+              />
+              <Button type="submit" disabled={isSearching || !customerSearchQuery.trim()}>
+                {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+              </Button>
+            </form>
+            
+            {customerSearchResults.length > 0 ? (
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">{customerSearchResults.length} result(s) found</p>
+                {customerSearchResults.map((apt) => (
+                  <Card key={apt.id} className="hover:bg-accent/50 transition-colors">
+                    <CardContent className="p-3">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium">{apt.customer_name}</p>
+                          <div className="text-sm text-muted-foreground space-y-0.5">
+                            {apt.customer_phone && <p>{apt.customer_phone}</p>}
+                            {apt.customer_email && <p className="truncate">{apt.customer_email}</p>}
+                            {apt.customer_address && <p className="truncate">{apt.customer_address}</p>}
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <Badge variant={apt.status === 'completed' ? 'secondary' : apt.status === 'cancelled' ? 'destructive' : 'default'} className="text-xs mb-1">
+                            {apt.status}
+                          </Badge>
+                          <p className="text-xs text-muted-foreground">{apt.service_type}</p>
+                          <p className="text-xs font-medium">{format(new Date(apt.datetime), 'MMM d, yyyy')}</p>
+                          <p className="text-xs text-muted-foreground">{format(new Date(apt.datetime), 'h:mm a')}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : customerSearchQuery && !isSearching ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p>No results found for "{customerSearchQuery}"</p>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p>Enter a name, phone, or email to search</p>
+              </div>
+            )}
+          </div>
+        </div>
       ) : (
         <>
           {/* Quick Actions */}
@@ -614,7 +711,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
             <div className="px-4 py-3 border-b border-border bg-muted/50">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">
-                  Select Appointment to {selectorAction === 'reschedule' ? 'Reschedule' : selectorAction === 'cancel' ? 'Cancel' : 'View'}
+                  Select Appointment to {selectorAction === 'reschedule' ? 'Reschedule' : 'Cancel'}
                 </span>
                 <Button
                   variant="ghost"
