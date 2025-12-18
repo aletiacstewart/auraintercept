@@ -35,27 +35,6 @@ import Referrals from "./pages/Referrals";
 import Campaigns from "./pages/Campaigns";
 import NotFound from "./pages/NotFound";
 
-// Role-based dashboards
-import TechnicianDashboard from "./pages/roles/TechnicianDashboard";
-import TechnicianFieldOps from "./pages/roles/TechnicianFieldOps";
-import TechnicianJobs from "./pages/roles/TechnicianJobs";
-import TechnicianCalendar from "./pages/roles/TechnicianCalendar";
-import TechnicianAvailability from "./pages/roles/TechnicianAvailability";
-import TechnicianMessages from "./pages/roles/TechnicianMessages";
-import BookingAgentDashboard from "./pages/roles/BookingAgentDashboard";
-import BookingAgentAIConsole from "./pages/roles/BookingAgentAIConsole";
-import BookingAgentAppointments from "./pages/roles/BookingAgentAppointments";
-import DispatchDashboard from "./pages/roles/DispatchDashboard";
-import MarketingDashboard from "./pages/roles/MarketingDashboard";
-import SalesDashboard from "./pages/roles/SalesDashboard";
-import CustomerServiceDashboard from "./pages/roles/CustomerServiceDashboard";
-import InventoryManagerDashboard from "./pages/roles/InventoryManagerDashboard";
-import BillingDashboard from "./pages/roles/BillingDashboard";
-import BillingReports from "./pages/roles/BillingReports";
-import BillingAIConsole from "./pages/roles/BillingAIConsole";
-import ComplianceDashboard from "./pages/roles/ComplianceDashboard";
-import AnalyticsDashboard from "./pages/roles/AnalyticsDashboard";
-
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -93,28 +72,6 @@ const App = () => (
             <Route path="/dashboard/warranties" element={<Warranties />} />
             <Route path="/dashboard/referrals" element={<Referrals />} />
             <Route path="/dashboard/campaigns" element={<Campaigns />} />
-            
-            {/* Role-based dashboards */}
-            <Route path="/dashboard/technician" element={<TechnicianDashboard />} />
-            <Route path="/dashboard/technician/field-ops" element={<TechnicianFieldOps />} />
-            <Route path="/dashboard/technician/jobs" element={<TechnicianJobs />} />
-            <Route path="/dashboard/technician/calendar" element={<TechnicianCalendar />} />
-            <Route path="/dashboard/technician/availability" element={<TechnicianAvailability />} />
-            <Route path="/dashboard/technician/messages" element={<TechnicianMessages />} />
-            <Route path="/dashboard/booking-agent" element={<BookingAgentDashboard />} />
-            <Route path="/dashboard/booking-agent/console" element={<BookingAgentAIConsole />} />
-            <Route path="/dashboard/booking-agent/appointments" element={<BookingAgentAppointments />} />
-            <Route path="/dashboard/dispatch" element={<DispatchDashboard />} />
-            <Route path="/dashboard/marketing" element={<MarketingDashboard />} />
-            <Route path="/dashboard/sales" element={<SalesDashboard />} />
-            <Route path="/dashboard/customer-service" element={<CustomerServiceDashboard />} />
-            <Route path="/dashboard/inventory-manager" element={<InventoryManagerDashboard />} />
-            <Route path="/dashboard/billing" element={<BillingDashboard />} />
-            <Route path="/dashboard/billing/reports" element={<BillingReports />} />
-            <Route path="/dashboard/billing/report" element={<BillingReports />} />
-            <Route path="/dashboard/billing/ai-console" element={<BillingAIConsole />} />
-            <Route path="/dashboard/compliance" element={<ComplianceDashboard />} />
-            <Route path="/dashboard/analytics-manager" element={<AnalyticsDashboard />} />
             
             <Route path="/appointment" element={<CustomerPortal />} />
             <Route path="/chat/:companySlug" element={<PublicChat />} />

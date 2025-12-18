@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { JobRoleType, JOB_ROLE_CONFIGS } from '@/config/jobRoleDashboards';
 
 type DbEmployeeJobType =
   | 'technician'
@@ -12,6 +11,16 @@ type DbEmployeeJobType =
   | 'marketing'
   | 'inventory'
   | 'analytics';
+
+type JobRoleType =
+  | 'technician'
+  | 'booking_agent'
+  | 'dispatch'
+  | 'customer_service'
+  | 'billing_specialist'
+  | 'marketing_manager'
+  | 'inventory_manager'
+  | 'analytics_manager';
 
 function normalizeJobType(dbType: DbEmployeeJobType): JobRoleType {
   switch (dbType) {
@@ -68,15 +77,12 @@ export function useEmployeeJobRole() {
     fetchJobTypes();
   }, [user, userRole]);
 
-  const getConfig = (jobType: JobRoleType) => JOB_ROLE_CONFIGS[jobType];
-
   const hasJobType = (type: JobRoleType) => jobTypes.includes(type);
 
   return {
     jobTypes,
     primaryJobType,
     loading,
-    getConfig,
     hasJobType,
   };
 }
