@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { 
   Send, 
   Receipt, 
@@ -23,7 +25,9 @@ import {
   Loader2,
   X,
   Calendar,
-  AlertCircle
+  AlertCircle,
+  Plus,
+  Trash2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -43,15 +47,14 @@ interface QuickAction {
   icon: React.ElementType;
   message: string;
   variant?: 'default' | 'destructive' | 'outline' | 'secondary';
-  navigateTo?: string;
 }
 
 const QUICK_ACTIONS: QuickAction[] = [
-  { id: 'create_invoice', label: 'Create Invoice', icon: Receipt, message: '', navigateTo: '/dashboard/invoices' },
+  { id: 'create_invoice', label: 'Create Invoice', icon: Receipt, message: '' },
   { id: 'send_reminder', label: 'Send Reminder', icon: Bell, message: '' },
   { id: 'overdue_followup', label: 'Overdue Follow-up', icon: AlertCircle, message: 'Show me all overdue invoices that need follow-up and help me send payment reminders.', variant: 'destructive' },
-  { id: 'create_quote', label: 'Create Quote', icon: FileText, message: '', navigateTo: '/dashboard/quotes' },
-  { id: 'revenue_report', label: 'Revenue Report', icon: BarChart3, message: '', navigateTo: '/dashboard/billing/reports' },
+  { id: 'create_quote', label: 'Create Quote', icon: FileText, message: '' },
+  { id: 'revenue_report', label: 'Revenue Report', icon: BarChart3, message: '' },
   { id: 'payment_forecast', label: 'Payment Forecast', icon: TrendingUp, message: 'Forecast expected payments and cash flow for the next 30 days based on outstanding invoices and historical data.' },
   { id: 'process_refund', label: 'Process Refund', icon: RefreshCw, message: '' },
 ];
@@ -74,8 +77,30 @@ interface BillingAgentConsoleProps {
 
 type SelectorMode = 'send_reminder' | 'process_refund' | null;
 
+const defaultInvoiceForm = {
+  customer_name: '',
+  customer_email: '',
+  customer_phone: '',
+  customer_address: '',
+  notes: '',
+  tax_rate: 0,
+  due_days: 30,
+  line_items: [{ description: '', quantity: 1, unit_price: 0 }],
+};
+
+const defaultQuoteForm = {
+  customer_name: '',
+  customer_email: '',
+  customer_phone: '',
+  customer_address: '',
+  notes: '',
+  tax_rate: 0,
+  valid_days: 30,
+  line_items: [{ description: '', quantity: 1, unit_price: 0 }],
+};
+
 export function BillingAgentConsole({ companyId, className }: BillingAgentConsoleProps) {
-  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user, companyId: authCompanyId } = useAuth();
   const effectiveCompanyId = companyId || authCompanyId;
   
@@ -84,6 +109,13 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
   const [processingInvoiceId, setProcessingInvoiceId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Form dialogs state
+  const [isInvoiceFormOpen, setIsInvoiceFormOpen] = useState(false);
+  const [isQuoteFormOpen, setIsQuoteFormOpen] = useState(false);
+  const [isReportsOpen, setIsReportsOpen] = useState(false);
+  const [invoiceFormData, setInvoiceFormData] = useState(defaultInvoiceForm);
+  const [quoteFormData, setQuoteFormData] = useState(defaultQuoteForm);
 
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
@@ -117,6 +149,136 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
     refetchInterval: 60000,
   });
 
+  // For reports
+  const { data: allInvoices = [] } = useQuery({
+    queryKey: ['all-invoices', effectiveCompanyId],
+    queryFn: async () => {
+      if (!effectiveCompanyId) return [];
+      const { data, error } = await supabase
+        .from('invoices')
+        .select('*')
+        .eq('company_id', effectiveCompanyId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!effectiveCompanyId && isReportsOpen,
+  });
+
+  // Invoice mutation
+  const createInvoiceMutation = useMutation({
+    mutationFn: async (data: typeof invoiceFormData) => {
+      const subtotal = data.line_items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
+      const taxAmount = subtotal * (data.tax_rate / 100);
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + data.due_days);
+
+      const invoiceNumber = `INV-${new Date().getFullYear()}-${String(invoices.length + 1).padStart(4, '0')}`;
+
+      const { data: invoice, error: invoiceError } = await supabase
+        .from('invoices')
+        .insert({
+          company_id: effectiveCompanyId,
+          invoice_number: invoiceNumber,
+          customer_name: data.customer_name,
+          customer_email: data.customer_email || null,
+          customer_phone: data.customer_phone || null,
+          customer_address: data.customer_address || null,
+          notes: data.notes || null,
+          subtotal,
+          tax_rate: data.tax_rate,
+          tax_amount: taxAmount,
+          total: subtotal + taxAmount,
+          due_date: dueDate.toISOString(),
+          status: 'draft',
+        })
+        .select()
+        .single();
+
+      if (invoiceError) throw invoiceError;
+
+      const lineItemsToInsert = data.line_items
+        .filter(item => item.description && item.unit_price > 0)
+        .map(item => ({
+          invoice_id: invoice.id,
+          description: item.description,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          total: item.quantity * item.unit_price,
+        }));
+
+      if (lineItemsToInsert.length > 0) {
+        const { error: itemsError } = await supabase
+          .from('invoice_line_items')
+          .insert(lineItemsToInsert);
+        if (itemsError) throw itemsError;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['billing-invoices'] });
+      queryClient.invalidateQueries({ queryKey: ['all-invoices'] });
+      toast.success('Invoice created successfully');
+      setIsInvoiceFormOpen(false);
+      setInvoiceFormData(defaultInvoiceForm);
+    },
+    onError: () => toast.error('Failed to create invoice'),
+  });
+
+  // Quote mutation
+  const createQuoteMutation = useMutation({
+    mutationFn: async (data: typeof quoteFormData) => {
+      const subtotal = data.line_items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
+      const taxAmount = subtotal * (data.tax_rate / 100);
+      const validUntil = new Date();
+      validUntil.setDate(validUntil.getDate() + data.valid_days);
+
+      const { data: quote, error: quoteError } = await supabase
+        .from('quotes')
+        .insert({
+          company_id: effectiveCompanyId,
+          customer_name: data.customer_name,
+          customer_email: data.customer_email || null,
+          customer_phone: data.customer_phone || null,
+          customer_address: data.customer_address || null,
+          notes: data.notes || null,
+          subtotal,
+          tax_rate: data.tax_rate,
+          tax_amount: taxAmount,
+          total_amount: subtotal + taxAmount,
+          valid_until: validUntil.toISOString(),
+          status: 'draft',
+        })
+        .select()
+        .single();
+
+      if (quoteError) throw quoteError;
+
+      const lineItemsToInsert = data.line_items
+        .filter(item => item.description && item.unit_price > 0)
+        .map(item => ({
+          quote_id: quote.id,
+          description: item.description,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          total: item.quantity * item.unit_price,
+        }));
+
+      if (lineItemsToInsert.length > 0) {
+        const { error: itemsError } = await supabase
+          .from('quote_line_items')
+          .insert(lineItemsToInsert);
+        if (itemsError) throw itemsError;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quotes'] });
+      toast.success('Quote created successfully');
+      setIsQuoteFormOpen(false);
+      setQuoteFormData(defaultQuoteForm);
+    },
+    onError: () => toast.error('Failed to create quote'),
+  });
+
   // Filter invoices based on selector mode
   const getFilteredInvoices = () => {
     if (selectorMode === 'send_reminder') {
@@ -145,9 +307,19 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
   };
 
   const handleQuickAction = useCallback(async (action: QuickAction) => {
-    // Navigate actions
-    if (action.navigateTo) {
-      navigate(action.navigateTo);
+    // Dialog actions
+    if (action.id === 'create_invoice') {
+      setInvoiceFormData(defaultInvoiceForm);
+      setIsInvoiceFormOpen(true);
+      return;
+    }
+    if (action.id === 'create_quote') {
+      setQuoteFormData(defaultQuoteForm);
+      setIsQuoteFormOpen(true);
+      return;
+    }
+    if (action.id === 'revenue_report') {
+      setIsReportsOpen(true);
       return;
     }
     // Selector actions
@@ -163,7 +335,7 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
     if (action.message) {
       await sendMessage(action.message);
     }
-  }, [sendMessage, navigate]);
+  }, [sendMessage]);
 
   const handleSelectInvoiceForReminder = useCallback(async (invoice: Invoice) => {
     if (processingInvoiceId) return;
@@ -221,6 +393,62 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
       default: return 'text-muted-foreground bg-muted';
     }
   };
+
+  // Line item helpers
+  const addInvoiceLineItem = () => {
+    setInvoiceFormData({
+      ...invoiceFormData,
+      line_items: [...invoiceFormData.line_items, { description: '', quantity: 1, unit_price: 0 }],
+    });
+  };
+
+  const updateInvoiceLineItem = (index: number, field: string, value: string | number) => {
+    const newItems = [...invoiceFormData.line_items];
+    newItems[index] = { ...newItems[index], [field]: value };
+    setInvoiceFormData({ ...invoiceFormData, line_items: newItems });
+  };
+
+  const removeInvoiceLineItem = (index: number) => {
+    if (invoiceFormData.line_items.length === 1) return;
+    setInvoiceFormData({
+      ...invoiceFormData,
+      line_items: invoiceFormData.line_items.filter((_, i) => i !== index),
+    });
+  };
+
+  const addQuoteLineItem = () => {
+    setQuoteFormData({
+      ...quoteFormData,
+      line_items: [...quoteFormData.line_items, { description: '', quantity: 1, unit_price: 0 }],
+    });
+  };
+
+  const updateQuoteLineItem = (index: number, field: string, value: string | number) => {
+    const newItems = [...quoteFormData.line_items];
+    newItems[index] = { ...newItems[index], [field]: value };
+    setQuoteFormData({ ...quoteFormData, line_items: newItems });
+  };
+
+  const removeQuoteLineItem = (index: number) => {
+    if (quoteFormData.line_items.length === 1) return;
+    setQuoteFormData({
+      ...quoteFormData,
+      line_items: quoteFormData.line_items.filter((_, i) => i !== index),
+    });
+  };
+
+  const invoiceSubtotal = invoiceFormData.line_items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
+  const invoiceTaxAmount = invoiceSubtotal * (invoiceFormData.tax_rate / 100);
+  const invoiceTotal = invoiceSubtotal + invoiceTaxAmount;
+
+  const quoteSubtotal = quoteFormData.line_items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
+  const quoteTaxAmount = quoteSubtotal * (quoteFormData.tax_rate / 100);
+  const quoteTotal = quoteSubtotal + quoteTaxAmount;
+
+  // Reports calculations
+  const totalPaid = allInvoices.filter((i: any) => i.status === 'paid').reduce((sum: number, i: any) => sum + i.total, 0);
+  const totalOutstanding = allInvoices.filter((i: any) => ['sent', 'pending', 'overdue'].includes(i.status)).reduce((sum: number, i: any) => sum + i.total, 0);
+  const overdueCount = allInvoices.filter((i: any) => i.status === 'overdue' || (i.status === 'sent' && i.due_date && new Date(i.due_date) < new Date())).length;
 
   const renderMessage = (msg: ChatMessage, index: number) => {
     const isUser = msg.role === 'user';
@@ -343,99 +571,374 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
   };
 
   return (
-    <Card className={cn('flex flex-col h-[600px] relative', className)}>
-      <CardHeader className="pb-2 border-b shrink-0">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Bot className="h-5 w-5 text-primary" />
-            Billing AI Console
-          </CardTitle>
-          {currentAgent && (
-            <Badge variant="outline" className="text-xs">
-              {BILLING_AGENTS.find(a => a.id === currentAgent)?.name || currentAgent}
-            </Badge>
-          )}
-        </div>
-      </CardHeader>
-
-      <CardContent className="flex-1 flex flex-col p-0 overflow-hidden relative">
-        {renderInvoiceSelector()}
-        
-        {/* Messages Area */}
-        <ScrollArea ref={scrollRef} className="flex-1 p-3">
-          <div className="space-y-3">
-            {messages.length === 0 ? (
-              <div className="text-center py-8">
-                <DollarSign className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-                <p className="text-sm text-muted-foreground">
-                  Hello! I'm your Billing AI Assistant. I can help you:
-                </p>
-                <ul className="text-xs text-muted-foreground mt-2 space-y-1">
-                  <li>• Create and manage invoices</li>
-                  <li>• Send payment reminders</li>
-                  <li>• Generate revenue reports</li>
-                  <li>• Forecast payments and cash flow</li>
-                  <li>• Process refunds</li>
-                </ul>
-              </div>
-            ) : (
-              messages.map((msg, index) => renderMessage(msg, index))
-            )}
-            {isLoading && (
-              <div className="flex gap-2 justify-start">
-                <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-primary" />
-                </div>
-                <div className="bg-muted rounded-2xl rounded-bl-md px-3 py-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                </div>
-              </div>
+    <>
+      <Card className={cn('flex flex-col h-[600px] relative', className)}>
+        <CardHeader className="pb-2 border-b shrink-0">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Bot className="h-5 w-5 text-primary" />
+              Billing AI Console
+            </CardTitle>
+            {currentAgent && (
+              <Badge variant="outline" className="text-xs">
+                {BILLING_AGENTS.find(a => a.id === currentAgent)?.name || currentAgent}
+              </Badge>
             )}
           </div>
-        </ScrollArea>
+        </CardHeader>
 
-        {/* Quick Actions */}
-        <div className="border-t p-2 shrink-0">
-          <div className="flex flex-wrap gap-1.5">
-            {QUICK_ACTIONS.map((action) => (
-              <Button
-                key={action.id}
-                variant={action.variant || 'outline'}
-                size="sm"
-                className="h-7 text-xs gap-1"
-                onClick={() => handleQuickAction(action)}
+        <CardContent className="flex-1 flex flex-col p-0 overflow-hidden relative">
+          {renderInvoiceSelector()}
+          
+          {/* Messages Area */}
+          <ScrollArea ref={scrollRef} className="flex-1 p-3">
+            <div className="space-y-3">
+              {messages.length === 0 ? (
+                <div className="text-center py-8">
+                  <DollarSign className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+                  <p className="text-sm text-muted-foreground">
+                    Hello! I'm your Billing AI Assistant. I can help you:
+                  </p>
+                  <ul className="text-xs text-muted-foreground mt-2 space-y-1">
+                    <li>• Create and manage invoices</li>
+                    <li>• Send payment reminders</li>
+                    <li>• Generate revenue reports</li>
+                    <li>• Forecast payments and cash flow</li>
+                    <li>• Process refunds</li>
+                  </ul>
+                </div>
+              ) : (
+                messages.map((msg, index) => renderMessage(msg, index))
+              )}
+              {isLoading && (
+                <div className="flex gap-2 justify-start">
+                  <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Bot className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="bg-muted rounded-2xl rounded-bl-md px-3 py-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </div>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+
+          {/* Quick Actions */}
+          <div className="border-t p-2 shrink-0">
+            <div className="flex flex-wrap gap-1.5">
+              {QUICK_ACTIONS.map((action) => (
+                <Button
+                  key={action.id}
+                  variant={action.variant || 'outline'}
+                  size="sm"
+                  className="h-7 text-xs gap-1"
+                  onClick={() => handleQuickAction(action)}
+                  disabled={isLoading}
+                >
+                  <action.icon className="h-3 w-3" />
+                  {action.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          {/* Input Area */}
+          <div className="border-t p-3 shrink-0">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSend();
+              }}
+              className="flex gap-2"
+            >
+              <Input
+                ref={inputRef}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Ask about invoices, payments, or reports..."
+                className="flex-1 h-9 text-sm"
                 disabled={isLoading}
-              >
-                <action.icon className="h-3 w-3" />
-                {action.label}
+              />
+              <Button type="submit" size="icon" className="h-9 w-9 shrink-0" disabled={isLoading || !inputValue.trim()}>
+                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </Button>
-            ))}
+            </form>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Input Area */}
-        <div className="border-t p-3 shrink-0">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSend();
-            }}
-            className="flex gap-2"
-          >
-            <Input
-              ref={inputRef}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask about invoices, payments, or reports..."
-              className="flex-1 h-9 text-sm"
-              disabled={isLoading}
-            />
-            <Button type="submit" size="icon" className="h-9 w-9 shrink-0" disabled={isLoading || !inputValue.trim()}>
-              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+      {/* Invoice Form Dialog */}
+      <Dialog open={isInvoiceFormOpen} onOpenChange={setIsInvoiceFormOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Create Invoice</DialogTitle>
+            <DialogDescription>Create a new invoice for a customer.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Customer Name *</Label>
+                <Input value={invoiceFormData.customer_name} onChange={e => setInvoiceFormData({ ...invoiceFormData, customer_name: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input type="email" value={invoiceFormData.customer_email} onChange={e => setInvoiceFormData({ ...invoiceFormData, customer_email: e.target.value })} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Phone</Label>
+                <Input value={invoiceFormData.customer_phone} onChange={e => setInvoiceFormData({ ...invoiceFormData, customer_phone: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Due in (days)</Label>
+                <Input type="number" value={invoiceFormData.due_days} onChange={e => setInvoiceFormData({ ...invoiceFormData, due_days: parseInt(e.target.value) || 30 })} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Billing Address</Label>
+              <Textarea value={invoiceFormData.customer_address} onChange={e => setInvoiceFormData({ ...invoiceFormData, customer_address: e.target.value })} />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Line Items</Label>
+                <Button type="button" variant="outline" size="sm" onClick={addInvoiceLineItem}>
+                  <Plus className="w-4 h-4 mr-1" /> Add Item
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {invoiceFormData.line_items.map((item, index) => (
+                  <div key={index} className="grid grid-cols-12 gap-2 items-center">
+                    <Input
+                      className="col-span-5"
+                      placeholder="Description"
+                      value={item.description}
+                      onChange={e => updateInvoiceLineItem(index, 'description', e.target.value)}
+                    />
+                    <Input
+                      className="col-span-2"
+                      type="number"
+                      placeholder="Qty"
+                      value={item.quantity}
+                      onChange={e => updateInvoiceLineItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                    />
+                    <Input
+                      className="col-span-3"
+                      type="number"
+                      step="0.01"
+                      placeholder="Price"
+                      value={item.unit_price}
+                      onChange={e => updateInvoiceLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
+                    />
+                    <div className="col-span-1 text-right text-sm">${(item.quantity * item.unit_price).toFixed(2)}</div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="col-span-1"
+                      onClick={() => removeInvoiceLineItem(index)}
+                      disabled={invoiceFormData.line_items.length === 1}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Tax Rate (%)</Label>
+                <Input type="number" step="0.01" value={invoiceFormData.tax_rate} onChange={e => setInvoiceFormData({ ...invoiceFormData, tax_rate: parseFloat(e.target.value) || 0 })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Notes</Label>
+                <Input value={invoiceFormData.notes} onChange={e => setInvoiceFormData({ ...invoiceFormData, notes: e.target.value })} />
+              </div>
+            </div>
+
+            <div className="border-t pt-4 space-y-1 text-right">
+              <div className="text-sm">Subtotal: ${invoiceSubtotal.toFixed(2)}</div>
+              <div className="text-sm text-muted-foreground">Tax ({invoiceFormData.tax_rate}%): ${invoiceTaxAmount.toFixed(2)}</div>
+              <div className="text-lg font-bold">Total: ${invoiceTotal.toFixed(2)}</div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsInvoiceFormOpen(false)}>Cancel</Button>
+            <Button onClick={() => {
+              if (!invoiceFormData.customer_name) {
+                toast.error('Customer name is required');
+                return;
+              }
+              createInvoiceMutation.mutate(invoiceFormData);
+            }} disabled={createInvoiceMutation.isPending}>
+              {createInvoiceMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              Create Invoice
             </Button>
-          </form>
-        </div>
-      </CardContent>
-    </Card>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Quote Form Dialog */}
+      <Dialog open={isQuoteFormOpen} onOpenChange={setIsQuoteFormOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Create Quote</DialogTitle>
+            <DialogDescription>Create a new quote for a customer.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Customer Name *</Label>
+                <Input value={quoteFormData.customer_name} onChange={e => setQuoteFormData({ ...quoteFormData, customer_name: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input type="email" value={quoteFormData.customer_email} onChange={e => setQuoteFormData({ ...quoteFormData, customer_email: e.target.value })} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Phone</Label>
+                <Input value={quoteFormData.customer_phone} onChange={e => setQuoteFormData({ ...quoteFormData, customer_phone: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Valid Days</Label>
+                <Input type="number" value={quoteFormData.valid_days} onChange={e => setQuoteFormData({ ...quoteFormData, valid_days: parseInt(e.target.value) || 30 })} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Address</Label>
+              <Textarea value={quoteFormData.customer_address} onChange={e => setQuoteFormData({ ...quoteFormData, customer_address: e.target.value })} />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Line Items</Label>
+                <Button type="button" variant="outline" size="sm" onClick={addQuoteLineItem}>
+                  <Plus className="w-4 h-4 mr-1" /> Add Item
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {quoteFormData.line_items.map((item, index) => (
+                  <div key={index} className="grid grid-cols-12 gap-2 items-center">
+                    <Input
+                      className="col-span-5"
+                      placeholder="Description"
+                      value={item.description}
+                      onChange={e => updateQuoteLineItem(index, 'description', e.target.value)}
+                    />
+                    <Input
+                      className="col-span-2"
+                      type="number"
+                      placeholder="Qty"
+                      value={item.quantity}
+                      onChange={e => updateQuoteLineItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                    />
+                    <Input
+                      className="col-span-3"
+                      type="number"
+                      step="0.01"
+                      placeholder="Price"
+                      value={item.unit_price}
+                      onChange={e => updateQuoteLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
+                    />
+                    <div className="col-span-1 text-right text-sm">${(item.quantity * item.unit_price).toFixed(2)}</div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="col-span-1"
+                      onClick={() => removeQuoteLineItem(index)}
+                      disabled={quoteFormData.line_items.length === 1}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Tax Rate (%)</Label>
+                <Input type="number" step="0.01" value={quoteFormData.tax_rate} onChange={e => setQuoteFormData({ ...quoteFormData, tax_rate: parseFloat(e.target.value) || 0 })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Notes</Label>
+                <Input value={quoteFormData.notes} onChange={e => setQuoteFormData({ ...quoteFormData, notes: e.target.value })} />
+              </div>
+            </div>
+
+            <div className="border-t pt-4 space-y-1 text-right">
+              <div className="text-sm">Subtotal: ${quoteSubtotal.toFixed(2)}</div>
+              <div className="text-sm text-muted-foreground">Tax ({quoteFormData.tax_rate}%): ${quoteTaxAmount.toFixed(2)}</div>
+              <div className="text-lg font-bold">Total: ${quoteTotal.toFixed(2)}</div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsQuoteFormOpen(false)}>Cancel</Button>
+            <Button onClick={() => {
+              if (!quoteFormData.customer_name) {
+                toast.error('Customer name is required');
+                return;
+              }
+              createQuoteMutation.mutate(quoteFormData);
+            }} disabled={createQuoteMutation.isPending}>
+              {createQuoteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              Create Quote
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Revenue Report Dialog */}
+      <Dialog open={isReportsOpen} onOpenChange={setIsReportsOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Revenue Report</DialogTitle>
+            <DialogDescription>Overview of invoices and revenue.</DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Total Invoices</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{allInvoices.length}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Total Paid</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-green-600">${totalPaid.toFixed(2)}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Outstanding</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">${totalOutstanding.toFixed(2)}</div>
+              </CardContent>
+            </Card>
+            <Card className={overdueCount > 0 ? 'border-destructive' : ''}>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Overdue</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-destructive">{overdueCount}</div>
+              </CardContent>
+            </Card>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsReportsOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
