@@ -13,7 +13,8 @@ import { TechnicianJobQueue } from '@/components/employee/TechnicianJobQueue';
 
 // Map job types to their dashboard routes
 const JOB_TYPE_ROUTES: Record<string, string> = {
-  // normalized app job roles
+  // All job roles get their specific dashboards
+  technician: '/dashboard/technician',
   billing_specialist: '/dashboard/billing',
   booking_agent: '/dashboard/booking-agent',
   dispatch: '/dashboard/dispatch',
@@ -29,8 +30,6 @@ const JOB_TYPE_ROUTES: Record<string, string> = {
   marketing: '/dashboard/marketing',
   inventory: '/dashboard/inventory-manager',
   analytics: '/dashboard/analytics-manager',
-
-  // technician stays on default employee dashboard
 };
 
 export function EmployeeDashboard() {
