@@ -24,7 +24,7 @@ import { TrackAppointmentForm, TrackingData } from '@/components/ai/TrackAppoint
 import { VoiceChat } from '@/components/ai/VoiceChat';
 import { format } from 'date-fns';
 import logo from '@/assets/logo.png';
-import aiBotCompanyLogo from '@/assets/ai-bot-company-logo.png';
+import aiBotRectangleLogo from '@/assets/ai-bot-rectangle-logo.png';
 
 // Demo company ID - AI Bot Company
 const DEMO_COMPANY_ID = '00000000-0000-0000-0000-000000000001';
@@ -356,28 +356,28 @@ export default function Demo() {
       </div>
 
       <div className="container max-w-4xl mx-auto py-4 sm:py-8 px-3 sm:px-6">
-        <div className="text-center mb-4 sm:mb-6">
+        <div className="flex items-center justify-center gap-4 mb-4">
           <img 
-            src={aiBotCompanyLogo} 
+            src={aiBotRectangleLogo} 
             alt="AI Bot Company" 
-            className="mx-auto mb-4 h-[175px] w-[175px] object-contain"
+            className="h-12 sm:h-14 object-contain"
           />
-          <h1 className="text-2xl sm:text-3xl font-bold mb-2 gradient-text">Try Our AI Agent</h1>
           <p className="text-muted-foreground text-sm sm:text-base">
             Experience how our AI handles appointments, quotes, and customer inquiries
           </p>
         </div>
 
-        <Card className="h-[calc(100vh-180px)] sm:h-[600px] flex flex-col overflow-hidden border-0 shadow-xl">
+        <Card className="h-[calc(100vh-140px)] sm:h-[650px] flex flex-col overflow-hidden border-0 shadow-xl">
           {/* Header */}
           <GlassHeader
             companyName="AI Bot Company"
-            logoUrl={logo}
+            logoUrl={aiBotRectangleLogo}
             agentLabel={agentInfo.label}
             agentColor={agentInfo.color}
             agentBgColor={agentInfo.bgColor}
             showVoice
             onVoiceClick={() => setActiveTab('voice')}
+            rectangleLogo
           />
 
           {/* Tab Navigation */}

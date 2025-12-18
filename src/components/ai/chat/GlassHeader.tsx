@@ -15,6 +15,7 @@ interface GlassHeaderProps {
   onPhoneClick?: () => void;
   onVoiceClick?: () => void;
   isOnline?: boolean;
+  rectangleLogo?: boolean;
 }
 
 export const GlassHeader: React.FC<GlassHeaderProps> = ({
@@ -28,6 +29,7 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
   onPhoneClick,
   onVoiceClick,
   isOnline = true,
+  rectangleLogo = false,
 }) => {
   return (
     <div className="glass-primary p-3 text-white relative shrink-0">
@@ -35,11 +37,19 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
         <div className="flex items-center gap-2 min-w-0">
           {/* Logo */}
           <div className="relative shrink-0">
-            <div className="h-[175px] w-[175px] rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden">
-              {logoUrl && (
-                <img src={logoUrl} alt={companyName} className="h-[150px] w-[150px] object-contain" />
-              )}
-            </div>
+            {rectangleLogo ? (
+              <div className="h-12 px-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden">
+                {logoUrl && (
+                  <img src={logoUrl} alt={companyName} className="h-10 object-contain" />
+                )}
+              </div>
+            ) : (
+              <div className="h-16 w-16 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden">
+                {logoUrl && (
+                  <img src={logoUrl} alt={companyName} className="h-14 w-14 object-contain" />
+                )}
+              </div>
+            )}
             {/* Online status indicator */}
             <div className={cn(
               "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white",
