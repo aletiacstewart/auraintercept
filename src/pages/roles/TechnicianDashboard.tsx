@@ -204,7 +204,7 @@ export default function TechnicianDashboard() {
         </Card>
 
         {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2">
           <Button
             variant="outline"
             className="h-auto py-6 flex flex-col items-center gap-2"
@@ -212,14 +212,6 @@ export default function TechnicianDashboard() {
           >
             <Wrench className="w-6 h-6 text-primary" />
             <span>Field Ops Console</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="h-auto py-6 flex flex-col items-center gap-2"
-            onClick={() => navigate('/dashboard/availability')}
-          >
-            <Clock className="w-6 h-6 text-secondary" />
-            <span>Availability</span>
           </Button>
           <Button
             variant="outline"
