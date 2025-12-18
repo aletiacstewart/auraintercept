@@ -30,7 +30,8 @@ import {
   FileCheck,
   Receipt,
   Megaphone,
-  Gift
+  Gift,
+  HelpCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/logo.png';
@@ -92,6 +93,7 @@ const navGroups: NavGroup[] = [
       { label: 'Subscription', icon: CreditCard, href: '/dashboard/subscription', roles: ['platform_admin', 'company_admin'] },
       { label: 'Communication Logs', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin'] },
       { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin'] },
     ],
   },
 ];
