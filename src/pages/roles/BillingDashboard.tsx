@@ -168,7 +168,7 @@ export default function BillingDashboard() {
               <BarChart3 className="w-5 h-5 text-secondary" />
             </CardHeader>
             <CardContent>
-              <Button size="sm" className="w-full" variant="outline" onClick={() => navigate('/dashboard/analytics')}>
+              <Button size="sm" className="w-full" variant="outline" onClick={() => navigate('/dashboard/billing/reports')}>
                 View Reports
               </Button>
             </CardContent>
@@ -176,7 +176,7 @@ export default function BillingDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-5">
+        <div className="grid gap-4 md:grid-cols-4">
           <Button
             variant="outline"
             className="h-auto py-6 flex flex-col items-center gap-2"
@@ -204,18 +204,10 @@ export default function BillingDashboard() {
           <Button
             variant="outline"
             className="h-auto py-6 flex flex-col items-center gap-2"
-            onClick={() => navigate('/dashboard/analytics')}
+            onClick={() => navigate('/dashboard/billing/reports')}
           >
             <BarChart3 className="w-6 h-6 text-primary" />
-            <span>View Analytics</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="h-auto py-6 flex flex-col items-center gap-2"
-            onClick={() => navigate('/dashboard/ai-agents')}
-          >
-            <TrendingUp className="w-6 h-6 text-secondary" />
-            <span>AI Agents Hub</span>
+            <span>View Reports</span>
           </Button>
         </div>
       </div>

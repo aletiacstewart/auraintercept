@@ -151,7 +151,7 @@ export const JOB_ROLE_CONFIGS: Record<JobRoleType, JobRoleConfig> = {
       { label: 'Quotes', icon: 'FileText', path: '/dashboard/quotes' },
       { label: 'Reports', icon: 'TrendingUp', path: '/dashboard/billing/reports' },
       { label: 'Billing AI Console', icon: 'Bot', path: '/dashboard/billing/ai-console' },
-      { label: 'Analytics', icon: 'BarChart3', path: '/dashboard/analytics' },
+      { label: 'Analytics', icon: 'BarChart3', path: '/dashboard/billing/reports' },
     ],
     quickActions: ['create_invoice', 'send_reminder', 'process_payment', 'refund', 'revenue_report', 'payment_forecast', 'overdue_followup'],
   },
