@@ -22,6 +22,7 @@ const AIAgent = () => {
   const { isAtLeastTier } = useSubscription();
   const [viewMode, setViewMode] = useState<'customer' | 'debug'>('customer');
   const [activeTab, setActiveTab] = useState<'console' | 'settings'>('console');
+  const [consoleType, setConsoleType] = useState<'customer' | 'fieldops'>('customer');
   
   // Employees can view but not configure - they inherit company settings
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
@@ -253,14 +254,30 @@ const AIAgent = () => {
           </TabsList>
 
           <TabsContent value="console" className="mt-6">
+            {/* Console Type Selector for Admins */}
+            {userRole !== 'employee' && (
+              <Tabs value={consoleType} onValueChange={(v) => setConsoleType(v as 'customer' | 'fieldops')} className="mb-6">
+                <TabsList>
+                  <TabsTrigger value="customer">
+                    <HeadphonesIcon className="h-4 w-4 mr-2" />
+                    Customer Engagement
+                  </TabsTrigger>
+                  <TabsTrigger value="fieldops">
+                    <Truck className="h-4 w-4 mr-2" />
+                    Field Operations
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            )}
+
             {/* Console with View Toggle */}
-            <div className={`grid gap-6 ${userRole === 'employee' ? '' : 'lg:grid-cols-2'}`}>
+            <div className={`grid gap-6 ${userRole === 'employee' || consoleType === 'fieldops' ? '' : 'lg:grid-cols-2'}`}>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold">
-                    {userRole === 'employee' ? 'Field Operations Console' : 'AI Agent Console'}
+                    {userRole === 'employee' || consoleType === 'fieldops' ? 'Field Operations Console' : 'AI Agent Console'}
                   </h2>
-                  {userRole !== 'employee' && (
+                  {userRole !== 'employee' && consoleType === 'customer' && (
                     <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
                       <TabsList className="h-8">
                         <TabsTrigger value="customer" className="text-xs h-7 px-3">
@@ -276,7 +293,7 @@ const AIAgent = () => {
                   )}
                 </div>
                 
-                {userRole === 'employee' ? (
+                {userRole === 'employee' || consoleType === 'fieldops' ? (
                   <FieldOpsAgentConsole />
                 ) : (
                   viewMode === 'customer' ? (
@@ -287,7 +304,7 @@ const AIAgent = () => {
                 )}
               </div>
 
-              {userRole !== 'employee' && (
+              {userRole !== 'employee' && consoleType === 'customer' && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
