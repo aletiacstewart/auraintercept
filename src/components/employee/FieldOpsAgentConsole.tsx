@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { 
   Send, 
   Navigation, 
@@ -27,15 +27,26 @@ import {
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { GlassHeader } from '@/components/ai/chat/GlassHeader';
+import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
 
 const FIELD_OPS_AGENTS = [
-  { id: 'accept', name: 'Accept Job', color: 'bg-blue-500' },
-  { id: 'directions', name: 'Get Directions', color: 'bg-green-500' },
-  { id: 'enroute', name: 'En Route', color: 'bg-orange-500' },
-  { id: 'eta', name: 'Update ETA', color: 'bg-yellow-500' },
-  { id: 'arrived', name: 'Arrived', color: 'bg-purple-500' },
-  { id: 'complete', name: 'Complete Job', color: 'bg-emerald-500' },
-  { id: 'dispatch', name: 'Contact Dispatch', color: 'bg-cyan-500' },
+  { id: 'accept', name: 'Accept Job', color: 'bg-blue-100', textColor: 'text-blue-700' },
+  { id: 'directions', name: 'Get Directions', color: 'bg-blue-100', textColor: 'text-blue-700' },
+  { id: 'enroute', name: 'En Route', color: 'bg-blue-100', textColor: 'text-blue-700' },
+  { id: 'eta', name: 'Update ETA', color: 'bg-blue-100', textColor: 'text-blue-700' },
+  { id: 'arrived', name: 'Arrived', color: 'bg-blue-100', textColor: 'text-blue-700' },
+  { id: 'complete', name: 'Complete Job', color: 'bg-blue-100', textColor: 'text-blue-700' },
+  { id: 'dispatch', name: 'Contact Dispatch', color: 'bg-blue-100', textColor: 'text-blue-700' },
+];
+
+// Tabs for the console - matching AIAgentConsole structure
+const TABS = [
+  { id: 'chat', label: 'Chat', icon: MessageSquare },
+  { id: 'jobs', label: 'Jobs', icon: Truck },
+  { id: 'directions', label: 'Directions', icon: Navigation },
+  { id: 'eta', label: 'ETA', icon: Clock },
+  { id: 'dispatch', label: 'Dispatch', icon: Phone },
 ];
 
 interface QuickAction {
@@ -89,6 +100,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const [processingJobId, setProcessingJobId] = useState<string | null>(null);
   const [selectedJobForEta, setSelectedJobForEta] = useState<JobAssignment | null>(null);
   const [etaMinutes, setEtaMinutes] = useState('');
+  const [activeTab, setActiveTab] = useState('chat');
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -455,11 +467,17 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     const agent = FIELD_OPS_AGENTS.find(a => a.id === agentType);
     if (!agent) return null;
     return (
-      <Badge variant="secondary" className={cn('text-[10px] px-1.5 py-0', agent.color, 'text-white')}>
+      <Badge variant="secondary" className={cn('text-[10px] px-1.5 py-0 border-0', agent.color, agent.textColor)}>
         {agent.name}
       </Badge>
     );
   };
+
+  const getAgentInfo = () => {
+    return { label: currentAgent || 'Field Ops', color: 'text-blue-700', bgColor: 'bg-blue-100' };
+  };
+
+  const agentInfo = getAgentInfo();
 
   const renderMessage = (msg: ChatMessage, index: number) => {
     const isUser = msg.role === 'user';
@@ -473,7 +491,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         )}
       >
         {!isUser && (
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shrink-0 shadow-sm">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-sm">
             <Bot className="w-4 h-4 text-white" />
           </div>
         )}
@@ -481,7 +499,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           className={cn(
             'max-w-[85%] rounded-2xl px-4 py-2.5 shadow-sm',
             isUser 
-              ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-br-md' 
+              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-br-md' 
               : 'bg-card border border-border/50 rounded-bl-md'
           )}
         >
@@ -582,55 +600,63 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   return (
     <Card className={cn('h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden border-0 shadow-xl', className)}>
       {/* Header - matching AIAgentConsole glass style */}
-      <div className="shrink-0 bg-gradient-to-r from-green-600 to-emerald-600 text-white">
-        <div className="px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                <Truck className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h2 className="font-semibold text-base">Field Ops Assistant</h2>
-                <p className="text-xs text-white/80">7 specialized agents ready</p>
-              </div>
-            </div>
-            <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
-              {currentAgent || 'Ready'}
-            </Badge>
-          </div>
-        </div>
-        
-        {/* Quick Actions - horizontal scrollable like AIAgentConsole */}
-        <div className="px-4 pb-3 pt-1">
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+      <GlassHeader
+        companyName="Field Ops Assistant"
+        agentLabel={agentInfo.label}
+        agentColor={agentInfo.color}
+        agentBgColor={agentInfo.bgColor}
+        showPhone={!!companyData?.dispatch_phone}
+        onPhoneClick={() => {
+          if (companyData?.dispatch_phone) {
+            const cleanPhone = companyData.dispatch_phone.replace(/[^\d+]/g, '');
+            window.location.href = `tel:${cleanPhone}`;
+          }
+        }}
+        isOnline={true}
+      />
+
+      {/* Tab Navigation - matching AIAgentConsole */}
+      <MobileTabNav
+        tabs={TABS}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+
+      {/* Quick Actions - matching AIAgentConsole style */}
+      {activeTab === 'chat' && (
+        <div className="shrink-0 px-4 py-3 border-b bg-muted/30">
+          <div className="flex flex-wrap gap-2 justify-center">
             {QUICK_ACTIONS.map((action) => (
               <Button
                 key={action.id}
-                variant="ghost"
+                variant={action.id === 'complete' ? 'default' : 'outline'}
                 size="sm"
-                className="shrink-0 h-auto py-1.5 px-3 flex items-center gap-1.5 text-xs bg-white/10 hover:bg-white/20 text-white border-0"
+                className={cn(
+                  'h-auto py-2 px-3 flex flex-col items-center gap-1 min-w-[80px]',
+                  action.id === 'complete' && 'bg-destructive hover:bg-destructive/90 text-destructive-foreground'
+                )}
                 onClick={() => handleQuickAction(action)}
                 disabled={isLoading}
               >
-                <action.icon className="h-3.5 w-3.5" />
-                <span>{action.label}</span>
+                <action.icon className="h-4 w-4" />
+                <span className="text-xs">{action.label}</span>
               </Button>
             ))}
           </div>
         </div>
-      </div>
+      )}
 
       {/* Job Selector Panel */}
       {selectorMode && selectorConfig && (
-        <div className="shrink-0 border-b bg-green-50 dark:bg-green-950/30 p-4">
+        <div className="shrink-0 border-b bg-blue-50 dark:bg-blue-950/30 p-4">
           <div className="flex items-center justify-between mb-3">
             <p className="text-sm font-medium flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                 <selectorConfig.icon className="h-3.5 w-3.5 text-white" />
               </div>
               {selectorConfig.title}
             </p>
-            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-green-100 dark:hover:bg-green-900/50" onClick={() => {
+            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-blue-100 dark:hover:bg-blue-900/50" onClick={() => {
               setSelectorMode(null);
               setSelectedJobForEta(null);
               setEtaMinutes('');
@@ -704,8 +730,8 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                     onClick={() => !isProcessing && (selectorMode !== 'eta' || !selectedJobForEta) && selectorConfig.onSelect(job)}
                     className={cn(
                       'p-3 rounded-lg border cursor-pointer transition-all bg-background',
-                      'hover:border-green-500/50 hover:bg-green-50 dark:hover:bg-green-950/30',
-                      isSelected && 'border-green-500 bg-green-50 dark:bg-green-950/30',
+                      'hover:border-blue-500/50 hover:bg-blue-50 dark:hover:bg-blue-950/30',
+                      isSelected && 'border-blue-500 bg-blue-50 dark:bg-blue-950/30',
                       (isProcessing || (selectorMode === 'eta' && selectedJobForEta && !isSelected)) && 'opacity-50 cursor-not-allowed'
                     )}
                   >
@@ -725,7 +751,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                         </p>
                         {address ? (
                           <p className="text-xs flex items-center gap-1 mt-1">
-                            <MapPin className="h-3 w-3 text-green-600 shrink-0" />
+                            <MapPin className="h-3 w-3 text-blue-600 shrink-0" />
                             <span className="truncate">{address}</span>
                           </p>
                         ) : (
@@ -772,7 +798,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         <div className="space-y-3">
           {messages.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 mx-auto mb-4 flex items-center justify-center shadow-lg">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 mx-auto mb-4 flex items-center justify-center shadow-lg">
                 <Truck className="w-8 h-8 text-white" />
               </div>
               <h3 className="font-semibold text-foreground mb-1">Field Ops Ready</h3>
@@ -785,14 +811,14 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           )}
           {isLoading && (
             <div className="flex gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
                 <Loader2 className="w-4 h-4 text-white animate-spin" />
               </div>
               <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             </div>
@@ -810,13 +836,13 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
             placeholder="Ask about jobs, directions, ETAs..."
             disabled={isLoading}
-            className="h-11 rounded-full px-4 border-muted-foreground/20 focus-visible:ring-green-500"
+            className="h-11 rounded-full px-4 border-muted-foreground/20 focus-visible:ring-primary"
           />
           <Button 
             onClick={handleSend} 
             disabled={isLoading || !inputValue.trim()} 
             size="icon" 
-            className="h-11 w-11 rounded-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-md"
+            className="h-11 w-11 rounded-full shadow-md"
           >
             <Send className="h-4 w-4" />
           </Button>
