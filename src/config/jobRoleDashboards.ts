@@ -127,15 +127,16 @@ export const JOB_ROLE_CONFIGS: Record<JobRoleType, JobRoleConfig> = {
   billing_specialist: {
     title: 'Billing Dashboard',
     description: 'Invoicing and payment management',
-    agents: ['invoice', 'quoting'],
+    agents: ['invoice', 'quoting', 'followup', 'insights', 'forecast'],
     navItems: [
       { label: 'Overview', icon: 'LayoutDashboard', path: '/dashboard/billing' },
       { label: 'Invoices', icon: 'Receipt', path: '/dashboard/invoices' },
       { label: 'Quotes', icon: 'FileText', path: '/dashboard/quotes' },
+      { label: 'Reports', icon: 'TrendingUp', path: '/dashboard/billing/reports' },
       { label: 'AI Console', icon: 'Bot', path: '/dashboard/ai-agent' },
       { label: 'Analytics', icon: 'BarChart3', path: '/dashboard/analytics' },
     ],
-    quickActions: ['create_invoice', 'send_reminder', 'process_payment', 'refund'],
+    quickActions: ['create_invoice', 'send_reminder', 'process_payment', 'refund', 'revenue_report', 'payment_forecast', 'overdue_followup'],
   },
   compliance_officer: {
     title: 'Compliance Dashboard',
@@ -174,7 +175,7 @@ export const JOB_TYPE_TO_AGENT_CATEGORIES: Record<JobRoleType, string[]> = {
   sales_rep: ['customer_engagement', 'business_operations', 'marketing_sales'],
   customer_service: ['customer_engagement', 'business_operations'],
   inventory_manager: ['business_operations'],
-  billing_specialist: ['business_operations'],
+  billing_specialist: ['business_operations', 'analytics', 'customer_engagement'],
   compliance_officer: ['business_operations', 'analytics'],
   analytics_manager: ['analytics'],
 };
