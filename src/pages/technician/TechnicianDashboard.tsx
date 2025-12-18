@@ -93,8 +93,8 @@ export default function TechnicianDashboard() {
       <div className="p-4 md:p-6 space-y-6 animate-fade-in">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Good {getGreeting()}!</h1>
-          <p className="text-muted-foreground mt-1">Here's your day at a glance</p>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground mt-1">Good {getGreeting()}! Here's your day at a glance</p>
         </div>
 
         {/* Stats Grid */}

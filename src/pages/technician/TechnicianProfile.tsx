@@ -5,9 +5,11 @@ import { ProfileSettings } from '@/components/employee/ProfileSettings';
 export default function TechnicianProfile() {
   return (
     <TechnicianDashboardLayout>
-      <div className="p-4 md:p-6">
-        <h1 className="text-2xl font-bold mb-4">My Profile</h1>
-        <p className="text-muted-foreground mb-6">Manage your personal information</p>
+      <div className="space-y-6 animate-fade-in">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
+          <p className="text-muted-foreground mt-1">Manage your personal information</p>
+        </div>
         <ProfileSettings />
       </div>
     </TechnicianDashboardLayout>
