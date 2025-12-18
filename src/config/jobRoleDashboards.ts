@@ -49,7 +49,6 @@ export const JOB_ROLE_CONFIGS: Record<JobRoleType, JobRoleConfig> = {
     agents: ['dispatch', 'route', 'eta', 'checkin', 'inventory'],
     navItems: [
       { label: 'Overview', icon: 'LayoutDashboard', path: '/dashboard/technician' },
-      { label: 'Field Ops Console', icon: 'Bot', path: '/dashboard/technician/field-ops' },
       { label: 'Job Queue', icon: 'ClipboardList', path: '/dashboard/technician/jobs' },
       { label: 'My Calendar', icon: 'Calendar', path: '/dashboard/appointments' },
       { label: 'Availability', icon: 'Clock', path: '/dashboard/availability' },
