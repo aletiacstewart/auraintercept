@@ -327,7 +327,7 @@ export function EmployeeDashboard() {
       </Card>
 
       {/* Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-5">
+      <div className="grid gap-4 md:grid-cols-4">
         <Button
           variant="outline"
           className="h-auto py-6 flex flex-col items-center gap-2"
@@ -351,14 +351,6 @@ export function EmployeeDashboard() {
         >
           <Calendar className="w-6 h-6 text-accent" />
           <span>View Calendar</span>
-        </Button>
-        <Button
-          variant="outline"
-          className="h-auto py-6 flex flex-col items-center gap-2"
-          onClick={() => navigate('/dashboard/inventory')}
-        >
-          <Package className="w-6 h-6 text-primary" />
-          <span>View Inventory</span>
         </Button>
         <Button
           variant="outline"
