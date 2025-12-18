@@ -1,5 +1,5 @@
 // Job role to dashboard configuration mapping
-export type JobRoleType = 
+export type JobRoleType =
   | 'technician'
   | 'booking_agent'
   | 'dispatch'
@@ -24,6 +24,23 @@ export interface JobRoleConfig {
   navItems: NavItem[];
   quickActions: string[];
 }
+
+/**
+ * Canonical role dashboard “home” routes.
+ * (Used by RoleDashboardLayout role switcher to avoid string replace bugs)
+ */
+export const JOB_ROLE_ROUTES: Record<JobRoleType, string> = {
+  technician: '/dashboard/technician',
+  booking_agent: '/dashboard/booking-agent',
+  dispatch: '/dashboard/dispatch',
+  marketing_manager: '/dashboard/marketing',
+  sales_rep: '/dashboard/sales',
+  customer_service: '/dashboard/customer-service',
+  inventory_manager: '/dashboard/inventory-manager',
+  billing_specialist: '/dashboard/billing',
+  compliance_officer: '/dashboard/compliance',
+  analytics_manager: '/dashboard/analytics-manager',
+};
 
 export const JOB_ROLE_CONFIGS: Record<JobRoleType, JobRoleConfig> = {
   technician: {
