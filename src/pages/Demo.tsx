@@ -24,7 +24,7 @@ import { TrackAppointmentForm, TrackingData } from '@/components/ai/TrackAppoint
 import { VoiceChat } from '@/components/ai/VoiceChat';
 import { format } from 'date-fns';
 import logo from '@/assets/logo.png';
-import aiBotRectangleLogo from '@/assets/ai-bot-rectangle-logo.png';
+import aiBotBannerLogo from '@/assets/ai-bot-company-banner.png';
 
 // Demo company ID - AI Bot Company
 const DEMO_COMPANY_ID = '00000000-0000-0000-0000-000000000001';
@@ -358,7 +358,7 @@ export default function Demo() {
       <div className="container max-w-4xl mx-auto py-4 sm:py-8 px-3 sm:px-6">
         <div className="flex items-center justify-center gap-4 mb-4">
           <img 
-            src={aiBotRectangleLogo} 
+            src={aiBotBannerLogo} 
             alt="AI Bot Company" 
             className="h-12 sm:h-14 object-contain"
           />
@@ -371,7 +371,7 @@ export default function Demo() {
           {/* Header */}
           <GlassHeader
             companyName="AI Bot Company"
-            logoUrl={aiBotRectangleLogo}
+            logoUrl={aiBotBannerLogo}
             agentLabel={agentInfo.label}
             agentColor={agentInfo.color}
             agentBgColor={agentInfo.bgColor}
