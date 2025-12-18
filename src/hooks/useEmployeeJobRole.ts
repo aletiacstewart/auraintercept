@@ -3,6 +3,31 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { JobRoleType, JOB_ROLE_CONFIGS } from '@/config/jobRoleDashboards';
 
+type DbEmployeeJobType =
+  | 'technician'
+  | 'booking_agent'
+  | 'dispatch'
+  | 'customer_service'
+  | 'billing'
+  | 'marketing'
+  | 'inventory'
+  | 'analytics';
+
+function normalizeJobType(dbType: DbEmployeeJobType): JobRoleType {
+  switch (dbType) {
+    case 'billing':
+      return 'billing_specialist';
+    case 'marketing':
+      return 'marketing_manager';
+    case 'inventory':
+      return 'inventory_manager';
+    case 'analytics':
+      return 'analytics_manager';
+    default:
+      return dbType;
+  }
+}
+
 export function useEmployeeJobRole() {
   const { user, userRole } = useAuth();
   const [jobTypes, setJobTypes] = useState<JobRoleType[]>([]);
@@ -25,10 +50,13 @@ export function useEmployeeJobRole() {
         if (error) throw error;
 
         if (data && data.length > 0) {
-          const types = data.map(d => d.job_type as JobRoleType);
+          const types = data.map((d) => normalizeJobType(d.job_type as DbEmployeeJobType));
           setJobTypes(types);
           // Primary is the first assigned job type
           setPrimaryJobType(types[0]);
+        } else {
+          setJobTypes([]);
+          setPrimaryJobType(null);
         }
       } catch (err) {
         console.error('Error fetching job types:', err);
@@ -41,7 +69,7 @@ export function useEmployeeJobRole() {
   }, [user, userRole]);
 
   const getConfig = (jobType: JobRoleType) => JOB_ROLE_CONFIGS[jobType];
-  
+
   const hasJobType = (type: JobRoleType) => jobTypes.includes(type);
 
   return {
