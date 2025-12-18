@@ -52,8 +52,6 @@ export const JOB_ROLE_CONFIGS: Record<JobRoleType, JobRoleConfig> = {
       { label: 'Job Queue', icon: 'ClipboardList', path: '/dashboard/technician/jobs' },
       { label: 'My Calendar', icon: 'Calendar', path: '/dashboard/appointments' },
       { label: 'Availability', icon: 'Clock', path: '/dashboard/availability' },
-      { label: 'Inventory', icon: 'Package', path: '/dashboard/inventory' },
-      { label: 'AI Console', icon: 'Bot', path: '/dashboard/ai-agent' },
       { label: 'Messages', icon: 'MessageSquare', path: '/dashboard/messages' },
     ],
     quickActions: ['accept_job', 'directions', 'en_route', 'check_in', 'complete'],
