@@ -37,6 +37,7 @@ import NotFound from "./pages/NotFound";
 
 // Role-based dashboards
 import TechnicianDashboard from "./pages/roles/TechnicianDashboard";
+import TechnicianFieldOps from "./pages/roles/TechnicianFieldOps";
 import BookingAgentDashboard from "./pages/roles/BookingAgentDashboard";
 import DispatchDashboard from "./pages/roles/DispatchDashboard";
 import MarketingDashboard from "./pages/roles/MarketingDashboard";
@@ -89,6 +90,7 @@ const App = () => (
             
             {/* Role-based dashboards */}
             <Route path="/dashboard/technician" element={<TechnicianDashboard />} />
+            <Route path="/dashboard/technician/field-ops" element={<TechnicianFieldOps />} />
             <Route path="/dashboard/booking-agent" element={<BookingAgentDashboard />} />
             <Route path="/dashboard/dispatch" element={<DispatchDashboard />} />
             <Route path="/dashboard/marketing" element={<MarketingDashboard />} />
