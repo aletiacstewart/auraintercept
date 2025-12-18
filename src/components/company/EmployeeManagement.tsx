@@ -173,15 +173,18 @@ export function EmployeeManagement() {
           .eq('company_id', companyId);
         if (error) throw error;
       } else {
-        // Add job type
+        // Add job type (upsert to avoid duplicate constraint errors)
         const { error } = await supabase
           .from('employee_job_assignments')
-          .insert({
-            employee_id: employeeId,
-            job_type: jobType,
-            company_id: companyId,
-            assigned_by: user?.id,
-          });
+          .upsert(
+            {
+              employee_id: employeeId,
+              job_type: jobType,
+              company_id: companyId,
+              assigned_by: user?.id,
+            },
+            { onConflict: 'employee_id,job_type' }
+          );
         if (error) throw error;
       }
     },
