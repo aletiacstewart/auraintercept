@@ -468,40 +468,40 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       <div
         key={index}
         className={cn(
-          'flex gap-2 animate-fade-in',
+          'flex gap-2.5 animate-fade-in',
           isUser ? 'justify-end' : 'justify-start'
         )}
       >
         {!isUser && (
-          <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-            <Bot className="w-4 h-4 text-primary" />
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shrink-0 shadow-sm">
+            <Bot className="w-4 h-4 text-white" />
           </div>
         )}
         <div
           className={cn(
-            'max-w-[85%] rounded-2xl px-3 py-2',
+            'max-w-[85%] rounded-2xl px-4 py-2.5 shadow-sm',
             isUser 
-              ? 'bg-primary text-primary-foreground rounded-br-md' 
-              : 'bg-muted rounded-bl-md'
+              ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-br-md' 
+              : 'bg-card border border-border/50 rounded-bl-md'
           )}
         >
           {!isUser && msg.agent && (
-            <div className="mb-1">
+            <div className="mb-1.5">
               {getAgentBadge(msg.agent)}
             </div>
           )}
-          <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+          <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
           {msg.timestamp && (
             <p className={cn(
-              'text-[10px] mt-1',
-              isUser ? 'text-primary-foreground/70' : 'text-muted-foreground'
+              'text-[10px] mt-1.5',
+              isUser ? 'text-white/70' : 'text-muted-foreground'
             )}>
               {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </p>
           )}
         </div>
         {isUser && (
-          <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center shrink-0 shadow-sm">
             <User className="w-4 h-4" />
           </div>
         )}
@@ -580,55 +580,57 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const selectorConfig = getSelectorConfig();
 
   return (
-    <div className={cn('flex flex-col h-full bg-background', className)}>
-      {/* Header */}
-      <Card className="rounded-none border-x-0 border-t-0 shrink-0">
-        <CardHeader className="py-3 px-4">
+    <Card className={cn('h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden border-0 shadow-xl', className)}>
+      {/* Header - matching AIAgentConsole glass style */}
+      <div className="shrink-0 bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+        <div className="px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center">
-                <Truck className="w-4 h-4 text-primary-foreground" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                <Truck className="w-5 h-5 text-white" />
               </div>
               <div>
-                <CardTitle className="text-base">Field Ops Assistant</CardTitle>
-                <p className="text-xs text-muted-foreground">Accept • Directions • En Route • ETA • Arrived • Complete • Dispatch</p>
+                <h2 className="font-semibold text-base">Field Ops Assistant</h2>
+                <p className="text-xs text-white/80">7 specialized agents ready</p>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs">
+            <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
               {currentAgent || 'Ready'}
             </Badge>
           </div>
-        </CardHeader>
-      </Card>
-
-      {/* Quick Actions */}
-      <div className="shrink-0 p-3 border-b">
-        <div className="grid grid-cols-3 gap-2">
-          {QUICK_ACTIONS.map((action) => (
-            <Button
-              key={action.id}
-              variant="outline"
-              size="sm"
-              className="h-auto py-2 px-2 flex flex-col items-center gap-1 text-[10px]"
-              onClick={() => handleQuickAction(action)}
-              disabled={isLoading}
-            >
-              <action.icon className="h-4 w-4" />
-              <span className="leading-tight text-center">{action.label}</span>
-            </Button>
-          ))}
+        </div>
+        
+        {/* Quick Actions - horizontal scrollable like AIAgentConsole */}
+        <div className="px-4 pb-3 pt-1">
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {QUICK_ACTIONS.map((action) => (
+              <Button
+                key={action.id}
+                variant="ghost"
+                size="sm"
+                className="shrink-0 h-auto py-1.5 px-3 flex items-center gap-1.5 text-xs bg-white/10 hover:bg-white/20 text-white border-0"
+                onClick={() => handleQuickAction(action)}
+                disabled={isLoading}
+              >
+                <action.icon className="h-3.5 w-3.5" />
+                <span>{action.label}</span>
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Job Selector Panel */}
       {selectorMode && selectorConfig && (
-        <div className="shrink-0 border-b bg-muted/30 p-3">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium flex items-center gap-1.5">
-              <selectorConfig.icon className="h-4 w-4 text-primary" />
+        <div className="shrink-0 border-b bg-green-50 dark:bg-green-950/30 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-sm font-medium flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                <selectorConfig.icon className="h-3.5 w-3.5 text-white" />
+              </div>
               {selectorConfig.title}
             </p>
-            <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => {
+            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-green-100 dark:hover:bg-green-900/50" onClick={() => {
               setSelectorMode(null);
               setSelectedJobForEta(null);
               setEtaMinutes('');
@@ -701,9 +703,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                     key={job.id}
                     onClick={() => !isProcessing && (selectorMode !== 'eta' || !selectedJobForEta) && selectorConfig.onSelect(job)}
                     className={cn(
-                      'p-2.5 rounded-lg border cursor-pointer transition-all',
-                      'hover:border-primary/50 hover:bg-primary/5',
-                      isSelected && 'border-primary bg-primary/5',
+                      'p-3 rounded-lg border cursor-pointer transition-all bg-background',
+                      'hover:border-green-500/50 hover:bg-green-50 dark:hover:bg-green-950/30',
+                      isSelected && 'border-green-500 bg-green-50 dark:bg-green-950/30',
                       (isProcessing || (selectorMode === 'eta' && selectedJobForEta && !isSelected)) && 'opacity-50 cursor-not-allowed'
                     )}
                   >
@@ -723,7 +725,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                         </p>
                         {address ? (
                           <p className="text-xs flex items-center gap-1 mt-1">
-                            <MapPin className="h-3 w-3 text-primary shrink-0" />
+                            <MapPin className="h-3 w-3 text-green-600 shrink-0" />
                             <span className="truncate">{address}</span>
                           </p>
                         ) : (
@@ -766,15 +768,16 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       )}
 
       {/* Messages */}
-      <ScrollArea className="flex-1 p-3" ref={scrollRef}>
+      <ScrollArea className="flex-1 p-4 bg-gradient-to-b from-background to-muted/20" ref={scrollRef}>
         <div className="space-y-3">
           {messages.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
-                <MessageSquare className="w-8 h-8 text-muted-foreground" />
+            <div className="text-center py-12">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 mx-auto mb-4 flex items-center justify-center shadow-lg">
+                <Truck className="w-8 h-8 text-white" />
               </div>
-              <p className="text-sm text-muted-foreground">
-                Ask me about directions, ETAs, or job status updates
+              <h3 className="font-semibold text-foreground mb-1">Field Ops Ready</h3>
+              <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                Manage your jobs - accept, navigate, update ETAs, and complete assignments
               </p>
             </div>
           ) : (
@@ -782,14 +785,14 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           )}
           {isLoading && (
             <div className="flex gap-2">
-              <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
-                <Loader2 className="w-4 h-4 text-primary animate-spin" />
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-sm">
+                <Loader2 className="w-4 h-4 text-white animate-spin" />
               </div>
-              <div className="bg-muted rounded-2xl rounded-bl-md px-3 py-2">
-                <div className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             </div>
@@ -797,23 +800,28 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         </div>
       </ScrollArea>
 
-      {/* Input */}
-      <div className="shrink-0 p-3 border-t bg-background">
+      {/* Input - matching AIAgentConsole floating style */}
+      <div className="shrink-0 p-4 border-t bg-background/80 backdrop-blur-sm">
         <div className="flex gap-2">
           <Input
             ref={inputRef}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-            placeholder="Type a message..."
+            placeholder="Ask about jobs, directions, ETAs..."
             disabled={isLoading}
-            className="h-10"
+            className="h-11 rounded-full px-4 border-muted-foreground/20 focus-visible:ring-green-500"
           />
-          <Button onClick={handleSend} disabled={isLoading || !inputValue.trim()} size="icon" className="h-10 w-10">
+          <Button 
+            onClick={handleSend} 
+            disabled={isLoading || !inputValue.trim()} 
+            size="icon" 
+            className="h-11 w-11 rounded-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-md"
+          >
             <Send className="h-4 w-4" />
           </Button>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
