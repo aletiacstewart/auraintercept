@@ -75,7 +75,7 @@ const navGroups: NavGroup[] = [
     label: 'AI & Automation',
     items: [
       { label: 'AI Agent', labelForEmployee: 'Field Ops Agent', icon: Bot, href: '/dashboard/ai-agent', roles: ['platform_admin', 'company_admin', 'employee'] },
-      { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin', 'employee'] },
+      { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'] },
       { label: 'Chat Widget', icon: MessageCircle, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
       { label: 'Call History', icon: PhoneCall, href: '/dashboard/calls', roles: ['platform_admin', 'company_admin'] },
     ],
