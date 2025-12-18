@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Receipt, DollarSign, FileText, BarChart3 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { BillingAgentConsole } from '@/components/billing/BillingAgentConsole';
 
 export default function BillingDashboard() {
   const { user, loading: authLoading, companyId } = useAuth();
@@ -83,10 +84,10 @@ export default function BillingDashboard() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Overdue</CardTitle>
-              <DollarSign className="h-4 w-4 text-red-500" />
+              <DollarSign className="h-4 w-4 text-destructive" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-500">{stats?.overdueInvoices || 0}</div>
+              <div className="text-2xl font-bold text-destructive">{stats?.overdueInvoices || 0}</div>
             </CardContent>
           </Card>
           <Card>
@@ -100,28 +101,22 @@ export default function BillingDashboard() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Invoices</CardTitle>
+              <CardTitle className="text-sm font-medium">Quick Access</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent>
-              <Button size="sm" className="w-full" onClick={() => navigate('/dashboard/invoices')}>
-                Manage
+            <CardContent className="space-y-2">
+              <Button size="sm" className="w-full" variant="outline" onClick={() => navigate('/dashboard/invoices')}>
+                Invoices
+              </Button>
+              <Button size="sm" className="w-full" variant="outline" onClick={() => navigate('/dashboard/quotes')}>
+                Quotes
               </Button>
             </CardContent>
           </Card>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Billing AI Console</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">Use AI to create invoices, send reminders, and process payments.</p>
-            <Button onClick={() => navigate('/dashboard/ai-agent')}>
-              Open AI Console
-            </Button>
-          </CardContent>
-        </Card>
+        {/* Billing AI Console */}
+        <BillingAgentConsole companyId={companyId || undefined} />
       </div>
     </RoleDashboardLayout>
   );
