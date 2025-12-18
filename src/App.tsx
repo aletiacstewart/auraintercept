@@ -33,6 +33,7 @@ import Invoices from "./pages/Invoices";
 import Warranties from "./pages/Warranties";
 import Referrals from "./pages/Referrals";
 import Campaigns from "./pages/Campaigns";
+import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
 
 // Technician Dashboard Pages
@@ -84,6 +85,7 @@ const App = () => (
             <Route path="/dashboard/warranties" element={<Warranties />} />
             <Route path="/dashboard/referrals" element={<Referrals />} />
             <Route path="/dashboard/campaigns" element={<Campaigns />} />
+            <Route path="/dashboard/help" element={<Help />} />
             
             <Route path="/appointment" element={<CustomerPortal />} />
             <Route path="/chat/:companySlug" element={<PublicChat />} />
