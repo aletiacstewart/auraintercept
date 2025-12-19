@@ -29,6 +29,7 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { GlassHeader } from '@/components/ai/chat/GlassHeader';
 import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
+import { TechnicianMap } from './TechnicianMap';
 
 const FIELD_OPS_AGENTS = [
   { id: 'accept', name: 'Accept Job', color: 'bg-blue-100', textColor: 'text-blue-700' },
@@ -101,6 +102,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const [selectedJobForEta, setSelectedJobForEta] = useState<JobAssignment | null>(null);
   const [etaMinutes, setEtaMinutes] = useState('');
   const [activeTab, setActiveTab] = useState('chat');
+  const [navigationAddress, setNavigationAddress] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -249,14 +251,11 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const handleSelectJobForDirections = useCallback((job: JobAssignment) => {
     const address = job.customer_address || job.appointments?.customer_address;
     if (address) {
-      // Open native maps app for directions instead of AI chat
-      const encodedAddress = encodeURIComponent(address);
-      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
-      window.open(mapsUrl, '_blank');
-      
+      // Set the address and switch to directions tab to show TechnicianMap
+      setNavigationAddress(address);
       setSelectorMode(null);
       setActiveTab('directions');
-      toast.success('Opening directions', { 
+      toast.success('Loading directions', { 
         description: `To: ${job.appointments?.customer_name || 'Customer'} at ${address}` 
       });
       
@@ -806,61 +805,78 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         </div>
       )}
 
-      {/* Messages */}
-      <ScrollArea className="flex-1 p-4 bg-gradient-to-b from-background to-muted/20" ref={scrollRef}>
-        <div className="space-y-3">
-          {messages.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 mx-auto mb-4 flex items-center justify-center shadow-lg">
-                <Truck className="w-8 h-8 text-white" />
+      {/* Directions Tab - TechnicianMap */}
+      {activeTab === 'directions' && (
+        <div className="flex-1 relative">
+          <TechnicianMap
+            initialAddress={navigationAddress}
+            onAddressSearched={() => setNavigationAddress(null)}
+            onRouteCalculated={(distance, duration) => {
+              toast.success(`Route: ${distance}`, { description: `ETA: ${duration}` });
+            }}
+          />
+        </div>
+      )}
+
+      {/* Messages - only show on chat tab */}
+      {activeTab === 'chat' && (
+        <ScrollArea className="flex-1 p-4 bg-gradient-to-b from-background to-muted/20" ref={scrollRef}>
+          <div className="space-y-3">
+            {messages.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 mx-auto mb-4 flex items-center justify-center shadow-lg">
+                  <Truck className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="font-semibold text-foreground mb-1">Field Ops Ready</h3>
+                <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                  Manage your jobs - accept, navigate, update ETAs, and complete assignments
+                </p>
               </div>
-              <h3 className="font-semibold text-foreground mb-1">Field Ops Ready</h3>
-              <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                Manage your jobs - accept, navigate, update ETAs, and complete assignments
-              </p>
-            </div>
-          ) : (
-            messages.map((msg, index) => renderMessage(msg, index))
-          )}
-          {isLoading && (
-            <div className="flex gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
-                <Loader2 className="w-4 h-4 text-white animate-spin" />
-              </div>
-              <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            ) : (
+              messages.map((msg, index) => renderMessage(msg, index))
+            )}
+            {isLoading && (
+              <div className="flex gap-2">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
+                  <Loader2 className="w-4 h-4 text-white animate-spin" />
+                </div>
+                <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
-      </ScrollArea>
+            )}
+          </div>
+        </ScrollArea>
+      )}
 
-      {/* Input - matching AIAgentConsole floating style */}
-      <div className="shrink-0 p-4 border-t bg-background/80 backdrop-blur-sm">
-        <div className="flex gap-2">
-          <Input
-            ref={inputRef}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-            placeholder="Ask about jobs, directions, ETAs..."
-            disabled={isLoading}
-            className="h-11 rounded-full px-4 border-muted-foreground/20 focus-visible:ring-primary"
-          />
-          <Button 
-            onClick={handleSend} 
-            disabled={isLoading || !inputValue.trim()} 
-            size="icon" 
-            className="h-11 w-11 rounded-full shadow-md"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
+      {/* Input - matching AIAgentConsole floating style - only show on chat tab */}
+      {activeTab === 'chat' && (
+        <div className="shrink-0 p-4 border-t bg-background/80 backdrop-blur-sm">
+          <div className="flex gap-2">
+            <Input
+              ref={inputRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+              placeholder="Ask about jobs, directions, ETAs..."
+              disabled={isLoading}
+              className="h-11 rounded-full px-4 border-muted-foreground/20 focus-visible:ring-primary"
+            />
+            <Button 
+              onClick={handleSend} 
+              disabled={isLoading || !inputValue.trim()} 
+              size="icon" 
+              className="h-11 w-11 rounded-full shadow-md"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </Card>
   );
 }
