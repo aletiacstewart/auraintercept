@@ -818,6 +818,148 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         </div>
       )}
 
+      {/* ETA Tab - Update ETA for jobs */}
+      {activeTab === 'eta' && (
+        <div className="flex-1 overflow-auto p-4">
+          <div className="space-y-4">
+            <div className="text-center pb-3 border-b">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 mx-auto mb-3 flex items-center justify-center shadow-lg">
+                <Clock className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-foreground">Update ETA</h3>
+              <p className="text-sm text-muted-foreground">Select a job to update the estimated arrival time</p>
+            </div>
+
+            {jobsLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : assignedJobs.filter(j => ['accepted', 'en_route'].includes(j.status)).length === 0 ? (
+              <div className="text-center py-8 text-sm text-muted-foreground">
+                No jobs currently en route or accepted
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {assignedJobs.filter(j => ['accepted', 'en_route'].includes(j.status)).map((job) => {
+                  const address = job.customer_address || job.appointments?.customer_address;
+                  const appointment = job.appointments;
+                  const isSelected = selectedJobForEta?.id === job.id;
+                  const isProcessing = processingJobId === job.id;
+
+                  return (
+                    <div key={job.id} className="space-y-2">
+                      <div
+                        onClick={() => !isProcessing && setSelectedJobForEta(isSelected ? null : job)}
+                        className={cn(
+                          'p-3 rounded-lg border cursor-pointer transition-all',
+                          'hover:border-amber-500/50 hover:bg-amber-50 dark:hover:bg-amber-950/30',
+                          isSelected && 'border-amber-500 bg-amber-50 dark:bg-amber-950/30'
+                        )}
+                      >
+                        <div className="flex items-start gap-2">
+                          <div className={cn('w-2 h-2 rounded-full mt-1.5 shrink-0', getStatusColor(job.status))} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-sm truncate">
+                                {appointment?.customer_name || 'Customer'}
+                              </span>
+                              <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
+                                {job.status.replace('_', ' ')}
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {appointment?.service_type || 'Service'}
+                            </p>
+                            {address && (
+                              <p className="text-xs flex items-center gap-1 mt-1">
+                                <MapPin className="h-3 w-3 text-amber-600 shrink-0" />
+                                <span className="truncate">{address}</span>
+                              </p>
+                            )}
+                            {job.estimated_arrival_minutes && (
+                              <p className="text-xs text-amber-600 font-medium mt-1">
+                                Current ETA: {job.estimated_arrival_minutes} min
+                              </p>
+                            )}
+                          </div>
+                          <Clock className={cn("h-4 w-4 shrink-0", isSelected ? "text-amber-600" : "text-muted-foreground")} />
+                        </div>
+                      </div>
+
+                      {/* ETA Input - shown when job is selected */}
+                      {isSelected && (
+                        <div className="ml-4 p-3 rounded-lg border bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
+                          <div className="flex gap-2">
+                            <div className="flex-1">
+                              <Input
+                                type="number"
+                                placeholder="ETA in minutes"
+                                value={etaMinutes}
+                                onChange={(e) => setEtaMinutes(e.target.value)}
+                                min="1"
+                                className="h-9"
+                              />
+                            </div>
+                            <Button 
+                              size="sm" 
+                              className="h-9 bg-amber-600 hover:bg-amber-700"
+                              onClick={handleSendEtaUpdate}
+                              disabled={!etaMinutes || isProcessing}
+                            >
+                              {isProcessing ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <Send className="h-3.5 w-3.5 mr-1" />
+                                  Update
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground mt-2">
+                            Customer will be notified via SMS & email
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Dispatch Tab - Contact dispatch */}
+      {activeTab === 'dispatch' && (
+        <div className="flex-1 overflow-auto p-4">
+          <div className="text-center py-8">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 mx-auto mb-4 flex items-center justify-center shadow-lg">
+              <Phone className="w-8 h-8 text-white" />
+            </div>
+            <h3 className="font-semibold text-foreground mb-1">Contact Dispatch</h3>
+            <p className="text-sm text-muted-foreground max-w-xs mx-auto mb-6">
+              Reach out to your dispatch team for assistance
+            </p>
+            {companyData?.dispatch_phone ? (
+              <Button
+                size="lg"
+                className="bg-green-600 hover:bg-green-700"
+                onClick={() => {
+                  const cleanPhone = companyData.dispatch_phone!.replace(/[^\d+]/g, '');
+                  window.location.href = `tel:${cleanPhone}`;
+                }}
+              >
+                <Phone className="h-5 w-5 mr-2" />
+                Call Dispatch
+              </Button>
+            ) : (
+              <p className="text-sm text-muted-foreground">No dispatch phone number configured</p>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Messages - only show on chat tab */}
       {activeTab === 'chat' && (
         <ScrollArea className="flex-1 p-4 bg-gradient-to-b from-background to-muted/20" ref={scrollRef}>
