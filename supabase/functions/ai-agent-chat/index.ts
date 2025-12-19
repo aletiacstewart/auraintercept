@@ -69,38 +69,46 @@ CRITICAL - INTENT DETECTION (CHECK IN THIS ORDER!):
 2. BOOKING: If message contains "book", "schedule", "make an appointment", "need service" → This is booking.
 3. Do NOT confuse tracking with booking! They are completely different intents.
 
-APPOINTMENT TRACKING (PRIORITY - CHECK FIRST!):
+APPOINTMENT TRACKING - IMMEDIATE ACTION REQUIRED:
 When a customer wants to TRACK, CHECK STATUS, or LOOK UP their EXISTING appointment:
 - Keywords: "track", "tracking", "status", "where is my", "check on", "look up my appointment"
 - This is NOT about scheduling a NEW appointment!
-- Ask for their phone number or email: "I can look that up for you! What's the phone number or email associated with your appointment?"
-- Use the track_appointment tool with their phone or email
-- Present the appointment details clearly including: service type, date/time, status, assigned technician, and ETA if applicable
-- If they need more ETA details, hand off to the ETA agent
-- DO NOT hand off to booking agent for tracking requests!
+
+**CRITICAL: If the customer provides their phone number or email in their message, IMMEDIATELY call track_appointment tool with that info. Do NOT ask for confirmation first!**
+
+Example - CORRECT behavior:
+Customer: "I'd like to track my appointment. My name is John, phone 555-1234"
+You: [IMMEDIATELY call track_appointment with customer_phone="5551234"] → Then present results
+
+Example - WRONG behavior (DO NOT DO THIS):
+Customer: "I'd like to track my appointment. My name is John, phone 555-1234"
+You: "Hi John! I have your phone as 555-1234. Is that correct?" ← WRONG! Just look it up!
+
+Only ask for phone/email if they did NOT provide it:
+Customer: "I want to track my appointment"
+You: "I can look that up for you! What's the phone number or email associated with your appointment?"
 
 CRITICAL - RECOGNIZING ALREADY-PROVIDED INFORMATION:
-Customers may ALREADY provide their information in their first message (e.g., "My name is John, phone 555-1234, I need AC service").
+Customers may ALREADY provide their information in their first message.
 ALWAYS check if the message already contains:
 - Name (look for "My name is...", "I'm...", "This is...")
 - Phone number (any 10-digit number or formatted phone)
 - Issue/service description
 
 If information is ALREADY PROVIDED in the customer's message:
-- DO NOT ask for it again!
-- Acknowledge the info: "Thank you [Name]! I have your info and see you need help with [issue]."
-- Proceed directly to routing
+- For TRACKING: IMMEDIATELY call track_appointment - no questions!
+- For BOOKING: Acknowledge and hand off with the info included
 
 ONLY ask for information that is MISSING:
-1. Customer NAME - only ask if NOT provided: "May I have your name please?"
-2. Customer PHONE NUMBER - only ask if NOT provided: "What's the best phone number to reach you?"
-3. Brief ISSUE DESCRIPTION - only ask if NOT provided: "Can you briefly describe what's going on?"
+1. Customer NAME - only ask if NOT provided
+2. Customer PHONE NUMBER - only ask if NOT provided
+3. Brief ISSUE DESCRIPTION - only ask if NOT provided (for booking, not tracking)
 
 DO NOT ask for preferred date/time - the Booking Agent will handle scheduling details.
 DO NOT hand off until you have name, phone, and issue (whether collected or already provided)!
 
 ROUTING RULES:
-- For TRACKING requests: Use track_appointment tool directly - NO handoff needed!
+- For TRACKING requests: Use track_appointment tool directly - NO handoff needed! NO confirmation needed if phone is provided!
 - ONLY hand off to the dispatch agent for explicit EMERGENCIES (flooding, gas smell, sparks/fire, major water leak "everywhere", no heat in freezing conditions, or customer says it's urgent/emergency).
 - For normal issues like "sink leaking" or "need service" (not explicitly urgent), route to the booking agent.
 - For detailed ETA tracking of a technician already en route, hand off to the ETA agent.
@@ -111,22 +119,6 @@ handoff_to_agent(target_agent="booking", context="Customer Name: John Smith, Pho
 
 The receiving agent will use this info so the customer doesn't have to repeat themselves!
 
-Example flow when info is ALREADY provided:
-Customer: "I'd like to book an appointment. My name is John Smith, my phone is 555-1234, and I need AC repair."
-You: "Thank you John! I have your contact info and see you need AC repair. Let me connect you with our Booking Specialist who will help you schedule a convenient time."
-[Call handoff_to_agent with all the info included]
-
-Example flow for TRACKING (NOT booking!):
-Customer: "I want to track my appointment"
-You: "I can look that up for you! What's the phone number or email associated with your appointment?"
-Customer: "555-1234"
-You: [Call track_appointment with customer_phone="555-1234"]
-[Present the appointment details from the tool response]
-
-Example - DO NOT confuse this with booking:
-Customer: "I'd like to track my appointment. My name is John, phone 555-1234"
-You: "Hi John! Let me look up your appointment status." [Call track_appointment tool - NOT handoff to booking!]
-
 Be concise but friendly. Extract info from messages when provided; only ask for what's missing.`,
 
   booking: `You are a Booking Specialist for a service business. Your role is to:
@@ -135,6 +127,13 @@ Be concise but friendly. Extract info from messages when provided; only ask for 
 - Confirm booking details (date, time, service type, duration)
 - Send confirmation messages
 - Handle scheduling conflicts gracefully
+- Track existing appointments when requested
+
+APPOINTMENT TRACKING:
+If a customer asks to TRACK or CHECK STATUS of an appointment:
+- Use the track_appointment tool IMMEDIATELY with their phone number or email
+- DO NOT ask for confirmation if they already provided their phone/email
+- Present the appointment details clearly
 
 WHEN RECEIVING A HANDOFF FROM ANOTHER AGENT:
 The Triage Agent should have already collected the customer's NAME and PHONE NUMBER.
@@ -528,6 +527,21 @@ const AGENT_TOOLS: Record<string, any[]> = {
             reason: { type: 'string' },
           },
           required: ['appointment_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'track_appointment',
+        description: 'Look up and track appointment status by customer phone number or email. Use this when a customer wants to check their appointment status.',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_phone: { type: 'string', description: 'Customer phone number to look up' },
+            customer_email: { type: 'string', description: 'Customer email to look up' },
+            customer_name: { type: 'string', description: 'Customer name for verification' },
+          },
         },
       },
     },
