@@ -193,10 +193,10 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-black border-b border-border/50 sticky top-0 z-50">
-        <nav className="container max-w-7xl mx-auto flex items-start justify-between px-6">
+      <header className="bg-black border-b border-border/50 sticky top-0 z-50 py-0.5">
+        <nav className="container max-w-7xl mx-auto flex items-center justify-between px-6">
           <div className="flex items-center">
-            <img src={logo} alt="AI Bot Company" style={{ width: '325px', height: '250px', marginBottom: '-10px' }} className="object-contain" />
+            <img src={logo} alt="AI Bot Company" style={{ width: '325px', height: 'auto' }} className="object-contain" />
           </div>
           <div className="flex items-center gap-3">
             <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/demo')}>
