@@ -194,8 +194,8 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-black border-b border-border/50 sticky top-0 z-50">
-        <nav className="container max-w-7xl mx-auto flex items-center justify-between py-1 px-6">
-          <div className="flex items-center pl-1">
+        <nav className="container max-w-7xl mx-auto flex items-center justify-between py-0 px-6">
+          <div className="flex items-center p-0.5">
             <img src={logo} alt="AI Bot Company" style={{ width: '325px', height: '250px' }} className="object-contain" />
           </div>
           <div className="flex items-center gap-3">
