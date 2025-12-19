@@ -464,6 +464,7 @@ export const AIAgentConsole = () => {
               {showFeedbackForm && (
                 <FeedbackForm
                   onSubmit={handleFeedbackSubmit}
+                  onCancel={handleHome}
                   isLoading={isLoading}
                   reviewLinks={reviewLinks}
                 />
@@ -472,6 +473,7 @@ export const AIAgentConsole = () => {
               {showReviewForm && (
                 <ReviewForm
                   onSubmit={handleReviewSubmit}
+                  onCancel={handleHome}
                   isLoading={isLoading}
                   reviewLinks={reviewLinks}
                 />
@@ -481,12 +483,14 @@ export const AIAgentConsole = () => {
                 <QuoteForm
                   services={services || []}
                   onSubmit={handleQuoteSubmit}
+                  onCancel={handleHome}
                 />
               )}
 
               {showTrackForm && (
                 <TrackAppointmentForm
                   onSubmit={handleTrackSubmit}
+                  onCancel={handleHome}
                 />
               )}
 

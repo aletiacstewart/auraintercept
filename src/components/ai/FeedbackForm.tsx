@@ -4,7 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Star, ThumbsUp, Minus, ThumbsDown, Send, ExternalLink, CalendarIcon } from 'lucide-react';
+import { Star, ThumbsUp, Minus, ThumbsDown, Send, ExternalLink, CalendarIcon, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -17,11 +17,12 @@ interface FeedbackFormProps {
     customerPhone: string;
     serviceDate?: Date;
   }) => void;
+  onCancel?: () => void;
   isLoading?: boolean;
   reviewLinks?: { platform: string; url: string }[];
 }
 
-export const FeedbackForm = ({ onSubmit, isLoading, reviewLinks }: FeedbackFormProps) => {
+export const FeedbackForm = ({ onSubmit, onCancel, isLoading, reviewLinks }: FeedbackFormProps) => {
   const [rating, setRating] = useState<number>(0);
   const [hoveredRating, setHoveredRating] = useState<number>(0);
   const [sentiment, setSentiment] = useState<'positive' | 'neutral' | 'negative' | null>(null);
@@ -52,6 +53,17 @@ export const FeedbackForm = ({ onSubmit, isLoading, reviewLinks }: FeedbackFormP
   return (
     <div className="w-full max-w-sm mx-auto p-2">
       <div className="flex items-center gap-2 mb-3">
+        {onCancel && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onCancel}
+            className="h-7 w-7 p-0 rounded-full hover:bg-muted"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        )}
         <Star className="h-4 w-4 text-yellow-500" />
         <h3 className="font-semibold text-sm">Share Your Feedback</h3>
       </div>
