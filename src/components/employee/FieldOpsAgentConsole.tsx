@@ -249,11 +249,24 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const handleSelectJobForDirections = useCallback((job: JobAssignment) => {
     const address = job.customer_address || job.appointments?.customer_address;
     if (address) {
-      onNavigateRequest?.(address);
+      // Open native maps app for directions instead of AI chat
+      const encodedAddress = encodeURIComponent(address);
+      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
+      window.open(mapsUrl, '_blank');
+      
       setSelectorMode(null);
-      sendMessage(`I need directions to ${job.appointments?.customer_name || 'my appointment'} at ${address}`);
+      setActiveTab('directions');
+      toast.success('Opening directions', { 
+        description: `To: ${job.appointments?.customer_name || 'Customer'} at ${address}` 
+      });
+      
+      // Trigger callback if provided
+      onNavigateRequest?.(address);
+    } else {
+      toast.error('No address available', { description: 'This job has no customer address on file' });
+      setSelectorMode(null);
     }
-  }, [onNavigateRequest, sendMessage]);
+  }, [onNavigateRequest]);
 
   const handleSelectJobForEnRoute = useCallback(async (job: JobAssignment) => {
     if (processingJobId) return;
