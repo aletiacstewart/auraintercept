@@ -69,7 +69,7 @@ export const QuickActionBar: React.FC<QuickActionBarProps> = ({
             className={cn(
               'text-xs shrink-0 rounded-full px-3 h-8',
               'hover:bg-primary/10 hover:text-primary transition-colors',
-              action.variant === 'destructive' && 'text-destructive hover:bg-destructive/10'
+              action.variant === 'destructive' && 'bg-destructive text-white hover:bg-destructive/90'
             )}
             onClick={() => onAction(action.message, action.id)}
           >
