@@ -12,7 +12,7 @@ import {
   ArrowRight, Sparkles, Wrench, Home, Flame, Droplet,
   ChevronRight, Star, Volume2, VolumeX
 } from 'lucide-react';
-import logo from '@/assets/ai-header-logo.png';
+import logo from '@/assets/ai-header-logo-new.png';
 import aiBotBanner from '@/assets/ai-bot-banner.png';
 
 const agentCategories = [
