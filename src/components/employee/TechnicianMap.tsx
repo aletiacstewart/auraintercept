@@ -215,38 +215,71 @@ export function TechnicianMap({
   // Handle initial address from parent (when user selects a job from console)
   useEffect(() => {
     if (!initialAddress) return;
-    
+
     // Set the search address
     setSearchAddress(initialAddress);
-    
+
     // Delay to ensure map is ready
     const timer = setTimeout(async () => {
       // Find matching job first
-      const matchingJob = jobs.find(j => 
-        j.address.toLowerCase().includes(initialAddress.toLowerCase()) ||
-        initialAddress.toLowerCase().includes(j.address.toLowerCase())
+      const matchingJob = jobs.find(
+        (j) =>
+          j.address.toLowerCase().includes(initialAddress.toLowerCase()) ||
+          initialAddress.toLowerCase().includes(j.address.toLowerCase())
       );
-      
+
       if (matchingJob) {
         // If we have coordinates for this job, use them directly
         setRoute([matchingJob.lat, matchingJob.lng], matchingJob.address);
         onJobSelect?.(matchingJob.id);
       } else {
-        // Otherwise trigger a geocode search
-        const buildUrl = (q: string) =>
+        const buildSearchUrl = (q: string) =>
           `https://nominatim.openstreetmap.org/search?format=json&limit=5&addressdetails=1&countrycodes=us&q=${encodeURIComponent(q)}`;
+
+        const buildReverseUrl = (lat: number, lon: number) =>
+          `https://nominatim.openstreetmap.org/reverse?format=json&zoom=10&addressdetails=1&lat=${encodeURIComponent(
+            lat
+          )}&lon=${encodeURIComponent(lon)}`;
 
         const stripUnit = (q: string) =>
           q.replace(/\b(apt|apartment|unit|ste|suite|#)\s*\w+\b/gi, '').replace(/\s{2,}/g, ' ').trim();
 
+        const looksCompleteEnough = (q: string) => /\b\d{5}\b/.test(q) || /,\s*[A-Za-z]{2}\b/.test(q);
+
+        const augmentWithLocality = async (q: string) => {
+          if (!currentPosition) return q;
+          if (looksCompleteEnough(q)) return q;
+
+          try {
+            const resp = await fetch(buildReverseUrl(currentPosition[0], currentPosition[1]), {
+              headers: { Accept: 'application/json' },
+            });
+            const data = await resp.json();
+            const a = data?.address;
+            const city = a?.city || a?.town || a?.village;
+            const state = a?.state;
+            const postcode = a?.postcode;
+
+            const parts = [q];
+            if (city) parts.push(city);
+            if (state) parts.push(state);
+            if (postcode) parts.push(postcode);
+            return parts.join(', ');
+          } catch {
+            return q;
+          }
+        };
+
         try {
-          let resp = await fetch(buildUrl(initialAddress), { headers: { Accept: 'application/json' } });
+          const query = await augmentWithLocality(initialAddress);
+
+          let resp = await fetch(buildSearchUrl(query), { headers: { Accept: 'application/json' } });
           let data = await resp.json();
 
           if (!data?.length) {
-            const simplified = stripUnit(initialAddress);
-            if (simplified && simplified !== initialAddress) {
-              resp = await fetch(buildUrl(simplified), { headers: { Accept: 'application/json' } });
+            const simplified = stripUnit(query);
+            if (simplified && simplified !== query) {
+              resp = await fetch(buildSearchUrl(simplified), { headers: { Accept: 'application/json' } });
               data = await resp.json();
             }
           }
@@ -256,17 +289,24 @@ export function TechnicianMap({
             const lat = parseFloat(best.lat);
             const lng = parseFloat(best.lon);
             setRoute([lat, lng], best.display_name);
+          } else {
+            toast({
+              title: 'Address Not Found',
+              description:
+                'Try adding city/state/ZIP (e.g., “6350 Meadowvista Dr, Corpus Christi, TX 78414”), then tap Go.',
+              variant: 'destructive',
+            });
           }
         } catch (e) {
           console.error('Geocode search failed:', e);
         }
       }
-      
+
       onAddressSearched?.();
     }, 300);
-    
+
     return () => clearTimeout(timer);
-  }, [initialAddress, jobs, onJobSelect, onAddressSearched, setRoute]);
+  }, [initialAddress, jobs, onJobSelect, onAddressSearched, setRoute, currentPosition, toast]);
 
   const locateMe = useCallback(() => {
     if (!navigator.geolocation) return;
