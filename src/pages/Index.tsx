@@ -12,7 +12,7 @@ import {
   ArrowRight, Sparkles, Wrench, Home, Flame, Droplet,
   ChevronRight, Star, Volume2, VolumeX
 } from 'lucide-react';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/ai-header-logo.png';
 import aiBotBanner from '@/assets/ai-bot-banner.png';
 
 const agentCategories = [
@@ -195,12 +195,8 @@ export default function Index() {
       {/* Header */}
       <header className="bg-black border-b border-border/50 sticky top-0 z-50">
         <nav className="container max-w-7xl mx-auto flex items-center justify-between py-3 px-6">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="AI Bot Company" className="object-contain" style={{ width: '175px', height: '175px' }} />
-            <div>
-              <h1 className="font-bold text-lg text-white">AI Bot Company</h1>
-              <p className="text-xs text-gray-400">The Future of Work</p>
-            </div>
+          <div className="flex items-center">
+            <img src={logo} alt="AI Bot Company" className="h-16 w-auto object-contain" />
           </div>
           <div className="flex items-center gap-3">
             <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/demo')}>
