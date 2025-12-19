@@ -196,7 +196,7 @@ export default function Index() {
       <header className="bg-black border-b border-border/50 sticky top-0 z-50">
         <nav className="container max-w-7xl mx-auto flex items-center justify-between py-3 px-6">
           <div className="flex items-center">
-            <img src={logo} alt="AI Bot Company" className="h-14 w-auto object-contain" />
+            <img src={logo} alt="AI Bot Company" style={{ width: '250px', height: '175px' }} className="object-contain" />
           </div>
           <div className="flex items-center gap-3">
             <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/demo')}>
