@@ -142,7 +142,7 @@ export function CompanyAdminDashboard() {
     { label: 'Create Quote', icon: FileText, href: '/dashboard/quotes', gradient: 'from-secondary to-secondary/80' },
     { label: 'Create Invoice', icon: Receipt, href: '/dashboard/invoices', gradient: 'from-accent to-accent/80' },
     { label: 'View Inventory', icon: Package, href: '/dashboard/inventory', gradient: 'from-green-500 to-green-600' },
-    { label: 'Configure AI', icon: Bot, href: '/dashboard/agent', gradient: 'from-purple-500 to-purple-600' },
+    { label: 'Configure AI', icon: Bot, href: '/dashboard/ai-agent', gradient: 'from-purple-500 to-purple-600' },
     { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', gradient: 'from-blue-500 to-blue-600' },
   ];
 
