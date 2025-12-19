@@ -807,7 +807,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Directions Tab - TechnicianMap */}
       {activeTab === 'directions' && (
-        <div className="flex-1 relative">
+        <div className="flex-1 relative min-h-[300px] overflow-hidden">
           <TechnicianMap
             initialAddress={navigationAddress}
             onAddressSearched={() => setNavigationAddress(null)}
