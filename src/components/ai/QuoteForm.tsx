@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { DollarSign, Send } from 'lucide-react';
+import { DollarSign, Send, ArrowLeft } from 'lucide-react';
 
 interface Service {
   id: string;
@@ -25,9 +25,10 @@ export interface QuoteData {
 interface QuoteFormProps {
   services: Service[];
   onSubmit: (data: QuoteData) => void;
+  onCancel?: () => void;
 }
 
-export function QuoteForm({ services, onSubmit }: QuoteFormProps) {
+export function QuoteForm({ services, onSubmit, onCancel }: QuoteFormProps) {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
@@ -62,6 +63,17 @@ export function QuoteForm({ services, onSubmit }: QuoteFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-2 p-2">
       <div className="flex items-center gap-2 mb-2">
+        {onCancel && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onCancel}
+            className="h-7 w-7 p-0 rounded-full hover:bg-muted"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        )}
         <DollarSign className="h-4 w-4 text-primary" />
         <h3 className="font-semibold text-sm">Request a Quote</h3>
       </div>

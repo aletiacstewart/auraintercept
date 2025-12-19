@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MapPin } from 'lucide-react';
+import { MapPin, ArrowLeft } from 'lucide-react';
 
 export interface TrackingData {
   customerName: string;
@@ -11,9 +11,10 @@ export interface TrackingData {
 
 interface TrackAppointmentFormProps {
   onSubmit: (data: TrackingData) => void;
+  onCancel?: () => void;
 }
 
-export function TrackAppointmentForm({ onSubmit }: TrackAppointmentFormProps) {
+export function TrackAppointmentForm({ onSubmit, onCancel }: TrackAppointmentFormProps) {
   const [formData, setFormData] = useState<TrackingData>({
     customerName: '',
     customerPhone: '',
@@ -31,6 +32,17 @@ export function TrackAppointmentForm({ onSubmit }: TrackAppointmentFormProps) {
   return (
     <div className="p-2">
       <div className="flex items-center gap-2 mb-2">
+        {onCancel && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onCancel}
+            className="h-7 w-7 p-0 rounded-full hover:bg-muted"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        )}
         <MapPin className="h-4 w-4 text-primary" />
         <h3 className="font-semibold text-sm">Track My Appointment</h3>
       </div>

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Star, Send } from 'lucide-react';
+import { Star, Send, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ReviewFormProps {
@@ -14,11 +14,12 @@ interface ReviewFormProps {
     customerPhone: string;
     selectedPlatforms: string[];
   }) => void;
+  onCancel?: () => void;
   isLoading?: boolean;
   reviewLinks?: { platform: string; url: string }[];
 }
 
-export const ReviewForm = ({ onSubmit, isLoading, reviewLinks = [] }: ReviewFormProps) => {
+export const ReviewForm = ({ onSubmit, onCancel, isLoading, reviewLinks = [] }: ReviewFormProps) => {
   const [rating, setRating] = useState<number>(0);
   const [hoveredRating, setHoveredRating] = useState<number>(0);
   const [comment, setComment] = useState('');
@@ -71,6 +72,17 @@ export const ReviewForm = ({ onSubmit, isLoading, reviewLinks = [] }: ReviewForm
   return (
     <div className="w-full max-w-sm mx-auto p-2">
       <div className="flex items-center gap-2 mb-3">
+        {onCancel && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onCancel}
+            className="h-7 w-7 p-0 rounded-full hover:bg-muted"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        )}
         <Star className="h-4 w-4 text-yellow-500" />
         <h3 className="font-semibold text-sm">Leave a Review</h3>
       </div>
