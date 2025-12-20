@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { X, TrendingUp, Send, Mail, MessageSquare, Users, Calendar } from 'lucide-react';
+import { X, TrendingUp, Send, Mail, MessageSquare, Users, Calendar, Sparkles, Loader2 } from 'lucide-react';
 import { format, subDays, subMonths } from 'date-fns';
 
 interface WinbackFormProps {
@@ -20,6 +20,8 @@ interface WinbackFormProps {
 
 export const WinbackForm: React.FC<WinbackFormProps> = ({ companyId, onCancel }) => {
   const queryClient = useQueryClient();
+  const [isGeneratingSubject, setIsGeneratingSubject] = useState(false);
+  const [isGeneratingMessage, setIsGeneratingMessage] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -32,6 +34,51 @@ export const WinbackForm: React.FC<WinbackFormProps> = ({ companyId, onCancel })
     sendEmail: true,
     sendSms: false,
   });
+
+  // Fetch company name for AI context
+  const { data: companyName } = useQuery({
+    queryKey: ['company-name', companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('companies')
+        .select('name')
+        .eq('id', companyId)
+        .single();
+      return data?.name || '';
+    },
+  });
+
+  const generateContent = async (field: 'subject' | 'message') => {
+    const setLoading = field === 'subject' ? setIsGeneratingSubject : setIsGeneratingMessage;
+    setLoading(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-campaign-content', {
+        body: {
+          campaignType: 'winback',
+          targetSegment: 'inactive',
+          companyName: companyName || 'our company',
+          field,
+        },
+      });
+
+      if (error) throw error;
+      
+      if (data?.content) {
+        if (field === 'subject') {
+          setFormData(prev => ({ ...prev, emailSubject: data.content }));
+        } else {
+          setFormData(prev => ({ ...prev, messageTemplate: data.content }));
+        }
+        toast.success(`${field === 'subject' ? 'Subject' : 'Message'} generated!`);
+      }
+    } catch (error) {
+      console.error('Error generating content:', error);
+      toast.error('Failed to generate content. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch inactive customers count
   const { data: inactiveCustomers } = useQuery({
@@ -243,7 +290,24 @@ export const WinbackForm: React.FC<WinbackFormProps> = ({ companyId, onCancel })
           {/* Email Subject */}
           {formData.sendEmail && (
             <div className="space-y-2">
-              <Label>Email Subject</Label>
+              <div className="flex items-center justify-between">
+                <Label>Email Subject</Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => generateContent('subject')}
+                  disabled={isGeneratingSubject}
+                  className="h-7 text-xs gap-1 text-primary hover:text-primary"
+                >
+                  {isGeneratingSubject ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-3 w-3" />
+                  )}
+                  AI Generate
+                </Button>
+              </div>
               <Input
                 placeholder="We miss you! Here's a special offer just for you"
                 value={formData.emailSubject}
@@ -254,7 +318,24 @@ export const WinbackForm: React.FC<WinbackFormProps> = ({ companyId, onCancel })
 
           {/* Message Template */}
           <div className="space-y-2">
-            <Label>Message</Label>
+            <div className="flex items-center justify-between">
+              <Label>Message</Label>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => generateContent('message')}
+                disabled={isGeneratingMessage}
+                className="h-7 text-xs gap-1 text-primary hover:text-primary"
+              >
+                {isGeneratingMessage ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Sparkles className="h-3 w-3" />
+                )}
+                AI Generate
+              </Button>
+            </div>
             <Textarea
               placeholder="Hi {customer_name}, it's been a while! We'd love to see you again. Use code {promo_code} for {discount} off your next visit!"
               value={formData.messageTemplate}

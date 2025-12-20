@@ -10,15 +10,34 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { X, Megaphone, Send, Mail, MessageSquare, Calendar } from 'lucide-react';
+import { X, Megaphone, Send, Mail, MessageSquare, Calendar, Sparkles, Loader2 } from 'lucide-react';
 
 interface CampaignFormProps {
   companyId: string;
   onCancel: () => void;
 }
 
+// Fetch company name for AI context
+const useCompanyName = (companyId: string) => {
+  return useQuery({
+    queryKey: ['company-name', companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('companies')
+        .select('name')
+        .eq('id', companyId)
+        .single();
+      return data?.name || '';
+    },
+  });
+};
+
 export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel }) => {
   const queryClient = useQueryClient();
+  const { data: companyName } = useCompanyName(companyId);
+  const [isGeneratingSubject, setIsGeneratingSubject] = useState(false);
+  const [isGeneratingMessage, setIsGeneratingMessage] = useState(false);
+  
   const [formData, setFormData] = useState({
     name: '',
     campaignType: 'promotional',
@@ -32,6 +51,38 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel 
     endDate: '',
     channels: [] as string[],
   });
+
+  const generateContent = async (field: 'subject' | 'message') => {
+    const setLoading = field === 'subject' ? setIsGeneratingSubject : setIsGeneratingMessage;
+    setLoading(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-campaign-content', {
+        body: {
+          campaignType: formData.campaignType,
+          targetSegment: formData.targetSegment,
+          companyName: companyName || 'our company',
+          field,
+        },
+      });
+
+      if (error) throw error;
+      
+      if (data?.content) {
+        if (field === 'subject') {
+          setFormData(prev => ({ ...prev, emailSubject: data.content }));
+        } else {
+          setFormData(prev => ({ ...prev, messageTemplate: data.content }));
+        }
+        toast.success(`${field === 'subject' ? 'Subject' : 'Message'} generated!`);
+      }
+    } catch (error) {
+      console.error('Error generating content:', error);
+      toast.error('Failed to generate content. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const createCampaign = useMutation({
     mutationFn: async () => {
@@ -247,7 +298,24 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel 
           {/* Email Subject */}
           {formData.channels.includes('email') && (
             <div className="space-y-2">
-              <Label>Email Subject</Label>
+              <div className="flex items-center justify-between">
+                <Label>Email Subject</Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => generateContent('subject')}
+                  disabled={isGeneratingSubject}
+                  className="h-7 text-xs gap-1 text-primary hover:text-primary"
+                >
+                  {isGeneratingSubject ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-3 w-3" />
+                  )}
+                  AI Generate
+                </Button>
+              </div>
               <Input
                 placeholder="Don't miss our summer sale!"
                 value={formData.emailSubject}
@@ -258,7 +326,24 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel 
 
           {/* Message Template */}
           <div className="space-y-2">
-            <Label>Message Template</Label>
+            <div className="flex items-center justify-between">
+              <Label>Message Template</Label>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => generateContent('message')}
+                disabled={isGeneratingMessage}
+                className="h-7 text-xs gap-1 text-primary hover:text-primary"
+              >
+                {isGeneratingMessage ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Sparkles className="h-3 w-3" />
+                )}
+                AI Generate
+              </Button>
+            </div>
             <Textarea
               placeholder="Hi {customer_name}, we have an exciting offer for you..."
               value={formData.messageTemplate}
