@@ -14,6 +14,7 @@ import { PromoCodeForm } from './forms/PromoCodeForm';
 import { ReferralForm } from './forms/ReferralForm';
 import { WinbackForm } from './forms/WinbackForm';
 import { LeadForm } from './forms/LeadForm';
+import { CustomerSegmentsForm } from './forms/CustomerSegmentsForm';
 import { 
   Megaphone, 
   Tag, 
@@ -69,6 +70,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const [showReferralForm, setShowReferralForm] = useState(false);
   const [showWinbackForm, setShowWinbackForm] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
+  const [showSegmentsForm, setShowSegmentsForm] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -104,6 +106,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     setShowReferralForm(false);
     setShowWinbackForm(false);
     setShowLeadForm(false);
+    setShowSegmentsForm(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -142,6 +145,11 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       setShowLeadForm(true);
       return;
     }
+    if (actionId === 'customers') {
+      hideAllForms();
+      setShowSegmentsForm(true);
+      return;
+    }
     
     // Default: send message to AI
     hideAllForms();
@@ -156,7 +164,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     setLastAgent('triage');
   };
 
-  const isShowingForm = showCampaignForm || showPromoForm || showReferralForm || showWinbackForm || showLeadForm;
+  const isShowingForm = showCampaignForm || showPromoForm || showReferralForm || showWinbackForm || showLeadForm || showSegmentsForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
 
@@ -224,6 +232,13 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
               
               {showLeadForm && effectiveCompanyId && (
                 <LeadForm
+                  companyId={effectiveCompanyId}
+                  onCancel={handleHome}
+                />
+              )}
+              
+              {showSegmentsForm && effectiveCompanyId && (
+                <CustomerSegmentsForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
                 />
