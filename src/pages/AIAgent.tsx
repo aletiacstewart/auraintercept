@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
@@ -20,12 +21,30 @@ import { Button } from '@/components/ui/button';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { useSubscription } from '@/hooks/useSubscription';
 
+type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics';
+
 const AIAgent = () => {
   const { companyId, userRole } = useAuth();
   const { isAtLeastTier } = useSubscription();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<'customer' | 'debug'>('customer');
   const [activeTab, setActiveTab] = useState<'console' | 'settings'>('console');
-  const [consoleType, setConsoleType] = useState<'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics'>('customer');
+  
+  // Get console type from URL or default to 'customer'
+  const consoleParam = searchParams.get('console') as ConsoleType | null;
+  const [consoleType, setConsoleType] = useState<ConsoleType>(consoleParam || 'customer');
+  
+  // Sync console type with URL params
+  useEffect(() => {
+    if (consoleParam && ['customer', 'fieldops', 'businessops', 'marketing', 'analytics'].includes(consoleParam)) {
+      setConsoleType(consoleParam);
+    }
+  }, [consoleParam]);
+  
+  const handleConsoleTypeChange = (value: ConsoleType) => {
+    setConsoleType(value);
+    setSearchParams({ console: value });
+  };
   
   // Employees can view but not configure - they inherit company settings
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
@@ -259,7 +278,7 @@ const AIAgent = () => {
           <TabsContent value="console" className="mt-6">
             {/* Console Type Selector for Admins */}
             {userRole !== 'employee' && (
-              <Tabs value={consoleType} onValueChange={(v) => setConsoleType(v as 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics')} className="mb-6">
+              <Tabs value={consoleType} onValueChange={(v) => handleConsoleTypeChange(v as ConsoleType)} className="mb-6">
                 <TabsList>
                   <TabsTrigger value="customer">
                     <HeadphonesIcon className="h-4 w-4 mr-2" />
