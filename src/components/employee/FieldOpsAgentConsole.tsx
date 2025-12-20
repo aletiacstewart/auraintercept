@@ -64,6 +64,7 @@ const QUICK_ACTIONS: FieldOpsQuickAction[] = [
   { id: 'directions', label: 'Get Directions', icon: Navigation, message: "Get directions to my next job" },
   { id: 'enroute', label: 'En Route', icon: Truck, message: "Mark myself as en route" },
   { id: 'eta', label: 'Update ETA', icon: Clock, message: "Update my ETA" },
+  { id: 'eta-agent', label: 'ETA Agent', icon: Bot, message: "I need help with ETA updates and customer notifications. Can you check my current jobs and help me calculate and send accurate ETAs to customers?" },
   { id: 'arrived', label: 'Arrived', icon: MapPin, message: "Mark myself as arrived" },
   { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: "Complete the current job", variant: 'destructive' },
   { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: "Contact dispatch" },
@@ -224,6 +225,11 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       setSelectorMode('eta');
       setSelectedJobForEta(null);
       setEtaMinutes('');
+      return;
+    }
+    if (action.id === 'eta-agent') {
+      // Send to AI agent for ETA assistance
+      await sendMessage(action.message);
       return;
     }
     if (action.id === 'arrived') {
