@@ -253,7 +253,7 @@ export const AIAgentConsole = () => {
 
   // Build tabs dynamically
   const TABS = [
-    { id: 'chat', label: 'Chat', icon: MessageSquare },
+    { id: 'chat', label: 'Home', icon: MessageSquare },
     { id: 'services', label: 'Services', icon: Sparkles },
     { id: 'hours', label: 'Hours', icon: Clock },
     { id: 'book', label: 'Book', icon: Calendar },
