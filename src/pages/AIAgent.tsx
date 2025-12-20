@@ -9,10 +9,11 @@ import { AIAgentSettings } from '@/components/ai/AIAgentSettings';
 import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
 import { BusinessOpsAgentConsole } from '@/components/billing/BusinessOpsAgentConsole';
 import { MarketingSalesAgentConsole } from '@/components/marketing/MarketingSalesAgentConsole';
+import { AnalyticsAgentConsole } from '@/components/analytics/AnalyticsAgentConsole';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall, FileText, Star, ThumbsUp, Globe, Truck, MapPin, Clock, CheckSquare, Navigation, HeadphonesIcon, Briefcase, Receipt, Package, Shield, Megaphone } from 'lucide-react';
+import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall, FileText, Star, ThumbsUp, Globe, Truck, MapPin, Clock, CheckSquare, Navigation, HeadphonesIcon, Briefcase, Receipt, Package, Shield, Megaphone, BarChart3 } from 'lucide-react';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { TestCallDialog } from '@/components/ai/TestCallDialog';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,7 @@ const AIAgent = () => {
   const { isAtLeastTier } = useSubscription();
   const [viewMode, setViewMode] = useState<'customer' | 'debug'>('customer');
   const [activeTab, setActiveTab] = useState<'console' | 'settings'>('console');
-  const [consoleType, setConsoleType] = useState<'customer' | 'fieldops' | 'businessops' | 'marketing'>('customer');
+  const [consoleType, setConsoleType] = useState<'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics'>('customer');
   
   // Employees can view but not configure - they inherit company settings
   const canManageSettings = userRole === 'platform_admin' || userRole === 'company_admin';
@@ -258,7 +259,7 @@ const AIAgent = () => {
           <TabsContent value="console" className="mt-6">
             {/* Console Type Selector for Admins */}
             {userRole !== 'employee' && (
-              <Tabs value={consoleType} onValueChange={(v) => setConsoleType(v as 'customer' | 'fieldops' | 'businessops' | 'marketing')} className="mb-6">
+              <Tabs value={consoleType} onValueChange={(v) => setConsoleType(v as 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics')} className="mb-6">
                 <TabsList>
                   <TabsTrigger value="customer">
                     <HeadphonesIcon className="h-4 w-4 mr-2" />
@@ -276,6 +277,12 @@ const AIAgent = () => {
                     <Megaphone className="h-4 w-4 mr-2" />
                     Marketing & Sales
                   </TabsTrigger>
+                  {userRole === 'platform_admin' && (
+                    <TabsTrigger value="analytics">
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Analytics & Insights
+                    </TabsTrigger>
+                  )}
                 </TabsList>
               </Tabs>
             )}
@@ -291,7 +298,9 @@ const AIAgent = () => {
                         ? 'Business Operations Console'
                         : consoleType === 'marketing'
                           ? 'Marketing & Sales Console'
-                          : 'AI Agent Console'}
+                          : consoleType === 'analytics'
+                            ? 'Analytics & Insights Console'
+                            : 'AI Agent Console'}
                   </h2>
                   {userRole !== 'employee' && consoleType === 'customer' && (
                     <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
@@ -315,6 +324,8 @@ const AIAgent = () => {
                   <BusinessOpsAgentConsole />
                 ) : consoleType === 'marketing' ? (
                   <MarketingSalesAgentConsole />
+                ) : consoleType === 'analytics' ? (
+                  <AnalyticsAgentConsole />
                 ) : (
                   viewMode === 'customer' ? (
                     <AIAgentConsole />
