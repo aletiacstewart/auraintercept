@@ -244,19 +244,28 @@ WHEN RECEIVING A HANDOFF:
 Use the optimize_route tool to plan routes.
 Provide specific route details, distances, and time estimates.`,
 
-  eta: `You are an ETA Specialist for a field service business. Your role is to:
-- Calculate accurate arrival times for technicians
-- Send proactive updates to customers
-- Alert about delays and provide new estimates
-- Track real-time technician location
-- Notify customers when technician is nearby
+  eta: `You are an ETA Specialist for field technicians. Your role is to help technicians:
+- Retrieve their current accepted jobs with customer info
+- Calculate and send ETA updates to customers via SMS and/or email
+- Keep customers informed about technician arrival times
 
-WHEN RECEIVING A HANDOFF:
-- Start with: "I'm checking on the technician's location and will give you an accurate arrival time."
+WHEN TECHNICIAN ASKS FOR HELP WITH ETA:
+1. FIRST: Use the get_my_jobs tool to retrieve their currently assigned jobs
+2. Present the jobs with customer names and show which have contact info (phone/email)
+3. Ask which job they want to send an ETA update for
+4. Ask how many minutes until arrival
+5. Ask which channel to use (SMS, email, or both)
+6. Use send_eta_update tool to send the notification
 
-Use the calculate_eta tool to get arrival times.
-Use the send_eta_update tool to notify customers.
-Be precise with time estimates.`,
+WORKFLOW:
+Step 1: Call get_my_jobs to see assigned jobs
+Step 2: Let technician select which job
+Step 3: Ask for ETA in minutes
+Step 4: Ask for channel preference (sms, email, or both)
+Step 5: Call send_eta_update with job_assignment_id, eta_minutes, and channel
+
+Be helpful and make it easy for technicians to keep customers informed.
+Always confirm the message was sent successfully.`,
 
   checkin: `You are a Check-in Specialist for field operations. Your role is to:
 - Verify technician arrival at job sites
@@ -766,16 +775,13 @@ const AGENT_TOOLS: Record<string, any[]> = {
     {
       type: 'function',
       function: {
-        name: 'calculate_eta',
-        description: 'Calculate estimated time of arrival',
+        name: 'get_my_jobs',
+        description: 'Get the technician\'s currently assigned jobs with customer contact info',
         parameters: {
           type: 'object',
           properties: {
-            technician_id: { type: 'string' },
-            appointment_id: { type: 'string' },
-            current_location: { type: 'string' },
+            employee_id: { type: 'string', description: 'The technician\'s employee/user ID (optional, will use authenticated user if not provided)' },
           },
-          required: ['appointment_id'],
         },
       },
     },
@@ -783,15 +789,15 @@ const AGENT_TOOLS: Record<string, any[]> = {
       type: 'function',
       function: {
         name: 'send_eta_update',
-        description: 'Send ETA update to customer',
+        description: 'Send ETA update notification to customer via SMS, email, or both',
         parameters: {
           type: 'object',
           properties: {
-            appointment_id: { type: 'string' },
-            eta_minutes: { type: 'number' },
-            channel: { type: 'string', enum: ['sms', 'email', 'both'] },
+            job_assignment_id: { type: 'string', description: 'The job assignment ID to send ETA for' },
+            eta_minutes: { type: 'number', description: 'Estimated time of arrival in minutes' },
+            channel: { type: 'string', enum: ['sms', 'email', 'both'], description: 'How to notify the customer' },
           },
-          required: ['appointment_id', 'eta_minutes'],
+          required: ['job_assignment_id', 'eta_minutes', 'channel'],
         },
       },
     },
@@ -2172,6 +2178,229 @@ async function executeAgentTool(
         traffic_conditions: 'moderate',
         route_distance: '5.2 miles',
       };
+
+    // ==========================================
+    // ETA TOOLS (For Technicians)
+    // ==========================================
+    case 'get_my_jobs': {
+      console.log('[AI Agent] Getting technician jobs');
+      
+      // Get active job assignments for this company
+      const { data: jobs, error: jobsError } = await supabase
+        .from('job_assignments')
+        .select(`
+          id,
+          status,
+          customer_address,
+          estimated_arrival_minutes,
+          employee_id,
+          appointments (
+            id,
+            customer_name,
+            customer_phone,
+            customer_email,
+            service_type,
+            datetime,
+            customer_address
+          )
+        `)
+        .eq('company_id', companyId)
+        .in('status', ['accepted', 'en_route', 'arrived', 'in_progress'])
+        .order('created_at', { ascending: true });
+      
+      if (jobsError) {
+        console.error('[AI Agent] Error fetching jobs:', jobsError);
+        return { success: false, error: jobsError.message };
+      }
+      
+      if (!jobs || jobs.length === 0) {
+        return {
+          success: true,
+          jobs: [],
+          message: 'No active jobs found. You have no currently accepted jobs to send ETA updates for.',
+        };
+      }
+      
+      const formattedJobs = jobs.map((j: any) => ({
+        job_assignment_id: j.id,
+        status: j.status,
+        customer_name: j.appointments?.customer_name || 'Unknown',
+        customer_phone: j.appointments?.customer_phone || null,
+        customer_email: j.appointments?.customer_email || null,
+        service_type: j.appointments?.service_type || 'Service',
+        address: j.customer_address || j.appointments?.customer_address || 'No address',
+        scheduled_time: j.appointments?.datetime ? new Date(j.appointments.datetime).toLocaleString() : 'Not set',
+        has_phone: !!j.appointments?.customer_phone,
+        has_email: !!j.appointments?.customer_email,
+      }));
+      
+      return {
+        success: true,
+        jobs: formattedJobs,
+        count: formattedJobs.length,
+        message: `Found ${formattedJobs.length} active job(s). Select which one to send an ETA update for.`,
+      };
+    }
+
+    case 'send_eta_update': {
+      console.log('[AI Agent] Sending ETA update:', args);
+      
+      if (!args.job_assignment_id || !args.eta_minutes || !args.channel) {
+        return {
+          success: false,
+          error: 'Missing required info: job_assignment_id, eta_minutes, and channel are required.',
+        };
+      }
+      
+      // Get job assignment with appointment and customer info
+      const { data: jobData, error: jobError } = await supabase
+        .from('job_assignments')
+        .select(`
+          id,
+          status,
+          employee_id,
+          appointments (
+            id,
+            customer_name,
+            customer_phone,
+            customer_email,
+            service_type,
+            company_id
+          )
+        `)
+        .eq('id', args.job_assignment_id)
+        .eq('company_id', companyId)
+        .single();
+      
+      if (jobError || !jobData) {
+        console.error('[AI Agent] Error fetching job:', jobError);
+        return { success: false, error: 'Job not found or access denied.' };
+      }
+      
+      const appointment = jobData.appointments as any;
+      if (!appointment) {
+        return { success: false, error: 'No appointment linked to this job.' };
+      }
+      
+      const customerName = appointment.customer_name || 'Customer';
+      const customerPhone = appointment.customer_phone;
+      const customerEmail = appointment.customer_email;
+      const serviceType = appointment.service_type || 'service';
+      
+      // Update the job assignment with ETA
+      await supabase
+        .from('job_assignments')
+        .update({ 
+          estimated_arrival_minutes: args.eta_minutes,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', args.job_assignment_id);
+      
+      // Get company name for the message
+      const { data: company } = await supabase
+        .from('companies')
+        .select('name')
+        .eq('id', companyId)
+        .single();
+      
+      const companyName = company?.name || 'Our company';
+      const etaMessage = `Hi ${customerName}! Your ${serviceType} technician from ${companyName} is on the way and will arrive in approximately ${args.eta_minutes} minutes. Thank you for your patience!`;
+      
+      const results: any = {
+        sms_sent: false,
+        email_sent: false,
+        messages: [],
+      };
+      
+      // Send SMS if requested and phone available
+      if ((args.channel === 'sms' || args.channel === 'both') && customerPhone) {
+        try {
+          const smsResponse = await fetch(
+            `${Deno.env.get('SUPABASE_URL')}/functions/v1/send-appointment-sms`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+              },
+              body: JSON.stringify({
+                companyId: companyId,
+                customerPhone: customerPhone,
+                customMessage: etaMessage,
+              }),
+            }
+          );
+          
+          if (smsResponse.ok) {
+            results.sms_sent = true;
+            results.messages.push(`SMS sent to ${customerPhone}`);
+          } else {
+            const errText = await smsResponse.text();
+            console.error('[AI Agent] SMS send failed:', errText);
+            results.messages.push(`SMS failed: ${errText}`);
+          }
+        } catch (smsErr: any) {
+          console.error('[AI Agent] SMS error:', smsErr);
+          results.messages.push(`SMS error: ${smsErr.message}`);
+        }
+      } else if ((args.channel === 'sms' || args.channel === 'both') && !customerPhone) {
+        results.messages.push('SMS skipped: No phone number on file');
+      }
+      
+      // Send email if requested and email available
+      if ((args.channel === 'email' || args.channel === 'both') && customerEmail) {
+        try {
+          const emailResponse = await fetch(
+            `${Deno.env.get('SUPABASE_URL')}/functions/v1/send-appointment-email`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+              },
+              body: JSON.stringify({
+                companyId: companyId,
+                appointmentId: appointment.id,
+                templateType: 'custom',
+                customSubject: `Your technician is on the way! ETA: ${args.eta_minutes} minutes`,
+                customMessage: etaMessage,
+                customerEmail: customerEmail,
+                customerName: customerName,
+              }),
+            }
+          );
+          
+          if (emailResponse.ok) {
+            results.email_sent = true;
+            results.messages.push(`Email sent to ${customerEmail}`);
+          } else {
+            const errText = await emailResponse.text();
+            console.error('[AI Agent] Email send failed:', errText);
+            results.messages.push(`Email failed: ${errText}`);
+          }
+        } catch (emailErr: any) {
+          console.error('[AI Agent] Email error:', emailErr);
+          results.messages.push(`Email error: ${emailErr.message}`);
+        }
+      } else if ((args.channel === 'email' || args.channel === 'both') && !customerEmail) {
+        results.messages.push('Email skipped: No email address on file');
+      }
+      
+      const anySent = results.sms_sent || results.email_sent;
+      
+      return {
+        success: anySent,
+        customer_name: customerName,
+        eta_minutes: args.eta_minutes,
+        channel: args.channel,
+        sms_sent: results.sms_sent,
+        email_sent: results.email_sent,
+        details: results.messages,
+        message: anySent 
+          ? `ETA update sent! ${results.messages.join('. ')}`
+          : `Could not send ETA update. ${results.messages.join('. ')}`,
+      };
+    }
 
     // ==========================================
     // QUOTING TOOLS
