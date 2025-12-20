@@ -274,6 +274,7 @@ export const AIAgentConsole = () => {
       setShowReviewForm(false);
       setShowQuoteForm(false);
       setShowTrackForm(false);
+      setShowBillingForm(false);
       setActiveTab('chat');
       return;
     }
@@ -282,6 +283,7 @@ export const AIAgentConsole = () => {
       setShowFeedbackForm(false);
       setShowQuoteForm(false);
       setShowTrackForm(false);
+      setShowBillingForm(false);
       setActiveTab('chat');
       return;
     }
@@ -290,6 +292,7 @@ export const AIAgentConsole = () => {
       setShowFeedbackForm(false);
       setShowReviewForm(false);
       setShowTrackForm(false);
+      setShowBillingForm(false);
       setActiveTab('chat');
       return;
     }
@@ -298,6 +301,16 @@ export const AIAgentConsole = () => {
       setShowFeedbackForm(false);
       setShowReviewForm(false);
       setShowQuoteForm(false);
+      setShowBillingForm(false);
+      setActiveTab('chat');
+      return;
+    }
+    if (actionId === 'billing') {
+      setShowBillingForm(true);
+      setShowFeedbackForm(false);
+      setShowReviewForm(false);
+      setShowQuoteForm(false);
+      setShowTrackForm(false);
       setActiveTab('chat');
       return;
     }
@@ -305,6 +318,7 @@ export const AIAgentConsole = () => {
     setShowReviewForm(false);
     setShowQuoteForm(false);
     setShowTrackForm(false);
+    setShowBillingForm(false);
     if (actionId === 'schedule') {
       setActiveTab('book');
       return;
@@ -331,6 +345,7 @@ export const AIAgentConsole = () => {
     setShowReviewForm(false);
     setShowQuoteForm(false);
     setShowTrackForm(false);
+    setShowBillingForm(false);
     setActiveTab('chat');
   };
 
@@ -418,7 +433,7 @@ export const AIAgentConsole = () => {
   };
 
   const agentInfo = getAgentInfo(currentAgent);
-  const isShowingForm = showFeedbackForm || showReviewForm || showQuoteForm || showTrackForm;
+  const isShowingForm = showFeedbackForm || showReviewForm || showQuoteForm || showTrackForm || showBillingForm;
 
   return (
     <Card className="h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden border-0 shadow-xl">
@@ -488,6 +503,13 @@ export const AIAgentConsole = () => {
               {showTrackForm && (
                 <TrackAppointmentForm
                   onSubmit={handleTrackSubmit}
+                  onCancel={handleHome}
+                />
+              )}
+
+              {showBillingForm && companyId && (
+                <BillingLookupForm
+                  companyId={companyId}
                   onCancel={handleHome}
                 />
               )}
