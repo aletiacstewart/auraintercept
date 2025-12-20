@@ -31,6 +31,9 @@ import {
   Receipt,
   Megaphone,
   Gift,
+  HeadphonesIcon,
+  Truck,
+  Briefcase,
   HelpCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -72,8 +75,12 @@ const navGroups: NavGroup[] = [
   {
     label: 'AI & Automation',
     items: [
-      { label: 'AI Agent', icon: Bot, href: '/dashboard/ai-agent', roles: ['platform_admin', 'company_admin'] },
       { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Customer Service', icon: HeadphonesIcon, href: '/dashboard/ai-agent?console=customer', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Field Operations', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Business Ops', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-agent?console=marketing', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Analytics', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', roles: ['platform_admin'] },
       { label: 'Chat Widget', icon: MessageCircle, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
       { label: 'Call History', icon: PhoneCall, href: '/dashboard/calls', roles: ['platform_admin', 'company_admin'] },
     ],
