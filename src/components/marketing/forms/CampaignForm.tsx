@@ -63,6 +63,10 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel 
           targetSegment: formData.targetSegment,
           companyName: companyName || 'our company',
           field,
+          campaignName: formData.name,
+          promoCode: formData.promoCode,
+          discountType: formData.discountType,
+          discountValue: formData.discountValue,
         },
       });
 

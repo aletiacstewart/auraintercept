@@ -59,6 +59,11 @@ export const WinbackForm: React.FC<WinbackFormProps> = ({ companyId, onCancel })
           targetSegment: 'inactive',
           companyName: companyName || 'our company',
           field,
+          campaignName: formData.name,
+          promoCode: formData.promoCode,
+          discountType: formData.discountType,
+          discountValue: formData.discountValue,
+          inactivePeriod: formData.inactivePeriod,
         },
       });
 
