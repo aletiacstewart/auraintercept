@@ -24,6 +24,7 @@ import { ReviewForm } from './ReviewForm';
 import { BookingForm, BookingData } from './BookingForm';
 import { QuoteForm, QuoteData } from './QuoteForm';
 import { TrackAppointmentForm, TrackingData } from './TrackAppointmentForm';
+import { BillingLookupForm } from '@/components/billing/forms/BillingLookupForm';
 import { format } from 'date-fns';
 
 // Customer Engagement agents definition
@@ -42,6 +43,7 @@ const QUICK_ACTIONS = [
   { id: 'hours', label: 'Hours', icon: Clock, message: "What are your business hours?" },
   { id: 'services', label: 'Services', icon: Sparkles, message: "What services do you offer?" },
   { id: 'track', label: 'Track', icon: MapPin, message: "I want to track my appointment status" },
+  { id: 'billing', label: 'Billing', icon: DollarSign, message: "I need to look up my billing information" },
   { id: 'feedback', label: 'Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
   { id: 'review', label: 'Review', icon: ThumbsUp, message: "I'd like to leave a review for my recent service" },
 ];
@@ -113,6 +115,7 @@ export const AIAgentConsole = () => {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [showTrackForm, setShowTrackForm] = useState(false);
+  const [showBillingForm, setShowBillingForm] = useState(false);
 
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
