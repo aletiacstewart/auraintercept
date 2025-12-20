@@ -11,11 +11,29 @@ serve(async (req) => {
   }
 
   try {
-    const { campaignType, targetSegment, companyName, field } = await req.json();
+    const { 
+      campaignType, 
+      targetSegment, 
+      companyName, 
+      field,
+      campaignName,
+      promoCode,
+      discountType,
+      discountValue,
+      inactivePeriod
+    } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY is not configured');
+    }
+
+    // Build discount string if provided
+    let discountInfo = '';
+    if (discountValue) {
+      discountInfo = discountType === 'percent' 
+        ? `${discountValue}% off` 
+        : `$${discountValue} off`;
     }
 
     const fieldPrompt = field === 'subject' 
@@ -24,8 +42,16 @@ serve(async (req) => {
 
     const systemPrompt = `You are a marketing copywriter specializing in service-based businesses. Create compelling campaign content that drives engagement and conversions. Be direct, use action-oriented language, and create urgency when appropriate.`;
 
+    // Build context from form data
+    let contextDetails = [];
+    if (campaignName) contextDetails.push(`Campaign: "${campaignName}"`);
+    if (promoCode) contextDetails.push(`Promo Code: ${promoCode}`);
+    if (discountInfo) contextDetails.push(`Offer: ${discountInfo}`);
+    if (inactivePeriod) contextDetails.push(`Targeting customers inactive for ${inactivePeriod} days`);
+
     const userPrompt = `Create content for a ${campaignType} campaign targeting ${targetSegment} customers for ${companyName || 'our company'}.
 
+${contextDetails.length > 0 ? `Campaign Details:\n${contextDetails.join('\n')}\n` : ''}
 Campaign Type: ${campaignType}
 - promotional: Focus on special offers, discounts, and limited-time deals
 - winback: Re-engage inactive customers with compelling reasons to return
@@ -39,6 +65,8 @@ Target: ${targetSegment}
 - vip: Exclusive offers for loyal customers
 
 ${fieldPrompt}
+${promoCode ? `Include the promo code "${promoCode}" in the message.` : ''}
+${discountInfo ? `Highlight the ${discountInfo} offer.` : ''}
 
 Respond with ONLY the content, no explanations or quotes around it.`;
 
