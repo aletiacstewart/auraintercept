@@ -900,6 +900,62 @@ export type Database = {
           },
         ]
       }
+      customer_profiles: {
+        Row: {
+          address: string | null
+          call_opt_out: boolean | null
+          company_id: string
+          created_at: string | null
+          email: string
+          email_opt_out: boolean | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          portal_token: string | null
+          sms_opt_out: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          call_opt_out?: boolean | null
+          company_id: string
+          created_at?: string | null
+          email: string
+          email_opt_out?: boolean | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          portal_token?: string | null
+          sms_opt_out?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          call_opt_out?: boolean | null
+          company_id?: string
+          created_at?: string | null
+          email?: string
+          email_opt_out?: boolean | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          portal_token?: string | null
+          sms_opt_out?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_referrals: {
         Row: {
           appointment_id: string | null
