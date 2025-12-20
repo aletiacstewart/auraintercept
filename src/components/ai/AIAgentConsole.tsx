@@ -437,6 +437,7 @@ export const AIAgentConsole = () => {
         tabs={TABS}
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        onHomeClick={handleHome}
       />
 
       {/* Content Area */}

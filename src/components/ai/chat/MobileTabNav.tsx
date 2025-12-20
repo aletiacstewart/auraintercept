@@ -13,13 +13,23 @@ interface MobileTabNavProps {
   tabs: Tab[];
   activeTab: string;
   onTabChange: (tabId: string) => void;
+  onHomeClick?: () => void;
 }
 
 export const MobileTabNav: React.FC<MobileTabNavProps> = ({
   tabs,
   activeTab,
   onTabChange,
+  onHomeClick,
 }) => {
+  const handleTabClick = (tabId: string) => {
+    // If clicking on home/chat tab, trigger home reset callback
+    if (tabId === 'chat' && onHomeClick) {
+      onHomeClick();
+    }
+    onTabChange(tabId);
+  };
+
   return (
     <div className="shrink-0 border-b bg-background/80 backdrop-blur-sm">
       <div className="flex">
@@ -30,7 +40,7 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
           return (
             <button
               key={tab.id}
-              onClick={() => onTabChange(tab.id)}
+              onClick={() => handleTabClick(tab.id)}
               className={cn(
                 'flex-1 flex flex-col items-center gap-0.5 py-2 px-1 text-[10px] font-medium transition-all relative',
                 isActive 
