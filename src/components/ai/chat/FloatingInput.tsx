@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Home, Mic } from 'lucide-react';
+import { Send, Home as HomeIcon, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FloatingInputProps {
@@ -35,7 +35,7 @@ export const FloatingInput: React.FC<FloatingInputProps> = ({
           onClick={onHome}
           className="shrink-0 h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
         >
-          <Home className="h-4 w-4" />
+          <HomeIcon className="h-4 w-4" />
         </Button>
         
         <Input

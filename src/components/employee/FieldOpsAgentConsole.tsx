@@ -22,13 +22,18 @@ import {
   User,
   Loader2,
   X,
-  Calendar
+  Calendar,
+  LucideIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { GlassHeader } from '@/components/ai/chat/GlassHeader';
 import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
+import { FloatingInput } from '@/components/ai/chat/FloatingInput';
+import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
+import { ChatBubble } from '@/components/ai/chat/ChatBubble';
+import { QuickActionBar } from '@/components/ai/chat/QuickActionGrid';
 import { TechnicianMap } from './TechnicianMap';
 
 const FIELD_OPS_AGENTS = [
@@ -43,29 +48,29 @@ const FIELD_OPS_AGENTS = [
 
 // Tabs for the console - matching AIAgentConsole structure
 const TABS = [
-  { id: 'chat', label: 'Chat', icon: MessageSquare },
+  { id: 'chat', label: 'Home', icon: MessageSquare },
   { id: 'jobs', label: 'Jobs', icon: Truck },
   { id: 'directions', label: 'Directions', icon: Navigation },
   { id: 'eta', label: 'ETA', icon: Clock },
   { id: 'dispatch', label: 'Dispatch', icon: Phone },
 ];
 
-interface QuickAction {
+interface FieldOpsQuickAction {
   id: string;
   label: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   message: string;
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary';
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
 }
 
-const QUICK_ACTIONS: QuickAction[] = [
-  { id: 'accept', label: 'Accept Job', icon: CheckCircle, message: '' },
-  { id: 'directions', label: 'Get Directions', icon: Navigation, message: '' },
-  { id: 'enroute', label: 'En Route', icon: Truck, message: '' },
-  { id: 'eta', label: 'Update ETA', icon: Clock, message: '' },
-  { id: 'arrived', label: 'Arrived', icon: MapPin, message: '' },
-  { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: '', variant: 'default' },
-  { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: '' },
+const QUICK_ACTIONS: FieldOpsQuickAction[] = [
+  { id: 'accept', label: 'Accept Job', icon: CheckCircle, message: "I want to accept a job" },
+  { id: 'directions', label: 'Get Directions', icon: Navigation, message: "Get directions to my next job" },
+  { id: 'enroute', label: 'En Route', icon: Truck, message: "Mark myself as en route" },
+  { id: 'eta', label: 'Update ETA', icon: Clock, message: "Update my ETA" },
+  { id: 'arrived', label: 'Arrived', icon: MapPin, message: "Mark myself as arrived" },
+  { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: "Complete the current job", variant: 'destructive' },
+  { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: "Contact dispatch" },
 ];
 
 interface JobAssignment {
@@ -206,7 +211,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     await sendMessage(message);
   };
 
-  const handleQuickAction = useCallback(async (action: QuickAction) => {
+  const handleQuickAction = useCallback(async (action: FieldOpsQuickAction) => {
     if (action.id === 'accept') {
       setSelectorMode('accept');
       return;
@@ -634,29 +639,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         onTabChange={setActiveTab}
       />
 
-      {/* Quick Actions - matching AIAgentConsole style */}
-      {activeTab === 'chat' && (
-        <div className="shrink-0 px-4 py-3 border-b bg-muted/30">
-          <div className="flex flex-wrap gap-2 justify-center">
-            {QUICK_ACTIONS.map((action) => (
-              <Button
-                key={action.id}
-                variant={action.id === 'complete' ? 'default' : 'outline'}
-                size="sm"
-                className={cn(
-                  'h-auto py-2 px-3 flex flex-col items-center gap-1 min-w-[80px]',
-                  action.id === 'complete' && 'bg-destructive hover:bg-destructive/90 text-destructive-foreground'
-                )}
-                onClick={() => handleQuickAction(action)}
-                disabled={isLoading}
-              >
-                <action.icon className="h-4 w-4" />
-                <span className="text-xs">{action.label}</span>
-              </Button>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Quick Actions moved inside chat content area */}
 
       {/* Job Selector Panel */}
       {selectorMode && selectorConfig && (
@@ -960,63 +943,73 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         </div>
       )}
 
-      {/* Messages - only show on chat tab */}
+      {/* Chat Tab - matching AIAgentConsole structure */}
       {activeTab === 'chat' && (
-        <ScrollArea className="flex-1 p-4 bg-gradient-to-b from-background to-muted/20" ref={scrollRef}>
-          <div className="space-y-3">
-            {messages.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 mx-auto mb-4 flex items-center justify-center shadow-lg">
-                  <Truck className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="font-semibold text-foreground mb-1">Field Ops Ready</h3>
-                <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                  Manage your jobs - accept, navigate, update ETAs, and complete assignments
-                </p>
-              </div>
-            ) : (
-              messages.map((msg, index) => renderMessage(msg, index))
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
+            {messages.length === 0 && !selectorMode && (
+              <WelcomeScreen
+                title="Field Ops Ready"
+                subtitle="Manage your jobs - accept, navigate, update ETAs, and complete assignments"
+                actions={QUICK_ACTIONS}
+                onAction={(message, actionId) => {
+                  const action = QUICK_ACTIONS.find(a => a.id === actionId);
+                  if (action) handleQuickAction(action);
+                }}
+              />
             )}
-            {isLoading && (
-              <div className="flex gap-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
-                  <Loader2 className="w-4 h-4 text-white animate-spin" />
-                </div>
-                <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
-      )}
 
-      {/* Input - matching AIAgentConsole floating style - only show on chat tab */}
-      {activeTab === 'chat' && (
-        <div className="shrink-0 p-4 border-t bg-background/80 backdrop-blur-sm">
-          <div className="flex gap-2">
-            <Input
-              ref={inputRef}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-              placeholder="Ask about jobs, directions, ETAs..."
-              disabled={isLoading}
-              className="h-11 rounded-full px-4 border-muted-foreground/20 focus-visible:ring-primary"
-            />
-            <Button 
-              onClick={handleSend} 
-              disabled={isLoading || !inputValue.trim()} 
-              size="icon" 
-              className="h-11 w-11 rounded-full shadow-md"
-            >
-              <Send className="h-4 w-4" />
-            </Button>
+            {messages.length > 0 && messages.map((msg, index) => {
+              const msgAgentInfo = msg.agent ? getAgentBadge(msg.agent) : null;
+              return (
+                <ChatBubble
+                  key={index}
+                  role={msg.role}
+                  content={msg.content}
+                  agentLabel={agentInfo.label}
+                  agentColor={agentInfo.color}
+                  agentBgColor={agentInfo.bgColor}
+                />
+              );
+            })}
+
+            {isLoading && messages[messages.length - 1]?.role === 'user' && (
+              <ChatBubble
+                role="assistant"
+                content=""
+                isLoading
+              />
+            )}
           </div>
+
+          {/* Quick Actions Bar - shown when there are messages */}
+          {messages.length > 0 && !selectorMode && (
+            <QuickActionBar
+              actions={QUICK_ACTIONS}
+              onAction={(message, actionId) => {
+                const action = QUICK_ACTIONS.find(a => a.id === actionId);
+                if (action) handleQuickAction(action);
+              }}
+            />
+          )}
+
+          {/* Floating Input */}
+          <FloatingInput
+            value={inputValue}
+            onChange={setInputValue}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSend();
+            }}
+            onHome={() => {
+              setInputValue('');
+              setSelectorMode(null);
+              setSelectedJobForEta(null);
+              setEtaMinutes('');
+            }}
+            isLoading={isLoading}
+            placeholder="Ask about jobs, directions, ETAs..."
+          />
         </div>
       )}
     </Card>
