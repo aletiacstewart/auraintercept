@@ -127,7 +127,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     enabled: !!effectiveCompanyId,
   });
 
-  const { messages, isLoading, currentAgent, sendMessage } = useMultiAgentChat({
+  const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     onAgentChange: (agent) => {
       console.log('[FieldOps] Agent changed to:', agent);
@@ -639,6 +639,14 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         tabs={TABS}
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        onHomeClick={() => {
+          clearMessages();
+          setInputValue('');
+          setSelectorMode(null);
+          setSelectedJobForEta(null);
+          setEtaMinutes('');
+          setActiveTab('chat');
+        }}
       />
 
       {/* Quick Actions moved inside chat content area */}
