@@ -25,6 +25,7 @@ import Widget from "./pages/Widget";
 import CallHistory from "./pages/CallHistory";
 import Analytics from "./pages/Analytics";
 import CustomerPortal from "./pages/CustomerPortal";
+import CustomerDashboard from "./pages/CustomerDashboard";
 import Subscription from "./pages/Subscription";
 import PublicChat from "./pages/PublicChat";
 import Inventory from "./pages/Inventory";
@@ -88,6 +89,7 @@ const App = () => (
             <Route path="/dashboard/help" element={<Help />} />
             
             <Route path="/appointment" element={<CustomerPortal />} />
+            <Route path="/customer-dashboard" element={<CustomerDashboard />} />
             <Route path="/chat/:companySlug" element={<PublicChat />} />
             
             {/* Technician Dashboard Routes */}

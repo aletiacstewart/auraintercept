@@ -6,7 +6,7 @@ const corsHeaders = {
 };
 
 interface PortalRequest {
-  action: 'get' | 'cancel' | 'reschedule' | 'update-preferences';
+  action: 'get' | 'cancel' | 'reschedule' | 'update-preferences' | 'get-dashboard' | 'get-appointments' | 'get-invoices' | 'get-profile';
   token: string;
   newDatetime?: string;
   preferences?: {
@@ -37,7 +37,68 @@ Deno.serve(async (req) => {
 
     console.log(`Customer portal action: ${action} for token: ${token}`);
 
-    // Fetch appointment by token
+    // Handle dashboard actions that use customer_profiles token
+    if (action === 'get-dashboard' || action === 'get-profile') {
+      // Try to find customer profile by portal token
+      const { data: profile, error: profileError } = await supabase
+        .from('customer_profiles')
+        .select('*')
+        .eq('portal_token', token)
+        .maybeSingle();
+
+      if (profileError) {
+        console.error('Profile fetch error:', profileError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to fetch profile' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (!profile) {
+        // Fall back to appointment token for backward compatibility
+        const { data: appointment } = await supabase
+          .from('appointments')
+          .select('customer_email, company_id')
+          .eq('customer_token', token)
+          .maybeSingle();
+
+        if (!appointment) {
+          return new Response(
+            JSON.stringify({ error: 'Customer not found' }),
+            { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        // Try to find profile by email
+        const { data: profileByEmail } = await supabase
+          .from('customer_profiles')
+          .select('*')
+          .eq('company_id', appointment.company_id)
+          .eq('email', appointment.customer_email)
+          .maybeSingle();
+
+        if (!profileByEmail) {
+          return new Response(
+            JSON.stringify({ error: 'Customer profile not found' }),
+            { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        // Use the found profile
+        return await getDashboardData(supabase, profileByEmail);
+      }
+
+      if (action === 'get-profile') {
+        return new Response(
+          JSON.stringify({ success: true, profile }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return await getDashboardData(supabase, profile);
+    }
+
+    // Handle appointment-token based actions (legacy)
     const { data: appointment, error: fetchError } = await supabase
       .from('appointments')
       .select(`
@@ -239,6 +300,15 @@ Deno.serve(async (req) => {
           );
         }
 
+        // Also update customer profile preferences if exists
+        if (appointment.customer_email) {
+          await supabase
+            .from('customer_profiles')
+            .update(updateData)
+            .eq('company_id', appointment.company_id)
+            .eq('email', appointment.customer_email);
+        }
+
         // Log subscription events for analytics
         if (subscriptionEvents.length > 0) {
           const eventsToInsert = subscriptionEvents.map(event => ({
@@ -285,3 +355,66 @@ Deno.serve(async (req) => {
     );
   }
 });
+
+// Helper function to get full dashboard data
+async function getDashboardData(supabase: any, profile: any) {
+  const companyId = profile.company_id;
+  const customerEmail = profile.email;
+
+  // Fetch company info
+  const { data: company } = await supabase
+    .from('companies')
+    .select('name, logo_url, primary_color')
+    .eq('id', companyId)
+    .single();
+
+  // Fetch appointments for this customer
+  const { data: appointments } = await supabase
+    .from('appointments')
+    .select('id, customer_name, service_type, datetime, status, customer_address, notes')
+    .eq('company_id', companyId)
+    .eq('customer_email', customerEmail)
+    .order('datetime', { ascending: false })
+    .limit(50);
+
+  // Fetch invoices for this customer
+  const { data: invoices } = await supabase
+    .from('invoices')
+    .select('id, invoice_number, customer_name, total, status, due_date, created_at')
+    .eq('company_id', companyId)
+    .eq('customer_email', customerEmail)
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  // Fetch quotes for this customer
+  const { data: quotes } = await supabase
+    .from('quotes')
+    .select('id, customer_name, total_amount, status, valid_until, created_at')
+    .eq('company_id', companyId)
+    .eq('customer_email', customerEmail)
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  // Fetch referrals by this customer
+  const { data: referrals } = await supabase
+    .from('customer_referrals')
+    .select('id, referral_code, status, reward_type, reward_value, referred_name')
+    .eq('company_id', companyId)
+    .eq('referrer_email', customerEmail)
+    .order('created_at', { ascending: false })
+    .limit(20);
+
+  console.log(`Dashboard data fetched for ${customerEmail}: ${appointments?.length || 0} appointments, ${invoices?.length || 0} invoices, ${quotes?.length || 0} quotes`);
+
+  return new Response(
+    JSON.stringify({
+      profile,
+      appointments: appointments || [],
+      invoices: invoices || [],
+      quotes: quotes || [],
+      referrals: referrals || [],
+      company: company || { name: 'Unknown', logo_url: null, primary_color: null }
+    }),
+    { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+  );
+}

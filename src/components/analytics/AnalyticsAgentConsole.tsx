@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
 import { Card } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { GlassHeader } from '@/components/ai/chat/GlassHeader';
 import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
@@ -15,13 +16,15 @@ import { CustomerInsightsForm } from './forms/CustomerInsightsForm';
 import { TrendForecastForm } from './forms/TrendForecastForm';
 import { KpiDashboardForm } from './forms/KpiDashboardForm';
 import { ExportReportForm } from './forms/ExportReportForm';
+import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   BarChart3, 
   TrendingUp, 
   Users, 
   DollarSign,
   Target,
-  Download
+  Download,
+  ShieldAlert
 } from 'lucide-react';
 
 // Tab configuration
@@ -39,25 +42,16 @@ const QUICK_ACTIONS = [
   { id: 'export', label: 'Export Report', icon: Download, message: 'I need to export a report' },
 ];
 
-// Agent styling
-const getAgentStyle = (agent: string) => {
-  const styles: Record<string, { label: string; color: string; bgColor: string }> = {
-    triage: { label: 'Triage', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    insights: { label: 'Insights', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
-    forecast: { label: 'Forecast', color: 'text-teal-700', bgColor: 'bg-teal-100' },
-    revenue: { label: 'Revenue', color: 'text-green-700', bgColor: 'bg-green-100' },
-    performance: { label: 'Performance', color: 'text-indigo-700', bgColor: 'bg-indigo-100' },
-  };
-  return styles[agent] || styles.triage;
-};
-
 interface AnalyticsAgentConsoleProps {
   companyId?: string;
 }
 
 export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ companyId: propCompanyId }) => {
-  const { companyId: authCompanyId } = useAuth();
+  const { companyId: authCompanyId, userRole } = useAuth();
   const effectiveCompanyId = propCompanyId || authCompanyId;
+  
+  // Role-based access control - only platform_admin and company_admin can access analytics
+  const hasAccess = userRole === 'platform_admin' || userRole === 'company_admin';
   
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
@@ -167,6 +161,24 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   const isShowingForm = showPerformanceForm || showRevenueForm || showCustomersForm || showForecastForm || showKpiForm || showExportForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
+
+  // Access denied UI
+  if (!hasAccess) {
+    return (
+      <Card className="h-[600px] flex flex-col overflow-hidden shadow-lg border-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="flex-1 flex items-center justify-center p-8">
+          <Alert variant="destructive" className="max-w-md">
+            <ShieldAlert className="h-5 w-5" />
+            <AlertTitle>Access Denied</AlertTitle>
+            <AlertDescription>
+              You don't have permission to access the Analytics console. 
+              This feature is available to Company Administrators and Platform Administrators only.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card className="h-[600px] flex flex-col overflow-hidden shadow-lg border-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
