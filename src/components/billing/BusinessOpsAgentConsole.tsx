@@ -13,6 +13,7 @@ import { BusinessQuoteForm, BusinessQuoteData } from './forms/BusinessQuoteForm'
 import { InvoiceForm, InvoiceFormData } from './forms/InvoiceForm';
 import { InventorySearchForm } from './forms/InventorySearchForm';
 import { WarrantyForm, WarrantyFormData } from './forms/WarrantyForm';
+import { WarrantyLookupForm } from './forms/WarrantyLookupForm';
 import { PriceLookupForm } from './forms/PriceLookupForm';
 import { 
   FileText, 
@@ -69,6 +70,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [showInventoryForm, setShowInventoryForm] = useState(false);
   const [showWarrantyForm, setShowWarrantyForm] = useState(false);
+  const [showWarrantyLookupForm, setShowWarrantyLookupForm] = useState(false);
   const [showPriceLookupForm, setShowPriceLookupForm] = useState(false);
 
   // Company branding
@@ -104,6 +106,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setShowInvoiceForm(false);
     setShowInventoryForm(false);
     setShowWarrantyForm(false);
+    setShowWarrantyLookupForm(false);
     setShowPriceLookupForm(false);
   };
 
@@ -136,6 +139,11 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     if (actionId === 'warranty-claim') {
       hideAllForms();
       setShowWarrantyForm(true);
+      return;
+    }
+    if (actionId === 'warranty-check') {
+      hideAllForms();
+      setShowWarrantyLookupForm(true);
       return;
     }
     if (actionId === 'pricing') {
@@ -188,7 +196,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     await sendMessage(message);
   };
 
-  const isShowingForm = showQuoteForm || showInvoiceForm || showInventoryForm || showWarrantyForm || showPriceLookupForm;
+  const isShowingForm = showQuoteForm || showInvoiceForm || showInventoryForm || showWarrantyForm || showWarrantyLookupForm || showPriceLookupForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
 
@@ -261,6 +269,13 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
                   onSubmit={handleWarrantySubmit}
                   onCancel={handleHome}
                   isLoading={isLoading}
+                />
+              )}
+              
+              {showWarrantyLookupForm && effectiveCompanyId && (
+                <WarrantyLookupForm
+                  companyId={effectiveCompanyId}
+                  onCancel={handleHome}
                 />
               )}
               
