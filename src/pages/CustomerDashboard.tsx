@@ -493,7 +493,6 @@ export default function CustomerDashboard() {
         <footer className="border-t mt-16 py-6 text-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} {company.name}. All rights reserved.</p>
         </footer>
-      </div>
     </div>
   );
 }
