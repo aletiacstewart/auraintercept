@@ -251,15 +251,9 @@ export const AIAgentConsole = () => {
   const hasSMS = !!(integrations?.twilio_phone_number && integrations?.twilio_account_sid && integrations?.twilio_auth_token);
   const twilioPhone = integrations?.twilio_phone_number;
 
-  // Build tabs dynamically
+  // Build tabs dynamically - only Home tab
   const TABS = [
     { id: 'chat', label: 'Home', icon: MessageSquare },
-    { id: 'services', label: 'Services', icon: Sparkles },
-    { id: 'hours', label: 'Hours', icon: Clock },
-    { id: 'book', label: 'Book', icon: Calendar },
-    { id: 'emergency', label: 'Emergency', icon: AlertTriangle, variant: 'destructive' as const },
-    ...(hasVoiceChat ? [{ id: 'voice', label: 'Voice', icon: Mic }] : []),
-    ...(hasSMS ? [{ id: 'sms', label: 'SMS', icon: Phone }] : []),
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
