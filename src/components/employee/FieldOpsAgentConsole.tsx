@@ -46,13 +46,9 @@ const FIELD_OPS_AGENTS = [
   { id: 'dispatch', name: 'Contact Dispatch', color: 'bg-blue-100', textColor: 'text-blue-700' },
 ];
 
-// Tabs for the console - matching AIAgentConsole structure
+// Tabs for the console - only Home tab
 const TABS = [
   { id: 'chat', label: 'Home', icon: MessageSquare },
-  { id: 'jobs', label: 'Jobs', icon: Truck },
-  { id: 'directions', label: 'Directions', icon: Navigation },
-  { id: 'eta', label: 'ETA', icon: Clock },
-  { id: 'dispatch', label: 'Dispatch', icon: Phone },
 ];
 
 interface FieldOpsQuickAction {
