@@ -179,7 +179,7 @@ export default function Inventory() {
 
   const totalValue = items.reduce((sum, item) => sum + (item.quantity * (item.unit_cost || 0)), 0);
 
-  const InventoryFormFields = () => (
+  const inventoryFormFields = (
     <div className="grid gap-4 py-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
@@ -244,7 +244,7 @@ export default function Inventory() {
                   <DialogTitle>Add Inventory Item</DialogTitle>
                   <DialogDescription>Add a new part or supply to your inventory.</DialogDescription>
                 </DialogHeader>
-                <InventoryFormFields />
+                {inventoryFormFields}
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsAddOpen(false)}>Cancel</Button>
                   <Button onClick={handleSubmit} disabled={addMutation.isPending}>Add Item</Button>
@@ -386,7 +386,7 @@ export default function Inventory() {
               <DialogTitle>Edit Inventory Item</DialogTitle>
               <DialogDescription>Update item details.</DialogDescription>
             </DialogHeader>
-            <InventoryFormFields />
+            {inventoryFormFields}
             <DialogFooter>
               <Button variant="outline" onClick={() => setEditItem(null)}>Cancel</Button>
               <Button onClick={handleSubmit} disabled={updateMutation.isPending}>Save Changes</Button>
