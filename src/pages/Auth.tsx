@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Bot, Building2, Users, Shield, Check, Crown, Zap, MessageSquare, Phone, Mail, Mic } from 'lucide-react';
+import { Bot, Building2, Users, Shield, Check, Crown, Zap, MessageSquare, Phone, Mail, Mic, UserCircle } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
@@ -18,7 +18,7 @@ import { PublicFooter } from '@/components/layout/PublicFooter';
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
 
-type AuthMode = 'platform_admin' | 'company' | 'employee';
+type AuthMode = 'platform_admin' | 'company' | 'employee' | 'customer';
 
 export default function Auth() {
   const [searchParams] = useSearchParams();
@@ -50,13 +50,29 @@ export default function Auth() {
       }
     }
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       toast({ title: 'Login Failed', description: error.message, variant: 'destructive' });
-    } else {
-      toast({ title: 'Welcome back!', description: 'Redirecting to dashboard...' });
-      navigate('/dashboard');
+      setIsLoading(false);
+      return;
+    }
+
+    // Check user role to determine redirect
+    if (authData.user) {
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', authData.user.id)
+        .single();
+
+      toast({ title: 'Welcome back!', description: 'Redirecting...' });
+      
+      if (roleData?.role === 'customer') {
+        navigate('/customer');
+      } else {
+        navigate('/dashboard');
+      }
     }
 
     setIsLoading(false);
@@ -315,6 +331,75 @@ export default function Auth() {
     setIsLoading(false);
   };
 
+  const handleCustomerSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      emailSchema.parse(email);
+      passwordSchema.parse(password);
+      if (!fullName.trim()) throw new Error('Full name is required');
+    } catch (err) {
+      const message = err instanceof z.ZodError ? err.errors[0].message : (err as Error).message;
+      toast({ title: 'Validation Error', description: message, variant: 'destructive' });
+      setIsLoading(false);
+      return;
+    }
+
+    const redirectUrl = `${window.location.origin}/customer`;
+
+    // Sign up user
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: { full_name: fullName }
+      }
+    });
+
+    if (authError) {
+      toast({ title: 'Signup Failed', description: authError.message, variant: 'destructive' });
+      setIsLoading(false);
+      return;
+    }
+
+    if (authData.user) {
+      // Wait a moment for the trigger to create the profile
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Update profile with full name
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ full_name: fullName })
+        .eq('id', authData.user.id);
+
+      if (profileError) {
+        console.error('Profile update error:', profileError);
+      }
+
+      // Assign customer role
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert({ user_id: authData.user.id, role: 'customer' });
+
+      if (roleError) {
+        console.error('Role assignment error:', roleError);
+        toast({ title: 'Warning', description: 'Account created but role assignment failed. Please contact support.', variant: 'destructive' });
+        setIsLoading(false);
+        return;
+      }
+
+      toast({ 
+        title: 'Welcome! 🎉', 
+        description: 'Your customer account has been created!' 
+      });
+      navigate('/customer');
+    }
+
+    setIsLoading(false);
+  };
+
   const getModeConfig = () => {
     switch (mode) {
       case 'platform_admin':
@@ -334,6 +419,15 @@ export default function Auth() {
           showCompanyField: false,
           showCodeField: true,
           onSignup: handleEmployeeSignup
+        };
+      case 'customer':
+        return {
+          title: 'Customer Portal',
+          description: 'Access your service history and appointments',
+          icon: UserCircle,
+          showCompanyField: false,
+          showCodeField: false,
+          onSignup: handleCustomerSignup
         };
       default:
         return {
@@ -571,15 +665,20 @@ export default function Auth() {
               </Card>
 
               {/* Mode switcher */}
-              <div className="flex justify-center gap-4 text-sm">
+              <div className="flex flex-wrap justify-center gap-2 text-sm">
                 {mode !== 'company' && (
                   <Button variant="link" size="sm" onClick={() => navigate('/auth?mode=company')}>
-                    <Building2 className="w-4 h-4 mr-1" /> Company Login
+                    <Building2 className="w-4 h-4 mr-1" /> Business
+                  </Button>
+                )}
+                {mode !== 'customer' && (
+                  <Button variant="link" size="sm" onClick={() => navigate('/auth?mode=customer')}>
+                    <UserCircle className="w-4 h-4 mr-1" /> Customer
                   </Button>
                 )}
                 {mode !== 'employee' && (
                   <Button variant="link" size="sm" onClick={() => navigate('/auth?mode=employee')}>
-                    <Users className="w-4 h-4 mr-1" /> Employee Login
+                    <Users className="w-4 h-4 mr-1" /> Employee
                   </Button>
                 )}
                 {mode !== 'platform_admin' && (
