@@ -82,7 +82,7 @@ const navGroups: NavGroup[] = [
       { label: 'Business Ops', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', roles: ['platform_admin', 'company_admin'] },
       { label: 'Billing', icon: Receipt, href: '/dashboard/ai-agent?console=billing', roles: ['platform_admin', 'company_admin'] },
       { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-agent?console=marketing', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Analytics', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', roles: ['platform_admin'] },
+      { label: 'Analytics', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', roles: ['platform_admin', 'company_admin'] },
       { label: 'Chat Widget', icon: MessageCircle, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
       { label: 'Call History', icon: PhoneCall, href: '/dashboard/calls', roles: ['platform_admin', 'company_admin'] },
     ],
