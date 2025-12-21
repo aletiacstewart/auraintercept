@@ -37,7 +37,7 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
             Sign In
           </Button>
           <Button className="gradient-primary" onClick={() => navigate('/auth?mode=company')}>
-            Get Started
+            Start Free Trial
           </Button>
         </div>
       </nav>

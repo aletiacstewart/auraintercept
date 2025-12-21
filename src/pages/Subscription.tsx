@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { Check, Crown, ExternalLink, Loader2, Clock, Sparkles } from 'lucide-react';
+import { Check, Crown, ExternalLink, Loader2, Clock, Sparkles, Users, Mail, MessageSquare, Mic, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SubscriptionStatus {
@@ -23,7 +23,11 @@ interface SubscriptionStatus {
 
 const ENTERPRISE_FEATURES = [
   'Unlimited appointments',
-  'Email, SMS & Voice reminders',
+  'Email reminders (included)',
+  'SMS reminders (usage-based)',
+  'AI Voice calls (usage-based)',
+  '10 employee accounts included',
+  'Additional employees: $10/mo each',
   'Premium AI Agent with custom voice',
   'Embeddable chat widget',
   'Full white-label branding',
@@ -259,7 +263,45 @@ export default function Subscription() {
                 <span className="text-5xl font-bold">$250</span>
                 <span className="text-muted-foreground text-lg">/month</span>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">Billed monthly</p>
+              <p className="text-sm text-muted-foreground mt-1">Base subscription • Billed monthly</p>
+            </div>
+
+            {/* Usage-based pricing info */}
+            <div className="p-4 rounded-lg bg-muted/50 border">
+              <h4 className="font-medium text-sm mb-3 flex items-center gap-2">
+                <Info className="w-4 h-4 text-primary" />
+                What's Included in Base Price
+              </h4>
+              <div className="grid gap-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-muted-foreground" />
+                    <span>Email reminders</span>
+                  </div>
+                  <span className="text-green-600 font-medium">Included</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-muted-foreground" />
+                    <span>SMS reminders</span>
+                  </div>
+                  <span className="text-muted-foreground text-xs">Usage-based</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Mic className="w-4 h-4 text-muted-foreground" />
+                    <span>AI Voice calls</span>
+                  </div>
+                  <span className="text-muted-foreground text-xs">Usage-based</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-muted-foreground" />
+                    <span>Employee accounts</span>
+                  </div>
+                  <span className="text-muted-foreground text-xs">10 free, +$10/mo each</span>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -321,6 +363,18 @@ export default function Subscription() {
               </p>
             </div>
             <div>
+              <h4 className="font-medium">How does employee pricing work?</h4>
+              <p className="text-sm text-muted-foreground">
+                Your subscription includes 10 employee accounts for free. Each additional employee beyond 10 costs $10/month. You can add employees from your dashboard, and billing adjusts automatically.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-medium">What are usage-based charges?</h4>
+              <p className="text-sm text-muted-foreground">
+                SMS and AI voice calls are billed based on actual usage. Email reminders are included at no extra cost. You can view your estimated costs in the Integrations section.
+              </p>
+            </div>
+            <div>
               <h4 className="font-medium">Can I subscribe during my trial?</h4>
               <p className="text-sm text-muted-foreground">
                 Yes! You can subscribe at any time. Your billing will start immediately, and you won't be charged again until your subscription renews.
@@ -330,12 +384,6 @@ export default function Subscription() {
               <h4 className="font-medium">Will I be charged during the trial?</h4>
               <p className="text-sm text-muted-foreground">
                 No! The 30-day trial is completely free with no credit card required. You only pay when you choose to subscribe.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium">What's included in the subscription?</h4>
-              <p className="text-sm text-muted-foreground">
-                Everything! Unlimited appointments, all reminder channels (email, SMS, voice), AI agent, chat widget, white-label branding, and priority support.
               </p>
             </div>
             <div>

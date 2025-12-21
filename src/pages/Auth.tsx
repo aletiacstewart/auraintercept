@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Bot, Building2, Users, Shield } from 'lucide-react';
+import { Bot, Building2, Users, Shield, Check, Crown, Zap, MessageSquare, Phone, Mail, Mic } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
@@ -496,6 +496,76 @@ export default function Auth() {
             </Tabs>
           </CardContent>
         </Card>
+
+        {/* Trial & Pricing Info for Company Signup */}
+        {mode === 'company' && (
+          <Card className="border-border/50 shadow-md">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Zap className="w-5 h-5 text-primary" />
+                What's Included
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Trial Info */}
+              <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+                <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                  <Crown className="w-4 h-4 text-amber-500" />
+                  30-Day Free Trial
+                </h4>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Full access to all features during your trial. No credit card required.
+                </p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <Check className="w-3 h-3 text-green-500" />
+                    <span>Unlimited appointments</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Check className="w-3 h-3 text-green-500" />
+                    <span>10 free employee accounts</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Check className="w-3 h-3 text-green-500" />
+                    <span>All AI agents</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Check className="w-3 h-3 text-green-500" />
+                    <span>Chat widget</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* After Trial */}
+              <div className="p-4 rounded-lg bg-muted/50 border">
+                <h4 className="font-semibold text-sm mb-2">After Trial: $250/month</h4>
+                <div className="space-y-2 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-3 h-3" />
+                    <span>Email reminders included</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="w-3 h-3" />
+                    <span>SMS reminders (usage-based)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mic className="w-3 h-3" />
+                    <span>AI Voice calls (usage-based)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Users className="w-3 h-3" />
+                    <span>10 employees free, +$10/mo each additional</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Upgrade Note */}
+              <p className="text-xs text-center text-muted-foreground">
+                Upgrade anytime from your dashboard under Subscription
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Mode switcher */}
         <div className="flex justify-center gap-4 text-sm">
