@@ -29,6 +29,8 @@ import { VoiceChat } from '@/components/ai/VoiceChat';
 import { format } from 'date-fns';
 import logo from '@/assets/logo.png';
 import aiBotBannerLogo from '@/assets/ai-bot-company-banner.png';
+import { PublicHeader } from '@/components/layout/PublicHeader';
+import { PublicFooter } from '@/components/layout/PublicFooter';
 
 // Demo company ID - AI Bot Company
 const DEMO_COMPANY_ID = '00000000-0000-0000-0000-000000000001';
@@ -399,7 +401,9 @@ export default function Demo() {
   const currentConsole = CONSOLE_TYPES.find(c => c.id === activeConsole);
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-background overflow-x-hidden">
+      <PublicHeader />
+      
       {/* Demo Banner */}
       <div className="glass-primary text-primary-foreground py-2 px-4 sm:py-3 sm:px-6">
         <div className="container max-w-7xl mx-auto flex items-center justify-between gap-2">
@@ -411,15 +415,6 @@ export default function Demo() {
             <Button 
               variant="secondary" 
               size="sm"
-              className="h-7 sm:h-8 text-xs sm:text-sm px-2 sm:px-3 glass-panel border-white/20"
-              onClick={() => navigate('/')}
-            >
-              <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-              Back
-            </Button>
-            <Button 
-              variant="secondary" 
-              size="sm"
               className="h-7 sm:h-8 text-xs sm:text-sm px-2 sm:px-3"
               onClick={() => navigate('/auth?mode=company')}
             >
@@ -428,6 +423,8 @@ export default function Demo() {
           </div>
         </div>
       </div>
+      
+      <div className="flex-1">
 
       <div className="container max-w-6xl mx-auto py-4 sm:py-6 px-3 sm:px-6">
         {/* Header */}
@@ -800,6 +797,8 @@ export default function Demo() {
           </div>
         </div>
       </div>
+      </div>
+      <PublicFooter />
     </div>
   );
 }

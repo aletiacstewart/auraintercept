@@ -12,6 +12,8 @@ import { Users, Building2, ArrowRight } from 'lucide-react';
 import logo from '@/assets/logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
+import { PublicHeader } from '@/components/layout/PublicHeader';
+import { PublicFooter } from '@/components/layout/PublicFooter';
 
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
@@ -152,8 +154,10 @@ export default function CustomerAuth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
-      <div className="w-full max-w-md space-y-6 animate-fade-in">
+    <div className="min-h-screen flex flex-col bg-muted/30">
+      <PublicHeader />
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-md space-y-6 animate-fade-in">
         {/* Logo */}
         <div className="flex flex-col items-center space-y-4">
           <div className="w-20 h-20 rounded-2xl gradient-primary p-0.5 shadow-glow">
@@ -277,6 +281,8 @@ export default function CustomerAuth() {
           </Button>
         </div>
       </div>
+      </div>
+      <PublicFooter />
     </div>
   );
 }
