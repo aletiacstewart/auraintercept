@@ -81,7 +81,7 @@ interface CompanyFormData {
 }
 
 export default function Companies() {
-  const { userRole } = useAuth();
+  const { userRole, companyId } = useAuth();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -97,19 +97,34 @@ export default function Companies() {
   const [createdCredentials, setCreatedCredentials] = useState<{ email: string; password: string } | null>(null);
   const [deletingCompany, setDeletingCompany] = useState<Company | null>(null);
 
-  // Fetch all companies - hooks must be called before any conditional returns
+  const isPlatformAdmin = userRole === 'platform_admin';
+  const isCompanyAdmin = userRole === 'company_admin';
+
+  // Fetch all companies for platform admin, or single company for company admin
   const { data: companies, isLoading } = useQuery({
-    queryKey: ['companies'],
+    queryKey: ['companies', isPlatformAdmin ? 'all' : companyId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('companies')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data as Company[];
+      if (isPlatformAdmin) {
+        const { data, error } = await supabase
+          .from('companies')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        return data as Company[];
+      } else if (isCompanyAdmin && companyId) {
+        const { data, error } = await supabase
+          .from('companies')
+          .select('*')
+          .eq('id', companyId)
+          .single();
+        
+        if (error) throw error;
+        return [data] as Company[];
+      }
+      return [];
     },
-    enabled: userRole === 'platform_admin',
+    enabled: isPlatformAdmin || (isCompanyAdmin && !!companyId),
   });
 
   // Fetch employee counts per company
@@ -131,7 +146,7 @@ export default function Companies() {
       });
       return counts;
     },
-    enabled: userRole === 'platform_admin',
+    enabled: isPlatformAdmin,
   });
 
   // Create company mutation
@@ -292,8 +307,8 @@ export default function Companies() {
     return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
   };
 
-  // Redirect non-platform admins (after all hooks)
-  if (userRole !== 'platform_admin') {
+  // Redirect users who are not platform or company admins
+  if (!isPlatformAdmin && !isCompanyAdmin) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
@@ -309,6 +324,116 @@ export default function Companies() {
     company.slug.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Company Admin View - show only their company details
+  if (isCompanyAdmin && companies?.length === 1) {
+    const company = companies[0];
+    return (
+      <DashboardLayout>
+        <div className="space-y-6 animate-fade-in">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Company Profile</h1>
+              <p className="text-muted-foreground">
+                View and manage your company information
+              </p>
+            </div>
+            <Button onClick={() => handleEdit(company)}>
+              <Pencil className="w-4 h-4 mr-2" />
+              Edit Company
+            </Button>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Company Info Card */}
+            <Card className="border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <div 
+                    className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-xl"
+                    style={{ backgroundColor: company.primary_color || '#0EA5E9' }}
+                  >
+                    {company.name.charAt(0).toUpperCase()}
+                  </div>
+                  {company.name}
+                </CardTitle>
+                <CardDescription>Company Details</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label className="text-muted-foreground text-sm">Company Slug</Label>
+                  <Badge variant="outline" className="font-mono text-sm ml-2">
+                    {company.slug}
+                  </Badge>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-sm">Created</Label>
+                  <p className="text-sm">{format(new Date(company.created_at), 'MMMM d, yyyy')}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground text-sm">Last Updated</Label>
+                  <p className="text-sm">{format(new Date(company.updated_at), 'MMMM d, yyyy')}</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Branding Card */}
+            <Card className="border-border/50">
+              <CardHeader>
+                <CardTitle>Branding</CardTitle>
+                <CardDescription>Your company's brand colors</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div>
+                    <Label className="text-muted-foreground text-sm">Primary Color</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div 
+                        className="w-8 h-8 rounded-md border"
+                        style={{ backgroundColor: company.primary_color || '#0EA5E9' }}
+                      />
+                      <span className="font-mono text-sm">{company.primary_color || '#0EA5E9'}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground text-sm">Secondary Color</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div 
+                        className="w-8 h-8 rounded-md border"
+                        style={{ backgroundColor: company.secondary_color || '#8B5CF6' }}
+                      />
+                      <span className="font-mono text-sm">{company.secondary_color || '#8B5CF6'}</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Edit Dialog */}
+          <Dialog open={!!editingCompany} onOpenChange={(open) => { if (!open) { setEditingCompany(null); resetForm(); } }}>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Edit Company</DialogTitle>
+                <DialogDescription>Update your company information</DialogDescription>
+              </DialogHeader>
+              <CompanyForm
+                formData={formData}
+                setFormData={setFormData}
+                onSubmit={handleSubmit}
+                onCancel={() => { setEditingCompany(null); resetForm(); }}
+                isLoading={updateMutation.isPending}
+                generateSlug={generateSlug}
+                isEdit
+                hideAdminFields
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Platform Admin View - show all companies with full management
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
@@ -587,6 +712,7 @@ function CompanyForm({
   isLoading,
   generateSlug,
   isEdit = false,
+  hideAdminFields = false,
 }: {
   formData: CompanyFormData;
   setFormData: (data: CompanyFormData) => void;
@@ -595,6 +721,7 @@ function CompanyForm({
   isLoading: boolean;
   generateSlug: (name: string) => string;
   isEdit?: boolean;
+  hideAdminFields?: boolean;
 }) {
   return (
     <div className="space-y-4 pt-4">
@@ -666,8 +793,8 @@ function CompanyForm({
         </div>
       </div>
 
-      {/* Admin Assignment Section - Only for create */}
-      {!isEdit && (
+      {/* Admin Assignment Section - Only for create and not hidden */}
+      {!isEdit && !hideAdminFields && (
         <div className="border-t pt-4 mt-4">
           <div className="flex items-center gap-2 mb-3">
             <Mail className="w-4 h-4 text-muted-foreground" />
