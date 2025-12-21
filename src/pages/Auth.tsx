@@ -24,7 +24,7 @@ export default function Auth() {
   const [searchParams] = useSearchParams();
   const mode = (searchParams.get('mode') as AuthMode) || 'company';
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
+  const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -353,239 +353,244 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex flex-col bg-muted/30">
       <PublicHeader />
-      <div className="flex-1 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6 animate-fade-in">
-        {/* Logo */}
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-20 h-20 rounded-2xl gradient-primary p-0.5 shadow-glow">
-            <div className="w-full h-full rounded-2xl bg-background flex items-center justify-center overflow-hidden">
-              <img src={logo} alt="AI Bot Company" className="w-16 h-16 object-contain" />
+      <div className="flex-1 flex items-center justify-center p-4 py-12">
+        <div className="w-full max-w-5xl animate-fade-in">
+          {/* Logo - centered above */}
+          <div className="flex flex-col items-center space-y-4 mb-8">
+            <div className="w-20 h-20 rounded-2xl gradient-primary p-0.5 shadow-glow">
+              <div className="w-full h-full rounded-2xl bg-background flex items-center justify-center overflow-hidden">
+                <img src={logo} alt="AI Bot Company" className="w-16 h-16 object-contain" />
+              </div>
+            </div>
+            <div className="text-center">
+              <h1 className="text-2xl font-bold tracking-tight">AI Bot Company</h1>
+              <p className="text-sm text-muted-foreground">The Future of Work</p>
             </div>
           </div>
-          <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight">AI Bot Company</h1>
-            <p className="text-sm text-muted-foreground">The Future of Work</p>
-          </div>
-        </div>
 
-        {/* Auth Card */}
-        <Card className="border-border/50 shadow-lg">
-          <CardHeader className="text-center pb-4">
-            <div className="mx-auto w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-3">
-              <Icon className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <CardTitle className="text-xl">{config.title}</CardTitle>
-            <CardDescription>{config.description}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'login' | 'signup')}>
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="login">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@company.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="flex justify-end">
-                    <ForgotPasswordDialog />
-                  </div>
-                  <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
-                    {isLoading ? 'Signing in...' : 'Sign In'}
-                  </Button>
-                </form>
-              </TabsContent>
-
-              <TabsContent value="signup">
-                <form onSubmit={config.onSignup} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input
-                      id="fullName"
-                      type="text"
-                      placeholder="John Doe"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  {config.showCompanyField && (
-                    <div className="space-y-2">
-                      <Label htmlFor="companyName">Company Name</Label>
-                      <Input
-                        id="companyName"
-                        type="text"
-                        placeholder="Acme Corp"
-                        value={companyName}
-                        onChange={(e) => setCompanyName(e.target.value)}
-                        required
-                      />
-                    </div>
-                  )}
-
-                  {config.showCodeField && (
-                    <div className="space-y-2">
-                      <Label htmlFor="code">Registration Code</Label>
-                      <Input
-                        id="code"
-                        type="text"
-                        placeholder="ABC123XYZ"
-                        value={registrationCode}
-                        onChange={(e) => setRegistrationCode(e.target.value.toUpperCase())}
-                        required
-                      />
-                      <p className="text-xs text-muted-foreground">Enter the code provided by your company admin</p>
-                    </div>
-                  )}
-
-                  <div className="space-y-2">
-                    <Label htmlFor="signupEmail">Email</Label>
-                    <Input
-                      id="signupEmail"
-                      type="email"
-                      placeholder="you@company.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signupPassword">Password</Label>
-                    <Input
-                      id="signupPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                    <PasswordStrengthIndicator password={password} />
-                  </div>
-                  <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
-                    {isLoading ? 'Creating account...' : mode === 'company' ? 'Start Free Trial' : 'Create Account'}
-                  </Button>
-                  {mode === 'company' && (
-                    <p className="text-xs text-center text-muted-foreground mt-2">
-                      30 days free • No credit card required • Cancel anytime
+          {/* Two Column Layout */}
+          <div className={`grid gap-8 ${mode === 'company' ? 'lg:grid-cols-2' : 'max-w-md mx-auto'}`}>
+            {/* Left Column - What's Included (only for company mode) */}
+            {mode === 'company' && (
+              <Card className="border-border/50 shadow-md h-fit">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-primary" />
+                    What's Included
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Trial Info */}
+                  <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+                    <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                      <Crown className="w-4 h-4 text-amber-500" />
+                      30-Day Free Trial
+                    </h4>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Full access to all features during your trial. No credit card required.
                     </p>
-                  )}
-                </form>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="flex items-center gap-1.5">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>Unlimited appointments</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>10 free employee accounts</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>All AI agents</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>Chat widget</span>
+                      </div>
+                    </div>
+                  </div>
 
-        {/* Trial & Pricing Info for Company Signup */}
-        {mode === 'company' && (
-          <Card className="border-border/50 shadow-md">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Zap className="w-5 h-5 text-primary" />
-                What's Included
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Trial Info */}
-              <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-                <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                  <Crown className="w-4 h-4 text-amber-500" />
-                  30-Day Free Trial
-                </h4>
-                <p className="text-xs text-muted-foreground mb-3">
-                  Full access to all features during your trial. No credit card required.
-                </p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="flex items-center gap-1.5">
-                    <Check className="w-3 h-3 text-green-500" />
-                    <span>Unlimited appointments</span>
+                  {/* After Trial */}
+                  <div className="p-4 rounded-lg bg-muted/50 border">
+                    <h4 className="font-semibold text-sm mb-2">After Trial: $250/month</h4>
+                    <div className="space-y-2 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-3 h-3" />
+                        <span>Email reminders included</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="w-3 h-3" />
+                        <span>SMS reminders (usage-based)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Mic className="w-3 h-3" />
+                        <span>AI Voice calls (usage-based)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="w-3 h-3" />
+                        <span>10 employees free, +$10/mo each additional</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Check className="w-3 h-3 text-green-500" />
-                    <span>10 free employee accounts</span>
+
+                  {/* Upgrade Note */}
+                  <p className="text-xs text-center text-muted-foreground">
+                    Upgrade anytime from your dashboard under Subscription
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Right Column - Auth Card */}
+            <div className="space-y-6">
+              <Card className="border-border/50 shadow-lg">
+                <CardHeader className="text-center pb-4">
+                  <div className="mx-auto w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-3">
+                    <Icon className="w-6 h-6 text-primary-foreground" />
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Check className="w-3 h-3 text-green-500" />
-                    <span>All AI agents</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Check className="w-3 h-3 text-green-500" />
-                    <span>Chat widget</span>
-                  </div>
-                </div>
+                  <CardTitle className="text-xl">{config.title}</CardTitle>
+                  <CardDescription>{config.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'login' | 'signup')}>
+                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                      <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                      <TabsTrigger value="login">Sign In</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="login">
+                      <form onSubmit={handleLogin} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="email">Email</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            placeholder="you@company.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="password">Password</Label>
+                          <Input
+                            id="password"
+                            type="password"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="flex justify-end">
+                          <ForgotPasswordDialog />
+                        </div>
+                        <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
+                          {isLoading ? 'Signing in...' : 'Sign In'}
+                        </Button>
+                      </form>
+                    </TabsContent>
+
+                    <TabsContent value="signup">
+                      <form onSubmit={config.onSignup} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="fullName">Full Name</Label>
+                          <Input
+                            id="fullName"
+                            type="text"
+                            placeholder="John Doe"
+                            value={fullName}
+                            onChange={(e) => setFullName(e.target.value)}
+                            required
+                          />
+                        </div>
+
+                        {config.showCompanyField && (
+                          <div className="space-y-2">
+                            <Label htmlFor="companyName">Company Name</Label>
+                            <Input
+                              id="companyName"
+                              type="text"
+                              placeholder="Acme Corp"
+                              value={companyName}
+                              onChange={(e) => setCompanyName(e.target.value)}
+                              required
+                            />
+                          </div>
+                        )}
+
+                        {config.showCodeField && (
+                          <div className="space-y-2">
+                            <Label htmlFor="code">Registration Code</Label>
+                            <Input
+                              id="code"
+                              type="text"
+                              placeholder="ABC123XYZ"
+                              value={registrationCode}
+                              onChange={(e) => setRegistrationCode(e.target.value.toUpperCase())}
+                              required
+                            />
+                            <p className="text-xs text-muted-foreground">Enter the code provided by your company admin</p>
+                          </div>
+                        )}
+
+                        <div className="space-y-2">
+                          <Label htmlFor="signupEmail">Email</Label>
+                          <Input
+                            id="signupEmail"
+                            type="email"
+                            placeholder="you@company.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="signupPassword">Password</Label>
+                          <Input
+                            id="signupPassword"
+                            type="password"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                          />
+                          <PasswordStrengthIndicator password={password} />
+                        </div>
+                        <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
+                          {isLoading ? 'Creating account...' : mode === 'company' ? 'Start Free Trial' : 'Create Account'}
+                        </Button>
+                        {mode === 'company' && (
+                          <p className="text-xs text-center text-muted-foreground mt-2">
+                            30 days free • No credit card required • Cancel anytime
+                          </p>
+                        )}
+                      </form>
+                    </TabsContent>
+                  </Tabs>
+                </CardContent>
+              </Card>
+
+              {/* Mode switcher */}
+              <div className="flex justify-center gap-4 text-sm">
+                {mode !== 'company' && (
+                  <Button variant="link" size="sm" onClick={() => navigate('/auth?mode=company')}>
+                    <Building2 className="w-4 h-4 mr-1" /> Company Login
+                  </Button>
+                )}
+                {mode !== 'employee' && (
+                  <Button variant="link" size="sm" onClick={() => navigate('/auth?mode=employee')}>
+                    <Users className="w-4 h-4 mr-1" /> Employee Login
+                  </Button>
+                )}
+                {mode !== 'platform_admin' && (
+                  <Button variant="link" size="sm" onClick={() => navigate('/auth?mode=platform_admin')}>
+                    <Shield className="w-4 h-4 mr-1" /> Admin
+                  </Button>
+                )}
               </div>
-
-              {/* After Trial */}
-              <div className="p-4 rounded-lg bg-muted/50 border">
-                <h4 className="font-semibold text-sm mb-2">After Trial: $250/month</h4>
-                <div className="space-y-2 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-3 h-3" />
-                    <span>Email reminders included</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MessageSquare className="w-3 h-3" />
-                    <span>SMS reminders (usage-based)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Mic className="w-3 h-3" />
-                    <span>AI Voice calls (usage-based)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="w-3 h-3" />
-                    <span>10 employees free, +$10/mo each additional</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Upgrade Note */}
-              <p className="text-xs text-center text-muted-foreground">
-                Upgrade anytime from your dashboard under Subscription
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Mode switcher */}
-        <div className="flex justify-center gap-4 text-sm">
-          {mode !== 'company' && (
-            <Button variant="link" size="sm" onClick={() => navigate('/auth?mode=company')}>
-              <Building2 className="w-4 h-4 mr-1" /> Company Login
-            </Button>
-          )}
-          {mode !== 'employee' && (
-            <Button variant="link" size="sm" onClick={() => navigate('/auth?mode=employee')}>
-              <Users className="w-4 h-4 mr-1" /> Employee Login
-            </Button>
-          )}
-          {mode !== 'platform_admin' && (
-            <Button variant="link" size="sm" onClick={() => navigate('/auth?mode=platform_admin')}>
-              <Shield className="w-4 h-4 mr-1" /> Admin
-            </Button>
-          )}
+            </div>
+          </div>
         </div>
-      </div>
       </div>
       <PublicFooter />
     </div>
