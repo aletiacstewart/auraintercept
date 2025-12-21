@@ -90,6 +90,20 @@ export function InvoiceForm({
     enabled: !!companyId && searchQuery.length >= 2,
   });
 
+  // Fetch services for price lookup
+  const { data: services = [] } = useQuery({
+    queryKey: ['services', companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('services')
+        .select('id, name, price, flat_fee, hourly_rate, duration_minutes')
+        .eq('company_id', companyId)
+        .eq('is_active', true);
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
   const createInvoiceMutation = useMutation({
     mutationFn: async () => {
       const itemsToCreate = lineItems.filter(item => item.description && item.unit_price > 0);
@@ -161,6 +175,27 @@ export function InvoiceForm({
       setCustomerEmail(apt.customer_email || '');
       setCustomerAddress(apt.customer_address || '');
       setServiceType(apt.service_type || '');
+      
+      // Find matching service and pre-fill line item with service details
+      const matchingService = services.find(s => 
+        s.name.toLowerCase() === apt.service_type?.toLowerCase()
+      );
+      
+      if (matchingService) {
+        const price = matchingService.price || matchingService.flat_fee || matchingService.hourly_rate || 0;
+        setLineItems([{ 
+          description: matchingService.name, 
+          quantity: 1, 
+          unit_price: price 
+        }]);
+      } else if (apt.service_type) {
+        // If no matching service found, still add the service type as description
+        setLineItems([{ 
+          description: apt.service_type, 
+          quantity: 1, 
+          unit_price: 0 
+        }]);
+      }
     }
   };
 
