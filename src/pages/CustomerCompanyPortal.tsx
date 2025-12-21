@@ -22,7 +22,7 @@ import {
   Heart
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { CustomerAIChat } from '@/components/customer/CustomerAIChat';
+import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
 
 interface Company {
   id: string;
@@ -206,11 +206,7 @@ export default function CustomerCompanyPortal() {
 
           {/* AI Chat Tab */}
           <TabsContent value="chat" className="mt-0">
-            <Card className="border-0 shadow-none">
-              <CardContent className="p-0">
-                <CustomerAIChat company={company} />
-              </CardContent>
-            </Card>
+            <AIAgentConsole companyId={company.id} />
           </TabsContent>
 
           {/* Services Tab */}
