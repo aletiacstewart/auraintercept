@@ -14,36 +14,36 @@ import aiBotBannerLogo from '@/assets/ai-bot-company-banner.png';
 // Import actual dashboard console components
 import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
 import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
-import { BillingAgentConsole } from '@/components/billing/BillingAgentConsole';
+import { BusinessOpsAgentConsole } from '@/components/billing/BusinessOpsAgentConsole';
 import { MarketingSalesAgentConsole } from '@/components/marketing/MarketingSalesAgentConsole';
 import { AnalyticsAgentConsole } from '@/components/analytics/AnalyticsAgentConsole';
 
 // Demo company ID - AI Bot Company
 const DEMO_COMPANY_ID = '00000000-0000-0000-0000-000000000001';
 
-// Console types for the demo - matching Platform Admin sidebar navigation
+// Console types for the demo - matching Platform Admin sidebar navigation exactly
 const CONSOLE_TYPES = [
-  { id: 'booking', label: 'Customer & Booking', icon: HeadphonesIcon, color: 'from-cyan-500 to-blue-500', description: 'Schedule appointments, get quotes, track service status, and leave feedback' },
+  { id: 'customer', label: 'Customer Engagement', icon: HeadphonesIcon, color: 'from-cyan-500 to-blue-500', description: 'Schedule appointments, get quotes, track service status, and leave feedback' },
   { id: 'fieldops', label: 'Field Operations', icon: Truck, color: 'from-green-500 to-emerald-500', description: 'Accept jobs, get directions, update ETA, and complete service calls' },
-  { id: 'billing', label: 'Billing & Invoicing', icon: Briefcase, color: 'from-purple-500 to-violet-500', description: 'Create invoices, send reminders, generate quotes, and track payments' },
+  { id: 'businessops', label: 'Business Operations', icon: Briefcase, color: 'from-purple-500 to-violet-500', description: 'Create quotes, generate invoices, check inventory, and manage warranties' },
   { id: 'marketing', label: 'Marketing & Sales', icon: Megaphone, color: 'from-orange-500 to-red-500', description: 'Create campaigns, generate promos, manage referrals, and track leads' },
   { id: 'analytics', label: 'Analytics & Insights', icon: BarChart3, color: 'from-indigo-500 to-blue-600', description: 'View performance reports, revenue analysis, forecasts, and KPIs' },
 ];
 
 export default function Demo() {
   const navigate = useNavigate();
-  const [activeConsole, setActiveConsole] = useState('booking');
+  const [activeConsole, setActiveConsole] = useState('customer');
 
   const currentConsole = CONSOLE_TYPES.find(c => c.id === activeConsole);
 
   const renderActiveConsole = () => {
     switch (activeConsole) {
-      case 'booking':
+      case 'customer':
         return <AIAgentConsole companyId={DEMO_COMPANY_ID} />;
       case 'fieldops':
         return <FieldOpsAgentConsole companyId={DEMO_COMPANY_ID} />;
-      case 'billing':
-        return <BillingAgentConsole companyId={DEMO_COMPANY_ID} />;
+      case 'businessops':
+        return <BusinessOpsAgentConsole companyId={DEMO_COMPANY_ID} />;
       case 'marketing':
         return <MarketingSalesAgentConsole companyId={DEMO_COMPANY_ID} />;
       case 'analytics':
