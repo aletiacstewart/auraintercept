@@ -9,19 +9,21 @@ import { AIAgentChat } from '@/components/ai/AIAgentChat';
 import { AIAgentSettings } from '@/components/ai/AIAgentSettings';
 import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
 import { BusinessOpsAgentConsole } from '@/components/billing/BusinessOpsAgentConsole';
+import { BillingAgentConsole } from '@/components/billing/BillingAgentConsole';
+import { BookingAgentConsole } from '@/components/booking/BookingAgentConsole';
 import { MarketingSalesAgentConsole } from '@/components/marketing/MarketingSalesAgentConsole';
 import { AnalyticsAgentConsole } from '@/components/analytics/AnalyticsAgentConsole';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall, FileText, Star, ThumbsUp, Globe, Truck, MapPin, Clock, CheckSquare, Navigation, HeadphonesIcon, Briefcase, Receipt, Package, Shield, Megaphone, BarChart3 } from 'lucide-react';
+import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall, FileText, Star, ThumbsUp, Globe, Truck, MapPin, Clock, CheckSquare, Navigation, HeadphonesIcon, Briefcase, Receipt, Package, Shield, Megaphone, BarChart3, DollarSign } from 'lucide-react';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { TestCallDialog } from '@/components/ai/TestCallDialog';
 import { Button } from '@/components/ui/button';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { useSubscription } from '@/hooks/useSubscription';
 
-type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics';
+type ConsoleType = 'customer' | 'booking' | 'fieldops' | 'businessops' | 'billing' | 'marketing' | 'analytics';
 
 const AIAgent = () => {
   const { companyId, userRole } = useAuth();
@@ -36,7 +38,7 @@ const AIAgent = () => {
   
   // Sync console type with URL params
   useEffect(() => {
-    if (consoleParam && ['customer', 'fieldops', 'businessops', 'marketing', 'analytics'].includes(consoleParam)) {
+    if (consoleParam && ['customer', 'booking', 'fieldops', 'businessops', 'billing', 'marketing', 'analytics'].includes(consoleParam)) {
       setConsoleType(consoleParam);
     }
   }, [consoleParam]);
@@ -279,27 +281,35 @@ const AIAgent = () => {
             {/* Console Type Selector for Admins */}
             {userRole !== 'employee' && (
               <Tabs value={consoleType} onValueChange={(v) => handleConsoleTypeChange(v as ConsoleType)} className="mb-6">
-                <TabsList>
+                <TabsList className="flex-wrap h-auto gap-1">
                   <TabsTrigger value="customer">
                     <HeadphonesIcon className="h-4 w-4 mr-2" />
-                    Customer Engagement
+                    Customer
+                  </TabsTrigger>
+                  <TabsTrigger value="booking">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Booking
                   </TabsTrigger>
                   <TabsTrigger value="fieldops">
                     <Truck className="h-4 w-4 mr-2" />
-                    Field Operations
+                    Field Ops
                   </TabsTrigger>
                   <TabsTrigger value="businessops">
                     <Briefcase className="h-4 w-4 mr-2" />
-                    Business Operations
+                    Business Ops
+                  </TabsTrigger>
+                  <TabsTrigger value="billing">
+                    <DollarSign className="h-4 w-4 mr-2" />
+                    Billing
                   </TabsTrigger>
                   <TabsTrigger value="marketing">
                     <Megaphone className="h-4 w-4 mr-2" />
-                    Marketing & Sales
+                    Marketing
                   </TabsTrigger>
                   {userRole === 'platform_admin' && (
                     <TabsTrigger value="analytics">
                       <BarChart3 className="h-4 w-4 mr-2" />
-                      Analytics & Insights
+                      Analytics
                     </TabsTrigger>
                   )}
                 </TabsList>
@@ -313,13 +323,17 @@ const AIAgent = () => {
                   <h2 className="text-lg font-semibold">
                     {userRole === 'employee' || consoleType === 'fieldops' 
                       ? 'Field Operations Console' 
-                      : consoleType === 'businessops'
-                        ? 'Business Operations Console'
-                        : consoleType === 'marketing'
-                          ? 'Marketing & Sales Console'
-                          : consoleType === 'analytics'
-                            ? 'Analytics & Insights Console'
-                            : 'AI Agent Console'}
+                      : consoleType === 'booking'
+                        ? 'Booking Console'
+                        : consoleType === 'businessops'
+                          ? 'Business Operations Console'
+                          : consoleType === 'billing'
+                            ? 'Billing Console'
+                            : consoleType === 'marketing'
+                              ? 'Marketing & Sales Console'
+                              : consoleType === 'analytics'
+                                ? 'Analytics & Insights Console'
+                                : 'AI Agent Console'}
                   </h2>
                   {userRole !== 'employee' && consoleType === 'customer' && (
                     <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
@@ -339,8 +353,12 @@ const AIAgent = () => {
                 
                 {userRole === 'employee' || consoleType === 'fieldops' ? (
                   <FieldOpsAgentConsole />
+                ) : consoleType === 'booking' ? (
+                  <BookingAgentConsole />
                 ) : consoleType === 'businessops' ? (
                   <BusinessOpsAgentConsole />
+                ) : consoleType === 'billing' ? (
+                  <BillingAgentConsole />
                 ) : consoleType === 'marketing' ? (
                   <MarketingSalesAgentConsole />
                 ) : consoleType === 'analytics' ? (
