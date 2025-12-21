@@ -23,7 +23,6 @@ export function PublicFooter() {
             <h4 className="font-semibold mb-4">Product</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><button onClick={() => navigate('/demo')} className="hover:text-foreground transition-colors">Live Demo</button></li>
-              <li><button onClick={() => navigate('/customer-auth')} className="hover:text-foreground transition-colors">Customer Portal</button></li>
               <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-foreground transition-colors">Start Trial</button></li>
               <li><a href="#" className="hover:text-foreground transition-colors">Pricing</a></li>
             </ul>
@@ -54,11 +53,8 @@ export function PublicFooter() {
             <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
               Home
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/customer-auth')}>
-              Customer Portal
-            </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate('/demo')}>
-              Try Demo
+              Live Demo
             </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate('/auth')}>
               Sign In
