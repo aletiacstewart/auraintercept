@@ -37,17 +37,20 @@ export function CompanyAdminDashboard() {
       const monthStart = startOfMonth(now).toISOString();
       const monthEnd = endOfMonth(now).toISOString();
 
-      const [employees, appointments, quotes, invoices, inventory, monthlyRevenue] = await Promise.all([
+      const [employees, appointments, quotes, invoices, inventory, monthlyRevenue, feedback, reminderLogs] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
-        supabase.from('appointments').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
-        supabase.from('quotes').select('id, total_amount, status').eq('company_id', companyId).in('status', ['draft', 'sent']),
-        supabase.from('invoices').select('id, total, status').eq('company_id', companyId),
+        supabase.from('appointments').select('id, status').eq('company_id', companyId),
+        supabase.from('quotes').select('id, total_amount, status').eq('company_id', companyId),
+        supabase.from('invoices').select('id, total, status, quote_id').eq('company_id', companyId),
         supabase.from('inventory_items').select('id, quantity, min_quantity').eq('company_id', companyId).eq('is_active', true),
         supabase.from('invoices').select('total').eq('company_id', companyId).eq('status', 'paid').gte('paid_at', monthStart).lte('paid_at', monthEnd),
+        supabase.from('customer_feedback').select('rating').eq('company_id', companyId).not('rating', 'is', null),
+        supabase.from('reminder_logs').select('id', { count: 'exact', head: true }).eq('company_id', companyId).gte('created_at', monthStart).lte('created_at', monthEnd),
       ]);
 
       // Calculate totals
-      const openQuotes = quotes.data ?? [];
+      const allQuotes = quotes.data ?? [];
+      const openQuotes = allQuotes.filter(q => q.status === 'draft' || q.status === 'sent');
       const openQuotesTotal = openQuotes.reduce((sum, q) => sum + (q.total_amount || 0), 0);
       
       const allInvoices = invoices.data ?? [];
@@ -59,15 +62,40 @@ export function CompanyAdminDashboard() {
       // Calculate low stock items
       const lowStockCount = (inventory.data ?? []).filter(item => item.quantity < item.min_quantity).length;
 
+      // Calculate quote conversion rate
+      const acceptedQuotes = allQuotes.filter(q => q.status === 'accepted').length;
+      const totalQuotesForConversion = allQuotes.filter(q => q.status !== 'draft').length;
+      const quoteConversionRate = totalQuotesForConversion > 0 ? Math.round((acceptedQuotes / totalQuotesForConversion) * 100) : 0;
+
+      // Calculate appointment completion rate
+      const allAppointments = appointments.data ?? [];
+      const completedAppointments = allAppointments.filter(a => a.status === 'completed').length;
+      const totalAppointmentsForCompletion = allAppointments.filter(a => a.status !== 'scheduled').length;
+      const appointmentCompletionRate = totalAppointmentsForCompletion > 0 ? Math.round((completedAppointments / totalAppointmentsForCompletion) * 100) : 0;
+
+      // Calculate customer satisfaction
+      const feedbackData = feedback.data ?? [];
+      const avgRating = feedbackData.length > 0 
+        ? feedbackData.reduce((sum, f) => sum + (f.rating || 0), 0) / feedbackData.length 
+        : 0;
+      const satisfactionRate = Math.round((avgRating / 5) * 100);
+
+      // Messages count (reminder logs as proxy)
+      const messagesCount = reminderLogs.count ?? 0;
+
       return {
         employees: employees.count ?? 0,
-        appointments: appointments.count ?? 0,
+        appointments: allAppointments.length,
         openQuotes: openQuotes.length,
         openQuotesTotal,
         outstandingInvoices: outstandingInvoices.length,
         outstandingTotal,
         monthlyRevenue: revenue,
         lowStockAlerts: lowStockCount,
+        quoteConversionRate,
+        appointmentCompletionRate,
+        satisfactionRate,
+        messagesCount,
       };
     },
     enabled: !!companyId,
@@ -130,7 +158,7 @@ export function CompanyAdminDashboard() {
     },
     { 
       title: 'Messages', 
-      value: 0, 
+      value: stats?.messagesCount ?? 0, 
       icon: MessageSquare, 
       description: 'This month',
       gradient: 'from-blue-500 to-blue-600'
@@ -259,28 +287,28 @@ export function CompanyAdminDashboard() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span>Quote Conversion</span>
-                  <span className="font-medium">--</span>
+                  <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-primary" style={{ width: '0%' }} />
+                  <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${stats?.quoteConversionRate ?? 0}%` }} />
                 </div>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span>Appointment Completion</span>
-                  <span className="font-medium">--</span>
+                  <span className="font-medium">{stats?.appointmentCompletionRate ?? 0}%</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-secondary" style={{ width: '0%' }} />
+                  <div className="h-full rounded-full bg-secondary transition-all" style={{ width: `${stats?.appointmentCompletionRate ?? 0}%` }} />
                 </div>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span>Customer Satisfaction</span>
-                  <span className="font-medium">--</span>
+                  <span className="font-medium">{stats?.satisfactionRate ?? 0}%</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-accent" style={{ width: '0%' }} />
+                  <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${stats?.satisfactionRate ?? 0}%` }} />
                 </div>
               </div>
             </div>

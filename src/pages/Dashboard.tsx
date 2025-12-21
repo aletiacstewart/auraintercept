@@ -5,6 +5,7 @@ import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PlatformAdminDashboard } from '@/components/dashboard/PlatformAdminDashboard';
 import { CompanyAdminDashboard } from '@/components/dashboard/CompanyAdminDashboard';
+import { EmployeeDashboard } from '@/components/dashboard/EmployeeDashboard';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Dashboard() {
@@ -46,7 +47,7 @@ export default function Dashboard() {
       case 'company_admin':
         return <CompanyAdminDashboard />;
       case 'employee':
-        return <CompanyAdminDashboard />;
+        return <EmployeeDashboard />;
       default:
         return (
           <div className="flex items-center justify-center h-full">
