@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Play, Users, Home } from 'lucide-react';
+import { Play, Home } from 'lucide-react';
 import logo from '@/assets/ai-header-logo-new.png';
 
 interface PublicHeaderProps {
@@ -27,11 +27,7 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
           )}
           <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/demo')}>
             <Play className="w-4 h-4 mr-1" />
-            Try Demo
-          </Button>
-          <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/demo')}>
-            <Users className="w-4 h-4 mr-1" />
-            Customer Portal
+            Live Demo
           </Button>
           <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/auth')}>
             Sign In
