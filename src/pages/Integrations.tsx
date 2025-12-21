@@ -3,6 +3,7 @@ import { CostCalculator } from '@/components/integrations/CostCalculator';
 import { ROICalculator } from '@/components/integrations/ROICalculator';
 import { QuickStartWizard } from '@/components/integrations/QuickStartWizard';
 import { GoogleCalendarSettings } from '@/components/integrations/GoogleCalendarSettings';
+import { CalendarSubscription } from '@/components/integrations/CalendarSubscription';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -622,8 +623,14 @@ export default function Integrations() {
           })}
         </div>
 
-        {/* Google Calendar Integration */}
-        <GoogleCalendarSettings />
+        {/* Calendar Integrations */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">Calendar</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            <CalendarSubscription type="company" />
+            <GoogleCalendarSettings />
+          </div>
+        </div>
 
         {/* Combined Calculator Card */}
         <Card className="border-border/50">

@@ -553,6 +553,7 @@ export type Database = {
           bounce_alert_email: string | null
           bounce_alert_enabled: boolean | null
           bounce_alert_threshold: number | null
+          calendar_feed_token: string | null
           cost_alert_email: string | null
           cost_alert_enabled: boolean | null
           cost_alert_threshold: number | null
@@ -623,6 +624,7 @@ export type Database = {
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
+          calendar_feed_token?: string | null
           cost_alert_email?: string | null
           cost_alert_enabled?: boolean | null
           cost_alert_threshold?: number | null
@@ -693,6 +695,7 @@ export type Database = {
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
+          calendar_feed_token?: string | null
           cost_alert_email?: string | null
           cost_alert_enabled?: boolean | null
           cost_alert_threshold?: number | null
@@ -1885,6 +1888,7 @@ export type Database = {
         Row: {
           availability_json: Json | null
           avatar_url: string | null
+          calendar_feed_token: string | null
           company_id: string | null
           created_at: string
           email: string | null
@@ -1898,6 +1902,7 @@ export type Database = {
         Insert: {
           availability_json?: Json | null
           avatar_url?: string | null
+          calendar_feed_token?: string | null
           company_id?: string | null
           created_at?: string
           email?: string | null
@@ -1911,6 +1916,7 @@ export type Database = {
         Update: {
           availability_json?: Json | null
           avatar_url?: string | null
+          calendar_feed_token?: string | null
           company_id?: string | null
           created_at?: string
           email?: string | null
