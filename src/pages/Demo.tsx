@@ -5,9 +5,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Bot, Calendar, Clock, Sparkles, Building2, ArrowLeft, Mic,
-  AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Zap, MessageSquare, Home
+  AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Zap, MessageSquare, Home,
+  Truck, Megaphone, BarChart3, Users, Navigation, CheckCircle,
+  Receipt, FileText, Bell, Tag, Gift, TrendingUp, UserPlus, Target, Download
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getAgentStyle } from '@/lib/agentStyles';
@@ -30,11 +33,20 @@ import aiBotBannerLogo from '@/assets/ai-bot-company-banner.png';
 // Demo company ID - AI Bot Company
 const DEMO_COMPANY_ID = '00000000-0000-0000-0000-000000000001';
 
-// Quick actions for demo
-const QUICK_ACTIONS = [
+// Console types for the demo
+const CONSOLE_TYPES = [
+  { id: 'booking', label: 'Customer & Booking', icon: Calendar, color: 'from-cyan-500 to-blue-500' },
+  { id: 'fieldops', label: 'Field Operations', icon: Truck, color: 'from-green-500 to-emerald-500' },
+  { id: 'billing', label: 'Billing & Invoicing', icon: DollarSign, color: 'from-purple-500 to-violet-500' },
+  { id: 'marketing', label: 'Marketing & Sales', icon: Megaphone, color: 'from-orange-500 to-red-500' },
+  { id: 'analytics', label: 'Analytics & Insights', icon: BarChart3, color: 'from-indigo-500 to-blue-600' },
+];
+
+// Quick actions for each console type
+const BOOKING_QUICK_ACTIONS = [
   { id: 'schedule', label: 'Book Appointment', icon: Calendar, message: "I'd like to request an appointment" },
   { id: 'emergency', label: 'Emergency', icon: AlertTriangle, message: "I have an urgent emergency situation", variant: 'destructive' as const },
-  { id: 'quote', label: 'Get Quote', icon: DollarSign, message: "I need a quote for your services" },
+  { id: 'quote', label: 'Get Quote', icon: FileText, message: "I need a quote for your services" },
   { id: 'hours', label: 'Hours', icon: Clock, message: "What are your business hours?" },
   { id: 'services', label: 'Services', icon: Sparkles, message: "What services do you offer?" },
   { id: 'track', label: 'Track', icon: MapPin, message: "I want to track my appointment status" },
@@ -42,8 +54,43 @@ const QUICK_ACTIONS = [
   { id: 'review', label: 'Review', icon: ThumbsUp, message: "I'd like to leave a review for my recent service" },
 ];
 
-// Tab configuration
-const TABS = [
+const FIELDOPS_QUICK_ACTIONS = [
+  { id: 'accept', label: 'Accept Job', icon: CheckCircle, message: "I want to accept a job" },
+  { id: 'directions', label: 'Get Directions', icon: Navigation, message: "Get directions to my next job" },
+  { id: 'enroute', label: 'En Route', icon: Truck, message: "Mark myself as en route" },
+  { id: 'eta', label: 'Update ETA', icon: Clock, message: "Update my ETA" },
+  { id: 'arrived', label: 'Arrived', icon: MapPin, message: "Mark myself as arrived" },
+  { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: "Complete the current job", variant: 'destructive' as const },
+];
+
+const BILLING_QUICK_ACTIONS = [
+  { id: 'create_invoice', label: 'Create Invoice', icon: Receipt, message: "I need to create an invoice for a customer" },
+  { id: 'send_reminder', label: 'Send Reminder', icon: Bell, message: "Send payment reminder to customers with overdue invoices" },
+  { id: 'create_quote', label: 'Create Quote', icon: FileText, message: "I need to create a quote for a customer" },
+  { id: 'revenue_report', label: 'Revenue Report', icon: BarChart3, message: "Show me a revenue report for this month" },
+  { id: 'overdue', label: 'Overdue Invoices', icon: AlertTriangle, message: "Show me all overdue invoices", variant: 'destructive' as const },
+];
+
+const MARKETING_QUICK_ACTIONS = [
+  { id: 'campaign', label: 'Create Campaign', icon: Megaphone, message: "I need to create a new marketing campaign" },
+  { id: 'promo', label: 'Generate Promo', icon: Tag, message: "I need to generate a promotional code" },
+  { id: 'referral', label: 'Referral Program', icon: Gift, message: "I need to set up a customer referral" },
+  { id: 'winback', label: 'Win-Back', icon: TrendingUp, message: "I need to create a win-back campaign for inactive customers" },
+  { id: 'lead', label: 'New Lead', icon: UserPlus, message: "I need to add a new lead to the system" },
+  { id: 'segments', label: 'Customer Segments', icon: Users, message: "Show me customer segments and analytics" },
+];
+
+const ANALYTICS_QUICK_ACTIONS = [
+  { id: 'performance', label: 'Performance Report', icon: BarChart3, message: "I need a performance report for the business" },
+  { id: 'revenue', label: 'Revenue Analysis', icon: DollarSign, message: "Show me detailed revenue analysis" },
+  { id: 'customers', label: 'Customer Insights', icon: Users, message: "I need customer insights and behavior analysis" },
+  { id: 'forecast', label: 'Trend Forecast', icon: TrendingUp, message: "Show me trend forecasts for the next quarter" },
+  { id: 'kpi', label: 'KPI Dashboard', icon: Target, message: "Show KPI dashboard with key metrics" },
+  { id: 'export', label: 'Export Report', icon: Download, message: "I need to export a comprehensive report" },
+];
+
+// Internal tab config
+const INTERNAL_TABS = [
   { id: 'home', label: 'Home', icon: Home },
   { id: 'chat', label: 'Chat', icon: MessageSquare },
   { id: 'services', label: 'Services', icon: Sparkles },
@@ -78,6 +125,7 @@ const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 
 export default function Demo() {
   const navigate = useNavigate();
+  const [activeConsole, setActiveConsole] = useState('booking');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentAgent, setCurrentAgent] = useState('triage');
@@ -88,6 +136,18 @@ export default function Demo() {
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [showTrackForm, setShowTrackForm] = useState(false);
   const chatScrollRef = useRef<HTMLDivElement>(null);
+
+  // Reset state when console changes
+  useEffect(() => {
+    setMessages([]);
+    setActiveTab('home');
+    setShowFeedbackForm(false);
+    setShowReviewForm(false);
+    setShowQuoteForm(false);
+    setShowTrackForm(false);
+    setCurrentAgent('triage');
+    setInput('');
+  }, [activeConsole]);
 
   // Auto-scroll chat
   useEffect(() => {
@@ -123,6 +183,33 @@ export default function Demo() {
     },
   });
 
+  const getQuickActionsForConsole = () => {
+    switch (activeConsole) {
+      case 'booking': return BOOKING_QUICK_ACTIONS;
+      case 'fieldops': return FIELDOPS_QUICK_ACTIONS;
+      case 'billing': return BILLING_QUICK_ACTIONS;
+      case 'marketing': return MARKETING_QUICK_ACTIONS;
+      case 'analytics': return ANALYTICS_QUICK_ACTIONS;
+      default: return BOOKING_QUICK_ACTIONS;
+    }
+  };
+
+  const getConsoleTitle = () => {
+    const console = CONSOLE_TYPES.find(c => c.id === activeConsole);
+    return console?.label || 'Customer & Booking';
+  };
+
+  const getConsoleDescription = () => {
+    switch (activeConsole) {
+      case 'booking': return 'Schedule appointments, get quotes, track service status, and leave feedback';
+      case 'fieldops': return 'Accept jobs, get directions, update ETA, and complete service calls';
+      case 'billing': return 'Create invoices, send reminders, generate quotes, and track payments';
+      case 'marketing': return 'Create campaigns, generate promos, manage referrals, and track leads';
+      case 'analytics': return 'View performance reports, revenue analysis, forecasts, and KPIs';
+      default: return 'Experience AI-powered business automation';
+    }
+  };
+
   const sendMessage = async (messageContent: string) => {
     if (!messageContent.trim() || isLoading) return;
 
@@ -137,6 +224,7 @@ export default function Demo() {
           companyId: DEMO_COMPANY_ID,
           conversationHistory: messages,
           currentAgent,
+          consoleType: activeConsole,
         },
       });
 
@@ -176,60 +264,58 @@ export default function Demo() {
   };
 
   const handleQuickAction = async (action: string, actionId?: string) => {
-    if (actionId === 'feedback') {
-      setShowFeedbackForm(true);
-      setShowReviewForm(false);
-      setShowQuoteForm(false);
-      setShowTrackForm(false);
-      setActiveTab('chat');
-      return;
+    // Handle form displays for booking console
+    if (activeConsole === 'booking') {
+      if (actionId === 'feedback') {
+        setShowFeedbackForm(true);
+        setShowReviewForm(false);
+        setShowQuoteForm(false);
+        setShowTrackForm(false);
+        setActiveTab('chat');
+        return;
+      }
+      if (actionId === 'review') {
+        setShowReviewForm(true);
+        setShowFeedbackForm(false);
+        setShowQuoteForm(false);
+        setShowTrackForm(false);
+        setActiveTab('chat');
+        return;
+      }
+      if (actionId === 'quote') {
+        setShowQuoteForm(true);
+        setShowFeedbackForm(false);
+        setShowReviewForm(false);
+        setShowTrackForm(false);
+        setActiveTab('chat');
+        return;
+      }
+      if (actionId === 'track') {
+        setShowTrackForm(true);
+        setShowFeedbackForm(false);
+        setShowReviewForm(false);
+        setShowQuoteForm(false);
+        setActiveTab('chat');
+        return;
+      }
+      if (actionId === 'schedule') {
+        setActiveTab('book');
+        return;
+      }
+      if (actionId === 'hours') {
+        setActiveTab('hours');
+        return;
+      }
+      if (actionId === 'services') {
+        setActiveTab('services');
+        return;
+      }
     }
-    if (actionId === 'review') {
-      setShowReviewForm(true);
-      setShowFeedbackForm(false);
-      setShowQuoteForm(false);
-      setShowTrackForm(false);
-      setActiveTab('chat');
-      return;
-    }
-    if (actionId === 'quote') {
-      setShowQuoteForm(true);
-      setShowFeedbackForm(false);
-      setShowReviewForm(false);
-      setShowTrackForm(false);
-      setActiveTab('chat');
-      return;
-    }
-    if (actionId === 'track') {
-      setShowTrackForm(true);
-      setShowFeedbackForm(false);
-      setShowReviewForm(false);
-      setShowQuoteForm(false);
-      setActiveTab('chat');
-      return;
-    }
+
     setShowFeedbackForm(false);
     setShowReviewForm(false);
     setShowQuoteForm(false);
     setShowTrackForm(false);
-    
-    if (actionId === 'schedule') {
-      setActiveTab('book');
-      return;
-    }
-    if (actionId === 'hours') {
-      setActiveTab('hours');
-      return;
-    }
-    if (actionId === 'services') {
-      setActiveTab('services');
-      return;
-    }
-    if (actionId === 'emergency') {
-      setActiveTab('chat');
-      await sendMessage(action);
-      return;
-    }
     setActiveTab('chat');
     await sendMessage(action);
   };
@@ -311,6 +397,7 @@ export default function Demo() {
 
   const agentInfo = getAgentStyle(currentAgent);
   const isShowingForm = showFeedbackForm || showReviewForm || showQuoteForm || showTrackForm;
+  const currentConsole = CONSOLE_TYPES.find(c => c.id === activeConsole);
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
@@ -319,7 +406,7 @@ export default function Demo() {
         <div className="container max-w-7xl mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <Zap className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
-            <span className="font-medium text-sm sm:text-base truncate">Live Demo</span>
+            <span className="font-medium text-sm sm:text-base truncate">Live Demo - AI Agent Consoles</span>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Button 
@@ -343,19 +430,57 @@ export default function Demo() {
         </div>
       </div>
 
-      <div className="container max-w-4xl mx-auto py-4 sm:py-8 px-3 sm:px-6">
-        <div className="flex items-center justify-center gap-4 mb-4">
+      <div className="container max-w-6xl mx-auto py-4 sm:py-6 px-3 sm:px-6">
+        {/* Header */}
+        <div className="text-center mb-6">
           <img 
             src={aiBotBannerLogo} 
             alt="AI Bot Company" 
-            className="h-12 sm:h-14 object-contain"
+            className="h-12 sm:h-14 object-contain mx-auto mb-3"
           />
-          <p className="text-muted-foreground text-sm sm:text-base">
-            Experience how our AI handles appointments, quotes, and customer inquiries
+          <h1 className="text-xl sm:text-2xl font-bold mb-2">Experience All 5 AI Agent Consoles</h1>
+          <p className="text-muted-foreground text-sm sm:text-base max-w-2xl mx-auto">
+            Switch between console types to see how AI agents handle different business operations
           </p>
         </div>
 
-        <Card className="h-[calc(100vh-140px)] sm:h-[650px] flex flex-col overflow-hidden border-0 shadow-xl">
+        {/* Console Type Selector */}
+        <Tabs value={activeConsole} onValueChange={setActiveConsole} className="mb-6">
+          <TabsList className="grid grid-cols-5 w-full h-auto p-1 bg-muted/50">
+            {CONSOLE_TYPES.map((console) => (
+              <TabsTrigger
+                key={console.id}
+                value={console.id}
+                className={cn(
+                  "flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 px-1 sm:px-3 text-xs sm:text-sm",
+                  "data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                )}
+              >
+                <console.icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="hidden sm:inline">{console.label}</span>
+                <span className="sm:hidden text-[10px] text-center leading-tight">{console.label.split(' ')[0]}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+
+        {/* Console Description Badge */}
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <Badge 
+            variant="outline" 
+            className={cn(
+              "px-4 py-1.5 text-sm font-medium",
+              `bg-gradient-to-r ${currentConsole?.color} text-white border-0`
+            )}
+          >
+            <currentConsole.icon className="h-4 w-4 mr-2" />
+            {getConsoleTitle()}
+          </Badge>
+        </div>
+        <p className="text-center text-muted-foreground text-sm mb-6">{getConsoleDescription()}</p>
+
+        {/* Console Card */}
+        <Card className="h-[calc(100vh-340px)] sm:h-[550px] flex flex-col overflow-hidden border-0 shadow-xl">
           {/* Header */}
           <GlassHeader
             companyName="AI Bot Company"
@@ -363,36 +488,38 @@ export default function Demo() {
             agentLabel={agentInfo.label}
             agentColor={agentInfo.color}
             agentBgColor={agentInfo.bgColor}
-            showVoice
+            showVoice={activeConsole === 'booking'}
             onVoiceClick={() => setActiveTab('voice')}
             rectangleLogo
           />
 
-          {/* Tab Navigation */}
-          <MobileTabNav
-            tabs={TABS}
-            activeTab={activeTab}
-            onTabChange={(tabId) => {
-              if (tabId === 'home') {
-                handleHome();
-              } else {
-                setActiveTab(tabId);
-              }
-            }}
-          />
+          {/* Tab Navigation - Only for booking console */}
+          {activeConsole === 'booking' && (
+            <MobileTabNav
+              tabs={INTERNAL_TABS}
+              activeTab={activeTab}
+              onTabChange={(tabId) => {
+                if (tabId === 'home') {
+                  handleHome();
+                } else {
+                  setActiveTab(tabId);
+                }
+              }}
+            />
+          )}
 
           {/* Content Area */}
           <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-            {/* Chat Tab */}
+            {/* Chat/Home View */}
             {(activeTab === 'chat' || activeTab === 'home') && (
               <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
                   {activeTab === 'home' && messages.length === 0 && !isShowingForm && (
                     <WelcomeScreen
                       companyName="AI Bot Company"
-                      title="Welcome to our Demo!"
-                      subtitle="Test our AI-powered assistant. Try scheduling an appointment, getting a quote, or asking about our services."
-                      actions={QUICK_ACTIONS}
+                      title={`${getConsoleTitle()} Demo`}
+                      subtitle={getConsoleDescription()}
+                      actions={getQuickActionsForConsole()}
                       onAction={handleQuickAction}
                     />
                   )}
@@ -454,7 +581,7 @@ export default function Demo() {
                 {/* Quick Actions Bar */}
                 {messages.length > 0 && !isShowingForm && (
                   <QuickActionBar
-                    actions={QUICK_ACTIONS}
+                    actions={getQuickActionsForConsole()}
                     onAction={handleQuickAction}
                   />
                 )}
@@ -470,8 +597,8 @@ export default function Demo() {
               </div>
             )}
 
-            {/* Services Tab */}
-            {activeTab === 'services' && (
+            {/* Services Tab - Booking console only */}
+            {activeTab === 'services' && activeConsole === 'booking' && (
               <div className="flex-1 overflow-y-auto p-3">
                 <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-primary" />
@@ -513,8 +640,8 @@ export default function Demo() {
               </div>
             )}
 
-            {/* Hours Tab */}
-            {activeTab === 'hours' && (
+            {/* Hours Tab - Booking console only */}
+            {activeTab === 'hours' && activeConsole === 'booking' && (
               <div className="flex-1 overflow-y-auto p-3">
                 <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
                   <Clock className="h-4 w-4 text-primary" />
@@ -557,8 +684,8 @@ export default function Demo() {
               </div>
             )}
 
-            {/* Book Tab */}
-            {activeTab === 'book' && (
+            {/* Book Tab - Booking console only */}
+            {activeTab === 'book' && activeConsole === 'booking' && (
               <div className="flex-1 overflow-y-auto p-3">
                 <BookingForm
                   services={services || []}
@@ -567,8 +694,8 @@ export default function Demo() {
               </div>
             )}
 
-            {/* Voice Tab */}
-            {activeTab === 'voice' && (
+            {/* Voice Tab - Booking console only */}
+            {activeTab === 'voice' && activeConsole === 'booking' && (
               <div className="flex-1 overflow-y-auto p-3 flex flex-col items-center justify-center">
                 <div className="text-center mb-4">
                   <h3 className="font-semibold text-sm mb-1">Voice AI Assistant</h3>
@@ -589,18 +716,28 @@ export default function Demo() {
         </Card>
 
         {/* CTA */}
-        <div className="mt-4 text-center">
-          <p className="text-muted-foreground text-xs mb-2">
-            Like what you see? Get your own AI agent for your business.
+        <div className="mt-6 text-center">
+          <p className="text-muted-foreground text-sm mb-3">
+            Ready to automate your business with AI agents?
           </p>
-          <Button 
-            size="sm" 
-            className="bg-primary text-primary-foreground"
-            onClick={() => navigate('/auth?mode=company')}
-          >
-            <Building2 className="h-4 w-4 mr-1" />
-            Start Free Trial
-          </Button>
+          <div className="flex items-center justify-center gap-3">
+            <Button 
+              size="lg" 
+              className="gradient-primary"
+              onClick={() => navigate('/auth?mode=company')}
+            >
+              <Building2 className="h-5 w-5 mr-2" />
+              Start Free Trial
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              onClick={() => navigate('/customer-auth')}
+            >
+              <Users className="h-5 w-5 mr-2" />
+              Customer Portal
+            </Button>
+          </div>
         </div>
       </div>
     </div>
