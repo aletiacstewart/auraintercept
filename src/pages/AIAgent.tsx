@@ -306,7 +306,7 @@ const AIAgent = () => {
                     <Megaphone className="h-4 w-4 mr-2" />
                     Marketing
                   </TabsTrigger>
-                  {userRole === 'platform_admin' && (
+                  {(userRole === 'platform_admin' || userRole === 'company_admin') && (
                     <TabsTrigger value="analytics">
                       <BarChart3 className="h-4 w-4 mr-2" />
                       Analytics
