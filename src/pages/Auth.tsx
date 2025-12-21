@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Bot, Building2, Users, Shield } from 'lucide-react';
 import logo from '@/assets/logo.png';
+import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
+import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
 
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
@@ -402,6 +404,9 @@ export default function Auth() {
                       required
                     />
                   </div>
+                  <div className="flex justify-end">
+                    <ForgotPasswordDialog />
+                  </div>
                   <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
                     {isLoading ? 'Signing in...' : 'Sign In'}
                   </Button>
@@ -472,6 +477,7 @@ export default function Auth() {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                     />
+                    <PasswordStrengthIndicator password={password} />
                   </div>
                   <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
                     {isLoading ? 'Creating account...' : mode === 'company' ? 'Start Free Trial' : 'Create Account'}
