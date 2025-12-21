@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Calendar, Zap, Truck, DollarSign, Megaphone, BarChart3
+  Zap, Truck, Megaphone, BarChart3, HeadphonesIcon, Briefcase
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PublicHeader } from '@/components/layout/PublicHeader';
@@ -21,11 +21,11 @@ import { AnalyticsAgentConsole } from '@/components/analytics/AnalyticsAgentCons
 // Demo company ID - AI Bot Company
 const DEMO_COMPANY_ID = '00000000-0000-0000-0000-000000000001';
 
-// Console types for the demo
+// Console types for the demo - matching Platform Admin sidebar navigation
 const CONSOLE_TYPES = [
-  { id: 'booking', label: 'Customer & Booking', icon: Calendar, color: 'from-cyan-500 to-blue-500', description: 'Schedule appointments, get quotes, track service status, and leave feedback' },
+  { id: 'booking', label: 'Customer & Booking', icon: HeadphonesIcon, color: 'from-cyan-500 to-blue-500', description: 'Schedule appointments, get quotes, track service status, and leave feedback' },
   { id: 'fieldops', label: 'Field Operations', icon: Truck, color: 'from-green-500 to-emerald-500', description: 'Accept jobs, get directions, update ETA, and complete service calls' },
-  { id: 'billing', label: 'Billing & Invoicing', icon: DollarSign, color: 'from-purple-500 to-violet-500', description: 'Create invoices, send reminders, generate quotes, and track payments' },
+  { id: 'billing', label: 'Billing & Invoicing', icon: Briefcase, color: 'from-purple-500 to-violet-500', description: 'Create invoices, send reminders, generate quotes, and track payments' },
   { id: 'marketing', label: 'Marketing & Sales', icon: Megaphone, color: 'from-orange-500 to-red-500', description: 'Create campaigns, generate promos, manage referrals, and track leads' },
   { id: 'analytics', label: 'Analytics & Insights', icon: BarChart3, color: 'from-indigo-500 to-blue-600', description: 'View performance reports, revenue analysis, forecasts, and KPIs' },
 ];
