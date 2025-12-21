@@ -472,6 +472,9 @@ export default function Auth() {
                     <Zap className="w-5 h-5 text-primary" />
                     What's Included
                   </CardTitle>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    <span className="font-medium text-foreground">For Businesses:</span> This platform subscription is designed for small to large companies — not individual employees.
+                  </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {/* Trial Info */}
@@ -530,6 +533,13 @@ export default function Auth() {
                   <p className="text-xs text-center text-muted-foreground">
                     Upgrade anytime from your dashboard under Subscription
                   </p>
+
+                  {/* Customer Info */}
+                  <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                    <p className="text-xs text-center text-green-700 dark:text-green-400">
+                      <span className="font-medium">Customers get free accounts</span> to engage with registered companies — book appointments, chat with AI agents, and more!
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             )}
