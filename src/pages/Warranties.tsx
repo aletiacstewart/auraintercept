@@ -1,38 +1,24 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
-import { format, addMonths } from 'date-fns';
+import { format } from 'date-fns';
 import { Shield, Plus, Search, AlertTriangle, CheckCircle, FileText } from 'lucide-react';
+import { WarrantyForm } from '@/components/billing/forms/WarrantyForm';
 
 export default function Warranties() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    customer_name: '',
-    customer_email: '',
-    equipment_type: '',
-    equipment_model: '',
-    serial_number: '',
-    coverage_type: 'standard',
-    coverage_details: '',
-    warranty_start_date: '',
-    warranty_months: 12,
-  });
 
   const { data: warranties, isLoading } = useQuery({
     queryKey: ['warranties', companyId],
@@ -62,32 +48,6 @@ export default function Warranties() {
     enabled: !!companyId,
   });
 
-  const createWarranty = useMutation({
-    mutationFn: async () => {
-      const endDate = addMonths(new Date(formData.warranty_start_date), formData.warranty_months);
-      const { error } = await supabase.from('warranty_records').insert({
-        company_id: companyId,
-        customer_name: formData.customer_name,
-        customer_email: formData.customer_email || null,
-        equipment_type: formData.equipment_type || null,
-        equipment_model: formData.equipment_model || null,
-        serial_number: formData.serial_number || null,
-        coverage_type: formData.coverage_type,
-        coverage_details: formData.coverage_details || null,
-        warranty_start_date: formData.warranty_start_date,
-        warranty_end_date: format(endDate, 'yyyy-MM-dd'),
-        is_active: true,
-      });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['warranties'] });
-      toast.success('Warranty record created');
-      setDialogOpen(false);
-    },
-    onError: () => toast.error('Failed to create warranty'),
-  });
-
   const filteredWarranties = warranties?.filter(w =>
     w.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     w.equipment_type?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -98,6 +58,11 @@ export default function Warranties() {
       return <Badge variant="destructive" className="gap-1"><AlertTriangle className="h-3 w-3" /> Expired</Badge>;
     }
     return <Badge className="gap-1 bg-green-500/20 text-green-700 border-green-500/30"><CheckCircle className="h-3 w-3" /> Active</Badge>;
+  };
+
+  const handleSuccess = () => {
+    setDialogOpen(false);
+    queryClient.invalidateQueries({ queryKey: ['warranties'] });
   };
 
   return (
@@ -115,58 +80,20 @@ export default function Warranties() {
             <DialogTrigger asChild>
               <Button><Plus className="h-4 w-4 mr-2" /> New Warranty</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-lg">
               <DialogHeader>
                 <DialogTitle>Create Warranty Record</DialogTitle>
                 <DialogDescription>Add a new warranty for a customer</DialogDescription>
               </DialogHeader>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Customer Name *</Label>
-                    <Input value={formData.customer_name} onChange={(e) => setFormData(p => ({ ...p, customer_name: e.target.value }))} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Email</Label>
-                    <Input type="email" value={formData.customer_email} onChange={(e) => setFormData(p => ({ ...p, customer_email: e.target.value }))} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Equipment Type</Label>
-                    <Input value={formData.equipment_type} onChange={(e) => setFormData(p => ({ ...p, equipment_type: e.target.value }))} placeholder="HVAC Unit" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Serial Number</Label>
-                    <Input value={formData.serial_number} onChange={(e) => setFormData(p => ({ ...p, serial_number: e.target.value }))} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Start Date *</Label>
-                    <Input type="date" value={formData.warranty_start_date} onChange={(e) => setFormData(p => ({ ...p, warranty_start_date: e.target.value }))} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Warranty Period</Label>
-                    <Select value={String(formData.warranty_months)} onValueChange={(v) => setFormData(p => ({ ...p, warranty_months: Number(v) }))}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="6">6 months</SelectItem>
-                        <SelectItem value="12">1 year</SelectItem>
-                        <SelectItem value="24">2 years</SelectItem>
-                        <SelectItem value="60">5 years</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Coverage Details</Label>
-                  <Textarea value={formData.coverage_details} onChange={(e) => setFormData(p => ({ ...p, coverage_details: e.target.value }))} />
-                </div>
-                <Button onClick={() => createWarranty.mutate()} disabled={!formData.customer_name || !formData.warranty_start_date || createWarranty.isPending} className="w-full">
-                  Create Warranty
-                </Button>
-              </div>
+              {companyId && (
+                <WarrantyForm
+                  companyId={companyId}
+                  mode="direct"
+                  showBackButton={false}
+                  onSuccess={handleSuccess}
+                  onCancel={() => setDialogOpen(false)}
+                />
+              )}
             </DialogContent>
           </Dialog>
         </div>

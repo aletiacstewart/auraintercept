@@ -5,16 +5,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Plus, FileText, Eye, Send, Check, X, Search, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { BusinessQuoteForm } from '@/components/billing/forms/BusinessQuoteForm';
 
 interface Quote {
   id: string;
@@ -49,17 +48,6 @@ export default function Quotes() {
   const [viewQuote, setViewQuote] = useState<Quote | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-
-  const [formData, setFormData] = useState({
-    customer_name: '',
-    customer_email: '',
-    customer_phone: '',
-    customer_address: '',
-    notes: '',
-    tax_rate: 0,
-    valid_days: 30,
-    line_items: [{ description: '', quantity: 1, unit_price: 0 }],
-  });
 
   const { data: quotes = [], isLoading } = useQuery({
     queryKey: ['quotes', companyId],
@@ -97,60 +85,6 @@ export default function Quotes() {
     return matchesSearch && matchesStatus;
   });
 
-  const addMutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
-      const subtotal = data.line_items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
-      const taxAmount = subtotal * (data.tax_rate / 100);
-      const validUntil = new Date();
-      validUntil.setDate(validUntil.getDate() + data.valid_days);
-
-      const { data: quote, error: quoteError } = await supabase
-        .from('quotes')
-        .insert({
-          company_id: companyId,
-          customer_name: data.customer_name,
-          customer_email: data.customer_email || null,
-          customer_phone: data.customer_phone || null,
-          customer_address: data.customer_address || null,
-          notes: data.notes || null,
-          subtotal,
-          tax_rate: data.tax_rate,
-          tax_amount: taxAmount,
-          total_amount: subtotal + taxAmount,
-          valid_until: validUntil.toISOString(),
-          status: 'draft',
-        })
-        .select()
-        .single();
-
-      if (quoteError) throw quoteError;
-
-      const lineItemsToInsert = data.line_items
-        .filter(item => item.description && item.unit_price > 0)
-        .map(item => ({
-          quote_id: quote.id,
-          description: item.description,
-          quantity: item.quantity,
-          unit_price: item.unit_price,
-          total: item.quantity * item.unit_price,
-        }));
-
-      if (lineItemsToInsert.length > 0) {
-        const { error: itemsError } = await supabase
-          .from('quote_line_items')
-          .insert(lineItemsToInsert);
-        if (itemsError) throw itemsError;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['quotes'] });
-      toast.success('Quote created successfully');
-      setIsAddOpen(false);
-      resetForm();
-    },
-    onError: () => toast.error('Failed to create quote'),
-  });
-
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase.from('quotes').update({ status }).eq('id', id);
@@ -176,48 +110,6 @@ export default function Quotes() {
     onError: () => toast.error('Failed to delete quote'),
   });
 
-  const resetForm = () => {
-    setFormData({
-      customer_name: '',
-      customer_email: '',
-      customer_phone: '',
-      customer_address: '',
-      notes: '',
-      tax_rate: 0,
-      valid_days: 30,
-      line_items: [{ description: '', quantity: 1, unit_price: 0 }],
-    });
-  };
-
-  const addLineItem = () => {
-    setFormData({
-      ...formData,
-      line_items: [...formData.line_items, { description: '', quantity: 1, unit_price: 0 }],
-    });
-  };
-
-  const updateLineItem = (index: number, field: string, value: string | number) => {
-    const newItems = [...formData.line_items];
-    newItems[index] = { ...newItems[index], [field]: value };
-    setFormData({ ...formData, line_items: newItems });
-  };
-
-  const removeLineItem = (index: number) => {
-    if (formData.line_items.length === 1) return;
-    setFormData({
-      ...formData,
-      line_items: formData.line_items.filter((_, i) => i !== index),
-    });
-  };
-
-  const handleSubmit = () => {
-    if (!formData.customer_name) {
-      toast.error('Customer name is required');
-      return;
-    }
-    addMutation.mutate(formData);
-  };
-
   const getStatusBadge = (status: string) => {
     const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
       draft: 'secondary',
@@ -228,10 +120,6 @@ export default function Quotes() {
     };
     return <Badge variant={variants[status] || 'secondary'}>{status}</Badge>;
   };
-
-  const subtotal = formData.line_items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
-  const taxAmount = subtotal * (formData.tax_rate / 100);
-  const total = subtotal + taxAmount;
 
   const totalQuoteValue = quotes.filter(q => q.status === 'accepted').reduce((sum, q) => sum + q.total_amount, 0);
   const pendingQuotes = quotes.filter(q => q.status === 'sent').length;
@@ -246,7 +134,7 @@ export default function Quotes() {
           </div>
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
-              <Button onClick={resetForm}>
+              <Button>
                 <Plus className="w-4 h-4 mr-2" />
                 New Quote
               </Button>
@@ -256,100 +144,15 @@ export default function Quotes() {
                 <DialogTitle>Create Quote</DialogTitle>
                 <DialogDescription>Create a new quote for a customer.</DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Customer Name *</Label>
-                    <Input value={formData.customer_name} onChange={e => setFormData({ ...formData, customer_name: e.target.value })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Email</Label>
-                    <Input type="email" value={formData.customer_email} onChange={e => setFormData({ ...formData, customer_email: e.target.value })} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Phone</Label>
-                    <Input value={formData.customer_phone} onChange={e => setFormData({ ...formData, customer_phone: e.target.value })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Valid Days</Label>
-                    <Input type="number" value={formData.valid_days} onChange={e => setFormData({ ...formData, valid_days: parseInt(e.target.value) || 30 })} />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Address</Label>
-                  <Textarea value={formData.customer_address} onChange={e => setFormData({ ...formData, customer_address: e.target.value })} />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label>Line Items</Label>
-                    <Button type="button" variant="outline" size="sm" onClick={addLineItem}>
-                      <Plus className="w-4 h-4 mr-1" /> Add Item
-                    </Button>
-                  </div>
-                  <div className="space-y-2">
-                    {formData.line_items.map((item, index) => (
-                      <div key={index} className="grid grid-cols-12 gap-2 items-center">
-                        <Input
-                          className="col-span-5"
-                          placeholder="Description"
-                          value={item.description}
-                          onChange={e => updateLineItem(index, 'description', e.target.value)}
-                        />
-                        <Input
-                          className="col-span-2"
-                          type="number"
-                          placeholder="Qty"
-                          value={item.quantity}
-                          onChange={e => updateLineItem(index, 'quantity', parseInt(e.target.value) || 1)}
-                        />
-                        <Input
-                          className="col-span-3"
-                          type="number"
-                          step="0.01"
-                          placeholder="Price"
-                          value={item.unit_price}
-                          onChange={e => updateLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
-                        />
-                        <div className="col-span-1 text-right text-sm">${(item.quantity * item.unit_price).toFixed(2)}</div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="col-span-1"
-                          onClick={() => removeLineItem(index)}
-                          disabled={formData.line_items.length === 1}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Tax Rate (%)</Label>
-                    <Input type="number" step="0.01" value={formData.tax_rate} onChange={e => setFormData({ ...formData, tax_rate: parseFloat(e.target.value) || 0 })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Notes</Label>
-                    <Input value={formData.notes} onChange={e => setFormData({ ...formData, notes: e.target.value })} />
-                  </div>
-                </div>
-
-                <div className="border-t pt-4 space-y-1 text-right">
-                  <div className="text-sm">Subtotal: ${subtotal.toFixed(2)}</div>
-                  <div className="text-sm text-muted-foreground">Tax ({formData.tax_rate}%): ${taxAmount.toFixed(2)}</div>
-                  <div className="text-lg font-bold">Total: ${total.toFixed(2)}</div>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddOpen(false)}>Cancel</Button>
-                <Button onClick={handleSubmit} disabled={addMutation.isPending}>Create Quote</Button>
-              </DialogFooter>
+              {companyId && (
+                <BusinessQuoteForm
+                  companyId={companyId}
+                  mode="direct"
+                  showBackButton={false}
+                  onSuccess={() => setIsAddOpen(false)}
+                  onCancel={() => setIsAddOpen(false)}
+                />
+              )}
             </DialogContent>
           </Dialog>
         </div>
@@ -453,11 +256,13 @@ export default function Quotes() {
                         </div>
                       </TableCell>
                       <TableCell>{format(new Date(quote.created_at), 'MMM d, yyyy')}</TableCell>
-                      <TableCell>{quote.valid_until ? format(new Date(quote.valid_until), 'MMM d, yyyy') : '-'}</TableCell>
+                      <TableCell>
+                        {quote.valid_until ? format(new Date(quote.valid_until), 'MMM d, yyyy') : '-'}
+                      </TableCell>
                       <TableCell>{getStatusBadge(quote.status)}</TableCell>
                       <TableCell className="text-right font-medium">${quote.total_amount.toFixed(2)}</TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-1">
+                        <div className="flex justify-end gap-2">
                           <Button variant="ghost" size="icon" onClick={() => setViewQuote(quote)}>
                             <Eye className="w-4 h-4" />
                           </Button>
@@ -469,7 +274,7 @@ export default function Quotes() {
                           {quote.status === 'sent' && (
                             <>
                               <Button variant="ghost" size="icon" onClick={() => updateStatusMutation.mutate({ id: quote.id, status: 'accepted' })}>
-                                <Check className="w-4 h-4 text-green-500" />
+                                <Check className="w-4 h-4 text-green-600" />
                               </Button>
                               <Button variant="ghost" size="icon" onClick={() => updateStatusMutation.mutate({ id: quote.id, status: 'declined' })}>
                                 <X className="w-4 h-4 text-destructive" />
@@ -497,46 +302,52 @@ export default function Quotes() {
             </DialogHeader>
             {viewQuote && (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <div className="text-muted-foreground">Customer</div>
-                    <div className="font-medium">{viewQuote.customer_name}</div>
-                    {viewQuote.customer_email && <div>{viewQuote.customer_email}</div>}
-                    {viewQuote.customer_phone && <div>{viewQuote.customer_phone}</div>}
+                    <label className="text-sm text-muted-foreground">Customer</label>
+                    <p className="font-medium">{viewQuote.customer_name}</p>
                   </div>
-                  <div className="text-right">
-                    <div className="text-muted-foreground">Status</div>
+                  <div>
+                    <label className="text-sm text-muted-foreground">Status</label>
                     <div>{getStatusBadge(viewQuote.status)}</div>
                   </div>
-                </div>
-                <div className="border rounded-lg p-3 space-y-2">
-                  {lineItems.map(item => (
-                    <div key={item.id} className="flex justify-between text-sm">
-                      <span>{item.description} x{item.quantity}</span>
-                      <span>${item.total.toFixed(2)}</span>
-                    </div>
-                  ))}
-                  <div className="border-t pt-2 mt-2 space-y-1">
-                    <div className="flex justify-between text-sm">
-                      <span>Subtotal</span>
-                      <span>${viewQuote.subtotal.toFixed(2)}</span>
-                    </div>
-                    {viewQuote.tax_amount && viewQuote.tax_amount > 0 && (
-                      <div className="flex justify-between text-sm text-muted-foreground">
-                        <span>Tax ({viewQuote.tax_rate}%)</span>
-                        <span>${viewQuote.tax_amount.toFixed(2)}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between font-bold">
-                      <span>Total</span>
-                      <span>${viewQuote.total_amount.toFixed(2)}</span>
-                    </div>
+                  <div>
+                    <label className="text-sm text-muted-foreground">Email</label>
+                    <p>{viewQuote.customer_email || '-'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-muted-foreground">Phone</label>
+                    <p>{viewQuote.customer_phone || '-'}</p>
                   </div>
                 </div>
+
+                {lineItems.length > 0 && (
+                  <div>
+                    <label className="text-sm text-muted-foreground">Line Items</label>
+                    <div className="mt-2 border rounded-lg">
+                      {lineItems.map(item => (
+                        <div key={item.id} className="flex justify-between p-2 border-b last:border-b-0">
+                          <div>
+                            <span className="font-medium">{item.description}</span>
+                            <span className="text-muted-foreground ml-2">x{item.quantity}</span>
+                          </div>
+                          <span>${item.total.toFixed(2)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="border-t pt-4 space-y-1 text-right">
+                  <div className="text-sm">Subtotal: ${viewQuote.subtotal.toFixed(2)}</div>
+                  <div className="text-sm text-muted-foreground">Tax ({viewQuote.tax_rate || 0}%): ${(viewQuote.tax_amount || 0).toFixed(2)}</div>
+                  <div className="text-lg font-bold">Total: ${viewQuote.total_amount.toFixed(2)}</div>
+                </div>
+
                 {viewQuote.notes && (
-                  <div className="text-sm">
-                    <div className="text-muted-foreground">Notes</div>
-                    <div>{viewQuote.notes}</div>
+                  <div>
+                    <label className="text-sm text-muted-foreground">Notes</label>
+                    <p className="text-sm">{viewQuote.notes}</p>
                   </div>
                 )}
               </div>
