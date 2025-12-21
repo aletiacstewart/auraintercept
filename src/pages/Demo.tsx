@@ -47,7 +47,7 @@ export default function Demo() {
       case 'marketing':
         return <MarketingSalesAgentConsole companyId={DEMO_COMPANY_ID} />;
       case 'analytics':
-        return <AnalyticsAgentConsole companyId={DEMO_COMPANY_ID} />;
+        return <AnalyticsAgentConsole companyId={DEMO_COMPANY_ID} demoMode={true} />;
       default:
         return <AIAgentConsole companyId={DEMO_COMPANY_ID} />;
     }

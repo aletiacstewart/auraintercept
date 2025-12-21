@@ -44,14 +44,16 @@ const QUICK_ACTIONS = [
 
 interface AnalyticsAgentConsoleProps {
   companyId?: string;
+  demoMode?: boolean;
 }
 
-export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ companyId: propCompanyId }) => {
+export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ companyId: propCompanyId, demoMode = false }) => {
   const { companyId: authCompanyId, userRole } = useAuth();
   const effectiveCompanyId = propCompanyId || authCompanyId;
   
   // Role-based access control - only platform_admin and company_admin can access analytics
-  const hasAccess = userRole === 'platform_admin' || userRole === 'company_admin';
+  // Demo mode bypasses authentication
+  const hasAccess = demoMode || userRole === 'platform_admin' || userRole === 'company_admin';
   
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
