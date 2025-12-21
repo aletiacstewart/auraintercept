@@ -30,7 +30,7 @@ const ENTERPRISE_FEATURES = [
   'Additional employees: $10/mo each',
   'Premium AI Agent with custom voice',
   'Embeddable chat widget',
-  'Full white-label branding',
+  'Customized dashboard branding',
   'Dedicated priority support',
   'All analytics & digest reports',
   'API access',
