@@ -12,6 +12,7 @@ import CustomerCompanyPortal from "./pages/CustomerCompanyPortal";
 import Demo from "./pages/Demo";
 import Dashboard from "./pages/Dashboard";
 import Companies from "./pages/Companies";
+import Customers from "./pages/Customers";
 import Employees from "./pages/Employees";
 import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="/demo" element={<Demo />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/companies" element={<Companies />} />
+            <Route path="/dashboard/customers" element={<Customers />} />
             <Route path="/dashboard/employees" element={<Employees />} />
             <Route path="/dashboard/settings" element={<Settings />} />
             <Route path="/dashboard/onboarding" element={<Onboarding />} />
