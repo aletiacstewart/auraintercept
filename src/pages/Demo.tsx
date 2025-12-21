@@ -7,9 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Bot, Calendar, Clock, Sparkles, Building2, ArrowLeft, Mic,
+  Bot, Calendar, Clock, Sparkles, Building2, ArrowLeft, Mic, ChevronRight,
   AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Zap, MessageSquare, Home,
-  Truck, Megaphone, BarChart3, Users, Navigation, CheckCircle,
+  Truck, Megaphone, BarChart3, Users, Navigation, CheckCircle, Phone,
   Receipt, FileText, Bell, Tag, Gift, TrendingUp, UserPlus, Target, Download
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -89,14 +89,9 @@ const ANALYTICS_QUICK_ACTIONS = [
   { id: 'export', label: 'Export Report', icon: Download, message: "I need to export a comprehensive report" },
 ];
 
-// Internal tab config
+// Internal tab config - matching AIAgentConsole exactly
 const INTERNAL_TABS = [
-  { id: 'home', label: 'Home', icon: Home },
-  { id: 'chat', label: 'Chat', icon: MessageSquare },
-  { id: 'services', label: 'Services', icon: Sparkles },
-  { id: 'hours', label: 'Hours', icon: Clock },
-  { id: 'book', label: 'Book', icon: Calendar },
-  { id: 'voice', label: 'Voice', icon: Mic },
+  { id: 'chat', label: 'Home', icon: MessageSquare },
 ];
 
 interface ChatMessage {
@@ -140,7 +135,7 @@ export default function Demo() {
   // Reset state when console changes
   useEffect(() => {
     setMessages([]);
-    setActiveTab('home');
+    setActiveTab('chat');
     setShowFeedbackForm(false);
     setShowReviewForm(false);
     setShowQuoteForm(false);
@@ -310,6 +305,10 @@ export default function Demo() {
         setActiveTab('services');
         return;
       }
+      if (actionId === 'emergency') {
+        setActiveTab('emergency');
+        return;
+      }
     }
 
     setShowFeedbackForm(false);
@@ -327,7 +326,7 @@ export default function Demo() {
     setShowQuoteForm(false);
     setShowTrackForm(false);
     setCurrentAgent('triage');
-    setActiveTab('home');
+    setActiveTab('chat');
   };
 
   const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string; serviceDate?: Date }) => {
@@ -498,27 +497,23 @@ export default function Demo() {
             <MobileTabNav
               tabs={INTERNAL_TABS}
               activeTab={activeTab}
-              onTabChange={(tabId) => {
-                if (tabId === 'home') {
-                  handleHome();
-                } else {
-                  setActiveTab(tabId);
-                }
-              }}
+              onTabChange={setActiveTab}
+              onHomeClick={handleHome}
             />
           )}
 
           {/* Content Area */}
           <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
             {/* Chat/Home View */}
-            {(activeTab === 'chat' || activeTab === 'home') && (
+            {/* Chat Tab - matches AIAgentConsole structure */}
+            {activeTab === 'chat' && (
               <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
-                  {activeTab === 'home' && messages.length === 0 && !isShowingForm && (
+                  {messages.length === 0 && !isShowingForm && (
                     <WelcomeScreen
                       companyName="AI Bot Company"
-                      title={`${getConsoleTitle()} Demo`}
-                      subtitle={getConsoleDescription()}
+                      title="Welcome!"
+                      subtitle="I'm your AI assistant. How can I help you today?"
                       actions={getQuickActionsForConsole()}
                       onAction={handleQuickAction}
                     />
@@ -527,6 +522,8 @@ export default function Demo() {
                   {showFeedbackForm && (
                     <FeedbackForm 
                       onSubmit={handleFeedbackSubmit}
+                      onCancel={handleHome}
+                      isLoading={isLoading}
                       reviewLinks={[]}
                     />
                   )}
@@ -534,6 +531,8 @@ export default function Demo() {
                   {showReviewForm && (
                     <ReviewForm 
                       onSubmit={handleReviewSubmit}
+                      onCancel={handleHome}
+                      isLoading={isLoading}
                       reviewLinks={[
                         { platform: 'Google', url: 'https://google.com/review' },
                         { platform: 'Facebook', url: 'https://facebook.com/review' },
@@ -545,31 +544,51 @@ export default function Demo() {
                     <QuoteForm 
                       services={services || []}
                       onSubmit={handleQuoteSubmit}
+                      onCancel={handleHome}
                     />
                   )}
 
                   {showTrackForm && (
                     <TrackAppointmentForm 
                       onSubmit={handleTrackSubmit}
+                      onCancel={handleHome}
                     />
                   )}
 
                   {!isShowingForm && messages.map((message, index) => {
                     const msgStyle = message.agent ? getAgentStyle(message.agent) : null;
+                    const prevMessage = index > 0 ? messages[index - 1] : null;
+                    const showHandoffIndicator = message.role === 'assistant' &&
+                      prevMessage?.role === 'assistant' && 
+                      message.agent && 
+                      prevMessage?.agent && 
+                      message.agent !== prevMessage.agent;
+
                     return (
-                      <ChatBubble
-                        key={index}
-                        role={message.role}
-                        content={message.content}
-                        agentLabel={msgStyle?.label}
-                        agentColor={msgStyle?.color}
-                        agentBgColor={msgStyle?.bgColor}
-                        isHandoff={message.isHandoff}
-                      />
+                      <React.Fragment key={index}>
+                        {showHandoffIndicator && (
+                          <div className="flex items-center justify-center gap-2 py-2 text-xs text-muted-foreground animate-fade-in">
+                            <div className="h-px flex-1 bg-border" />
+                            <span className="flex items-center gap-1 px-2 py-1 rounded-full glass-panel">
+                              → Transferred to {msgStyle?.label}
+                            </span>
+                            <div className="h-px flex-1 bg-border" />
+                          </div>
+                        )}
+                        
+                        <ChatBubble
+                          role={message.role}
+                          content={message.content}
+                          agentLabel={msgStyle?.label}
+                          agentColor={msgStyle?.color}
+                          agentBgColor={msgStyle?.bgColor}
+                          isHandoff={showHandoffIndicator}
+                        />
+                      </React.Fragment>
                     );
                   })}
 
-                  {isLoading && (
+                  {isLoading && messages[messages.length - 1]?.role === 'user' && (
                     <ChatBubble
                       role="assistant"
                       content=""
@@ -597,110 +616,151 @@ export default function Demo() {
               </div>
             )}
 
-            {/* Services Tab - Booking console only */}
-            {activeTab === 'services' && activeConsole === 'booking' && (
-              <div className="flex-1 overflow-y-auto p-3">
-                <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  Our Services
-                </h3>
-                {services && services.length > 0 ? (
-                  <div className="space-y-2">
-                    {services.map((service) => (
+            {/* Services Tab */}
+            {activeTab === 'services' && (
+              <div className="flex-1 overflow-y-auto p-4">
+                <h3 className="font-semibold text-lg mb-4 gradient-text">Our Services</h3>
+                {services?.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">
+                    No services configured yet
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {services?.map((service, index) => (
                       <button
                         key={service.id}
-                        className="w-full text-left p-2.5 rounded-lg border bg-card hover:border-primary/50 transition-colors"
                         onClick={() => {
                           setActiveTab('chat');
                           sendMessage(`Tell me about ${service.name}`);
                         }}
+                        className="w-full text-left p-4 rounded-xl glass-panel hover:neon-border transition-all duration-300 group animate-fade-in"
+                        style={{ animationDelay: `${index * 50}ms` }}
                       >
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-medium text-sm">{service.name}</h4>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h4 className="font-medium group-hover:text-primary transition-colors">
+                              {service.name}
+                            </h4>
                             {service.description && (
-                              <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{service.description}</p>
+                              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                                {service.description}
+                              </p>
                             )}
+                            <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                              <span className="flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                {service.duration_minutes} min
+                              </span>
+                              {service.price && (
+                                <Badge variant="secondary" className="text-xs">
+                                  ${service.price}
+                                </Badge>
+                              )}
+                            </div>
                           </div>
-                          <div className="text-right ml-2">
-                            {service.price && (
-                              <Badge variant="secondary" className="text-xs">${service.price}</Badge>
-                            )}
-                            {service.duration_minutes && (
-                              <p className="text-[10px] text-muted-foreground mt-0.5">{service.duration_minutes} min</p>
-                            )}
-                          </div>
+                          <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                         </div>
                       </button>
                     ))}
                   </div>
-                ) : (
-                  <p className="text-muted-foreground text-xs text-center py-4">No services configured</p>
                 )}
+
+                <Button 
+                  className="w-full mt-4 glass-primary text-white glow-primary" 
+                  onClick={() => setActiveTab('book')}
+                >
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Schedule an Appointment
+                </Button>
               </div>
             )}
 
-            {/* Hours Tab - Booking console only */}
-            {activeTab === 'hours' && activeConsole === 'booking' && (
-              <div className="flex-1 overflow-y-auto p-3">
-                <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-primary" />
-                  Business Hours
-                </h3>
-                <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 mb-3">
-                  <div className="flex items-center gap-2 text-primary">
-                    <Clock className="h-4 w-4" />
-                    <span className="font-medium text-sm">Today: {getTodayHours()}</span>
+            {/* Hours Tab */}
+            {activeTab === 'hours' && (
+              <div className="flex-1 overflow-y-auto p-4">
+                <h3 className="font-semibold text-lg mb-4 gradient-text">Business Hours</h3>
+                <div className="glass-primary rounded-xl p-4 mb-4 glow-primary">
+                  <div className="flex items-center gap-2 text-white">
+                    <Clock className="h-5 w-5" />
+                    <span className="font-medium">Today's Hours</span>
                   </div>
+                  <p className="text-lg font-semibold mt-1 text-white">{getTodayHours()}</p>
                 </div>
-                {businessHours && businessHours.length > 0 ? (
-                  <div className="space-y-1">
-                    {DAYS.map((day, index) => {
-                      const hours = businessHours.find(h => h.day_of_week === index);
-                      const isToday = new Date().getDay() === index;
-                      return (
-                        <div
-                          key={day}
-                          className={cn(
-                            'flex justify-between items-center py-2 px-3 rounded-lg text-sm',
-                            isToday ? 'bg-primary/10 text-primary font-medium' : 'bg-muted/30'
-                          )}
-                        >
-                          <span>{day}</span>
-                          <span className="text-xs">
-                            {hours?.is_closed
-                              ? 'Closed'
-                              : hours
-                                ? `${formatTime(hours.open_time)} - ${formatTime(hours.close_time)}`
-                                : 'Not set'}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground text-xs text-center py-4">Hours not configured</p>
-                )}
+
+                <h4 className="font-medium mb-3">Weekly Schedule</h4>
+                <div className="space-y-2">
+                  {DAYS.map((day, index) => {
+                    const hours = businessHours?.find(h => h.day_of_week === index);
+                    const isToday = new Date().getDay() === index;
+
+                    return (
+                      <div
+                        key={day}
+                        className={cn(
+                          "flex justify-between p-3 rounded-xl transition-all animate-fade-in",
+                          isToday ? "glass-panel neon-border" : "glass-panel"
+                        )}
+                        style={{ animationDelay: `${index * 50}ms` }}
+                      >
+                        <span className={cn("font-medium", isToday && "text-primary")}>
+                          {day}
+                          {isToday && <Badge variant="outline" className="ml-2 text-xs">Today</Badge>}
+                        </span>
+                        <span className="text-muted-foreground">
+                          {!hours || hours.is_closed
+                            ? 'Closed'
+                            : `${formatTime(hours.open_time)} - ${formatTime(hours.close_time)}`}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
 
-            {/* Book Tab - Booking console only */}
-            {activeTab === 'book' && activeConsole === 'booking' && (
-              <div className="flex-1 overflow-y-auto p-3">
+            {/* Emergency Tab */}
+            {activeTab === 'emergency' && (
+              <div className="flex-1 overflow-y-auto p-4">
+                <div className="text-center py-8">
+                  <div className="h-16 w-16 rounded-full bg-destructive/10 mx-auto mb-4 flex items-center justify-center">
+                    <AlertTriangle className="h-8 w-8 text-destructive" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">Emergency Service</h3>
+                  <p className="text-muted-foreground mb-6">
+                    For urgent issues that can't wait, contact us immediately.
+                  </p>
+                  
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setActiveTab('chat');
+                      sendMessage("I have an urgent emergency situation that needs immediate attention.");
+                    }}
+                  >
+                    Chat About Emergency
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Book Tab */}
+            {activeTab === 'book' && (
+              <div className="flex-1 overflow-y-auto p-4">
                 <BookingForm
                   services={services || []}
                   onSubmit={handleBookingSubmit}
+                  isLoading={isLoading}
                 />
               </div>
             )}
 
-            {/* Voice Tab - Booking console only */}
-            {activeTab === 'voice' && activeConsole === 'booking' && (
-              <div className="flex-1 overflow-y-auto p-3 flex flex-col items-center justify-center">
-                <div className="text-center mb-4">
-                  <h3 className="font-semibold text-sm mb-1">Voice AI Assistant</h3>
-                  <p className="text-muted-foreground text-xs">
-                    Talk directly with our AI using your microphone.
+            {/* Voice Tab */}
+            {activeTab === 'voice' && (
+              <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center">
+                <div className="text-center mb-6">
+                  <h3 className="font-semibold text-lg mb-2 gradient-text">Voice AI Assistant</h3>
+                  <p className="text-muted-foreground text-sm max-w-md">
+                    Talk directly with our AI assistant using your microphone.
                   </p>
                 </div>
                 <VoiceChat
