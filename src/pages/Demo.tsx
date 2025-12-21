@@ -10,6 +10,7 @@ import {
   AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Zap, MessageSquare, Home
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getAgentStyle } from '@/lib/agentStyles';
 import { GlassHeader } from '@/components/ai/chat/GlassHeader';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
@@ -50,20 +51,6 @@ const TABS = [
   { id: 'book', label: 'Book', icon: Calendar },
   { id: 'voice', label: 'Voice', icon: Mic },
 ];
-
-// Agent display configuration
-const AGENT_CONFIG: Record<string, { label: string; color: string; bgColor: string }> = {
-  triage: { label: 'Triage', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  booking: { label: 'Booking', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  dispatch: { label: 'Dispatch', color: 'text-green-700', bgColor: 'bg-green-100' },
-  followup: { label: 'Follow-up', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  review: { label: 'Review', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  quoting: { label: 'Quoting', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-};
-
-const getAgentInfo = (agent: string) => {
-  return AGENT_CONFIG[agent] || { label: agent, color: 'text-gray-700', bgColor: 'bg-gray-100' };
-};
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -322,7 +309,7 @@ export default function Demo() {
     return `${formatTime(todayHours.open_time)} - ${formatTime(todayHours.close_time)}`;
   };
 
-  const agentInfo = getAgentInfo(currentAgent);
+  const agentInfo = getAgentStyle(currentAgent);
   const isShowingForm = showFeedbackForm || showReviewForm || showQuoteForm || showTrackForm;
 
   return (
@@ -440,17 +427,20 @@ export default function Demo() {
                     />
                   )}
 
-                  {!isShowingForm && messages.map((message, index) => (
-                    <ChatBubble
-                      key={index}
-                      role={message.role}
-                      content={message.content}
-                      agentLabel={message.agent ? getAgentInfo(message.agent).label : undefined}
-                      agentColor={message.agent ? getAgentInfo(message.agent).color : undefined}
-                      agentBgColor={message.agent ? getAgentInfo(message.agent).bgColor : undefined}
-                      isHandoff={message.isHandoff}
-                    />
-                  ))}
+                  {!isShowingForm && messages.map((message, index) => {
+                    const msgStyle = message.agent ? getAgentStyle(message.agent) : null;
+                    return (
+                      <ChatBubble
+                        key={index}
+                        role={message.role}
+                        content={message.content}
+                        agentLabel={msgStyle?.label}
+                        agentColor={msgStyle?.color}
+                        agentBgColor={msgStyle?.bgColor}
+                        isHandoff={message.isHandoff}
+                      />
+                    );
+                  })}
 
                   {isLoading && (
                     <ChatBubble

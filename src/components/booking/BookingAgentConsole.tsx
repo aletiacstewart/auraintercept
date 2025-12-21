@@ -12,6 +12,7 @@ import { BookingForm, BookingData } from '@/components/ai/BookingForm';
 import { FeedbackForm } from '@/components/ai/FeedbackForm';
 import { QuoteForm, QuoteData } from '@/components/ai/QuoteForm';
 import { ReviewForm } from '@/components/ai/ReviewForm';
+import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Send, 
   Calendar, 
@@ -32,13 +33,6 @@ import {
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-
-const BOOKING_AGENTS = [
-  { id: 'triage', name: 'Triage Agent', color: 'bg-blue-500' },
-  { id: 'booking', name: 'Booking Agent', color: 'bg-green-500' },
-  { id: 'followup', name: 'Follow-up Agent', color: 'bg-orange-500' },
-  { id: 'review', name: 'Review Agent', color: 'bg-purple-500' },
-];
 
 interface QuickAction {
   id: string;
@@ -498,11 +492,10 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
   };
 
   const getAgentBadge = (agentType?: string) => {
-    const agent = BOOKING_AGENTS.find(a => a.id === agentType);
-    if (!agent) return null;
+    const style = getAgentStyle(agentType);
     return (
-      <Badge variant="secondary" className={cn('text-[10px] px-1.5 py-0', agent.color, 'text-white')}>
-        {agent.name}
+      <Badge variant="secondary" className={cn('text-[10px] px-1.5 py-0', style.bgColor, style.color)}>
+        {style.label}
       </Badge>
     );
   };
@@ -582,7 +575,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
           </span>
           {!showBookingForm && !showFeedbackForm && !showQuoteForm && !showReviewForm && !showCustomerSearch && currentAgent && (
             <Badge variant="outline" className="text-xs">
-              {BOOKING_AGENTS.find(a => a.id === currentAgent)?.name || currentAgent}
+              {getAgentStyle(currentAgent).label}
             </Badge>
           )}
         </div>

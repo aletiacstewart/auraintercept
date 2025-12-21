@@ -11,6 +11,7 @@ import {
   AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Mic, Phone
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getAgentStyle } from '@/lib/agentStyles';
 import { GlassHeader } from './chat/GlassHeader';
 import { ChatBubble } from './chat/ChatBubble';
 import { FloatingInput } from './chat/FloatingInput';
@@ -47,30 +48,6 @@ const QUICK_ACTIONS = [
   { id: 'feedback', label: 'Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
   { id: 'review', label: 'Review', icon: ThumbsUp, message: "I'd like to leave a review for my recent service" },
 ];
-
-// Agent display configuration for visual indicators
-const AGENT_CONFIG: Record<string, { label: string; color: string; bgColor: string }> = {
-  triage: { label: 'Triage', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  booking: { label: 'Booking', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  dispatch: { label: 'Dispatch', color: 'text-green-700', bgColor: 'bg-green-100' },
-  followup: { label: 'Follow-up', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  review: { label: 'Review', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  quoting: { label: 'Quoting', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-  invoice: { label: 'Invoice', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-  inventory: { label: 'Inventory', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-  marketing: { label: 'Marketing', color: 'text-orange-700', bgColor: 'bg-orange-100' },
-  referral: { label: 'Referral', color: 'text-orange-700', bgColor: 'bg-orange-100' },
-  winback: { label: 'Win-back', color: 'text-orange-700', bgColor: 'bg-orange-100' },
-  checkin: { label: 'Check-in', color: 'text-green-700', bgColor: 'bg-green-100' },
-  route: { label: 'Route', color: 'text-green-700', bgColor: 'bg-green-100' },
-  eta: { label: 'ETA', color: 'text-green-700', bgColor: 'bg-green-100' },
-  warranty: { label: 'Warranty', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-  analytics: { label: 'Analytics', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-};
-
-const getAgentInfo = (agent: string) => {
-  return AGENT_CONFIG[agent] || { label: agent, color: 'text-gray-700', bgColor: 'bg-gray-100' };
-};
 
 interface Service {
   id: string;
@@ -432,7 +409,7 @@ export const AIAgentConsole = () => {
     return `${formatTime(todayHours.open_time)} - ${formatTime(todayHours.close_time)}`;
   };
 
-  const agentInfo = getAgentInfo(currentAgent);
+  const agentInfo = getAgentStyle(currentAgent);
   const isShowingForm = showFeedbackForm || showReviewForm || showQuoteForm || showTrackForm || showBillingForm;
 
   return (
@@ -515,7 +492,7 @@ export const AIAgentConsole = () => {
               )}
 
               {!isShowingForm && messages.map((message, index) => {
-                const msgAgentInfo = message.agent ? getAgentInfo(message.agent) : null;
+                const msgAgentInfo = message.agent ? getAgentStyle(message.agent) : null;
                 const prevMessage = index > 0 ? messages[index - 1] : null;
                 const showHandoffIndicator = message.role === 'assistant' &&
                   prevMessage?.role === 'assistant' && 
