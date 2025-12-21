@@ -74,8 +74,13 @@ interface BusinessHour {
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-export const AIAgentConsole = () => {
-  const { companyId } = useAuth();
+interface AIAgentConsoleProps {
+  companyId?: string;
+}
+
+export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({ companyId: propCompanyId }) => {
+  const { companyId: authCompanyId } = useAuth();
+  const companyId = propCompanyId || authCompanyId;
   const [previousAgent, setPreviousAgent] = useState<string>('triage');
   
   const { messages, isLoading, currentAgent, sessionId, sendMessage, clearMessages } = useMultiAgentChat({
