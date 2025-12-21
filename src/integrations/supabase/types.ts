@@ -827,6 +827,51 @@ export type Database = {
           },
         ]
       }
+      customer_company_associations: {
+        Row: {
+          company_id: string
+          created_at: string | null
+          customer_profile_id: string | null
+          customer_user_id: string
+          id: string
+          is_favorite: boolean | null
+          last_interaction_at: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string | null
+          customer_profile_id?: string | null
+          customer_user_id: string
+          id?: string
+          is_favorite?: boolean | null
+          last_interaction_at?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string | null
+          customer_profile_id?: string | null
+          customer_user_id?: string
+          id?: string
+          is_favorite?: boolean | null
+          last_interaction_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_company_associations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_company_associations_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "customer_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_feedback: {
         Row: {
           appointment_id: string | null
@@ -2659,6 +2704,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      customer_has_company_access: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
@@ -2667,9 +2716,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_customer: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      app_role: "platform_admin" | "company_admin" | "employee"
+      app_role: "platform_admin" | "company_admin" | "employee" | "customer"
       employee_job_type:
         | "technician"
         | "booking_agent"
@@ -2806,7 +2856,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["platform_admin", "company_admin", "employee"],
+      app_role: ["platform_admin", "company_admin", "employee", "customer"],
       employee_job_type: [
         "technician",
         "booking_agent",
