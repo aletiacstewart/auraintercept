@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import CustomerAuth from "./pages/CustomerAuth";
+import CustomerPortalHome from "./pages/CustomerPortalHome";
+import CustomerCompanyPortal from "./pages/CustomerCompanyPortal";
 import Demo from "./pages/Demo";
 import Dashboard from "./pages/Dashboard";
 import Companies from "./pages/Companies";
@@ -61,6 +64,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/customer-auth" element={<CustomerAuth />} />
             <Route path="/demo" element={<Demo />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/companies" element={<Companies />} />
@@ -88,6 +92,11 @@ const App = () => (
             <Route path="/dashboard/campaigns" element={<Campaigns />} />
             <Route path="/dashboard/help" element={<Help />} />
             
+            {/* Customer Portal Routes */}
+            <Route path="/customer-portal" element={<CustomerPortalHome />} />
+            <Route path="/customer-portal/:companySlug" element={<CustomerCompanyPortal />} />
+            
+            {/* Legacy Customer Routes */}
             <Route path="/appointment" element={<CustomerPortal />} />
             <Route path="/customer-dashboard" element={<CustomerDashboard />} />
             <Route path="/chat/:companySlug" element={<PublicChat />} />
