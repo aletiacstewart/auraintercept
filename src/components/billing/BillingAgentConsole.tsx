@@ -26,7 +26,8 @@ import {
   AlertCircle,
   Plus,
   Trash2,
-  ArrowLeft
+  ArrowLeft,
+  Home
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -914,6 +915,20 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
           }}
           className="flex gap-2"
         >
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              clearMessages();
+              setViewMode('chat');
+              setInputValue('');
+            }}
+            className="shrink-0 h-9 w-9"
+            title="Back to Home"
+          >
+            <Home className="h-4 w-4" />
+          </Button>
           <Input
             ref={inputRef}
             value={inputValue}
