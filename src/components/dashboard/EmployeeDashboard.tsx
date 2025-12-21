@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, MessageSquare, Clock, CheckCircle2, Bot, Settings, User } from 'lucide-react';
+import { Calendar, MessageSquare, Clock, CheckCircle2, Bot, Settings, User, Truck, ClipboardList, MapPin, Phone, Briefcase } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
@@ -11,7 +11,7 @@ import { format, startOfMonth, endOfMonth } from 'date-fns';
 
 export function EmployeeDashboard() {
   const { user, companyId } = useAuth();
-  const { jobTypes, primaryJobType } = useEmployeeJobRole();
+  const { jobTypes, primaryJobType, hasJobType } = useEmployeeJobRole();
   const navigate = useNavigate();
 
   const { data: profile, isLoading: profileLoading } = useQuery({
@@ -51,7 +51,7 @@ export function EmployeeDashboard() {
       const monthStart = startOfMonth(now).toISOString();
       const monthEnd = endOfMonth(now).toISOString();
 
-      const [appointments, completedJobs] = await Promise.all([
+      const [appointments, completedJobs, pendingJobs, callLogs] = await Promise.all([
         supabase
           .from('appointments')
           .select('id', { count: 'exact', head: true })
@@ -65,11 +65,25 @@ export function EmployeeDashboard() {
           .eq('status', 'completed')
           .gte('completed_at', monthStart)
           .lte('completed_at', monthEnd),
+        supabase
+          .from('job_assignments')
+          .select('id', { count: 'exact', head: true })
+          .eq('employee_id', user.id)
+          .in('status', ['pending_acceptance', 'accepted', 'en_route', 'arrived', 'in_progress']),
+        supabase
+          .from('call_logs')
+          .select('id', { count: 'exact', head: true })
+          .eq('company_id', companyId)
+          .eq('employee_id', user.id)
+          .gte('created_at', monthStart)
+          .lte('created_at', monthEnd),
       ]);
 
       return {
         upcomingAppointments: appointments.count ?? 0,
         completedThisMonth: completedJobs.count ?? 0,
+        pendingJobs: pendingJobs.count ?? 0,
+        callsThisMonth: callLogs.count ?? 0,
       };
     },
     enabled: !!user?.id && !!companyId,
@@ -86,19 +100,78 @@ export function EmployeeDashboard() {
       gradient: 'from-primary to-primary/80',
     },
     {
+      title: 'Pending Jobs',
+      value: stats?.pendingJobs ?? 0,
+      icon: ClipboardList,
+      description: 'Awaiting action',
+      gradient: 'from-yellow-500 to-yellow-600',
+      highlight: (stats?.pendingJobs ?? 0) > 0,
+    },
+    {
       title: 'Completed',
       value: stats?.completedThisMonth ?? 0,
       icon: CheckCircle2,
       description: format(new Date(), 'MMMM yyyy'),
       gradient: 'from-green-500 to-green-600',
     },
+    {
+      title: 'Calls',
+      value: stats?.callsThisMonth ?? 0,
+      icon: Phone,
+      description: 'This month',
+      gradient: 'from-blue-500 to-blue-600',
+    },
+  ];
+
+  // Build quick actions based on role
+  const baseQuickActions = [
+    { label: 'View Schedule', icon: Calendar, href: '/dashboard/appointments', gradient: 'from-primary to-primary/80' },
+    { label: 'My Availability', icon: Clock, href: '/dashboard/availability', gradient: 'from-secondary to-secondary/80' },
+  ];
+
+  const technicianActions = hasJobType('technician') ? [
+    { label: 'Field Ops AI', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', gradient: 'from-green-500 to-green-600' },
+    { label: 'Job Queue', icon: ClipboardList, href: '/technician/jobs', gradient: 'from-orange-500 to-orange-600' },
+    { label: 'Route Map', icon: MapPin, href: '/technician/jobs', gradient: 'from-cyan-500 to-cyan-600' },
+  ] : [];
+
+  const dispatchActions = (hasJobType('dispatch') || hasJobType('booking_agent')) ? [
+    { label: 'Booking AI', icon: Calendar, href: '/dashboard/ai-agent?console=booking', gradient: 'from-cyan-500 to-cyan-600' },
+    { label: 'Customer AI', icon: MessageSquare, href: '/dashboard/ai-agent?console=customer', gradient: 'from-purple-500 to-purple-600' },
+  ] : [];
+
+  const customerServiceActions = hasJobType('customer_service') ? [
+    { label: 'Customer AI', icon: MessageSquare, href: '/dashboard/ai-agent?console=customer', gradient: 'from-purple-500 to-purple-600' },
+  ] : [];
+
+  const billingActions = hasJobType('billing_specialist') ? [
+    { label: 'Business AI', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', gradient: 'from-blue-500 to-blue-600' },
+  ] : [];
+
+  const marketingActions = hasJobType('marketing_manager') ? [
+    { label: 'Marketing AI', icon: Bot, href: '/dashboard/ai-agent?console=marketing', gradient: 'from-orange-500 to-orange-600' },
+  ] : [];
+
+  const hasSpecializedRole = hasJobType('technician') || hasJobType('dispatch') || hasJobType('booking_agent') || 
+    hasJobType('customer_service') || hasJobType('billing_specialist') || hasJobType('marketing_manager');
+
+  const defaultAIAction = !hasSpecializedRole ? [
+    { label: 'AI Assistant', icon: Bot, href: '/dashboard/ai-agent', gradient: 'from-purple-500 to-purple-600' },
+  ] : [];
+
+  const profileAction = [
+    { label: 'Profile', icon: User, href: '/dashboard/settings', gradient: 'from-accent to-accent/80' },
   ];
 
   const quickActions = [
-    { label: 'View Schedule', icon: Calendar, href: '/dashboard/appointments', gradient: 'from-primary to-primary/80' },
-    { label: 'AI Assistant', icon: Bot, href: '/dashboard/ai-agent', gradient: 'from-purple-500 to-purple-600' },
-    { label: 'My Availability', icon: Clock, href: '/dashboard/availability', gradient: 'from-secondary to-secondary/80' },
-    { label: 'Profile', icon: User, href: '/dashboard/settings', gradient: 'from-accent to-accent/80' },
+    ...baseQuickActions,
+    ...technicianActions,
+    ...dispatchActions,
+    ...customerServiceActions,
+    ...billingActions,
+    ...marketingActions,
+    ...defaultAIAction,
+    ...profileAction,
   ];
 
   return (
@@ -156,7 +229,7 @@ export function EmployeeDashboard() {
               {isLoading ? (
                 <Skeleton className="h-8 w-20" />
               ) : (
-                <div className="text-3xl font-bold">{stat.value}</div>
+                <div className={`text-3xl font-bold ${stat.highlight ? 'text-yellow-600' : ''}`}>{stat.value}</div>
               )}
               <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
             </CardContent>
