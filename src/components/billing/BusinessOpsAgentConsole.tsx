@@ -15,6 +15,7 @@ import { InventorySearchForm } from './forms/InventorySearchForm';
 import { WarrantyForm, WarrantyFormData } from './forms/WarrantyForm';
 import { WarrantyLookupForm } from './forms/WarrantyLookupForm';
 import { PriceLookupForm } from './forms/PriceLookupForm';
+import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   FileText, 
   Receipt, 
@@ -39,18 +40,6 @@ const QUICK_ACTIONS = [
   { id: 'warranty-claim', label: 'Warranty Claim', icon: ClipboardList, message: 'I need to file a warranty claim' },
   { id: 'pricing', label: 'Price Lookup', icon: DollarSign, message: 'I need to look up service pricing' },
 ];
-
-// Agent styling
-const getAgentStyle = (agent: string) => {
-  const styles: Record<string, { label: string; color: string; bgColor: string }> = {
-    triage: { label: 'Triage', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    quoting: { label: 'Quoting', color: 'text-green-700', bgColor: 'bg-green-100' },
-    invoice: { label: 'Invoice', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-    inventory: { label: 'Inventory', color: 'text-orange-700', bgColor: 'bg-orange-100' },
-    warranty: { label: 'Warranty', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
-  };
-  return styles[agent] || styles.triage;
-};
 
 interface BusinessOpsAgentConsoleProps {
   companyId?: string;

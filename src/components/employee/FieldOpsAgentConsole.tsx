@@ -35,6 +35,7 @@ import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { QuickActionBar } from '@/components/ai/chat/QuickActionGrid';
 import { TechnicianMap } from './TechnicianMap';
+import { getAgentStyle } from '@/lib/agentStyles';
 
 const FIELD_OPS_AGENTS = [
   { id: 'accept', name: 'Accept Job', color: 'bg-blue-100', textColor: 'text-blue-700' },
@@ -483,20 +484,15 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   }, [processingJobId, refetchJobs, sendMessage]);
 
   const getAgentBadge = (agentType?: string) => {
-    const agent = FIELD_OPS_AGENTS.find(a => a.id === agentType);
-    if (!agent) return null;
+    const style = getAgentStyle(agentType);
     return (
-      <Badge variant="secondary" className={cn('text-[10px] px-1.5 py-0 border-0', agent.color, agent.textColor)}>
-        {agent.name}
+      <Badge variant="secondary" className={cn('text-[10px] px-1.5 py-0 border-0', style.bgColor, style.color)}>
+        {style.label}
       </Badge>
     );
   };
 
-  const getAgentInfo = () => {
-    return { label: currentAgent || 'Field Ops', color: 'text-blue-700', bgColor: 'bg-blue-100' };
-  };
-
-  const agentInfo = getAgentInfo();
+  const agentInfo = getAgentStyle(currentAgent);
 
   const renderMessage = (msg: ChatMessage, index: number) => {
     const isUser = msg.role === 'user';

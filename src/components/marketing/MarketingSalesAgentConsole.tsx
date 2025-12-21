@@ -15,6 +15,7 @@ import { ReferralForm } from './forms/ReferralForm';
 import { WinbackForm } from './forms/WinbackForm';
 import { LeadForm } from './forms/LeadForm';
 import { CustomerSegmentsForm } from './forms/CustomerSegmentsForm';
+import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Megaphone, 
   Tag, 
@@ -38,18 +39,6 @@ const QUICK_ACTIONS = [
   { id: 'lead', label: 'New Lead', icon: UserPlus, message: 'I need to add a new lead' },
   { id: 'customers', label: 'Customer Segments', icon: Users, message: 'Show me customer segments' },
 ];
-
-// Agent styling
-const getAgentStyle = (agent: string) => {
-  const styles: Record<string, { label: string; color: string; bgColor: string }> = {
-    triage: { label: 'Triage', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    promo: { label: 'Promo', color: 'text-orange-700', bgColor: 'bg-orange-100' },
-    referral: { label: 'Referral', color: 'text-pink-700', bgColor: 'bg-pink-100' },
-    winback: { label: 'Win-Back', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-    seasonal: { label: 'Seasonal', color: 'text-green-700', bgColor: 'bg-green-100' },
-  };
-  return styles[agent] || styles.triage;
-};
 
 interface MarketingSalesAgentConsoleProps {
   companyId?: string;
