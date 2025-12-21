@@ -28,7 +28,8 @@ import {
   RotateCcw,
   XCircle,
   Search,
-  ArrowLeft
+  ArrowLeft,
+  Home
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -784,6 +785,24 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
               }}
               className="flex gap-2"
             >
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  setShowBookingForm(false);
+                  setShowFeedbackForm(false);
+                  setShowQuoteForm(false);
+                  setShowReviewForm(false);
+                  setShowCustomerSearch(false);
+                  setShowAppointmentSelector(false);
+                  setSelectorAction(null);
+                }}
+                className="shrink-0"
+                title="Back to Home"
+              >
+                <Home className="w-4 h-4" />
+              </Button>
               <Input
                 ref={inputRef}
                 value={inputValue}
