@@ -4,6 +4,7 @@ import { TechnicianDashboardLayout } from '@/components/dashboard/TechnicianDash
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { CalendarSubscription } from '@/components/integrations/CalendarSubscription';
 import { 
   User, 
   Clock, 
@@ -56,6 +57,13 @@ export default function TechnicianSettings() {
             </Link>
           ))}
         </div>
+
+        {/* Calendar Subscription */}
+        <CalendarSubscription 
+          type="employee" 
+          title="My Job Calendar"
+          description="Subscribe to see your assigned jobs in Google Calendar, Outlook, or Apple Calendar"
+        />
 
         {/* Preferences */}
         <div className="space-y-2">
