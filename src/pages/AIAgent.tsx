@@ -9,8 +9,6 @@ import { AIAgentChat } from '@/components/ai/AIAgentChat';
 import { AIAgentSettings } from '@/components/ai/AIAgentSettings';
 import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
 import { BusinessOpsAgentConsole } from '@/components/billing/BusinessOpsAgentConsole';
-import { BillingAgentConsole } from '@/components/billing/BillingAgentConsole';
-import { BookingAgentConsole } from '@/components/booking/BookingAgentConsole';
 import { MarketingSalesAgentConsole } from '@/components/marketing/MarketingSalesAgentConsole';
 import { AnalyticsAgentConsole } from '@/components/analytics/AnalyticsAgentConsole';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,7 +21,7 @@ import { Button } from '@/components/ui/button';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { useSubscription } from '@/hooks/useSubscription';
 
-type ConsoleType = 'customer' | 'booking' | 'fieldops' | 'businessops' | 'billing' | 'marketing' | 'analytics';
+type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics';
 
 const AIAgent = () => {
   const { companyId, userRole } = useAuth();
@@ -38,7 +36,7 @@ const AIAgent = () => {
   
   // Sync console type with URL params
   useEffect(() => {
-    if (consoleParam && ['customer', 'booking', 'fieldops', 'businessops', 'billing', 'marketing', 'analytics'].includes(consoleParam)) {
+    if (consoleParam && ['customer', 'fieldops', 'businessops', 'marketing', 'analytics'].includes(consoleParam)) {
       setConsoleType(consoleParam);
     }
   }, [consoleParam]);
@@ -284,32 +282,24 @@ const AIAgent = () => {
                 <TabsList className="flex-wrap h-auto gap-1">
                   <TabsTrigger value="customer">
                     <HeadphonesIcon className="h-4 w-4 mr-2" />
-                    Customer
-                  </TabsTrigger>
-                  <TabsTrigger value="booking">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Booking
+                    Customer Engagement
                   </TabsTrigger>
                   <TabsTrigger value="fieldops">
                     <Truck className="h-4 w-4 mr-2" />
-                    Field Ops
+                    Field Operations
                   </TabsTrigger>
                   <TabsTrigger value="businessops">
                     <Briefcase className="h-4 w-4 mr-2" />
-                    Business Ops
-                  </TabsTrigger>
-                  <TabsTrigger value="billing">
-                    <DollarSign className="h-4 w-4 mr-2" />
-                    Billing
+                    Business Operations
                   </TabsTrigger>
                   <TabsTrigger value="marketing">
                     <Megaphone className="h-4 w-4 mr-2" />
-                    Marketing
+                    Marketing & Sales
                   </TabsTrigger>
                   {(userRole === 'platform_admin' || userRole === 'company_admin') && (
                     <TabsTrigger value="analytics">
                       <BarChart3 className="h-4 w-4 mr-2" />
-                      Analytics
+                      Analytics & Insights
                     </TabsTrigger>
                   )}
                 </TabsList>
@@ -323,17 +313,13 @@ const AIAgent = () => {
                   <h2 className="text-lg font-semibold">
                     {userRole === 'employee' || consoleType === 'fieldops' 
                       ? 'Field Operations Console' 
-                      : consoleType === 'booking'
-                        ? 'Booking Console'
-                        : consoleType === 'businessops'
-                          ? 'Business Operations Console'
-                          : consoleType === 'billing'
-                            ? 'Billing Console'
-                            : consoleType === 'marketing'
-                              ? 'Marketing & Sales Console'
-                              : consoleType === 'analytics'
-                                ? 'Analytics & Insights Console'
-                                : 'AI Agent Console'}
+                      : consoleType === 'businessops'
+                        ? 'Business Operations Console'
+                        : consoleType === 'marketing'
+                          ? 'Marketing & Sales Console'
+                          : consoleType === 'analytics'
+                            ? 'Analytics & Insights Console'
+                            : 'Customer Engagement Console'}
                   </h2>
                   {userRole !== 'employee' && consoleType === 'customer' && (
                     <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
@@ -353,12 +339,8 @@ const AIAgent = () => {
                 
                 {userRole === 'employee' || consoleType === 'fieldops' ? (
                   <FieldOpsAgentConsole />
-                ) : consoleType === 'booking' ? (
-                  <BookingAgentConsole />
                 ) : consoleType === 'businessops' ? (
                   <BusinessOpsAgentConsole />
-                ) : consoleType === 'billing' ? (
-                  <BillingAgentConsole />
                 ) : consoleType === 'marketing' ? (
                   <MarketingSalesAgentConsole />
                 ) : consoleType === 'analytics' ? (
