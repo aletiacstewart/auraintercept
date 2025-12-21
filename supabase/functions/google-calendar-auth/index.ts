@@ -175,8 +175,9 @@ Deno.serve(async (req) => {
 
     if (action === 'get_auth_url') {
       // Generate OAuth URL for Google Calendar
+      // Keep scopes minimal to avoid Google blocking unverified apps.
+      // This is enough for reading calendar list + creating/updating events.
       const scopes = [
-        'https://www.googleapis.com/auth/calendar',
         'https://www.googleapis.com/auth/calendar.events',
         'https://www.googleapis.com/auth/calendar.readonly',
       ].join(' ');
