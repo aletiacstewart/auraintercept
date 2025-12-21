@@ -10,10 +10,11 @@ import {
   FileText, DollarSign, Package, Award, Megaphone, 
   Gift, RotateCcw, Sun, BarChart3, Target, CheckCircle2,
   ArrowRight, Sparkles, Wrench, Home, Flame, Droplet,
-  ChevronRight, Star, Volume2, VolumeX
+  ChevronRight, Star, Volume2, VolumeX, Navigation, Truck,
+  Search, UserPlus, Globe, Headphones, Bell, Mail, 
+  Smartphone, Video, Mic, Brain, Layers, Lock
 } from 'lucide-react';
 import logo from '@/assets/ai-header-logo-new.png';
-import aiBotBanner from '@/assets/ai-bot-banner.png';
 
 const agentCategories = [
   {
@@ -22,10 +23,10 @@ const agentCategories = [
     icon: Users,
     color: 'from-cyan-500 to-blue-500',
     agents: [
-      { name: 'Triage Agent', description: 'Routes inquiries to the right department', icon: Target },
-      { name: 'Booking Agent', description: 'Handles appointment scheduling 24/7', icon: Calendar },
-      { name: 'Follow-up Agent', description: 'Sends reminders and confirmations', icon: Clock },
-      { name: 'Review Agent', description: 'Collects feedback and manages reviews', icon: Star },
+      { name: 'Triage Agent', description: 'AI-powered inquiry routing to the right department instantly', icon: Target },
+      { name: 'Booking Agent', description: 'Natural language appointment scheduling with calendar sync', icon: Calendar },
+      { name: 'Follow-up Agent', description: 'Automated reminders via email, SMS, and voice calls', icon: Bell },
+      { name: 'Review Agent', description: 'Collects feedback and manages multi-platform reviews', icon: Star },
     ]
   },
   {
@@ -34,10 +35,10 @@ const agentCategories = [
     icon: MapPin,
     color: 'from-green-500 to-emerald-500',
     agents: [
-      { name: 'Dispatch Agent', description: 'Assigns jobs to available technicians', icon: Users },
-      { name: 'Route Agent', description: 'Optimizes travel routes for efficiency', icon: MapPin },
-      { name: 'ETA Agent', description: 'Provides real-time arrival updates', icon: Clock },
-      { name: 'Check-in Agent', description: 'Manages job status and completion', icon: CheckCircle2 },
+      { name: 'Dispatch Agent', description: 'Smart job assignment based on skills and location', icon: Users },
+      { name: 'Route Agent', description: 'Real-time route optimization for maximum efficiency', icon: Navigation },
+      { name: 'ETA Agent', description: 'Accurate arrival time predictions with customer notifications', icon: Clock },
+      { name: 'Check-in Agent', description: 'Job status tracking with photo documentation', icon: CheckCircle2 },
     ]
   },
   {
@@ -46,10 +47,10 @@ const agentCategories = [
     icon: Building2,
     color: 'from-purple-500 to-violet-500',
     agents: [
-      { name: 'Quoting Agent', description: 'Generates accurate service quotes', icon: FileText },
-      { name: 'Invoice Agent', description: 'Creates and sends invoices automatically', icon: DollarSign },
-      { name: 'Inventory Agent', description: 'Tracks parts and supplies', icon: Package },
-      { name: 'Warranty Agent', description: 'Manages warranty claims and tracking', icon: Award },
+      { name: 'Quoting Agent', description: 'Instant quote generation with service pricing lookup', icon: FileText },
+      { name: 'Invoice Agent', description: 'Automated invoicing with payment tracking', icon: DollarSign },
+      { name: 'Inventory Agent', description: 'Parts tracking with low-stock alerts', icon: Package },
+      { name: 'Warranty Agent', description: 'Warranty registration and claims management', icon: Award },
     ]
   },
   {
@@ -58,10 +59,10 @@ const agentCategories = [
     icon: Megaphone,
     color: 'from-orange-500 to-red-500',
     agents: [
-      { name: 'Promo Agent', description: 'Runs targeted promotional campaigns', icon: Megaphone },
-      { name: 'Referral Agent', description: 'Manages customer referral programs', icon: Gift },
-      { name: 'Win-back Agent', description: 'Re-engages inactive customers', icon: RotateCcw },
-      { name: 'Seasonal Agent', description: 'Launches seasonal marketing pushes', icon: Sun },
+      { name: 'Campaign Agent', description: 'Multi-channel promotional campaign automation', icon: Megaphone },
+      { name: 'Referral Agent', description: 'Customer referral tracking with rewards', icon: Gift },
+      { name: 'Win-back Agent', description: 'Re-engage inactive customers with personalized offers', icon: RotateCcw },
+      { name: 'Lead Agent', description: 'Lead capture and qualification automation', icon: UserPlus },
     ]
   },
   {
@@ -70,8 +71,93 @@ const agentCategories = [
     icon: BarChart3,
     color: 'from-indigo-500 to-blue-600',
     agents: [
-      { name: 'Insights Agent', description: 'Analyzes business performance data', icon: BarChart3 },
-      { name: 'Forecast Agent', description: 'Predicts demand and trends', icon: TrendingUp },
+      { name: 'Insights Agent', description: 'Real-time business performance dashboards', icon: BarChart3 },
+      { name: 'Forecast Agent', description: 'AI-powered demand and revenue predictions', icon: TrendingUp },
+      { name: 'KPI Agent', description: 'Custom metrics and goal tracking', icon: Target },
+      { name: 'Report Agent', description: 'Automated weekly and monthly digest reports', icon: FileText },
+    ]
+  }
+];
+
+const agentConsoles = [
+  {
+    name: 'Booking Console',
+    description: 'Complete customer engagement hub for appointment scheduling, follow-ups, and review collection.',
+    icon: Calendar,
+    gradient: 'from-cyan-500 to-blue-500',
+    iconBg: 'bg-cyan-500/10',
+    iconColor: 'text-cyan-500',
+    features: [
+      '24/7 natural language booking',
+      'Multi-service appointment scheduling',
+      'Automated email & SMS reminders',
+      'Customer feedback collection',
+      'Quote generation wizard',
+      'Review request campaigns'
+    ]
+  },
+  {
+    name: 'Field Ops Console',
+    description: 'Technician-focused mobile console for job management, navigation, and customer communication.',
+    icon: Truck,
+    gradient: 'from-green-500 to-emerald-500',
+    iconBg: 'bg-green-500/10',
+    iconColor: 'text-green-500',
+    features: [
+      'One-tap job acceptance',
+      'Real-time GPS navigation',
+      'ETA updates with notifications',
+      'Before/after photo capture',
+      'Parts usage tracking',
+      'Dispatch communication'
+    ]
+  },
+  {
+    name: 'Billing Console',
+    description: 'Financial operations center for quotes, invoices, payments, and warranty management.',
+    icon: DollarSign,
+    gradient: 'from-purple-500 to-violet-500',
+    iconBg: 'bg-purple-500/10',
+    iconColor: 'text-purple-500',
+    features: [
+      'AI-assisted quote generation',
+      'Automated invoice creation',
+      'Payment status tracking',
+      'Warranty claim processing',
+      'Price lookup assistant',
+      'Inventory cost tracking'
+    ]
+  },
+  {
+    name: 'Marketing Console',
+    description: 'Growth and retention hub for campaigns, referrals, and customer win-back automation.',
+    icon: Megaphone,
+    gradient: 'from-orange-500 to-red-500',
+    iconBg: 'bg-orange-500/10',
+    iconColor: 'text-orange-500',
+    features: [
+      'Multi-channel campaigns',
+      'Customer segmentation',
+      'Promo code management',
+      'Referral program tracking',
+      'Win-back automation',
+      'Lead capture forms'
+    ]
+  },
+  {
+    name: 'Analytics Console',
+    description: 'Business intelligence dashboard with KPIs, forecasting, and automated reporting.',
+    icon: BarChart3,
+    gradient: 'from-indigo-500 to-blue-600',
+    iconBg: 'bg-indigo-500/10',
+    iconColor: 'text-indigo-500',
+    features: [
+      'Real-time KPI dashboards',
+      'Revenue trend analysis',
+      'Customer insights reports',
+      'Performance forecasting',
+      'Automated weekly digests',
+      'Custom metric tracking'
     ]
   }
 ];
@@ -79,43 +165,70 @@ const agentCategories = [
 const platformFeatures = [
   {
     icon: MessageSquare,
-    title: 'Multi-Channel Support',
-    description: 'Voice calls, SMS, and chat widget - engage customers on their preferred channel.'
+    title: 'Multi-Channel AI',
+    description: 'Voice calls, SMS, email, and web chat - customers connect on their preferred channel.'
+  },
+  {
+    icon: Globe,
+    title: 'Customer Portal',
+    description: 'Self-service portal where customers book, track appointments, and chat with AI agents.'
   },
   {
     icon: Building2,
-    title: 'White-Label Branding',
-    description: 'Custom logos and colors. Your brand, your AI agents.'
+    title: 'White-Label Ready',
+    description: 'Custom logos, colors, and branding. Your company, your AI agents.'
   },
   {
-    icon: Zap,
-    title: 'Phased Rollout',
-    description: 'Deploy agents in 5 phases - from core booking to full marketing automation.'
+    icon: Layers,
+    title: 'Multi-Tenant Platform',
+    description: 'Serve unlimited companies with isolated data and custom configurations.'
   },
   {
-    icon: Users,
-    title: 'Role-Based Access',
-    description: 'Technicians, Admins, and Platform Admins with granular permissions.'
+    icon: Smartphone,
+    title: 'Mobile-First Design',
+    description: 'Technician consoles optimized for field work on any device.'
   },
   {
-    icon: BarChart3,
-    title: 'Real-Time Monitoring',
-    description: 'Track agent events, job status, and performance analytics live.'
+    icon: Brain,
+    title: 'AI Orchestration',
+    description: 'Intelligent agent handoffs with context preservation across conversations.'
   },
   {
-    icon: Calendar,
-    title: 'Calendar Integration',
-    description: 'Seamless Google Calendar sync for appointments and availability.'
-  },
-  {
-    icon: Clock,
-    title: 'Automated Reminders',
+    icon: Bell,
+    title: 'Smart Reminders',
     description: 'Email, SMS, and voice reminders reduce no-shows by up to 40%.'
   },
   {
-    icon: Shield,
+    icon: Lock,
     title: 'Enterprise Security',
-    description: 'Row-level security and multi-tenant isolation protect your data.'
+    description: 'Row-level security and role-based access protect sensitive data.'
+  }
+];
+
+const communicationChannels = [
+  {
+    icon: Mic,
+    title: 'Voice AI',
+    description: 'Natural voice conversations with AI agents for phone-based customer service.',
+    color: 'from-pink-500 to-rose-500'
+  },
+  {
+    icon: MessageSquare,
+    title: 'SMS/Text',
+    description: 'Two-way text messaging for appointment reminders and quick updates.',
+    color: 'from-green-500 to-emerald-500'
+  },
+  {
+    icon: Mail,
+    title: 'Email',
+    description: 'Automated email campaigns, confirmations, and digest reports.',
+    color: 'from-blue-500 to-cyan-500'
+  },
+  {
+    icon: Headphones,
+    title: 'Web Chat',
+    description: 'Embeddable chat widget for website visitor engagement.',
+    color: 'from-purple-500 to-violet-500'
   }
 ];
 
@@ -129,28 +242,34 @@ const industries = [
 const howItWorks = [
   {
     step: 1,
-    title: 'Subscribe & Configure',
-    description: 'Set up your company profile, customize branding with your logo and colors.',
+    title: 'Sign Up & Configure',
+    description: 'Create your company profile with custom branding, services, and business hours.',
     icon: Building2
   },
   {
     step: 2,
     title: 'Activate AI Agents',
-    description: 'Choose from 18 specialized AI agents based on your business needs.',
+    description: 'Enable 20+ specialized AI agents and configure knowledge base for your business.',
     icon: Bot
   },
   {
     step: 3,
+    title: 'Connect Customers',
+    description: 'Share your customer portal link or embed the chat widget on your website.',
+    icon: Users
+  },
+  {
+    step: 4,
     title: 'Automate & Scale',
-    description: 'Let AI handle bookings, field ops, billing, and marketing 24/7.',
+    description: 'AI handles bookings, field ops, billing, and marketing 24/7 while you focus on growth.',
     icon: Zap
   }
 ];
 
 const heroStats = [
-  { value: '18', label: 'AI Agents' },
+  { value: '20+', label: 'AI Agents' },
   { value: '24/7', label: 'Automation' },
-  { value: '5', label: 'Deployment Phases' },
+  { value: '5', label: 'Agent Consoles' },
   { value: '40%', label: 'Less No-Shows' },
 ];
 
@@ -160,6 +279,7 @@ const subtitles = [
   'Billing & Invoicing',
   'Customer Engagement',
   'Marketing Automation',
+  'Analytics & Insights',
 ];
 
 export default function Index() {
@@ -203,6 +323,10 @@ export default function Index() {
               <Play className="w-4 h-4 mr-1" />
               Try Demo
             </Button>
+            <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/customer-auth')}>
+              <Users className="w-4 h-4 mr-1" />
+              Customer Portal
+            </Button>
             <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/auth')}>
               Sign In
             </Button>
@@ -245,12 +369,12 @@ export default function Index() {
             <div className="text-center max-w-4xl mx-auto">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 animate-fade-in">
                 <Sparkles className="w-4 h-4" />
-                18 AI Agents • One Powerful Platform
+                20+ AI Agents • 5 Consoles • One Platform
               </div>
               
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 animate-fade-in">
                 Automate Your Business with{' '}
-                <span className="gradient-text">AI Agents</span>
+                <span className="gradient-text">AI Agent Consoles</span>
               </h1>
 
               <div className="h-8 mb-6 animate-fade-in">
@@ -260,8 +384,8 @@ export default function Index() {
               </div>
               
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
-                Deploy 18 specialized AI agents to handle appointments, field operations, billing, 
-                and marketing for your service business. White-label ready.
+                Deploy 20+ specialized AI agents across 5 powerful consoles to handle customer engagement, 
+                field operations, billing, marketing, and analytics. White-label ready with customer portal.
               </p>
 
               {/* Hero Stats */}
@@ -291,10 +415,19 @@ export default function Index() {
                   size="lg" 
                   variant="outline"
                   className="text-lg px-8 py-6 w-full sm:w-auto"
+                  onClick={() => navigate('/customer-auth')}
+                >
+                  <Users className="w-5 h-5 mr-2" />
+                  Customer Portal
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="ghost"
+                  className="text-lg px-8 py-6 w-full sm:w-auto"
                   onClick={() => navigate('/demo')}
                 >
                   <Play className="w-5 h-5 mr-2" />
-                  Try Live Demo
+                  Live Demo
                 </Button>
               </div>
             </div>
@@ -307,28 +440,28 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">How It Works</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Get Started in 3 Simple Steps</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Get Started in 4 Simple Steps</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               From signup to full automation in minutes, not months.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-4 gap-6">
             {howItWorks.map((item, index) => (
               <div key={item.step} className="relative">
                 <Card className="h-full hover:shadow-lg transition-all duration-300 hover:border-primary/50">
                   <CardContent className="p-6 text-center">
-                    <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-glow">
-                      <item.icon className="w-8 h-8 text-primary-foreground" />
+                    <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-glow">
+                      <item.icon className="w-7 h-7 text-primary-foreground" />
                     </div>
                     <div className="text-sm font-medium text-primary mb-2">Step {item.step}</div>
-                    <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                    <p className="text-muted-foreground">{item.description}</p>
+                    <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground">{item.description}</p>
                   </CardContent>
                 </Card>
                 {index < howItWorks.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                    <ChevronRight className="w-8 h-8 text-muted-foreground/50" />
+                  <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
+                    <ChevronRight className="w-6 h-6 text-muted-foreground/50" />
                   </div>
                 )}
               </div>
@@ -342,10 +475,10 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">AI Agents</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">18 Specialized AI Agents</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">20+ Specialized AI Agents</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Each agent is purpose-built to handle specific business functions, 
-              working together seamlessly to automate your operations.
+              working together seamlessly with intelligent handoffs and context preservation.
             </p>
           </div>
 
@@ -393,93 +526,171 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Agent Consoles</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Powerful Control Centers</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">5 Powerful Control Centers</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Three specialized consoles give your team full control over AI agent operations.
+              Purpose-built consoles give your team full control over AI agent operations with intuitive interfaces.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <Card className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 overflow-hidden group">
-              <div className="h-2 gradient-primary" />
-              <CardContent className="p-6">
-                <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center mb-4">
-                  <Calendar className="w-6 h-6 text-cyan-500" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Booking Agent Console</h3>
-                <p className="text-muted-foreground mb-4">
-                  Manage appointments, scheduling, customer follow-ups, and review collection from one dashboard.
-                </p>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    <span>24/7 appointment scheduling</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    <span>Automated reminders</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    <span>Review management</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {agentConsoles.map((console, index) => (
+              <Card 
+                key={console.name}
+                className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 overflow-hidden group"
+              >
+                <div className={`h-2 bg-gradient-to-r ${console.gradient}`} />
+                <CardContent className="p-6">
+                  <div className={`w-12 h-12 rounded-xl ${console.iconBg} flex items-center justify-center mb-4`}>
+                    <console.icon className={`w-6 h-6 ${console.iconColor}`} />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">{console.name}</h3>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    {console.description}
+                  </p>
+                  <ul className="space-y-2 text-sm">
+                    {console.features.slice(0, 4).map((feature, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <Card className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 overflow-hidden group">
-              <div className="h-2 bg-gradient-to-r from-purple-500 to-violet-500" />
-              <CardContent className="p-6">
-                <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
-                  <DollarSign className="w-6 h-6 text-purple-500" />
+      {/* Customer Portal Section */}
+      <section className="py-20">
+        <div className="container max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <Badge variant="secondary" className="mb-4">Customer Portal</Badge>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+                Self-Service Portal for Your Customers
+              </h2>
+              <p className="text-lg text-muted-foreground mb-8">
+                Give your customers 24/7 access to book appointments, get quotes, track service status, 
+                and chat with AI agents - all branded with your company's look and feel.
+              </p>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
+                    <Calendar className="w-5 h-5 text-cyan-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">Easy Appointment Booking</h4>
+                    <p className="text-sm text-muted-foreground">Customers select from your services and available time slots with real-time calendar sync.</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Billing Agent Console</h3>
-                <p className="text-muted-foreground mb-4">
-                  Handle quotes, invoices, payment reminders, and warranty claims with AI assistance.
-                </p>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    <span>Automated invoicing</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    <span>Quote generation</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    <span>Payment tracking</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                    <FileText className="w-5 h-5 text-purple-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">Instant Quote Requests</h4>
+                    <p className="text-sm text-muted-foreground">AI-powered quote generation based on your service pricing and customer needs.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                    <Search className="w-5 h-5 text-green-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">Appointment Tracking</h4>
+                    <p className="text-sm text-muted-foreground">Real-time status updates with technician ETA and job completion notifications.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center flex-shrink-0">
+                    <Headphones className="w-5 h-5 text-orange-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">AI Chat Support</h4>
+                    <p className="text-sm text-muted-foreground">Natural language conversations with AI agents for instant answers and assistance.</p>
+                  </div>
+                </div>
+              </div>
 
-            <Card className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 overflow-hidden group">
-              <div className="h-2 bg-gradient-to-r from-green-500 to-emerald-500" />
-              <CardContent className="p-6">
-                <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center mb-4">
-                  <MapPin className="w-6 h-6 text-green-500" />
+              <Button 
+                size="lg" 
+                className="gradient-primary"
+                onClick={() => navigate('/customer-auth')}
+              >
+                <Users className="w-5 h-5 mr-2" />
+                Try Customer Portal
+              </Button>
+            </div>
+            
+            <div className="relative">
+              <Card className="p-6 bg-card/80 backdrop-blur border-primary/20">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 pb-4 border-b border-border/50">
+                    <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center">
+                      <Bot className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <div className="font-semibold">AI Assistant</div>
+                      <div className="text-xs text-muted-foreground">Always available to help</div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="bg-muted/50 rounded-lg p-3 max-w-[80%]">
+                      <p className="text-sm">Hi! I'm here to help you with your HVAC needs. Would you like to book an appointment, get a quote, or track an existing service?</p>
+                    </div>
+                    <div className="bg-primary/10 rounded-lg p-3 max-w-[80%] ml-auto">
+                      <p className="text-sm">I'd like to schedule an AC maintenance check</p>
+                    </div>
+                    <div className="bg-muted/50 rounded-lg p-3 max-w-[80%]">
+                      <p className="text-sm">Great! I can help you with that. Let me check our available slots. When works best for you?</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <Button size="sm" variant="outline" className="flex-1">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      Book Now
+                    </Button>
+                    <Button size="sm" variant="outline" className="flex-1">
+                      <FileText className="w-4 h-4 mr-1" />
+                      Get Quote
+                    </Button>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Field Ops Console</h3>
-                <p className="text-muted-foreground mb-4">
-                  Dispatch jobs, track technicians, optimize routes, and monitor field operations in real-time.
-                </p>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    <span>Smart job dispatch</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    <span>Real-time tracking</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    <span>Route optimization</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Communication Channels */}
+      <section className="bg-muted/30 py-20">
+        <div className="container max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <Badge variant="secondary" className="mb-4">Multi-Channel</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Engage Customers Everywhere</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              AI agents work across all communication channels, providing consistent experiences.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {communicationChannels.map((channel, index) => (
+              <Card 
+                key={channel.title}
+                className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 text-center"
+              >
+                <CardContent className="p-6">
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${channel.color} flex items-center justify-center mx-auto mb-4`}>
+                    <channel.icon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">{channel.title}</h3>
+                  <p className="text-sm text-muted-foreground">{channel.description}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
@@ -591,7 +802,7 @@ export default function Index() {
                 <span className="font-semibold">AI Bot Company</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                18 AI agents automating appointment-based businesses worldwide.
+                20+ AI agents automating appointment-based businesses worldwide.
               </p>
             </div>
             
@@ -599,6 +810,7 @@ export default function Index() {
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><button onClick={() => navigate('/demo')} className="hover:text-foreground transition-colors">Live Demo</button></li>
+                <li><button onClick={() => navigate('/customer-auth')} className="hover:text-foreground transition-colors">Customer Portal</button></li>
                 <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-foreground transition-colors">Start Trial</button></li>
                 <li><a href="#" className="hover:text-foreground transition-colors">Pricing</a></li>
               </ul>
@@ -626,6 +838,9 @@ export default function Index() {
           <div className="border-t border-border/50 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <span className="text-sm text-muted-foreground">© 2025 AI Bot Company. All rights reserved.</span>
             <div className="flex items-center gap-4">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/customer-auth')}>
+                Customer Portal
+              </Button>
               <Button variant="ghost" size="sm" onClick={() => navigate('/demo')}>
                 Try Demo
               </Button>
