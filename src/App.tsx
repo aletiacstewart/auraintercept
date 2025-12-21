@@ -95,6 +95,7 @@ const App = () => (
             <Route path="/dashboard/help" element={<Help />} />
             
             {/* Customer Portal Routes */}
+            <Route path="/customer" element={<CustomerPortalHome />} />
             <Route path="/customer-portal" element={<CustomerPortalHome />} />
             <Route path="/customer-portal/:companySlug" element={<CustomerCompanyPortal />} />
             
