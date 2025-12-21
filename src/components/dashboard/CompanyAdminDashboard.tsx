@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, Package, DollarSign, AlertTriangle, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Megaphone } from 'lucide-react';
+import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, Package, DollarSign, AlertTriangle, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Megaphone, BarChart3 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
@@ -167,15 +167,11 @@ export function CompanyAdminDashboard() {
 
   const quickActions = [
     { label: 'Add Employee', icon: Plus, href: '/dashboard/employees', gradient: 'from-primary to-primary/80' },
-    { label: 'Create Quote', icon: FileText, href: '/dashboard/quotes', gradient: 'from-secondary to-secondary/80' },
-    { label: 'Create Invoice', icon: Receipt, href: '/dashboard/invoices', gradient: 'from-accent to-accent/80' },
-    { label: 'Booking AI', icon: Calendar, href: '/dashboard/ai-agent?console=booking', gradient: 'from-cyan-500 to-cyan-600' },
-    { label: 'Customer AI', icon: HeadphonesIcon, href: '/dashboard/ai-agent?console=customer', gradient: 'from-purple-500 to-purple-600' },
-    { label: 'Field Ops AI', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', gradient: 'from-green-500 to-green-600' },
-    { label: 'Business AI', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', gradient: 'from-blue-500 to-blue-600' },
-    { label: 'Billing AI', icon: DollarSign, href: '/dashboard/ai-agent?console=billing', gradient: 'from-emerald-500 to-emerald-600' },
-    { label: 'Marketing AI', icon: Megaphone, href: '/dashboard/ai-agent?console=marketing', gradient: 'from-orange-500 to-orange-600' },
-    { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', gradient: 'from-indigo-500 to-indigo-600' },
+    { label: 'Customer Engagement', icon: HeadphonesIcon, href: '/dashboard/ai-agent?console=customer', gradient: 'from-cyan-500 to-blue-500' },
+    { label: 'Field Operations', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', gradient: 'from-green-500 to-emerald-500' },
+    { label: 'Business Operations', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', gradient: 'from-purple-500 to-violet-500' },
+    { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-agent?console=marketing', gradient: 'from-orange-500 to-red-500' },
+    { label: 'Analytics & Insights', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', gradient: 'from-indigo-500 to-blue-600' },
   ];
 
   return (
