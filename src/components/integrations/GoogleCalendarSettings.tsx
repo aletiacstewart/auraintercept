@@ -127,6 +127,30 @@ export function GoogleCalendarSettings() {
 
   const isConnected = !!integration?.google_refresh_token && integration?.google_calendar_enabled;
 
+  // Handle OAuth redirect results (keeps the flow "one-click" for companies)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const connected = params.get('gc') === 'connected';
+    const error = params.get('gc_error');
+
+    if (!connected && !error) return;
+
+    if (connected) {
+      toast.success('Google Calendar connected');
+      queryClient.invalidateQueries({ queryKey: ['google-calendar-integration'] });
+      queryClient.invalidateQueries({ queryKey: ['google-calendars'] });
+    }
+
+    if (error) {
+      toast.error('Google Calendar connection failed');
+    }
+
+    params.delete('gc');
+    params.delete('gc_error');
+    const next = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ''}${window.location.hash}`;
+    window.history.replaceState({}, '', next);
+  }, [queryClient]);
+
   // Fetch available calendars when connected
   const { data: calendarsData, isLoading: calendarsLoading } = useQuery({
     queryKey: ['google-calendars', companyId],
@@ -223,15 +247,15 @@ export function GoogleCalendarSettings() {
   const connectMutation = useMutation({
     mutationFn: async () => {
       if (!companyId) throw new Error('No company ID');
-      
-      // Get the redirect URI (current page)
-      const redirectUri = `${window.location.origin}/dashboard/integrations`;
-      
+
+      // Where to return after Google finishes (this page)
+      const returnTo = `${window.location.origin}/dashboard/integrations`;
+
       const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
         body: {
           action: 'get_auth_url',
           companyId,
-          redirectUri,
+          returnTo,
         },
       });
 
@@ -243,7 +267,7 @@ export function GoogleCalendarSettings() {
     },
     onError: (error) => {
       console.error('Failed to initiate Google Calendar connection:', error);
-      toast.error('Failed to connect Google Calendar. Please ensure Google OAuth credentials are configured.');
+      toast.error('Failed to start Google Calendar connection.');
     },
   });
 

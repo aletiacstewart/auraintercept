@@ -27,125 +27,191 @@ async function getAccessToken(refreshToken: string, clientId: string, clientSecr
 }
 
 Deno.serve(async (req) => {
+  const requestUrl = new URL(req.url);
+
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
-  try {
-    const body = await req.json();
-    const { action, code, companyId, redirectUri, calendarId, calendarColor, calendarName, visibility, shareEmail, shareRole, removeRuleId } = body;
-    
-    const GOOGLE_CLIENT_ID = Deno.env.get('GOOGLE_CLIENT_ID');
-    const GOOGLE_CLIENT_SECRET = Deno.env.get('GOOGLE_CLIENT_SECRET');
-    const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const GOOGLE_CLIENT_ID = Deno.env.get('GOOGLE_CLIENT_ID');
+  const GOOGLE_CLIENT_SECRET = Deno.env.get('GOOGLE_CLIENT_SECRET');
+  const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
+  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-    if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
-      return new Response(
-        JSON.stringify({ error: 'Google OAuth credentials not configured' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+  // We use a single, stable redirect URI (the function URL) so companies never need to whitelist their app URL.
+  const callbackUrl = `${SUPABASE_URL}/functions/v1/google-calendar-auth`;
+
+  if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+    return new Response(
+      JSON.stringify({ error: 'Google OAuth credentials not configured' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+  const exchangeCodeAndStore = async (code: string, companyId: string, redirectUri: string) => {
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: GOOGLE_CLIENT_ID,
+        client_secret: GOOGLE_CLIENT_SECRET,
+        code,
+        grant_type: 'authorization_code',
+        redirect_uri: redirectUri,
+      }),
+    });
+
+    if (!tokenResponse.ok) {
+      const errorText = await tokenResponse.text();
+      console.error('Token exchange failed:', errorText);
+      throw new Error('Failed to exchange code for tokens');
     }
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const tokens = await tokenResponse.json();
+    console.log('Tokens received, has refresh_token:', !!tokens.refresh_token);
+
+    // Get the primary calendar ID
+    const calendarResponse = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary', {
+      headers: { Authorization: `Bearer ${tokens.access_token}` },
+    });
+
+    let primaryCalendarId = 'primary';
+    if (calendarResponse.ok) {
+      const calendarData = await calendarResponse.json();
+      primaryCalendarId = calendarData.id || 'primary';
+    }
+
+    // Save tokens to tenant_integrations
+    const { error: updateError } = await supabase
+      .from('tenant_integrations')
+      .update({
+        google_refresh_token: tokens.refresh_token || null,
+        google_calendar_id: primaryCalendarId,
+        google_calendar_enabled: true,
+      })
+      .eq('company_id', companyId);
+
+    if (updateError) {
+      // If no row exists, insert one
+      const { error: insertError } = await supabase
+        .from('tenant_integrations')
+        .insert({
+          company_id: companyId,
+          google_refresh_token: tokens.refresh_token || null,
+          google_calendar_id: primaryCalendarId,
+          google_calendar_enabled: true,
+        });
+
+      if (insertError) {
+        console.error('Failed to save tokens:', insertError);
+        throw new Error('Failed to save credentials');
+      }
+    }
+
+    return primaryCalendarId;
+  };
+
+  // OAuth callback (Google redirects back to this function)
+  if (req.method === 'GET') {
+    const code = requestUrl.searchParams.get('code');
+    const state = requestUrl.searchParams.get('state');
+    const oauthError = requestUrl.searchParams.get('error');
+
+    if (!code && !oauthError) {
+      return new Response('Google Calendar OAuth endpoint.', { status: 200 });
+    }
+
+    try {
+      const decodedState = state ? JSON.parse(atob(state)) : null;
+      const companyId = decodedState?.companyId;
+      const returnTo = decodedState?.returnTo;
+
+      if (!companyId || !returnTo) {
+        console.error('Invalid oauth state:', state);
+        return new Response('Invalid state parameter.', { status: 400 });
+      }
+
+      if (oauthError) {
+        const redirect = new URL(returnTo);
+        redirect.searchParams.set('gc_error', oauthError);
+        return Response.redirect(redirect.toString(), 302);
+      }
+
+      await exchangeCodeAndStore(code!, companyId, callbackUrl);
+      const redirect = new URL(returnTo);
+      redirect.searchParams.set('gc', 'connected');
+      return Response.redirect(redirect.toString(), 302);
+    } catch (e) {
+      console.error('OAuth callback failed:', e);
+      // Best-effort redirect back with error
+      try {
+        const fallback = new URL(requestUrl.origin);
+        return Response.redirect(fallback.toString(), 302);
+      } catch {
+        return new Response('OAuth callback failed.', { status: 500 });
+      }
+    }
+  }
+
+  try {
+    const body = await req.json();
+    const {
+      action,
+      code,
+      companyId,
+      returnTo,
+      redirectUri,
+      calendarId,
+      calendarColor,
+      calendarName,
+      visibility,
+      shareEmail,
+      shareRole,
+      removeRuleId,
+    } = body;
 
     if (action === 'get_auth_url') {
       // Generate OAuth URL for Google Calendar
       const scopes = [
         'https://www.googleapis.com/auth/calendar',
         'https://www.googleapis.com/auth/calendar.events',
-        'https://www.googleapis.com/auth/calendar.readonly'
+        'https://www.googleapis.com/auth/calendar.readonly',
       ].join(' ');
 
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-        `client_id=${GOOGLE_CLIENT_ID}&` +
-        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-        `response_type=code&` +
-        `scope=${encodeURIComponent(scopes)}&` +
-        `access_type=offline&` +
-        `prompt=consent&` +
-        `state=${companyId}`;
-
-      return new Response(
-        JSON.stringify({ authUrl }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    if (action === 'exchange_code') {
-      // Exchange authorization code for tokens
-      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          client_id: GOOGLE_CLIENT_ID,
-          client_secret: GOOGLE_CLIENT_SECRET,
-          code,
-          grant_type: 'authorization_code',
-          redirect_uri: redirectUri,
-        }),
-      });
-
-      if (!tokenResponse.ok) {
-        const errorText = await tokenResponse.text();
-        console.error('Token exchange failed:', errorText);
+      if (!companyId) {
         return new Response(
-          JSON.stringify({ error: 'Failed to exchange code for tokens' }),
+          JSON.stringify({ error: 'Company ID required' }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      const tokens = await tokenResponse.json();
-      console.log('Tokens received, has refresh_token:', !!tokens.refresh_token);
+      const state = btoa(JSON.stringify({ companyId, returnTo: returnTo || redirectUri }));
 
-      // Get the primary calendar ID
-      const calendarResponse = await fetch(
-        'https://www.googleapis.com/calendar/v3/calendars/primary',
-        {
-          headers: { Authorization: `Bearer ${tokens.access_token}` },
-        }
-      );
+      const authUrl =
+        `https://accounts.google.com/o/oauth2/v2/auth?` +
+        `client_id=${GOOGLE_CLIENT_ID}&` +
+        `redirect_uri=${encodeURIComponent(callbackUrl)}&` +
+        `response_type=code&` +
+        `scope=${encodeURIComponent(scopes)}&` +
+        `access_type=offline&` +
+        `prompt=consent&` +
+        `state=${encodeURIComponent(state)}`;
 
-      let primaryCalendarId = 'primary';
-      if (calendarResponse.ok) {
-        const calendarData = await calendarResponse.json();
-        primaryCalendarId = calendarData.id || 'primary';
-      }
+      return new Response(JSON.stringify({ authUrl }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
-      // Save tokens to tenant_integrations
-      const { error: updateError } = await supabase
-        .from('tenant_integrations')
-        .update({
-          google_refresh_token: tokens.refresh_token || null,
-          google_calendar_id: primaryCalendarId,
-          google_calendar_enabled: true,
-        })
-        .eq('company_id', companyId);
+    if (action === 'exchange_code') {
+      const effectiveRedirectUri = redirectUri || callbackUrl;
+      const primaryCalendarId = await exchangeCodeAndStore(code, companyId, effectiveRedirectUri);
 
-      if (updateError) {
-        // If no row exists, insert one
-        const { error: insertError } = await supabase
-          .from('tenant_integrations')
-          .insert({
-            company_id: companyId,
-            google_refresh_token: tokens.refresh_token || null,
-            google_calendar_id: primaryCalendarId,
-            google_calendar_enabled: true,
-          });
-
-        if (insertError) {
-          console.error('Failed to save tokens:', insertError);
-          return new Response(
-            JSON.stringify({ error: 'Failed to save credentials' }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-      }
-
-      return new Response(
-        JSON.stringify({ success: true, calendarId: primaryCalendarId }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ success: true, calendarId: primaryCalendarId }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     if (action === 'list_calendars') {
