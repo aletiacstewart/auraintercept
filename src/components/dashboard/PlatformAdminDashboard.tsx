@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone, BarChart3 } from 'lucide-react';
+import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { startOfMonth, endOfMonth } from 'date-fns';
-import { AnalyticsAgentConsole } from '@/components/analytics/AnalyticsAgentConsole';
+
 
 export function PlatformAdminDashboard() {
   const { data: stats, isLoading } = useQuery({
@@ -215,19 +215,6 @@ export function PlatformAdminDashboard() {
         </Card>
       </div>
 
-      {/* Analytics Agent Console */}
-      <Card className="border-border/50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-primary" />
-            Analytics & Insights AI Agent
-          </CardTitle>
-          <CardDescription>AI-powered analytics and reporting console</CardDescription>
-        </CardHeader>
-        <CardContent className="p-0">
-          <AnalyticsAgentConsole />
-        </CardContent>
-      </Card>
     </div>
   );
 }
