@@ -6,7 +6,7 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -179,6 +179,49 @@ export default function Inventory() {
 
   const totalValue = items.reduce((sum, item) => sum + (item.quantity * (item.unit_cost || 0)), 0);
 
+  const InventoryFormFields = () => (
+    <div className="grid gap-4 py-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Name *</Label>
+          <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+        </div>
+        <div className="space-y-2">
+          <Label>SKU</Label>
+          <Input value={formData.sku} onChange={e => setFormData({ ...formData, sku: e.target.value })} />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Label>Description</Label>
+        <Textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+      </div>
+      <div className="grid grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <Label>Quantity</Label>
+          <Input type="number" value={formData.quantity} onChange={e => setFormData({ ...formData, quantity: parseInt(e.target.value) || 0 })} />
+        </div>
+        <div className="space-y-2">
+          <Label>Min Quantity</Label>
+          <Input type="number" value={formData.min_quantity} onChange={e => setFormData({ ...formData, min_quantity: parseInt(e.target.value) || 0 })} />
+        </div>
+        <div className="space-y-2">
+          <Label>Unit Cost ($)</Label>
+          <Input type="number" step="0.01" value={formData.unit_cost} onChange={e => setFormData({ ...formData, unit_cost: parseFloat(e.target.value) || 0 })} />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Supplier</Label>
+          <Input value={formData.supplier} onChange={e => setFormData({ ...formData, supplier: e.target.value })} />
+        </div>
+        <div className="space-y-2">
+          <Label>Category</Label>
+          <Input value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} />
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -197,56 +240,17 @@ export default function Inventory() {
                 </Button>
               </DialogTrigger>
               <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add Inventory Item</DialogTitle>
-                <DialogDescription>Add a new part or supply to your inventory.</DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Name *</Label>
-                    <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>SKU</Label>
-                    <Input value={formData.sku} onChange={e => setFormData({ ...formData, sku: e.target.value })} />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Description</Label>
-                  <Textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label>Quantity</Label>
-                    <Input type="number" value={formData.quantity} onChange={e => setFormData({ ...formData, quantity: parseInt(e.target.value) || 0 })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Min Quantity</Label>
-                    <Input type="number" value={formData.min_quantity} onChange={e => setFormData({ ...formData, min_quantity: parseInt(e.target.value) || 0 })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Unit Cost ($)</Label>
-                    <Input type="number" step="0.01" value={formData.unit_cost} onChange={e => setFormData({ ...formData, unit_cost: parseFloat(e.target.value) || 0 })} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Supplier</Label>
-                    <Input value={formData.supplier} onChange={e => setFormData({ ...formData, supplier: e.target.value })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Category</Label>
-                    <Input value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} />
-                  </div>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddOpen(false)}>Cancel</Button>
-                <Button onClick={handleSubmit} disabled={addMutation.isPending}>Add Item</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+                <DialogHeader>
+                  <DialogTitle>Add Inventory Item</DialogTitle>
+                  <DialogDescription>Add a new part or supply to your inventory.</DialogDescription>
+                </DialogHeader>
+                <InventoryFormFields />
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsAddOpen(false)}>Cancel</Button>
+                  <Button onClick={handleSubmit} disabled={addMutation.isPending}>Add Item</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
@@ -382,46 +386,7 @@ export default function Inventory() {
               <DialogTitle>Edit Inventory Item</DialogTitle>
               <DialogDescription>Update item details.</DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Name *</Label>
-                  <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
-                </div>
-                <div className="space-y-2">
-                  <Label>SKU</Label>
-                  <Input value={formData.sku} onChange={e => setFormData({ ...formData, sku: e.target.value })} />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Description</Label>
-                <Textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label>Quantity</Label>
-                  <Input type="number" value={formData.quantity} onChange={e => setFormData({ ...formData, quantity: parseInt(e.target.value) || 0 })} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Min Quantity</Label>
-                  <Input type="number" value={formData.min_quantity} onChange={e => setFormData({ ...formData, min_quantity: parseInt(e.target.value) || 0 })} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Unit Cost ($)</Label>
-                  <Input type="number" step="0.01" value={formData.unit_cost} onChange={e => setFormData({ ...formData, unit_cost: parseFloat(e.target.value) || 0 })} />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Supplier</Label>
-                  <Input value={formData.supplier} onChange={e => setFormData({ ...formData, supplier: e.target.value })} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Category</Label>
-                  <Input value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} />
-                </div>
-              </div>
-            </div>
+            <InventoryFormFields />
             <DialogFooter>
               <Button variant="outline" onClick={() => setEditItem(null)}>Cancel</Button>
               <Button onClick={handleSubmit} disabled={updateMutation.isPending}>Save Changes</Button>
