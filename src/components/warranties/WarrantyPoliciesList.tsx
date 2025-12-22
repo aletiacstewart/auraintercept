@@ -127,7 +127,7 @@ export function WarrantyPoliciesList({ companyId }: WarrantyPoliciesListProps) {
                 <div className="flex flex-wrap gap-3 text-sm">
                   <div className="flex items-center gap-1 text-muted-foreground">
                     <Clock className="h-4 w-4" />
-                    <span>{policy.duration_months} months</span>
+                    <span>{policy.duration_text || `${policy.duration_months} months`}</span>
                   </div>
                   {policy.labor_covered && (
                     <div className="flex items-center gap-1 text-green-600">

@@ -2562,6 +2562,7 @@ export type Database = {
           created_at: string
           description: string | null
           duration_months: number
+          duration_text: string | null
           exclusions: string | null
           id: string
           is_active: boolean | null
@@ -2579,6 +2580,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           duration_months?: number
+          duration_text?: string | null
           exclusions?: string | null
           id?: string
           is_active?: boolean | null
@@ -2596,6 +2598,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           duration_months?: number
+          duration_text?: string | null
           exclusions?: string | null
           id?: string
           is_active?: boolean | null
