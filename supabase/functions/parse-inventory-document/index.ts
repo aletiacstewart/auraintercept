@@ -49,9 +49,14 @@ Extract the following fields for each item:
 - description: Item description (optional)
 - quantity: Current stock quantity (default to 0 if not specified)
 - min_quantity: Minimum stock threshold (default to 5 if not specified)
-- unit_cost: Cost per unit in dollars (optional)
+- unit_cost: Cost per unit in dollars as a NUMBER (optional). If a price range is given like "$75 - $200", use the FIRST number (75). Remove currency symbols and commas.
 - supplier: Supplier name (optional)
 - category: Item category (optional)
+
+IMPORTANT: 
+- unit_cost MUST be a number (e.g., 12.99), NOT a string
+- For price ranges like "$75 - $200" or "$50-$100", extract ONLY the first number (75 or 50)
+- Remove all currency symbols ($) and commas from numbers
 
 Return ONLY a valid JSON array of items. Do not include any explanations or markdown formatting.
 If no valid inventory data is found, return an empty array: []
@@ -123,6 +128,22 @@ Example output format:
       );
     }
 
+    // Helper function to parse price/cost values that may be strings with ranges or currency
+    const parseUnitCost = (value: any): number | null => {
+      if (typeof value === 'number') return Math.max(0, value);
+      if (typeof value !== 'string') return null;
+      
+      // Remove currency symbols and commas
+      const cleaned = value.replace(/[$,]/g, '').trim();
+      // Handle price ranges like "75 - 200" by extracting first number
+      const match = cleaned.match(/^([\d.]+)/);
+      if (match) {
+        const num = parseFloat(match[1]);
+        return isNaN(num) ? null : Math.max(0, num);
+      }
+      return null;
+    };
+
     // Validate and normalize items
     const validatedItems = extractedItems
       .filter((item: any) => item && typeof item.name === 'string' && item.name.trim())
@@ -133,7 +154,7 @@ Example output format:
         description: item.description?.toString().trim() || null,
         quantity: typeof item.quantity === 'number' ? Math.max(0, Math.floor(item.quantity)) : 0,
         min_quantity: typeof item.min_quantity === 'number' ? Math.max(0, Math.floor(item.min_quantity)) : 5,
-        unit_cost: typeof item.unit_cost === 'number' ? Math.max(0, item.unit_cost) : null,
+        unit_cost: parseUnitCost(item.unit_cost),
         supplier: item.supplier?.toString().trim() || null,
         category: item.category?.toString().trim() || null,
         is_active: true,
