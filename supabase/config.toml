@@ -128,3 +128,6 @@ verify_jwt = true
 
 [functions.manage-user]
 verify_jwt = false
+
+[functions.parse-faq-document]
+verify_jwt = true
