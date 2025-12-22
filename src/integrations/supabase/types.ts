@@ -2554,6 +2554,68 @@ export type Database = {
           },
         ]
       }
+      warranty_policies: {
+        Row: {
+          company_id: string
+          coverage_details: string | null
+          coverage_type: string
+          created_at: string
+          description: string | null
+          duration_months: number
+          exclusions: string | null
+          id: string
+          is_active: boolean | null
+          labor_covered: boolean | null
+          name: string
+          parts_covered: boolean | null
+          sort_order: number | null
+          terms_conditions: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          coverage_details?: string | null
+          coverage_type?: string
+          created_at?: string
+          description?: string | null
+          duration_months?: number
+          exclusions?: string | null
+          id?: string
+          is_active?: boolean | null
+          labor_covered?: boolean | null
+          name: string
+          parts_covered?: boolean | null
+          sort_order?: number | null
+          terms_conditions?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          coverage_details?: string | null
+          coverage_type?: string
+          created_at?: string
+          description?: string | null
+          duration_months?: number
+          exclusions?: string | null
+          id?: string
+          is_active?: boolean | null
+          labor_covered?: boolean | null
+          name?: string
+          parts_covered?: boolean | null
+          sort_order?: number | null
+          terms_conditions?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "warranty_policies_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       warranty_records: {
         Row: {
           appointment_id: string | null
