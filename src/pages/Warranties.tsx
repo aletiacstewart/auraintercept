@@ -11,8 +11,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
-import { Shield, Plus, Search, AlertTriangle, CheckCircle, FileText } from 'lucide-react';
+import { Shield, Plus, Search, AlertTriangle, CheckCircle, FileText, BookOpen } from 'lucide-react';
 import { WarrantyForm } from '@/components/billing/forms/WarrantyForm';
+import { WarrantyPoliciesList } from '@/components/warranties/WarrantyPoliciesList';
 
 export default function Warranties() {
   const { companyId } = useAuth();
@@ -42,6 +43,19 @@ export default function Warranties() {
         .select('*, warranty_records(customer_name, coverage_type)')
         .eq('company_id', companyId)
         .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
+  const { data: policies } = useQuery({
+    queryKey: ['warranty-policies', companyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('warranty_policies')
+        .select('*')
+        .eq('company_id', companyId);
       if (error) throw error;
       return data || [];
     },
@@ -102,6 +116,10 @@ export default function Warranties() {
           <TabsList>
             <TabsTrigger value="warranties">Warranties ({warranties?.length || 0})</TabsTrigger>
             <TabsTrigger value="claims">Claims ({claims?.length || 0})</TabsTrigger>
+            <TabsTrigger value="policies" className="gap-1">
+              <BookOpen className="h-3.5 w-3.5" />
+              Policies ({policies?.length || 0})
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="warranties" className="space-y-4">
@@ -161,6 +179,10 @@ export default function Warranties() {
                 ))}
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="policies" className="space-y-4">
+            {companyId && <WarrantyPoliciesList companyId={companyId} />}
           </TabsContent>
         </Tabs>
       </div>
