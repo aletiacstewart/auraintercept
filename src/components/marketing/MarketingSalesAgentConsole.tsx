@@ -166,6 +166,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
         agentLabel={agentStyle.label}
         agentColor={agentStyle.color}
         agentBgColor={agentStyle.bgColor}
+        useDefaultLogo={true}
       />
 
       {/* Tab Navigation */}

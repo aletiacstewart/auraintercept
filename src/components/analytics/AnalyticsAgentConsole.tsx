@@ -191,6 +191,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
         agentLabel={agentStyle.label}
         agentColor={agentStyle.color}
         agentBgColor={agentStyle.bgColor}
+        useDefaultLogo={true}
       />
 
       {/* Tab Navigation */}

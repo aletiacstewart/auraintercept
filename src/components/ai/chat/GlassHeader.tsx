@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Phone, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import aiCircleLogo from '@/assets/ai-circle-logo.png';
 
 interface GlassHeaderProps {
   companyName: string;
@@ -16,6 +17,7 @@ interface GlassHeaderProps {
   onVoiceClick?: () => void;
   isOnline?: boolean;
   rectangleLogo?: boolean;
+  useDefaultLogo?: boolean; // When true, uses AI circle logo if no company logo
 }
 
 export const GlassHeader: React.FC<GlassHeaderProps> = ({
@@ -30,7 +32,11 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
   onVoiceClick,
   isOnline = true,
   rectangleLogo = false,
+  useDefaultLogo = false,
 }) => {
+  // Determine which logo to show
+  const displayLogo = logoUrl || (useDefaultLogo ? aiCircleLogo : null);
+  
   return (
     <div className="glass-primary p-3 text-white relative shrink-0">
       <div className="relative flex items-center justify-between gap-2">
@@ -39,14 +45,14 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
           <div className="relative shrink-0">
             {rectangleLogo ? (
               <div className="h-12 px-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden">
-                {logoUrl && (
-                  <img src={logoUrl} alt={companyName} className="h-10 object-contain" />
+                {displayLogo && (
+                  <img src={displayLogo} alt={companyName} className="h-10 object-contain" />
                 )}
               </div>
             ) : (
               <div className="h-16 w-16 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden">
-                {logoUrl && (
-                  <img src={logoUrl} alt={companyName} className="h-14 w-14 object-contain" />
+                {displayLogo && (
+                  <img src={displayLogo} alt={companyName} className="h-14 w-14 object-contain" />
                 )}
               </div>
             )}
