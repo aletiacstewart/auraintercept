@@ -1426,6 +1426,15 @@ serve(async (req) => {
         .eq('company_id', companyId)
         .order('day_of_week');
 
+      // Get FAQs from knowledge base
+      const { data: faqs } = await supabase
+        .from('faqs')
+        .select('question, answer, category')
+        .eq('company_id', companyId)
+        .eq('is_active', true)
+        .order('sort_order')
+        .limit(30);
+
       const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       
       if (services && services.length > 0) {
@@ -1448,6 +1457,16 @@ serve(async (req) => {
           } else {
             knowledgeBaseContext += `- ${day}: ${h.open_time} - ${h.close_time}\n`;
           }
+        });
+      }
+
+      if (faqs && faqs.length > 0) {
+        knowledgeBaseContext += `\nFREQUENTLY ASKED QUESTIONS:\n`;
+        faqs.forEach(faq => {
+          knowledgeBaseContext += `Q: ${faq.question}\n`;
+          knowledgeBaseContext += `A: ${faq.answer}\n`;
+          if (faq.category) knowledgeBaseContext += `   (Category: ${faq.category})\n`;
+          knowledgeBaseContext += '\n';
         });
       }
     }
