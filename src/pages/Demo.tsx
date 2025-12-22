@@ -62,7 +62,7 @@ export default function Demo() {
         <div className="container max-w-7xl mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <Zap className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
-            <span className="font-medium text-sm sm:text-base truncate">Live Demo - AI Agent Consoles</span>
+            <span className="font-medium text-sm sm:text-base truncate">Company Portal Demo - AI Agent Consoles</span>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Button 
