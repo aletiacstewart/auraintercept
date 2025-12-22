@@ -118,7 +118,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.reset-user-password]
-verify_jwt = true
+verify_jwt = false
 
 [functions.cost-alerts]
 verify_jwt = false
