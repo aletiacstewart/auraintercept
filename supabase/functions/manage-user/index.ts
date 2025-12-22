@@ -18,7 +18,8 @@ Deno.serve(async (req) => {
       auth: { autoRefreshToken: false, persistSession: false }
     });
 
-    const { action, email, password, fullName, role, companyId } = await req.json();
+    const body = await req.json();
+    const { action, email, password, fullName, role, companyId, oldEmail, newEmail } = body;
 
     if (action === 'delete') {
       // Delete user by email
@@ -142,8 +143,70 @@ Deno.serve(async (req) => {
       );
     }
 
+    if (action === 'update_email') {
+      if (!oldEmail || !newEmail) {
+        return new Response(
+          JSON.stringify({ error: 'oldEmail and newEmail are required for update_email' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Find user by old email
+      const { data: usersData, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+      if (listError) {
+        console.error('Error listing users:', listError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to list users' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const user = usersData.users.find(u => u.email?.toLowerCase() === oldEmail.toLowerCase());
+      if (!user) {
+        return new Response(
+          JSON.stringify({ error: 'User not found', oldEmail }),
+          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Update the auth user email
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(user.id, {
+        email: newEmail,
+        email_confirm: true
+      });
+
+      if (updateError) {
+        console.error('Error updating user email:', updateError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to update user email', details: updateError.message }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Also update the profiles table email
+      const { error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .update({ email: newEmail, updated_at: new Date().toISOString() })
+        .eq('id', user.id);
+
+      if (profileError) {
+        console.error('Error updating profile email:', profileError);
+      }
+
+      console.log(`User email updated: ${oldEmail} -> ${newEmail}`);
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          oldEmail,
+          newEmail,
+          message: `User email updated from ${oldEmail} to ${newEmail}` 
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     return new Response(
-      JSON.stringify({ error: 'Invalid action. Use "create" or "delete"' }),
+      JSON.stringify({ error: 'Invalid action. Use "create", "delete", or "update_email"' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
