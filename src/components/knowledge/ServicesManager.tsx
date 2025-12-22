@@ -546,19 +546,22 @@ export function ServicesManager() {
   };
 
   const handleDownloadTemplate = () => {
+    // Template example row aligned with CSV_HEADERS:
+    // ['Service Name', 'Category', 'Description', 'Service Type', 'Service Type (Other)', 
+    //  'Duration (Minutes)', 'Flat Fee', 'Hourly Rate', 'Parts Cost', 'Base Price', 'Active']
     const exampleRow = [
-      '"Example Service"',
-      '"Maintenance"',
-      '"Description of the service"',
-      'In Person',
-      '""',
-      '60',
-      '50',
-      '',
-      '25',
-      '',
-      'Yes',
-    ].join(',');
+      'Example Service',      // Service Name
+      'Maintenance',          // Category
+      'Description of the service', // Description
+      'In Person',            // Service Type
+      '',                     // Service Type (Other)
+      '60',                   // Duration (Minutes)
+      '50',                   // Flat Fee
+      '75',                   // Hourly Rate
+      '25',                   // Parts Cost
+      '100',                  // Base Price
+      'Yes',                  // Active
+    ].map(v => `"${v}"`).join(',');
 
     const csvContent = [CSV_HEADERS.join(','), exampleRow].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
