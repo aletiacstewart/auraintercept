@@ -430,6 +430,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({ companyId: propC
         showVoice={hasVoiceChat}
         onPhoneClick={() => window.open(`tel:${twilioPhone}`, '_self')}
         onVoiceClick={() => setActiveTab('voice')}
+        useDefaultLogo={true}
       />
 
       {/* Tab Navigation */}

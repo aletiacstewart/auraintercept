@@ -198,6 +198,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
         agentLabel={agentStyle.label}
         agentColor={agentStyle.color}
         agentBgColor={agentStyle.bgColor}
+        useDefaultLogo={true}
       />
 
       {/* Tab Navigation */}
