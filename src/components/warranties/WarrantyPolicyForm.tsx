@@ -21,7 +21,7 @@ export function WarrantyPolicyForm({ companyId, policy, onSuccess, onCancel }: W
     name: policy?.name || '',
     description: policy?.description || '',
     coverage_type: policy?.coverage_type || 'standard',
-    duration_months: policy?.duration_months || 12,
+    duration_text: policy?.duration_text || '1 year',
     coverage_details: policy?.coverage_details || '',
     terms_conditions: policy?.terms_conditions || '',
     exclusions: policy?.exclusions || '',
@@ -102,14 +102,14 @@ export function WarrantyPolicyForm({ companyId, policy, onSuccess, onCancel }: W
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="duration_months">Duration (Months)</Label>
+          <Label htmlFor="duration_text">Duration</Label>
           <Input
-            id="duration_months"
-            type="number"
-            min={1}
-            value={formData.duration_months}
-            onChange={(e) => setFormData({ ...formData, duration_months: parseInt(e.target.value) || 12 })}
+            id="duration_text"
+            value={formData.duration_text}
+            onChange={(e) => setFormData({ ...formData, duration_text: e.target.value })}
+            placeholder="e.g., 5-10 years, 1 year, 90 days"
           />
+          <p className="text-xs text-muted-foreground">e.g., "5-10 years", "1 year", "90 days"</p>
         </div>
       </div>
 
