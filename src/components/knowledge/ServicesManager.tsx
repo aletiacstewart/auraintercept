@@ -545,6 +545,31 @@ export function ServicesManager() {
     toast.success('Services exported successfully');
   };
 
+  const handleDownloadTemplate = () => {
+    const exampleRow = [
+      '"Example Service"',
+      '"Maintenance"',
+      '"Description of the service"',
+      'In Person',
+      '""',
+      '60',
+      '50',
+      '',
+      '25',
+      '',
+      'Yes',
+    ].join(',');
+
+    const csvContent = [CSV_HEADERS.join(','), exampleRow].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'services_import_template.csv';
+    link.click();
+    URL.revokeObjectURL(link.href);
+    toast.success('Template downloaded');
+  };
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -796,6 +821,10 @@ export function ServicesManager() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleDownloadTemplate}>
+                <FileDown className="w-4 h-4 mr-2" />
+                Download Template
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleExportCSV} disabled={!services || services.length === 0}>
                 <FileDown className="w-4 h-4 mr-2" />
                 Export CSV
