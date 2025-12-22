@@ -406,7 +406,7 @@ export default function Index() {
                   onClick={() => navigate('/demo')}
                 >
                   <Play className="w-5 h-5 mr-2" />
-                  Live Demo
+                  Company Portal Demo
                 </Button>
               </div>
             </div>

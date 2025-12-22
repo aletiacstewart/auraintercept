@@ -27,7 +27,7 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
           )}
           <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/demo')}>
             <Play className="w-4 h-4 mr-1" />
-            Live Demo
+            Company Portal Demo
           </Button>
           <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/auth')}>
             Sign In
