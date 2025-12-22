@@ -127,6 +127,9 @@ const SERVICE_TYPE_VALUE_MAP: Record<string, string> = {
   'in_person': 'in_person',
   'virtual': 'virtual',
   'other': 'other',
+  'flat rate': 'in_person',
+  'hourly': 'in_person',
+  'variable': 'other',
 };
 
 interface SortableRowProps {
@@ -682,7 +685,16 @@ export function ServicesManager() {
 
   const parseNumber = (value: string | null): number | null => {
     if (!value) return null;
-    const num = parseFloat(value);
+    // Handle price ranges like "$75 - $200" by extracting first number
+    // Also handle currency symbols and commas
+    const cleaned = value.replace(/[$,]/g, '').trim();
+    // If it's a range (contains "-" with spaces or multiple numbers), extract first number
+    const rangeMatch = cleaned.match(/^([\d.]+)/);
+    if (rangeMatch) {
+      const num = parseFloat(rangeMatch[1]);
+      return isNaN(num) ? null : num;
+    }
+    const num = parseFloat(cleaned);
     return isNaN(num) ? null : num;
   };
 
