@@ -276,7 +276,7 @@ export default function CustomerAuth() {
             onClick={() => navigate('/auth')}
           >
             <Building2 className="w-4 h-4 mr-2" />
-            Business Login
+            Company Login
             <ArrowRight className="w-4 h-4 ml-1" />
           </Button>
         </div>
