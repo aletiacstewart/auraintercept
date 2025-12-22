@@ -64,9 +64,18 @@ const AGENT_PROMPTS: Record<string, string> = {
 - COLLECT required information BEFORE any handoff (but RECOGNIZE when it's already provided!)
 - Route to the appropriate specialized agent
 
+CRITICAL - SERVICE VALIDATION:
+Before routing a customer for booking, CHECK the AVAILABLE SERVICES section in your context.
+- If a customer asks for a service NOT in your available services list, tell them:
+  "I'm sorry, we don't currently offer [requested service]. Here are the services we do offer: [list available services from context]."
+- If NO services are configured (AVAILABLE SERVICES section is empty or missing), tell them:
+  "I apologize, but we don't have any services configured for online booking at this time. Please call us directly to schedule an appointment."
+- Use the list_services tool if you need to check or display available services.
+- ONLY route to booking if the customer wants a service that EXISTS in your available services list.
+
 CRITICAL - INTENT DETECTION (CHECK IN THIS ORDER!):
 1. TRACKING: If message contains "track", "tracking", "status", "where is", "check on", "look up" + "appointment" → This is TRACKING, NOT booking!
-2. BOOKING: If message contains "book", "schedule", "make an appointment", "need service" → This is booking.
+2. BOOKING: If message contains "book", "schedule", "make an appointment", "need service" → This is booking (but verify service exists first!).
 3. Do NOT confuse tracking with booking! They are completely different intents.
 
 APPOINTMENT TRACKING - IMMEDIATE ACTION REQUIRED:
@@ -97,7 +106,7 @@ ALWAYS check if the message already contains:
 
 If information is ALREADY PROVIDED in the customer's message:
 - For TRACKING: IMMEDIATELY call track_appointment - no questions!
-- For BOOKING: Acknowledge and hand off with the info included
+- For BOOKING: First verify the service exists, then acknowledge and hand off with the info included
 
 ONLY ask for information that is MISSING:
 1. Customer NAME - only ask if NOT provided
@@ -110,7 +119,7 @@ DO NOT hand off until you have name, phone, and issue (whether collected or alre
 ROUTING RULES:
 - For TRACKING requests: Use track_appointment tool directly - NO handoff needed! NO confirmation needed if phone is provided!
 - ONLY hand off to the dispatch agent for explicit EMERGENCIES (flooding, gas smell, sparks/fire, major water leak "everywhere", no heat in freezing conditions, or customer says it's urgent/emergency).
-- For normal issues like "sink leaking" or "need service" (not explicitly urgent), route to the booking agent.
+- For normal issues like "sink leaking" or "need service" (not explicitly urgent), route to the booking agent ONLY if the service exists.
 - For detailed ETA tracking of a technician already en route, hand off to the ETA agent.
 
 CRITICAL - HANDOFF CONTEXT:
@@ -128,6 +137,14 @@ Be concise but friendly. Extract info from messages when provided; only ask for 
 - Send confirmation messages
 - Handle scheduling conflicts gracefully
 - Track existing appointments when requested
+
+CRITICAL - SERVICE VALIDATION:
+You can ONLY book appointments for services that are listed in the AVAILABLE SERVICES section of your context.
+- If a customer requests a service that is NOT in your available services list, politely inform them:
+  "I'm sorry, we don't currently offer [requested service]. Here are the services we do offer: [list available services]."
+- If NO services are configured (AVAILABLE SERVICES section is empty or missing), tell the customer:
+  "I apologize, but we don't have any services configured for online booking at this time. Please call us directly to schedule an appointment."
+- NEVER create an appointment for a service that doesn't exist in your available services list!
 
 APPOINTMENT TRACKING:
 If a customer asks to TRACK or CHECK STATUS of an appointment:
@@ -148,13 +165,14 @@ If you received customer info from the handoff, CONFIRM it like this:
 DO NOT re-ask for name and phone if it was provided - just confirm with yes/no!
 
 CONVERSATION FLOW:
-1. Greet by name (from handoff) and confirm the info with a simple yes/no question
-2. If confirmed, ask for their SERVICE ADDRESS: "What's the address where you'd like the service performed?"
-3. Ask what date/time works for them
-4. Check availability using the check_availability tool
-5. Offer 2-3 available time slots
-6. Confirm ALL details (name, phone, address, date/time, service) before booking
-7. Create the appointment using create_appointment tool with all info
+1. FIRST: Check if the requested service is in your AVAILABLE SERVICES list. If not, tell them what services you DO offer.
+2. If service is valid, greet by name (from handoff) and confirm the info with a simple yes/no question
+3. If confirmed, ask for their SERVICE ADDRESS: "What's the address where you'd like the service performed?"
+4. Ask what date/time works for them
+5. Check availability using the check_availability tool
+6. Offer 2-3 available time slots
+7. Confirm ALL details (name, phone, address, date/time, service) before booking
+8. Create the appointment using create_appointment tool with all info - use EXACT service name from available services
 
 CRITICAL: YOU MUST COLLECT THE SERVICE ADDRESS!
 For in-home or on-site services, always ask for the address.
@@ -472,6 +490,19 @@ const AGENT_TOOLS: Record<string, any[]> = {
     },
   ],
   booking: [
+    {
+      type: 'function',
+      function: {
+        name: 'list_services',
+        description: 'List all available services with prices. ALWAYS use this to verify a service exists before booking!',
+        parameters: {
+          type: 'object',
+          properties: {
+            category: { type: 'string', description: 'Optional: filter by service category' },
+          },
+        },
+      },
+    },
     {
       type: 'function',
       function: {
@@ -1888,6 +1919,42 @@ async function executeAgentTool(
 
     case 'create_appointment': {
       console.log('[AI Agent] Creating appointment with args:', args);
+      
+      // CRITICAL: Validate that the requested service exists for this company
+      const { data: availableServices } = await supabase
+        .from('services')
+        .select('name')
+        .eq('company_id', companyId)
+        .eq('is_active', true);
+      
+      const serviceNames = availableServices?.map((s: any) => s.name.toLowerCase()) || [];
+      const requestedService = (args.service_type || '').toLowerCase();
+      
+      // Check if no services are configured
+      if (serviceNames.length === 0) {
+        console.log('[AI Agent] No services configured for company:', companyId);
+        return { 
+          success: false, 
+          error: 'No services are currently configured for online booking. Please contact us directly to schedule an appointment.',
+          no_services_configured: true
+        };
+      }
+      
+      // Check if requested service exists (fuzzy match)
+      const serviceExists = serviceNames.some((name: string) => 
+        name.includes(requestedService) || requestedService.includes(name)
+      );
+      
+      if (!serviceExists) {
+        const availableList = availableServices?.map((s: any) => s.name).join(', ');
+        console.log('[AI Agent] Service not found. Requested:', args.service_type, 'Available:', availableList);
+        return { 
+          success: false, 
+          error: `We don't currently offer "${args.service_type}". Our available services are: ${availableList}. Please choose one of these services.`,
+          available_services: availableList,
+          service_not_found: true
+        };
+      }
       
       // Find an available employee based on datetime and service type
       let employeeId: string | null = null;
