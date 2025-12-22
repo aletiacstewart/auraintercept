@@ -413,7 +413,7 @@ export default function Auth() {
         };
       case 'employee':
         return {
-          title: 'Employee Access',
+          title: 'Employee Portal',
           description: 'Sign in to your employee dashboard',
           icon: Users,
           showCompanyField: false,
