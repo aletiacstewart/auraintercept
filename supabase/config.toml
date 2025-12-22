@@ -125,3 +125,6 @@ verify_jwt = false
 
 [functions.parse-inventory-document]
 verify_jwt = true
+
+[functions.manage-user]
+verify_jwt = false
