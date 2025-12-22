@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Dialog,
   DialogContent,
@@ -24,7 +25,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, HelpCircle } from 'lucide-react';
+import { Plus, Pencil, Trash2, HelpCircle, Upload, FileText, Loader2, Info } from 'lucide-react';
 
 interface FAQ {
   id: string;
@@ -37,8 +38,10 @@ interface FAQ {
 export function FAQsManager() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingFaq, setEditingFaq] = useState<FAQ | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState({
     question: '',
     answer: '',
@@ -146,6 +149,91 @@ export function FAQsManager() {
     saveMutation.mutate(formData);
   };
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !companyId) return;
+
+    // Validate file type
+    const allowedTypes = [
+      'text/plain',
+      'text/markdown',
+      'text/csv',
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+    const allowedExtensions = ['.txt', '.md', '.csv', '.pdf', '.doc', '.docx'];
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    
+    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+      toast.error('Unsupported file type. Please upload TXT, MD, CSV, PDF, DOC, or DOCX files.');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File is too large. Maximum size is 5MB.');
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      let content: string;
+
+      // Read file content based on type
+      if (file.type === 'application/pdf') {
+        // For PDFs, we'll send the base64 content and let the edge function handle it
+        // For now, we'll show a message that PDFs need text content
+        toast.error('PDF parsing is not yet supported. Please upload a text-based file (TXT, MD, CSV).');
+        setIsUploading(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      } else {
+        // Read as text for other file types
+        content = await file.text();
+      }
+
+      if (!content.trim()) {
+        toast.error('The file appears to be empty.');
+        setIsUploading(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+
+      // Call the edge function to parse FAQs
+      const { data, error } = await supabase.functions.invoke('parse-faq-document', {
+        body: {
+          content,
+          companyId,
+          fileName: file.name,
+        },
+      });
+
+      if (error) {
+        console.error('Error parsing FAQ document:', error);
+        toast.error(error.message || 'Failed to parse FAQ document');
+        return;
+      }
+
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      // Success!
+      queryClient.invalidateQueries({ queryKey: ['faqs'] });
+      toast.success(`Successfully imported ${data.count} FAQs from ${file.name}`);
+
+    } catch (error) {
+      console.error('Error uploading FAQ document:', error);
+      toast.error('Failed to process the document. Please try again.');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   // Group FAQs by category
   const groupedFaqs = faqs?.reduce((acc, faq) => {
     const category = faq.category || 'General';
@@ -156,7 +244,7 @@ export function FAQsManager() {
 
   return (
     <Card className="border-border/50">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-4">
         <div>
           <CardTitle className="flex items-center gap-2">
             <HelpCircle className="w-5 h-5" />
@@ -164,12 +252,43 @@ export function FAQsManager() {
           </CardTitle>
           <CardDescription>Common questions your AI can answer</CardDescription>
         </div>
-        <Button onClick={() => handleOpenDialog()} className="gap-2">
-          <Plus className="w-4 h-4" />
-          Add FAQ
-        </Button>
+        <div className="flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".txt,.md,.csv,.doc,.docx"
+            className="hidden"
+            onChange={handleFileUpload}
+            disabled={isUploading}
+          />
+          <Button 
+            variant="outline" 
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+            className="gap-2"
+          >
+            {isUploading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Upload className="w-4 h-4" />
+            )}
+            {isUploading ? 'Processing...' : 'Upload FAQs'}
+          </Button>
+          <Button onClick={() => handleOpenDialog()} className="gap-2">
+            <Plus className="w-4 h-4" />
+            Add FAQ
+          </Button>
+        </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        <Alert className="bg-muted/50">
+          <Info className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Upload FAQ documents</strong> to automatically extract question-answer pairs. 
+            Supported formats: TXT, MD, CSV. The AI will identify and import FAQs from your document.
+          </AlertDescription>
+        </Alert>
+
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => <Skeleton key={i} className="h-16 w-full" />)}
@@ -218,7 +337,17 @@ export function FAQsManager() {
           <div className="text-center py-8">
             <HelpCircle className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
             <p className="text-muted-foreground">No FAQs yet</p>
-            <p className="text-sm text-muted-foreground">Add questions your AI should know how to answer</p>
+            <p className="text-sm text-muted-foreground mb-4">Add questions your AI should know how to answer</p>
+            <div className="flex justify-center gap-2">
+              <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2">
+                <FileText className="w-4 h-4" />
+                Upload Document
+              </Button>
+              <Button onClick={() => handleOpenDialog()} className="gap-2">
+                <Plus className="w-4 h-4" />
+                Add Manually
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>
