@@ -20,7 +20,7 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
         </div>
         <div className="flex items-center gap-3">
           {showHomeLink && (
-            <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => navigate('/')}>
+            <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" onClick={() => navigate('/')}>
               <Home className="w-4 h-4 mr-1" />
               Home
             </Button>
