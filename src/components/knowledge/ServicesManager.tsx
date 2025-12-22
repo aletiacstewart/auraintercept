@@ -94,7 +94,40 @@ const SERVICE_TYPE_ICONS: Record<ServiceType, React.ReactNode> = {
   other: <HelpCircle className="w-4 h-4" />,
 };
 
-const CSV_HEADERS = ['name', 'category', 'description', 'service_type', 'service_type_other', 'duration_minutes', 'flat_fee', 'hourly_rate', 'parts_cost', 'price', 'is_active'];
+const CSV_HEADERS = ['Service Name', 'Category', 'Description', 'Service Type', 'Service Type (Other)', 'Duration (Minutes)', 'Flat Fee', 'Hourly Rate', 'Parts Cost', 'Base Price', 'Active'];
+
+// Map CSV headers to database field names
+const CSV_HEADER_MAP: Record<string, string> = {
+  'service name': 'name',
+  'category': 'category',
+  'description': 'description',
+  'service type': 'service_type',
+  'service type (other)': 'service_type_other',
+  'duration (minutes)': 'duration_minutes',
+  'flat fee': 'flat_fee',
+  'hourly rate': 'hourly_rate',
+  'parts cost': 'parts_cost',
+  'base price': 'price',
+  'active': 'is_active',
+  // Also support legacy/database field names for backward compatibility
+  'name': 'name',
+  'service_type': 'service_type',
+  'service_type_other': 'service_type_other',
+  'duration_minutes': 'duration_minutes',
+  'flat_fee': 'flat_fee',
+  'hourly_rate': 'hourly_rate',
+  'parts_cost': 'parts_cost',
+  'price': 'price',
+  'is_active': 'is_active',
+};
+
+// Map service type display values to database values
+const SERVICE_TYPE_VALUE_MAP: Record<string, string> = {
+  'in person': 'in_person',
+  'in_person': 'in_person',
+  'virtual': 'virtual',
+  'other': 'other',
+};
 
 interface SortableRowProps {
   service: Service;
@@ -492,14 +525,14 @@ export function ServicesManager() {
         `"${(service.name || '').replace(/"/g, '""')}"`,
         `"${(service.category || '').replace(/"/g, '""')}"`,
         `"${(service.description || '').replace(/"/g, '""')}"`,
-        service.service_type || 'in_person',
+        service.service_type ? SERVICE_TYPE_LABELS[(service.service_type as ServiceType)] || service.service_type : 'In Person',
         `"${(service.service_type_other || '').replace(/"/g, '""')}"`,
         service.duration_minutes || '',
         service.flat_fee || '',
         service.hourly_rate || '',
         service.parts_cost || '',
         service.price || '',
-        service.is_active ? 'true' : 'false',
+        service.is_active ? 'Yes' : 'No',
       ].join(','))
     ].join('\n');
 
@@ -528,10 +561,13 @@ export function ServicesManager() {
         }
 
         const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''));
-        const nameIndex = headers.indexOf('name');
+        
+        // Map headers to database field names
+        const mappedHeaders = headers.map(h => CSV_HEADER_MAP[h] || h);
+        const nameIndex = mappedHeaders.indexOf('name');
         
         if (nameIndex === -1) {
-          toast.error('CSV must have a "name" column');
+          toast.error('CSV must have a "Service Name" or "name" column');
           return;
         }
 
@@ -541,18 +577,26 @@ export function ServicesManager() {
           const values = parseCSVLine(lines[i]);
           if (values.length === 0) continue;
 
+          // Parse service type - handle display values
+          const rawServiceType = getCSVValue(values, mappedHeaders, 'service_type')?.toLowerCase() || '';
+          const serviceType = SERVICE_TYPE_VALUE_MAP[rawServiceType] || 'in_person';
+          
+          // Parse active status - handle Yes/No and true/false
+          const rawActive = getCSVValue(values, mappedHeaders, 'is_active')?.toLowerCase() || '';
+          const isActive = rawActive === 'yes' || rawActive === 'true';
+
           const service: Partial<Service> = {
-            name: getCSVValue(values, headers, 'name') || `Service ${i}`,
-            category: getCSVValue(values, headers, 'category') || null,
-            description: getCSVValue(values, headers, 'description') || null,
-            service_type: getCSVValue(values, headers, 'service_type') || 'in_person',
-            service_type_other: getCSVValue(values, headers, 'service_type_other') || null,
-            duration_minutes: parseNumber(getCSVValue(values, headers, 'duration_minutes')),
-            flat_fee: parseNumber(getCSVValue(values, headers, 'flat_fee')),
-            hourly_rate: parseNumber(getCSVValue(values, headers, 'hourly_rate')),
-            parts_cost: parseNumber(getCSVValue(values, headers, 'parts_cost')),
-            price: parseNumber(getCSVValue(values, headers, 'price')),
-            is_active: getCSVValue(values, headers, 'is_active')?.toLowerCase() === 'true',
+            name: getCSVValue(values, mappedHeaders, 'name') || `Service ${i}`,
+            category: getCSVValue(values, mappedHeaders, 'category') || null,
+            description: getCSVValue(values, mappedHeaders, 'description') || null,
+            service_type: serviceType,
+            service_type_other: getCSVValue(values, mappedHeaders, 'service_type_other') || null,
+            duration_minutes: parseNumber(getCSVValue(values, mappedHeaders, 'duration_minutes')),
+            flat_fee: parseNumber(getCSVValue(values, mappedHeaders, 'flat_fee')),
+            hourly_rate: parseNumber(getCSVValue(values, mappedHeaders, 'hourly_rate')),
+            parts_cost: parseNumber(getCSVValue(values, mappedHeaders, 'parts_cost')),
+            price: parseNumber(getCSVValue(values, mappedHeaders, 'price')),
+            is_active: isActive,
           };
           
           parsedServices.push(service);
