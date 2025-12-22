@@ -567,12 +567,20 @@ export default function Auth() {
                       <Users className="w-4 h-4 mr-1" /> Employee
                     </Button>
                     <Button 
-                      variant={mode === 'company' || mode === 'platform_admin' ? 'default' : 'ghost'} 
+                      variant={mode === 'company' ? 'default' : 'ghost'} 
                       size="sm" 
-                      className={mode === 'company' || mode === 'platform_admin' ? 'gradient-primary' : ''}
+                      className={mode === 'company' ? 'gradient-primary' : ''}
                       onClick={() => navigate('/auth?mode=company')}
                     >
-                      <Shield className="w-4 h-4 mr-1" /> Admin
+                      <Building2 className="w-4 h-4 mr-1" /> Business
+                    </Button>
+                    <Button 
+                      variant={mode === 'platform_admin' ? 'default' : 'ghost'} 
+                      size="sm" 
+                      className={mode === 'platform_admin' ? 'gradient-primary' : ''}
+                      onClick={() => navigate('/auth?mode=platform_admin')}
+                    >
+                      <Shield className="w-4 h-4 mr-1" /> Platform Admin
                     </Button>
                   </div>
                   <div className="mx-auto w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-3">
