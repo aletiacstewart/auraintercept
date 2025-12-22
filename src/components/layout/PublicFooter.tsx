@@ -24,7 +24,7 @@ export function PublicFooter() {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><button onClick={() => navigate('/demo')} className="hover:text-foreground transition-colors">Live Demo</button></li>
               <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-foreground transition-colors">Start Trial</button></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Pricing</a></li>
+              <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-foreground transition-colors">Company Subscription</button></li>
             </ul>
           </div>
           
