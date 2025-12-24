@@ -85,8 +85,14 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   allowCompanySelection = false
 }) => {
   const { companyId: authCompanyId } = useAuth();
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(propCompanyId || null);
-  const companyId = selectedCompanyId || propCompanyId || authCompanyId;
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+  
+  // When company selection is allowed, only use selectedCompanyId
+  // Otherwise, use propCompanyId or authCompanyId as fallback
+  const companyId = allowCompanySelection 
+    ? selectedCompanyId 
+    : (propCompanyId || authCompanyId);
+    
   const [previousAgent, setPreviousAgent] = useState<string>('triage');
   
   const { messages, isLoading, currentAgent, sessionId, sendMessage, clearMessages } = useMultiAgentChat({
