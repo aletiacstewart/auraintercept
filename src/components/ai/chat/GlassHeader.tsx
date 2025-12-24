@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Phone, Mic } from 'lucide-react';
+import { Phone, Mic, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import aiCircleLogo from '@/assets/ai-circle-logo.png';
 
-interface GlassHeaderProps {
+export interface GlassHeaderProps {
   companyName: string;
   logoUrl?: string | null;
   agentLabel: string;
@@ -17,7 +17,9 @@ interface GlassHeaderProps {
   onVoiceClick?: () => void;
   isOnline?: boolean;
   rectangleLogo?: boolean;
-  useDefaultLogo?: boolean; // When true, uses AI circle logo if no company logo
+  useDefaultLogo?: boolean;
+  showBackButton?: boolean;
+  onBackClick?: () => void;
 }
 
 export const GlassHeader: React.FC<GlassHeaderProps> = ({
@@ -33,6 +35,8 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
   isOnline = true,
   rectangleLogo = false,
   useDefaultLogo = false,
+  showBackButton = false,
+  onBackClick,
 }) => {
   // Determine which logo to show
   const displayLogo = logoUrl || (useDefaultLogo ? aiCircleLogo : null);
@@ -41,6 +45,18 @@ export const GlassHeader: React.FC<GlassHeaderProps> = ({
     <div className="glass-primary p-3 text-white relative shrink-0">
       <div className="relative flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
+          {/* Back Button */}
+          {showBackButton && (
+            <Button 
+              size="sm" 
+              variant="ghost" 
+              className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full shrink-0"
+              onClick={onBackClick}
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          )}
+          
           {/* Logo */}
           <div className="relative shrink-0">
             {rectangleLogo ? (
