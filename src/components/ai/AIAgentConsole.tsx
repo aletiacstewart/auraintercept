@@ -448,7 +448,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
         <CompanySelector 
           onSelectCompany={handleCompanySelect}
           title="Select a Company"
-          subtitle="Choose a company to book appointments or get assistance"
+          subtitle="Choose a company to access their AI assistant and services"
         />
       </Card>
     );
@@ -489,8 +489,11 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
               {messages.length === 0 && !isShowingForm && (
                 <WelcomeScreen
                   companyName={company?.name}
-                  title="Welcome!"
-                  subtitle="I'm your AI assistant. How can I help you today?"
+                  title={company?.name ? `Welcome to ${company.name}!` : "Welcome!"}
+                  subtitle={company?.name 
+                    ? `I'm ${company.name}'s virtual assistant. Select an option below or type a message to get started.`
+                    : "I'm your AI assistant. How can I help you today?"
+                  }
                   actions={QUICK_ACTIONS}
                   onAction={handleQuickAction}
                 />
