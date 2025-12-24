@@ -26,6 +26,7 @@ import { BookingForm, BookingData } from './BookingForm';
 import { QuoteForm, QuoteData } from './QuoteForm';
 import { TrackAppointmentForm, TrackingData } from './TrackAppointmentForm';
 import { BillingLookupForm } from '@/components/billing/forms/BillingLookupForm';
+import { CompanySelector } from './CompanySelector';
 import { format } from 'date-fns';
 
 // Customer Engagement agents definition
@@ -76,11 +77,16 @@ const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 
 interface AIAgentConsoleProps {
   companyId?: string;
+  allowCompanySelection?: boolean;
 }
 
-export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({ companyId: propCompanyId }) => {
+export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({ 
+  companyId: propCompanyId,
+  allowCompanySelection = false
+}) => {
   const { companyId: authCompanyId } = useAuth();
-  const companyId = propCompanyId || authCompanyId;
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(propCompanyId || null);
+  const companyId = selectedCompanyId || propCompanyId || authCompanyId;
   const [previousAgent, setPreviousAgent] = useState<string>('triage');
   
   const { messages, isLoading, currentAgent, sessionId, sendMessage, clearMessages } = useMultiAgentChat({
@@ -417,6 +423,31 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({ companyId: propC
   const agentInfo = getAgentStyle(currentAgent);
   const isShowingForm = showFeedbackForm || showReviewForm || showQuoteForm || showTrackForm || showBillingForm;
 
+  // Show company selector if allowed and no company is selected
+  const showCompanySelector = allowCompanySelection && !companyId;
+
+  const handleCompanySelect = (id: string) => {
+    setSelectedCompanyId(id);
+    clearMessages();
+  };
+
+  const handleBackToCompanySelector = () => {
+    setSelectedCompanyId(null);
+    clearMessages();
+  };
+
+  if (showCompanySelector) {
+    return (
+      <Card className="h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden border-0 shadow-xl">
+        <CompanySelector 
+          onSelectCompany={handleCompanySelect}
+          title="Select a Company"
+          subtitle="Choose a company to book appointments or get assistance"
+        />
+      </Card>
+    );
+  }
+
   return (
     <Card className="h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden border-0 shadow-xl">
       {/* Header */}
@@ -431,6 +462,8 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({ companyId: propC
         onPhoneClick={() => window.open(`tel:${twilioPhone}`, '_self')}
         onVoiceClick={() => setActiveTab('voice')}
         useDefaultLogo={true}
+        showBackButton={allowCompanySelection && !!selectedCompanyId}
+        onBackClick={handleBackToCompanySelector}
       />
 
       {/* Tab Navigation */}

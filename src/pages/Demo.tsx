@@ -39,7 +39,8 @@ export default function Demo() {
   const renderActiveConsole = () => {
     switch (activeConsole) {
       case 'customer':
-        return <AIAgentConsole companyId={DEMO_COMPANY_ID} />;
+        // Customer Engagement allows company selection
+        return <AIAgentConsole allowCompanySelection={true} />;
       case 'fieldops':
         return <FieldOpsAgentConsole companyId={DEMO_COMPANY_ID} />;
       case 'businessops':
@@ -49,7 +50,7 @@ export default function Demo() {
       case 'analytics':
         return <AnalyticsAgentConsole companyId={DEMO_COMPANY_ID} demoMode={true} />;
       default:
-        return <AIAgentConsole companyId={DEMO_COMPANY_ID} />;
+        return <AIAgentConsole allowCompanySelection={true} />;
     }
   };
 
