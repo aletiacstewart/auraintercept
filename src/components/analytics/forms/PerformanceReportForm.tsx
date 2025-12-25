@@ -13,6 +13,7 @@ import { format, subDays, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 interface PerformanceReportFormProps {
   companyId: string;
   onCancel: () => void;
+  onAnalyze?: (data: Record<string, unknown>) => void;
 }
 
 export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({ companyId, onCancel }) => {
