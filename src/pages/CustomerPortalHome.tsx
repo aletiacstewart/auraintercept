@@ -18,8 +18,21 @@ import {
   LogOut,
   User,
   ArrowRight,
-  Heart
+  Heart,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle2,
+  MousePointerClick,
+  Sparkles,
+  DollarSign,
+  MapPin
 } from 'lucide-react';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import logo from '@/assets/logo.png';
 
 interface Company {
@@ -182,6 +195,9 @@ export default function CustomerPortalHome() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
+        {/* How It Works Section */}
+        <HowItWorksSection />
+
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -326,6 +342,142 @@ function CompanyCard({
           <ArrowRight className="w-4 h-4" />
         </div>
       </CardContent>
+    </Card>
+  );
+}
+
+function HowItWorksSection() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const steps = [
+    {
+      step: 1,
+      icon: Search,
+      title: 'Find a Business',
+      description: 'Search for companies by name or browse our directory to find service providers in your area.'
+    },
+    {
+      step: 2,
+      icon: MousePointerClick,
+      title: 'Select a Company',
+      description: 'Click on any company card to view their services and interact with their AI assistant.'
+    },
+    {
+      step: 3,
+      icon: Bot,
+      title: 'Chat with AI Assistant',
+      description: 'Use the AI-powered assistant to book appointments, get quotes, track services, and more.'
+    },
+    {
+      step: 4,
+      icon: Heart,
+      title: 'Save Favorites',
+      description: 'Mark companies as favorites for quick access to your preferred service providers.'
+    }
+  ];
+
+  const aiFeatures = [
+    { icon: Calendar, title: 'Book Appointments', description: 'Schedule service visits at your convenience' },
+    { icon: DollarSign, title: 'Get Quotes', description: 'Request price estimates for services' },
+    { icon: MapPin, title: 'Track Services', description: 'Monitor appointment status in real-time' },
+    { icon: Star, title: 'Leave Feedback', description: 'Rate and review your service experience' },
+    { icon: MessageSquare, title: 'Ask Questions', description: 'Get instant answers about services and hours' },
+    { icon: Sparkles, title: 'Explore Services', description: 'Browse available services and pricing' },
+  ];
+
+  return (
+    <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CollapsibleTrigger asChild>
+          <CardHeader className="cursor-pointer hover:bg-primary/5 transition-colors rounded-t-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <HelpCircle className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">How to Use the Customer Portal</CardTitle>
+                  <CardDescription>Learn how to find businesses and use AI-powered assistance</CardDescription>
+                </div>
+              </div>
+              <Button variant="ghost" size="icon">
+                {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+              </Button>
+            </div>
+          </CardHeader>
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent>
+          <CardContent className="pt-0 space-y-6">
+            {/* Getting Started Steps */}
+            <div>
+              <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                Getting Started
+              </h4>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {steps.map((item) => (
+                  <div key={item.step} className="flex flex-col items-center text-center p-4 rounded-lg bg-background border">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm mb-2">
+                      {item.step}
+                    </div>
+                    <item.icon className="w-6 h-6 text-primary mb-2" />
+                    <h5 className="font-medium text-sm">{item.title}</h5>
+                    <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* AI Assistant Features */}
+            <div>
+              <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                <Bot className="w-4 h-4 text-primary" />
+                What You Can Do with AI Assistants
+              </h4>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {aiFeatures.map((feature, idx) => (
+                  <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-background border">
+                    <div className="p-1.5 rounded-md bg-primary/10">
+                      <feature.icon className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <h5 className="font-medium text-sm">{feature.title}</h5>
+                      <p className="text-xs text-muted-foreground">{feature.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Tips */}
+            <div className="bg-background rounded-lg border p-4">
+              <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                Pro Tips
+              </h4>
+              <ul className="space-y-1.5">
+                <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                  <span>Use the search bar to quickly find businesses by name</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                  <span>Click the heart icon on company cards to save them as favorites</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                  <span>Each company has a unique AI assistant trained on their specific services</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                  <span>Your recent interactions are saved for easy access</span>
+                </li>
+              </ul>
+            </div>
+          </CardContent>
+        </CollapsibleContent>
+      </Collapsible>
     </Card>
   );
 }
