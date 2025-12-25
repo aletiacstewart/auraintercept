@@ -188,6 +188,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
               subtitle="I can help you with campaigns, promotions, referrals, and lead management. How can I assist you today?"
               actions={QUICK_ACTIONS}
               onAction={handleQuickAction}
+              consoleType="marketing"
             />
           ) : (
             <div className="space-y-4">
