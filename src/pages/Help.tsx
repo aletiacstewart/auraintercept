@@ -1,7 +1,9 @@
+import { useSearchParams } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Building2, 
   Users, 
@@ -14,10 +16,131 @@ import {
   ArrowRight,
   Shield,
   Bot,
-  MessageCircle
+  MessageCircle,
+  HeadphonesIcon,
+  Truck,
+  Briefcase,
+  Megaphone,
+  BarChart3
 } from 'lucide-react';
 
+type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics';
+
+const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType; description: string; features: string[]; useCases: string[] }> = {
+  customer: {
+    title: 'Customer Engagement',
+    icon: HeadphonesIcon,
+    description: 'Handle customer inquiries, book appointments, provide quotes, and deliver exceptional customer service.',
+    features: [
+      'Book and manage appointments with smart scheduling',
+      'Provide instant quotes for services',
+      'Answer customer questions using your knowledge base',
+      'Track existing appointments and send reminders',
+      'Collect customer feedback and reviews',
+      'Voice and SMS support via Twilio integration'
+    ],
+    useCases: [
+      '"Book an appointment for AC repair tomorrow at 2pm"',
+      '"How much does a water heater installation cost?"',
+      '"What are your business hours?"',
+      '"I need to reschedule my appointment"',
+      '"Can I get a quote for a full home inspection?"'
+    ]
+  },
+  fieldops: {
+    title: 'Field Operations',
+    icon: Truck,
+    description: 'Optimize field technician workflows, route planning, job management, and real-time status updates.',
+    features: [
+      'Get directions and navigation to job sites',
+      'Update job status (en route, arrived, completed)',
+      'View daily job queue and schedule',
+      'Upload before/after photos for documentation',
+      'Log parts used and job notes',
+      'Access customer and job details on the go'
+    ],
+    useCases: [
+      '"Navigate to my next job"',
+      '"Mark this job as completed"',
+      '"What jobs do I have today?"',
+      '"Log parts used: 2 filters and 1 thermostat"',
+      '"Show me the customer details for this appointment"'
+    ]
+  },
+  businessops: {
+    title: 'Business Operations',
+    icon: Briefcase,
+    description: 'Manage invoices, quotes, inventory, warranties, and day-to-day business administration.',
+    features: [
+      'Create and send invoices to customers',
+      'Generate detailed quotes for services',
+      'Track inventory levels and reorder alerts',
+      'Manage warranty claims and policies',
+      'Look up pricing for parts and services',
+      'Process billing and payment tracking'
+    ],
+    useCases: [
+      '"Create an invoice for John Smith\'s repair"',
+      '"Check warranty status for order #12345"',
+      '"What\'s the current stock level for air filters?"',
+      '"Generate a quote for a new HVAC installation"',
+      '"Look up the price for a compressor replacement"'
+    ]
+  },
+  marketing: {
+    title: 'Marketing & Sales',
+    icon: Megaphone,
+    description: 'Create campaigns, manage leads, generate promo codes, and drive customer acquisition and retention.',
+    features: [
+      'Create targeted marketing campaigns',
+      'Segment customers for personalized outreach',
+      'Generate promotional codes and discounts',
+      'Track referrals and reward programs',
+      'Win back lapsed customers with special offers',
+      'Manage leads and sales pipeline'
+    ],
+    useCases: [
+      '"Create a 20% off campaign for HVAC maintenance"',
+      '"Generate a promo code for first-time customers"',
+      '"Find customers who haven\'t booked in 6 months"',
+      '"Set up a referral reward program"',
+      '"Create a summer AC tune-up promotion"'
+    ]
+  },
+  analytics: {
+    title: 'Analytics & Insights',
+    icon: BarChart3,
+    description: 'Access performance reports, revenue analysis, customer insights, and business intelligence.',
+    features: [
+      'View KPI dashboards and metrics',
+      'Analyze revenue trends and forecasts',
+      'Generate performance reports',
+      'Get customer behavior insights',
+      'Export data for external analysis',
+      'Track technician performance metrics'
+    ],
+    useCases: [
+      '"Show me this month\'s revenue"',
+      '"What\'s our customer satisfaction score?"',
+      '"Generate a performance report for last quarter"',
+      '"Which services are most profitable?"',
+      '"Forecast next month\'s appointment volume"'
+    ]
+  }
+};
+
 export default function Help() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const consoleParam = searchParams.get('console') as ConsoleType | null;
+  const consoleType: ConsoleType = consoleParam && Object.keys(consoleInfo).includes(consoleParam) ? consoleParam : 'customer';
+
+  const handleConsoleTypeChange = (value: ConsoleType) => {
+    setSearchParams({ console: value });
+  };
+
+  const currentConsole = consoleInfo[consoleType];
+  const ConsoleIcon = currentConsole.icon;
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
@@ -25,9 +148,82 @@ export default function Help() {
         <div>
           <h1 className="text-3xl font-bold">Help & Documentation</h1>
           <p className="text-muted-foreground mt-2">
-            Learn how to set up and access your dashboard, invite team members, and customize your brand.
+            Learn how to use your AI agents, set up your dashboard, and manage your team.
           </p>
         </div>
+
+        {/* Console Type Selector */}
+        <Tabs value={consoleType} onValueChange={(v) => handleConsoleTypeChange(v as ConsoleType)}>
+          <TabsList className="flex-wrap h-auto gap-1">
+            <TabsTrigger value="customer">
+              <HeadphonesIcon className="h-4 w-4 mr-2" />
+              Customer Engagement
+            </TabsTrigger>
+            <TabsTrigger value="fieldops">
+              <Truck className="h-4 w-4 mr-2" />
+              Field Operations
+            </TabsTrigger>
+            <TabsTrigger value="businessops">
+              <Briefcase className="h-4 w-4 mr-2" />
+              Business Operations
+            </TabsTrigger>
+            <TabsTrigger value="marketing">
+              <Megaphone className="h-4 w-4 mr-2" />
+              Marketing & Sales
+            </TabsTrigger>
+            <TabsTrigger value="analytics">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Analytics & Insights
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        {/* Console-Specific Guide */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <ConsoleIcon className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <CardTitle>{currentConsole.title} AI Agent</CardTitle>
+                <CardDescription>{currentConsole.description}</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Features */}
+            <div>
+              <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                What This Agent Can Do
+              </h3>
+              <ul className="space-y-2 ml-7">
+                {currentConsole.features.map((feature, index) => (
+                  <li key={index} className="flex items-start gap-2 text-sm">
+                    <ArrowRight className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Example Prompts */}
+            <div>
+              <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                <MessageCircle className="w-5 h-5 text-blue-500" />
+                Example Prompts
+              </h3>
+              <div className="ml-7 space-y-2">
+                {currentConsole.useCases.map((useCase, index) => (
+                  <div key={index} className="bg-muted/50 px-3 py-2 rounded-lg text-sm">
+                    {useCase}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Quick Links */}
         <div className="grid gap-4 md:grid-cols-3">
