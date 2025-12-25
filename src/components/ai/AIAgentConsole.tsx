@@ -496,6 +496,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                   }
                   actions={QUICK_ACTIONS}
                   onAction={handleQuickAction}
+                  consoleType="customer"
                 />
               )}
 
