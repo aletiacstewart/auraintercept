@@ -213,6 +213,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
               subtitle="I can help you with performance reports, revenue analysis, customer insights, and forecasting. What would you like to explore?"
               actions={QUICK_ACTIONS}
               onAction={handleQuickAction}
+              consoleType="analytics"
             />
           ) : (
             <div className="space-y-4">

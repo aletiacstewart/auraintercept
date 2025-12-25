@@ -962,6 +962,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                   const action = QUICK_ACTIONS.find(a => a.id === actionId);
                   if (action) handleQuickAction(action);
                 }}
+                consoleType="fieldops"
               />
             )}
 

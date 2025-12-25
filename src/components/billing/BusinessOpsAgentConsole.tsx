@@ -220,6 +220,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
               subtitle="I can help you with quotes, invoices, inventory, and warranties. How can I assist you today?"
               actions={QUICK_ACTIONS}
               onAction={handleQuickAction}
+              consoleType="businessops"
             />
           ) : (
             <div className="space-y-4">

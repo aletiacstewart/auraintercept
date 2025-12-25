@@ -11,11 +11,29 @@ import {
   Star, 
   ThumbsUp,
   HelpCircle,
-  CheckCircle2
+  CheckCircle2,
+  CheckCircle,
+  Navigation,
+  Truck,
+  Phone,
+  Bot,
+  FileText,
+  Receipt,
+  Package,
+  Shield,
+  ClipboardList,
+  Megaphone,
+  Tag,
+  Gift,
+  TrendingUp,
+  UserPlus,
+  Users,
+  BarChart3,
+  Target,
+  Download
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
   Collapsible,
@@ -38,7 +56,8 @@ interface AgentGuide {
   tips?: string[];
 }
 
-const AGENT_GUIDES: AgentGuide[] = [
+// Customer Engagement Guides
+const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
   {
     id: 'schedule',
     label: 'Book Appointment',
@@ -156,36 +175,408 @@ const AGENT_GUIDES: AgentGuide[] = [
   },
 ];
 
+// Field Operations Guides
+const FIELD_OPS_GUIDES: AgentGuide[] = [
+  {
+    id: 'accept',
+    label: 'Accept Job',
+    icon: CheckCircle,
+    description: 'Accept and confirm assigned jobs',
+    steps: [
+      { step: 1, title: 'View Assignment', description: 'Review the job details including customer info and service type' },
+      { step: 2, title: 'Check Schedule', description: 'Confirm you can make the scheduled time' },
+      { step: 3, title: 'Accept Job', description: 'Click Accept to confirm you will handle this job' },
+      { step: 4, title: 'Prepare', description: 'Gather necessary tools and parts for the service' },
+    ],
+    tips: ['Accept jobs promptly to avoid reassignment', 'Contact dispatch if you have scheduling conflicts']
+  },
+  {
+    id: 'directions',
+    label: 'Get Directions',
+    icon: Navigation,
+    description: 'Navigate to customer location',
+    steps: [
+      { step: 1, title: 'Select Job', description: 'Choose the job you need directions to' },
+      { step: 2, title: 'Click Directions', description: 'Open navigation in your preferred maps app' },
+      { step: 3, title: 'Follow Route', description: 'Follow the optimal route to the customer' },
+    ],
+    tips: ['Check traffic conditions before departing', 'Save customer address for future visits']
+  },
+  {
+    id: 'enroute',
+    label: 'Mark En Route',
+    icon: Truck,
+    description: 'Update status when heading to a job',
+    steps: [
+      { step: 1, title: 'Start Travel', description: 'Begin traveling to the customer location' },
+      { step: 2, title: 'Update Status', description: 'Click En Route to update your status' },
+      { step: 3, title: 'Customer Notified', description: 'Customer automatically receives notification' },
+    ],
+    tips: ['Update status as soon as you leave', 'Customers appreciate real-time updates']
+  },
+  {
+    id: 'eta',
+    label: 'Update ETA',
+    icon: Clock,
+    description: 'Provide accurate arrival time estimates',
+    steps: [
+      { step: 1, title: 'Check Traffic', description: 'Assess current travel conditions' },
+      { step: 2, title: 'Calculate Time', description: 'Estimate realistic arrival time' },
+      { step: 3, title: 'Update ETA', description: 'Enter your expected arrival time' },
+      { step: 4, title: 'Auto-Notify', description: 'Customer receives updated ETA notification' },
+    ],
+    tips: ['Update ETA if delays occur', 'Be realistic with time estimates']
+  },
+  {
+    id: 'eta-agent',
+    label: 'ETA Agent',
+    icon: Bot,
+    description: 'AI-powered ETA calculations and notifications',
+    steps: [
+      { step: 1, title: 'Request Help', description: 'Ask the AI agent for ETA assistance' },
+      { step: 2, title: 'Review Jobs', description: 'AI analyzes your current job queue' },
+      { step: 3, title: 'Get Suggestions', description: 'Receive optimized ETA recommendations' },
+      { step: 4, title: 'Send Updates', description: 'AI can help send customer notifications' },
+    ],
+    tips: ['Use ETA Agent for complex scheduling', 'AI considers traffic and job duration']
+  },
+  {
+    id: 'arrived',
+    label: 'Mark Arrived',
+    icon: MapPin,
+    description: 'Confirm arrival at customer location',
+    steps: [
+      { step: 1, title: 'Arrive On-Site', description: 'Park and prepare to meet customer' },
+      { step: 2, title: 'Click Arrived', description: 'Update your status to Arrived' },
+      { step: 3, title: 'Customer Notified', description: 'Customer knows you have arrived' },
+    ],
+    tips: ['Mark arrived immediately when on-site', 'Take before photos if needed']
+  },
+  {
+    id: 'complete',
+    label: 'Complete Job',
+    icon: CheckCircle,
+    description: 'Mark job as finished and document work',
+    steps: [
+      { step: 1, title: 'Finish Service', description: 'Complete all required service work' },
+      { step: 2, title: 'Document Work', description: 'Add notes and take after photos' },
+      { step: 3, title: 'Customer Sign-off', description: 'Get customer approval if required' },
+      { step: 4, title: 'Mark Complete', description: 'Click Complete Job to finish' },
+    ],
+    tips: ['Always document parts used', 'Take clear after photos for records']
+  },
+  {
+    id: 'dispatch',
+    label: 'Contact Dispatch',
+    icon: Phone,
+    description: 'Reach dispatch for urgent matters',
+    steps: [
+      { step: 1, title: 'Click Contact', description: 'Open dispatch communication' },
+      { step: 2, title: 'Describe Issue', description: 'Explain the situation clearly' },
+      { step: 3, title: 'Get Assistance', description: 'Dispatch will provide guidance' },
+    ],
+    tips: ['Use for urgent situations only', 'Have job details ready when calling']
+  },
+];
+
+// Business Operations Guides
+const BUSINESS_OPS_GUIDES: AgentGuide[] = [
+  {
+    id: 'quote',
+    label: 'Create Quote',
+    icon: FileText,
+    description: 'Generate professional quotes for customers',
+    steps: [
+      { step: 1, title: 'Enter Customer', description: 'Add customer name and contact info' },
+      { step: 2, title: 'Add Line Items', description: 'Select services and set quantities' },
+      { step: 3, title: 'Apply Discounts', description: 'Add any applicable discounts' },
+      { step: 4, title: 'Send Quote', description: 'Email or print the quote for customer' },
+    ],
+    tips: ['Include detailed descriptions', 'Set appropriate validity period']
+  },
+  {
+    id: 'invoice',
+    label: 'Generate Invoice',
+    icon: Receipt,
+    description: 'Create and send invoices for services',
+    steps: [
+      { step: 1, title: 'Select Customer', description: 'Choose customer or enter new details' },
+      { step: 2, title: 'Add Services', description: 'List all services provided' },
+      { step: 3, title: 'Set Terms', description: 'Configure payment terms and due date' },
+      { step: 4, title: 'Send Invoice', description: 'Email invoice to customer' },
+    ],
+    tips: ['Convert quotes to invoices easily', 'Set up recurring invoices for regulars']
+  },
+  {
+    id: 'inventory',
+    label: 'Check Inventory',
+    icon: Package,
+    description: 'View and manage inventory levels',
+    steps: [
+      { step: 1, title: 'Search Items', description: 'Find parts by name or SKU' },
+      { step: 2, title: 'Check Stock', description: 'View current quantity and location' },
+      { step: 3, title: 'Reorder', description: 'Create purchase orders for low stock' },
+    ],
+    tips: ['Set minimum stock alerts', 'Track inventory usage per job']
+  },
+  {
+    id: 'warranty-check',
+    label: 'Warranty Check',
+    icon: Shield,
+    description: 'Verify warranty status for products',
+    steps: [
+      { step: 1, title: 'Enter Details', description: 'Input serial number or customer info' },
+      { step: 2, title: 'View Coverage', description: 'See warranty terms and expiration' },
+      { step: 3, title: 'Check Claims', description: 'Review any previous claims' },
+    ],
+    tips: ['Keep warranty cards updated', 'Register products promptly']
+  },
+  {
+    id: 'warranty-claim',
+    label: 'File Warranty Claim',
+    icon: ClipboardList,
+    description: 'Submit warranty claims for defective items',
+    steps: [
+      { step: 1, title: 'Verify Coverage', description: 'Confirm product is under warranty' },
+      { step: 2, title: 'Document Issue', description: 'Describe the defect with photos' },
+      { step: 3, title: 'Submit Claim', description: 'File claim with manufacturer' },
+      { step: 4, title: 'Track Status', description: 'Monitor claim progress' },
+    ],
+    tips: ['Include clear photos of defects', 'Keep original receipts']
+  },
+  {
+    id: 'pricing',
+    label: 'Price Lookup',
+    icon: DollarSign,
+    description: 'Find service and product pricing',
+    steps: [
+      { step: 1, title: 'Search Service', description: 'Find service or product' },
+      { step: 2, title: 'View Pricing', description: 'See base price and options' },
+      { step: 3, title: 'Check Promotions', description: 'View active discounts' },
+    ],
+    tips: ['Check for seasonal pricing', 'Bundle services for discounts']
+  },
+];
+
+// Marketing & Sales Guides
+const MARKETING_SALES_GUIDES: AgentGuide[] = [
+  {
+    id: 'campaign',
+    label: 'Create Campaign',
+    icon: Megaphone,
+    description: 'Launch marketing campaigns',
+    steps: [
+      { step: 1, title: 'Define Goals', description: 'Set campaign objectives and KPIs' },
+      { step: 2, title: 'Select Audience', description: 'Choose target customer segments' },
+      { step: 3, title: 'Create Content', description: 'Design email and SMS messages' },
+      { step: 4, title: 'Schedule & Launch', description: 'Set timing and activate campaign' },
+    ],
+    tips: ['A/B test subject lines', 'Segment for better engagement']
+  },
+  {
+    id: 'promo',
+    label: 'Generate Promo Code',
+    icon: Tag,
+    description: 'Create promotional discount codes',
+    steps: [
+      { step: 1, title: 'Set Discount', description: 'Choose percentage or fixed amount' },
+      { step: 2, title: 'Define Rules', description: 'Set usage limits and expiration' },
+      { step: 3, title: 'Generate Code', description: 'Create unique promo code' },
+      { step: 4, title: 'Distribute', description: 'Share via campaigns or direct' },
+    ],
+    tips: ['Track code usage', 'Create seasonal promotions']
+  },
+  {
+    id: 'referral',
+    label: 'Referral Program',
+    icon: Gift,
+    description: 'Set up and manage referral rewards',
+    steps: [
+      { step: 1, title: 'Configure Rewards', description: 'Set referrer and referee incentives' },
+      { step: 2, title: 'Generate Links', description: 'Create unique referral links' },
+      { step: 3, title: 'Track Referrals', description: 'Monitor conversions and rewards' },
+      { step: 4, title: 'Issue Rewards', description: 'Fulfill referral bonuses' },
+    ],
+    tips: ['Promote to satisfied customers', 'Offer compelling rewards']
+  },
+  {
+    id: 'winback',
+    label: 'Win-Back Campaign',
+    icon: TrendingUp,
+    description: 'Re-engage inactive customers',
+    steps: [
+      { step: 1, title: 'Identify Lapsed', description: 'Find customers inactive 90+ days' },
+      { step: 2, title: 'Create Offer', description: 'Design compelling comeback offer' },
+      { step: 3, title: 'Send Campaign', description: 'Reach out via email and SMS' },
+      { step: 4, title: 'Track Returns', description: 'Monitor re-engagement success' },
+    ],
+    tips: ['Personalize messaging', 'Offer limited-time incentives']
+  },
+  {
+    id: 'lead',
+    label: 'New Lead',
+    icon: UserPlus,
+    description: 'Add and manage sales leads',
+    steps: [
+      { step: 1, title: 'Enter Details', description: 'Add lead contact information' },
+      { step: 2, title: 'Set Source', description: 'Tag where lead came from' },
+      { step: 3, title: 'Assign Follow-up', description: 'Schedule initial contact' },
+      { step: 4, title: 'Track Progress', description: 'Update lead status as they progress' },
+    ],
+    tips: ['Follow up within 24 hours', 'Log all interactions']
+  },
+  {
+    id: 'customers',
+    label: 'Customer Segments',
+    icon: Users,
+    description: 'View and manage customer groups',
+    steps: [
+      { step: 1, title: 'View Segments', description: 'See predefined customer groups' },
+      { step: 2, title: 'Create Custom', description: 'Build segments based on criteria' },
+      { step: 3, title: 'Target Campaigns', description: 'Use segments for marketing' },
+    ],
+    tips: ['Update segments regularly', 'Combine criteria for precision']
+  },
+];
+
+// Analytics & Insights Guides
+const ANALYTICS_GUIDES: AgentGuide[] = [
+  {
+    id: 'performance',
+    label: 'Performance Report',
+    icon: BarChart3,
+    description: 'Analyze business performance metrics',
+    steps: [
+      { step: 1, title: 'Select Period', description: 'Choose date range for analysis' },
+      { step: 2, title: 'Choose Metrics', description: 'Select KPIs to include' },
+      { step: 3, title: 'Generate Report', description: 'Create comprehensive report' },
+      { step: 4, title: 'Review Insights', description: 'Analyze trends and patterns' },
+    ],
+    tips: ['Compare to previous periods', 'Set up weekly automated reports']
+  },
+  {
+    id: 'revenue',
+    label: 'Revenue Analysis',
+    icon: DollarSign,
+    description: 'Deep dive into revenue streams',
+    steps: [
+      { step: 1, title: 'View Breakdown', description: 'See revenue by service type' },
+      { step: 2, title: 'Analyze Trends', description: 'Track month-over-month growth' },
+      { step: 3, title: 'Identify Top Performers', description: 'Find highest revenue services' },
+      { step: 4, title: 'Spot Opportunities', description: 'Discover growth areas' },
+    ],
+    tips: ['Track recurring vs one-time revenue', 'Monitor seasonal patterns']
+  },
+  {
+    id: 'customers',
+    label: 'Customer Insights',
+    icon: Users,
+    description: 'Understand customer behavior and value',
+    steps: [
+      { step: 1, title: 'View Demographics', description: 'Analyze customer profiles' },
+      { step: 2, title: 'Check Lifetime Value', description: 'See CLV by segment' },
+      { step: 3, title: 'Review Retention', description: 'Monitor churn rates' },
+      { step: 4, title: 'Identify Opportunities', description: 'Find upsell potential' },
+    ],
+    tips: ['Focus on high-value segments', 'Track satisfaction scores']
+  },
+  {
+    id: 'forecast',
+    label: 'Trend Forecast',
+    icon: TrendingUp,
+    description: 'Predict future business trends',
+    steps: [
+      { step: 1, title: 'Select Metric', description: 'Choose what to forecast' },
+      { step: 2, title: 'Set Timeframe', description: 'Define forecast period' },
+      { step: 3, title: 'View Predictions', description: 'See AI-generated forecasts' },
+      { step: 4, title: 'Plan Actions', description: 'Prepare for predicted trends' },
+    ],
+    tips: ['Consider seasonal factors', 'Update forecasts monthly']
+  },
+  {
+    id: 'kpi',
+    label: 'KPI Dashboard',
+    icon: Target,
+    description: 'Monitor key performance indicators',
+    steps: [
+      { step: 1, title: 'View Dashboard', description: 'See all KPIs at a glance' },
+      { step: 2, title: 'Check Status', description: 'Green/yellow/red indicators' },
+      { step: 3, title: 'Drill Down', description: 'Click any KPI for details' },
+      { step: 4, title: 'Set Alerts', description: 'Configure threshold notifications' },
+    ],
+    tips: ['Review KPIs daily', 'Set realistic targets']
+  },
+  {
+    id: 'export',
+    label: 'Export Report',
+    icon: Download,
+    description: 'Download reports in various formats',
+    steps: [
+      { step: 1, title: 'Select Report', description: 'Choose which report to export' },
+      { step: 2, title: 'Choose Format', description: 'Pick PDF, Excel, or CSV' },
+      { step: 3, title: 'Configure Options', description: 'Set date range and filters' },
+      { step: 4, title: 'Download', description: 'Save report to your device' },
+    ],
+    tips: ['Schedule automated exports', 'Share with stakeholders regularly']
+  },
+];
+
+export type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics';
+
+const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
+  customer: CUSTOMER_ENGAGEMENT_GUIDES,
+  fieldops: FIELD_OPS_GUIDES,
+  businessops: BUSINESS_OPS_GUIDES,
+  marketing: MARKETING_SALES_GUIDES,
+  analytics: ANALYTICS_GUIDES,
+};
+
+const CONSOLE_TITLES: Record<ConsoleType, string> = {
+  customer: 'How to use our AI agents',
+  fieldops: 'How to use Field Operations AI',
+  businessops: 'How to use Business Operations AI',
+  marketing: 'How to use Marketing & Sales AI',
+  analytics: 'How to use Analytics & Insights AI',
+};
+
 interface AgentHowToGuideProps {
   className?: string;
   defaultExpanded?: boolean;
+  consoleType?: ConsoleType;
 }
 
 export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
   className,
   defaultExpanded = false,
+  consoleType = 'customer',
 }) => {
   const [isOpen, setIsOpen] = useState(defaultExpanded);
   const [expandedGuide, setExpandedGuide] = useState<string | null>(null);
+
+  const guides = CONSOLE_GUIDES[consoleType];
+  const title = CONSOLE_TITLES[consoleType];
 
   return (
     <div className={cn('w-full max-w-md mx-auto px-2', className)}>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <Button
-            variant="ghost"
+            variant={isOpen ? "default" : "ghost"}
             size="sm"
-            className="w-full flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground text-xs py-1"
+            className={cn(
+              "w-full flex items-center justify-center gap-2 text-xs py-1",
+              !isOpen && "text-muted-foreground hover:text-foreground"
+            )}
           >
             <HelpCircle className="h-3.5 w-3.5" />
-            <span>How to use our AI agents</span>
+            <span>{title}</span>
             {isOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           </Button>
         </CollapsibleTrigger>
         
         <CollapsibleContent className="mt-2 space-y-2">
-          <div className="grid gap-2">
-            {AGENT_GUIDES.map((guide) => (
+          <div className="grid gap-2 max-h-[400px] overflow-y-auto pr-1">
+            {guides.map((guide) => (
               <Card
                 key={guide.id}
                 className={cn(
