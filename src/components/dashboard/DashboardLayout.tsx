@@ -58,50 +58,22 @@ const navGroups: NavGroup[] = [
     label: 'Overview',
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Customers', icon: UserCheck, href: '/dashboard/customers', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Employees', icon: Users, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'] },
-    ],
-  },
-  {
-    label: 'Operations',
-    items: [
-      { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Quotes', icon: FileCheck, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Warranties', icon: Shield, href: '/dashboard/warranties', roles: ['platform_admin', 'company_admin'] },
-    ],
-  },
-  {
-    label: 'AI & Automation',
-    items: [
       { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'] },
+    ],
+  },
+  {
+    label: 'AI Consoles',
+    items: [
       { label: 'Customer Engagement', icon: HeadphonesIcon, href: '/dashboard/ai-agent?console=customer', roles: ['platform_admin', 'company_admin'] },
       { label: 'Field Operations', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', roles: ['platform_admin', 'company_admin'] },
       { label: 'Business Operations', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', roles: ['platform_admin', 'company_admin'] },
       { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-agent?console=marketing', roles: ['platform_admin', 'company_admin'] },
       { label: 'Analytics & Insights', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Chat Widget', icon: MessageCircle, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Call History', icon: PhoneCall, href: '/dashboard/calls', roles: ['platform_admin', 'company_admin'] },
-    ],
-  },
-  {
-    label: 'Marketing & Growth',
-    items: [
-      { label: 'Campaigns', icon: Megaphone, href: '/dashboard/campaigns', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Referrals', icon: Gift, href: '/dashboard/referrals', roles: ['platform_admin', 'company_admin'] },
     ],
   },
   {
     label: 'Configuration',
     items: [
-      { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Subscription', icon: CreditCard, href: '/dashboard/subscription', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Upgrade Plan', icon: Crown, href: '/dashboard/subscription', roles: ['company_admin'] },
-      { label: 'Communication Logs', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin'] },
       { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin'] },
       { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin'] },
     ],
