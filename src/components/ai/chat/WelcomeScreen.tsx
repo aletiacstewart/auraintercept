@@ -1,5 +1,6 @@
 import React from 'react';
 import { QuickActionGrid } from './QuickActionGrid';
+import { AgentHowToGuide } from './AgentHowToGuide';
 import { LucideIcon } from 'lucide-react';
 
 interface QuickAction {
@@ -16,6 +17,7 @@ interface WelcomeScreenProps {
   subtitle?: string;
   actions: QuickAction[];
   onAction: (message: string, actionId: string) => void;
+  showHowToGuide?: boolean;
 }
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
@@ -24,6 +26,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   subtitle,
   actions,
   onAction,
+  showHowToGuide = true,
 }) => {
   return (
     <div className="text-center py-4 animate-fade-in">
@@ -39,6 +42,12 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
           columns={2}
         />
       </div>
+
+      {showHowToGuide && (
+        <div className="mt-4">
+          <AgentHowToGuide />
+        </div>
+      )}
     </div>
   );
 };
