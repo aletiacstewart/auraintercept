@@ -13,9 +13,10 @@ import { format, subDays, addDays, subMonths } from 'date-fns';
 interface TrendForecastFormProps {
   companyId: string;
   onCancel: () => void;
+  onForecast?: (data: Record<string, unknown>) => void;
 }
 
-export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId, onCancel }) => {
+export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId, onCancel, onForecast }) => {
   const [metric, setMetric] = useState('appointments');
   const [forecastDays, setForecastDays] = useState('30');
   const [isGeneratingForecast, setIsGeneratingForecast] = useState(false);

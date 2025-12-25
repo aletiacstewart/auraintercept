@@ -16,9 +16,10 @@ import { format, subDays, subMonths } from 'date-fns';
 interface WinbackFormProps {
   companyId: string;
   onCancel: () => void;
+  onSuccess?: (data: { name: string; targetCount: number }) => void;
 }
 
-export const WinbackForm: React.FC<WinbackFormProps> = ({ companyId, onCancel }) => {
+export const WinbackForm: React.FC<WinbackFormProps> = ({ companyId, onCancel, onSuccess }) => {
   const queryClient = useQueryClient();
   const [isGeneratingSubject, setIsGeneratingSubject] = useState(false);
   const [isGeneratingMessage, setIsGeneratingMessage] = useState(false);
@@ -147,9 +148,10 @@ export const WinbackForm: React.FC<WinbackFormProps> = ({ companyId, onCancel })
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success('Win-back campaign created successfully!');
       queryClient.invalidateQueries({ queryKey: ['marketing-campaigns'] });
+      onSuccess?.({ name: data.name, targetCount: inactiveCustomers?.length || 0 });
       onCancel();
     },
     onError: (error) => {

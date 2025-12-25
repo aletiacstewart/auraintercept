@@ -15,6 +15,7 @@ import { X, Megaphone, Send, Mail, MessageSquare, Calendar, Sparkles, Loader2 } 
 interface CampaignFormProps {
   companyId: string;
   onCancel: () => void;
+  onSuccess?: (data: { name: string; type: string }) => void;
 }
 
 // Fetch company name for AI context
@@ -32,7 +33,7 @@ const useCompanyName = (companyId: string) => {
   });
 };
 
-export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel }) => {
+export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel, onSuccess }) => {
   const queryClient = useQueryClient();
   const { data: companyName } = useCompanyName(companyId);
   const [isGeneratingSubject, setIsGeneratingSubject] = useState(false);
@@ -113,9 +114,10 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel 
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success('Campaign created successfully!');
       queryClient.invalidateQueries({ queryKey: ['marketing-campaigns'] });
+      onSuccess?.({ name: data.name, type: data.campaign_type });
       onCancel();
     },
     onError: (error) => {

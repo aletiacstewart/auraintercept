@@ -14,9 +14,10 @@ import { format, subDays, subMonths } from 'date-fns';
 interface CustomerInsightsFormProps {
   companyId: string;
   onCancel: () => void;
+  onAnalyze?: (data: Record<string, unknown>) => void;
 }
 
-export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ companyId, onCancel }) => {
+export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ companyId, onCancel, onAnalyze }) => {
   const [dateRange, setDateRange] = useState('90');
 
   const getDateRange = () => {
