@@ -14,9 +14,10 @@ import { X, UserPlus, Send, Mail, MessageSquare, Phone } from 'lucide-react';
 interface LeadFormProps {
   companyId: string;
   onCancel: () => void;
+  onSuccess?: (data: { name: string; source: string }) => void;
 }
 
-export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel }) => {
+export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSuccess }) => {
   const queryClient = useQueryClient();
   
   const [formData, setFormData] = useState({
@@ -83,6 +84,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel }) => {
     onSuccess: () => {
       toast.success('Lead added successfully!');
       queryClient.invalidateQueries({ queryKey: ['campaign-recipients'] });
+      onSuccess?.({ name: formData.name, source: formData.source });
       onCancel();
     },
     onError: (error) => {

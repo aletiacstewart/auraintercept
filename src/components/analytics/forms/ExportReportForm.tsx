@@ -14,9 +14,10 @@ import { format, subDays, startOfMonth, endOfMonth } from 'date-fns';
 interface ExportReportFormProps {
   companyId: string;
   onCancel: () => void;
+  onExport?: (data: { type: string; count: number }) => void;
 }
 
-export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, onCancel }) => {
+export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, onCancel, onExport }) => {
   const [reportType, setReportType] = useState('appointments');
   const [dateRange, setDateRange] = useState('30');
   const [exportFormat, setExportFormat] = useState('csv');

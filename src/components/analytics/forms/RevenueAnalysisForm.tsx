@@ -14,9 +14,10 @@ import { format, subDays, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 interface RevenueAnalysisFormProps {
   companyId: string;
   onCancel: () => void;
+  onAnalyze?: (data: Record<string, unknown>) => void;
 }
 
-export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ companyId, onCancel }) => {
+export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ companyId, onCancel, onAnalyze }) => {
   const [dateRange, setDateRange] = useState('30');
   const [groupBy, setGroupBy] = useState('service');
 

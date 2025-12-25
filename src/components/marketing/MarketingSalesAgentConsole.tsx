@@ -153,6 +153,20 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     setLastAgent('triage');
   };
 
+  const handleFormSuccess = async (formType: string, data: Record<string, unknown>) => {
+    hideAllForms();
+    const messages: Record<string, string> = {
+      campaign: `I just created a new marketing campaign called "${data.name}" (${data.type}). Can you help me optimize it and suggest the best channels and messaging?`,
+      promo: `I just created a promo code "${data.code}" for ${data.discount} off. What's the best way to promote this code to maximize conversions?`,
+      referral: `I just set up a referral for ${data.referrerName} with code "${data.code}". How can we encourage them to share this with more people?`,
+      winback: `I just created a win-back campaign "${data.name}" targeting ${data.targetCount} inactive customers. What strategies work best for re-engaging inactive customers?`,
+      lead: `I just added a new lead: ${data.name} from ${data.source}. What's the best nurturing sequence for this type of lead?`,
+    };
+    if (messages[formType]) {
+      await sendMessage(messages[formType]);
+    }
+  };
+
   const isShowingForm = showCampaignForm || showPromoForm || showReferralForm || showWinbackForm || showLeadForm || showSegmentsForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
@@ -197,6 +211,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
                 <CampaignForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
+                  onSuccess={(data) => handleFormSuccess('campaign', data)}
                 />
               )}
               
@@ -204,6 +219,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
                 <PromoCodeForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
+                  onSuccess={(data) => handleFormSuccess('promo', data)}
                 />
               )}
               
@@ -211,6 +227,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
                 <ReferralForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
+                  onSuccess={(data) => handleFormSuccess('referral', data)}
                 />
               )}
               
@@ -218,6 +235,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
                 <WinbackForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
+                  onSuccess={(data) => handleFormSuccess('winback', data)}
                 />
               )}
               
@@ -225,6 +243,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
                 <LeadForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
+                  onSuccess={(data) => handleFormSuccess('lead', data)}
                 />
               )}
               

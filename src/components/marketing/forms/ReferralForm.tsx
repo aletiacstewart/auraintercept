@@ -16,9 +16,10 @@ import { format } from 'date-fns';
 interface ReferralFormProps {
   companyId: string;
   onCancel: () => void;
+  onSuccess?: (data: { referrerName: string; code: string }) => void;
 }
 
-export const ReferralForm: React.FC<ReferralFormProps> = ({ companyId, onCancel }) => {
+export const ReferralForm: React.FC<ReferralFormProps> = ({ companyId, onCancel, onSuccess }) => {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('create');
   const [searchQuery, setSearchQuery] = useState('');
@@ -93,6 +94,7 @@ export const ReferralForm: React.FC<ReferralFormProps> = ({ companyId, onCancel 
     onSuccess: (data) => {
       toast.success(`Referral created! Code: ${data.referral_code}`);
       queryClient.invalidateQueries({ queryKey: ['referrals'] });
+      onSuccess?.({ referrerName: data.referrer_name, code: data.referral_code });
       setFormData({
         referrerName: '',
         referrerEmail: '',

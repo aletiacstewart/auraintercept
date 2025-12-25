@@ -15,9 +15,10 @@ import { format } from 'date-fns';
 interface PromoCodeFormProps {
   companyId: string;
   onCancel: () => void;
+  onSuccess?: (data: { code: string; discount: string }) => void;
 }
 
-export const PromoCodeForm: React.FC<PromoCodeFormProps> = ({ companyId, onCancel }) => {
+export const PromoCodeForm: React.FC<PromoCodeFormProps> = ({ companyId, onCancel, onSuccess }) => {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('create');
   const [searchQuery, setSearchQuery] = useState('');
@@ -77,9 +78,11 @@ export const PromoCodeForm: React.FC<PromoCodeFormProps> = ({ companyId, onCance
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success('Promo code created successfully!');
       queryClient.invalidateQueries({ queryKey: ['promo-campaigns'] });
+      const discount = data.discount_type === 'percent' ? `${data.discount_value}%` : `$${data.discount_value}`;
+      onSuccess?.({ code: data.promo_code, discount });
       setFormData({ code: '', discountType: 'percent', discountValue: '', expiresAt: '', usageLimit: '' });
       setActiveTab('existing');
     },

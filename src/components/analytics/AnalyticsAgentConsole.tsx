@@ -160,6 +160,22 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     setLastAgent('triage');
   };
 
+  const handleAnalyze = async (formType: string, data: Record<string, unknown>) => {
+    hideAllForms();
+    const dataStr = JSON.stringify(data, null, 2);
+    const messages: Record<string, string> = {
+      performance: `Analyze this performance data and provide insights: ${dataStr}. What recommendations do you have to improve these metrics?`,
+      revenue: `Analyze this revenue data: ${dataStr}. What trends do you see and what opportunities exist to increase revenue?`,
+      customers: `Analyze these customer insights: ${dataStr}. What customer segments should we focus on and how can we improve retention?`,
+      forecast: `Based on this forecast data: ${dataStr}. What should we prepare for and what actions should we take?`,
+      kpi: `Review these KPIs: ${dataStr}. Which ones need immediate attention and what steps can improve them?`,
+      export: `I just exported a ${data.type} report with ${data.count} records. What analysis would be most valuable from this data?`,
+    };
+    if (messages[formType]) {
+      await sendMessage(messages[formType]);
+    }
+  };
+
   const isShowingForm = showPerformanceForm || showRevenueForm || showCustomersForm || showForecastForm || showKpiForm || showExportForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
@@ -222,6 +238,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
                 <PerformanceReportForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
+                  onAnalyze={(data) => handleAnalyze('performance', data)}
                 />
               )}
               
@@ -229,6 +246,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
                 <RevenueAnalysisForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
+                  onAnalyze={(data) => handleAnalyze('revenue', data)}
                 />
               )}
               
@@ -236,6 +254,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
                 <CustomerInsightsForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
+                  onAnalyze={(data) => handleAnalyze('customers', data)}
                 />
               )}
               
@@ -243,6 +262,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
                 <TrendForecastForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
+                  onForecast={(data) => handleAnalyze('forecast', data)}
                 />
               )}
               
@@ -250,6 +270,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
                 <KpiDashboardForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
+                  onAnalyze={(data) => handleAnalyze('kpi', data)}
                 />
               )}
               
@@ -257,6 +278,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
                 <ExportReportForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
+                  onExport={(data) => handleAnalyze('export', data)}
                 />
               )}
 

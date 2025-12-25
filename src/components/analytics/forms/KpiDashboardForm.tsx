@@ -14,6 +14,7 @@ import { format, subDays, startOfMonth, endOfMonth } from 'date-fns';
 interface KpiDashboardFormProps {
   companyId: string;
   onCancel: () => void;
+  onAnalyze?: (data: Record<string, unknown>) => void;
 }
 
 interface KpiItem {
@@ -25,7 +26,7 @@ interface KpiItem {
   color: string;
 }
 
-export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, onCancel }) => {
+export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, onCancel, onAnalyze }) => {
   const [dateRange, setDateRange] = useState('month');
 
   const getDateRange = () => {
