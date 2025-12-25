@@ -347,7 +347,7 @@ const AIAgent = () => {
                   <AnalyticsAgentConsole />
                 ) : (
                   viewMode === 'customer' ? (
-                    <AIAgentConsole allowCompanySelection={userRole === 'platform_admin'} />
+                    <AIAgentConsole allowCompanySelection={true} />
                   ) : (
                     <AIAgentChat />
                   )
