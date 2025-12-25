@@ -29,25 +29,36 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   showHowToGuide = true,
 }) => {
   return (
-    <div className="text-center py-4 animate-fade-in">
-      <h3 className="font-bold text-base mb-1">{title}</h3>
-      <p className="text-muted-foreground text-xs mb-4 max-w-xs mx-auto px-2">
-        {subtitle || `I'm your virtual assistant${companyName ? ` at ${companyName}` : ''}. How can I help?`}
-      </p>
-      
-      <div className="max-w-sm mx-auto px-2">
-        <QuickActionGrid 
-          actions={actions} 
-          onAction={onAction} 
-          columns={2}
-        />
+    <div className="py-4 animate-fade-in">
+      {/* Header */}
+      <div className="text-center mb-4">
+        <h3 className="font-bold text-base mb-1">{title}</h3>
+        <p className="text-muted-foreground text-xs max-w-md mx-auto px-2">
+          {subtitle || `I'm your virtual assistant${companyName ? ` at ${companyName}` : ''}. How can I help?`}
+        </p>
       </div>
-
-      {showHowToGuide && (
-        <div className="mt-4">
-          <AgentHowToGuide />
+      
+      {/* Two Column Layout */}
+      <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto px-2">
+        {/* Left Column - How To Guide */}
+        {showHowToGuide && (
+          <div className="order-2 md:order-1">
+            <AgentHowToGuide defaultExpanded={true} className="max-w-none" />
+          </div>
+        )}
+        
+        {/* Right Column - Action Buttons */}
+        <div className={showHowToGuide ? "order-1 md:order-2" : "md:col-span-2"}>
+          <div className="mb-2 text-center md:text-left">
+            <p className="text-xs font-medium text-muted-foreground">Quick Actions</p>
+          </div>
+          <QuickActionGrid 
+            actions={actions} 
+            onAction={onAction} 
+            columns={2}
+          />
         </div>
-      )}
+      </div>
     </div>
   );
 };
