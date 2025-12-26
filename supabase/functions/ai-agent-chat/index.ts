@@ -225,6 +225,12 @@ Be grateful and professional. Never be pushy about reviews.`,
 - Find and assign the nearest available technician
 - Complete the FULL dispatch workflow in one interaction
 
+CRITICAL - NEVER INVENT IDs:
+- NEVER make up, guess, or fabricate appointment IDs or technician IDs
+- Appointment IDs are UUIDs that ONLY come from the create_appointment tool response
+- ALWAYS use the EXACT appointment_id value returned from create_appointment when calling assign_technician
+- WARNING: Using a made-up ID will cause errors!
+
 CRITICAL: COLLECT INFO FIRST!
 If the customer info was NOT provided in the handoff context, you MUST ask for:
 1. Customer NAME
@@ -236,12 +242,13 @@ Only AFTER you have name, phone, address, and issue type should you proceed.
 
 COMPLETE DISPATCH WORKFLOW (execute ALL steps in sequence):
 Step 1: Confirm you have: name, phone, address, issue type
-Step 2: Call create_appointment with customer info (use datetime about 1 hour from now for emergencies)
+Step 2: Call create_appointment with customer info (use datetime about 1 hour from now for emergencies) → Save the returned appointment_id
 Step 3: Call check_tech_availability to find the nearest available technician
-Step 4: Call assign_technician with the appointment_id from step 2 and the best technician
+Step 4: Call assign_technician with the EXACT appointment_id from step 2 and the best technician_id from step 3
 Step 5: Tell the customer: technician name, distance away, and estimated arrival time
 
 You MUST complete ALL steps. Do not stop after creating the appointment.
+Do NOT use any ID that wasn't returned by a tool in this conversation.
 
 Example final response after all steps:
 "Great news! I've dispatched John Smith to help you. He's currently 5 miles away and should arrive in approximately 20 minutes. He'll call you at [phone] when he's on his way. Is there anything else I can help with while you wait?"
@@ -308,17 +315,26 @@ Be thorough with documentation.`,
 - Explain pricing clearly to customers
 - Handle quote follow-ups
 
-WHEN RECEIVING A HANDOFF FROM ANOTHER AGENT OR CUSTOMER ASKS FOR A QUOTE:
-1. FIRST: Use the list_services tool to show all available services with prices
-2. Present the services in a clear, numbered list format so customers can easily choose
-3. Ask which service(s) they'd like a quote for
-4. Once they select, use generate_quote to create a detailed quote
+CRITICAL - NEVER INVENT IDs:
+- NEVER make up, guess, or fabricate quote IDs, appointment IDs, or any database IDs
+- Quote IDs are UUIDs that ONLY come from the generate_quote tool response
+- If you need to send a quote but don't have a real quote_id, call generate_quote FIRST
+- ALWAYS use the EXACT quote_id value returned from generate_quote
+- WARNING: Using a made-up ID will cause errors!
 
-CRITICAL: Always call list_services FIRST to show available options before asking what they want!
-Do NOT ask "What services are you interested in?" without first showing them the options.
+WORKFLOW (follow this EXACTLY):
+1. Call list_services to show available services with prices
+2. Present the services in a clear, numbered list format
+3. Wait for customer to select service(s)
+4. Call generate_quote with selected services → This returns the quote_id
+5. Present the quote details to customer
+6. If they want it sent, call send_quote with the EXACT quote_id from step 4
 
-Use the generate_quote tool to create quotes after they select services.
-Use the send_quote tool to deliver to customers.
+WHEN RECEIVING A HANDOFF FROM ANOTHER AGENT:
+Look for any context about what service the customer wants, then follow the workflow above.
+Always call list_services FIRST to show available options.
+
+Do NOT skip steps. Do NOT use any ID that wasn't returned by a tool in this conversation.
 Break down costs clearly. Be transparent about what's included.`,
 
   invoice: `You are a Billing Specialist for a service business. Your role is to:
@@ -327,6 +343,18 @@ Break down costs clearly. Be transparent about what's included.`,
 - Track payment status
 - Send payment reminders
 - Handle payment disputes gracefully
+
+CRITICAL - NEVER INVENT IDs:
+- NEVER make up, guess, or fabricate invoice IDs, quote IDs, or appointment IDs
+- Invoice IDs are UUIDs that ONLY come from the generate_invoice tool response
+- If you need to send a payment link but don't have a real invoice_id, call generate_invoice FIRST
+- ALWAYS use the EXACT invoice_id value returned from generate_invoice
+- WARNING: Using a made-up ID will cause errors!
+
+WORKFLOW:
+1. If customer needs an invoice, call generate_invoice with the required info
+2. Use the invoice_id returned to send payment links via send_payment_link
+3. Never skip steps or use IDs not returned by tools
 
 WHEN RECEIVING A HANDOFF:
 - Start with: "I'm here to help with your billing. Let me pull up your account."
@@ -2776,7 +2804,11 @@ async function executeAgentTool(
         .single();
 
       if (!quote) {
-        return { success: false, error: 'Quote not found' };
+        return { 
+          success: false, 
+          error: 'Quote not found. You must call generate_quote first to create a quote before sending it. Use the quote_id returned from generate_quote.',
+          action_required: 'Call generate_quote with the customer\'s selected services first, then use the returned quote_id with send_quote.'
+        };
       }
 
       // Update quote status to sent
