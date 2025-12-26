@@ -269,37 +269,46 @@ WHEN RECEIVING A HANDOFF:
 Use the optimize_route tool to plan routes.
 Provide specific route details, distances, and time estimates.`,
 
-  eta: `You are an ETA Specialist for field technicians. Your role is to help technicians:
+  eta: `You are an ETA Specialist and Field Assistant for technicians. Your role is to help technicians:
 - Retrieve their current accepted jobs with customer info
+- Update job status (en route, arrived, completed) and notify customers automatically
 - Calculate and send ETA updates to customers via SMS and/or email
 - Keep customers informed about technician arrival times
 
-AUTOMATIC STATUS UPDATES (CRITICAL):
-When the message mentions a job status change (e.g., "arrived at [customer name]'s location" or "en route to [customer name]"):
-1. The message already contains the customer name and job details - DO NOT ask for them again
-2. Call get_my_jobs to get the job_assignment_id for that customer
-3. IMMEDIATELY call send_eta_update with:
-   - job_assignment_id from the matching job
-   - eta_minutes: 0 for "arrived", estimate for "en route"
-   - channel: "sms" (default, or "both" if email available)
-4. Confirm the notification was sent - DO NOT ask any questions
+QUICK ACTION HANDLING (CRITICAL - respond immediately without asking questions):
 
-MANUAL ETA REQUESTS:
-If technician asks generally for help with ETAs (no specific job mentioned):
-1. Call get_my_jobs to retrieve their assigned jobs
-2. If only ONE job: automatically use that job - don't ask which one
-3. If multiple jobs: ask which job to send ETA for
-4. Ask for ETA minutes and channel preference
-5. Call send_eta_update
+When technician says "en route" or "heading to" or "mark me as en route":
+1. Call get_my_jobs to get their active jobs
+2. If ONLY ONE job: immediately call update_job_status with status="en_route" - DO NOT ASK which job
+3. If MULTIPLE jobs: ask which customer they're heading to, then update
+4. Confirm the update and that customer was notified
+
+When technician says "arrived" or "I have arrived" or "mark me as arrived":
+1. Call get_my_jobs to get their en_route jobs
+2. If ONLY ONE en_route job: immediately call update_job_status with status="arrived" - DO NOT ASK
+3. If MULTIPLE jobs: ask which one
+4. Confirm arrival and that customer was notified
+
+When technician says "complete" or "finished" or "job done" or "mark as completed":
+1. Call get_my_jobs to get their arrived/in_progress jobs
+2. If ONLY ONE such job: immediately call update_job_status with status="completed" - DO NOT ASK
+3. If MULTIPLE jobs: ask which one
+4. Confirm completion and that customer was notified
+
+When technician asks to update ETA:
+1. Call get_my_jobs to get active jobs
+2. If ONLY ONE job: ask for ETA minutes, then send update
+3. If MULTIPLE jobs: ask which customer and ETA minutes
+4. Call send_eta_update with the info
 
 KEY RULES:
-- NEVER ask for customer name or job ID when it's already in the message
-- NEVER ask for confirmation when job details are provided
-- Extract customer name from the message and match to get_my_jobs results
-- If job has phone, default to SMS. If email only, use email. If both, use both.
-- Be efficient - technicians are busy in the field
+- BE FAST - technicians are busy in the field
+- If only ONE active job, NEVER ask which job - just process it
+- NEVER ask for customer name or job ID if you can get it from get_my_jobs
+- After any status update, always confirm what was done
+- Always mention that customer was notified when status is updated
 
-Always confirm the message was sent successfully with customer name and channel used.`,
+ETA AGENT button specifically means technician wants help with ETA calculations and notifications.`,
 
   checkin: `You are a Check-in Specialist for field operations. Your role is to:
 - Verify technician arrival at job sites
@@ -850,6 +859,22 @@ const AGENT_TOOLS: Record<string, any[]> = {
           properties: {
             employee_id: { type: 'string', description: 'The technician\'s employee/user ID (optional, will use authenticated user if not provided)' },
           },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'update_job_status',
+        description: 'Update job status to en_route, arrived, in_progress, or completed. This also automatically notifies the customer.',
+        parameters: {
+          type: 'object',
+          properties: {
+            job_assignment_id: { type: 'string', description: 'The job assignment ID' },
+            status: { type: 'string', enum: ['en_route', 'arrived', 'in_progress', 'completed'], description: 'The new status' },
+            eta_minutes: { type: 'number', description: 'Optional estimated arrival time in minutes (for en_route status)' },
+          },
+          required: ['job_assignment_id', 'status'],
         },
       },
     },
@@ -2522,6 +2547,124 @@ async function executeAgentTool(
         message: anySent 
           ? `ETA update sent! ${results.messages.join('. ')}`
           : `Could not send ETA update. ${results.messages.join('. ')}`,
+      };
+    }
+
+    case 'update_job_status': {
+      console.log('[AI Agent] Updating job status:', args);
+      
+      if (!args.job_assignment_id || !args.status) {
+        return {
+          success: false,
+          error: 'Missing required info: job_assignment_id and status are required.',
+        };
+      }
+      
+      const validStatuses = ['en_route', 'arrived', 'in_progress', 'completed'];
+      if (!validStatuses.includes(args.status)) {
+        return {
+          success: false,
+          error: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
+        };
+      }
+      
+      // Get job assignment with customer info
+      const { data: jobData, error: jobError } = await supabase
+        .from('job_assignments')
+        .select(`
+          id,
+          status,
+          employee_id,
+          appointments (
+            id,
+            customer_name,
+            customer_phone,
+            customer_email,
+            service_type
+          )
+        `)
+        .eq('id', args.job_assignment_id)
+        .eq('company_id', companyId)
+        .single();
+      
+      if (jobError || !jobData) {
+        console.error('[AI Agent] Error fetching job:', jobError);
+        return { success: false, error: 'Job not found or access denied.' };
+      }
+      
+      const appointment = jobData.appointments as any;
+      const customerName = appointment?.customer_name || 'Customer';
+      const serviceType = appointment?.service_type || 'service';
+      
+      // Build update object based on status
+      const updateData: any = {
+        status: args.status,
+        updated_at: new Date().toISOString(),
+      };
+      
+      if (args.status === 'en_route') {
+        updateData.en_route_at = new Date().toISOString();
+        if (args.eta_minutes) {
+          updateData.estimated_arrival_minutes = args.eta_minutes;
+        }
+      } else if (args.status === 'arrived') {
+        updateData.arrived_at = new Date().toISOString();
+      } else if (args.status === 'completed') {
+        updateData.completed_at = new Date().toISOString();
+      }
+      
+      // Update the job assignment
+      const { error: updateError } = await supabase
+        .from('job_assignments')
+        .update(updateData)
+        .eq('id', args.job_assignment_id);
+      
+      if (updateError) {
+        console.error('[AI Agent] Error updating job status:', updateError);
+        return { success: false, error: 'Failed to update job status.' };
+      }
+      
+      // Send notification to customer
+      let notificationResult = 'Customer notified';
+      try {
+        const notifResponse = await fetch(
+          `${Deno.env.get('SUPABASE_URL')}/functions/v1/send-job-notification`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+            },
+            body: JSON.stringify({
+              jobAssignmentId: args.job_assignment_id,
+              notificationType: args.status,
+              recipientType: 'customer',
+            }),
+          }
+        );
+        
+        if (!notifResponse.ok) {
+          notificationResult = 'Status updated (notification delivery pending)';
+        }
+      } catch (notifErr: any) {
+        console.error('[AI Agent] Notification error:', notifErr);
+        notificationResult = 'Status updated (notification delivery pending)';
+      }
+      
+      const statusMessages: Record<string, string> = {
+        en_route: `You are now en route to ${customerName}. ${notificationResult}.`,
+        arrived: `Marked as arrived at ${customerName}'s location. ${notificationResult}.`,
+        in_progress: `Job started for ${customerName}. ${notificationResult}.`,
+        completed: `Job completed for ${customerName}! ${notificationResult}.`,
+      };
+      
+      return {
+        success: true,
+        job_assignment_id: args.job_assignment_id,
+        new_status: args.status,
+        customer_name: customerName,
+        service_type: serviceType,
+        message: statusMessages[args.status] || `Status updated to ${args.status}. ${notificationResult}.`,
       };
     }
 
