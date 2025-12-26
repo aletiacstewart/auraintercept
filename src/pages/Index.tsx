@@ -591,7 +591,7 @@ export default function Index() {
                 onClick={() => navigate('/customer-auth')}
               >
                 <Users className="w-5 h-5 mr-2" />
-                Try Customer Portal
+                Customer Portal
               </Button>
             </div>
             

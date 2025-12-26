@@ -11,7 +11,6 @@ const diagrams = {
     chart: `flowchart TB
     subgraph Public["🌐 Public Access"]
         Landing[Landing Page]
-        Demo[Demo Page]
         PublicChat[Public Chat Widget]
     end
     
@@ -58,9 +57,8 @@ const diagrams = {
     end
     
     Landing --> Auth
-    Landing --> Demo
     Landing --> PublicChat
-    Demo --> AIConsole
+    Landing --> CustAuth
     Auth --> PlatformAdmin
     Auth --> CompanyAdmin
     Auth --> TechDash
@@ -76,7 +74,6 @@ const diagrams = {
     AuthCheck -->|Yes| RoleCheck{Check User Role}
     
     PublicRoutes --> Landing[Landing Page]
-    PublicRoutes --> Demo[Demo Page]
     PublicRoutes --> PublicChat[Public Chat]
     PublicRoutes --> CustAuth[Customer Auth]
     
