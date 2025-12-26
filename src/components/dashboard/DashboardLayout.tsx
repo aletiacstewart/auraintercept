@@ -35,6 +35,7 @@ import {
   HeadphonesIcon,
   Truck,
   Briefcase,
+  Map,
   HelpCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -76,6 +77,7 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin'] },
       { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin', 'company_admin'] },
     ],
   },
 ];
