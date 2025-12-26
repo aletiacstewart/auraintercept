@@ -47,9 +47,10 @@ const FIELD_OPS_AGENTS = [
   { id: 'dispatch', name: 'Contact Dispatch', color: 'bg-blue-100', textColor: 'text-blue-700' },
 ];
 
-// Tabs for the console - only Home tab
+// Tabs for the console - include all functional tabs
 const TABS = [
   { id: 'chat', label: 'Home', icon: MessageSquare },
+  { id: 'directions', label: 'Directions', icon: Navigation },
 ];
 
 interface FieldOpsQuickAction {

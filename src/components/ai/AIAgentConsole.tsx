@@ -12,6 +12,13 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getAgentStyle } from '@/lib/agentStyles';
+import { 
+  formatFeedbackMessage, 
+  formatReviewMessage, 
+  formatQuoteMessage, 
+  formatBookingMessage, 
+  formatTrackingMessage 
+} from '@/lib/formatFormData';
 import { GlassHeader } from './chat/GlassHeader';
 import { ChatBubble } from './chat/ChatBubble';
 import { FloatingInput } from './chat/FloatingInput';
@@ -248,9 +255,11 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   const hasSMS = !!(integrations?.twilio_phone_number && integrations?.twilio_account_sid && integrations?.twilio_auth_token);
   const twilioPhone = integrations?.twilio_phone_number;
 
-  // Build tabs dynamically - only Home tab
+  // Build tabs dynamically - include all functional tabs
   const TABS = [
     { id: 'chat', label: 'Home', icon: MessageSquare },
+    { id: 'services', label: 'Services', icon: Sparkles },
+    { id: 'hours', label: 'Hours', icon: Clock },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -313,8 +322,11 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     setShowQuoteForm(false);
     setShowTrackForm(false);
     setShowBillingForm(false);
+    // Handle tab-switching actions that should send message to AI instead
     if (actionId === 'schedule') {
-      setActiveTab('book');
+      // Send message to AI for booking flow instead of switching tabs
+      setActiveTab('chat');
+      await sendMessage("I'd like to request an appointment");
       return;
     }
     if (actionId === 'hours') {
@@ -326,7 +338,9 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       return;
     }
     if (actionId === 'emergency') {
-      setActiveTab('emergency');
+      // Send emergency message to AI
+      setActiveTab('chat');
+      await sendMessage("I have an urgent emergency situation that needs immediate attention");
       return;
     }
     setActiveTab('chat');
@@ -345,14 +359,26 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
   const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string; serviceDate?: Date }) => {
     setShowFeedbackForm(false);
-    const feedbackMessage = `I'd like to leave feedback. My name is ${feedback.customerName}${feedback.customerPhone ? ` and my phone number is ${feedback.customerPhone}` : ''}${feedback.serviceDate ? ` for my appointment on ${feedback.serviceDate.toLocaleDateString()}` : ''}. My rating is ${feedback.rating} stars and my experience was ${feedback.sentiment}.${feedback.note ? ` Additional comments: ${feedback.note}` : ''}`;
+    const feedbackMessage = formatFeedbackMessage({
+      rating: feedback.rating,
+      sentiment: feedback.sentiment,
+      note: feedback.note,
+      customerName: feedback.customerName,
+      customerPhone: feedback.customerPhone,
+      serviceDate: feedback.serviceDate,
+    });
     await sendMessage(feedbackMessage);
   };
 
   const handleReviewSubmit = async (review: { rating: number; comment: string; customerName: string; customerPhone: string; selectedPlatforms: string[] }) => {
     setShowReviewForm(false);
-    const platformsText = review.selectedPlatforms.join(' and ');
-    const reviewMessage = `I've submitted a review. My name is ${review.customerName}${review.customerPhone ? ` and my phone number is ${review.customerPhone}` : ''}. I gave ${review.rating} stars and left a review on ${platformsText}.${review.comment ? ` My comment: ${review.comment}` : ''}`;
+    const reviewMessage = formatReviewMessage({
+      rating: review.rating,
+      comment: review.comment,
+      customerName: review.customerName,
+      customerPhone: review.customerPhone,
+      selectedPlatforms: review.selectedPlatforms,
+    });
     await sendMessage(reviewMessage);
   };
 
@@ -376,17 +402,17 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   const handleBookingSubmit = async (booking: BookingData) => {
     const serviceNames = services
       ?.filter(s => booking.selectedServices.includes(s.id))
-      .map(s => s.name)
-      .join(', ') || 'service';
+      .map(s => s.name) || [];
     
-    const formattedDate = format(booking.date, 'MMMM d, yyyy');
-    const [hours, minutes] = booking.time.split(':');
-    const hour = parseInt(hours);
-    const period = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-    const formattedTime = `${displayHour}:${minutes} ${period}`;
-    
-    const bookingMessage = `I'd like to book an appointment. My name is ${booking.customerName}, my phone number is ${booking.customerPhone}, and I need service at ${booking.customerAddress}. I'm interested in: ${serviceNames}. I'd like to schedule for ${formattedDate} at ${formattedTime}.`;
+    const bookingMessage = formatBookingMessage({
+      customerName: booking.customerName,
+      customerPhone: booking.customerPhone,
+      customerAddress: booking.customerAddress,
+      selectedServices: booking.selectedServices,
+      serviceNames,
+      date: booking.date,
+      time: booking.time,
+    });
     
     setActiveTab('chat');
     await sendMessage(bookingMessage);
@@ -396,17 +422,28 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     setShowQuoteForm(false);
     const serviceNames = services
       ?.filter(s => quote.selectedServices.includes(s.id))
-      .map(s => s.name)
-      .join(', ') || 'service';
+      .map(s => s.name) || [];
     
-    const quoteMessage = `I'd like to request a quote. My name is ${quote.customerName}, my phone number is ${quote.customerPhone}${quote.customerEmail ? `, email: ${quote.customerEmail}` : ''}${quote.customerAddress ? `, address: ${quote.customerAddress}` : ''}. I'm interested in: ${serviceNames}.${quote.issueDescription ? ` Issue description: ${quote.issueDescription}` : ''}`;
+    const quoteMessage = formatQuoteMessage({
+      customerName: quote.customerName,
+      customerPhone: quote.customerPhone,
+      customerEmail: quote.customerEmail,
+      customerAddress: quote.customerAddress,
+      selectedServices: quote.selectedServices,
+      serviceNames,
+      issueDescription: quote.issueDescription,
+    });
     
     await sendMessage(quoteMessage);
   };
 
   const handleTrackSubmit = async (tracking: TrackingData) => {
     setShowTrackForm(false);
-    const trackMessage = `I'd like to track my appointment. My name is ${tracking.customerName}${tracking.customerPhone ? `, phone: ${tracking.customerPhone}` : ''}${tracking.customerEmail ? `, email: ${tracking.customerEmail}` : ''}.`;
+    const trackMessage = formatTrackingMessage({
+      customerName: tracking.customerName,
+      customerPhone: tracking.customerPhone,
+      customerEmail: tracking.customerEmail,
+    });
     await sendMessage(trackMessage);
   };
 

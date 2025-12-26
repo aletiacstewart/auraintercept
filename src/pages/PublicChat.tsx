@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,14 +12,12 @@ import {
   Phone, X, MapPin
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
+import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
+import { getAgentStyle } from '@/lib/agentStyles';
 
 interface CompanyConfig {
   company: {
+    id: string;
     name: string;
     logo_url: string | null;
     primary_color: string;
@@ -57,11 +55,23 @@ export default function PublicChat() {
   const [config, setConfig] = useState<CompanyConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
-  const [isStreaming, setIsStreaming] = useState(false);
   const [activeTab, setActiveTab] = useState('chat');
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Use multi-agent chat hook
+  const { 
+    messages, 
+    isLoading: isStreaming, 
+    currentAgent, 
+    sendMessage, 
+    clearMessages 
+  } = useMultiAgentChat({
+    companyId: config?.company?.id,
+    onAgentChange: (agent) => {
+      console.log('[PublicChat] Agent changed to:', agent);
+    }
+  });
 
   const API_BASE = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
@@ -96,81 +106,15 @@ export default function PublicChat() {
     }
   };
 
-  const sendMessage = useCallback(async (text: string) => {
+  const handleSendMessage = async (text: string) => {
     if (!text.trim() || isStreaming || !config) return;
-
-    const userMsg: ChatMessage = { role: 'user', content: text };
-    setMessages(prev => [...prev, userMsg]);
     setInput('');
-    setIsStreaming(true);
-
-    try {
-      const response = await fetch(`${API_BASE}/widget-api?action=chat&company=${encodeURIComponent(companySlug!)}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...messages, userMsg] }),
-      });
-
-      if (!response.ok) throw new Error('Chat failed');
-
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error('No reader');
-
-      const decoder = new TextDecoder();
-      let assistantContent = '';
-      let buffer = '';
-
-      // Add placeholder assistant message
-      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          if (line.startsWith(':') || line.trim() === '') continue;
-          if (!line.startsWith('data: ')) continue;
-
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === '[DONE]') continue;
-
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) {
-              assistantContent += content;
-              setMessages(prev => {
-                const updated = [...prev];
-                updated[updated.length - 1] = { role: 'assistant', content: assistantContent };
-                return updated;
-              });
-            }
-          } catch {}
-        }
-      }
-
-      if (!assistantContent) {
-        setMessages(prev => {
-          const updated = [...prev];
-          updated[updated.length - 1] = { role: 'assistant', content: 'I apologize, I encountered an issue. Please try again.' };
-          return updated;
-        });
-      }
-    } catch (err) {
-      console.error('Chat error:', err);
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' }]);
-    } finally {
-      setIsStreaming(false);
-    }
-  }, [API_BASE, companySlug, messages, isStreaming, config]);
+    await sendMessage(text);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    sendMessage(input);
+    handleSendMessage(input);
   };
 
   const formatTime = (time: string | null) => {
@@ -190,6 +134,7 @@ export default function PublicChat() {
   };
 
   const primaryColor = config?.company.primary_color || '#6366f1';
+  const agentInfo = getAgentStyle(currentAgent);
 
   if (loading) {
     return (
@@ -238,7 +183,15 @@ export default function PublicChat() {
             )}
             <div>
               <h1 className="font-semibold">{config.company.name}</h1>
-              <p className="text-xs text-white/80">Virtual Assistant</p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs text-white/80">Virtual Assistant</p>
+                <Badge 
+                  variant="secondary" 
+                  className={cn('text-[10px] px-1.5 py-0 border-0', agentInfo.bgColor, agentInfo.color)}
+                >
+                  {agentInfo.label}
+                </Badge>
+              </div>
             </div>
           </div>
           <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
@@ -302,7 +255,7 @@ export default function PublicChat() {
                           "justify-start gap-2",
                           action.variant === 'destructive' && "bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive/30"
                         )}
-                        onClick={() => sendMessage(action.message)}
+                        onClick={() => handleSendMessage(action.message)}
                       >
                         <action.icon className="h-4 w-4" />
                         <span className="truncate">{action.label}</span>
@@ -312,32 +265,65 @@ export default function PublicChat() {
                 </div>
               )}
 
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={cn(
-                    'flex gap-3 p-3 rounded-lg',
-                    message.role === 'user' 
-                      ? 'bg-primary/10 ml-8' 
-                      : 'bg-muted mr-8'
-                  )}
-                >
-                  <div 
-                    className={cn(
-                      'h-8 w-8 rounded-full flex items-center justify-center shrink-0',
-                      message.role === 'user' ? 'bg-primary' : ''
+              {messages.map((message, index) => {
+                const msgAgentInfo = message.agent ? getAgentStyle(message.agent) : null;
+                const prevMessage = index > 0 ? messages[index - 1] : null;
+                const showHandoffIndicator = message.role === 'assistant' &&
+                  prevMessage?.role === 'assistant' && 
+                  message.agent && 
+                  prevMessage?.agent && 
+                  message.agent !== prevMessage.agent;
+
+                return (
+                  <React.Fragment key={index}>
+                    {/* Handoff Indicator */}
+                    {showHandoffIndicator && (
+                      <div className="flex items-center justify-center gap-2 py-2 text-xs text-muted-foreground">
+                        <div className="h-px flex-1 bg-border" />
+                        <span className="flex items-center gap-1 px-2 py-1 rounded-full bg-muted">
+                          → Transferred to {msgAgentInfo?.label}
+                        </span>
+                        <div className="h-px flex-1 bg-border" />
+                      </div>
                     )}
-                    style={message.role === 'assistant' ? { background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` } : undefined}
-                  >
-                    {message.role === 'user' ? (
-                      <User className="h-4 w-4 text-primary-foreground" />
-                    ) : (
-                      <Bot className="h-4 w-4 text-white" />
-                    )}
-                  </div>
-                  <div className="flex-1 whitespace-pre-wrap text-sm">{message.content}</div>
-                </div>
-              ))}
+
+                    <div
+                      className={cn(
+                        'flex gap-3 p-3 rounded-lg',
+                        message.role === 'user' 
+                          ? 'bg-primary/10 ml-8' 
+                          : 'bg-muted mr-8'
+                      )}
+                    >
+                      <div 
+                        className={cn(
+                          'h-8 w-8 rounded-full flex items-center justify-center shrink-0',
+                          message.role === 'user' ? 'bg-primary' : ''
+                        )}
+                        style={message.role === 'assistant' ? { background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` } : undefined}
+                      >
+                        {message.role === 'user' ? (
+                          <User className="h-4 w-4 text-primary-foreground" />
+                        ) : (
+                          <Bot className="h-4 w-4 text-white" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        {/* Agent Badge for assistant messages */}
+                        {message.role === 'assistant' && msgAgentInfo && (
+                          <Badge 
+                            variant="secondary" 
+                            className={cn('text-[10px] px-1.5 py-0 mb-1 border-0', msgAgentInfo.bgColor, msgAgentInfo.color)}
+                          >
+                            {msgAgentInfo.label}
+                          </Badge>
+                        )}
+                        <div className="whitespace-pre-wrap text-sm">{message.content}</div>
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              })}
 
               {isStreaming && messages[messages.length - 1]?.role !== 'assistant' && (
                 <div className="flex gap-3 p-3 rounded-lg bg-muted mr-8">
@@ -380,7 +366,7 @@ export default function PublicChat() {
                   <button
                     key={service.id}
                     onClick={() => {
-                      sendMessage(`Tell me about ${service.name}`);
+                      handleSendMessage(`Tell me about ${service.name}`);
                       setActiveTab('chat');
                     }}
                     className="w-full text-left p-4 rounded-lg border hover:border-primary hover:bg-primary/5 transition-colors"
@@ -409,7 +395,7 @@ export default function PublicChat() {
               <Button 
                 className="w-full mt-4"
                 onClick={() => {
-                  sendMessage("I'd like to book an appointment");
+                  handleSendMessage("I'd like to book an appointment");
                   setActiveTab('chat');
                 }}
               >
@@ -446,7 +432,7 @@ export default function PublicChat() {
                       key={day}
                       className={cn(
                         "flex justify-between p-3 rounded-lg",
-                        isToday ? "bg-primary/10 border border-primary/20" : "bg-muted/50"
+                        isToday ? "bg-primary/10 border border-primary/20" : "bg-muted"
                       )}
                     >
                       <span className={cn("font-medium", isToday && "text-primary")}>
@@ -454,26 +440,27 @@ export default function PublicChat() {
                         {isToday && <Badge variant="outline" className="ml-2 text-xs">Today</Badge>}
                       </span>
                       <span className="text-muted-foreground">
-                        {!hours || hours.is_closed 
-                          ? 'Closed' 
-                          : `${formatTime(hours.open_time)} - ${formatTime(hours.close_time)}`
-                        }
+                        {!hours || hours.is_closed
+                          ? 'Closed'
+                          : `${formatTime(hours.open_time)} - ${formatTime(hours.close_time)}`}
                       </span>
                     </div>
                   );
                 })}
               </div>
 
-              <Button 
-                className="w-full mt-6"
-                onClick={() => {
-                  sendMessage("I'd like to book an appointment");
-                  setActiveTab('chat');
-                }}
-              >
-                <Calendar className="h-4 w-4 mr-2" />
-                Schedule an Appointment
-              </Button>
+              <div className="mt-6 text-center">
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    handleSendMessage("What are your business hours?");
+                    setActiveTab('chat');
+                  }}
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Ask About Hours
+                </Button>
+              </div>
             </div>
           </ScrollArea>
         </TabsContent>
