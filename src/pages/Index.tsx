@@ -394,19 +394,10 @@ export default function Index() {
                   size="lg" 
                   variant="outline"
                   className="text-lg px-8 py-6 w-full sm:w-auto"
-                  onClick={() => navigate('/demo')}
+                  onClick={() => navigate('/customer-auth')}
                 >
                   <Users className="w-5 h-5 mr-2" />
-                  Customer Portal Demo
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="ghost"
-                  className="text-lg px-8 py-6 w-full sm:w-auto"
-                  onClick={() => navigate('/demo')}
-                >
-                  <Play className="w-5 h-5 mr-2" />
-                  Company Portal Demo
+                  Customer Portal
                 </Button>
               </div>
             </div>
@@ -760,10 +751,10 @@ export default function Index() {
                   size="lg" 
                   variant="outline"
                   className="text-lg px-8 py-6 border-white/30 text-white hover:bg-white/10 hover:text-white"
-                  onClick={() => navigate('/demo')}
+                  onClick={() => navigate('/customer-auth')}
                 >
-                  <Phone className="w-5 h-5 mr-2" />
-                  Schedule a Demo
+                  <Users className="w-5 h-5 mr-2" />
+                  Customer Portal
                 </Button>
               </div>
             </div>
