@@ -62,13 +62,12 @@ interface FieldOpsQuickAction {
 }
 
 const QUICK_ACTIONS: FieldOpsQuickAction[] = [
-  { id: 'accept', label: 'Accept Job', icon: CheckCircle, message: "I want to accept a job" },
   { id: 'directions', label: 'Get Directions', icon: Navigation, message: "Get directions to my next job" },
-  { id: 'enroute', label: 'En Route', icon: Truck, message: "Mark myself as en route" },
-  { id: 'eta', label: 'Update ETA', icon: Clock, message: "Update my ETA" },
+  { id: 'enroute', label: 'En Route', icon: Truck, message: "I'm ready to head out. Mark me as en route to my next job and notify the customer." },
+  { id: 'eta', label: 'Update ETA', icon: Clock, message: "I need to update my ETA for my current job." },
   { id: 'eta-agent', label: 'ETA Agent', icon: Bot, message: "I need help with ETA updates and customer notifications. Can you check my current jobs and help me calculate and send accurate ETAs to customers?" },
-  { id: 'arrived', label: 'Arrived', icon: MapPin, message: "Mark myself as arrived" },
-  { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: "Complete the current job", variant: 'destructive' },
+  { id: 'arrived', label: 'Arrived', icon: MapPin, message: "I have arrived at the customer's location. Please mark me as arrived and notify the customer." },
+  { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: "I have finished the job. Please mark it as completed and notify the customer.", variant: 'destructive' },
   { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: "Contact dispatch" },
 ];
 
@@ -211,37 +210,13 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   };
 
   const handleQuickAction = useCallback(async (action: FieldOpsQuickAction) => {
-    if (action.id === 'accept') {
-      setSelectorMode('accept');
-      return;
-    }
+    // Directions opens job selector to pick which job to navigate to
     if (action.id === 'directions') {
       setSelectorMode('directions');
       return;
     }
-    if (action.id === 'enroute') {
-      setSelectorMode('enroute');
-      return;
-    }
-    if (action.id === 'eta') {
-      setSelectorMode('eta');
-      setSelectedJobForEta(null);
-      setEtaMinutes('');
-      return;
-    }
-    if (action.id === 'eta-agent') {
-      // Send to AI agent for ETA assistance
-      await sendMessage(action.message);
-      return;
-    }
-    if (action.id === 'arrived') {
-      setSelectorMode('arrived');
-      return;
-    }
-    if (action.id === 'complete') {
-      setSelectorMode('complete');
-      return;
-    }
+    
+    // Dispatch calls the phone directly
     if (action.id === 'dispatch') {
       if (companyData?.dispatch_phone) {
         const cleanPhone = companyData.dispatch_phone.replace(/[^\d+]/g, '');
@@ -254,6 +229,8 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       }
       return;
     }
+    
+    // All other actions send message to AI agent which will use tools
     await sendMessage(action.message);
   }, [sendMessage, companyData]);
 
