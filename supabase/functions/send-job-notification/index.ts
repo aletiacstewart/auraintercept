@@ -272,7 +272,7 @@ function generateMessages(
     },
     accepted: {
       customer: {
-        sms: `Great news! ${employeeName} has confirmed your ${serviceType} appointment on ${dateStr} at ${timeStr}. See you soon! - ${companyName}`,
+        sms: `Great news, ${customerName}! ${employeeName} has confirmed your ${serviceType} appointment on ${dateStr} at ${timeStr}.${estimatedArrival ? ` Estimated arrival: ${estimatedArrival} minutes.` : ''} See you soon! - ${companyName}`,
         emailSubject: `Appointment Confirmed - ${companyName}`,
         emailHtml: `
           <h2>Your Appointment is Confirmed</h2>
@@ -280,6 +280,7 @@ function generateMessages(
           <p><strong>${employeeName}</strong> has confirmed your appointment.</p>
           <p><strong>Service:</strong> ${serviceType}</p>
           <p><strong>When:</strong> ${dateStr} at ${timeStr}</p>
+          ${estimatedArrival ? `<p><strong>Estimated Arrival:</strong> ${estimatedArrival} minutes</p>` : ''}
           <p>We look forward to serving you!</p>
         `,
       },
