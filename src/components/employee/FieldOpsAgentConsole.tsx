@@ -61,6 +61,9 @@ interface FieldOpsQuickAction {
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
 }
 
+// Job action IDs that require employee role (not available to company/platform admins)
+const EMPLOYEE_ONLY_ACTIONS = ['enroute', 'eta', 'eta-agent', 'arrived', 'complete'];
+
 const QUICK_ACTIONS: FieldOpsQuickAction[] = [
   { id: 'directions', label: 'Get Directions', icon: Navigation, message: "Get directions to my next job" },
   { id: 'enroute', label: 'En Route', icon: Truck, message: "I'm ready to head out. Mark me as en route to my next job and notify the customer." },
@@ -96,8 +99,17 @@ interface FieldOpsAgentConsoleProps {
 type SelectorMode = 'accept' | 'directions' | 'enroute' | 'eta' | 'arrived' | 'complete' | null;
 
 export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }: FieldOpsAgentConsoleProps) {
-  const { user, companyId: authCompanyId } = useAuth();
+  const { user, companyId: authCompanyId, userRole } = useAuth();
   const effectiveCompanyId = companyId || authCompanyId;
+  
+  // Only employees can perform job actions (accept, enroute, arrived, complete)
+  const isEmployee = userRole === 'employee';
+  const canPerformJobActions = isEmployee;
+  
+  // Filter quick actions based on role - company/platform admins can only view, not perform job actions
+  const availableActions = canPerformJobActions 
+    ? QUICK_ACTIONS 
+    : QUICK_ACTIONS.filter(action => !EMPLOYEE_ONLY_ACTIONS.includes(action.id));
   
   const [inputValue, setInputValue] = useState('');
   const [selectorMode, setSelectorMode] = useState<SelectorMode>(null);
@@ -935,10 +947,13 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
             {messages.length === 0 && !selectorMode && (
               <WelcomeScreen
                 title="Field Ops Ready"
-                subtitle="Manage your jobs - accept, navigate, update ETAs, and complete assignments"
-                actions={QUICK_ACTIONS}
+                subtitle={canPerformJobActions 
+                  ? "Manage your jobs - accept, navigate, update ETAs, and complete assignments"
+                  : "View job information and get directions (job actions are for technicians only)"
+                }
+                actions={availableActions}
                 onAction={(message, actionId) => {
-                  const action = QUICK_ACTIONS.find(a => a.id === actionId);
+                  const action = availableActions.find(a => a.id === actionId);
                   if (action) handleQuickAction(action);
                 }}
                 consoleType="fieldops"
@@ -971,9 +986,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           {/* Quick Actions Bar - shown when there are messages */}
           {messages.length > 0 && !selectorMode && (
             <QuickActionBar
-              actions={QUICK_ACTIONS}
+              actions={availableActions}
               onAction={(message, actionId) => {
-                const action = QUICK_ACTIONS.find(a => a.id === actionId);
+                const action = availableActions.find(a => a.id === actionId);
                 if (action) handleQuickAction(action);
               }}
             />
