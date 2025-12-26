@@ -12,13 +12,14 @@ export interface ChatMessage {
 interface UseMultiAgentChatOptions {
   companyId?: string;
   onAgentChange?: (agent: string) => void;
+  initialAgent?: string;
 }
 
 export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
-  const { companyId, onAgentChange } = options;
+  const { companyId, onAgentChange, initialAgent = 'triage' } = options;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentAgent, setCurrentAgent] = useState<string>('triage');
+  const [currentAgent, setCurrentAgent] = useState<string>(initialAgent);
   const [sessionId] = useState(() => crypto.randomUUID());
 
   const sendMessage = useCallback(async (userMessage: string) => {
@@ -122,8 +123,8 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
 
   const clearMessages = useCallback(() => {
     setMessages([]);
-    setCurrentAgent('triage');
-  }, []);
+    setCurrentAgent(initialAgent);
+  }, [initialAgent]);
 
   return {
     messages,
