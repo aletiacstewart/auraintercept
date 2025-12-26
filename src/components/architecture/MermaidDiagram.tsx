@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useId } from 'react';
 import mermaid from 'mermaid';
 import { Button } from '@/components/ui/button';
 import { Download, Copy, Check } from 'lucide-react';
@@ -21,13 +21,16 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
   const containerRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
   const [svgContent, setSvgContent] = useState<string>('');
+  const uniqueId = useId().replace(/:/g, '');
 
   useEffect(() => {
     const renderDiagram = async () => {
       if (containerRef.current) {
         containerRef.current.innerHTML = '';
         try {
-          const { svg } = await mermaid.render(`mermaid-${title.replace(/\s/g, '-')}`, chart);
+          // Create a clean ID with only alphanumeric characters and dashes
+          const cleanId = `mermaid${uniqueId}`;
+          const { svg } = await mermaid.render(cleanId, chart);
           containerRef.current.innerHTML = svg;
           setSvgContent(svg);
         } catch (error) {
@@ -37,7 +40,7 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
       }
     };
     renderDiagram();
-  }, [chart, title]);
+  }, [chart, uniqueId]);
 
   const handleCopyCode = async () => {
     await navigator.clipboard.writeText(chart);
@@ -60,27 +63,43 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
 
   const handleDownloadPNG = async () => {
     if (!svgContent) return;
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
     
-    img.onload = () => {
-      canvas.width = img.width * 2;
-      canvas.height = img.height * 2;
-      ctx?.scale(2, 2);
-      ctx?.drawImage(img, 0, 0);
-      const pngUrl = canvas.toDataURL('image/png');
-      const a = document.createElement('a');
-      a.href = pngUrl;
-      a.download = `${title.replace(/\s/g, '-').toLowerCase()}.png`;
-      a.click();
-      toast.success('PNG downloaded');
-    };
-    
-    const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
-    img.src = URL.createObjectURL(svgBlob);
+    try {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      // Convert SVG to a data URL to avoid CORS issues
+      const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+      const reader = new FileReader();
+      
+      reader.onload = () => {
+        img.onload = () => {
+          canvas.width = img.width * 2;
+          canvas.height = img.height * 2;
+          ctx?.scale(2, 2);
+          ctx?.drawImage(img, 0, 0);
+          
+          try {
+            const pngUrl = canvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.href = pngUrl;
+            a.download = `${title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.png`;
+            a.click();
+            toast.success('PNG downloaded');
+          } catch {
+            toast.error('PNG download failed - try SVG instead');
+          }
+        };
+        img.src = reader.result as string;
+      };
+      
+      reader.readAsDataURL(svgBlob);
+    } catch {
+      toast.error('PNG download failed - try SVG instead');
+    }
   };
-
+    
   return (
     <div className="rounded-lg border border-border bg-card p-4">
       <div className="flex items-start justify-between mb-4">
