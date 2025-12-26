@@ -468,6 +468,68 @@ Be data-driven but explain in business terms.`,
 Use the forecast_demand tool for predictions.
 Use the generate_capacity_plan tool for planning.
 Provide confidence levels with predictions.`,
+
+  // Marketing agent - for MarketingSalesAgentConsole
+  marketing: `You are a Marketing & Sales Agent for a service business. Your role is to:
+- Create and manage marketing campaigns
+- Generate promotional codes and track usage
+- Set up and manage referral programs
+- Create win-back campaigns for inactive customers
+- Manage leads and customer segments
+- Analyze marketing performance
+
+QUICK ACTIONS YOU CAN HELP WITH:
+- "Create Campaign" → Help create a new marketing campaign with targeting and messaging
+- "Generate Promo" → Create promotional codes with discounts
+- "Referral Program" → Set up customer referral rewards
+- "Win-Back Campaign" → Re-engage inactive customers with special offers
+- "New Lead" → Add and track a new sales lead
+- "Customer Segments" → Analyze customer groups for targeting
+
+Be creative with promotions. Think strategically about targeting the right customers.
+Suggest A/B testing approaches and measure campaign effectiveness.`,
+
+  // Analytics agent - for AnalyticsAgentConsole
+  analytics: `You are an Analytics & Insights Agent for a service business. Your role is to:
+- Analyze business performance data across all areas
+- Generate performance reports and KPI dashboards
+- Provide revenue analysis and projections
+- Deliver customer insights and segmentation analysis
+- Create trend forecasts and predictions
+- Export and summarize data for reporting
+
+QUICK ACTIONS YOU CAN HELP WITH:
+- "Performance Report" → Generate comprehensive business performance metrics
+- "Revenue Analysis" → Analyze revenue trends, sources, and projections
+- "Customer Insights" → Understand customer behavior and preferences
+- "Trend Forecast" → Predict future demand and business trends
+- "KPI Dashboard" → Review key performance indicators
+- "Export Report" → Export data for external analysis
+
+Be data-driven but explain insights in business terms that are easy to understand.
+Always provide actionable recommendations based on the data.`,
+
+  // Admin/Business agent - for BusinessOpsAgentConsole
+  admin: `You are a Business Operations Agent for a service business. Your role is to:
+- Generate and manage customer quotes
+- Create and send invoices
+- Track inventory and parts
+- Manage warranty claims and lookups
+- Handle pricing inquiries
+- Support administrative tasks
+
+QUICK ACTIONS YOU CAN HELP WITH:
+- "Create Quote" → Generate accurate service quotes with pricing
+- "Generate Invoice" → Create invoices from completed jobs
+- "Check Inventory" → Look up parts and stock levels
+- "Warranty Check" → Verify warranty coverage for equipment
+- "Warranty Claim" → Process warranty claims
+- "Price Lookup" → Find pricing for services
+
+Use the list_services tool to get accurate pricing.
+Use the generate_quote tool to create quotes.
+Use the generate_invoice tool for billing.
+Be professional, accurate, and helpful with all business operations tasks.`,
 };
 
 // Tool definitions for each agent category
@@ -1432,6 +1494,205 @@ const AGENT_TOOLS: Record<string, any[]> = {
       },
     },
   ],
+  
+  // Marketing agent tools
+  marketing: [
+    {
+      type: 'function',
+      function: {
+        name: 'create_campaign',
+        description: 'Create a new marketing campaign',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', description: 'Campaign name' },
+            campaign_type: { type: 'string', enum: ['email', 'sms', 'both'] },
+            target_segment: { type: 'string', description: 'Customer segment to target' },
+            message_template: { type: 'string', description: 'Message content' },
+            discount_type: { type: 'string', enum: ['percentage', 'fixed'] },
+            discount_value: { type: 'number' },
+          },
+          required: ['name', 'campaign_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'generate_promo_code',
+        description: 'Generate a promotional code with discount',
+        parameters: {
+          type: 'object',
+          properties: {
+            code: { type: 'string', description: 'Custom code or leave empty for auto-generate' },
+            discount_type: { type: 'string', enum: ['percentage', 'fixed'] },
+            discount_value: { type: 'number' },
+            expires_at: { type: 'string', description: 'Expiration date' },
+          },
+          required: ['discount_type', 'discount_value'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_customer_segments',
+        description: 'Analyze customer segments for targeting',
+        parameters: {
+          type: 'object',
+          properties: {
+            segment_type: { type: 'string', enum: ['all', 'active', 'inactive', 'high_value', 'new'] },
+          },
+        },
+      },
+    },
+  ],
+  
+  // Analytics agent tools
+  analytics: [
+    {
+      type: 'function',
+      function: {
+        name: 'get_performance_metrics',
+        description: 'Get business performance metrics',
+        parameters: {
+          type: 'object',
+          properties: {
+            period: { type: 'string', enum: ['today', 'week', 'month', 'quarter', 'year'] },
+            metrics: { type: 'array', items: { type: 'string' }, description: 'Specific metrics to retrieve' },
+          },
+          required: ['period'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_revenue_analysis',
+        description: 'Analyze revenue trends and sources',
+        parameters: {
+          type: 'object',
+          properties: {
+            period: { type: 'string', enum: ['week', 'month', 'quarter', 'year'] },
+            breakdown_by: { type: 'string', enum: ['service', 'customer', 'employee', 'day'] },
+          },
+          required: ['period'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_customer_insights',
+        description: 'Get customer behavior and segment insights',
+        parameters: {
+          type: 'object',
+          properties: {
+            insight_type: { type: 'string', enum: ['retention', 'acquisition', 'satisfaction', 'segments'] },
+          },
+          required: ['insight_type'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'forecast_trends',
+        description: 'Generate forecasts for demand and revenue',
+        parameters: {
+          type: 'object',
+          properties: {
+            forecast_type: { type: 'string', enum: ['demand', 'revenue', 'appointments'] },
+            period: { type: 'string', enum: ['week', 'month', 'quarter'] },
+          },
+          required: ['forecast_type', 'period'],
+        },
+      },
+    },
+  ],
+  
+  // Admin/Business Operations agent tools
+  admin: [
+    {
+      type: 'function',
+      function: {
+        name: 'list_services',
+        description: 'List all available services with prices',
+        parameters: {
+          type: 'object',
+          properties: {
+            category: { type: 'string', description: 'Optional: filter by service category' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'generate_quote',
+        description: 'Generate a quote for services',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_name: { type: 'string' },
+            customer_phone: { type: 'string' },
+            customer_email: { type: 'string' },
+            services: { type: 'array', items: { type: 'string' }, description: 'Service names to include' },
+            notes: { type: 'string' },
+          },
+          required: ['customer_name', 'services'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'generate_invoice',
+        description: 'Generate an invoice',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_name: { type: 'string' },
+            customer_email: { type: 'string' },
+            amount: { type: 'number' },
+            description: { type: 'string' },
+          },
+          required: ['customer_name', 'amount'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'check_inventory',
+        description: 'Check inventory levels for parts',
+        parameters: {
+          type: 'object',
+          properties: {
+            search_term: { type: 'string', description: 'Part name or SKU to search' },
+            category: { type: 'string' },
+            low_stock_only: { type: 'boolean' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'check_warranty',
+        description: 'Check warranty status for customer equipment',
+        parameters: {
+          type: 'object',
+          properties: {
+            customer_name: { type: 'string' },
+            customer_phone: { type: 'string' },
+            equipment_type: { type: 'string' },
+          },
+          required: ['customer_name'],
+        },
+      },
+    },
+  ],
 };
 
 serve(async (req) => {
@@ -1449,9 +1710,9 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { agentType, message, companyId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo } = await req.json();
+    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo } = await req.json();
 
-    console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}`);
+    console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}`);
 
     // Get agent config for any custom settings
     const { data: config } = await supabase
@@ -2331,10 +2592,13 @@ async function executeAgentTool(
     // ETA TOOLS (For Technicians)
     // ==========================================
     case 'get_my_jobs': {
-      console.log('[AI Agent] Getting technician jobs');
+      console.log('[AI Agent] Getting technician jobs for userId:', args.employee_id);
       
-      // Get active job assignments for this company
-      const { data: jobs, error: jobsError } = await supabase
+      // Use provided employee_id from args, or filter by authenticated user
+      const employeeIdFilter = args.employee_id;
+      
+      // Build query
+      let query = supabase
         .from('job_assignments')
         .select(`
           id,
@@ -2356,6 +2620,13 @@ async function executeAgentTool(
         .in('status', ['accepted', 'en_route', 'arrived', 'in_progress'])
         .order('created_at', { ascending: true });
       
+      // Filter by employee if provided
+      if (employeeIdFilter) {
+        query = query.eq('employee_id', employeeIdFilter);
+      }
+      
+      const { data: jobs, error: jobsError } = await query;
+      
       if (jobsError) {
         console.error('[AI Agent] Error fetching jobs:', jobsError);
         return { success: false, error: jobsError.message };
@@ -2365,7 +2636,9 @@ async function executeAgentTool(
         return {
           success: true,
           jobs: [],
-          message: 'No active jobs found. You have no currently accepted jobs to send ETA updates for.',
+          message: employeeIdFilter 
+            ? 'No active jobs found assigned to you. You have no currently accepted jobs.'
+            : 'No active jobs found. You have no currently accepted jobs to send ETA updates for.',
         };
       }
       
@@ -2378,15 +2651,16 @@ async function executeAgentTool(
         service_type: j.appointments?.service_type || 'Service',
         address: j.customer_address || j.appointments?.customer_address || 'No address',
         scheduled_time: j.appointments?.datetime ? new Date(j.appointments.datetime).toLocaleString() : 'Not set',
-        has_phone: !!j.appointments?.customer_phone,
-        has_email: !!j.appointments?.customer_email,
+        estimated_arrival_minutes: j.estimated_arrival_minutes,
       }));
       
       return {
         success: true,
         jobs: formattedJobs,
         count: formattedJobs.length,
-        message: `Found ${formattedJobs.length} active job(s). Select which one to send an ETA update for.`,
+        message: formattedJobs.length === 1 
+          ? `You have 1 active job: ${formattedJobs[0].customer_name} at ${formattedJobs[0].address}`
+          : `You have ${formattedJobs.length} active jobs.`,
       };
     }
 

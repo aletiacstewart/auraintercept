@@ -46,13 +46,13 @@ interface BusinessOpsAgentConsoleProps {
 }
 
 export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = ({ companyId: propCompanyId }) => {
-  const { companyId: authCompanyId } = useAuth();
+  const { companyId: authCompanyId, user } = useAuth();
   const effectiveCompanyId = propCompanyId || authCompanyId;
   
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [lastAgent, setLastAgent] = useState<string>('triage');
+  const [lastAgent, setLastAgent] = useState<string>('admin');
   
   // Form visibility states
   const [showQuoteForm, setShowQuoteForm] = useState(false);
@@ -79,6 +79,8 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
 
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
+    userId: user?.id,
+    initialAgent: 'admin',
     onAgentChange: (agent) => {
       console.log('[BusinessOps] Agent changed to:', agent);
       setLastAgent(agent);
@@ -151,7 +153,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     hideAllForms();
     setInputValue('');
     setActiveTab('chat');
-    setLastAgent('triage');
+    setLastAgent('admin');
   };
 
   // Form submission handlers

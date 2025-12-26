@@ -45,13 +45,13 @@ interface MarketingSalesAgentConsoleProps {
 }
 
 export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProps> = ({ companyId: propCompanyId }) => {
-  const { companyId: authCompanyId } = useAuth();
+  const { companyId: authCompanyId, user } = useAuth();
   const effectiveCompanyId = propCompanyId || authCompanyId;
   
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [lastAgent, setLastAgent] = useState<string>('triage');
+  const [lastAgent, setLastAgent] = useState<string>('marketing');
   
   // Form visibility states
   const [showCampaignForm, setShowCampaignForm] = useState(false);
@@ -78,6 +78,8 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
 
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
+    userId: user?.id,
+    initialAgent: 'marketing',
     onAgentChange: (agent) => {
       console.log('[Marketing] Agent changed to:', agent);
       setLastAgent(agent);
@@ -150,7 +152,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     hideAllForms();
     setInputValue('');
     setActiveTab('chat');
-    setLastAgent('triage');
+    setLastAgent('marketing');
   };
 
   const handleFormSuccess = async (formType: string, data: Record<string, unknown>) => {

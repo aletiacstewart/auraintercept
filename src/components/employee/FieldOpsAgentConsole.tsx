@@ -142,6 +142,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
+    userId: user?.id,
     initialAgent: 'eta', // Field Ops uses ETA agent for technicians
     onAgentChange: (agent) => {
       console.log('[FieldOps] Agent changed to:', agent);
