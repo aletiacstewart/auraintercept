@@ -262,7 +262,16 @@ export function TechnicianJobQueue() {
   });
 
   const handleAccept = (job: JobAssignment) => {
-    updateStatusMutation.mutate({ jobId: job.id, status: 'accepted' });
+    // Calculate estimated arrival based on scheduled time
+    const appointmentTime = job.appointments?.datetime ? new Date(job.appointments.datetime) : new Date();
+    const now = new Date();
+    const minutesUntilAppointment = Math.max(15, Math.round((appointmentTime.getTime() - now.getTime()) / 60000));
+    
+    updateStatusMutation.mutate({ 
+      jobId: job.id, 
+      status: 'accepted',
+      additionalData: { estimated_arrival_minutes: minutesUntilAppointment },
+    });
   };
 
   const handleDecline = (job: JobAssignment) => {
