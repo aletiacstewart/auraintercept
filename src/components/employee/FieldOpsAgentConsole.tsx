@@ -652,12 +652,12 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       {selectorMode && selectorConfig && (
         <div className="shrink-0 border-b bg-blue-50 dark:bg-blue-950/30 p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-medium flex items-center gap-2">
+            <div className="text-sm font-medium flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                 <selectorConfig.icon className="h-3.5 w-3.5 text-white" />
               </div>
-              {selectorConfig.title}
-            </p>
+              <span>{selectorConfig.title}</span>
+            </div>
             <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-blue-100 dark:hover:bg-blue-900/50" onClick={() => {
               setSelectorMode(null);
               setSelectedJobForEta(null);

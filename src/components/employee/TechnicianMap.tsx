@@ -6,7 +6,8 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Clock, Locate, MapPin, Navigation, Route as RouteIcon, Search, X } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertTriangle, Clock, ExternalLink, Locate, MapPin, Navigation, Route as RouteIcon, Search, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 // Fix Leaflet default marker icon issue in Vite
@@ -60,6 +61,7 @@ export function TechnicianMap({
   const [searchAddress, setSearchAddress] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [routeInfo, setRouteInfo] = useState<{ distance: string; duration: string } | null>(null);
+  const [routeError, setRouteError] = useState<string | null>(null);
 
   const defaultCenter: [number, number] = useMemo(() => {
     return currentPosition || [39.8283, -98.5795];
@@ -137,6 +139,7 @@ export function TechnicianMap({
     setDestination(null);
     setSearchAddress('');
     setRouteInfo(null);
+    setRouteError(null);
   }, []);
 
   const setRoute = useCallback(
@@ -146,18 +149,18 @@ export function TechnicianMap({
 
       setDestination(to);
       if (addressLabel) setSearchAddress(addressLabel);
+      setRouteError(null);
 
       // Destination marker
       if (destinationMarkerRef.current) destinationMarkerRef.current.remove();
       destinationMarkerRef.current = L.marker(to).addTo(map);
 
-      // Routing
+      // Zoom to destination regardless of whether we can get routing
+      map.setView(to, 14, { animate: true });
+
+      // Routing (optional - may fail due to rate limits)
       if (!currentPosition) {
-        toast({
-          title: 'Location Needed',
-          description: 'Enable location services to calculate routes and ETA.',
-          variant: 'destructive',
-        });
+        setRouteError('Enable location services for turn-by-turn directions and ETA.');
         return;
       }
 
@@ -188,10 +191,16 @@ export function TechnicianMap({
         fitSelectedRoutes: true,
         showAlternatives: false,
         show: false,
+        collapsible: true,
         lineOptions: {
-          styles: [{ color: primaryColor, weight: 5, opacity: 0.85 }],
+          styles: [{ color: primaryColor, weight: 6, opacity: 0.8 }],
+          extendToWaypoints: true,
+          missingRouteTolerance: 0,
         },
-        router: RoutingModule.osrmv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' }),
+        router: RoutingModule.osrmv1({ 
+          serviceUrl: 'https://router.project-osrm.org/route/v1',
+          timeout: 10000,
+        }),
         createMarker: () => null,
       });
 
@@ -204,6 +213,12 @@ export function TechnicianMap({
         const nextInfo = { distance: `${distanceMiles} mi`, duration: `${durationMins} min` };
         setRouteInfo(nextInfo);
         onRouteCalculated?.(nextInfo.distance, nextInfo.duration);
+        console.log('[TechnicianMap] Route found:', nextInfo);
+      });
+
+      ctrl.on('routingerror', (e: any) => {
+        console.error('[TechnicianMap] Routing error:', e);
+        setRouteError('Route calculation unavailable. Use the button below for Google Maps directions.');
       });
 
       ctrl.addTo(map);
@@ -495,6 +510,30 @@ export function TechnicianMap({
                 <span className="font-medium">{routeInfo.duration}</span>
               </div>
             </div>
+          )}
+
+          {/* Error message with Google Maps fallback */}
+          {routeError && destination && (
+            <Alert variant="destructive" className="mt-3">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <span className="text-xs">{routeError}</span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 text-xs shrink-0"
+                  onClick={() => {
+                    const url = currentPosition
+                      ? `https://www.google.com/maps/dir/${currentPosition[0]},${currentPosition[1]}/${destination[0]},${destination[1]}`
+                      : `https://www.google.com/maps/search/${destination[0]},${destination[1]}`;
+                    window.open(url, '_blank');
+                  }}
+                >
+                  <ExternalLink className="h-3 w-3 mr-1" />
+                  Open in Google Maps
+                </Button>
+              </AlertDescription>
+            </Alert>
           )}
         </CardContent>
       </Card>
