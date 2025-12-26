@@ -101,6 +101,8 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
 
   const { messages, isLoading, currentAgent, sendMessage } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
+    userId: user?.id,
+    initialAgent: 'booking',
     onAgentChange: (agent) => {
       console.log('[BookingConsole] Agent changed to:', agent);
     },

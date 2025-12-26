@@ -48,7 +48,7 @@ interface AnalyticsAgentConsoleProps {
 }
 
 export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ companyId: propCompanyId, demoMode = false }) => {
-  const { companyId: authCompanyId, userRole } = useAuth();
+  const { companyId: authCompanyId, userRole, user } = useAuth();
   const effectiveCompanyId = propCompanyId || authCompanyId;
   
   // Role-based access control - only platform_admin and company_admin can access analytics
@@ -58,7 +58,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [lastAgent, setLastAgent] = useState<string>('triage');
+  const [lastAgent, setLastAgent] = useState<string>('analytics');
   
   // Form visibility states
   const [showPerformanceForm, setShowPerformanceForm] = useState(false);
@@ -85,6 +85,8 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
 
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
+    userId: user?.id,
+    initialAgent: 'analytics',
     onAgentChange: (agent) => {
       console.log('[Analytics] Agent changed to:', agent);
       setLastAgent(agent);
@@ -157,7 +159,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     hideAllForms();
     setInputValue('');
     setActiveTab('chat');
-    setLastAgent('triage');
+    setLastAgent('analytics');
   };
 
   const handleAnalyze = async (formType: string, data: Record<string, unknown>) => {

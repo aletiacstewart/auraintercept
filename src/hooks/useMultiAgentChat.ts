@@ -11,12 +11,13 @@ export interface ChatMessage {
 
 interface UseMultiAgentChatOptions {
   companyId?: string;
+  userId?: string;
   onAgentChange?: (agent: string) => void;
   initialAgent?: string;
 }
 
 export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
-  const { companyId, onAgentChange, initialAgent = 'triage' } = options;
+  const { companyId, userId, onAgentChange, initialAgent = 'triage' } = options;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentAgent, setCurrentAgent] = useState<string>(initialAgent);
@@ -40,6 +41,7 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
           agentType: currentAgent,
           message: userMessage,
           companyId,
+          userId,
           sessionId,
           conversationHistory: messages.map(m => ({
             role: m.role,
@@ -84,6 +86,7 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
             agentType: data.handoff_to,
             message: userMessage,
             companyId,
+            userId,
             sessionId,
             isHandoff: true,
             handoffFrom: currentAgent,
