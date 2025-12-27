@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Checkbox } from '@/components/ui/checkbox';
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Receipt, Send, ArrowLeft, Mail, MessageSquare, Loader2, Search, User, Calendar, Plus, X, Check } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -146,7 +146,7 @@ export function InvoiceForm({
 
   const services = (servicesData ?? EMPTY_SERVICES) as Service[];
 
-  // Auto-populate line items when jobs are selected
+  // Auto-populate line items and customer info when jobs are selected
   useEffect(() => {
     const currentJobIds = [...selectedJobs].map(j => j.id).sort().join(',');
     const prevJobIds = [...prevSelectedJobsRef.current].sort().join(',');
@@ -190,6 +190,31 @@ export function InvoiceForm({
       const manualItems = prev.filter(item => !item.appointmentId && item.description);
       return [...jobLineItems, ...manualItems];
     });
+
+    // Also update the service type and amount for ai mode
+    if (selectedJobs.length === 1) {
+      const job = selectedJobs[0];
+      setServiceType(job.service_type || '');
+      const matchingService = services.find(s => 
+        s.name.toLowerCase() === job.service_type?.toLowerCase()
+      );
+      const price = matchingService 
+        ? (matchingService.price || matchingService.flat_fee || matchingService.hourly_rate || 0)
+        : 0;
+      setAmount(price > 0 ? price.toString() : '');
+    } else if (selectedJobs.length > 1) {
+      // Multiple jobs - show combined info
+      setServiceType(selectedJobs.map(j => j.service_type).join(', '));
+      const totalAmount = selectedJobs.reduce((sum, job) => {
+        const matchingService = services.find(s => 
+          s.name.toLowerCase() === job.service_type?.toLowerCase()
+        );
+        return sum + (matchingService 
+          ? (matchingService.price || matchingService.flat_fee || matchingService.hourly_rate || 0)
+          : 0);
+      }, 0);
+      setAmount(totalAmount > 0 ? totalAmount.toString() : '');
+    }
   }, [selectedJobs, services]);
 
   const createInvoiceMutation = useMutation({
@@ -332,6 +357,8 @@ export function InvoiceForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    const calculatedTotal = lineItems.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
+    
     if (mode === 'direct') {
       if (!customerName.trim()) {
         toast.error('Customer name is required');
@@ -339,8 +366,24 @@ export function InvoiceForm({
       }
       createInvoiceMutation.mutate();
     } else {
-      if (!customerName.trim() || !amount.trim()) return;
-      if (!sendEmail && !sendSms) return;
+      if (!customerName.trim()) {
+        toast.error('Customer name is required');
+        return;
+      }
+      if (calculatedTotal <= 0) {
+        toast.error('Please add at least one line item with a price');
+        return;
+      }
+      if (!sendEmail && !sendSms) {
+        toast.error('Please select at least one delivery method');
+        return;
+      }
+      
+      // Combine line items into service description and amount
+      const serviceDescriptions = lineItems
+        .filter(item => item.description)
+        .map(item => item.description)
+        .join(', ');
       
       onSubmit?.({
         appointmentId: selectedJobs.length > 0 ? selectedJobs[0].id : null,
@@ -348,8 +391,8 @@ export function InvoiceForm({
         customerPhone,
         customerEmail,
         customerAddress,
-        serviceType,
-        amount,
+        serviceType: serviceDescriptions || serviceType,
+        amount: calculatedTotal.toFixed(2),
         notes,
         sendEmail,
         sendSms,
@@ -361,7 +404,8 @@ export function InvoiceForm({
   const taxAmount = subtotal * (taxRate / 100);
   const total = subtotal + taxAmount;
 
-  const isValidAI = customerName.trim() && amount.trim() && (sendEmail || sendSms);
+  const hasValidLineItems = lineItems.some(item => item.description && item.unit_price > 0);
+  const isValidAI = customerName.trim() && hasValidLineItems && (sendEmail || sendSms);
   const isValidDirect = customerName.trim();
   const isPending = isLoading || createInvoiceMutation.isPending;
 
@@ -501,118 +545,103 @@ export function InvoiceForm({
           />
         </div>
 
-        {mode === 'ai' && (
+        {/* Line Items Section - shown in both modes */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <Label className="text-sm font-medium">Services / Line Items</Label>
+            <div className="flex gap-1">
+              {services.length > 0 && (
+                <Select onValueChange={addServiceLineItem}>
+                  <SelectTrigger className="h-7 w-[120px] text-xs">
+                    <SelectValue placeholder="Add Service" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {services.map(s => (
+                      <SelectItem key={s.id} value={s.id} className="text-xs">
+                        {s.name} - ${s.price || s.flat_fee || s.hourly_rate || 0}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+              <Button type="button" variant="outline" size="sm" onClick={addLineItem} className="h-7">
+                <Plus className="w-3 h-3 mr-1" /> Add
+              </Button>
+            </div>
+          </div>
+          <div className="space-y-2 max-h-48 overflow-y-auto border rounded-lg p-2 bg-muted/20">
+            {lineItems.map((item, index) => (
+              <div key={item.id} className="grid grid-cols-12 gap-1 items-center">
+                <Input
+                  className="col-span-5 h-8 text-xs"
+                  placeholder="Description"
+                  value={item.description}
+                  onChange={e => updateLineItem(index, 'description', e.target.value)}
+                />
+                <Input
+                  className="col-span-2 h-8 text-xs"
+                  type="number"
+                  placeholder="Qty"
+                  value={item.quantity}
+                  onChange={e => updateLineItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                />
+                <Input
+                  className="col-span-3 h-8 text-xs"
+                  type="number"
+                  step="0.01"
+                  placeholder="Price"
+                  value={item.unit_price}
+                  onChange={e => updateLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
+                />
+                <div className="col-span-1 text-right text-xs font-medium">${(item.quantity * item.unit_price).toFixed(0)}</div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="col-span-1 h-6 w-6"
+                  onClick={() => removeLineItem(index)}
+                  disabled={lineItems.length === 1}
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
+            ))}
+          </div>
+          <div className="border-t pt-2 mt-2 space-y-1 text-right text-sm">
+            <div className="font-bold">Total: ${subtotal.toFixed(2)}</div>
+          </div>
+        </div>
+
+        {mode === 'direct' && (
           <div className="grid grid-cols-2 gap-2">
-            <Input
-              value={serviceType}
-              onChange={(e) => setServiceType(e.target.value)}
-              placeholder="Service Type"
-              className="h-9 text-sm"
-            />
-            <Input
-              type="number"
-              step="0.01"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Amount ($) *"
-              className="h-9 text-sm"
-              required
-            />
+            <div className="space-y-1">
+              <Label className="text-xs">Tax Rate (%)</Label>
+              <Input 
+                type="number" 
+                step="0.01" 
+                value={taxRate} 
+                onChange={e => setTaxRate(parseFloat(e.target.value) || 0)} 
+                className="h-9 text-sm"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Due in (days)</Label>
+              <Input 
+                type="number" 
+                value={dueDays} 
+                onChange={e => setDueDays(parseInt(e.target.value) || 30)} 
+                className="h-9 text-sm"
+              />
+            </div>
           </div>
         )}
 
-        {mode === 'direct' && (
-          <>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1">
-                <Label className="text-xs">Tax Rate (%)</Label>
-                <Input 
-                  type="number" 
-                  step="0.01" 
-                  value={taxRate} 
-                  onChange={e => setTaxRate(parseFloat(e.target.value) || 0)} 
-                  className="h-9 text-sm"
-                />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Due in (days)</Label>
-                <Input 
-                  type="number" 
-                  value={dueDays} 
-                  onChange={e => setDueDays(parseInt(e.target.value) || 30)} 
-                  className="h-9 text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label className="text-sm font-medium">Line Items</Label>
-                <div className="flex gap-1">
-                  {services.length > 0 && (
-                    <Select onValueChange={addServiceLineItem}>
-                      <SelectTrigger className="h-7 w-[120px] text-xs">
-                        <SelectValue placeholder="Add Service" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {services.map(s => (
-                          <SelectItem key={s.id} value={s.id} className="text-xs">
-                            {s.name} - ${s.price || s.flat_fee || s.hourly_rate || 0}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                  <Button type="button" variant="outline" size="sm" onClick={addLineItem} className="h-7">
-                    <Plus className="w-3 h-3 mr-1" /> Manual
-                  </Button>
-                </div>
-              </div>
-              <div className="space-y-2 max-h-48 overflow-y-auto">
-                {lineItems.map((item, index) => (
-                  <div key={item.id} className="grid grid-cols-12 gap-1 items-center">
-                    <Input
-                      className="col-span-5 h-8 text-xs"
-                      placeholder="Description"
-                      value={item.description}
-                      onChange={e => updateLineItem(index, 'description', e.target.value)}
-                    />
-                    <Input
-                      className="col-span-2 h-8 text-xs"
-                      type="number"
-                      placeholder="Qty"
-                      value={item.quantity}
-                      onChange={e => updateLineItem(index, 'quantity', parseInt(e.target.value) || 1)}
-                    />
-                    <Input
-                      className="col-span-3 h-8 text-xs"
-                      type="number"
-                      step="0.01"
-                      placeholder="Price"
-                      value={item.unit_price}
-                      onChange={e => updateLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
-                    />
-                    <div className="col-span-1 text-right text-xs">${(item.quantity * item.unit_price).toFixed(0)}</div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="col-span-1 h-6 w-6"
-                      onClick={() => removeLineItem(index)}
-                      disabled={lineItems.length === 1}
-                    >
-                      <X className="w-3 h-3" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-              <div className="border-t pt-2 mt-2 space-y-1 text-right text-sm">
-                <div>Subtotal: ${subtotal.toFixed(2)}</div>
-                <div className="text-muted-foreground text-xs">Tax ({taxRate}%): ${taxAmount.toFixed(2)}</div>
-                <div className="font-bold">Total: ${total.toFixed(2)}</div>
-              </div>
-            </div>
-          </>
+        {mode === 'direct' && taxRate > 0 && (
+          <div className="text-right text-sm text-muted-foreground">
+            <div>Subtotal: ${subtotal.toFixed(2)}</div>
+            <div>Tax ({taxRate}%): ${taxAmount.toFixed(2)}</div>
+            <div className="font-bold text-foreground">Total: ${total.toFixed(2)}</div>
+          </div>
         )}
 
         <Textarea
