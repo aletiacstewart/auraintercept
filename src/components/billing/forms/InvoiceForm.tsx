@@ -423,18 +423,26 @@ export function InvoiceForm({
           <div className="border rounded-lg max-h-48 overflow-y-auto">
             {appointments.map((apt) => {
               const isSelected = selectedJobs.some(j => j.id === apt.id);
+              const handlePick = () => handleToggleJob(apt);
               return (
-                <button
+                <div
                   key={apt.id}
-                  type="button"
-                  onClick={() => handleToggleJob(apt)}
-                  className={`w-full text-left p-2 hover:bg-muted/50 border-b last:border-b-0 text-sm ${
+                  role="button"
+                  tabIndex={0}
+                  onClick={handlePick}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handlePick();
+                    }
+                  }}
+                  className={`w-full text-left p-2 hover:bg-muted/50 border-b last:border-b-0 text-sm cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background ${
                     isSelected ? 'bg-primary/5' : ''
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Checkbox checked={isSelected} className="pointer-events-none" />
+                      <Checkbox checked={isSelected} className="pointer-events-none" aria-hidden="true" />
                       <User className="h-3.5 w-3.5 text-muted-foreground" />
                       <span className="font-medium">{apt.customer_name}</span>
                     </div>
@@ -444,7 +452,7 @@ export function InvoiceForm({
                     <Calendar className="h-3 w-3" />
                     {format(new Date(apt.datetime), 'MMM d, yyyy')} - {apt.service_type}
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
