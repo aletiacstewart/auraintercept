@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Receipt, Send, ArrowLeft, Mail, MessageSquare, Loader2, Search, User, Calendar, Plus, X } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,6 +23,24 @@ export interface InvoiceFormData {
   notes: string;
   sendEmail: boolean;
   sendSms: boolean;
+}
+
+interface LineItem {
+  description: string;
+  quantity: number;
+  unit_price: number;
+  appointmentId?: string | null;
+}
+
+interface SelectedJob {
+  id: string;
+  customer_name: string;
+  customer_phone: string | null;
+  customer_email: string | null;
+  customer_address: string | null;
+  service_type: string;
+  datetime: string;
+  status: string;
 }
 
 interface InvoiceFormProps {
@@ -44,7 +64,7 @@ export function InvoiceForm({
 }: InvoiceFormProps) {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
+  const [selectedJobs, setSelectedJobs] = useState<SelectedJob[]>([]);
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
@@ -56,8 +76,8 @@ export function InvoiceForm({
   const [sendSms, setSendSms] = useState(false);
   const [taxRate, setTaxRate] = useState(0);
   const [dueDays, setDueDays] = useState(30);
-  const [lineItems, setLineItems] = useState<{description: string; quantity: number; unit_price: number}[]>([
-    { description: '', quantity: 1, unit_price: 0 }
+  const [lineItems, setLineItems] = useState<LineItem[]>([
+    { description: '', quantity: 1, unit_price: 0, appointmentId: null }
   ]);
 
   // Get existing invoice count for generating invoice number
@@ -73,7 +93,7 @@ export function InvoiceForm({
     enabled: !!companyId && mode === 'direct',
   });
 
-  // Search for jobs/appointments
+  // Search for completed jobs/appointments
   const { data: appointments = [], isLoading: searchingJobs } = useQuery({
     queryKey: ['job-search', companyId, searchQuery],
     queryFn: async () => {
@@ -82,15 +102,16 @@ export function InvoiceForm({
         .from('appointments')
         .select('id, customer_name, customer_phone, customer_email, customer_address, service_type, datetime, status')
         .eq('company_id', companyId)
+        .eq('status', 'completed')
         .or(`customer_name.ilike.%${searchQuery}%,customer_phone.ilike.%${searchQuery}%,customer_email.ilike.%${searchQuery}%`)
         .order('datetime', { ascending: false })
-        .limit(10);
+        .limit(20);
       return data || [];
     },
     enabled: !!companyId && searchQuery.length >= 2,
   });
 
-  // Fetch services for price lookup
+  // Fetch services for price lookup and manual add
   const { data: services = [] } = useQuery({
     queryKey: ['services', companyId],
     queryFn: async () => {
@@ -104,6 +125,41 @@ export function InvoiceForm({
     enabled: !!companyId,
   });
 
+  // Auto-populate line items when jobs are selected
+  useEffect(() => {
+    if (selectedJobs.length === 0) {
+      return;
+    }
+
+    // Use first job's customer info
+    const firstJob = selectedJobs[0];
+    setCustomerName(firstJob.customer_name || '');
+    setCustomerPhone(firstJob.customer_phone || '');
+    setCustomerEmail(firstJob.customer_email || '');
+    setCustomerAddress(firstJob.customer_address || '');
+
+    // Create line items from all selected jobs
+    const jobLineItems: LineItem[] = selectedJobs.map(job => {
+      const matchingService = services.find(s => 
+        s.name.toLowerCase() === job.service_type?.toLowerCase()
+      );
+      const price = matchingService 
+        ? (matchingService.price || matchingService.flat_fee || matchingService.hourly_rate || 0)
+        : 0;
+      
+      return {
+        description: job.service_type || 'Service',
+        quantity: 1,
+        unit_price: price,
+        appointmentId: job.id,
+      };
+    });
+
+    // Keep any manually added items (those without appointmentId)
+    const manualItems = lineItems.filter(item => !item.appointmentId && item.description);
+    setLineItems([...jobLineItems, ...manualItems]);
+  }, [selectedJobs, services]);
+
   const createInvoiceMutation = useMutation({
     mutationFn: async () => {
       const itemsToCreate = lineItems.filter(item => item.description && item.unit_price > 0);
@@ -116,6 +172,9 @@ export function InvoiceForm({
 
       const year = new Date().getFullYear();
       const invoiceNumber = `INV-${year}-${(invoiceCount + 1).toString().padStart(4, '0')}`;
+
+      // Use first selected job's appointment_id or null
+      const primaryAppointmentId = selectedJobs.length > 0 ? selectedJobs[0].id : null;
 
       const { data: invoice, error: invoiceError } = await supabase
         .from('invoices')
@@ -133,7 +192,7 @@ export function InvoiceForm({
           total: subtotal + taxAmount,
           due_date: dueDate.toISOString(),
           status: 'draft',
-          appointment_id: selectedAppointmentId,
+          appointment_id: primaryAppointmentId,
         })
         .select()
         .single();
@@ -166,41 +225,43 @@ export function InvoiceForm({
     onError: () => toast.error('Failed to create invoice'),
   });
 
-  const handleSelectAppointment = (appointmentId: string) => {
-    const apt = appointments.find(a => a.id === appointmentId);
-    if (apt) {
-      setSelectedAppointmentId(apt.id);
-      setCustomerName(apt.customer_name || '');
-      setCustomerPhone(apt.customer_phone || '');
-      setCustomerEmail(apt.customer_email || '');
-      setCustomerAddress(apt.customer_address || '');
-      setServiceType(apt.service_type || '');
-      
-      // Find matching service and pre-fill line item with service details
-      const matchingService = services.find(s => 
-        s.name.toLowerCase() === apt.service_type?.toLowerCase()
-      );
-      
-      if (matchingService) {
-        const price = matchingService.price || matchingService.flat_fee || matchingService.hourly_rate || 0;
-        setLineItems([{ 
-          description: matchingService.name, 
-          quantity: 1, 
-          unit_price: price 
-        }]);
-      } else if (apt.service_type) {
-        // If no matching service found, still add the service type as description
-        setLineItems([{ 
-          description: apt.service_type, 
-          quantity: 1, 
-          unit_price: 0 
-        }]);
+  const handleToggleJob = (apt: SelectedJob) => {
+    const isSelected = selectedJobs.some(j => j.id === apt.id);
+    if (isSelected) {
+      setSelectedJobs(selectedJobs.filter(j => j.id !== apt.id));
+    } else {
+      // Check if new job's customer matches existing selection
+      if (selectedJobs.length > 0) {
+        const firstCustomer = selectedJobs[0].customer_name?.toLowerCase();
+        if (apt.customer_name?.toLowerCase() !== firstCustomer) {
+          toast.error('All jobs must be for the same customer');
+          return;
+        }
       }
+      setSelectedJobs([...selectedJobs, apt]);
     }
   };
 
+  const handleRemoveJob = (jobId: string) => {
+    setSelectedJobs(selectedJobs.filter(j => j.id !== jobId));
+    setLineItems(lineItems.filter(item => item.appointmentId !== jobId));
+  };
+
   const addLineItem = () => {
-    setLineItems([...lineItems, { description: '', quantity: 1, unit_price: 0 }]);
+    setLineItems([...lineItems, { description: '', quantity: 1, unit_price: 0, appointmentId: null }]);
+  };
+
+  const addServiceLineItem = (serviceId: string) => {
+    const service = services.find(s => s.id === serviceId);
+    if (service) {
+      const price = service.price || service.flat_fee || service.hourly_rate || 0;
+      setLineItems([...lineItems, { 
+        description: service.name, 
+        quantity: 1, 
+        unit_price: price,
+        appointmentId: null 
+      }]);
+    }
   };
 
   const updateLineItem = (index: number, field: string, value: string | number) => {
@@ -211,12 +272,17 @@ export function InvoiceForm({
 
   const removeLineItem = (index: number) => {
     if (lineItems.length === 1) return;
+    const itemToRemove = lineItems[index];
+    // If removing a job-linked item, also remove from selectedJobs
+    if (itemToRemove.appointmentId) {
+      setSelectedJobs(selectedJobs.filter(j => j.id !== itemToRemove.appointmentId));
+    }
     setLineItems(lineItems.filter((_, i) => i !== index));
   };
 
   const resetForm = () => {
     setSearchQuery('');
-    setSelectedAppointmentId(null);
+    setSelectedJobs([]);
     setCustomerName('');
     setCustomerPhone('');
     setCustomerEmail('');
@@ -224,7 +290,7 @@ export function InvoiceForm({
     setServiceType('');
     setAmount('');
     setNotes('');
-    setLineItems([{ description: '', quantity: 1, unit_price: 0 }]);
+    setLineItems([{ description: '', quantity: 1, unit_price: 0, appointmentId: null }]);
     setTaxRate(0);
     setDueDays(30);
   };
@@ -243,7 +309,7 @@ export function InvoiceForm({
       if (!sendEmail && !sendSms) return;
       
       onSubmit?.({
-        appointmentId: selectedAppointmentId,
+        appointmentId: selectedJobs.length > 0 ? selectedJobs[0].id : null,
         customerName,
         customerPhone,
         customerEmail,
@@ -283,11 +349,35 @@ export function InvoiceForm({
         <h3 className="font-semibold">{mode === 'direct' ? 'Create Invoice' : 'Generate Invoice'}</h3>
       </div>
 
+      {/* Selected Jobs Display */}
+      {selectedJobs.length > 0 && (
+        <div className="space-y-1">
+          <Label className="text-xs font-medium text-muted-foreground">Selected Jobs ({selectedJobs.length})</Label>
+          <div className="flex flex-wrap gap-1">
+            {selectedJobs.map(job => (
+              <div 
+                key={job.id} 
+                className="flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full"
+              >
+                <span>{format(new Date(job.datetime), 'MMM d')} - {job.service_type}</span>
+                <button 
+                  type="button" 
+                  onClick={() => handleRemoveJob(job.id)}
+                  className="hover:text-destructive"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Job/Customer Search */}
       <div className="space-y-2">
         <Label className="text-sm font-medium flex items-center gap-2">
           <Search className="h-4 w-4" />
-          Search Job or Customer
+          Search Completed Jobs
         </Label>
         <Input
           value={searchQuery}
@@ -296,27 +386,33 @@ export function InvoiceForm({
           className="h-9 text-sm"
         />
         {searchQuery.length >= 2 && appointments.length > 0 && (
-          <div className="border rounded-lg max-h-40 overflow-y-auto">
-            {appointments.map((apt) => (
-              <button
-                key={apt.id}
-                type="button"
-                onClick={() => handleSelectAppointment(apt.id)}
-                className="w-full text-left p-2 hover:bg-muted/50 border-b last:border-b-0 text-sm"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <User className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="font-medium">{apt.customer_name}</span>
+          <div className="border rounded-lg max-h-48 overflow-y-auto">
+            {appointments.map((apt) => {
+              const isSelected = selectedJobs.some(j => j.id === apt.id);
+              return (
+                <button
+                  key={apt.id}
+                  type="button"
+                  onClick={() => handleToggleJob(apt)}
+                  className={`w-full text-left p-2 hover:bg-muted/50 border-b last:border-b-0 text-sm ${
+                    isSelected ? 'bg-primary/5' : ''
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Checkbox checked={isSelected} className="pointer-events-none" />
+                      <User className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="font-medium">{apt.customer_name}</span>
+                    </div>
+                    <span className="text-xs text-green-600 font-medium">{apt.status}</span>
                   </div>
-                  <span className="text-xs text-muted-foreground">{apt.status}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                  <Calendar className="h-3 w-3" />
-                  {format(new Date(apt.datetime), 'MMM d, yyyy')} - {apt.service_type}
-                </div>
-              </button>
-            ))}
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1 ml-6">
+                    <Calendar className="h-3 w-3" />
+                    {format(new Date(apt.datetime), 'MMM d, yyyy')} - {apt.service_type}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
         {searchingJobs && <p className="text-xs text-muted-foreground">Searching...</p>}
@@ -403,11 +499,27 @@ export function InvoiceForm({
             <div>
               <div className="flex items-center justify-between mb-2">
                 <Label className="text-sm font-medium">Line Items</Label>
-                <Button type="button" variant="outline" size="sm" onClick={addLineItem} className="h-7">
-                  <Plus className="w-3 h-3 mr-1" /> Add
-                </Button>
+                <div className="flex gap-1">
+                  {services.length > 0 && (
+                    <Select onValueChange={addServiceLineItem}>
+                      <SelectTrigger className="h-7 w-[120px] text-xs">
+                        <SelectValue placeholder="Add Service" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {services.map(s => (
+                          <SelectItem key={s.id} value={s.id} className="text-xs">
+                            {s.name} - ${s.price || s.flat_fee || s.hourly_rate || 0}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  <Button type="button" variant="outline" size="sm" onClick={addLineItem} className="h-7">
+                    <Plus className="w-3 h-3 mr-1" /> Manual
+                  </Button>
+                </div>
               </div>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
+              <div className="space-y-2 max-h-48 overflow-y-auto">
                 {lineItems.map((item, index) => (
                   <div key={index} className="grid grid-cols-12 gap-1 items-center">
                     <Input
@@ -484,17 +596,17 @@ export function InvoiceForm({
       <Button 
         type="submit" 
         className="w-full h-9" 
-        disabled={(mode === 'ai' ? !isValidAI : !isValidDirect) || isPending}
+        disabled={isPending || (mode === 'ai' ? !isValidAI : !isValidDirect)}
       >
         {isPending ? (
           <>
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            Creating...
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {mode === 'direct' ? 'Creating...' : 'Generating...'}
           </>
         ) : (
           <>
-            <Send className="h-4 w-4 mr-2" />
-            {mode === 'ai' ? 'Generate & Send Invoice' : 'Create Invoice'}
+            <Send className="mr-2 h-4 w-4" />
+            {mode === 'direct' ? 'Create Invoice' : 'Generate Invoice'}
           </>
         )}
       </Button>
