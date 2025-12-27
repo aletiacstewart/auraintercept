@@ -830,6 +830,212 @@ export type Database = {
           },
         ]
       }
+      crm_connections: {
+        Row: {
+          access_token: string | null
+          company_id: string
+          connected_at: string | null
+          connected_by: string | null
+          created_at: string | null
+          id: string
+          last_error: string | null
+          last_sync_at: string | null
+          provider: Database["public"]["Enums"]["crm_provider"]
+          refresh_token: string | null
+          settings: Json | null
+          status: Database["public"]["Enums"]["crm_connection_status"]
+          sync_activities: boolean | null
+          sync_contacts: boolean | null
+          sync_deals: boolean | null
+          sync_direction:
+            | Database["public"]["Enums"]["crm_sync_direction"]
+            | null
+          sync_leads: boolean | null
+          token_expires_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          access_token?: string | null
+          company_id: string
+          connected_at?: string | null
+          connected_by?: string | null
+          created_at?: string | null
+          id?: string
+          last_error?: string | null
+          last_sync_at?: string | null
+          provider: Database["public"]["Enums"]["crm_provider"]
+          refresh_token?: string | null
+          settings?: Json | null
+          status?: Database["public"]["Enums"]["crm_connection_status"]
+          sync_activities?: boolean | null
+          sync_contacts?: boolean | null
+          sync_deals?: boolean | null
+          sync_direction?:
+            | Database["public"]["Enums"]["crm_sync_direction"]
+            | null
+          sync_leads?: boolean | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          access_token?: string | null
+          company_id?: string
+          connected_at?: string | null
+          connected_by?: string | null
+          created_at?: string | null
+          id?: string
+          last_error?: string | null
+          last_sync_at?: string | null
+          provider?: Database["public"]["Enums"]["crm_provider"]
+          refresh_token?: string | null
+          settings?: Json | null
+          status?: Database["public"]["Enums"]["crm_connection_status"]
+          sync_activities?: boolean | null
+          sync_contacts?: boolean | null
+          sync_deals?: boolean | null
+          sync_direction?:
+            | Database["public"]["Enums"]["crm_sync_direction"]
+            | null
+          sync_leads?: boolean | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_connections_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_entity_mappings: {
+        Row: {
+          company_id: string
+          connection_id: string
+          created_at: string | null
+          crm_entity_id: string
+          crm_entity_type: string | null
+          entity_type: Database["public"]["Enums"]["crm_entity_type"]
+          id: string
+          last_synced_at: string | null
+          local_entity_id: string
+          sync_hash: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_id: string
+          connection_id: string
+          created_at?: string | null
+          crm_entity_id: string
+          crm_entity_type?: string | null
+          entity_type: Database["public"]["Enums"]["crm_entity_type"]
+          id?: string
+          last_synced_at?: string | null
+          local_entity_id: string
+          sync_hash?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: string
+          connection_id?: string
+          created_at?: string | null
+          crm_entity_id?: string
+          crm_entity_type?: string | null
+          entity_type?: Database["public"]["Enums"]["crm_entity_type"]
+          id?: string
+          last_synced_at?: string | null
+          local_entity_id?: string
+          sync_hash?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_entity_mappings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_entity_mappings_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "crm_connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_sync_logs: {
+        Row: {
+          company_id: string
+          completed_at: string | null
+          connection_id: string
+          created_at: string | null
+          direction: Database["public"]["Enums"]["crm_sync_direction"]
+          entity_type: Database["public"]["Enums"]["crm_entity_type"]
+          error_details: Json | null
+          error_message: string | null
+          id: string
+          records_created: number | null
+          records_failed: number | null
+          records_processed: number | null
+          records_updated: number | null
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          company_id: string
+          completed_at?: string | null
+          connection_id: string
+          created_at?: string | null
+          direction: Database["public"]["Enums"]["crm_sync_direction"]
+          entity_type: Database["public"]["Enums"]["crm_entity_type"]
+          error_details?: Json | null
+          error_message?: string | null
+          id?: string
+          records_created?: number | null
+          records_failed?: number | null
+          records_processed?: number | null
+          records_updated?: number | null
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          company_id?: string
+          completed_at?: string | null
+          connection_id?: string
+          created_at?: string | null
+          direction?: Database["public"]["Enums"]["crm_sync_direction"]
+          entity_type?: Database["public"]["Enums"]["crm_entity_type"]
+          error_details?: Json | null
+          error_message?: string | null
+          id?: string
+          records_created?: number | null
+          records_failed?: number | null
+          records_processed?: number | null
+          records_updated?: number | null
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_sync_logs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_sync_logs_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "crm_connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_company_associations: {
         Row: {
           company_id: string
@@ -2791,6 +2997,27 @@ export type Database = {
     }
     Enums: {
       app_role: "platform_admin" | "company_admin" | "employee" | "customer"
+      crm_connection_status:
+        | "disconnected"
+        | "pending"
+        | "connected"
+        | "error"
+        | "expired"
+      crm_entity_type:
+        | "contact"
+        | "lead"
+        | "deal"
+        | "activity"
+        | "appointment"
+        | "invoice"
+        | "quote"
+      crm_provider:
+        | "hubspot"
+        | "salesforce"
+        | "zoho"
+        | "pipedrive"
+        | "custom_webhook"
+      crm_sync_direction: "push" | "pull" | "bidirectional"
       employee_job_type:
         | "technician"
         | "booking_agent"
@@ -2928,6 +3155,30 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["platform_admin", "company_admin", "employee", "customer"],
+      crm_connection_status: [
+        "disconnected",
+        "pending",
+        "connected",
+        "error",
+        "expired",
+      ],
+      crm_entity_type: [
+        "contact",
+        "lead",
+        "deal",
+        "activity",
+        "appointment",
+        "invoice",
+        "quote",
+      ],
+      crm_provider: [
+        "hubspot",
+        "salesforce",
+        "zoho",
+        "pipedrive",
+        "custom_webhook",
+      ],
+      crm_sync_direction: ["push", "pull", "bidirectional"],
       employee_job_type: [
         "technician",
         "booking_agent",
