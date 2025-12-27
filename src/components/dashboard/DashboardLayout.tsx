@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -36,17 +37,24 @@ import {
   Truck,
   Briefcase,
   Map,
-  HelpCircle
+  HelpCircle,
+  Clock,
+  ClipboardList,
+  History,
+  User
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/logo.png';
 import { differenceInDays, parseISO } from 'date-fns';
 
+type UserRole = 'platform_admin' | 'company_admin' | 'employee';
+
 interface NavItem {
   label: string;
   icon: React.ElementType;
   href: string;
-  roles: ('platform_admin' | 'company_admin')[];
+  roles: UserRole[];
+  requiredJobTypes?: string[];
 }
 
 interface NavGroup {
@@ -58,25 +66,36 @@ const navGroups: NavGroup[] = [
   {
     label: 'Overview',
     items: [
-      { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
       { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'] },
+      { label: 'My Schedule', icon: Calendar, href: '/employee/appointments', roles: ['employee'] },
+      { label: 'Availability', icon: Clock, href: '/employee/availability', roles: ['employee'] },
     ],
   },
   {
     label: 'AI Consoles',
     items: [
-      { label: 'Customer Engagement', icon: HeadphonesIcon, href: '/dashboard/ai-agent?console=customer', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Field Operations', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Business Operations', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-agent?console=marketing', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Analytics & Insights', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Customer Engagement', icon: HeadphonesIcon, href: '/dashboard/ai-agent?console=customer', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'] },
+      { label: 'Field Operations', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
+      { label: 'Business Operations', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist', 'inventory_manager'] },
+      { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-agent?console=marketing', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['marketing_manager'] },
+      { label: 'Analytics & Insights', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['analytics_manager'] },
+    ],
+  },
+  {
+    label: 'Technician',
+    items: [
+      { label: 'Job Queue', icon: ClipboardList, href: '/technician/jobs', roles: ['employee'], requiredJobTypes: ['technician'] },
+      { label: 'Calendar', icon: Calendar, href: '/technician/calendar', roles: ['employee'], requiredJobTypes: ['technician'] },
+      { label: 'Job History', icon: History, href: '/technician/history', roles: ['employee'], requiredJobTypes: ['technician'] },
     ],
   },
   {
     label: 'Configuration',
     items: [
       { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Profile', icon: User, href: '/technician/profile', roles: ['employee'] },
+      { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'] },
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin', 'company_admin'] },
     ],
   },
@@ -86,7 +105,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const { userRole, signOut, user } = useAuth();
   const { subscriptionTier, subscriptionEnd } = useSubscription();
+  const { jobTypes, hasJobType } = useEmployeeJobRole();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const getTierDisplay = () => {
     const tierConfig: Record<string, { label: string; color: string; icon: typeof Crown | null }> = {
@@ -105,10 +126,21 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const tierDisplay = getTierDisplay();
   const daysRemaining = getDaysRemaining();
 
-  // Filter groups and items based on user role (admins only)
+  // Filter groups and items based on user role and job types
   const filteredNavGroups = navGroups.map(group => ({
     ...group,
-    items: group.items.filter(item => userRole && (userRole === 'platform_admin' || userRole === 'company_admin') && item.roles.includes(userRole))
+    items: group.items.filter(item => {
+      // Check basic role permission
+      if (!userRole || !item.roles.includes(userRole as UserRole)) return false;
+      
+      // For employees, check job type requirements if specified
+      if (userRole === 'employee' && item.requiredJobTypes) {
+        return item.requiredJobTypes.some(jt => hasJobType(jt as any));
+      }
+      
+      // Admins see all items they have role access to
+      return true;
+    })
   })).filter(group => group.items.length > 0);
 
   const handleSignOut = async () => {
@@ -169,7 +201,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 )}
                 {group.items.map((item) => {
                   const Icon = item.icon;
-                  const isActive = window.location.pathname === item.href;
+                  const isActive = location.pathname + location.search === item.href || 
+                    (location.pathname === item.href.split('?')[0] && item.href.includes('?') && location.search.includes(item.href.split('?')[1]?.split('=')[1] || ''));
                   const displayLabel = item.label;
                   
                   return (
