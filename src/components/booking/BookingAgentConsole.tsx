@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCRMConnection } from '@/hooks/useCRMConnection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -12,6 +13,7 @@ import { BookingForm, BookingData } from '@/components/ai/BookingForm';
 import { FeedbackForm } from '@/components/ai/FeedbackForm';
 import { QuoteForm, QuoteData } from '@/components/ai/QuoteForm';
 import { ReviewForm } from '@/components/ai/ReviewForm';
+import { CRMStatusIndicator, CRMSyncButton } from '@/components/crm/CRMStatusIndicator';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Send, 
@@ -80,6 +82,9 @@ interface BookingAgentConsoleProps {
 export function BookingAgentConsole({ companyId, className }: BookingAgentConsoleProps) {
   const { user, companyId: authCompanyId } = useAuth();
   const effectiveCompanyId = companyId || authCompanyId;
+  
+  // CRM integration hook - non-blocking sync
+  const { isConnected: isCRMConnected, trySyncCustomer, trySyncAppointment, isSyncingCustomer } = useCRMConnection();
   
   const [inputValue, setInputValue] = useState('');
   const [showAppointmentSelector, setShowAppointmentSelector] = useState(false);
@@ -293,6 +298,19 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
 
       toast.success('Appointment booked successfully!', {
         description: `${bookingData.customerName} - ${format(appointmentDate, 'MMM d, yyyy h:mm a')}`
+      });
+
+      // Non-blocking CRM sync - sync customer and appointment if CRM is connected
+      trySyncCustomer(
+        '', // No email in this form
+        bookingData.customerName,
+        bookingData.customerPhone
+      );
+      
+      trySyncAppointment({
+        service_type: selectedServiceNames,
+        datetime: appointmentDate.toISOString(),
+        notes: bookingData.notes,
       });
 
       setShowBookingForm(false);
