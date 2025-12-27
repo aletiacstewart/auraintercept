@@ -558,8 +558,10 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
               {showQuoteForm && (
                 <QuoteForm
                   services={services || []}
+                  company={company}
                   onSubmit={handleQuoteSubmit}
                   onCancel={handleHome}
+                  onSelectDifferentCompany={allowCompanySelection ? handleBackToCompanySelector : undefined}
                 />
               )}
 
