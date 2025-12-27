@@ -32,7 +32,9 @@ import { ReviewForm } from './ReviewForm';
 import { BookingForm, BookingData } from './BookingForm';
 import { QuoteForm, QuoteData } from './QuoteForm';
 import { TrackAppointmentForm, TrackingData } from './TrackAppointmentForm';
+import { AppointmentTrackingView } from './AppointmentTrackingView';
 import { BillingLookupForm } from '@/components/billing/forms/BillingLookupForm';
+import { InvoiceDetailView } from '@/components/billing/forms/InvoiceDetailView';
 import { CompanySelector } from './CompanySelector';
 import { format } from 'date-fns';
 
@@ -117,6 +119,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [showTrackForm, setShowTrackForm] = useState(false);
   const [showBillingForm, setShowBillingForm] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
 
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
@@ -354,6 +357,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     setShowQuoteForm(false);
     setShowTrackForm(false);
     setShowBillingForm(false);
+    setSelectedInvoice(null);
     setActiveTab('chat');
   };
 
@@ -565,17 +569,25 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                 />
               )}
 
-              {showTrackForm && (
-                <TrackAppointmentForm
-                  onSubmit={handleTrackSubmit}
+              {showTrackForm && companyId && (
+                <AppointmentTrackingView
+                  companyId={companyId}
                   onCancel={handleHome}
                 />
               )}
 
-              {showBillingForm && companyId && (
+              {showBillingForm && companyId && !selectedInvoice && (
                 <BillingLookupForm
                   companyId={companyId}
                   onCancel={handleHome}
+                  onSelectInvoice={(invoice) => setSelectedInvoice(invoice)}
+                />
+              )}
+
+              {showBillingForm && selectedInvoice && (
+                <InvoiceDetailView
+                  invoice={selectedInvoice}
+                  onBack={() => setSelectedInvoice(null)}
                 />
               )}
 
