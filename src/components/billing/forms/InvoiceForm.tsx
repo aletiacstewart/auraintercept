@@ -47,6 +47,18 @@ interface SelectedJob {
   status: string;
 }
 
+interface Service {
+  id: string;
+  name: string;
+  price: number | null;
+  flat_fee: number | null;
+  hourly_rate: number | null;
+  duration_minutes: number | null;
+}
+
+const EMPTY_APPOINTMENTS: SelectedJob[] = [];
+const EMPTY_SERVICES: Service[] = [];
+
 interface InvoiceFormProps {
   companyId: string;
   onSubmit?: (data: InvoiceFormData) => void;
@@ -99,7 +111,7 @@ export function InvoiceForm({
   });
 
   // Search for completed jobs/appointments
-  const { data: appointments = [], isLoading: searchingJobs } = useQuery({
+  const { data: appointmentsData, isLoading: searchingJobs } = useQuery({
     queryKey: ['job-search', companyId, searchQuery],
     queryFn: async () => {
       if (!searchQuery.trim()) return [];
@@ -116,8 +128,10 @@ export function InvoiceForm({
     enabled: !!companyId && searchQuery.length >= 2,
   });
 
+  const appointments = (appointmentsData ?? EMPTY_APPOINTMENTS) as SelectedJob[];
+
   // Fetch services for price lookup and manual add
-  const { data: services = [] } = useQuery({
+  const { data: servicesData } = useQuery({
     queryKey: ['services', companyId],
     queryFn: async () => {
       const { data } = await supabase
@@ -130,11 +144,12 @@ export function InvoiceForm({
     enabled: !!companyId,
   });
 
+  const services = (servicesData ?? EMPTY_SERVICES) as Service[];
+
   // Auto-populate line items when jobs are selected
   useEffect(() => {
-    const currentJobIds = selectedJobs.map(j => j.id).sort().join(',');
-    const prevJobIds = prevSelectedJobsRef.current.sort().join(',');
-    
+    const currentJobIds = [...selectedJobs].map(j => j.id).sort().join(',');
+    const prevJobIds = [...prevSelectedJobsRef.current].sort().join(',');
     // Only run if selected jobs actually changed
     if (currentJobIds === prevJobIds) {
       return;
