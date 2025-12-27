@@ -131,3 +131,6 @@ verify_jwt = false
 
 [functions.parse-faq-document]
 verify_jwt = true
+
+[functions.crm-adapter]
+verify_jwt = true
