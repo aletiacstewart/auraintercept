@@ -1,13 +1,17 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAIAgentOrchestrator } from '@/hooks/useAIAgentOrchestrator';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   Send, 
   Navigation, 
@@ -23,7 +27,12 @@ import {
   Loader2,
   X,
   Calendar,
-  LucideIcon
+  LucideIcon,
+  Zap,
+  ChevronRight,
+  Play,
+  Lock,
+  CheckSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -36,6 +45,14 @@ import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { QuickActionBar } from '@/components/ai/chat/QuickActionGrid';
 import { TechnicianMap } from './TechnicianMap';
 import { getAgentStyle } from '@/lib/agentStyles';
+
+// Field Operations AI Agent icons and descriptions
+const FIELD_OPS_AGENT_CONFIG: Record<string, { icon: LucideIcon; description: string }> = {
+  dispatch: { icon: Truck, description: 'Assigns technicians to jobs and manages dispatching workflow' },
+  route: { icon: Navigation, description: 'Optimizes routes and provides navigation for field technicians' },
+  eta: { icon: Clock, description: 'Calculates and communicates estimated arrival times to customers' },
+  checkin: { icon: CheckSquare, description: 'Manages arrival confirmations and job check-in processes' },
+};
 
 const FIELD_OPS_AGENTS = [
   { id: 'accept', name: 'Accept Job', color: 'bg-blue-100', textColor: 'text-blue-700' },
@@ -50,6 +67,7 @@ const FIELD_OPS_AGENTS = [
 // Tabs for the console - include all functional tabs
 const TABS = [
   { id: 'chat', label: 'Home', icon: MessageSquare },
+  { id: 'agents', label: 'Agents', icon: Bot },
   { id: 'directions', label: 'Directions', icon: Navigation },
 ];
 
@@ -101,10 +119,19 @@ type SelectorMode = 'accept' | 'directions' | 'enroute' | 'eta' | 'arrived' | 'c
 export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }: FieldOpsAgentConsoleProps) {
   const { user, companyId: authCompanyId, userRole } = useAuth();
   const effectiveCompanyId = companyId || authCompanyId;
+  const navigate = useNavigate();
   
   // Only employees can perform job actions (accept, enroute, arrived, complete)
   const isEmployee = userRole === 'employee';
   const canPerformJobActions = isEmployee;
+  const canManageAgents = userRole === 'platform_admin' || userRole === 'company_admin';
+  
+  // Get field operations agents
+  const { agents, loading: agentsLoading, toggleAgent } = useAIAgentOrchestrator();
+  
+  const fieldOpsAgents = useMemo(() => {
+    return agents.filter(agent => agent.category === 'field_operations');
+  }, [agents]);
   
   // Filter quick actions based on role - company/platform admins can only view, not perform job actions
   const availableActions = canPerformJobActions 
@@ -783,6 +810,109 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
               })}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Agents Tab - Field Operations AI Agents */}
+      {activeTab === 'agents' && (
+        <div className="flex-1 overflow-auto p-4">
+          <div className="space-y-4">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-green-500/10">
+                  <Truck className="h-5 w-5 text-green-500" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Field Operations Agents</h3>
+                  <p className="text-xs text-muted-foreground">
+                    AI agents for dispatching, routing, and field service
+                  </p>
+                </div>
+              </div>
+              <Badge variant="outline">
+                {fieldOpsAgents.filter(a => a.is_enabled).length}/{fieldOpsAgents.length} Active
+              </Badge>
+            </div>
+
+            {/* Agent Cards */}
+            {agentsLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : fieldOpsAgents.length === 0 ? (
+              <div className="text-center py-8 text-sm text-muted-foreground">
+                No field operations agents configured
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {fieldOpsAgents.map((agent) => {
+                  const config = FIELD_OPS_AGENT_CONFIG[agent.type] || { icon: Bot, description: '' };
+                  const AgentIcon = config.icon;
+                  
+                  return (
+                    <Card key={agent.type} className="hover:shadow-md transition-all">
+                      <CardHeader className="pb-2">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="p-1.5 rounded-lg bg-green-500/10">
+                              <AgentIcon className="h-4 w-4 text-green-500" />
+                            </div>
+                            <div>
+                              <CardTitle className="text-sm">{agent.name}</CardTitle>
+                              <CardDescription className="text-[10px]">Phase {agent.phase}</CardDescription>
+                            </div>
+                          </div>
+                          {canManageAgents ? (
+                            <Switch 
+                              checked={agent.is_enabled} 
+                              onCheckedChange={(enabled) => toggleAgent(agent.type, enabled)}
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          ) : (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex items-center gap-1 text-muted-foreground">
+                                  <Lock className="h-3 w-3" />
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Only admins can toggle agents</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <p className="text-xs text-muted-foreground mb-2">{config.description}</p>
+                        <div className="flex items-center justify-between">
+                          <Badge variant={agent.is_enabled ? 'default' : 'secondary'} className="text-[10px]">
+                            {agent.is_enabled ? (
+                              <>
+                                <Zap className="h-2.5 w-2.5 mr-1" />
+                                Active
+                              </>
+                            ) : (
+                              'Disabled'
+                            )}
+                          </Badge>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-6 text-xs text-primary"
+                            onClick={() => navigate(`/dashboard/ai-agents/${agent.type}`)}
+                          >
+                            Configure
+                            <ChevronRight className="h-3 w-3 ml-1" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
