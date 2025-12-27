@@ -115,6 +115,8 @@ export function BillingAgentConsole({ companyId, className }: BillingAgentConsol
 
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
+    userId: user?.id,
+    initialAgent: 'invoice',
     onAgentChange: (agent) => {
       console.log('[Billing] Agent changed to:', agent);
     },
