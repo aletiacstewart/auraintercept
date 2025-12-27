@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Receipt, Send, ArrowLeft, Mail, MessageSquare, Loader2, Search, User, Calendar, Plus, X } from 'lucide-react';
+import { Receipt, Send, ArrowLeft, Mail, MessageSquare, Loader2, Search, User, Calendar, Plus, X, Check } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
@@ -442,7 +442,14 @@ export function InvoiceForm({
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Checkbox checked={isSelected} className="pointer-events-none" aria-hidden="true" />
+                      <span
+                        aria-hidden="true"
+                        className={`inline-flex h-4 w-4 items-center justify-center rounded-sm border bg-background ${
+                          isSelected ? 'border-primary text-primary' : 'border-input text-muted-foreground'
+                        }`}
+                      >
+                        {isSelected ? <Check className="h-3 w-3" /> : null}
+                      </span>
                       <User className="h-3.5 w-3.5 text-muted-foreground" />
                       <span className="font-medium">{apt.customer_name}</span>
                     </div>
