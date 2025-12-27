@@ -70,7 +70,6 @@ const FIELD_OPS_AGENTS = [
 const TABS = [
   { id: 'chat', label: 'Home', icon: MessageSquare },
   { id: 'agents', label: 'Agents', icon: Bot },
-  { id: 'directions', label: 'Directions', icon: Navigation },
 ];
 
 interface FieldOpsQuickAction {
