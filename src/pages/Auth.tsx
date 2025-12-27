@@ -572,7 +572,7 @@ export default function Auth() {
                       className={mode === 'company' ? 'gradient-primary' : ''}
                       onClick={() => navigate('/auth?mode=company')}
                     >
-                      <Building2 className="w-4 h-4 mr-1" /> Business
+                      <Building2 className="w-4 h-4 mr-1" /> Company
                     </Button>
                     <Button 
                       variant={mode === 'platform_admin' ? 'default' : 'ghost'} 
