@@ -155,9 +155,11 @@ export function InvoiceForm({
       };
     });
 
-    // Keep any manually added items (those without appointmentId)
-    const manualItems = lineItems.filter(item => !item.appointmentId && item.description);
-    setLineItems([...jobLineItems, ...manualItems]);
+    setLineItems(prev => {
+      // Keep any manually added items (those without appointmentId)
+      const manualItems = prev.filter(item => !item.appointmentId && item.description);
+      return [...jobLineItems, ...manualItems];
+    });
   }, [selectedJobs, services]);
 
   const createInvoiceMutation = useMutation({
