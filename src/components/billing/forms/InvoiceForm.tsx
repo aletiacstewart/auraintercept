@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -26,11 +26,15 @@ export interface InvoiceFormData {
 }
 
 interface LineItem {
+  id: string;
   description: string;
   quantity: number;
   unit_price: number;
   appointmentId?: string | null;
 }
+
+let lineItemIdCounter = 0;
+const generateLineItemId = () => `line-item-${++lineItemIdCounter}`;
 
 interface SelectedJob {
   id: string;
@@ -77,8 +81,9 @@ export function InvoiceForm({
   const [taxRate, setTaxRate] = useState(0);
   const [dueDays, setDueDays] = useState(30);
   const [lineItems, setLineItems] = useState<LineItem[]>([
-    { description: '', quantity: 1, unit_price: 0, appointmentId: null }
+    { id: generateLineItemId(), description: '', quantity: 1, unit_price: 0, appointmentId: null }
   ]);
+  const prevSelectedJobsRef = useRef<string[]>([]);
 
   // Get existing invoice count for generating invoice number
   const { data: invoiceCount = 0 } = useQuery({
@@ -127,6 +132,15 @@ export function InvoiceForm({
 
   // Auto-populate line items when jobs are selected
   useEffect(() => {
+    const currentJobIds = selectedJobs.map(j => j.id).sort().join(',');
+    const prevJobIds = prevSelectedJobsRef.current.sort().join(',');
+    
+    // Only run if selected jobs actually changed
+    if (currentJobIds === prevJobIds) {
+      return;
+    }
+    prevSelectedJobsRef.current = selectedJobs.map(j => j.id);
+
     if (selectedJobs.length === 0) {
       return;
     }
@@ -148,6 +162,7 @@ export function InvoiceForm({
         : 0;
       
       return {
+        id: `job-${job.id}`,
         description: job.service_type || 'Service',
         quantity: 1,
         unit_price: price,
@@ -249,22 +264,23 @@ export function InvoiceForm({
     setLineItems(lineItems.filter(item => item.appointmentId !== jobId));
   };
 
-  const addLineItem = () => {
-    setLineItems([...lineItems, { description: '', quantity: 1, unit_price: 0, appointmentId: null }]);
-  };
+  const addLineItem = useCallback(() => {
+    setLineItems(prev => [...prev, { id: generateLineItemId(), description: '', quantity: 1, unit_price: 0, appointmentId: null }]);
+  }, []);
 
-  const addServiceLineItem = (serviceId: string) => {
+  const addServiceLineItem = useCallback((serviceId: string) => {
     const service = services.find(s => s.id === serviceId);
     if (service) {
       const price = service.price || service.flat_fee || service.hourly_rate || 0;
-      setLineItems([...lineItems, { 
+      setLineItems(prev => [...prev, { 
+        id: generateLineItemId(),
         description: service.name, 
         quantity: 1, 
         unit_price: price,
         appointmentId: null 
       }]);
     }
-  };
+  }, [services]);
 
   const updateLineItem = (index: number, field: string, value: string | number) => {
     const newItems = [...lineItems];
@@ -292,7 +308,8 @@ export function InvoiceForm({
     setServiceType('');
     setAmount('');
     setNotes('');
-    setLineItems([{ description: '', quantity: 1, unit_price: 0, appointmentId: null }]);
+    setLineItems([{ id: generateLineItemId(), description: '', quantity: 1, unit_price: 0, appointmentId: null }]);
+    prevSelectedJobsRef.current = [];
     setTaxRate(0);
     setDueDays(30);
   };
@@ -523,7 +540,7 @@ export function InvoiceForm({
               </div>
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {lineItems.map((item, index) => (
-                  <div key={index} className="grid grid-cols-12 gap-1 items-center">
+                  <div key={item.id} className="grid grid-cols-12 gap-1 items-center">
                     <Input
                       className="col-span-5 h-8 text-xs"
                       placeholder="Description"
