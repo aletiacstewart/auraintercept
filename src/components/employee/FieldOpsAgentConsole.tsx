@@ -32,7 +32,9 @@ import {
   ChevronRight,
   Play,
   Lock,
-  CheckSquare
+  CheckSquare,
+  UserCheck,
+  Wrench
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -79,15 +81,18 @@ interface FieldOpsQuickAction {
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
 }
 
-// Job action IDs that require employee role (not available to company/platform admins)
-const EMPLOYEE_ONLY_ACTIONS = ['enroute', 'eta', 'eta-agent', 'arrived', 'complete'];
+// Job action IDs that require employee role (not available to company/platform admins for execution)
+const EMPLOYEE_ONLY_ACTIONS = ['accept', 'enroute', 'eta', 'eta-agent', 'arrived', 'start', 'complete'];
 
+// All 9 Field Operations AI Agent quick actions
 const QUICK_ACTIONS: FieldOpsQuickAction[] = [
+  { id: 'accept', label: 'Accept Job', icon: UserCheck, message: "I want to accept my next assigned job." },
   { id: 'directions', label: 'Get Directions', icon: Navigation, message: "Get directions to my next job" },
-  { id: 'enroute', label: 'En Route', icon: Truck, message: "I'm ready to head out. Mark me as en route to my next job and notify the customer." },
+  { id: 'enroute', label: 'Mark En Route', icon: Truck, message: "I'm ready to head out. Mark me as en route to my next job and notify the customer." },
   { id: 'eta', label: 'Update ETA', icon: Clock, message: "I need to update my ETA for my current job." },
   { id: 'eta-agent', label: 'ETA Agent', icon: Bot, message: "I need help with ETA updates and customer notifications. Can you check my current jobs and help me calculate and send accurate ETAs to customers?" },
-  { id: 'arrived', label: 'Arrived', icon: MapPin, message: "I have arrived at the customer's location. Please mark me as arrived and notify the customer." },
+  { id: 'arrived', label: 'Marked Arrived', icon: MapPin, message: "I have arrived at the customer's location. Please mark me as arrived and notify the customer." },
+  { id: 'start', label: 'Start Job', icon: Wrench, message: "I'm starting work on the job now." },
   { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: "I have finished the job. Please mark it as completed and notify the customer.", variant: 'destructive' },
   { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: "Contact dispatch" },
 ];
@@ -114,7 +119,7 @@ interface FieldOpsAgentConsoleProps {
   className?: string;
 }
 
-type SelectorMode = 'accept' | 'directions' | 'enroute' | 'eta' | 'arrived' | 'complete' | null;
+type SelectorMode = 'accept' | 'directions' | 'enroute' | 'eta' | 'arrived' | 'start' | 'complete' | null;
 
 export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }: FieldOpsAgentConsoleProps) {
   const { user, companyId: authCompanyId, userRole } = useAuth();
@@ -133,10 +138,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     return agents.filter(agent => agent.category === 'field_operations');
   }, [agents]);
   
-  // Filter quick actions based on role - company/platform admins can only view, not perform job actions
-  const availableActions = canPerformJobActions 
-    ? QUICK_ACTIONS 
-    : QUICK_ACTIONS.filter(action => !EMPLOYEE_ONLY_ACTIONS.includes(action.id));
+  // Show ALL quick actions to everyone - company/platform admins see them but with visual indicators
+  // All 9 Field Ops agents are visible to everyone for consistency
+  const availableActions = QUICK_ACTIONS;
   
   const [inputValue, setInputValue] = useState('');
   const [selectorMode, setSelectorMode] = useState<SelectorMode>(null);
@@ -228,6 +232,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (selectorMode === 'arrived') {
       return assignedJobs.filter(job => job.status === 'en_route');
     }
+    if (selectorMode === 'start') {
+      return assignedJobs.filter(job => job.status === 'arrived');
+    }
     if (selectorMode === 'complete') {
       return assignedJobs.filter(job => ['arrived', 'in_progress'].includes(job.status));
     }
@@ -251,9 +258,54 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   };
 
   const handleQuickAction = useCallback(async (action: FieldOpsQuickAction) => {
+    // Check if this is an employee-only action and user is not an employee
+    const isEmployeeOnlyAction = EMPLOYEE_ONLY_ACTIONS.includes(action.id);
+    if (isEmployeeOnlyAction && !canPerformJobActions) {
+      toast.info('Employee Action', { 
+        description: 'This action is only available to field technicians' 
+      });
+      return;
+    }
+    
+    // Accept job opens job selector
+    if (action.id === 'accept') {
+      setSelectorMode('accept');
+      return;
+    }
+    
     // Directions opens job selector to pick which job to navigate to
     if (action.id === 'directions') {
       setSelectorMode('directions');
+      return;
+    }
+    
+    // En Route opens job selector
+    if (action.id === 'enroute') {
+      setSelectorMode('enroute');
+      return;
+    }
+    
+    // Update ETA opens job selector
+    if (action.id === 'eta') {
+      setSelectorMode('eta');
+      return;
+    }
+    
+    // Arrived opens job selector
+    if (action.id === 'arrived') {
+      setSelectorMode('arrived');
+      return;
+    }
+    
+    // Start Job opens job selector
+    if (action.id === 'start') {
+      setSelectorMode('start');
+      return;
+    }
+    
+    // Complete job opens job selector
+    if (action.id === 'complete') {
+      setSelectorMode('complete');
       return;
     }
     
@@ -273,7 +325,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     
     // All other actions send message to AI agent which will use tools
     await sendMessage(action.message);
-  }, [sendMessage, companyData]);
+  }, [sendMessage, companyData, canPerformJobActions]);
 
   const handleSelectJobForDirections = useCallback((job: JobAssignment) => {
     const address = job.customer_address || job.appointments?.customer_address;
@@ -463,6 +515,37 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     }
   }, [processingJobId, refetchJobs, sendMessage]);
 
+  const handleSelectJobForStart = useCallback(async (job: JobAssignment) => {
+    if (processingJobId) return;
+    
+    setProcessingJobId(job.id);
+    const customerName = job.appointments?.customer_name || 'Customer';
+    
+    try {
+      const { error: updateError } = await supabase
+        .from('job_assignments')
+        .update({ 
+          status: 'in_progress',
+          started_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', job.id);
+
+      if (updateError) throw updateError;
+
+      toast.success(`Job started for ${customerName}`, { description: 'Work in progress' });
+      refetchJobs();
+      setSelectorMode(null);
+      sendMessage(`I have started working on the ${job.appointments?.service_type || 'service'} job for ${customerName}.`);
+
+    } catch (error) {
+      console.error('Start job error:', error);
+      toast.error('Failed to start job', { description: 'Please try again' });
+    } finally {
+      setProcessingJobId(null);
+    }
+  }, [processingJobId, refetchJobs, sendMessage]);
+
   const handleSelectJobForComplete = useCallback(async (job: JobAssignment) => {
     if (processingJobId) return;
     
@@ -615,6 +698,15 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         emptyMessage: 'No en route appointments to mark as arrived',
         actionIcon: MapPin,
         onSelect: handleSelectJobForArrived,
+      };
+    }
+    if (selectorMode === 'start') {
+      return {
+        icon: Wrench,
+        title: 'Select job to start working on',
+        emptyMessage: 'No arrived jobs to start',
+        actionIcon: Wrench,
+        onSelect: handleSelectJobForStart,
       };
     }
     if (selectorMode === 'complete') {
