@@ -218,14 +218,6 @@ class HubSpotAdapter implements CRMAdapter {
   }
 
   async logActivity(activity: CRMActivity): Promise<CRMActivity> {
-    const engagementType = {
-      call: 'CALL',
-      email: 'EMAIL',
-      meeting: 'MEETING',
-      note: 'NOTE',
-      task: 'TASK',
-    }[activity.type] || 'NOTE';
-
     const data = await this.request('/crm/v3/objects/notes', {
       method: 'POST',
       body: JSON.stringify({
@@ -273,38 +265,701 @@ class HubSpotAdapter implements CRMAdapter {
   }
 }
 
-// Salesforce Adapter Implementation (placeholder)
+// Salesforce Adapter Implementation
 class SalesforceAdapter implements CRMAdapter {
   private accessToken: string;
   private instanceUrl: string;
+  private apiVersion = 'v59.0';
 
   constructor(accessToken: string, instanceUrl: string) {
     this.accessToken = accessToken;
-    this.instanceUrl = instanceUrl;
+    this.instanceUrl = instanceUrl.replace(/\/$/, '');
+  }
+
+  private async request(endpoint: string, options: RequestInit = {}) {
+    const url = `${this.instanceUrl}/services/data/${this.apiVersion}${endpoint}`;
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Authorization': `Bearer ${this.accessToken}`,
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Salesforce API error: ${response.status} - ${error}`);
+    }
+
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
   }
 
   async testConnection(): Promise<{ success: boolean; error?: string }> {
-    return { success: false, error: 'Salesforce adapter not yet implemented' };
+    try {
+      await this.request('/sobjects/Contact/describe');
+      return { success: true };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : 'Unknown error';
+      return { success: false, error };
+    }
   }
 
-  async getContacts(): Promise<CRMContact[]> { return []; }
-  async getContact(): Promise<CRMContact | null> { return null; }
-  async createContact(contact: CRMContact): Promise<CRMContact> { return contact; }
-  async updateContact(_id: string, contact: Partial<CRMContact>): Promise<CRMContact> { return contact as CRMContact; }
-  async getDeals(): Promise<CRMDeal[]> { return []; }
-  async createDeal(deal: CRMDeal): Promise<CRMDeal> { return deal; }
-  async updateDeal(_id: string, deal: Partial<CRMDeal>): Promise<CRMDeal> { return deal as CRMDeal; }
-  async logActivity(activity: CRMActivity): Promise<CRMActivity> { return activity; }
-  async getActivities(): Promise<CRMActivity[]> { return []; }
+  async getContacts(limit = 100): Promise<CRMContact[]> {
+    const query = encodeURIComponent(`SELECT Id, Email, FirstName, LastName, Phone, Account.Name FROM Contact LIMIT ${limit}`);
+    const data = await this.request(`/query?q=${query}`);
+    return (data.records || []).map((c: any) => ({
+      id: c.Id,
+      email: c.Email,
+      firstName: c.FirstName,
+      lastName: c.LastName,
+      phone: c.Phone,
+      company: c.Account?.Name,
+      properties: c,
+    }));
+  }
+
+  async getContact(id: string): Promise<CRMContact | null> {
+    try {
+      const c = await this.request(`/sobjects/Contact/${id}`);
+      return {
+        id: c.Id,
+        email: c.Email,
+        firstName: c.FirstName,
+        lastName: c.LastName,
+        phone: c.Phone,
+        company: c.Account?.Name,
+        properties: c,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  async createContact(contact: CRMContact): Promise<CRMContact> {
+    const data = await this.request('/sobjects/Contact', {
+      method: 'POST',
+      body: JSON.stringify({
+        Email: contact.email,
+        FirstName: contact.firstName,
+        LastName: contact.lastName || contact.firstName || 'Unknown',
+        Phone: contact.phone,
+      }),
+    });
+    return {
+      id: data.id,
+      email: contact.email,
+      firstName: contact.firstName,
+      lastName: contact.lastName,
+      phone: contact.phone,
+      company: contact.company,
+    };
+  }
+
+  async updateContact(id: string, contact: Partial<CRMContact>): Promise<CRMContact> {
+    const updateData: Record<string, unknown> = {};
+    if (contact.email) updateData.Email = contact.email;
+    if (contact.firstName) updateData.FirstName = contact.firstName;
+    if (contact.lastName) updateData.LastName = contact.lastName;
+    if (contact.phone) updateData.Phone = contact.phone;
+
+    await this.request(`/sobjects/Contact/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updateData),
+    });
+
+    return { id, ...contact } as CRMContact;
+  }
+
+  async getDeals(limit = 100): Promise<CRMDeal[]> {
+    const query = encodeURIComponent(`SELECT Id, Name, Amount, StageName FROM Opportunity LIMIT ${limit}`);
+    const data = await this.request(`/query?q=${query}`);
+    return (data.records || []).map((d: any) => ({
+      id: d.Id,
+      name: d.Name,
+      amount: d.Amount,
+      stage: d.StageName,
+      properties: d,
+    }));
+  }
+
+  async createDeal(deal: CRMDeal): Promise<CRMDeal> {
+    const data = await this.request('/sobjects/Opportunity', {
+      method: 'POST',
+      body: JSON.stringify({
+        Name: deal.name,
+        Amount: deal.amount,
+        StageName: deal.stage || 'Prospecting',
+        CloseDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      }),
+    });
+    return {
+      id: data.id,
+      name: deal.name,
+      amount: deal.amount,
+      stage: deal.stage,
+    };
+  }
+
+  async updateDeal(id: string, deal: Partial<CRMDeal>): Promise<CRMDeal> {
+    const updateData: Record<string, unknown> = {};
+    if (deal.name) updateData.Name = deal.name;
+    if (deal.amount !== undefined) updateData.Amount = deal.amount;
+    if (deal.stage) updateData.StageName = deal.stage;
+
+    await this.request(`/sobjects/Opportunity/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updateData),
+    });
+
+    return { id, ...deal } as CRMDeal;
+  }
+
+  async logActivity(activity: CRMActivity): Promise<CRMActivity> {
+    const taskData: Record<string, unknown> = {
+      Subject: activity.subject || `${activity.type} Activity`,
+      Description: activity.body,
+      Status: 'Completed',
+      Priority: 'Normal',
+      ActivityDate: activity.timestamp ? new Date(activity.timestamp).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+    };
+
+    if (activity.contactId) {
+      taskData.WhoId = activity.contactId;
+    }
+
+    const data = await this.request('/sobjects/Task', {
+      method: 'POST',
+      body: JSON.stringify(taskData),
+    });
+
+    return {
+      id: data.id,
+      ...activity,
+    };
+  }
+
+  async getActivities(contactId: string): Promise<CRMActivity[]> {
+    const query = encodeURIComponent(`SELECT Id, Subject, Description, Status, ActivityDate FROM Task WHERE WhoId = '${contactId}' ORDER BY ActivityDate DESC LIMIT 50`);
+    const data = await this.request(`/query?q=${query}`);
+    return (data.records || []).map((t: any) => ({
+      id: t.Id,
+      type: 'task' as const,
+      subject: t.Subject,
+      body: t.Description,
+      contactId,
+      timestamp: t.ActivityDate,
+    }));
+  }
+}
+
+// Zoho CRM Adapter Implementation
+class ZohoAdapter implements CRMAdapter {
+  private accessToken: string;
+  private baseUrl: string;
+
+  constructor(accessToken: string, datacenter: string = 'com') {
+    this.accessToken = accessToken;
+    this.baseUrl = `https://www.zohoapis.${datacenter}/crm/v3`;
+  }
+
+  private async request(endpoint: string, options: RequestInit = {}) {
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      ...options,
+      headers: {
+        'Authorization': `Zoho-oauthtoken ${this.accessToken}`,
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Zoho CRM API error: ${response.status} - ${error}`);
+    }
+
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+  }
+
+  async testConnection(): Promise<{ success: boolean; error?: string }> {
+    try {
+      await this.request('/Contacts?per_page=1');
+      return { success: true };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : 'Unknown error';
+      return { success: false, error };
+    }
+  }
+
+  async getContacts(limit = 100): Promise<CRMContact[]> {
+    const data = await this.request(`/Contacts?per_page=${limit}`);
+    return (data?.data || []).map((c: any) => ({
+      id: c.id,
+      email: c.Email,
+      firstName: c.First_Name,
+      lastName: c.Last_Name,
+      phone: c.Phone,
+      company: c.Account_Name?.name,
+      properties: c,
+    }));
+  }
+
+  async getContact(id: string): Promise<CRMContact | null> {
+    try {
+      const data = await this.request(`/Contacts/${id}`);
+      const c = data?.data?.[0];
+      if (!c) return null;
+      return {
+        id: c.id,
+        email: c.Email,
+        firstName: c.First_Name,
+        lastName: c.Last_Name,
+        phone: c.Phone,
+        company: c.Account_Name?.name,
+        properties: c,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  async createContact(contact: CRMContact): Promise<CRMContact> {
+    const data = await this.request('/Contacts', {
+      method: 'POST',
+      body: JSON.stringify({
+        data: [{
+          Email: contact.email,
+          First_Name: contact.firstName,
+          Last_Name: contact.lastName || contact.firstName || 'Unknown',
+          Phone: contact.phone,
+        }],
+      }),
+    });
+    return {
+      id: data?.data?.[0]?.details?.id,
+      email: contact.email,
+      firstName: contact.firstName,
+      lastName: contact.lastName,
+      phone: contact.phone,
+      company: contact.company,
+    };
+  }
+
+  async updateContact(id: string, contact: Partial<CRMContact>): Promise<CRMContact> {
+    const updateData: Record<string, unknown> = {};
+    if (contact.email) updateData.Email = contact.email;
+    if (contact.firstName) updateData.First_Name = contact.firstName;
+    if (contact.lastName) updateData.Last_Name = contact.lastName;
+    if (contact.phone) updateData.Phone = contact.phone;
+
+    await this.request(`/Contacts/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ data: [updateData] }),
+    });
+
+    return { id, ...contact } as CRMContact;
+  }
+
+  async getDeals(limit = 100): Promise<CRMDeal[]> {
+    const data = await this.request(`/Deals?per_page=${limit}`);
+    return (data?.data || []).map((d: any) => ({
+      id: d.id,
+      name: d.Deal_Name,
+      amount: d.Amount,
+      stage: d.Stage,
+      properties: d,
+    }));
+  }
+
+  async createDeal(deal: CRMDeal): Promise<CRMDeal> {
+    const data = await this.request('/Deals', {
+      method: 'POST',
+      body: JSON.stringify({
+        data: [{
+          Deal_Name: deal.name,
+          Amount: deal.amount,
+          Stage: deal.stage || 'Qualification',
+          Closing_Date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        }],
+      }),
+    });
+    return {
+      id: data?.data?.[0]?.details?.id,
+      name: deal.name,
+      amount: deal.amount,
+      stage: deal.stage,
+    };
+  }
+
+  async updateDeal(id: string, deal: Partial<CRMDeal>): Promise<CRMDeal> {
+    const updateData: Record<string, unknown> = {};
+    if (deal.name) updateData.Deal_Name = deal.name;
+    if (deal.amount !== undefined) updateData.Amount = deal.amount;
+    if (deal.stage) updateData.Stage = deal.stage;
+
+    await this.request(`/Deals/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ data: [updateData] }),
+    });
+
+    return { id, ...deal } as CRMDeal;
+  }
+
+  async logActivity(activity: CRMActivity): Promise<CRMActivity> {
+    const noteData: Record<string, unknown> = {
+      Note_Title: activity.subject || `${activity.type} Activity`,
+      Note_Content: activity.body,
+    };
+
+    if (activity.contactId) {
+      noteData.Parent_Id = activity.contactId;
+      noteData.se_module = 'Contacts';
+    }
+
+    const data = await this.request('/Notes', {
+      method: 'POST',
+      body: JSON.stringify({ data: [noteData] }),
+    });
+
+    return {
+      id: data?.data?.[0]?.details?.id,
+      ...activity,
+    };
+  }
+
+  async getActivities(contactId: string): Promise<CRMActivity[]> {
+    const data = await this.request(`/Contacts/${contactId}/Notes`);
+    return (data?.data || []).map((n: any) => ({
+      id: n.id,
+      type: 'note' as const,
+      subject: n.Note_Title,
+      body: n.Note_Content,
+      contactId,
+      timestamp: n.Created_Time,
+    }));
+  }
+}
+
+// Pipedrive Adapter Implementation
+class PipedriveAdapter implements CRMAdapter {
+  private apiToken: string;
+  private baseUrl = 'https://api.pipedrive.com/v1';
+
+  constructor(apiToken: string) {
+    this.apiToken = apiToken;
+  }
+
+  private async request(endpoint: string, options: RequestInit = {}) {
+    const separator = endpoint.includes('?') ? '&' : '?';
+    const url = `${this.baseUrl}${endpoint}${separator}api_token=${this.apiToken}`;
+    
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Pipedrive API error: ${response.status} - ${error}`);
+    }
+
+    return response.json();
+  }
+
+  async testConnection(): Promise<{ success: boolean; error?: string }> {
+    try {
+      await this.request('/users/me');
+      return { success: true };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : 'Unknown error';
+      return { success: false, error };
+    }
+  }
+
+  async getContacts(limit = 100): Promise<CRMContact[]> {
+    const data = await this.request(`/persons?limit=${limit}`);
+    return (data?.data || []).map((p: any) => ({
+      id: p.id?.toString(),
+      email: p.email?.[0]?.value,
+      firstName: p.first_name,
+      lastName: p.last_name,
+      phone: p.phone?.[0]?.value,
+      company: p.org_name,
+      properties: p,
+    }));
+  }
+
+  async getContact(id: string): Promise<CRMContact | null> {
+    try {
+      const data = await this.request(`/persons/${id}`);
+      const p = data?.data;
+      if (!p) return null;
+      return {
+        id: p.id?.toString(),
+        email: p.email?.[0]?.value,
+        firstName: p.first_name,
+        lastName: p.last_name,
+        phone: p.phone?.[0]?.value,
+        company: p.org_name,
+        properties: p,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  async createContact(contact: CRMContact): Promise<CRMContact> {
+    const personData: Record<string, unknown> = {
+      name: `${contact.firstName || ''} ${contact.lastName || ''}`.trim() || contact.email,
+    };
+    if (contact.email) personData.email = [{ value: contact.email, primary: true }];
+    if (contact.phone) personData.phone = [{ value: contact.phone, primary: true }];
+
+    const data = await this.request('/persons', {
+      method: 'POST',
+      body: JSON.stringify(personData),
+    });
+
+    return {
+      id: data?.data?.id?.toString(),
+      email: contact.email,
+      firstName: contact.firstName,
+      lastName: contact.lastName,
+      phone: contact.phone,
+      company: contact.company,
+    };
+  }
+
+  async updateContact(id: string, contact: Partial<CRMContact>): Promise<CRMContact> {
+    const updateData: Record<string, unknown> = {};
+    if (contact.firstName || contact.lastName) {
+      updateData.name = `${contact.firstName || ''} ${contact.lastName || ''}`.trim();
+    }
+    if (contact.email) updateData.email = [{ value: contact.email, primary: true }];
+    if (contact.phone) updateData.phone = [{ value: contact.phone, primary: true }];
+
+    await this.request(`/persons/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateData),
+    });
+
+    return { id, ...contact } as CRMContact;
+  }
+
+  async getDeals(limit = 100): Promise<CRMDeal[]> {
+    const data = await this.request(`/deals?limit=${limit}`);
+    return (data?.data || []).map((d: any) => ({
+      id: d.id?.toString(),
+      name: d.title,
+      amount: d.value,
+      stage: d.stage_id?.toString(),
+      contactId: d.person_id?.toString(),
+      properties: d,
+    }));
+  }
+
+  async createDeal(deal: CRMDeal): Promise<CRMDeal> {
+    const dealData: Record<string, unknown> = {
+      title: deal.name,
+      value: deal.amount,
+    };
+    if (deal.contactId) dealData.person_id = parseInt(deal.contactId);
+
+    const data = await this.request('/deals', {
+      method: 'POST',
+      body: JSON.stringify(dealData),
+    });
+
+    return {
+      id: data?.data?.id?.toString(),
+      name: deal.name,
+      amount: deal.amount,
+      stage: deal.stage,
+    };
+  }
+
+  async updateDeal(id: string, deal: Partial<CRMDeal>): Promise<CRMDeal> {
+    const updateData: Record<string, unknown> = {};
+    if (deal.name) updateData.title = deal.name;
+    if (deal.amount !== undefined) updateData.value = deal.amount;
+    if (deal.stage) updateData.stage_id = parseInt(deal.stage);
+
+    await this.request(`/deals/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateData),
+    });
+
+    return { id, ...deal } as CRMDeal;
+  }
+
+  async logActivity(activity: CRMActivity): Promise<CRMActivity> {
+    const activityType = {
+      call: 'call',
+      email: 'email',
+      meeting: 'meeting',
+      note: 'task',
+      task: 'task',
+    }[activity.type] || 'task';
+
+    const activityData: Record<string, unknown> = {
+      subject: activity.subject || `${activity.type} Activity`,
+      note: activity.body,
+      type: activityType,
+      done: 1,
+      due_date: activity.timestamp ? new Date(activity.timestamp).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      due_time: activity.timestamp ? new Date(activity.timestamp).toISOString().split('T')[1].substring(0, 5) : '12:00',
+    };
+
+    if (activity.contactId) activityData.person_id = parseInt(activity.contactId);
+    if (activity.dealId) activityData.deal_id = parseInt(activity.dealId);
+
+    const data = await this.request('/activities', {
+      method: 'POST',
+      body: JSON.stringify(activityData),
+    });
+
+    return {
+      id: data?.data?.id?.toString(),
+      ...activity,
+    };
+  }
+
+  async getActivities(contactId: string): Promise<CRMActivity[]> {
+    const data = await this.request(`/persons/${contactId}/activities?limit=50`);
+    return (data?.data || []).map((a: any) => ({
+      id: a.id?.toString(),
+      type: a.type === 'call' ? 'call' : a.type === 'email' ? 'email' : a.type === 'meeting' ? 'meeting' : 'task',
+      subject: a.subject,
+      body: a.note,
+      contactId,
+      timestamp: a.due_date,
+    }));
+  }
+}
+
+// Generic Webhook Adapter Implementation
+class WebhookAdapter implements CRMAdapter {
+  private webhookUrl: string;
+  private authHeader?: string;
+
+  constructor(webhookUrl: string, authToken?: string) {
+    this.webhookUrl = webhookUrl;
+    this.authHeader = authToken ? `Bearer ${authToken}` : undefined;
+  }
+
+  private async sendWebhook(event: string, data: unknown): Promise<any> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (this.authHeader) headers['Authorization'] = this.authHeader;
+
+    const response = await fetch(this.webhookUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        event,
+        timestamp: new Date().toISOString(),
+        data,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Webhook error: ${response.status} - ${error}`);
+    }
+
+    const text = await response.text();
+    try {
+      return text ? JSON.parse(text) : { success: true };
+    } catch {
+      return { success: true, raw: text };
+    }
+  }
+
+  async testConnection(): Promise<{ success: boolean; error?: string }> {
+    try {
+      await this.sendWebhook('test_connection', { test: true });
+      return { success: true };
+    } catch (err) {
+      const error = err instanceof Error ? err.message : 'Unknown error';
+      return { success: false, error };
+    }
+  }
+
+  async getContacts(): Promise<CRMContact[]> {
+    // Webhook adapter is primarily for outbound sync
+    console.log('Webhook adapter: getContacts not supported for outbound-only webhooks');
+    return [];
+  }
+
+  async getContact(): Promise<CRMContact | null> {
+    console.log('Webhook adapter: getContact not supported for outbound-only webhooks');
+    return null;
+  }
+
+  async createContact(contact: CRMContact): Promise<CRMContact> {
+    const response = await this.sendWebhook('contact.created', contact);
+    return {
+      id: response?.id || crypto.randomUUID(),
+      ...contact,
+    };
+  }
+
+  async updateContact(id: string, contact: Partial<CRMContact>): Promise<CRMContact> {
+    await this.sendWebhook('contact.updated', { id, ...contact });
+    return { id, ...contact } as CRMContact;
+  }
+
+  async getDeals(): Promise<CRMDeal[]> {
+    console.log('Webhook adapter: getDeals not supported for outbound-only webhooks');
+    return [];
+  }
+
+  async createDeal(deal: CRMDeal): Promise<CRMDeal> {
+    const response = await this.sendWebhook('deal.created', deal);
+    return {
+      id: response?.id || crypto.randomUUID(),
+      ...deal,
+    };
+  }
+
+  async updateDeal(id: string, deal: Partial<CRMDeal>): Promise<CRMDeal> {
+    await this.sendWebhook('deal.updated', { id, ...deal });
+    return { id, ...deal } as CRMDeal;
+  }
+
+  async logActivity(activity: CRMActivity): Promise<CRMActivity> {
+    const response = await this.sendWebhook('activity.logged', activity);
+    return {
+      id: response?.id || crypto.randomUUID(),
+      ...activity,
+    };
+  }
+
+  async getActivities(): Promise<CRMActivity[]> {
+    console.log('Webhook adapter: getActivities not supported for outbound-only webhooks');
+    return [];
+  }
 }
 
 // Factory function to get appropriate adapter
-function getCRMAdapter(provider: string, credentials: Record<string, string>): CRMAdapter {
+function getCRMAdapter(provider: string, credentials: Record<string, string>, settings?: Record<string, unknown>): CRMAdapter {
   switch (provider) {
     case 'hubspot':
       return new HubSpotAdapter(credentials.access_token);
     case 'salesforce':
-      return new SalesforceAdapter(credentials.access_token, credentials.instance_url);
+      return new SalesforceAdapter(credentials.access_token, credentials.instance_url || settings?.instance_url as string || '');
+    case 'zoho':
+      return new ZohoAdapter(credentials.access_token, settings?.datacenter as string || 'com');
+    case 'pipedrive':
+      return new PipedriveAdapter(credentials.access_token || credentials.api_token);
+    case 'webhook':
+      return new WebhookAdapter(settings?.webhook_url as string || credentials.webhook_url, credentials.auth_token);
     default:
       throw new Error(`Unsupported CRM provider: ${provider}`);
   }
@@ -402,11 +1057,18 @@ serve(async (req) => {
       });
     }
 
-    // Create adapter
-    const adapter = getCRMAdapter(connection.provider, {
-      access_token: connection.access_token || '',
-      instance_url: connection.settings?.instance_url || '',
-    });
+    // Create adapter with settings
+    const adapter = getCRMAdapter(
+      connection.provider,
+      {
+        access_token: connection.access_token || '',
+        api_token: connection.access_token || '',
+        instance_url: (connection.settings as Record<string, unknown>)?.instance_url as string || '',
+        webhook_url: (connection.settings as Record<string, unknown>)?.webhook_url as string || '',
+        auth_token: connection.access_token || '',
+      },
+      connection.settings as Record<string, unknown> || {}
+    );
 
     let result: unknown;
 
@@ -425,7 +1087,6 @@ serve(async (req) => {
 
       case 'create_contact':
         result = await adapter.createContact(params.contact);
-        // Log sync
         await supabase.from('crm_sync_logs').insert({
           company_id: companyId,
           connection_id: connection.id,

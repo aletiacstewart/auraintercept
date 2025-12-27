@@ -3017,6 +3017,7 @@ export type Database = {
         | "zoho"
         | "pipedrive"
         | "custom_webhook"
+        | "webhook"
       crm_sync_direction: "push" | "pull" | "bidirectional"
       employee_job_type:
         | "technician"
@@ -3177,6 +3178,7 @@ export const Constants = {
         "zoho",
         "pipedrive",
         "custom_webhook",
+        "webhook",
       ],
       crm_sync_direction: ["push", "pull", "bidirectional"],
       employee_job_type: [
