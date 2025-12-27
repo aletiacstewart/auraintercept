@@ -390,26 +390,19 @@ export default function Index() {
                   <Building2 className="w-5 h-5 mr-2" />
                   Start Free Trial
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  className="text-lg px-8 py-6 w-full sm:w-auto"
-                  onClick={() => navigate('/customer-auth')}
-                >
-                  <Users className="w-5 h-5 mr-2" />
-                  Customer Portal
-                </Button>
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* === COMPANY/BUSINESS SECTION === */}
+      
       {/* How It Works */}
       <section className="bg-muted/30 py-20">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">How It Works</Badge>
+            <Badge variant="secondary" className="mb-4">For Service Businesses</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Get Started in 4 Simple Steps</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               From signup to full automation in minutes, not months.
@@ -532,111 +525,8 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Customer Portal Section */}
-      <section className="py-20">
-        <div className="container max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <Badge variant="secondary" className="mb-4">Customer Portal</Badge>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-                Self-Service Portal for Your Customers
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Give your customers 24/7 access to book appointments, get quotes, track service status, 
-                and chat with AI agents - all branded with your company's look and feel.
-              </p>
-              
-              <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
-                    <Calendar className="w-5 h-5 text-cyan-500" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Easy Appointment Booking</h4>
-                    <p className="text-sm text-muted-foreground">Customers select from your services and available time slots with real-time calendar sync.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
-                    <FileText className="w-5 h-5 text-purple-500" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Instant Quote Requests</h4>
-                    <p className="text-sm text-muted-foreground">AI-powered quote generation based on your service pricing and customer needs.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
-                    <Search className="w-5 h-5 text-green-500" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Appointment Tracking</h4>
-                    <p className="text-sm text-muted-foreground">Real-time status updates with technician ETA and job completion notifications.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center flex-shrink-0">
-                    <Headphones className="w-5 h-5 text-orange-500" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">AI Chat Support</h4>
-                    <p className="text-sm text-muted-foreground">Natural language conversations with AI agents for instant answers and assistance.</p>
-                  </div>
-                </div>
-              </div>
-
-              <Button 
-                size="lg" 
-                className="gradient-primary"
-                onClick={() => navigate('/customer-auth')}
-              >
-                <Users className="w-5 h-5 mr-2" />
-                Customer Portal
-              </Button>
-            </div>
-            
-            <div className="relative">
-              <Card className="p-6 bg-card/80 backdrop-blur border-primary/20">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 pb-4 border-b border-border/50">
-                    <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center">
-                      <Bot className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <div className="font-semibold">AI Assistant</div>
-                      <div className="text-xs text-muted-foreground">Always available to help</div>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="bg-muted/50 rounded-lg p-3 max-w-[80%]">
-                      <p className="text-sm">Hi! I'm here to help you with your HVAC needs. Would you like to book an appointment, get a quote, or track an existing service?</p>
-                    </div>
-                    <div className="bg-primary/10 rounded-lg p-3 max-w-[80%] ml-auto">
-                      <p className="text-sm">I'd like to schedule an AC maintenance check</p>
-                    </div>
-                    <div className="bg-muted/50 rounded-lg p-3 max-w-[80%]">
-                      <p className="text-sm">Great! I can help you with that. Let me check our available slots. When works best for you?</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      Book Now
-                    </Button>
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <FileText className="w-4 h-4 mr-1" />
-                      Get Quote
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Communication Channels */}
-      <section className="bg-muted/30 py-20">
+      <section className="py-20">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Multi-Channel</Badge>
@@ -666,7 +556,7 @@ export default function Index() {
       </section>
 
       {/* Platform Features */}
-      <section className="py-20">
+      <section className="bg-muted/30 py-20">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Platform Features</Badge>
@@ -697,7 +587,7 @@ export default function Index() {
       </section>
 
       {/* Industries */}
-      <section className="bg-muted/30 py-20">
+      <section className="py-20">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Industries</Badge>
@@ -724,39 +614,123 @@ export default function Index() {
               </Card>
             ))}
           </div>
+
+          <div className="text-center mt-10">
+            <Button 
+              size="lg" 
+              className="gradient-primary shadow-glow text-lg px-8 py-6"
+              onClick={() => navigate('/auth?mode=company')}
+            >
+              <Building2 className="w-5 h-5 mr-2" />
+              Start Your Free Trial
+            </Button>
+          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20">
+      {/* === CUSTOMER SECTION === */}
+      
+      {/* Customer Portal Section */}
+      <section className="bg-muted/30 py-20">
         <div className="container max-w-7xl mx-auto px-6">
-          <div className="rounded-3xl gradient-primary p-8 sm:p-12 text-center text-primary-foreground relative overflow-hidden">
-            <div className="absolute inset-0 tech-grid opacity-10" />
-            <div className="relative">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to Transform Your Business?</h2>
-              <p className="text-lg opacity-90 mb-8 max-w-xl mx-auto">
-                Join businesses already using AI agents to automate operations and delight customers 24/7.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button 
-                  size="lg" 
-                  variant="secondary"
-                  className="text-lg px-8 py-6"
-                  onClick={() => navigate('/auth?mode=company')}
-                >
-                  Start Free Trial
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
+          <div className="text-center mb-12">
+            <Badge variant="secondary" className="mb-4">For Customers</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              Self-Service Customer Portal
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Get 24/7 access to book appointments, get quotes, track service status, 
+              and chat with AI agents - all in one convenient place.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
+                  <Calendar className="w-5 h-5 text-cyan-500" />
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-1">Easy Appointment Booking</h4>
+                  <p className="text-sm text-muted-foreground">Select from available services and time slots with real-time calendar sync.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                  <FileText className="w-5 h-5 text-purple-500" />
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-1">Instant Quote Requests</h4>
+                  <p className="text-sm text-muted-foreground">Get AI-powered quotes based on your service needs.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                  <Search className="w-5 h-5 text-green-500" />
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-1">Appointment Tracking</h4>
+                  <p className="text-sm text-muted-foreground">Real-time status updates with technician ETA and job completion notifications.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center flex-shrink-0">
+                  <Headphones className="w-5 h-5 text-orange-500" />
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-1">AI Chat Support</h4>
+                  <p className="text-sm text-muted-foreground">Natural language conversations with AI agents for instant answers.</p>
+                </div>
+              </div>
+
+              <div className="pt-4">
                 <Button 
                   size="lg" 
                   variant="outline"
-                  className="text-lg px-8 py-6 border-white/30 text-white hover:bg-white/10 hover:text-white"
+                  className="text-lg px-8 py-6"
                   onClick={() => navigate('/customer-auth')}
                 >
                   <Users className="w-5 h-5 mr-2" />
-                  Customer Portal
+                  Access Customer Portal
                 </Button>
               </div>
+            </div>
+            
+            <div className="relative">
+              <Card className="p-6 bg-card/80 backdrop-blur border-primary/20">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 pb-4 border-b border-border/50">
+                    <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center">
+                      <Bot className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <div className="font-semibold">AI Assistant</div>
+                      <div className="text-xs text-muted-foreground">Always available to help</div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="bg-muted/50 rounded-lg p-3 max-w-[80%]">
+                      <p className="text-sm">Hi! I'm here to help you with your service needs. Would you like to book an appointment, get a quote, or track an existing service?</p>
+                    </div>
+                    <div className="bg-primary/10 rounded-lg p-3 max-w-[80%] ml-auto">
+                      <p className="text-sm">I'd like to schedule a maintenance check</p>
+                    </div>
+                    <div className="bg-muted/50 rounded-lg p-3 max-w-[80%]">
+                      <p className="text-sm">Great! I can help you with that. Let me check available slots. When works best for you?</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <Button size="sm" variant="outline" className="flex-1">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      Book Now
+                    </Button>
+                    <Button size="sm" variant="outline" className="flex-1">
+                      <FileText className="w-4 h-4 mr-1" />
+                      Get Quote
+                    </Button>
+                  </div>
+                </div>
+              </Card>
             </div>
           </div>
         </div>
