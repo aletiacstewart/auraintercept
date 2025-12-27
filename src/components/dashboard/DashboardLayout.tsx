@@ -68,8 +68,8 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
       { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'] },
-      { label: 'My Schedule', icon: Calendar, href: '/employee/appointments', roles: ['employee'] },
-      { label: 'Availability', icon: Clock, href: '/employee/availability', roles: ['employee'] },
+      { label: 'My Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['employee'] },
+      { label: 'Availability', icon: Clock, href: '/dashboard/availability', roles: ['employee'] },
     ],
   },
   {
