@@ -8,7 +8,6 @@ import { AIAgentConsole } from '@/components/ai/AIAgentConsole';
 import { AIAgentChat } from '@/components/ai/AIAgentChat';
 import { AIAgentSettings } from '@/components/ai/AIAgentSettings';
 import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
-import { FieldOpsAgentGrid } from '@/components/ai/FieldOpsAgentGrid';
 import { BusinessOpsAgentConsole } from '@/components/billing/BusinessOpsAgentConsole';
 import { MarketingSalesAgentConsole } from '@/components/marketing/MarketingSalesAgentConsole';
 import { AnalyticsAgentConsole } from '@/components/analytics/AnalyticsAgentConsole';
@@ -312,17 +311,15 @@ const AIAgent = () => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold">
-                    {userRole === 'employee' 
+                    {userRole === 'employee' || consoleType === 'fieldops' 
                       ? 'Field Operations Console' 
-                      : consoleType === 'fieldops'
-                        ? 'Field Operations AI Agents'
-                        : consoleType === 'businessops'
-                          ? 'Business Operations Console'
-                          : consoleType === 'marketing'
-                            ? 'Marketing & Sales Console'
-                            : consoleType === 'analytics'
-                              ? 'Analytics & Insights Console'
-                              : 'Customer Engagement Console'}
+                      : consoleType === 'businessops'
+                        ? 'Business Operations Console'
+                        : consoleType === 'marketing'
+                          ? 'Marketing & Sales Console'
+                          : consoleType === 'analytics'
+                            ? 'Analytics & Insights Console'
+                            : 'Customer Engagement Console'}
                   </h2>
                   {userRole !== 'employee' && consoleType === 'customer' && (
                     <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
@@ -340,10 +337,8 @@ const AIAgent = () => {
                   )}
                 </div>
                 
-                {userRole === 'employee' ? (
+                {userRole === 'employee' || consoleType === 'fieldops' ? (
                   <FieldOpsAgentConsole />
-                ) : consoleType === 'fieldops' ? (
-                  <FieldOpsAgentGrid />
                 ) : consoleType === 'businessops' ? (
                   <BusinessOpsAgentConsole />
                 ) : consoleType === 'marketing' ? (
