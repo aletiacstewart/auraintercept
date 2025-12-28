@@ -2371,6 +2371,7 @@ export type Database = {
           name: string
           parts_cost: number | null
           price: number | null
+          price_display: string | null
           service_type: string | null
           service_type_other: string | null
           sort_order: number | null
@@ -2389,6 +2390,7 @@ export type Database = {
           name: string
           parts_cost?: number | null
           price?: number | null
+          price_display?: string | null
           service_type?: string | null
           service_type_other?: string | null
           sort_order?: number | null
@@ -2407,6 +2409,7 @@ export type Database = {
           name?: string
           parts_cost?: number | null
           price?: number | null
+          price_display?: string | null
           service_type?: string | null
           service_type_other?: string | null
           sort_order?: number | null

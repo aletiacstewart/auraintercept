@@ -70,6 +70,7 @@ interface Service {
   description: string | null;
   duration_minutes: number | null;
   price: number | null;
+  price_display: string | null;
   is_active: boolean;
   service_type: string | null;
   service_type_other: string | null;
@@ -280,6 +281,7 @@ export function ServicesManager() {
     description: '',
     duration_minutes: '',
     price: '',
+    price_display: '',
     is_active: true,
     service_type: 'in_person' as ServiceType,
     service_type_other: '',
@@ -402,6 +404,7 @@ export function ServicesManager() {
         description: data.description || null,
         duration_minutes: data.duration_minutes ? parseInt(data.duration_minutes) : null,
         price: data.price ? parseFloat(data.price) : null,
+        price_display: data.price_display || null,
         is_active: data.is_active,
         service_type: data.service_type,
         service_type_other: data.service_type === 'other' ? data.service_type_other : null,
@@ -706,6 +709,7 @@ export function ServicesManager() {
         description: service.description || '',
         duration_minutes: service.duration_minutes?.toString() || '',
         price: service.price?.toString() || '',
+        price_display: service.price_display || '',
         is_active: service.is_active,
         service_type: (service.service_type as ServiceType) || 'in_person',
         service_type_other: service.service_type_other || '',
@@ -721,6 +725,7 @@ export function ServicesManager() {
         description: '',
         duration_minutes: '',
         price: '',
+        price_display: '',
         is_active: true,
         service_type: 'in_person',
         service_type_other: '',
@@ -764,6 +769,10 @@ export function ServicesManager() {
   };
 
   const getPriceDisplay = (service: Service) => {
+    // Use custom price_display if set
+    if (service.price_display) {
+      return service.price_display;
+    }
     const prices: string[] = [];
     if (service.flat_fee) prices.push(`$${service.flat_fee.toFixed(2)} flat`);
     if (service.hourly_rate) prices.push(`$${service.hourly_rate.toFixed(2)}/hr`);
@@ -1031,6 +1040,13 @@ export function ServicesManager() {
                 </div>
                 
                 <div className="space-y-3">
+                  {viewingService.price_display && (
+                    <div className="flex justify-between items-center py-3 px-3 rounded-lg bg-primary/10">
+                      <span className="text-sm font-medium">Custom Pricing</span>
+                      <span className="font-bold text-primary">{viewingService.price_display}</span>
+                    </div>
+                  )}
+
                   {viewingService.flat_fee && (
                     <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-muted/30">
                       <span className="text-sm">Flat Fee</span>
@@ -1066,7 +1082,7 @@ export function ServicesManager() {
                     </div>
                   )}
 
-                  {!viewingService.flat_fee && !viewingService.hourly_rate && !viewingService.parts_cost && !viewingService.price && (
+                  {!viewingService.price_display && !viewingService.flat_fee && !viewingService.hourly_rate && !viewingService.parts_cost && !viewingService.price && (
                     <p className="text-sm text-muted-foreground text-center py-2">No pricing set</p>
                   )}
 
@@ -1218,54 +1234,69 @@ export function ServicesManager() {
               <Label className="text-base font-medium">Pricing</Label>
               <p className="text-sm text-muted-foreground mb-3">Set one or more pricing options</p>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="flat_fee">Flat Fee ($)</Label>
+                  <Label htmlFor="price_display">Custom Pricing Display <span className="text-muted-foreground text-xs">(optional)</span></Label>
                   <Input
-                    id="flat_fee"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={formData.flat_fee}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, flat_fee: e.target.value }))}
-                    placeholder="0.00"
+                    id="price_display"
+                    value={formData.price_display}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, price_display: e.target.value }))}
+                    placeholder="e.g., $100-$250, Starting at $50, Call for quote"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    If set, this will be shown instead of calculated pricing below
+                  </p>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="hourly_rate">Hourly Rate ($)</Label>
-                  <Input
-                    id="hourly_rate"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={formData.hourly_rate}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, hourly_rate: e.target.value }))}
-                    placeholder="0.00"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="parts_cost">Parts Cost ($)</Label>
-                  <Input
-                    id="parts_cost"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={formData.parts_cost}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, parts_cost: e.target.value }))}
-                    placeholder="0.00"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="price">Base Price ($)</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={formData.price}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
-                    placeholder="0.00"
-                  />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="flat_fee">Flat Fee ($)</Label>
+                    <Input
+                      id="flat_fee"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.flat_fee}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, flat_fee: e.target.value }))}
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="hourly_rate">Hourly Rate ($)</Label>
+                    <Input
+                      id="hourly_rate"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.hourly_rate}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, hourly_rate: e.target.value }))}
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="parts_cost">Parts Cost ($)</Label>
+                    <Input
+                      id="parts_cost"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.parts_cost}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, parts_cost: e.target.value }))}
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Base Price ($)</Label>
+                    <Input
+                      id="price"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.price}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
+                      placeholder="0.00"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
