@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
@@ -14,7 +14,7 @@ import { AnalyticsAgentConsole } from '@/components/analytics/AnalyticsAgentCons
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall, FileText, Star, ThumbsUp, Globe, Truck, MapPin, Clock, CheckSquare, Navigation, HeadphonesIcon, Briefcase, Receipt, Package, Shield, Megaphone, BarChart3, DollarSign } from 'lucide-react';
+import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall, FileText, Star, ThumbsUp, Globe, Truck, MapPin, Clock, CheckSquare, Navigation, HeadphonesIcon, Briefcase, Receipt, Package, Shield, Megaphone, BarChart3, DollarSign, Cpu } from 'lucide-react';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { TestCallDialog } from '@/components/ai/TestCallDialog';
 import { Button } from '@/components/ui/button';
@@ -27,6 +27,7 @@ const AIAgent = () => {
   const { companyId, userRole } = useAuth();
   const { isAtLeastTier } = useSubscription();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'customer' | 'debug'>('customer');
   const [activeTab, setActiveTab] = useState<'console' | 'settings'>('console');
   
@@ -310,17 +311,30 @@ const AIAgent = () => {
             <div className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">
-                    {userRole === 'employee' || consoleType === 'fieldops' 
-                      ? 'Field Operations Console' 
-                      : consoleType === 'businessops'
-                        ? 'Business Operations Console'
-                        : consoleType === 'marketing'
-                          ? 'Marketing & Sales Console'
-                          : consoleType === 'analytics'
-                            ? 'Analytics & Insights Console'
-                            : 'Customer Engagement Console'}
-                  </h2>
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-lg font-semibold">
+                      {userRole === 'employee' || consoleType === 'fieldops' 
+                        ? 'Field Operations Console' 
+                        : consoleType === 'businessops'
+                          ? 'Business Operations Console'
+                          : consoleType === 'marketing'
+                            ? 'Marketing & Sales Console'
+                            : consoleType === 'analytics'
+                              ? 'Analytics & Insights Console'
+                              : 'Customer Engagement Console'}
+                    </h2>
+                    {canManageSettings && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate('/dashboard/ai-agents')}
+                        className="h-7"
+                      >
+                        <Cpu className="h-3.5 w-3.5 mr-1.5" />
+                        Manage Agents
+                      </Button>
+                    )}
+                  </div>
                   {userRole !== 'employee' && consoleType === 'customer' && (
                     <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
                       <TabsList className="h-8">
