@@ -45,6 +45,17 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       .catch(() => setHasPermission(false));
   }, []);
 
+  // If ElevenLabs was blocked previously, avoid calling it again.
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('elevenlabs_disabled') === '1') {
+        elevenLabsAvailableRef.current = false;
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
   // Initialize speech recognition
   const initRecognition = useCallback(() => {
     if (!SpeechRecognition) return null;
@@ -249,8 +260,14 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       if (!response.ok) {
         // If ElevenLabs is blocked (401), disable it for the rest of the session.
         const raw = await response.text().catch(() => '');
-        if (raw.includes('401') || raw.toLowerCase().includes('elevenlabs api error')) {
+        if (response.status === 401 || raw.toLowerCase().includes('elevenlabs api error')) {
           elevenLabsAvailableRef.current = false;
+          try {
+            localStorage.setItem('elevenlabs_disabled', '1');
+          } catch {
+            // ignore
+          }
+
           toast({
             title: 'Voice provider unavailable',
             description: 'Switching to browser voice output for this session.',
