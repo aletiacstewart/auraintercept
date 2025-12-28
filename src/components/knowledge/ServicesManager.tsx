@@ -95,7 +95,7 @@ const SERVICE_TYPE_ICONS: Record<ServiceType, React.ReactNode> = {
   other: <HelpCircle className="w-4 h-4" />,
 };
 
-const CSV_HEADERS = ['Service Name', 'Category', 'Description', 'Service Type', 'Service Type (Other)', 'Duration (Minutes)', 'Flat Fee', 'Hourly Rate', 'Parts Cost', 'Base Price', 'Active'];
+const CSV_HEADERS = ['Service Name', 'Category', 'Description', 'Service Type', 'Service Type (Other)', 'Duration (Minutes)', 'Pricing Display', 'Flat Fee', 'Hourly Rate', 'Parts Cost', 'Base Price', 'Active'];
 
 // Map CSV headers to database field names
 const CSV_HEADER_MAP: Record<string, string> = {
@@ -105,6 +105,9 @@ const CSV_HEADER_MAP: Record<string, string> = {
   'service type': 'service_type',
   'service type (other)': 'service_type_other',
   'duration (minutes)': 'duration_minutes',
+  'pricing display': 'price_display',
+  'pricing': 'price_display',
+  'price display': 'price_display',
   'flat fee': 'flat_fee',
   'hourly rate': 'hourly_rate',
   'parts cost': 'parts_cost',
@@ -115,6 +118,7 @@ const CSV_HEADER_MAP: Record<string, string> = {
   'service_type': 'service_type',
   'service_type_other': 'service_type_other',
   'duration_minutes': 'duration_minutes',
+  'price_display': 'price_display',
   'flat_fee': 'flat_fee',
   'hourly_rate': 'hourly_rate',
   'parts_cost': 'parts_cost',
@@ -495,6 +499,7 @@ export function ServicesManager() {
         description: service.description || null,
         duration_minutes: service.duration_minutes || null,
         price: service.price || null,
+        price_display: service.price_display || null,
         is_active: service.is_active ?? false,
         service_type: service.service_type || 'in_person',
         service_type_other: service.service_type_other || null,
@@ -534,6 +539,7 @@ export function ServicesManager() {
         service.service_type ? SERVICE_TYPE_LABELS[(service.service_type as ServiceType)] || service.service_type : 'In Person',
         `"${(service.service_type_other || '').replace(/"/g, '""')}"`,
         service.duration_minutes || '',
+        `"${(service.price_display || '').replace(/"/g, '""')}"`,
         service.flat_fee || '',
         service.hourly_rate || '',
         service.parts_cost || '',
@@ -554,7 +560,7 @@ export function ServicesManager() {
   const handleDownloadTemplate = () => {
     // Template example row aligned with CSV_HEADERS:
     // ['Service Name', 'Category', 'Description', 'Service Type', 'Service Type (Other)', 
-    //  'Duration (Minutes)', 'Flat Fee', 'Hourly Rate', 'Parts Cost', 'Base Price', 'Active']
+    //  'Duration (Minutes)', 'Pricing Display', 'Flat Fee', 'Hourly Rate', 'Parts Cost', 'Base Price', 'Active']
     const exampleRow = [
       'Example Service',      // Service Name
       'Maintenance',          // Category
@@ -562,6 +568,7 @@ export function ServicesManager() {
       'In Person',            // Service Type
       '',                     // Service Type (Other)
       '60',                   // Duration (Minutes)
+      '$100-$250',            // Pricing Display
       '50',                   // Flat Fee
       '75',                   // Hourly Rate
       '25',                   // Parts Cost
@@ -626,6 +633,7 @@ export function ServicesManager() {
             service_type: serviceType,
             service_type_other: getCSVValue(values, mappedHeaders, 'service_type_other') || null,
             duration_minutes: parseNumber(getCSVValue(values, mappedHeaders, 'duration_minutes')),
+            price_display: getCSVValue(values, mappedHeaders, 'price_display') || null,
             flat_fee: parseNumber(getCSVValue(values, mappedHeaders, 'flat_fee')),
             hourly_rate: parseNumber(getCSVValue(values, mappedHeaders, 'hourly_rate')),
             parts_cost: parseNumber(getCSVValue(values, mappedHeaders, 'parts_cost')),
@@ -1364,7 +1372,7 @@ export function ServicesManager() {
                           {service.duration_minutes ? `${service.duration_minutes} min` : '-'}
                         </TableCell>
                         <TableCell className="text-sm">
-                          {[
+                          {service.price_display || [
                             service.flat_fee && `$${service.flat_fee} flat`,
                             service.hourly_rate && `$${service.hourly_rate}/hr`,
                             service.parts_cost && `$${service.parts_cost} parts`,
