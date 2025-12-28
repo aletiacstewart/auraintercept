@@ -228,9 +228,20 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
             <span className="w-6 h-6 rounded-full bg-blue-500 text-white text-sm flex items-center justify-center">3</span>
             Configure Client Tools
           </h3>
-          <div className="ml-8 space-y-2">
+          <div className="ml-8 space-y-3">
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 text-sm">
+              <p className="font-medium text-amber-600 dark:text-amber-400 mb-2">📍 Where to add tools in ElevenLabs:</p>
+              <ol className="list-decimal ml-4 space-y-1 text-muted-foreground">
+                <li>Go to <a href="https://elevenlabs.io/app/conversational-ai" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">elevenlabs.io/app/conversational-ai</a></li>
+                <li>Click on your agent to open it</li>
+                <li>In the left sidebar, click <strong>"Tools"</strong></li>
+                <li>Click <strong>"+ Add Tool"</strong> button</li>
+                <li>Select <strong>"Webhook"</strong> as the tool type</li>
+                <li>Fill in the Name, Description, URL, and Parameters for each tool below</li>
+              </ol>
+            </div>
             <p className="text-sm text-muted-foreground">
-              In ElevenLabs, go to your agent → Tools → Add the following 4 client tools:
+              Add all 4 tools below. Each tool uses the same webhook URL but different parameters:
             </p>
             
             {/* Webhook URL */}
