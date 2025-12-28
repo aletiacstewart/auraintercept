@@ -2568,11 +2568,13 @@ export type Database = {
           openai_tts_model: string | null
           openai_tts_voice: string | null
           resend_api_key: string | null
+          tts_monthly_limit: number | null
           tts_provider: string | null
           twilio_account_sid: string | null
           twilio_auth_token: string | null
           twilio_phone_number: string | null
           updated_at: string
+          use_platform_tts: boolean | null
         }
         Insert: {
           company_id: string
@@ -2595,11 +2597,13 @@ export type Database = {
           openai_tts_model?: string | null
           openai_tts_voice?: string | null
           resend_api_key?: string | null
+          tts_monthly_limit?: number | null
           tts_provider?: string | null
           twilio_account_sid?: string | null
           twilio_auth_token?: string | null
           twilio_phone_number?: string | null
           updated_at?: string
+          use_platform_tts?: boolean | null
         }
         Update: {
           company_id?: string
@@ -2622,17 +2626,54 @@ export type Database = {
           openai_tts_model?: string | null
           openai_tts_voice?: string | null
           resend_api_key?: string | null
+          tts_monthly_limit?: number | null
           tts_provider?: string | null
           twilio_account_sid?: string | null
           twilio_auth_token?: string | null
           twilio_phone_number?: string | null
           updated_at?: string
+          use_platform_tts?: boolean | null
         }
         Relationships: [
           {
             foreignKeyName: "tenant_integrations_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tts_usage: {
+        Row: {
+          characters_used: number
+          company_id: string
+          created_at: string | null
+          id: string
+          month_year: string
+          updated_at: string | null
+        }
+        Insert: {
+          characters_used?: number
+          company_id: string
+          created_at?: string | null
+          id?: string
+          month_year: string
+          updated_at?: string | null
+        }
+        Update: {
+          characters_used?: number
+          company_id?: string
+          created_at?: string | null
+          id?: string
+          month_year?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tts_usage_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
