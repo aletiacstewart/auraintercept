@@ -233,6 +233,20 @@ export const AIAgentSettings = () => {
       return;
     }
 
+    const speakWithBrowser = (text: string) => {
+      if (!('speechSynthesis' in window)) return false;
+      try {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 1;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
     setIsPreviewingGreeting(true);
     try {
       const voiceId = useCustomVoice ? customVoiceId : selectedVoiceId;
@@ -260,8 +274,26 @@ export const AIAgentSettings = () => {
       );
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to generate voice preview');
+        // ElevenLabs can be blocked (401) on free tier; allow preview using browser TTS.
+        if (response.status === 401) {
+          const raw = await response.text().catch(() => '');
+          const played = speakWithBrowser(voiceGreeting);
+          toast.error(
+            raw.toLowerCase().includes('unusual activity')
+              ? 'ElevenLabs blocked this key (unusual activity). Using browser voice for preview.'
+              : 'ElevenLabs unavailable. Using browser voice for preview.'
+          );
+          if (played) return;
+        }
+
+        let message = 'Failed to generate voice preview';
+        try {
+          const errJson = await response.json();
+          message = errJson.error || message;
+        } catch {
+          // ignore
+        }
+        throw new Error(message);
       }
 
       const audioBlob = await response.blob();
@@ -289,6 +321,22 @@ export const AIAgentSettings = () => {
       return;
     }
 
+    const speakWithBrowser = (text: string) => {
+      if (!('speechSynthesis' in window)) return false;
+      try {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 1;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    const testText = "Hello! I'm your AI assistant. How can I help you today?";
+
     setIsPreviewingVoice(true);
     try {
       const response = await fetch(
@@ -301,7 +349,7 @@ export const AIAgentSettings = () => {
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
           body: JSON.stringify({
-            text: "Hello! I'm your AI assistant. How can I help you today?",
+            text: testText,
             company_id: companyId,
             voice_id: voiceId,
             voice_settings: {
@@ -315,8 +363,25 @@ export const AIAgentSettings = () => {
       );
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to generate voice preview');
+        if (response.status === 401) {
+          const raw = await response.text().catch(() => '');
+          const played = speakWithBrowser(testText);
+          toast.error(
+            raw.toLowerCase().includes('unusual activity')
+              ? 'ElevenLabs blocked this key (unusual activity). Using browser voice for preview.'
+              : 'ElevenLabs unavailable. Using browser voice for preview.'
+          );
+          if (played) return;
+        }
+
+        let message = 'Failed to generate voice preview';
+        try {
+          const errJson = await response.json();
+          message = errJson.error || message;
+        } catch {
+          // ignore
+        }
+        throw new Error(message);
       }
 
       const audioBlob = await response.blob();
