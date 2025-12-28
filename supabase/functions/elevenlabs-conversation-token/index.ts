@@ -25,10 +25,10 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Fetch company's ElevenLabs API key from tenant_integrations
+    // Fetch company's ElevenLabs API key and agent ID from tenant_integrations
     const { data: integration, error: integrationError } = await supabase
       .from("tenant_integrations")
-      .select("elevenlabs_api_key, elevenlabs_voice_id")
+      .select("elevenlabs_api_key, elevenlabs_voice_id, elevenlabs_agent_id")
       .eq("company_id", company_id)
       .single();
 
@@ -48,14 +48,15 @@ serve(async (req) => {
 
     const ELEVENLABS_API_KEY = integration.elevenlabs_api_key;
     
-    // If an agent_id is provided, use it; otherwise we'll need to create a temporary agent
-    // For now, we'll use a signed URL approach which doesn't require a pre-configured agent
-    if (agent_id) {
+    // Use agent_id from request, or fall back to company's configured agent_id
+    const effectiveAgentId = agent_id || integration.elevenlabs_agent_id;
+    
+    if (effectiveAgentId) {
       // Get conversation token for existing agent
-      console.log("Getting token for agent:", agent_id);
+      console.log("Getting token for agent:", effectiveAgentId);
       
       const response = await fetch(
-        `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${agent_id}`,
+        `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${effectiveAgentId}`,
         {
           headers: {
             "xi-api-key": ELEVENLABS_API_KEY,

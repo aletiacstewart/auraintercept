@@ -106,7 +106,8 @@ const INTEGRATIONS: Integration[] = [
     color: 'bg-blue-500',
     docsUrl: 'https://elevenlabs.io/app/settings/api-keys',
     fields: [
-      { key: 'elevenlabs_api_key', label: 'API Key', placeholder: 'Your ElevenLabs API key', type: 'password', required: true, helpText: 'Voice selection in AI Agent → Settings' },
+      { key: 'elevenlabs_api_key', label: 'API Key', placeholder: 'Your ElevenLabs API key', type: 'password', required: true, helpText: 'Get from elevenlabs.io/app/settings/api-keys' },
+      { key: 'elevenlabs_agent_id', label: 'Agent ID', placeholder: 'Your conversational AI agent ID', type: 'text', required: false, helpText: 'Optional: Create at elevenlabs.io/app/conversational-ai' },
     ],
     checkConnection: (data) => !!data.elevenlabs_api_key,
     note: '💡 Best for: High-quality, emotional voices. ~$0.30/1K chars. Choose if voice quality is priority.',
