@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -114,6 +114,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { jobTypes, hasJobType } = useEmployeeJobRole();
   const navigate = useNavigate();
   const location = useLocation();
+  const mainRef = useRef<HTMLElement>(null);
+
+  // Scroll to top when route changes
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTo(0, 0);
+    }
+  }, [location.pathname, location.search]);
 
   const getTierDisplay = () => {
     const tierConfig: Record<string, { label: string; color: string; icon: typeof Crown | null }> = {
@@ -298,7 +306,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto">
+      <main ref={mainRef} className="flex-1 overflow-auto">
         <div className="container max-w-7xl py-8 px-6">
           {children}
         </div>
