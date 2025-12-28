@@ -91,19 +91,24 @@ async function getServices(supabase: any, companyId: string) {
 
 // Get available dates for the next 2 weeks
 async function getAvailableDates(supabase: any, companyId: string, params: any) {
-  const { service_name } = params;
+  // Support both service_name and service_type for compatibility
+  const serviceName = params.service_name || params.service_type || params.serviceType;
+
+  if (!serviceName) {
+    return { success: false, error: 'Please specify which service you need.' };
+  }
 
   // Get service details
   const { data: service } = await supabase
     .from('services')
     .select('*')
     .eq('company_id', companyId)
-    .ilike('name', `%${service_name}%`)
+    .ilike('name', `%${serviceName}%`)
     .eq('is_active', true)
     .single();
 
   if (!service) {
-    return { success: false, error: `Service "${service_name}" not found. Please ask which service they need.` };
+    return { success: false, error: `Service "${serviceName}" not found. Please ask which service they need.` };
   }
 
   // Get business hours
@@ -155,7 +160,9 @@ async function getAvailableDates(supabase: any, companyId: string, params: any) 
 
 // Get available time slots for a specific date
 async function getAvailableTimes(supabase: any, companyId: string, params: any) {
-  const { service_name, date } = params;
+  // Support both service_name and service_type for compatibility
+  const serviceName = params.service_name || params.service_type || params.serviceType;
+  const { date } = params;
 
   // Parse the date - handle various formats
   let parsedDate: Date;
@@ -187,12 +194,12 @@ async function getAvailableTimes(supabase: any, companyId: string, params: any) 
     .from('services')
     .select('*')
     .eq('company_id', companyId)
-    .ilike('name', `%${service_name}%`)
+    .ilike('name', `%${serviceName}%`)
     .eq('is_active', true)
     .single();
 
   if (!service) {
-    return { success: false, error: `Service "${service_name}" not found.` };
+    return { success: false, error: `Service "${serviceName}" not found.` };
   }
 
   // Get business hours
@@ -449,29 +456,30 @@ async function findExistingUserAccount(supabase: any, email: string) {
 
 // Book appointment with full customer account creation and notifications
 async function bookAppointmentWithAccountCreation(supabase: any, companyId: string, params: any) {
-  const { 
-    service_name, 
-    date, 
-    time, 
-    customer_name, 
-    customer_email, 
-    customer_phone, 
-    customer_address,
-    issue_description 
-  } = params;
+  // Support both snake_case and camelCase for compatibility with different integrations
+  const serviceName = params.service_name || params.service_type || params.serviceType;
+  const date = params.date;
+  const time = params.time;
+  const customerName = params.customer_name || params.customerName;
+  const customerEmail = params.customer_email || params.customerEmail;
+  const customerPhone = params.customer_phone || params.customerPhone;
+  const customerAddress = params.customer_address || params.customerAddress;
+  const issueDescription = params.issue_description || params.notes || params.issueDescription;
 
-  console.log('[Voice Booking Agent] Booking appointment with params:', params);
+  console.log('[Voice Booking Agent] Booking appointment with params:', {
+    serviceName, date, time, customerName, customerEmail, customerPhone, customerAddress, issueDescription
+  });
 
   // Validate all required fields
-  if (!customer_name || !customer_email || !customer_phone || !customer_address) {
+  if (!customerName || !customerPhone) {
     return { 
       success: false, 
-      error: 'Missing customer information. Need: name, email, phone, and address.' 
+      error: 'Missing customer information. Need at least: name and phone.' 
     };
   }
 
   // ===== STEP 1: Check for existing customer =====
-  const existingCustomer = await findExistingCustomer(supabase, companyId, customer_email, customer_phone, customer_address);
+  const existingCustomer = await findExistingCustomer(supabase, companyId, customerEmail, customerPhone, customerAddress);
   let customerProfileId: string | null = existingCustomer?.profile?.id || null;
   let customerToken = existingCustomer?.profile?.portal_token || crypto.randomUUID();
   let isReturningCustomer = !!existingCustomer;
@@ -483,7 +491,7 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
   });
 
   // ===== STEP 2: Check for existing user account =====
-  const existingUser = await findExistingUserAccount(supabase, customer_email);
+  const existingUser = await findExistingUserAccount(supabase, customerEmail);
   let customerUserId: string | null = existingUser?.user?.id || null;
   let newAccountCreated = false;
   let tempPassword: string | null = null;
@@ -498,13 +506,13 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
     .from('services')
     .select('*')
     .eq('company_id', companyId)
-    .ilike('name', `%${service_name}%`)
+    .ilike('name', `%${serviceName}%`)
     .eq('is_active', true)
     .single();
 
   if (serviceError || !service) {
     console.error('[Voice Booking Agent] Service not found:', serviceError);
-    return { success: false, error: `Service "${service_name}" not found` };
+    return { success: false, error: `Service "${serviceName}" not found` };
   }
 
   // Parse date and time
@@ -525,7 +533,7 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
   // Get available slot with employee
   const dateIso = appointmentDateTime.toISOString().split('T')[0];
   const availabilityResult = await getAvailableTimes(supabase, companyId, {
-    service_name,
+    service_type: serviceName,
     date: dateIso
   });
 
@@ -563,12 +571,12 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
       service_type: service.name,
       datetime: appointmentDateTime.toISOString(),
       duration_minutes: service.duration_minutes,
-      customer_name,
-      customer_email,
-      customer_phone,
-      customer_address,
+      customer_name: customerName,
+      customer_email: customerEmail,
+      customer_phone: customerPhone,
+      customer_address: customerAddress,
       customer_token: customerToken,
-      notes: issue_description || null,
+      notes: issueDescription || null,
       status: 'scheduled',
       sms_opt_out: !(company?.default_sms_enabled ?? true),
       email_opt_out: !(company?.default_email_enabled ?? true),
@@ -591,10 +599,10 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
       .from('customer_profiles')
       .insert({
         company_id: companyId,
-        email: customer_email,
-        phone: customer_phone,
-        name: customer_name,
-        address: customer_address,
+        email: customerEmail,
+        phone: customerPhone,
+        name: customerName,
+        address: customerAddress,
         portal_token: customerToken,
       })
       .select('id')
@@ -607,9 +615,9 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
     await supabase
       .from('customer_profiles')
       .update({
-        phone: customer_phone,
-        name: customer_name,
-        address: customer_address,
+        phone: customerPhone,
+        name: customerName,
+        address: customerAddress,
         updated_at: new Date().toISOString(),
       })
       .eq('id', customerProfileId);
@@ -618,15 +626,15 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
   }
 
   // ===== STEP 5: Handle user account =====
-  if (!existingUser) {
+  if (!existingUser && customerEmail) {
     // Create new customer user account
     tempPassword = generateTemporaryPassword();
     try {
       const { data: userData, error: createError } = await supabase.auth.admin.createUser({
-        email: customer_email,
+        email: customerEmail,
         password: tempPassword,
         email_confirm: true,
-        user_metadata: { full_name: customer_name }
+        user_metadata: { full_name: customerName }
       });
 
       if (createError) {
@@ -654,7 +662,7 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
     } catch (e) {
       console.error('[Voice Booking Agent] Error in account creation:', e);
     }
-  } else {
+  } else if (existingUser) {
     customerUserId = existingUser.user.id;
     
     // Ensure they have customer role
@@ -711,7 +719,7 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
   });
 
   // Send customer confirmation email with account details
-  if (integrations?.resend_api_key && customer_email) {
+  if (integrations?.resend_api_key && customerEmail) {
     try {
       const resend = new Resend(integrations.resend_api_key);
       const companyName = company?.name || 'Our Business';
@@ -722,7 +730,7 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
           <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 20px; margin: 20px 0;">
             <h3 style="margin-top: 0; color: #0369a1;">Your Customer Portal Account</h3>
             <p>We've created an account for you to manage your appointments:</p>
-            <p><strong>Email:</strong> ${customer_email}</p>
+            <p><strong>Email:</strong> ${customerEmail}</p>
             <p><strong>Temporary Password:</strong> ${tempPassword}</p>
             <p style="color: #6b7280; font-size: 12px;">Please change your password after logging in.</p>
             <a href="${supabaseUrl?.replace('supabase.co', 'lovable.app')}/customer-auth" 
@@ -735,12 +743,12 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
 
       await resend.emails.send({
         from: `${companyName} <onboarding@resend.dev>`,
-        to: [customer_email],
+        to: [customerEmail],
         subject: `Appointment Confirmed - ${companyName}`,
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
             <h1 style="color: #0ea5e9;">Appointment Confirmed!</h1>
-            <p>Hi ${customer_name},</p>
+            <p>Hi ${customerName},</p>
             <p>Your appointment has been successfully scheduled.</p>
             
             <div style="background: #f9fafb; border-radius: 8px; padding: 20px; margin: 20px 0;">
@@ -749,8 +757,8 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
               <p><strong>Date:</strong> ${appointmentDateFormatted}</p>
               <p><strong>Time:</strong> ${appointmentTimeFormatted}</p>
               <p><strong>Technician:</strong> ${assignedEmployeeName || 'To be assigned'}</p>
-              <p><strong>Address:</strong> ${customer_address}</p>
-              ${issue_description ? `<p><strong>Issue:</strong> ${issue_description}</p>` : ''}
+              <p><strong>Address:</strong> ${customerAddress || 'Not provided'}</p>
+              ${issueDescription ? `<p><strong>Issue:</strong> ${issueDescription}</p>` : ''}
             </div>
             
             ${accountSection}
@@ -796,11 +804,11 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
                   <p><strong>Service:</strong> ${service.name}</p>
                   <p><strong>Date:</strong> ${appointmentDateFormatted}</p>
                   <p><strong>Time:</strong> ${appointmentTimeFormatted}</p>
-                  <p><strong>Customer:</strong> ${customer_name}</p>
-                  <p><strong>Phone:</strong> ${customer_phone}</p>
-                  <p><strong>Email:</strong> ${customer_email}</p>
-                  <p><strong>Address:</strong> ${customer_address}</p>
-                  ${issue_description ? `<p><strong>Issue:</strong> ${issue_description}</p>` : ''}
+                  <p><strong>Customer:</strong> ${customerName}</p>
+                  <p><strong>Phone:</strong> ${customerPhone}</p>
+                  <p><strong>Email:</strong> ${customerEmail || 'Not provided'}</p>
+                  <p><strong>Address:</strong> ${customerAddress || 'Not provided'}</p>
+                  ${issueDescription ? `<p><strong>Issue:</strong> ${issueDescription}</p>` : ''}
                 </div>
                 
                 <p>Please log into your dashboard to accept this job.</p>
@@ -822,7 +830,7 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
           const formData = new URLSearchParams();
           formData.append('To', employee.phone_number);
           formData.append('From', integrations.twilio_phone_number);
-          formData.append('Body', `NEW JOB: ${service.name} for ${customer_name} on ${appointmentDateFormatted} at ${appointmentTimeFormatted}. Address: ${customer_address}. Check your dashboard to accept.`);
+          formData.append('Body', `NEW JOB: ${service.name} for ${customerName} on ${appointmentDateFormatted} at ${appointmentTimeFormatted}. Address: ${customerAddress || 'Not provided'}. Check your dashboard to accept.`);
 
           await fetch(twilioUrl, {
             method: 'POST',
@@ -841,7 +849,7 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
   }
 
   const customerMessage = isReturningCustomer 
-    ? `Welcome back ${customer_name}! I found your existing account.`
+    ? `Welcome back ${customerName}! I found your existing account.`
     : newAccountCreated 
       ? `A customer account has been created with login details sent via email.`
       : '';
@@ -855,7 +863,7 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
     technician: assignedEmployeeName,
     is_returning_customer: isReturningCustomer,
     customer_account_created: newAccountCreated,
-    message: `${isReturningCustomer ? 'Welcome back! ' : ''}Appointment booked for ${customer_name} on ${appointmentDateFormatted} at ${appointmentTimeFormatted} for ${service.name}. ${assignedEmployeeName ? `${assignedEmployeeName} will be your technician.` : ''} A confirmation email has been sent to ${customer_email}. ${customerMessage}`
+    message: `${isReturningCustomer ? 'Welcome back! ' : ''}Appointment booked for ${customerName} on ${appointmentDateFormatted} at ${appointmentTimeFormatted} for ${service.name}. ${assignedEmployeeName ? `${assignedEmployeeName} will be your technician.` : ''} ${customerEmail ? `A confirmation email has been sent to ${customerEmail}.` : ''} ${customerMessage}`
   };
 }
 
