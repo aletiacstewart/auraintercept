@@ -31,6 +31,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const recognitionStartedRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isActiveRef = useRef(false);
+  const elevenLabsAvailableRef = useRef(true);
 
   // Check microphone permission and Speech API availability
   useEffect(() => {
@@ -204,29 +205,64 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const speakText = useCallback(async (text: string) => {
     setIsSpeaking(true);
 
+    const speakWithBrowser = () => {
+      setIsSpeaking(false);
+      if (!('speechSynthesis' in window)) return false;
+      try {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 1;
+        utterance.onend = () => {
+          if (isActiveRef.current) setTimeout(() => startListening(), 250);
+        };
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
     try {
-      // Call ElevenLabs TTS edge function
+      // If ElevenLabs is known-broken in this session, skip it.
+      if (!elevenLabsAvailableRef.current) {
+        if (!speakWithBrowser()) {
+          throw new Error('Voice output not available in this browser');
+        }
+        return;
+      }
+
+      // Call ElevenLabs TTS backend function
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
           body: JSON.stringify({ text, company_id: companyId }),
         }
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'TTS request failed');
+        // If ElevenLabs is blocked (401), disable it for the rest of the session.
+        const raw = await response.text().catch(() => '');
+        if (raw.includes('401') || raw.toLowerCase().includes('elevenlabs api error')) {
+          elevenLabsAvailableRef.current = false;
+          toast({
+            title: 'Voice provider unavailable',
+            description: 'Switching to browser voice output for this session.',
+          });
+          if (speakWithBrowser()) return;
+        }
+        throw new Error('TTS request failed');
       }
 
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
-      
+
       // Play the audio
       if (audioRef.current) {
         audioRef.current.pause();
@@ -235,14 +271,11 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
       const audio = new Audio(audioUrl);
       audioRef.current = audio;
-      
+
       audio.onended = () => {
         setIsSpeaking(false);
         URL.revokeObjectURL(audioUrl);
-        // Resume listening after speaking
-        if (isActiveRef.current) {
-          setTimeout(() => startListening(), 300);
-        }
+        if (isActiveRef.current) setTimeout(() => startListening(), 300);
       };
 
       audio.onerror = () => {
@@ -256,27 +289,12 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       console.error('TTS error:', error);
       setIsSpeaking(false);
 
-      // Fallback to browser TTS so the voice agent still works if ElevenLabs fails.
-      if ('speechSynthesis' in window) {
-        try {
-          const utterance = new SpeechSynthesisUtterance(text);
-          utterance.lang = 'en-US';
-          utterance.rate = 1;
-          utterance.onend = () => {
-            if (isActiveRef.current) setTimeout(() => startListening(), 250);
-          };
-          window.speechSynthesis.cancel();
-          window.speechSynthesis.speak(utterance);
-          return;
-        } catch (e) {
-          // fall through to toast
-        }
-      }
+      if (speakWithBrowser()) return;
 
       toast({
-        variant: "destructive",
-        title: "Voice Error",
-        description: error instanceof Error ? error.message : "Could not generate speech",
+        variant: 'destructive',
+        title: 'Voice Error',
+        description: error instanceof Error ? error.message : 'Could not generate speech',
       });
     }
   }, [companyId, startListening, toast]);
