@@ -261,8 +261,6 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   // Build tabs dynamically - include all functional tabs
   const TABS = [
     { id: 'chat', label: 'Home', icon: MessageSquare },
-    { id: 'services', label: 'Services', icon: Sparkles },
-    { id: 'hours', label: 'Hours', icon: Clock },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
