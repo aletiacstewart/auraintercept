@@ -49,61 +49,74 @@ serve(async (req) => {
     const ELEVENLABS_API_KEY = integration.elevenlabs_api_key;
 
     // Use agent_id from request, or fall back to company's configured agent_id.
-    // Normalize to ElevenLabs' expected format ("agent_...") in case the UI stored the raw id.
-    const rawAgentId = (agent_id || integration.elevenlabs_agent_id || "").trim();
-    const effectiveAgentId = rawAgentId
-      ? rawAgentId.startsWith("agent_")
-        ? rawAgentId
-        : `agent_${rawAgentId}`
-      : null;
-    
-    if (effectiveAgentId) {
-      // Get conversation token for existing agent
-      console.log("Getting token for agent:", effectiveAgentId);
-      
+    // ElevenLabs sometimes displays IDs with an "agent_" prefix, but some accounts store/use the raw id.
+    // We'll try both forms (raw + prefixed) to avoid hard failures.
+    const storedAgentId = (agent_id || integration.elevenlabs_agent_id || "").trim();
+
+    const candidates = (() => {
+      if (!storedAgentId) return [] as string[];
+      if (storedAgentId.startsWith("agent_")) {
+        return [storedAgentId, storedAgentId.replace(/^agent_/, "")];
+      }
+      return [storedAgentId, `agent_${storedAgentId}`];
+    })();
+
+    const getSignedUrl = async (candidateAgentId: string) => {
+      console.log("Getting token for agent:", candidateAgentId);
       const response = await fetch(
-        `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${effectiveAgentId}`,
+        `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${candidateAgentId}`,
         {
           headers: {
             "xi-api-key": ELEVENLABS_API_KEY,
           },
         }
       );
+      return response;
+    };
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("ElevenLabs API error:", response.status, errorText);
-        
-        // Parse the error for a more helpful message
-        let details = errorText;
-        if (response.status === 404) {
-          details = `Agent ID "${effectiveAgentId}" was not found. Please verify it exists in your ElevenLabs dashboard and update the Agent ID in Integrations settings.`;
-        } else if (response.status === 401) {
-          details = "Invalid ElevenLabs API key. Please check your API key in Integrations settings.";
+    if (candidates.length > 0) {
+      let response: Response | null = null;
+      let lastErrorText = "";
+
+      for (const candidate of candidates) {
+        response = await getSignedUrl(candidate);
+        if (response.ok) {
+          const { signed_url } = await response.json();
+          console.log("Got signed URL for agent");
+          return new Response(JSON.stringify({ signed_url }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
         }
-        
-        return new Response(
-          JSON.stringify({ error: `ElevenLabs API error: ${response.status}`, details }),
-          { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+
+        lastErrorText = await response.text();
+        console.error("ElevenLabs API error:", response.status, lastErrorText);
+
+        // If it's not a 404, don't retry other formats.
+        if (response.status !== 404) break;
       }
 
-      const { signed_url } = await response.json();
-      console.log("Got signed URL for agent");
+      // Build a helpful error.
+      const status = response?.status ?? 500;
+      let details = lastErrorText;
+      if (status === 404) {
+        details = `Agent ID "${storedAgentId}" was not found (tried: ${candidates.join(", ")}). Please verify the agent exists and update it in Integrations settings.`;
+      } else if (status === 401) {
+        details = "Invalid ElevenLabs API key. Please check your API key in Integrations settings.";
+      }
 
-      return new Response(
-        JSON.stringify({ signed_url }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: `ElevenLabs API error: ${status}`, details }), {
+        status,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     } else {
       // Return the API key for direct connection (less secure but works without pre-configured agent)
       // The frontend will use the public agent approach
       console.log("No agent_id provided, returning API key for public connection");
-      
+
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           api_key: ELEVENLABS_API_KEY,
-          voice_id: integration.elevenlabs_voice_id || "JBFqnCBsd6RMkjVDRZzb" // Default to George voice
+          voice_id: integration.elevenlabs_voice_id || "JBFqnCBsd6RMkjVDRZzb", // Default to George voice
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
