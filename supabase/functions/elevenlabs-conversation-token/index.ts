@@ -67,7 +67,19 @@ serve(async (req) => {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("ElevenLabs API error:", response.status, errorText);
-        throw new Error(`ElevenLabs API error: ${response.status}`);
+        
+        // Parse the error for a more helpful message
+        let details = errorText;
+        if (response.status === 404) {
+          details = `Agent ID "${effectiveAgentId}" was not found. Please verify it exists in your ElevenLabs dashboard and update the Agent ID in Integrations settings.`;
+        } else if (response.status === 401) {
+          details = "Invalid ElevenLabs API key. Please check your API key in Integrations settings.";
+        }
+        
+        return new Response(
+          JSON.stringify({ error: `ElevenLabs API error: ${response.status}`, details }),
+          { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
       }
 
       const { signed_url } = await response.json();
