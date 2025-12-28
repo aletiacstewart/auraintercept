@@ -18,7 +18,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, company_id } = await req.json();
+    const { messages, company_id, stream = true } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -226,7 +226,7 @@ serve(async (req) => {
         body: JSON.stringify({
           model: "google/gemini-2.5-flash",
           messages: followUpMessages,
-          stream: true,
+          stream,
         }),
       });
 
@@ -239,12 +239,21 @@ serve(async (req) => {
         });
       }
 
+      // Non-streaming mode for web voice clients
+      if (!stream) {
+        const followUpData = await followUpResponse.json();
+        const content = followUpData?.choices?.[0]?.message?.content || "";
+        return new Response(JSON.stringify({ content }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
       return new Response(followUpResponse.body, {
         headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
       });
     }
 
-    // No tool calls - make streaming request for regular response
+    // No tool calls - make streaming or non-streaming request for regular response
     const streamResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -259,7 +268,7 @@ serve(async (req) => {
         ],
         tools,
         tool_choice: "auto",
-        stream: true,
+        stream,
       }),
     });
 
@@ -268,6 +277,15 @@ serve(async (req) => {
       console.error("Stream AI error:", streamResponse.status, errorText);
       return new Response(JSON.stringify({ error: "AI gateway error" }), {
         status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Non-streaming mode for web voice clients
+    if (!stream) {
+      const data = await streamResponse.json();
+      const content = data?.choices?.[0]?.message?.content || "";
+      return new Response(JSON.stringify({ content }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

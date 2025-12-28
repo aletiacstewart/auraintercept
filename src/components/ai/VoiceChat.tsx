@@ -115,11 +115,12 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         { role: 'user' as const, content: userText }
       ];
 
-      // Call AI agent
+      // Call AI agent (non-streaming for reliable parsing)
       const { data: aiResponse, error: aiError } = await supabase.functions.invoke('ai-agent', {
-        body: { 
+        body: {
           messages,
-          company_id: companyId
+          company_id: companyId,
+          stream: false,
         }
       });
 
