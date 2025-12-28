@@ -22,10 +22,14 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [agentId, setAgentId] = useState<string | null>(null);
 
+  const [wasConnected, setWasConnected] = useState(false);
+
   // ElevenLabs conversation hook
   const conversation = useConversation({
     onConnect: () => {
       console.log('Connected to ElevenLabs agent');
+      setWasConnected(true);
+      setIsConnecting(false);
       toast({
         title: "Voice Chat Started",
         description: "You can now speak with the AI assistant",
@@ -33,6 +37,14 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     },
     onDisconnect: () => {
       console.log('Disconnected from ElevenLabs agent');
+      // Only show toast if we were previously connected
+      if (wasConnected) {
+        toast({
+          title: "Voice Chat Ended",
+          description: "The conversation has been disconnected",
+        });
+        setWasConnected(false);
+      }
     },
     onMessage: (message) => {
       console.log('Agent message:', message);
@@ -53,12 +65,16 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         }
       }
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       console.error('ElevenLabs conversation error:', error);
+      setIsConnecting(false);
+      const errorMessage = error && typeof error === 'object' && 'message' in error 
+        ? String((error as { message: unknown }).message) 
+        : "Connection to voice agent failed. Please try again.";
       toast({
         variant: "destructive",
         title: "Voice Chat Error",
-        description: "Connection to voice agent failed. Please try again.",
+        description: errorMessage,
       });
     },
   });
@@ -142,15 +158,15 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   // Stop conversation
   const stopConversation = useCallback(async () => {
     try {
+      setWasConnected(false); // Prevent duplicate toast from onDisconnect
       await conversation.endSession();
+      toast({
+        title: "Voice Chat Ended",
+        description: "The conversation has been disconnected",
+      });
     } catch (e) {
       console.error('Error ending session:', e);
     }
-    
-    toast({
-      title: "Voice Chat Ended",
-      description: "The conversation has been disconnected",
-    });
   }, [conversation, toast]);
 
   const isConnected = conversation.status === 'connected';
