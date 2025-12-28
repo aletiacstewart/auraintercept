@@ -5,6 +5,7 @@ import { QuickStartWizard } from '@/components/integrations/QuickStartWizard';
 import { GoogleCalendarSettings } from '@/components/integrations/GoogleCalendarSettings';
 import { CalendarSubscription } from '@/components/integrations/CalendarSubscription';
 import { CRMConnectionSettings } from '@/components/integrations/CRMConnectionSettings';
+import { ElevenLabsSetupGuide } from '@/components/integrations/ElevenLabsSetupGuide';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -624,6 +625,14 @@ export default function Integrations() {
             );
           })}
         </div>
+
+        {/* ElevenLabs Voice Agent Setup Guide - Show when ElevenLabs is connected */}
+        {integrations?.elevenlabs_api_key && companyId && (
+          <ElevenLabsSetupGuide 
+            companyId={companyId} 
+            agentId={integrations?.elevenlabs_agent_id || undefined}
+          />
+        )}
 
         {/* CRM Integrations */}
         <CRMConnectionSettings />
