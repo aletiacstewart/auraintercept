@@ -119,8 +119,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       const { data: aiResponse, error: aiError } = await supabase.functions.invoke('ai-agent', {
         body: { 
           messages,
-          companyId,
-          action: 'chat'
+          company_id: companyId
         }
       });
 
