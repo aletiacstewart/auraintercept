@@ -218,7 +218,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       if (!companyId) return null;
       const { data } = await supabase
         .from('tenant_integrations')
-        .select('twilio_phone_number, twilio_account_sid, twilio_auth_token, elevenlabs_api_key, tts_provider, openai_api_key, google_tts_api_key, elevenlabs_voice_id, openai_tts_voice, google_tts_voice')
+        .select('twilio_phone_number, twilio_account_sid, twilio_auth_token, elevenlabs_api_key, tts_provider, openai_api_key, google_tts_api_key, elevenlabs_voice_id, openai_tts_voice, google_tts_voice, use_platform_tts')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -236,7 +236,8 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     }> = {
       elevenlabs: {
         name: 'ElevenLabs',
-        isConfigured: !!integrations?.elevenlabs_api_key,
+        // Platform TTS or own API key counts as configured
+        isConfigured: !!integrations?.elevenlabs_api_key || !!integrations?.use_platform_tts,
         voiceName: integrations?.elevenlabs_voice_id || 'Default voice',
       },
       openai: {
@@ -257,7 +258,6 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   const hasVoiceChat = ttsInfo.isConfigured;
   const hasSMS = !!(integrations?.twilio_phone_number && integrations?.twilio_account_sid && integrations?.twilio_auth_token);
   const twilioPhone = integrations?.twilio_phone_number;
-
   // Build tabs dynamically - include all functional tabs
   const TABS = [
     { id: 'chat', label: 'Home', icon: MessageSquare },
