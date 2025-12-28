@@ -134,3 +134,6 @@ verify_jwt = true
 
 [functions.crm-adapter]
 verify_jwt = true
+
+[functions.voice-booking-agent]
+verify_jwt = false
