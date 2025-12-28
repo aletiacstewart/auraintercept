@@ -47,9 +47,15 @@ serve(async (req) => {
     }
 
     const ELEVENLABS_API_KEY = integration.elevenlabs_api_key;
-    
-    // Use agent_id from request, or fall back to company's configured agent_id
-    const effectiveAgentId = agent_id || integration.elevenlabs_agent_id;
+
+    // Use agent_id from request, or fall back to company's configured agent_id.
+    // Normalize to ElevenLabs' expected format ("agent_...") in case the UI stored the raw id.
+    const rawAgentId = (agent_id || integration.elevenlabs_agent_id || "").trim();
+    const effectiveAgentId = rawAgentId
+      ? rawAgentId.startsWith("agent_")
+        ? rawAgentId
+        : `agent_${rawAgentId}`
+      : null;
     
     if (effectiveAgentId) {
       // Get conversation token for existing agent
