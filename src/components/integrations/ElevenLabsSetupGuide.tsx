@@ -23,14 +23,14 @@ const TOOLS_CONFIG = [
     parameters: {
       type: 'object',
       properties: {
-        action: { type: 'string', const: 'get_services' },
-        companyId: { type: 'string', description: 'The company ID' }
+        action: { type: 'string', description: 'Must be get_services', enum: ['get_services'] },
+        company_id: { type: 'string', description: 'The company ID' }
       },
-      required: ['action', 'companyId']
+      required: ['action', 'company_id']
     },
     exampleBody: (companyId: string) => ({
       action: 'get_services',
-      companyId
+      company_id: companyId
     })
   },
   {
@@ -41,16 +41,16 @@ const TOOLS_CONFIG = [
     parameters: {
       type: 'object',
       properties: {
-        action: { type: 'string', const: 'get_available_dates' },
-        companyId: { type: 'string', description: 'The company ID' },
-        serviceType: { type: 'string', description: 'The service type to book' }
+        action: { type: 'string', description: 'Must be get_available_dates', enum: ['get_available_dates'] },
+        company_id: { type: 'string', description: 'The company ID' },
+        service_type: { type: 'string', description: 'The service type to book' }
       },
-      required: ['action', 'companyId', 'serviceType']
+      required: ['action', 'company_id', 'service_type']
     },
     exampleBody: (companyId: string) => ({
       action: 'get_available_dates',
-      companyId,
-      serviceType: 'General Plumbing'
+      company_id: companyId,
+      service_type: 'General Plumbing'
     })
   },
   {
@@ -61,18 +61,18 @@ const TOOLS_CONFIG = [
     parameters: {
       type: 'object',
       properties: {
-        action: { type: 'string', const: 'get_available_times' },
-        companyId: { type: 'string', description: 'The company ID' },
+        action: { type: 'string', description: 'Must be get_available_times', enum: ['get_available_times'] },
+        company_id: { type: 'string', description: 'The company ID' },
         date: { type: 'string', description: 'The date in YYYY-MM-DD format' },
-        serviceType: { type: 'string', description: 'The service type' }
+        service_type: { type: 'string', description: 'The service type' }
       },
-      required: ['action', 'companyId', 'date', 'serviceType']
+      required: ['action', 'company_id', 'date', 'service_type']
     },
     exampleBody: (companyId: string) => ({
       action: 'get_available_times',
-      companyId,
+      company_id: companyId,
       date: '2025-01-15',
-      serviceType: 'General Plumbing'
+      service_type: 'General Plumbing'
     })
   },
   {
@@ -83,27 +83,27 @@ const TOOLS_CONFIG = [
     parameters: {
       type: 'object',
       properties: {
-        action: { type: 'string', const: 'book_appointment' },
-        companyId: { type: 'string', description: 'The company ID' },
-        customerName: { type: 'string', description: 'Full name of the customer' },
-        customerPhone: { type: 'string', description: 'Phone number of the customer' },
-        customerEmail: { type: 'string', description: 'Email address of the customer' },
-        customerAddress: { type: 'string', description: 'Service address of the customer' },
-        serviceType: { type: 'string', description: 'The service type being booked' },
-        date: { type: 'string', description: 'The appointment date (YYYY-MM-DD)' },
-        time: { type: 'string', description: 'The appointment time (HH:MM)' },
+        action: { type: 'string', description: 'Must be book_appointment', enum: ['book_appointment'] },
+        company_id: { type: 'string', description: 'The company ID' },
+        customer_name: { type: 'string', description: 'Full name of the customer' },
+        customer_phone: { type: 'string', description: 'Phone number of the customer' },
+        customer_email: { type: 'string', description: 'Email address of the customer' },
+        customer_address: { type: 'string', description: 'Service address of the customer' },
+        service_type: { type: 'string', description: 'The service type being booked' },
+        date: { type: 'string', description: 'The appointment date in YYYY-MM-DD format' },
+        time: { type: 'string', description: 'The appointment time in HH:MM format' },
         notes: { type: 'string', description: 'Additional notes about the service needed' }
       },
-      required: ['action', 'companyId', 'customerName', 'customerPhone', 'serviceType', 'date', 'time']
+      required: ['action', 'company_id', 'customer_name', 'customer_phone', 'service_type', 'date', 'time']
     },
     exampleBody: (companyId: string) => ({
       action: 'book_appointment',
-      companyId,
-      customerName: 'John Smith',
-      customerPhone: '+1234567890',
-      customerEmail: 'john@example.com',
-      customerAddress: '123 Main St, City, State 12345',
-      serviceType: 'General Plumbing',
+      company_id: companyId,
+      customer_name: 'John Smith',
+      customer_phone: '+1234567890',
+      customer_email: 'john@example.com',
+      customer_address: '123 Main St, City, State 12345',
+      service_type: 'General Plumbing',
       date: '2025-01-15',
       time: '10:00',
       notes: 'Leaky faucet in kitchen'
