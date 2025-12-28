@@ -28,6 +28,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const [conversationHistory, setConversationHistory] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([]);
   
   const recognitionRef = useRef<any>(null);
+  const recognitionStartedRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isActiveRef = useRef(false);
 
@@ -52,10 +53,14 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     recognition.interimResults = false;
     recognition.lang = 'en-US';
 
+    recognition.onstart = () => {
+      recognitionStartedRef.current = true;
+    };
+
     recognition.onresult = async (event: any) => {
       const transcript = event.results[0][0].transcript;
       console.log('User said:', transcript);
-      
+
       if (transcript && isActiveRef.current) {
         onTranscript?.('user', transcript);
         setConversationHistory(prev => [...prev, { role: 'user', content: transcript }]);
@@ -64,6 +69,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     };
 
     recognition.onerror = (event: any) => {
+      recognitionStartedRef.current = false;
       console.error('Speech recognition error:', event.error);
       if (event.error !== 'aborted' && event.error !== 'no-speech') {
         toast({
@@ -75,19 +81,21 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     };
 
     recognition.onend = () => {
+      recognitionStartedRef.current = false;
       setIsListening(false);
       // Restart listening if still active and not processing/speaking
       if (isActiveRef.current && !isProcessing && !isSpeaking) {
         setTimeout(() => {
-          if (isActiveRef.current && recognitionRef.current) {
-            try {
-              recognitionRef.current.start();
-              setIsListening(true);
-            } catch (e) {
-              console.log('Recognition restart skipped:', e);
-            }
+          if (!isActiveRef.current) return;
+          if (recognitionStartedRef.current) return;
+          try {
+            recognition.start();
+            recognitionStartedRef.current = true;
+            setIsListening(true);
+          } catch (e) {
+            console.log('Recognition restart skipped:', e);
           }
-        }, 100);
+        }, 150);
       }
     };
 
@@ -177,6 +185,21 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     }
   }, [companyId, conversationHistory, onTranscript, toast]);
 
+  // Start listening
+  const startListening = useCallback(() => {
+    if (!recognitionRef.current || !isActiveRef.current) return;
+    if (isProcessing || isSpeaking) return;
+    if (recognitionStartedRef.current) return;
+
+    try {
+      recognitionRef.current.start();
+      setIsListening(true);
+    } catch (e) {
+      // Common when recognition is already started; keep it quiet.
+      console.log('Could not start recognition:', e);
+    }
+  }, [isProcessing, isSpeaking]);
+
   // Speak text using ElevenLabs TTS
   const speakText = useCallback(async (text: string) => {
     setIsSpeaking(true);
@@ -232,25 +255,32 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     } catch (error) {
       console.error('TTS error:', error);
       setIsSpeaking(false);
+
+      // Fallback to browser TTS so the voice agent still works if ElevenLabs fails.
+      if ('speechSynthesis' in window) {
+        try {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'en-US';
+          utterance.rate = 1;
+          utterance.onend = () => {
+            if (isActiveRef.current) setTimeout(() => startListening(), 250);
+          };
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.speak(utterance);
+          return;
+        } catch (e) {
+          // fall through to toast
+        }
+      }
+
       toast({
         variant: "destructive",
         title: "Voice Error",
         description: error instanceof Error ? error.message : "Could not generate speech",
       });
     }
-  }, [companyId, toast]);
+  }, [companyId, startListening, toast]);
 
-  // Start listening
-  const startListening = useCallback(() => {
-    if (!recognitionRef.current || !isActiveRef.current) return;
-    
-    try {
-      recognitionRef.current.start();
-      setIsListening(true);
-    } catch (e) {
-      console.log('Could not start recognition:', e);
-    }
-  }, []);
 
   // Start conversation
   const startConversation = useCallback(async () => {
@@ -296,7 +326,8 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   // Stop conversation
   const stopConversation = useCallback(() => {
     isActiveRef.current = false;
-    
+    recognitionStartedRef.current = false;
+
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
