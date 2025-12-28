@@ -360,6 +360,93 @@ async function validateCustomerInfo(params: any) {
   };
 }
 
+// Find existing customer by email, phone, or address
+async function findExistingCustomer(supabase: any, companyId: string, email: string, phone: string, address: string) {
+  // First try to find by email (most reliable identifier)
+  if (email) {
+    const { data: byEmail } = await supabase
+      .from('customer_profiles')
+      .select('id, name, email, phone, address, portal_token')
+      .eq('company_id', companyId)
+      .eq('email', email)
+      .maybeSingle();
+    
+    if (byEmail) {
+      console.log('[Voice Booking Agent] Found existing customer by email:', byEmail.id);
+      return { profile: byEmail, matchedBy: 'email' };
+    }
+  }
+
+  // Try to find by phone number (normalize phone for comparison)
+  if (phone) {
+    const cleanPhone = phone.replace(/\D/g, '');
+    const { data: allProfiles } = await supabase
+      .from('customer_profiles')
+      .select('id, name, email, phone, address, portal_token')
+      .eq('company_id', companyId)
+      .not('phone', 'is', null);
+    
+    if (allProfiles) {
+      const matchByPhone = allProfiles.find((p: any) => 
+        p.phone && p.phone.replace(/\D/g, '') === cleanPhone
+      );
+      if (matchByPhone) {
+        console.log('[Voice Booking Agent] Found existing customer by phone:', matchByPhone.id);
+        return { profile: matchByPhone, matchedBy: 'phone' };
+      }
+    }
+  }
+
+  // Try to find by address (partial match)
+  if (address && address.length > 10) {
+    const addressParts = address.toLowerCase().split(/[\s,]+/).filter(p => p.length > 3);
+    const { data: allProfiles } = await supabase
+      .from('customer_profiles')
+      .select('id, name, email, phone, address, portal_token')
+      .eq('company_id', companyId)
+      .not('address', 'is', null);
+    
+    if (allProfiles) {
+      const matchByAddress = allProfiles.find((p: any) => {
+        if (!p.address) return false;
+        const profileAddress = p.address.toLowerCase();
+        // Match if at least 3 address parts are found
+        const matchCount = addressParts.filter(part => profileAddress.includes(part)).length;
+        return matchCount >= 3;
+      });
+      if (matchByAddress) {
+        console.log('[Voice Booking Agent] Found existing customer by address:', matchByAddress.id);
+        return { profile: matchByAddress, matchedBy: 'address' };
+      }
+    }
+  }
+
+  return null;
+}
+
+// Find existing user account by email
+async function findExistingUserAccount(supabase: any, email: string) {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('id, email, full_name')
+    .eq('email', email)
+    .maybeSingle();
+  
+  if (profile) {
+    // Check if they have customer role
+    const { data: role } = await supabase
+      .from('user_roles')
+      .select('id')
+      .eq('user_id', profile.id)
+      .eq('role', 'customer')
+      .maybeSingle();
+    
+    return { user: profile, hasCustomerRole: !!role };
+  }
+  
+  return null;
+}
+
 // Book appointment with full customer account creation and notifications
 async function bookAppointmentWithAccountCreation(supabase: any, companyId: string, params: any) {
   const { 
@@ -382,6 +469,29 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
       error: 'Missing customer information. Need: name, email, phone, and address.' 
     };
   }
+
+  // ===== STEP 1: Check for existing customer =====
+  const existingCustomer = await findExistingCustomer(supabase, companyId, customer_email, customer_phone, customer_address);
+  let customerProfileId: string | null = existingCustomer?.profile?.id || null;
+  let customerToken = existingCustomer?.profile?.portal_token || crypto.randomUUID();
+  let isReturningCustomer = !!existingCustomer;
+  
+  console.log('[Voice Booking Agent] Customer lookup result:', {
+    isReturningCustomer,
+    matchedBy: existingCustomer?.matchedBy,
+    customerProfileId
+  });
+
+  // ===== STEP 2: Check for existing user account =====
+  const existingUser = await findExistingUserAccount(supabase, customer_email);
+  let customerUserId: string | null = existingUser?.user?.id || null;
+  let newAccountCreated = false;
+  let tempPassword: string | null = null;
+
+  console.log('[Voice Booking Agent] User account lookup:', {
+    hasExistingUser: !!existingUser,
+    hasCustomerRole: existingUser?.hasCustomerRole
+  });
 
   // Get service
   const { data: service, error: serviceError } = await supabase
@@ -444,10 +554,7 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
     .eq('id', companyId)
     .single();
 
-  // Generate customer token
-  const customerToken = crypto.randomUUID();
-
-  // Create the appointment
+  // ===== STEP 3: Create the appointment =====
   const { data: appointment, error: appointmentError } = await supabase
     .from('appointments')
     .insert({
@@ -477,16 +584,10 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
 
   console.log('[Voice Booking Agent] Appointment created:', appointment.id);
 
-  // Create or update customer profile
-  const { data: existingProfile } = await supabase
-    .from('customer_profiles')
-    .select('id')
-    .eq('company_id', companyId)
-    .eq('email', customer_email)
-    .maybeSingle();
-
-  if (!existingProfile) {
-    await supabase
+  // ===== STEP 4: Create or update customer profile =====
+  if (!customerProfileId) {
+    // Create new customer profile
+    const { data: newProfile } = await supabase
       .from('customer_profiles')
       .insert({
         company_id: companyId,
@@ -495,24 +596,31 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
         name: customer_name,
         address: customer_address,
         portal_token: customerToken,
-      });
+      })
+      .select('id')
+      .single();
+    
+    customerProfileId = newProfile?.id;
+    console.log('[Voice Booking Agent] Created new customer profile:', customerProfileId);
+  } else {
+    // Update existing profile with latest info
+    await supabase
+      .from('customer_profiles')
+      .update({
+        phone: customer_phone,
+        name: customer_name,
+        address: customer_address,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', customerProfileId);
+    
+    console.log('[Voice Booking Agent] Updated existing customer profile:', customerProfileId);
   }
 
-  // Generate temporary password for customer account
-  const tempPassword = generateTemporaryPassword();
-  
-  // Check if customer user account exists
-  const { data: existingUsers } = await supabase
-    .from('profiles')
-    .select('id, email')
-    .eq('email', customer_email)
-    .maybeSingle();
-
-  let customerUserId: string | null = null;
-  let newAccountCreated = false;
-
-  if (!existingUsers) {
+  // ===== STEP 5: Handle user account =====
+  if (!existingUser) {
     // Create new customer user account
+    tempPassword = generateTemporaryPassword();
     try {
       const { data: userData, error: createError } = await supabase.auth.admin.createUser({
         email: customer_email,
@@ -538,11 +646,49 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
           .insert({
             customer_user_id: customerUserId,
             company_id: companyId,
+            customer_profile_id: customerProfileId,
           });
+        
+        console.log('[Voice Booking Agent] Created new user account:', customerUserId);
       }
     } catch (e) {
       console.error('[Voice Booking Agent] Error in account creation:', e);
     }
+  } else {
+    customerUserId = existingUser.user.id;
+    
+    // Ensure they have customer role
+    if (!existingUser.hasCustomerRole) {
+      await supabase
+        .from('user_roles')
+        .insert({ user_id: customerUserId, role: 'customer' });
+    }
+
+    // Ensure company association exists
+    const { data: existingAssoc } = await supabase
+      .from('customer_company_associations')
+      .select('id')
+      .eq('customer_user_id', customerUserId)
+      .eq('company_id', companyId)
+      .maybeSingle();
+
+    if (!existingAssoc) {
+      await supabase
+        .from('customer_company_associations')
+        .insert({
+          customer_user_id: customerUserId,
+          company_id: companyId,
+          customer_profile_id: customerProfileId,
+        });
+    } else {
+      // Update last interaction
+      await supabase
+        .from('customer_company_associations')
+        .update({ last_interaction_at: new Date().toISOString() })
+        .eq('id', existingAssoc.id);
+    }
+    
+    console.log('[Voice Booking Agent] Using existing user account:', customerUserId);
   }
 
   // Get integrations for notifications
@@ -694,6 +840,12 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
     }
   }
 
+  const customerMessage = isReturningCustomer 
+    ? `Welcome back ${customer_name}! I found your existing account.`
+    : newAccountCreated 
+      ? `A customer account has been created with login details sent via email.`
+      : '';
+
   return { 
     success: true, 
     appointment_id: appointment.id,
@@ -701,8 +853,9 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
     date: appointmentDateFormatted,
     time: appointmentTimeFormatted,
     technician: assignedEmployeeName,
+    is_returning_customer: isReturningCustomer,
     customer_account_created: newAccountCreated,
-    message: `Appointment booked for ${customer_name} on ${appointmentDateFormatted} at ${appointmentTimeFormatted} for ${service.name}. ${assignedEmployeeName ? `${assignedEmployeeName} will be your technician.` : ''} A confirmation email has been sent to ${customer_email}.${newAccountCreated ? ' A customer account has been created with login details sent via email.' : ''}`
+    message: `${isReturningCustomer ? 'Welcome back! ' : ''}Appointment booked for ${customer_name} on ${appointmentDateFormatted} at ${appointmentTimeFormatted} for ${service.name}. ${assignedEmployeeName ? `${assignedEmployeeName} will be your technician.` : ''} A confirmation email has been sent to ${customer_email}. ${customerMessage}`
   };
 }
 
