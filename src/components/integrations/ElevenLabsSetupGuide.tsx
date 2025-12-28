@@ -230,24 +230,22 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
           </h3>
           <div className="ml-8 space-y-3">
             <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 text-sm">
-              <p className="font-medium text-amber-600 dark:text-amber-400 mb-2">📍 Where to add tools in ElevenLabs:</p>
+              <p className="font-medium text-amber-600 dark:text-amber-400 mb-2">📍 How to add each tool in ElevenLabs:</p>
               <ol className="list-decimal ml-4 space-y-1 text-muted-foreground">
-                <li>Go to <a href="https://elevenlabs.io/app/conversational-ai" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">elevenlabs.io/app/conversational-ai</a></li>
-                <li>Click on your agent to open it</li>
-                <li>In the left sidebar, click <strong>"Tools"</strong></li>
-                <li>Click <strong>"+ Add Tool"</strong> button</li>
-                <li>Select <strong>"Webhook"</strong> as the tool type</li>
-                <li>Fill in the Name, Description, URL, and Parameters for each tool below</li>
+                <li>Go to your agent → <strong>Tools</strong> → <strong>+ Add Tool</strong> → <strong>Webhook</strong></li>
+                <li>Fill in the <strong>Name</strong> field (e.g., <code>get_services</code>)</li>
+                <li>Fill in the <strong>Description</strong> field</li>
+                <li>Change <strong>Method</strong> from GET to <strong>POST</strong></li>
+                <li>Paste the <strong>URL</strong> (see below)</li>
+                <li>Scroll down to <strong>"Body"</strong> section and click <strong>"Add property"</strong> for each parameter</li>
+                <li><strong>OR easier:</strong> Click <strong>"Edit as JSON"</strong> at the bottom and paste the JSON config</li>
               </ol>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Add all 4 tools below. Each tool uses the same webhook URL but different parameters:
-            </p>
             
             {/* Webhook URL */}
             <div className="bg-muted p-3 rounded-lg space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">Webhook URL (same for all tools)</span>
+                <span className="text-xs font-medium text-muted-foreground">URL (same for all 4 tools)</span>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -259,6 +257,10 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
               </div>
               <code className="text-xs break-all">{WEBHOOK_URL}</code>
             </div>
+            
+            <p className="text-sm text-muted-foreground">
+              Add all 4 tools below. For each one, copy the <strong>"Full JSON Config"</strong> and paste via "Edit as JSON":
+            </p>
 
             <Tabs defaultValue="get_services" className="mt-4">
               <TabsList className="grid w-full grid-cols-4">
@@ -272,7 +274,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
 
               {TOOLS_CONFIG.map((tool) => (
                 <TabsContent key={tool.id} value={tool.id} className="space-y-3">
-                  <div className="bg-card border rounded-lg p-4 space-y-3">
+                  <div className="bg-card border rounded-lg p-4 space-y-4">
                     <div className="flex items-start justify-between">
                       <div>
                         <h4 className="font-medium flex items-center gap-2">
@@ -284,35 +286,39 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                       <Badge variant="outline">POST</Badge>
                     </div>
 
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium">Tool Configuration</span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 gap-1"
-                          onClick={() => copyToClipboard(JSON.stringify({
-                            name: tool.name,
-                            description: tool.description,
-                            parameters: tool.parameters
-                          }, null, 2), `tool-${tool.id}`)}
-                        >
-                          {copiedItems[`tool-${tool.id}`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                          Copy Config
-                        </Button>
+                    {/* Field-by-field instructions */}
+                    <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-xs space-y-2">
+                      <p className="font-medium text-green-600 dark:text-green-400">Fill in these fields:</p>
+                      <div className="grid gap-1.5">
+                        <div><strong>Name:</strong> <code className="bg-muted px-1 rounded">{tool.name}</code></div>
+                        <div><strong>Description:</strong> <span className="text-muted-foreground">{tool.description}</span></div>
+                        <div><strong>Method:</strong> <code className="bg-muted px-1 rounded">POST</code></div>
+                        <div><strong>URL:</strong> <code className="bg-muted px-1 rounded text-[10px]">{WEBHOOK_URL}</code></div>
                       </div>
-                      <pre className="bg-muted p-3 rounded text-xs overflow-x-auto">
-{JSON.stringify({
-  name: tool.name,
-  description: tool.description,
-  parameters: tool.parameters
-}, null, 2)}
-                      </pre>
                     </div>
 
+                    {/* Body parameters */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium">Example Request Body</span>
+                        <span className="text-xs font-medium">Body Parameters (scroll to "Body" section, click "Add property" for each)</span>
+                      </div>
+                      <div className="bg-muted p-3 rounded text-xs space-y-1">
+                        {Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => (
+                          <div key={key} className="flex items-start gap-2">
+                            <code className="font-semibold min-w-[100px]">{key}</code>
+                            <span className="text-muted-foreground">
+                              ({value.type}) {value.description || (value.const ? `= "${value.const}"` : '')}
+                              {tool.parameters.required?.includes(key) && <Badge variant="secondary" className="ml-1 text-[9px] h-4">required</Badge>}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Example values to test */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium">Example values (for testing)</span>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -320,7 +326,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                           onClick={() => copyToClipboard(JSON.stringify(tool.exampleBody(companyId), null, 2), `body-${tool.id}`)}
                         >
                           {copiedItems[`body-${tool.id}`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                          Copy Body
+                          Copy
                         </Button>
                       </div>
                       <pre className="bg-muted p-3 rounded text-xs overflow-x-auto">
