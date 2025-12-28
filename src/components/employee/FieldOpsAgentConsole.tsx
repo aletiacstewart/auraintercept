@@ -241,9 +241,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
   const filteredJobs = getFilteredJobs();
 
-  // Auto-scroll to bottom on new messages
+  // Auto-scroll to bottom on new messages (only when there are messages)
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && messages.length > 0) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
