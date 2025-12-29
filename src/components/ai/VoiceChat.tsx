@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useConversation } from '@elevenlabs/react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -22,13 +22,14 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [agentId, setAgentId] = useState<string | null>(null);
 
-  const [wasConnected, setWasConnected] = useState(false);
+  // Avoid stale state inside useConversation callbacks
+  const wasConnectedRef = useRef(false);
 
   // ElevenLabs conversation hook
   const conversation = useConversation({
     onConnect: () => {
       console.log('Connected to ElevenLabs agent');
-      setWasConnected(true);
+      wasConnectedRef.current = true;
       setIsConnecting(false);
       toast({
         title: "Voice Chat Started",
@@ -37,14 +38,17 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     },
     onDisconnect: () => {
       console.log('Disconnected from ElevenLabs agent');
+      setIsConnecting(false);
+
       // Only show toast if we were previously connected
-      if (wasConnected) {
+      if (wasConnectedRef.current) {
         toast({
           title: "Voice Chat Ended",
           description: "The conversation has been disconnected",
         });
-        setWasConnected(false);
       }
+
+      wasConnectedRef.current = false;
     },
     onMessage: (message) => {
       console.log('Agent message:', message);
@@ -68,9 +72,13 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     onError: (error: unknown) => {
       console.error('ElevenLabs conversation error:', error);
       setIsConnecting(false);
-      const errorMessage = error && typeof error === 'object' && 'message' in error 
-        ? String((error as { message: unknown }).message) 
-        : "Connection to voice agent failed. Please try again.";
+      wasConnectedRef.current = false;
+
+      const errorMessage =
+        error && typeof error === 'object' && 'message' in error
+          ? String((error as { message: unknown }).message)
+          : "Connection to voice agent failed. Please try again.";
+
       toast({
         variant: "destructive",
         title: "Voice Chat Error",
@@ -158,7 +166,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   // Stop conversation
   const stopConversation = useCallback(async () => {
     try {
-      setWasConnected(false); // Prevent duplicate toast from onDisconnect
+      wasConnectedRef.current = false; // Prevent duplicate toast from onDisconnect
       await conversation.endSession();
       toast({
         title: "Voice Chat Ended",
@@ -170,7 +178,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   }, [conversation, toast]);
 
   const isConnected = conversation.status === 'connected';
-  const isSpeaking = conversation.isSpeaking;
+  const isSpeaking = isConnected && conversation.isSpeaking;
 
   // Visual feedback based on state
   const getStatusText = () => {
