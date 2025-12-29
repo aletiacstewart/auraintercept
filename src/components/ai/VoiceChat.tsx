@@ -24,11 +24,17 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
   // Avoid stale state inside useConversation callbacks
   const wasConnectedRef = useRef(false);
+  const connectStartedAtRef = useRef<number | null>(null);
+  const lastConnectMethodRef = useRef<'webrtc' | 'ws_signed_url' | 'ws_agent_id' | null>(null);
+  const lastAuthRef = useRef<{ token?: string; signed_url?: string } | null>(null);
+  const autoRetryUsedRef = useRef(false);
 
   // ElevenLabs conversation hook
   const conversation = useConversation({
     onConnect: () => {
-      console.log('Connected to ElevenLabs agent');
+      console.log('Connected to ElevenLabs agent', {
+        method: lastConnectMethodRef.current,
+      });
       wasConnectedRef.current = true;
       setIsConnecting(false);
       toast({
@@ -36,9 +42,39 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         description: "You can now speak with the AI assistant",
       });
     },
-    onDisconnect: () => {
-      console.log('Disconnected from ElevenLabs agent');
+    onDisconnect: async () => {
+      const connectedForMs = connectStartedAtRef.current ? Date.now() - connectStartedAtRef.current : null;
+      console.log('Disconnected from ElevenLabs agent', {
+        method: lastConnectMethodRef.current,
+        connectedForMs,
+      });
+
       setIsConnecting(false);
+
+      // If we disconnect immediately after connecting, automatically fall back once.
+      // This helps when WebRTC is blocked or fails during ICE negotiation.
+      const shouldAutoRetry =
+        !autoRetryUsedRef.current &&
+        lastConnectMethodRef.current === 'webrtc' &&
+        typeof connectedForMs === 'number' &&
+        connectedForMs < 2000 &&
+        !!lastAuthRef.current?.signed_url;
+
+      if (shouldAutoRetry) {
+        autoRetryUsedRef.current = true;
+        try {
+          setIsConnecting(true);
+          toast({
+            title: 'Reconnecting…',
+            description: 'Switching to a compatibility mode for your browser/network.',
+          });
+          await conversation.startSession({ signedUrl: lastAuthRef.current!.signed_url! });
+          return;
+        } catch (e) {
+          console.error('Auto-retry via signed_url failed:', e);
+          setIsConnecting(false);
+        }
+      }
 
       // Only show toast if we were previously connected
       if (wasConnectedRef.current) {
@@ -118,6 +154,10 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   const startConversation = useCallback(async () => {
     setIsConnecting(true);
 
+    // Reset attempt state
+    autoRetryUsedRef.current = false;
+    connectStartedAtRef.current = Date.now();
+
     try {
       // Request microphone permission
       await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -127,36 +167,43 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         throw new Error('No ElevenLabs agent configured for this company');
       }
 
-      // Get signed URL from edge function
       const { data, error } = await supabase.functions.invoke('elevenlabs-conversation-token', {
-        body: { company_id: companyId }
+        body: { company_id: companyId },
       });
 
       if (error) {
         throw new Error(error.message || 'Failed to get conversation token');
       }
 
-      console.log('Got ElevenLabs token response:', data);
+      // Cache auth so we can auto-fallback if needed
+      lastAuthRef.current = {
+        token: data?.token,
+        signed_url: data?.signed_url,
+      };
+
+      console.log('Got ElevenLabs auth response:', {
+        hasToken: Boolean(data?.token),
+        hasSignedUrl: Boolean(data?.signed_url),
+      });
 
       if (data?.token) {
-        // WebRTC is typically more stable/low-latency than websocket
+        lastConnectMethodRef.current = 'webrtc';
         await conversation.startSession({
           conversationToken: data.token,
           connectionType: 'webrtc',
         });
       } else if (data?.signed_url) {
-        // Fallback: Connect using signed URL (WebSocket)
+        lastConnectMethodRef.current = 'ws_signed_url';
         await conversation.startSession({
           signedUrl: data.signed_url,
         });
       } else {
-        // Fallback: Connect directly with agent ID (public agent)
+        lastConnectMethodRef.current = 'ws_agent_id';
         await conversation.startSession({
           agentId: agentId,
           connectionType: 'websocket',
         });
       }
-
     } catch (error) {
       console.error('Failed to start voice conversation:', error);
       toast({
