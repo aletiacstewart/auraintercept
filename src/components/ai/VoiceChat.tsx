@@ -2,44 +2,55 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useConversation } from '@elevenlabs/react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Mic, MicOff, Phone, PhoneOff, Loader2, Volume2 } from 'lucide-react';
+import { Mic, MicOff, Phone, PhoneOff, Loader2, Volume2, MessageSquare, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 interface VoiceChatProps {
   companyId: string;
   companyName: string;
   onTranscript?: (role: 'user' | 'assistant', text: string) => void;
+  /** Enable text-only mode to test without using voice credits */
+  testMode?: boolean;
 }
 
 export const VoiceChat: React.FC<VoiceChatProps> = ({ 
   companyId, 
   companyName,
-  onTranscript 
+  onTranscript,
+  testMode = false
 }) => {
   const { toast } = useToast();
   const [isConnecting, setIsConnecting] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [agentId, setAgentId] = useState<string | null>(null);
+  const [textInput, setTextInput] = useState('');
+  const [isSendingText, setIsSendingText] = useState(false);
 
   // Avoid stale state inside useConversation callbacks
   const wasConnectedRef = useRef(false);
   const connectStartedAtRef = useRef<number | null>(null);
-  const lastConnectMethodRef = useRef<'webrtc' | 'ws_signed_url' | 'ws_agent_id' | null>(null);
+  const lastConnectMethodRef = useRef<'webrtc' | 'ws_signed_url' | 'ws_agent_id' | 'text_only' | null>(null);
   const lastAuthRef = useRef<{ token?: string; signed_url?: string } | null>(null);
   const autoRetryUsedRef = useRef(false);
 
-  // ElevenLabs conversation hook
+  // ElevenLabs conversation hook - textOnly mode skips audio processing
   const conversation = useConversation({
+    ...(testMode && { textOnly: true }),
     onConnect: () => {
       console.log('Connected to ElevenLabs agent', {
         method: lastConnectMethodRef.current,
+        testMode,
       });
       wasConnectedRef.current = true;
       setIsConnecting(false);
       toast({
-        title: "Voice Chat Started",
-        description: "You can now speak with the AI assistant",
+        title: testMode ? "Text Mode Started" : "Voice Chat Started",
+        description: testMode 
+          ? "Testing agent without using voice credits" 
+          : "You can now speak with the AI assistant",
       });
     },
     onDisconnect: async () => {
@@ -47,13 +58,15 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       console.log('Disconnected from ElevenLabs agent', {
         method: lastConnectMethodRef.current,
         connectedForMs,
+        testMode,
       });
 
       setIsConnecting(false);
 
       // If we disconnect immediately after connecting, automatically fall back once.
-      // This helps when WebRTC is blocked or fails during ICE negotiation.
+      // Skip auto-retry in text mode as it's already a fallback
       const shouldAutoRetry =
+        !testMode &&
         !autoRetryUsedRef.current &&
         lastConnectMethodRef.current === 'webrtc' &&
         typeof connectedForMs === 'number' &&
@@ -79,7 +92,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       // Only show toast if we were previously connected
       if (wasConnectedRef.current) {
         toast({
-          title: "Voice Chat Ended",
+          title: testMode ? "Text Mode Ended" : "Voice Chat Ended",
           description: "The conversation has been disconnected",
         });
       }
@@ -117,18 +130,22 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
       toast({
         variant: "destructive",
-        title: "Voice Chat Error",
+        title: testMode ? "Text Mode Error" : "Voice Chat Error",
         description: errorMessage,
       });
     },
   });
 
-  // Check microphone permission
+  // Check microphone permission (skip in text mode)
   useEffect(() => {
+    if (testMode) {
+      setHasPermission(true); // Not needed for text mode
+      return;
+    }
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(() => setHasPermission(true))
       .catch(() => setHasPermission(false));
-  }, []);
+  }, [testMode]);
 
   // Fetch agent ID for this company
   useEffect(() => {
@@ -159,9 +176,11 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
     connectStartedAtRef.current = Date.now();
 
     try {
-      // Request microphone permission
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      setHasPermission(true);
+      // Request microphone permission only in voice mode
+      if (!testMode) {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        setHasPermission(true);
+      }
 
       if (!agentId) {
         throw new Error('No ElevenLabs agent configured for this company');
@@ -184,9 +203,23 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       console.log('Got ElevenLabs auth response:', {
         hasToken: Boolean(data?.token),
         hasSignedUrl: Boolean(data?.signed_url),
+        testMode,
       });
 
-      if (data?.token) {
+      // In text mode, prefer signed URL (simpler) or direct agent ID
+      if (testMode) {
+        lastConnectMethodRef.current = 'text_only';
+        if (data?.signed_url) {
+          await conversation.startSession({
+            signedUrl: data.signed_url,
+          });
+        } else {
+          await conversation.startSession({
+            agentId: agentId,
+            connectionType: 'websocket',
+          });
+        }
+      } else if (data?.token) {
         lastConnectMethodRef.current = 'webrtc';
         await conversation.startSession({
           conversationToken: data.token,
@@ -205,16 +238,16 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         });
       }
     } catch (error) {
-      console.error('Failed to start voice conversation:', error);
+      console.error('Failed to start conversation:', error);
       toast({
         variant: "destructive",
         title: "Connection Failed",
-        description: error instanceof Error ? error.message : "Unable to start voice chat",
+        description: error instanceof Error ? error.message : "Unable to start chat",
       });
     } finally {
       setIsConnecting(false);
     }
-  }, [companyId, agentId, conversation, toast]);
+  }, [companyId, agentId, conversation, toast, testMode]);
 
   // Stop conversation
   const stopConversation = useCallback(async () => {
@@ -222,13 +255,44 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       wasConnectedRef.current = false; // Prevent duplicate toast from onDisconnect
       await conversation.endSession();
       toast({
-        title: "Voice Chat Ended",
+        title: testMode ? "Text Mode Ended" : "Voice Chat Ended",
         description: "The conversation has been disconnected",
       });
     } catch (e) {
       console.error('Error ending session:', e);
     }
-  }, [conversation, toast]);
+  }, [conversation, toast, testMode]);
+
+  // Send text message (for text mode)
+  const sendTextMessage = useCallback(async () => {
+    if (!textInput.trim() || !conversation.status) return;
+    
+    setIsSendingText(true);
+    try {
+      // Log user message
+      onTranscript?.('user', textInput.trim());
+      
+      // Send to agent
+      conversation.sendUserMessage(textInput.trim());
+      setTextInput('');
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      toast({
+        variant: "destructive",
+        title: "Send Failed",
+        description: "Could not send message to agent",
+      });
+    } finally {
+      setIsSendingText(false);
+    }
+  }, [textInput, conversation, onTranscript, toast]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendTextMessage();
+    }
+  };
 
   const isConnected = conversation.status === 'connected';
   const isSpeaking = isConnected && conversation.isSpeaking;
@@ -236,19 +300,21 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   // Visual feedback based on state
   const getStatusText = () => {
     if (isConnecting) return 'Connecting...';
+    if (testMode && isConnected) return 'Text mode active - type to chat';
     if (isSpeaking) return 'AI is speaking...';
     if (isConnected) return 'Listening...';
-    return 'Click to start voice chat';
+    return testMode ? 'Click to start text mode' : 'Click to start voice chat';
   };
 
   const getStatusColor = () => {
+    if (testMode && isConnected) return 'bg-blue-500';
     if (isSpeaking) return 'bg-secondary';
     if (isConnected) return 'bg-green-500';
     if (isConnecting) return 'bg-amber-500';
     return 'bg-muted';
   };
 
-  if (hasPermission === false) {
+  if (!testMode && hasPermission === false) {
     return (
       <div className="flex flex-col items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
         <MicOff className="h-8 w-8 text-destructive" />
@@ -272,7 +338,15 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
   return (
     <div className="flex flex-col items-center gap-4 p-4">
-      {/* Voice Visualizer */}
+      {/* Test Mode Badge */}
+      {testMode && (
+        <Badge variant="secondary" className="gap-1 bg-blue-500/10 text-blue-600 border-blue-500/20">
+          <MessageSquare className="h-3 w-3" />
+          Text Mode (No Voice Credits)
+        </Badge>
+      )}
+
+      {/* Voice/Text Visualizer */}
       <div 
         className={cn(
           "relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300",
@@ -282,10 +356,14 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       >
         {isConnecting ? (
           <Loader2 className="h-10 w-10 text-white animate-spin" />
+        ) : testMode && isConnected ? (
+          <MessageSquare className="h-10 w-10 text-white" />
         ) : isSpeaking ? (
           <Volume2 className="h-10 w-10 text-white animate-pulse" />
         ) : isConnected ? (
           <Mic className="h-10 w-10 text-white" />
+        ) : testMode ? (
+          <MessageSquare className="h-10 w-10 text-muted-foreground" />
         ) : (
           <Mic className="h-10 w-10 text-muted-foreground" />
         )}
@@ -302,6 +380,31 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       {/* Status Text */}
       <p className="text-sm text-muted-foreground">{getStatusText()}</p>
 
+      {/* Text Input (for text mode when connected) */}
+      {testMode && isConnected && (
+        <div className="flex gap-2 w-full max-w-md">
+          <Input
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type your message..."
+            disabled={isSendingText}
+            className="flex-1"
+          />
+          <Button
+            onClick={sendTextMessage}
+            disabled={!textInput.trim() || isSendingText}
+            size="icon"
+          >
+            {isSendingText ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      )}
+
       {/* Control Buttons */}
       <div className="flex gap-2">
         {!isConnected ? (
@@ -310,13 +413,16 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
             disabled={isConnecting}
             className="gap-2"
             size="lg"
+            variant={testMode ? "secondary" : "default"}
           >
             {isConnecting ? (
               <Loader2 className="h-4 w-4 animate-spin" />
+            ) : testMode ? (
+              <MessageSquare className="h-4 w-4" />
             ) : (
               <Phone className="h-4 w-4" />
             )}
-            Start Voice Chat
+            {testMode ? "Start Text Mode" : "Start Voice Chat"}
           </Button>
         ) : (
           <Button
@@ -326,14 +432,14 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
             size="lg"
           >
             <PhoneOff className="h-4 w-4" />
-            End Call
+            {testMode ? "End Session" : "End Call"}
           </Button>
         )}
       </div>
 
       {/* Company branding */}
       <p className="text-xs text-muted-foreground mt-2">
-        Voice powered by {companyName}
+        {testMode ? "Testing" : "Voice powered by"} {companyName}
       </p>
     </div>
   );
