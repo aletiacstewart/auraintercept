@@ -138,8 +138,14 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
       console.log('Got ElevenLabs token response:', data);
 
-      if (data?.signed_url) {
-        // Connect using signed URL (WebSocket)
+      if (data?.token) {
+        // WebRTC is typically more stable/low-latency than websocket
+        await conversation.startSession({
+          conversationToken: data.token,
+          connectionType: 'webrtc',
+        });
+      } else if (data?.signed_url) {
+        // Fallback: Connect using signed URL (WebSocket)
         await conversation.startSession({
           signedUrl: data.signed_url,
         });
