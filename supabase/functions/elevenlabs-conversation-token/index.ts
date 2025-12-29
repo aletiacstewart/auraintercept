@@ -61,8 +61,21 @@ serve(async (req) => {
       return [storedAgentId, `agent_${storedAgentId}`];
     })();
 
+    const getConversationToken = async (candidateAgentId: string) => {
+      console.log("Getting WebRTC token for agent:", candidateAgentId);
+      const response = await fetch(
+        `https://api.elevenlabs.io/v1/convai/conversation/token?agent_id=${candidateAgentId}`,
+        {
+          headers: {
+            "xi-api-key": ELEVENLABS_API_KEY,
+          },
+        }
+      );
+      return response;
+    };
+
     const getSignedUrl = async (candidateAgentId: string) => {
-      console.log("Getting token for agent:", candidateAgentId);
+      console.log("Getting signed URL for agent:", candidateAgentId);
       const response = await fetch(
         `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${candidateAgentId}`,
         {
@@ -75,37 +88,49 @@ serve(async (req) => {
     };
 
     if (candidates.length > 0) {
-      let response: Response | null = null;
+      let lastStatus = 500;
       let lastErrorText = "";
 
       for (const candidate of candidates) {
-        response = await getSignedUrl(candidate);
-        if (response.ok) {
-          const { signed_url } = await response.json();
+        // Prefer WebRTC token (more stable than websocket signed_url)
+        const tokenRes = await getConversationToken(candidate);
+        if (tokenRes.ok) {
+          const { token } = await tokenRes.json();
+          console.log("Got WebRTC token for agent");
+          return new Response(JSON.stringify({ token }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        // Fallback to websocket signed_url
+        const signedRes = await getSignedUrl(candidate);
+        if (signedRes.ok) {
+          const { signed_url } = await signedRes.json();
           console.log("Got signed URL for agent");
           return new Response(JSON.stringify({ signed_url }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
 
-        lastErrorText = await response.text();
-        console.error("ElevenLabs API error:", response.status, lastErrorText);
+        // Capture error details and decide whether to try other formats
+        lastStatus = signedRes.status || tokenRes.status || 500;
+        lastErrorText = await signedRes.text().catch(async () => await tokenRes.text());
+        console.error("ElevenLabs API error:", lastStatus, lastErrorText);
 
         // If it's not a 404, don't retry other formats.
-        if (response.status !== 404) break;
+        if (lastStatus !== 404) break;
       }
 
       // Build a helpful error.
-      const status = response?.status ?? 500;
       let details = lastErrorText;
-      if (status === 404) {
+      if (lastStatus === 404) {
         details = `Agent ID "${storedAgentId}" was not found (tried: ${candidates.join(", ")}). Please verify the agent exists and update it in Integrations settings.`;
-      } else if (status === 401) {
+      } else if (lastStatus === 401) {
         details = "Invalid ElevenLabs API key. Please check your API key in Integrations settings.";
       }
 
-      return new Response(JSON.stringify({ error: `ElevenLabs API error: ${status}`, details }), {
-        status,
+      return new Response(JSON.stringify({ error: `ElevenLabs API error: ${lastStatus}`, details }), {
+        status: lastStatus,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     } else {
