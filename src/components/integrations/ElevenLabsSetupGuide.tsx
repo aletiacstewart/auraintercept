@@ -308,12 +308,19 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                         <ol className="list-decimal ml-4 space-y-1 text-muted-foreground">
                           <li>Scroll down to the <strong>"Body"</strong> section</li>
                           <li>Click <strong>"Add property"</strong></li>
-                          <li>In the <strong>"Identifier"</strong> field, type the property name exactly (e.g., <code className="bg-muted px-1 rounded">company_id</code>)</li>
+                          <li>In the <strong>"Identifier"</strong> field, type the property name exactly (e.g., <code className="bg-muted px-1 rounded">company_id</code>) — <strong>only letters, numbers, underscores allowed</strong></li>
                           <li>Set <strong>"Data type"</strong> to <code className="bg-muted px-1 rounded">String</code></li>
-                          <li>Set <strong>"Value Type"</strong> to <code className="bg-muted px-1 rounded">LLM Prompt</code></li>
+                          <li>Set <strong>"Value Type"</strong>: for <code>company_id</code> use <code className="bg-muted px-1 rounded">Value</code> and paste your ID; for others use <code className="bg-muted px-1 rounded">LLM Prompt</code></li>
                           <li>Fill in the <strong>"Description"</strong></li>
                           <li>Check <strong>"Required"</strong> if needed</li>
                         </ol>
+                        <div className="mt-2 p-2 bg-background rounded border border-amber-500/30">
+                          <p className="text-amber-600 dark:text-amber-400">
+                            <strong>💡 For company_id:</strong> The "Identifier" field is just the name <code className="bg-muted px-1 rounded">company_id</code>. 
+                            Set "Value Type" to <strong>Value</strong> (not LLM Prompt), then paste your actual UUID in the value field. 
+                            The UUID with hyphens goes in the <em>value</em>, not the identifier.
+                          </p>
+                        </div>
                       </div>
                       
                       <div className="bg-muted p-3 rounded text-xs space-y-2">
