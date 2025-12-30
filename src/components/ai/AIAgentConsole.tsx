@@ -5,10 +5,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { 
   Calendar, Clock, MessageSquare, Sparkles, ChevronRight,
-  AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Mic, Phone
+  AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Mic, Phone, TestTube2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getAgentStyle } from '@/lib/agentStyles';
@@ -120,6 +122,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   const [showTrackForm, setShowTrackForm] = useState(false);
   const [showBillingForm, setShowBillingForm] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
+  const [voiceTestMode, setVoiceTestMode] = useState(false);
 
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
@@ -807,12 +810,29 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
             <div className="text-center mb-6">
               <h3 className="font-semibold text-lg mb-2 gradient-text">Voice AI Assistant</h3>
               <p className="text-muted-foreground text-sm max-w-md">
-                Talk directly with our AI assistant using your microphone.
+                {voiceTestMode 
+                  ? 'Test agent logic via text without using voice credits.'
+                  : 'Talk directly with our AI assistant using your microphone.'}
               </p>
+              
+              {/* Test Mode Toggle */}
+              <div className="flex items-center justify-center gap-2 mt-4 p-2 rounded-lg bg-muted/50">
+                <Switch
+                  id="voice-test-mode"
+                  checked={voiceTestMode}
+                  onCheckedChange={setVoiceTestMode}
+                />
+                <Label htmlFor="voice-test-mode" className="flex items-center gap-1.5 text-sm cursor-pointer">
+                  <TestTube2 className="h-4 w-4" />
+                  Text Mode
+                  <span className="text-xs text-muted-foreground">(saves credits)</span>
+                </Label>
+              </div>
             </div>
             <VoiceChat
               companyId={companyId || ''}
               companyName={company?.name || 'Company'}
+              testMode={voiceTestMode}
               onTranscript={(role, text) => {
                 console.log(`[${role}]: ${text}`);
               }}
