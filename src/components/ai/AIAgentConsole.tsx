@@ -123,6 +123,8 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   const [showBillingForm, setShowBillingForm] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
   const [voiceTestMode, setVoiceTestMode] = useState(false);
+  const [voiceMessages, setVoiceMessages] = useState<Array<{ role: 'user' | 'assistant'; text: string; id: string }>>([]);
+  const voiceChatScrollRef = useRef<HTMLDivElement>(null);
 
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
@@ -806,10 +808,10 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
         {/* Voice Tab */}
         {activeTab === 'voice' && hasVoiceChat && (
-          <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center">
-            <div className="text-center mb-6">
+          <div className="flex-1 overflow-y-auto p-4 flex flex-col">
+            <div className="text-center mb-4">
               <h3 className="font-semibold text-lg mb-2 gradient-text">Voice AI Assistant</h3>
-              <p className="text-muted-foreground text-sm max-w-md">
+              <p className="text-muted-foreground text-sm max-w-md mx-auto">
                 {voiceTestMode 
                   ? 'Test agent logic via text without using voice credits.'
                   : 'Talk directly with our AI assistant using your microphone.'}
@@ -820,7 +822,10 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                 <Switch
                   id="voice-test-mode"
                   checked={voiceTestMode}
-                  onCheckedChange={setVoiceTestMode}
+                  onCheckedChange={(checked) => {
+                    setVoiceTestMode(checked);
+                    setVoiceMessages([]); // Clear messages when switching modes
+                  }}
                 />
                 <Label htmlFor="voice-test-mode" className="flex items-center gap-1.5 text-sm cursor-pointer">
                   <TestTube2 className="h-4 w-4" />
@@ -829,14 +834,73 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                 </Label>
               </div>
             </div>
-            <VoiceChat
-              companyId={companyId || ''}
-              companyName={company?.name || 'Company'}
-              testMode={voiceTestMode}
-              onTranscript={(role, text) => {
-                console.log(`[${role}]: ${text}`);
-              }}
-            />
+
+            {/* Conversation Transcript (Text Mode) */}
+            {voiceTestMode && voiceMessages.length > 0 && (
+              <div 
+                ref={voiceChatScrollRef}
+                className="flex-1 min-h-[200px] max-h-[300px] overflow-y-auto mb-4 p-4 bg-muted/30 rounded-lg border border-border"
+              >
+                <div className="space-y-3">
+                  {voiceMessages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={cn(
+                        "flex",
+                        msg.role === 'user' ? 'justify-end' : 'justify-start'
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "max-w-[80%] rounded-lg px-3 py-2 text-sm",
+                          msg.role === 'user'
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted text-foreground'
+                        )}
+                      >
+                        {msg.text}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Clear Conversation Button */}
+            {voiceTestMode && voiceMessages.length > 0 && (
+              <div className="flex justify-center mb-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setVoiceMessages([])}
+                  className="text-xs text-muted-foreground"
+                >
+                  Clear Conversation
+                </Button>
+              </div>
+            )}
+
+            <div className="flex flex-col items-center justify-center flex-1">
+              <VoiceChat
+                companyId={companyId || ''}
+                companyName={company?.name || 'Company'}
+                testMode={voiceTestMode}
+                onTranscript={(role, text) => {
+                  console.log(`[${role}]: ${text}`);
+                  setVoiceMessages((prev) => [
+                    ...prev,
+                    { role, text, id: `${Date.now()}-${Math.random().toString(36).slice(2)}` }
+                  ]);
+                  // Auto-scroll to bottom
+                  setTimeout(() => {
+                    voiceChatScrollRef.current?.scrollTo({
+                      top: voiceChatScrollRef.current.scrollHeight,
+                      behavior: 'smooth'
+                    });
+                  }, 100);
+                }}
+              />
+            </div>
           </div>
         )}
 
