@@ -104,7 +104,14 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       // Handle transcripts based on message structure
       const msg = message as unknown as Record<string, unknown>;
       
-      if (msg.user_transcription_event) {
+      // Handle text mode messages (different format: { source, role, message })
+      if (msg.source === 'ai' && typeof msg.message === 'string') {
+        onTranscript?.('assistant', msg.message);
+      } else if (msg.source === 'user' && typeof msg.message === 'string') {
+        onTranscript?.('user', msg.message);
+      }
+      // Handle voice mode events (user_transcription_event, agent_response_event)
+      else if (msg.user_transcription_event) {
         const event = msg.user_transcription_event as Record<string, unknown>;
         const userText = event.user_transcript as string | undefined;
         if (userText) {
