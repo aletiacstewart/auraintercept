@@ -67,7 +67,7 @@ export function CompanyJobQueue() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
 
-  // Fetch all job assignments for the company
+  // Fetch all active job assignments for the company
   const { data: jobs, isLoading, refetch } = useQuery({
     queryKey: ['company-jobs', companyId],
     queryFn: async () => {
@@ -103,6 +103,46 @@ export function CompanyJobQueue() {
     refetchInterval: 30000,
   });
 
+  // Fetch completed jobs for the company (last 30 days)
+  const { data: completedJobs, isLoading: isLoadingCompleted } = useQuery({
+    queryKey: ['company-completed-jobs', companyId],
+    queryFn: async () => {
+      if (!companyId) return [];
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const { data, error } = await supabase
+        .from('job_assignments')
+        .select(`
+          *,
+          appointments:appointment_id (
+            id,
+            customer_name,
+            customer_phone,
+            customer_email,
+            service_type,
+            datetime,
+            duration_minutes,
+            notes
+          ),
+          employee:employee_id (
+            id,
+            full_name,
+            email
+          )
+        `)
+        .eq('company_id', companyId)
+        .eq('status', 'completed')
+        .gte('completed_at', thirtyDaysAgo.toISOString())
+        .order('completed_at', { ascending: false });
+
+      if (error) throw error;
+      return data as JobAssignment[];
+    },
+    enabled: !!companyId,
+    refetchInterval: 60000,
+  });
+
   // Subscribe to realtime updates
   useEffect(() => {
     if (!companyId) return;
@@ -133,7 +173,17 @@ export function CompanyJobQueue() {
   const pendingJobs = jobs?.filter(j => j.status === 'pending_acceptance') || [];
   const acceptedJobs = jobs?.filter(j => j.status === 'accepted') || [];
 
-  if (isLoading) {
+  // Group completed jobs by employee
+  const completedByEmployee = (completedJobs || []).reduce((acc, job) => {
+    const employeeName = job.employee?.full_name || 'Unassigned';
+    if (!acc[employeeName]) {
+      acc[employeeName] = [];
+    }
+    acc[employeeName].push(job);
+    return acc;
+  }, {} as Record<string, JobAssignment[]>);
+
+  if (isLoading || isLoadingCompleted) {
     return (
       <Card>
         <CardHeader>
@@ -232,6 +282,39 @@ export function CompanyJobQueue() {
             </p>
           </div>
         )}
+
+        {/* Completed Jobs by Employee */}
+        {Object.keys(completedByEmployee).length > 0 && (
+          <div className="space-y-3 border-t pt-6">
+            <h3 className="text-sm font-medium flex items-center gap-2">
+              <Users className="h-4 w-4 text-green-500" />
+              Completed Jobs (Last 30 Days) — {completedJobs?.length || 0} total
+            </h3>
+            <div className="space-y-4">
+              {Object.entries(completedByEmployee).map(([employeeName, employeeJobs]) => (
+                <div key={employeeName} className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">{employeeName}</span>
+                    <Badge variant="secondary" className="text-xs">
+                      {employeeJobs.length} completed
+                    </Badge>
+                  </div>
+                  <div className="space-y-2 pl-6">
+                    {employeeJobs.slice(0, 5).map((job) => (
+                      <CompletedJobRow key={job.id} job={job} />
+                    ))}
+                    {employeeJobs.length > 5 && (
+                      <p className="text-xs text-muted-foreground">
+                        + {employeeJobs.length - 5} more completed jobs
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -300,6 +383,28 @@ function JobRow({ job }: { job: JobAssignment }) {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function CompletedJobRow({ job }: { job: JobAssignment }) {
+  return (
+    <div className="flex items-center gap-3 p-2 rounded-md border bg-muted/30 text-sm">
+      <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+      <div className="flex-1 min-w-0">
+        <span className="font-medium truncate">
+          {job.appointments?.customer_name || 'Unknown'}
+        </span>
+        <span className="text-muted-foreground"> — </span>
+        <span className="text-muted-foreground">
+          {job.appointments?.service_type || 'Service'}
+        </span>
+      </div>
+      {job.completed_at && (
+        <span className="text-xs text-muted-foreground flex-shrink-0">
+          {format(new Date(job.completed_at), 'MMM d')}
+        </span>
+      )}
     </div>
   );
 }
