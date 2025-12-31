@@ -2249,18 +2249,169 @@ async function executeAgentTool(
 
   // Simulated tool execution - in production, these would connect to real systems
   switch (toolName) {
-    case 'check_availability':
-      return {
-        success: true,
-        available_slots: [
-          { date: args.preferred_date || 'tomorrow', time: '9:00 AM', duration: 60 },
-          { date: args.preferred_date || 'tomorrow', time: '2:00 PM', duration: 60 },
-          { date: args.preferred_date || 'day after tomorrow', time: '10:00 AM', duration: 60 },
-        ],
-      };
+    case 'check_availability': {
+      console.log('[AI Agent] Checking availability with args:', args);
+      
+      // Parse the preferred_date to get a proper YYYY-MM-DD format
+      let dateStr = args.preferred_date;
+      
+      if (dateStr) {
+        // Try to parse the date - could be "tomorrow", "January 2, 2026", "2026-01-02", etc.
+        const parsedDate = new Date(dateStr);
+        if (!isNaN(parsedDate.getTime())) {
+          // Valid date - format as YYYY-MM-DD
+          dateStr = parsedDate.toISOString().split('T')[0];
+        } else {
+          // If parsing failed, try relative date handling
+          const today = new Date();
+          const lowerDate = dateStr.toLowerCase();
+          
+          if (lowerDate === 'today') {
+            dateStr = today.toISOString().split('T')[0];
+          } else if (lowerDate === 'tomorrow') {
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            dateStr = tomorrow.toISOString().split('T')[0];
+          } else {
+            // Default to tomorrow if we can't parse
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            dateStr = tomorrow.toISOString().split('T')[0];
+          }
+        }
+      } else {
+        // Default to tomorrow if no date specified
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dateStr = tomorrow.toISOString().split('T')[0];
+      }
+      
+      console.log('[AI Agent] Checking availability for date:', dateStr, 'service:', args.service_type);
+      
+      // Call the booking-actions endpoint for real availability
+      try {
+        const bookingResponse = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/booking-actions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+          },
+          body: JSON.stringify({
+            action: 'check_availability',
+            company_id: companyId,
+            service_name: args.service_type || 'Standard Service Call / Diagnostic',
+            date: dateStr,
+            employee_id: args.employee_id || null,
+          }),
+        });
+        
+        if (!bookingResponse.ok) {
+          const errorText = await bookingResponse.text();
+          console.error('[AI Agent] Booking actions error:', errorText);
+          return { 
+            success: false, 
+            error: 'Unable to check availability. Please try again.',
+            date: dateStr
+          };
+        }
+        
+        const availabilityResult = await bookingResponse.json();
+        console.log('[AI Agent] Availability result:', JSON.stringify(availabilityResult).substring(0, 500));
+        
+        // Format slots for AI to present
+        if (availabilityResult.available_slots && availabilityResult.available_slots.length > 0) {
+          return {
+            success: true,
+            date: dateStr,
+            service: availabilityResult.service || args.service_type,
+            available_slots: availabilityResult.available_slots.map((slot: any) => ({
+              time: slot.start_time,
+              datetime: slot.datetime,
+              employee_name: slot.employee_name,
+              employee_id: slot.employee_id,
+            })),
+            total_slots: availabilityResult.available_slots.length,
+          };
+        } else {
+          return {
+            success: true,
+            date: dateStr,
+            service: availabilityResult.service || args.service_type,
+            available_slots: [],
+            message: availabilityResult.message || 'No availability on this date. Please try another date.',
+          };
+        }
+      } catch (error: any) {
+        console.error('[AI Agent] Error checking availability:', error);
+        return { 
+          success: false, 
+          error: 'Unable to check availability: ' + error.message,
+          date: dateStr
+        };
+      }
+    }
 
     case 'create_appointment': {
       console.log('[AI Agent] Creating appointment with args:', args);
+      
+      // CRITICAL: Parse and normalize the datetime
+      let appointmentDatetime = args.datetime;
+      
+      if (appointmentDatetime) {
+        // Check if it's already a valid ISO date
+        const parsed = new Date(appointmentDatetime);
+        
+        if (isNaN(parsed.getTime())) {
+          // Not a valid date - might be just a time like "2:00 PM" or relative like "tomorrow 2pm"
+          console.log('[AI Agent] Datetime needs parsing:', appointmentDatetime);
+          
+          // Try to extract time and date components
+          const lowerDt = appointmentDatetime.toLowerCase();
+          
+          // Determine the date part
+          let baseDate = new Date();
+          if (lowerDt.includes('tomorrow')) {
+            baseDate.setDate(baseDate.getDate() + 1);
+          } else if (lowerDt.includes('today')) {
+            // baseDate is already today
+          }
+          
+          // Extract time - look for patterns like "2pm", "2:00 PM", "14:00"
+          const timeMatch = appointmentDatetime.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm|AM|PM)?/);
+          if (timeMatch) {
+            let hours = parseInt(timeMatch[1]);
+            const minutes = timeMatch[2] ? parseInt(timeMatch[2]) : 0;
+            const meridiem = timeMatch[3]?.toLowerCase();
+            
+            // Convert to 24-hour format
+            if (meridiem === 'pm' && hours !== 12) {
+              hours += 12;
+            } else if (meridiem === 'am' && hours === 12) {
+              hours = 0;
+            }
+            
+            baseDate.setHours(hours, minutes, 0, 0);
+            appointmentDatetime = baseDate.toISOString();
+            console.log('[AI Agent] Parsed datetime to:', appointmentDatetime);
+          } else {
+            // Couldn't parse time - default to 9 AM
+            baseDate.setHours(9, 0, 0, 0);
+            appointmentDatetime = baseDate.toISOString();
+            console.log('[AI Agent] Could not parse time, defaulting to 9 AM:', appointmentDatetime);
+          }
+        } else {
+          // Valid date - ensure it's ISO format
+          appointmentDatetime = parsed.toISOString();
+          console.log('[AI Agent] Valid ISO datetime:', appointmentDatetime);
+        }
+      } else {
+        // No datetime provided - default to tomorrow 9 AM
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(9, 0, 0, 0);
+        appointmentDatetime = tomorrow.toISOString();
+        console.log('[AI Agent] No datetime provided, defaulting to:', appointmentDatetime);
+      }
       
       // CRITICAL: Validate that the requested service exists for this company
       const { data: availableServices } = await supabase
@@ -2313,7 +2464,7 @@ async function executeAgentTool(
         console.log(`[AI Agent] Assigning to employee: ${employees[0].full_name}`);
       }
 
-      // Create the appointment with dedicated customer_address column
+      // Create the appointment with the properly parsed datetime
       const { data: appointment, error } = await supabase
         .from('appointments')
         .insert({
@@ -2323,7 +2474,7 @@ async function executeAgentTool(
           customer_email: args.customer_email,
           customer_address: args.customer_address || null,
           service_type: args.service_type,
-          datetime: args.datetime,
+          datetime: appointmentDatetime,
           duration_minutes: args.duration_minutes || 60,
           notes: args.notes || null,
           status: 'scheduled',
