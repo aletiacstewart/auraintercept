@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { CostCalculator } from '@/components/integrations/CostCalculator';
-import { ROICalculator } from '@/components/integrations/ROICalculator';
 import { QuickStartWizard } from '@/components/integrations/QuickStartWizard';
 import { GoogleCalendarSettings } from '@/components/integrations/GoogleCalendarSettings';
 import { CalendarSubscription } from '@/components/integrations/CalendarSubscription';
@@ -17,7 +15,6 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Accordion,
   AccordionContent,
@@ -43,11 +40,8 @@ import {
   EyeOff,
   Loader2,
   Rocket,
-  Calculator,
-  TrendingUp,
   BookOpen,
   Volume2,
-  Bot,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -588,36 +582,6 @@ export default function Integrations() {
           </div>
         </div>
 
-        {/* Combined Calculator Card */}
-        <Card className="border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Calculator className="w-5 h-5 text-primary" />
-              Cost & ROI Calculator
-            </CardTitle>
-            <CardDescription>Estimate costs and calculate potential savings</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="costs" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="costs" className="flex items-center gap-1">
-                  <Calculator className="w-4 h-4" />
-                  Estimate Costs
-                </TabsTrigger>
-                <TabsTrigger value="roi" className="flex items-center gap-1">
-                  <TrendingUp className="w-4 h-4" />
-                  Calculate ROI
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="costs">
-                <CostCalculator />
-              </TabsContent>
-              <TabsContent value="roi">
-                <ROICalculator />
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Setup Dialog */}
