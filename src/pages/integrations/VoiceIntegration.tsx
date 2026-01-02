@@ -4,18 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { ElevenLabsSetupGuide } from '@/components/integrations/ElevenLabsSetupGuide';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ElevenLabsVoiceSetupGuide } from '@/components/integrations/ElevenLabsVoiceSetupGuide';
+import { GoogleTTSSetupGuide } from '@/components/integrations/GoogleTTSSetupGuide';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import {
   Dialog,
   DialogContent,
@@ -172,58 +168,11 @@ export default function VoiceIntegration() {
           </div>
         </div>
 
-        {/* Setup Guide */}
-        <Card className="border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Getting Started</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="elevenlabs">
-                <AccordionTrigger className="text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-blue-500 flex items-center justify-center">
-                      <Mic className="w-3 h-3 text-white" />
-                    </div>
-                    ElevenLabs Setup (AI Voice)
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground">
-                  <ol className="list-decimal list-inside space-y-1">
-                    <li>Create an ElevenLabs account at <a href="https://elevenlabs.io" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">elevenlabs.io</a></li>
-                    <li>Go to <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Settings → API Keys</a></li>
-                    <li>Generate and copy your API key</li>
-                    <li>Select voice in AI Agent → Settings</li>
-                  </ol>
-                </AccordionContent>
-              </AccordionItem>
+        {/* ElevenLabs Setup Guide */}
+        <ElevenLabsVoiceSetupGuide />
 
-              <AccordionItem value="google-tts">
-                <AccordionTrigger className="text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-amber-500 flex items-center justify-center">
-                      <Volume2 className="w-3 h-3 text-white" />
-                    </div>
-                    Google Cloud TTS Setup
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground space-y-3">
-                  <ol className="list-decimal list-inside space-y-1">
-                    <li>Create a Google Cloud project at <a href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">console.cloud.google.com</a></li>
-                    <li>Enable the <a href="https://console.cloud.google.com/apis/library/texttospeech.googleapis.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Cloud Text-to-Speech API</a></li>
-                    <li>Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">APIs & Services → Credentials</a></li>
-                    <li>Create an API key and copy it</li>
-                  </ol>
-                  <div className="p-3 rounded-lg bg-muted/50 border">
-                    <p className="font-medium text-foreground mb-1">Voice Types:</p>
-                    <p className="text-xs">Standard, WaveNet, Neural2 (highest quality)</p>
-                    <p className="text-xs mt-1">1M free chars/month, then $4-16 per million</p>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </CardContent>
-        </Card>
+        {/* Google Cloud TTS Setup Guide */}
+        <GoogleTTSSetupGuide />
 
         {/* Integration Cards */}
         <div className="grid gap-4 md:grid-cols-2">
