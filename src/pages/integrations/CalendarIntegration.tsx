@@ -1,9 +1,8 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { CalendarSubscription } from '@/components/integrations/CalendarSubscription';
-import { GoogleCalendarSettings } from '@/components/integrations/GoogleCalendarSettings';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Calendar, CalendarDays } from 'lucide-react';
+import { ArrowLeft, CalendarDays } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function CalendarIntegration() {
@@ -28,25 +27,19 @@ export default function CalendarIntegration() {
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-lg">
               <CalendarDays className="w-5 h-5 text-primary" />
-              Calendar Options
+              ICS Calendar Feed
             </CardTitle>
             <CardDescription>
-              Choose how you want to sync your appointments
+              Subscribe to your appointments calendar
             </CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            <ul className="list-disc list-inside space-y-1">
-              <li><strong>ICS Calendar Feed (Recommended)</strong> - Free, works with any calendar app (Google, Outlook, Apple). Simple setup, no OAuth required.</li>
-              <li><strong>Google Calendar</strong> - Two-way sync with Google Calendar. Requires OAuth setup in Google Cloud Console.</li>
-            </ul>
+            <p>Works with any calendar app (Google Calendar, Outlook, Apple Calendar). Simple setup, no OAuth required.</p>
           </CardContent>
         </Card>
 
         {/* Calendar Settings */}
-        <div className="grid gap-4 md:grid-cols-2">
-          <CalendarSubscription type="company" />
-          <GoogleCalendarSettings />
-        </div>
+        <CalendarSubscription type="company" />
       </div>
     </DashboardLayout>
   );
