@@ -4,6 +4,9 @@ import { GoogleCalendarSettings } from '@/components/integrations/GoogleCalendar
 import { CalendarSubscription } from '@/components/integrations/CalendarSubscription';
 import { CRMConnectionSettings } from '@/components/integrations/CRMConnectionSettings';
 import { ElevenLabsSetupGuide } from '@/components/integrations/ElevenLabsSetupGuide';
+import { TwilioSetupGuide } from '@/components/integrations/TwilioSetupGuide';
+import { ResendSetupGuide } from '@/components/integrations/ResendSetupGuide';
+import { GoogleTTSSetupGuide } from '@/components/integrations/GoogleTTSSetupGuide';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -562,13 +565,28 @@ export default function Integrations() {
           })}
         </div>
 
-        {/* ElevenLabs Voice Agent Setup Guide - Show when ElevenLabs is connected */}
-        {integrations?.elevenlabs_api_key && companyId && (
-          <ElevenLabsSetupGuide 
-            companyId={companyId} 
-            agentId={integrations?.elevenlabs_agent_id || undefined}
-          />
-        )}
+        {/* Detailed Setup Guides */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">Detailed Setup Guides</h2>
+          <p className="text-sm text-muted-foreground">Step-by-step instructions for configuring each integration</p>
+          
+          {/* Twilio Setup Guide */}
+          <TwilioSetupGuide />
+          
+          {/* Resend Setup Guide */}
+          <ResendSetupGuide />
+          
+          {/* Google TTS Setup Guide */}
+          <GoogleTTSSetupGuide />
+          
+          {/* ElevenLabs Voice Agent Setup Guide - Show when ElevenLabs is connected */}
+          {integrations?.elevenlabs_api_key && companyId && (
+            <ElevenLabsSetupGuide 
+              companyId={companyId} 
+              agentId={integrations?.elevenlabs_agent_id || undefined}
+            />
+          )}
+        </div>
 
         {/* CRM Integrations */}
         <CRMConnectionSettings />
