@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,7 +10,7 @@ import {
   FileText, DollarSign, Package, Award, Megaphone, 
   Gift, RotateCcw, Sun, BarChart3, Target, CheckCircle2,
   ArrowRight, Sparkles, Wrench, Home, Flame, Droplet,
-  ChevronRight, Star, Volume2, VolumeX, Navigation, Truck,
+  ChevronRight, Star, Navigation, Truck,
   Search, UserPlus, Globe, Headphones, Bell, Mail, 
   Smartphone, Video, Mic, Brain, Layers, Lock
 } from 'lucide-react';
@@ -288,22 +288,6 @@ export default function Index() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('customer');
   const [currentSubtitle, setCurrentSubtitle] = useState(0);
-  const [isMuted, setIsMuted] = useState(true);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const handleUnmute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = false;
-      setIsMuted(false);
-    }
-  };
-
-  const handleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = true;
-      setIsMuted(true);
-    }
-  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -318,79 +302,53 @@ export default function Index() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        {/* Video */}
-        <div className="w-full relative">
-          <video 
-            ref={videoRef}
-            autoPlay
-            loop 
-            muted
-            playsInline
-            className="w-full h-auto max-h-[70vh] object-cover"
-          >
-            <source src="/videos/hero-demo.mp4" type="video/mp4" />
-          </video>
-          
-          {/* Unmute/Mute Button */}
-          <button
-            onClick={isMuted ? handleUnmute : handleMute}
-            className="absolute bottom-4 right-4 p-3 rounded-full bg-black/70 hover:bg-black/90 text-white transition-all duration-200 z-10"
-            aria-label={isMuted ? "Unmute video" : "Mute video"}
-          >
-            {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
-          </button>
-        </div>
-        
-        {/* Hero Content */}
-        <div className="relative">
-          <div className="absolute inset-0 tech-grid opacity-30" />
-          <div className="container max-w-7xl mx-auto px-6 py-16 relative">
-            <div className="text-center max-w-4xl mx-auto">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 animate-fade-in">
-                <Sparkles className="w-4 h-4" />
-                20+ AI Agents • 5 Consoles • One Platform
-              </div>
-              
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 animate-fade-in">
-                Automate Your Business with{' '}
-                <span className="gradient-text">AI Agent Consoles</span>
-              </h1>
+        <div className="absolute inset-0 tech-grid opacity-30" />
+        <div className="container max-w-7xl mx-auto px-6 py-20 relative">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 animate-fade-in">
+              <Sparkles className="w-4 h-4" />
+              20+ AI Agents • 5 Consoles • One Platform
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 animate-fade-in">
+              Automate Your Business with{' '}
+              <span className="gradient-text">AI Agent Consoles</span>
+            </h1>
 
-              <div className="h-8 mb-6 animate-fade-in">
-                <p className="text-xl text-primary font-medium transition-all duration-500">
-                  {subtitles[currentSubtitle]}
-                </p>
-              </div>
-              
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
-                Deploy 20+ specialized AI agents across 5 powerful consoles to handle customer engagement, 
-                field operations, billing, marketing, and analytics. White-label ready with customer portal.
+            <div className="h-8 mb-6 animate-fade-in">
+              <p className="text-xl text-primary font-medium transition-all duration-500">
+                {subtitles[currentSubtitle]}
               </p>
+            </div>
+            
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
+              Deploy 20+ specialized AI agents across 5 powerful consoles to handle customer engagement, 
+              field operations, billing, marketing, and analytics. White-label ready with customer portal.
+            </p>
 
-              {/* Hero Stats */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto mb-10 animate-fade-in">
-                {heroStats.map((stat, index) => (
-                  <div 
-                    key={stat.label} 
-                    className="p-4 rounded-xl border border-border/50 bg-card/80"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <div className="text-2xl sm:text-3xl font-bold gradient-text">{stat.value}</div>
-                    <div className="text-sm text-muted-foreground">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in">
-                <Button 
-                  size="lg" 
-                  className="gradient-primary shadow-glow text-lg px-8 py-6 w-full sm:w-auto"
-                  onClick={() => navigate('/auth?mode=company')}
+            {/* Hero Stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto mb-10 animate-fade-in">
+              {heroStats.map((stat, index) => (
+                <div 
+                  key={stat.label} 
+                  className="p-4 rounded-xl border border-border/50 bg-card/80"
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <Building2 className="w-5 h-5 mr-2" />
-                  Start Free Trial
-                </Button>
-              </div>
+                  <div className="text-2xl sm:text-3xl font-bold gradient-text">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in">
+              <Button 
+                size="lg" 
+                className="gradient-primary shadow-glow text-lg px-8 py-6 w-full sm:w-auto"
+                onClick={() => navigate('/auth?mode=company')}
+              >
+                <Building2 className="w-5 h-5 mr-2" />
+                Start Free Trial
+              </Button>
             </div>
           </div>
         </div>
