@@ -137,3 +137,6 @@ verify_jwt = false
 
 [functions.caldav-server]
 verify_jwt = false
+
+[functions.create-platform-admin]
+verify_jwt = false
