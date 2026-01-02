@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { QuickStartWizard } from '@/components/integrations/QuickStartWizard';
-import { GoogleCalendarSettings } from '@/components/integrations/GoogleCalendarSettings';
 import { CalendarSubscription } from '@/components/integrations/CalendarSubscription';
 import { CRMConnectionSettings } from '@/components/integrations/CRMConnectionSettings';
 import { ElevenLabsSetupGuide } from '@/components/integrations/ElevenLabsSetupGuide';
 import { TwilioSetupGuide } from '@/components/integrations/TwilioSetupGuide';
 import { ResendSetupGuide } from '@/components/integrations/ResendSetupGuide';
-import { GoogleTTSSetupGuide } from '@/components/integrations/GoogleTTSSetupGuide';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -44,7 +42,6 @@ import {
   Loader2,
   Rocket,
   BookOpen,
-  Volume2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -122,19 +119,6 @@ const INTEGRATIONS: Integration[] = [
     ],
     checkConnection: (data) => !!data.resend_api_key,
     note: '💡 3,000 free emails/mo, then $0.001/email. Most cost-effective reminder channel.',
-  },
-  {
-    id: 'google-tts',
-    name: 'Google TTS',
-    description: 'Enterprise-grade WaveNet voices.',
-    icon: Volume2,
-    color: 'bg-amber-500',
-    docsUrl: 'https://console.cloud.google.com/apis/credentials',
-    fields: [
-      { key: 'google_tts_api_key', label: 'API Key', placeholder: 'Your Google Cloud API key', type: 'password', required: true, helpText: 'Enable Cloud Text-to-Speech API first' },
-    ],
-    checkConnection: (data) => !!data.google_tts_api_key,
-    note: '💡 Best for: Enterprise scale. $4-16/1M chars + 1M free/mo. Cheapest at high volume.',
   },
 ];
 
@@ -216,48 +200,8 @@ export default function Integrations() {
     setShowPasswords((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Get TTS connection status
-  const connectedTTS = {
-    elevenlabs: !!integrations?.elevenlabs_api_key,
-    google: !!integrations?.google_tts_api_key,
-  };
-  const hasAnyTTS = connectedTTS.elevenlabs || connectedTTS.google;
-
-  // Fetch cost estimates to determine recommended TTS
-  const { data: costEstimates } = useQuery({
-    queryKey: ['cost-estimates-latest', companyId],
-    queryFn: async () => {
-      if (!companyId) return null;
-      const { data } = await supabase
-        .from('cost_estimates')
-        .select('appointments_count, reminders_per_appointment')
-        .eq('company_id', companyId)
-        .order('month_year', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      return data;
-    },
-    enabled: !!companyId,
-  });
-
-  // Calculate recommended TTS provider based on usage
-  const getRecommendedTTS = () => {
-    const appointments = costEstimates?.appointments_count || 100;
-    const remindersPerAppt = costEstimates?.reminders_per_appointment || 2;
-    const totalReminders = appointments * remindersPerAppt;
-    const avgCallDuration = 0.5; // minutes
-    const charsPerMinute = 1000;
-    const totalChars = totalReminders * avgCallDuration * charsPerMinute;
-
-    // Google's free tier is 1M chars/month
-    if (totalChars <= 1000000) {
-      return { provider: 'google', reason: 'Free tier covers your volume', icon: Volume2 };
-    }
-    // For premium quality needs or very high volume with budget
-    return { provider: 'elevenlabs', reason: 'Premium quality voices', icon: Mic };
-  };
-
-  const recommendedTTS = getRecommendedTTS();
+   // Get TTS connection status
+  const hasElevenLabs = !!integrations?.elevenlabs_api_key;
 
   return (
     <DashboardLayout>
@@ -279,43 +223,26 @@ export default function Integrations() {
               <div className="flex items-center gap-1">
                 <span className="text-xs text-muted-foreground mr-1">Voice:</span>
                 <Button
-                  variant={connectedTTS.elevenlabs ? "secondary" : "outline"}
+                  variant={hasElevenLabs ? "secondary" : "outline"}
                   size="sm"
                   className={cn(
                     "h-7 px-2 text-xs relative",
-                    connectedTTS.elevenlabs && "bg-green-500/10 text-green-600 border-green-500/30",
-                    recommendedTTS.provider === 'elevenlabs' && !connectedTTS.elevenlabs && "ring-2 ring-primary/50"
+                    hasElevenLabs && "bg-green-500/10 text-green-600 border-green-500/30",
+                    !hasElevenLabs && "ring-2 ring-primary/50"
                   )}
                   onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'elevenlabs')!)}
                 >
                   <Mic className="w-3 h-3 mr-1" />
                   ElevenLabs
-                  {connectedTTS.elevenlabs && <Check className="w-3 h-3 ml-1" />}
-                  {recommendedTTS.provider === 'elevenlabs' && !connectedTTS.elevenlabs && (
-                    <Badge className="absolute -top-2 -right-2 h-4 px-1 text-[10px] bg-primary">★</Badge>
-                  )}
-                </Button>
-                <Button
-                  variant={connectedTTS.google ? "secondary" : "outline"}
-                  size="sm"
-                  className={cn(
-                    "h-7 px-2 text-xs relative",
-                    connectedTTS.google && "bg-green-500/10 text-green-600 border-green-500/30",
-                    recommendedTTS.provider === 'google' && !connectedTTS.google && "ring-2 ring-primary/50"
-                  )}
-                  onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'google-tts')!)}
-                >
-                  <Volume2 className="w-3 h-3 mr-1" />
-                  Google
-                  {connectedTTS.google && <Check className="w-3 h-3 ml-1" />}
-                  {recommendedTTS.provider === 'google' && !connectedTTS.google && (
+                  {hasElevenLabs && <Check className="w-3 h-3 ml-1" />}
+                  {!hasElevenLabs && (
                     <Badge className="absolute -top-2 -right-2 h-4 px-1 text-[10px] bg-primary">★</Badge>
                   )}
                 </Button>
               </div>
-              {!hasAnyTTS && (
+              {!hasElevenLabs && (
                 <p className="text-[10px] text-muted-foreground">
-                  ★ Recommended: {recommendedTTS.provider === 'google' ? 'Google' : 'ElevenLabs'} - {recommendedTTS.reason}
+                  ★ Recommended: ElevenLabs - Premium quality voices
                 </p>
               )}
             </div>
@@ -333,12 +260,7 @@ export default function Integrations() {
 
         {/* Setup Progress */}
         {(() => {
-          const ttsProvider = integrations?.tts_provider || 'elevenlabs';
-          const isTTSConfigured = ttsProvider === 'elevenlabs' 
-            ? !!integrations?.elevenlabs_api_key 
-            : ttsProvider === 'openai' 
-              ? !!integrations?.openai_api_key 
-              : !!integrations?.google_tts_api_key;
+          const isTTSConfigured = !!integrations?.elevenlabs_api_key;
           
           const statuses = [
             { name: 'Stripe', connected: true, icon: CreditCard, color: 'bg-purple-500' },
@@ -480,30 +402,6 @@ export default function Integrations() {
               </AccordionItem>
 
 
-              <AccordionItem value="google-tts">
-                <AccordionTrigger className="text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-amber-500 flex items-center justify-center">
-                      <Volume2 className="w-3 h-3 text-white" />
-                    </div>
-                    Google Cloud TTS Setup
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground space-y-3">
-                  <ol className="list-decimal list-inside space-y-1">
-                    <li>Create a Google Cloud project at <a href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">console.cloud.google.com</a></li>
-                    <li>Enable the <a href="https://console.cloud.google.com/apis/library/texttospeech.googleapis.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Cloud Text-to-Speech API</a></li>
-                    <li>Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">APIs & Services → Credentials</a></li>
-                    <li>Create an API key and copy it</li>
-                    <li>Enter the API key in the Google TTS card below</li>
-                  </ol>
-                  <div className="p-3 rounded-lg bg-muted/50 border">
-                    <p className="font-medium text-foreground mb-1">Voice Types:</p>
-                    <p className="text-xs">Standard, WaveNet, Neural2 (highest quality)</p>
-                    <p className="text-xs mt-1">1M free chars/month, then $4-16 per million</p>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
             </Accordion>
           </CardContent>
         </Card>
@@ -576,9 +474,6 @@ export default function Integrations() {
           {/* Resend Setup Guide */}
           <ResendSetupGuide />
           
-          {/* Google TTS Setup Guide */}
-          <GoogleTTSSetupGuide />
-          
           {/* ElevenLabs Voice Agent Setup Guide - Show when ElevenLabs is connected */}
           {integrations?.elevenlabs_api_key && companyId && (
             <ElevenLabsSetupGuide 
@@ -594,10 +489,7 @@ export default function Integrations() {
         {/* Calendar Integrations */}
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Calendar</h2>
-          <div className="grid gap-4 md:grid-cols-2">
-            <CalendarSubscription type="company" />
-            <GoogleCalendarSettings />
-          </div>
+          <CalendarSubscription type="company" />
         </div>
 
       </div>

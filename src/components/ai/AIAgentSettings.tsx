@@ -55,9 +55,6 @@ export const AIAgentSettings = () => {
 
   // TTS Provider settings
   const [ttsProvider, setTtsProvider] = useState('elevenlabs');
-  const [googleApiKey, setGoogleApiKey] = useState('');
-  const [googleVoice, setGoogleVoice] = useState('en-US-Neural2-D');
-  const [googleModel, setGoogleModel] = useState('neural2');
 
   // Fetch company settings
   const { data: company, isLoading: isLoadingCompany } = useQuery({
@@ -121,9 +118,6 @@ export const AIAgentSettings = () => {
       setVoiceSpeed(integrations.elevenlabs_voice_speed ?? 1.0);
       // Load TTS provider settings
       setTtsProvider(integrations.tts_provider || 'elevenlabs');
-      setGoogleApiKey(integrations.google_tts_api_key || '');
-      setGoogleVoice(integrations.google_tts_voice || 'en-US-Neural2-D');
-      setGoogleModel(integrations.google_tts_model || 'neural2');
     }
   }, [integrations]);
 
@@ -161,9 +155,6 @@ export const AIAgentSettings = () => {
         elevenlabs_voice_style: voiceStyle,
         elevenlabs_voice_speed: voiceSpeed,
         tts_provider: ttsProvider,
-        google_tts_api_key: googleApiKey || null,
-        google_tts_voice: googleVoice,
-        google_tts_model: googleModel,
       };
 
       if (integrations?.id) {
@@ -209,9 +200,6 @@ export const AIAgentSettings = () => {
     setVoiceStyle(0.5);
     setVoiceSpeed(1.0);
     setTtsProvider('elevenlabs');
-    setGoogleApiKey('');
-    setGoogleVoice('en-US-Neural2-D');
-    setGoogleModel('neural2');
   };
 
   const handlePreviewGreeting = async () => {
@@ -407,12 +395,6 @@ export const AIAgentSettings = () => {
       <TTSProviderSettings
         ttsProvider={ttsProvider}
         setTtsProvider={setTtsProvider}
-        googleApiKey={googleApiKey}
-        setGoogleApiKey={setGoogleApiKey}
-        googleVoice={googleVoice}
-        setGoogleVoice={setGoogleVoice}
-        googleModel={googleModel}
-        setGoogleModel={setGoogleModel}
         hasElevenLabs={hasElevenLabs}
         companyId={companyId}
       />
