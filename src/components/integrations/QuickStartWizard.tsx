@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -26,7 +26,7 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
-interface QuickStartWizardProps {
+export interface QuickStartWizardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onComplete: () => void;
@@ -70,14 +70,14 @@ const PLANS = {
   },
 };
 
-export function QuickStartWizard({ 
+export const QuickStartWizard = forwardRef<HTMLDivElement, QuickStartWizardProps>(function QuickStartWizard({ 
   open, 
   onOpenChange, 
   onComplete,
   hasResend,
   hasTwilio,
   hasElevenLabs,
-}: QuickStartWizardProps) {
+}, ref) {
   const [currentStep, setCurrentStep] = useState<Step>('welcome');
   const [businessInfo, setBusinessInfo] = useState<BusinessInfo>({
     monthlyAppointments: 100,
@@ -644,4 +644,4 @@ export function QuickStartWizard({
       </DialogContent>
     </Dialog>
   );
-}
+});

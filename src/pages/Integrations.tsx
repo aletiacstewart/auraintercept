@@ -315,96 +315,29 @@ export default function Integrations() {
           );
         })()}
 
-        {/* Getting Started Accordion */}
+        {/* Getting Started - Simplified link to sub-pages */}
         <Card className="border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <BookOpen className="w-5 h-5 text-primary" />
-              Getting Started
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="twilio">
-                <AccordionTrigger className="text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-red-500 flex items-center justify-center">
-                      <Phone className="w-3 h-3 text-white" />
-                    </div>
-                    Twilio Setup (Voice & SMS)
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 text-sm text-muted-foreground">
-                  <ol className="list-decimal list-inside space-y-1">
-                    <li>Create a Twilio account at <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">twilio.com</a></li>
-                    <li>Get Account SID and Auth Token from <a href="https://console.twilio.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Console</a></li>
-                    <li>Purchase a phone number with Voice capabilities</li>
-                    <li>Enter credentials in the Twilio card below</li>
-                  </ol>
-                  <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-2">
-                    <p className="font-medium text-foreground">Voice Webhook URL:</p>
-                    <div className="flex gap-2">
-                      <Input
-                        readOnly
-                        value="https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=incoming"
-                        className="font-mono text-xs"
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          navigator.clipboard.writeText('https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=incoming');
-                          toast.success('Copied!');
-                        }}
-                      >
-                        Copy
-                      </Button>
-                    </div>
-                    <p className="text-xs">Set as "A CALL COMES IN" webhook (HTTP POST)</p>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="elevenlabs">
-                <AccordionTrigger className="text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-blue-500 flex items-center justify-center">
-                      <Mic className="w-3 h-3 text-white" />
-                    </div>
-                    ElevenLabs Setup (AI Voice)
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground">
-                  <ol className="list-decimal list-inside space-y-1">
-                    <li>Create an ElevenLabs account at <a href="https://elevenlabs.io" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">elevenlabs.io</a></li>
-                    <li>Go to <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Settings → API Keys</a></li>
-                    <li>Generate and copy your API key</li>
-                    <li>Select voice in AI Agent → Settings</li>
-                  </ol>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="resend">
-                <AccordionTrigger className="text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-emerald-500 flex items-center justify-center">
-                      <Mail className="w-3 h-3 text-white" />
-                    </div>
-                    Resend Setup (Email)
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground">
-                  <ol className="list-decimal list-inside space-y-1">
-                    <li>Create a Resend account at <a href="https://resend.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">resend.com</a></li>
-                    <li>Verify your email domain at <a href="https://resend.com/domains" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">resend.com/domains</a></li>
-                    <li>Go to <a href="https://resend.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">API Keys</a> and create a new key</li>
-                    <li>Enter your API key in the Resend card below</li>
-                  </ol>
-                </AccordionContent>
-              </AccordionItem>
-
-
-            </Accordion>
+          <CardContent className="py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <BookOpen className="w-5 h-5 text-primary" />
+                <div>
+                  <p className="font-medium">Need help setting up?</p>
+                  <p className="text-sm text-muted-foreground">Detailed setup guides available on each integration page</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/dashboard/integrations/voice">Voice Setup</Link>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/dashboard/integrations/sms">SMS Setup</Link>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/dashboard/integrations/email">Email Setup</Link>
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
