@@ -75,21 +75,37 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: 'Management',
+    items: [
+      { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'] },
+      { label: 'Customers', icon: Users, href: '/dashboard/customers', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Employees', icon: UserCheck, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'] },
+    ],
+  },
+  {
+    label: 'Financial',
+    items: [
+      { label: 'Quotes', icon: FileText, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'] },
+    ],
+  },
+  {
+    label: 'Communications',
+    items: [
+      { label: 'Messages', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Call History', icon: PhoneCall, href: '/dashboard/calls', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Campaigns', icon: Megaphone, href: '/dashboard/campaigns', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Referrals', icon: Gift, href: '/dashboard/referrals', roles: ['platform_admin', 'company_admin'] },
+    ],
+  },
+  {
     label: 'AI Consoles',
     items: [
       { label: 'Customer Engagement', icon: HeadphonesIcon, href: '/dashboard/ai-agent?console=customer', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'] },
       { label: 'Field Operations', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
       { label: 'Business Operations', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist', 'inventory_manager'] },
       { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-agent?console=marketing', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['marketing_manager'] },
-      { label: 'Analytics & Insights', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['analytics_manager'] },
-    ],
-  },
-  {
-    label: 'Technician',
-    items: [
-      { label: 'Job Queue', icon: ClipboardList, href: '/technician/jobs', roles: ['employee'], requiredJobTypes: ['technician'] },
-      { label: 'Calendar', icon: Calendar, href: '/technician/calendar', roles: ['employee'], requiredJobTypes: ['technician'] },
-      { label: 'Job History', icon: History, href: '/technician/history', roles: ['employee'], requiredJobTypes: ['technician'] },
+      { label: 'Analytics & Insights', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', roles: ['platform_admin'] },
     ],
   },
   {
