@@ -60,7 +60,14 @@ export function GoogleCalendarSettings() {
       return data.authUrl;
     },
     onSuccess: (authUrl) => {
-      window.location.href = authUrl;
+      // Handle iframe context - Google OAuth blocks embedded flows
+      const isInIframe = window.self !== window.top;
+      if (isInIframe) {
+        // Redirect the top-level window to avoid iframe restrictions
+        window.top?.location.assign(authUrl);
+      } else {
+        window.location.href = authUrl;
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message);
