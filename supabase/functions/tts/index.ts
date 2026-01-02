@@ -108,9 +108,6 @@ serve(async (req) => {
         elevenlabs_voice_similarity,
         elevenlabs_voice_style,
         elevenlabs_voice_speed,
-        openai_api_key,
-        openai_tts_voice,
-        openai_tts_model,
         google_tts_api_key,
         google_tts_voice,
         google_tts_model,
@@ -135,27 +132,6 @@ serve(async (req) => {
     let usingPlatformKey = false;
 
     switch (provider) {
-      case "openai":
-        if (!integration?.openai_api_key) {
-          return new Response(
-            JSON.stringify({ error: "OpenAI TTS not configured" }),
-            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        audioResponse = await fetch("https://api.openai.com/v1/audio/speech", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${integration.openai_api_key}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: integration.openai_tts_model || "tts-1",
-            input: text,
-            voice: integration.openai_tts_voice || "alloy",
-            response_format: "mp3",
-          }),
-        });
-        break;
 
       case "google":
         if (!integration?.google_tts_api_key) {

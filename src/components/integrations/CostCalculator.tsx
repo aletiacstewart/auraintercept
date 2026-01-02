@@ -54,10 +54,6 @@ const PRICING = {
     creatorPrice: 22,
     creatorChars: 100000,
   },
-  openaiTts: {
-    pricePerThousandChars: 0.015,
-    hdPricePerThousandChars: 0.030,
-  },
   googleTts: {
     freeChars: 1000000,
     standardPricePerMillion: 4,
@@ -309,9 +305,6 @@ export function CostCalculator() {
             else ttsCost = 99;
           }
           break;
-        case 'openai':
-          ttsCost = (totalChars / 1000) * PRICING.openaiTts.pricePerThousandChars;
-          break;
         case 'google':
           if (totalChars > PRICING.googleTts.freeChars) {
             ttsCost = ((totalChars - PRICING.googleTts.freeChars) / 1000000) * PRICING.googleTts.neural2PricePerMillion;
@@ -339,7 +332,6 @@ export function CostCalculator() {
     // TTS provider comparison
     const ttsComparison = channels.voice ? {
       elevenlabs: calculateVoiceCostByProvider(totalReminders, 'elevenlabs'),
-      openai: calculateVoiceCostByProvider(totalReminders, 'openai'),
       google: calculateVoiceCostByProvider(totalReminders, 'google'),
     } : null;
 

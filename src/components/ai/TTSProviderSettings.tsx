@@ -18,13 +18,6 @@ import { Volume2, Play, Loader2, AlertCircle, ExternalLink } from 'lucide-react'
 interface TTSProviderSettingsProps {
   ttsProvider: string;
   setTtsProvider: (provider: string) => void;
-  // OpenAI settings
-  openaiApiKey: string;
-  setOpenaiApiKey: (key: string) => void;
-  openaiVoice: string;
-  setOpenaiVoice: (voice: string) => void;
-  openaiModel: string;
-  setOpenaiModel: (model: string) => void;
   // Google settings
   googleApiKey: string;
   setGoogleApiKey: (key: string) => void;
@@ -36,15 +29,6 @@ interface TTSProviderSettingsProps {
   hasElevenLabs: boolean;
   companyId: string | null;
 }
-
-const OPENAI_VOICES = [
-  { id: 'alloy', name: 'Alloy', description: 'Neutral, balanced' },
-  { id: 'echo', name: 'Echo', description: 'Male, warm' },
-  { id: 'fable', name: 'Fable', description: 'British accent' },
-  { id: 'onyx', name: 'Onyx', description: 'Male, deep' },
-  { id: 'nova', name: 'Nova', description: 'Female, friendly' },
-  { id: 'shimmer', name: 'Shimmer', description: 'Female, soft' },
-];
 
 const GOOGLE_VOICES = [
   { id: 'en-US-Neural2-D', name: 'Neural2-D', description: 'Male, American' },
@@ -62,11 +46,6 @@ const GOOGLE_VOICES = [
 export function TTSProviderSettings({
   ttsProvider,
   setTtsProvider,
-  openaiApiKey,
-  openaiVoice,
-  setOpenaiVoice,
-  openaiModel,
-  setOpenaiModel,
   googleApiKey,
   googleVoice,
   setGoogleVoice,
@@ -78,11 +57,9 @@ export function TTSProviderSettings({
   const [isTestingVoice, setIsTestingVoice] = useState(false);
 
   // Check which providers are connected
-  const hasOpenAI = !!openaiApiKey;
   const hasGoogle = !!googleApiKey;
   const connectedProviders = [
     hasElevenLabs && 'elevenlabs',
-    hasOpenAI && 'openai',
     hasGoogle && 'google',
   ].filter(Boolean) as string[];
 
@@ -112,10 +89,6 @@ export function TTSProviderSettings({
       };
 
       switch (ttsProvider) {
-        case 'openai':
-          endpoint = 'openai-tts';
-          body = { ...body, api_key: openaiApiKey, voice: openaiVoice, model: openaiModel };
-          break;
         case 'google':
           endpoint = 'google-tts';
           body = { ...body, api_key: googleApiKey, voice: googleVoice, model: googleModel };
@@ -235,21 +208,6 @@ export function TTSProviderSettings({
             </div>
           )}
 
-          {hasOpenAI && (
-            <div className={`flex items-start space-x-3 rounded-lg border p-4 transition-colors ${ttsProvider === 'openai' ? 'border-primary bg-primary/5' : 'border-border'}`}>
-              <RadioGroupItem value="openai" id="openai" className="mt-1" />
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="openai" className="font-medium cursor-pointer">OpenAI TTS</Label>
-                  <Badge className="bg-green-500/10 text-green-600 border-green-500/30 text-xs">Connected</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  High-quality voices at a lower cost.
-                </p>
-              </div>
-            </div>
-          )}
-
           {hasGoogle && (
             <div className={`flex items-start space-x-3 rounded-lg border p-4 transition-colors ${ttsProvider === 'google' ? 'border-primary bg-primary/5' : 'border-border'}`}>
               <RadioGroupItem value="google" id="google" className="mt-1" />
@@ -265,42 +223,6 @@ export function TTSProviderSettings({
             </div>
           )}
         </RadioGroup>
-
-        {/* Voice selection for selected provider */}
-        {ttsProvider === 'openai' && hasOpenAI && (
-          <div className="space-y-4 pt-4 border-t">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label>Voice</Label>
-                <Select value={openaiVoice} onValueChange={setOpenaiVoice}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {OPENAI_VOICES.map((voice) => (
-                      <SelectItem key={voice.id} value={voice.id}>
-                        <span>{voice.name}</span>
-                        <span className="text-muted-foreground text-xs ml-2">({voice.description})</span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Model</Label>
-                <Select value={openaiModel} onValueChange={setOpenaiModel}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="tts-1">TTS-1 (Fast)</SelectItem>
-                    <SelectItem value="tts-1-hd">TTS-1 HD (Higher quality)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-        )}
 
         {ttsProvider === 'google' && hasGoogle && (
           <div className="space-y-4 pt-4 border-t">

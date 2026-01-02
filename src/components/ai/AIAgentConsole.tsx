@@ -223,7 +223,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       if (!companyId) return null;
       const { data } = await supabase
         .from('tenant_integrations')
-        .select('twilio_phone_number, twilio_account_sid, twilio_auth_token, elevenlabs_api_key, tts_provider, openai_api_key, google_tts_api_key, elevenlabs_voice_id, openai_tts_voice, google_tts_voice, use_platform_tts')
+        .select('twilio_phone_number, twilio_account_sid, twilio_auth_token, elevenlabs_api_key, tts_provider, google_tts_api_key, elevenlabs_voice_id, google_tts_voice, use_platform_tts')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -244,11 +244,6 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
         // Platform TTS or own API key counts as configured
         isConfigured: !!integrations?.elevenlabs_api_key || !!integrations?.use_platform_tts,
         voiceName: integrations?.elevenlabs_voice_id || 'Default voice',
-      },
-      openai: {
-        name: 'OpenAI TTS',
-        isConfigured: !!integrations?.openai_api_key,
-        voiceName: integrations?.openai_tts_voice || 'alloy',
       },
       google: {
         name: 'Google TTS',

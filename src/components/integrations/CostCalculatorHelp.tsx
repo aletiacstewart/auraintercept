@@ -121,7 +121,6 @@ interface TTSComparisonTableProps {
   totalReminders: number;
   ttsComparison: {
     elevenlabs: { twilioCost: number; ttsCost: number; total: number };
-    openai: { twilioCost: number; ttsCost: number; total: number };
     google: { twilioCost: number; ttsCost: number; total: number };
   } | null;
 }
@@ -147,16 +146,9 @@ export function TTSComparisonTable({ totalReminders, ttsComparison }: TTSCompari
       perReminder: totalReminders > 0 ? ttsComparison.elevenlabs.total / totalReminders : 0,
     },
     { 
-      name: 'OpenAI TTS', 
-      data: ttsComparison.openai, 
-      quality: 4, 
-      description: 'Very good quality, reliable',
-      perReminder: totalReminders > 0 ? ttsComparison.openai.total / totalReminders : 0,
-    },
-    { 
       name: 'Google TTS', 
       data: ttsComparison.google, 
-      quality: 3, 
+      quality: 4, 
       description: 'Good quality, most affordable',
       perReminder: totalReminders > 0 ? ttsComparison.google.total / totalReminders : 0,
     },
