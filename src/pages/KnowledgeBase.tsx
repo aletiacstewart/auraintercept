@@ -1,12 +1,17 @@
+import { useSearchParams } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ServicesManager } from '@/components/knowledge/ServicesManager';
 import { FAQsManager } from '@/components/knowledge/FAQsManager';
 import { BusinessHoursManager } from '@/components/knowledge/BusinessHoursManager';
 import { DocumentsManager } from '@/components/knowledge/DocumentsManager';
-import { Briefcase, HelpCircle, Clock, FileText } from 'lucide-react';
+import { InventoryManager } from '@/components/knowledge/InventoryManager';
+import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
+import { Briefcase, HelpCircle, Clock, FileText, Package, Shield } from 'lucide-react';
 
 export default function KnowledgeBase() {
+  const [searchParams] = useSearchParams();
+  const defaultTab = searchParams.get('tab') || 'services';
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
@@ -17,8 +22,8 @@ export default function KnowledgeBase() {
           </p>
         </div>
 
-        <Tabs defaultValue="services" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+        <Tabs defaultValue={defaultTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 lg:w-auto lg:inline-grid">
             <TabsTrigger value="services" className="gap-2">
               <Briefcase className="w-4 h-4 hidden sm:block" />
               Services
@@ -34,6 +39,14 @@ export default function KnowledgeBase() {
             <TabsTrigger value="documents" className="gap-2">
               <FileText className="w-4 h-4 hidden sm:block" />
               Documents
+            </TabsTrigger>
+            <TabsTrigger value="inventory" className="gap-2">
+              <Package className="w-4 h-4 hidden sm:block" />
+              Inventory
+            </TabsTrigger>
+            <TabsTrigger value="warranties" className="gap-2">
+              <Shield className="w-4 h-4 hidden sm:block" />
+              Warranties
             </TabsTrigger>
           </TabsList>
 
@@ -51,6 +64,14 @@ export default function KnowledgeBase() {
 
           <TabsContent value="documents">
             <DocumentsManager />
+          </TabsContent>
+
+          <TabsContent value="inventory">
+            <InventoryManager />
+          </TabsContent>
+
+          <TabsContent value="warranties">
+            <WarrantiesManager />
           </TabsContent>
         </Tabs>
       </div>
