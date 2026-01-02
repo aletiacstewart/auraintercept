@@ -9,12 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+import { ResendSetupGuide } from '@/components/integrations/ResendSetupGuide';
 import {
   Dialog,
   DialogContent,
@@ -157,34 +152,8 @@ export default function EmailIntegration() {
           </div>
         </div>
 
-        {/* Setup Guide */}
-        <Card className="border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Getting Started</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="resend">
-                <AccordionTrigger className="text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-emerald-500 flex items-center justify-center">
-                      <Mail className="w-3 h-3 text-white" />
-                    </div>
-                    Resend Setup (Email)
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground">
-                  <ol className="list-decimal list-inside space-y-1">
-                    <li>Create a Resend account at <a href="https://resend.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">resend.com</a></li>
-                    <li>Verify your email domain at <a href="https://resend.com/domains" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">resend.com/domains</a></li>
-                    <li>Go to <a href="https://resend.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">API Keys</a> and create a new key</li>
-                    <li>Enter your API key below</li>
-                  </ol>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </CardContent>
-        </Card>
+        {/* Resend Setup Guide */}
+        <ResendSetupGuide />
 
         {/* Integration Cards */}
         <div className="grid gap-4 md:grid-cols-2">
