@@ -60,14 +60,24 @@ export function GoogleCalendarSettings() {
       return data.authUrl;
     },
     onSuccess: (authUrl) => {
-      // Handle iframe context - Google OAuth blocks embedded flows
-      const isInIframe = window.self !== window.top;
+      // Google OAuth blocks embedded flows; also, cross-origin iframes cannot access window.top.location
+      const isInIframe = (() => {
+        try {
+          return window.self !== window.top;
+        } catch {
+          return true;
+        }
+      })();
+
       if (isInIframe) {
-        // Redirect the top-level window to avoid iframe restrictions
-        window.top?.location.assign(authUrl);
-      } else {
-        window.location.href = authUrl;
+        const opened = window.open(authUrl, '_blank', 'noopener,noreferrer');
+        if (!opened) {
+          toast.error('Popup blocked — please allow popups and try again.');
+        }
+        return;
       }
+
+      window.location.href = authUrl;
     },
     onError: (error: Error) => {
       toast.error(error.message);
