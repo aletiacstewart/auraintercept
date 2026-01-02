@@ -71,18 +71,12 @@ Deno.serve(async (req) => {
       return await syncAppointmentToGoogle(supabase, accessToken, companyId, appointment, companyName);
     } else if (action === 'delete_event') {
       return await deleteEventFromGoogle(supabase, accessToken, companyId, appointmentId);
-    } else if (action === 'sync_all') {
+    } else if (action === 'sync_all' || action === 'full_sync' || action === 'manual_sync') {
+      // Sync all appointments to Google Calendar
       return await syncAllAppointments(supabase, accessToken, companyId, companyName);
-    } else if (action === 'manual_sync') {
-      // Manual sync triggered by user
-      const authHeader = req.headers.get('Authorization');
-      if (!authHeader) {
-        return new Response(
-          JSON.stringify({ error: 'Authorization required' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      return await syncAllAppointments(supabase, accessToken, companyId, companyName);
+    } else if (action === 'import_events') {
+      // Import events from Google Calendar into appointments
+      return await importEventsFromGoogle(supabase, accessToken, companyId);
     }
 
     return new Response(
@@ -375,6 +369,131 @@ async function syncAllAppointments(
     );
   } catch (error: any) {
     console.error('Sync all error:', error);
+    return new Response(
+      JSON.stringify({ success: false, error: error?.message || 'Unknown error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+}
+
+async function importEventsFromGoogle(
+  supabase: any,
+  accessToken: string,
+  companyId: string
+): Promise<Response> {
+  try {
+    // Get events from Google Calendar for the next 30 days
+    const timeMin = new Date().toISOString();
+    const timeMax = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    const response = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&orderBy=startTime`,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.error) {
+      console.error('Google Calendar API error:', data.error);
+      return new Response(
+        JSON.stringify({ success: false, error: data.error.message }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    let imported = 0;
+    let skipped = 0;
+
+    for (const event of data.items || []) {
+      // Skip all-day events or events without proper dateTime
+      if (!event.start?.dateTime || !event.end?.dateTime) {
+        skipped++;
+        continue;
+      }
+
+      // Check if this event was created by our platform (has our extended properties)
+      const appointmentId = event.extendedProperties?.private?.appointmentId;
+      if (appointmentId) {
+        // This event came from our platform, skip it
+        skipped++;
+        continue;
+      }
+
+      // Check if we already have a mapping for this Google event
+      const { data: existingMapping } = await supabase
+        .from('calendar_event_mappings')
+        .select('appointment_id')
+        .eq('google_event_id', event.id)
+        .eq('company_id', companyId)
+        .maybeSingle();
+
+      if (existingMapping) {
+        skipped++;
+        continue;
+      }
+
+      // Create a new appointment from this Google event
+      const startDateTime = new Date(event.start.dateTime);
+      const endDateTime = new Date(event.end.dateTime);
+      const durationMinutes = Math.round((endDateTime.getTime() - startDateTime.getTime()) / 60000);
+
+      const { data: newAppointment, error: insertError } = await supabase
+        .from('appointments')
+        .insert({
+          company_id: companyId,
+          customer_name: event.summary || 'Google Calendar Event',
+          customer_address: event.location || null,
+          service_type: 'Imported Event',
+          datetime: startDateTime.toISOString(),
+          duration_minutes: durationMinutes,
+          notes: event.description || `Imported from Google Calendar: ${event.summary}`,
+          status: 'scheduled',
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error('Failed to create appointment:', insertError);
+        continue;
+      }
+
+      // Create mapping
+      await supabase
+        .from('calendar_event_mappings')
+        .insert({
+          appointment_id: newAppointment.id,
+          company_id: companyId,
+          google_event_id: event.id,
+          sync_status: 'synced',
+          sync_source: 'google',
+          sync_direction: 'from_google',
+          last_synced_at: new Date().toISOString(),
+        });
+
+      imported++;
+    }
+
+    console.log(`Import complete - Imported: ${imported}, Skipped: ${skipped}`);
+
+    // Update connection last sync time
+    await supabase
+      .from('google_calendar_connections')
+      .update({
+        last_sync_at: new Date().toISOString(),
+        last_error: null,
+      })
+      .eq('company_id', companyId);
+
+    return new Response(
+      JSON.stringify({ success: true, imported, skipped }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  } catch (error: any) {
+    console.error('Import error:', error);
     return new Response(
       JSON.stringify({ success: false, error: error?.message || 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
