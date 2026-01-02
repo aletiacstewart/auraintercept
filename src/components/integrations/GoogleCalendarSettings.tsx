@@ -45,10 +45,15 @@ export function GoogleCalendarSettings() {
   // Connect to Google Calendar
   const connectMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/google-calendar-auth`, {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Not authenticated');
+      
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/google-calendar-auth?action=authorize`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'get_auth_url', companyId }),
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Failed to get auth URL');
@@ -65,10 +70,15 @@ export function GoogleCalendarSettings() {
   // Disconnect from Google Calendar
   const disconnectMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/google-calendar-auth`, {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Not authenticated');
+      
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/google-calendar-auth?action=disconnect`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'disconnect', companyId }),
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Failed to disconnect');
