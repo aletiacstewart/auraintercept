@@ -172,232 +172,237 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
           Configure your ElevenLabs agent to book appointments via voice. Follow these steps to enable real-time booking.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Step 1: Prerequisites */}
-        <div className="space-y-2">
-          <h3 className="font-semibold flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-blue-500 text-white text-sm flex items-center justify-center">1</span>
-            Prerequisites
-          </h3>
-          <div className="ml-8 space-y-2 text-sm text-muted-foreground">
-            <p>Make sure you have:</p>
-            <ul className="list-disc ml-4 space-y-1">
-              <li>An ElevenLabs account with Conversational AI access</li>
-              <li>Your ElevenLabs API key configured in Integrations above</li>
-              <li>A voice agent created in ElevenLabs dashboard</li>
-            </ul>
-            <Button variant="outline" size="sm" className="mt-2 gap-2" asChild>
-              <a href="https://elevenlabs.io/app/conversational-ai" target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-4 h-4" />
-                Open ElevenLabs Dashboard
-              </a>
-            </Button>
-          </div>
-        </div>
-
-        {/* Step 2: Agent Prompt */}
-        <div className="space-y-2">
-          <h3 className="font-semibold flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-blue-500 text-white text-sm flex items-center justify-center">2</span>
-            Set Agent Prompt
-          </h3>
-          <div className="ml-8 space-y-2">
-            <p className="text-sm text-muted-foreground">
-              Copy this prompt and paste it in your ElevenLabs agent's "System Prompt" field:
-            </p>
-            <div className="relative">
-              <pre className="bg-muted p-4 rounded-lg text-xs overflow-x-auto max-h-48 overflow-y-auto">
-                {AGENT_PROMPT}
-              </pre>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="absolute top-2 right-2 gap-1"
-                onClick={() => copyToClipboard(AGENT_PROMPT, 'prompt')}
+      <CardContent>
+        <Accordion type="single" collapsible className="w-full">
+          {/* Step 1: Prerequisites */}
+          <AccordionItem value="step-1">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-blue-500 text-white border-blue-500">1</Badge>
+                Prerequisites
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+              <p>Make sure you have:</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>An ElevenLabs account with Conversational AI access</li>
+                <li>Your ElevenLabs API key configured in Integrations above</li>
+                <li>A voice agent created in ElevenLabs dashboard</li>
+              </ul>
+              <a 
+                href="https://elevenlabs.io/app/conversational-ai" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-primary hover:underline"
               >
-                {copiedItems['prompt'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                {copiedItems['prompt'] ? 'Copied' : 'Copy'}
-              </Button>
-            </div>
-          </div>
-        </div>
+                Open ElevenLabs Dashboard <ExternalLink className="w-3 h-3" />
+              </a>
+            </AccordionContent>
+          </AccordionItem>
 
-        {/* Step 3: Configure Client Tools */}
-        <div className="space-y-2">
-          <h3 className="font-semibold flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-blue-500 text-white text-sm flex items-center justify-center">3</span>
-            Configure Client Tools
-          </h3>
-          <div className="ml-8 space-y-3">
-            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 text-sm">
-              <p className="font-medium text-amber-600 dark:text-amber-400 mb-2">📍 How to add each tool in ElevenLabs:</p>
-              <ol className="list-decimal ml-4 space-y-1 text-muted-foreground">
-                <li>Go to your agent → <strong>Tools</strong> → <strong>+ Add Tool</strong> → <strong>Webhook</strong></li>
-                <li>Fill in the <strong>Name</strong> field (e.g., <code>get_services</code>)</li>
-                <li>Fill in the <strong>Description</strong> field</li>
-                <li>Change <strong>Method</strong> from GET to <strong>POST</strong></li>
-                <li>Paste the <strong>URL</strong> (see below)</li>
-                <li>Scroll down to <strong>"Body"</strong> section and click <strong>"Add property"</strong> for each parameter</li>
-                <li><strong>OR easier:</strong> Click <strong>"Edit as JSON"</strong> at the bottom and paste the JSON config</li>
-              </ol>
-            </div>
-            
-            {/* Webhook URL */}
-            <div className="bg-muted p-3 rounded-lg space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">URL (same for all 4 tools)</span>
+          {/* Step 2: Agent Prompt */}
+          <AccordionItem value="step-2">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-blue-500 text-white border-blue-500">2</Badge>
+                Set Agent Prompt
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+              <p>Copy this prompt and paste it in your ElevenLabs agent's "System Prompt" field:</p>
+              <div className="relative">
+                <pre className="bg-muted p-4 rounded-lg text-xs overflow-x-auto max-h-48 overflow-y-auto">
+                  {AGENT_PROMPT}
+                </pre>
                 <Button
-                  variant="ghost"
+                  variant="secondary"
                   size="sm"
-                  className="h-7 gap-1"
-                  onClick={() => copyToClipboard(WEBHOOK_URL, 'webhook')}
+                  className="absolute top-2 right-2 gap-1"
+                  onClick={() => copyToClipboard(AGENT_PROMPT, 'prompt')}
                 >
-                  {copiedItems['webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  {copiedItems['prompt'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  {copiedItems['prompt'] ? 'Copied' : 'Copy'}
                 </Button>
               </div>
-              <code className="text-xs break-all">{WEBHOOK_URL}</code>
-            </div>
-            
-            <p className="text-sm text-muted-foreground">
-              Add all 4 tools below. For each one, copy the <strong>"Full JSON Config"</strong> and paste via "Edit as JSON":
-            </p>
+            </AccordionContent>
+          </AccordionItem>
 
-            <Tabs defaultValue="get_services" className="mt-4">
-              <TabsList className="grid w-full grid-cols-4">
+          {/* Step 3: Configure Client Tools */}
+          <AccordionItem value="step-3">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-blue-500 text-white border-blue-500">3</Badge>
+                Configure Client Tools
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground space-y-4">
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                <p className="font-medium text-amber-600 dark:text-amber-400 mb-2">📍 How to add each tool in ElevenLabs:</p>
+                <ol className="list-decimal list-inside space-y-1">
+                  <li>Go to your agent → <strong>Tools</strong> → <strong>+ Add Tool</strong> → <strong>Webhook</strong></li>
+                  <li>Fill in the <strong>Name</strong> field (e.g., <code className="bg-muted px-1 rounded">get_services</code>)</li>
+                  <li>Fill in the <strong>Description</strong> field</li>
+                  <li>Change <strong>Method</strong> from GET to <strong>POST</strong></li>
+                  <li>Paste the <strong>URL</strong> (see below)</li>
+                  <li>Scroll down to <strong>"Body"</strong> section and click <strong>"Add property"</strong> for each parameter</li>
+                  <li><strong>OR easier:</strong> Click <strong>"Edit as JSON"</strong> at the bottom and paste the JSON config</li>
+                </ol>
+              </div>
+              
+              {/* Webhook URL */}
+              <div className="bg-muted p-3 rounded-lg space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-foreground">URL (same for all 4 tools)</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 gap-1"
+                    onClick={() => copyToClipboard(WEBHOOK_URL, 'webhook')}
+                  >
+                    {copiedItems['webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  </Button>
+                </div>
+                <code className="text-xs break-all">{WEBHOOK_URL}</code>
+              </div>
+              
+              <p>Add all 4 tools below. For each one, copy the <strong>"Full JSON Config"</strong> and paste via "Edit as JSON":</p>
+
+              <Tabs defaultValue="get_services" className="mt-4">
+                <TabsList className="grid w-full grid-cols-4">
+                  {TOOLS_CONFIG.map((tool) => (
+                    <TabsTrigger key={tool.id} value={tool.id} className="text-xs">
+                      <tool.icon className="w-3 h-3 mr-1" />
+                      {tool.id.replace('get_', '').replace('book_', '')}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+
                 {TOOLS_CONFIG.map((tool) => (
-                  <TabsTrigger key={tool.id} value={tool.id} className="text-xs">
-                    <tool.icon className="w-3 h-3 mr-1" />
-                    {tool.id.replace('get_', '').replace('book_', '')}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-
-              {TOOLS_CONFIG.map((tool) => (
-                <TabsContent key={tool.id} value={tool.id} className="space-y-3">
-                  <div className="bg-card border rounded-lg p-4 space-y-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-medium flex items-center gap-2">
-                          <tool.icon className="w-4 h-4 text-blue-500" />
-                          {tool.name}
-                        </h4>
-                        <p className="text-xs text-muted-foreground mt-1">{tool.description}</p>
+                  <TabsContent key={tool.id} value={tool.id} className="space-y-3">
+                    <div className="bg-card border rounded-lg p-4 space-y-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium flex items-center gap-2">
+                            <tool.icon className="w-4 h-4 text-blue-500" />
+                            {tool.name}
+                          </h4>
+                          <p className="text-xs text-muted-foreground mt-1">{tool.description}</p>
+                        </div>
+                        <Badge variant="outline">POST</Badge>
                       </div>
-                      <Badge variant="outline">POST</Badge>
-                    </div>
 
-                    {/* Field-by-field instructions */}
-                    <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-xs space-y-2">
-                      <p className="font-medium text-green-600 dark:text-green-400">Fill in these fields:</p>
-                      <div className="grid gap-1.5">
-                        <div><strong>Name:</strong> <code className="bg-muted px-1 rounded">{tool.name}</code></div>
-                        <div><strong>Description:</strong> <span className="text-muted-foreground">{tool.description}</span></div>
-                        <div><strong>Method:</strong> <code className="bg-muted px-1 rounded">POST</code></div>
-                        <div><strong>URL:</strong> <code className="bg-muted px-1 rounded text-[10px]">{WEBHOOK_URL}</code></div>
-                      </div>
-                    </div>
-
-                    {/* Body parameters */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium">Body Parameters</span>
-                      </div>
-                      
-                      <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 text-xs">
-                        <p className="font-medium text-amber-600 dark:text-amber-400 mb-2">⚠️ How to add each property:</p>
-                        <ol className="list-decimal ml-4 space-y-1 text-muted-foreground">
-                          <li>Scroll down to the <strong>"Body"</strong> section</li>
-                          <li>Click <strong>"Add property"</strong></li>
-                          <li>In the <strong>"Identifier"</strong> field, type the property name exactly (e.g., <code className="bg-muted px-1 rounded">company_id</code>) — <strong>only letters, numbers, underscores allowed</strong></li>
-                          <li>Set <strong>"Data type"</strong> to <code className="bg-muted px-1 rounded">String</code></li>
-                          <li>Set <strong>"Value Type"</strong>: for <code>company_id</code> use <code className="bg-muted px-1 rounded">Value</code> and paste your ID; for others use <code className="bg-muted px-1 rounded">LLM Prompt</code></li>
-                          <li>Fill in the <strong>"Description"</strong></li>
-                          <li>Check <strong>"Required"</strong> if needed</li>
-                        </ol>
-                        <div className="mt-2 p-2 bg-background rounded border border-amber-500/30">
-                          <p className="text-amber-600 dark:text-amber-400">
-                            <strong>💡 For company_id:</strong> The "Identifier" field is just the name <code className="bg-muted px-1 rounded">company_id</code>. 
-                            Set "Value Type" to <strong>Value</strong> (not LLM Prompt), then paste your actual UUID in the value field. 
-                            The UUID with hyphens goes in the <em>value</em>, not the identifier.
-                          </p>
+                      {/* Field-by-field instructions */}
+                      <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-xs space-y-2">
+                        <p className="font-medium text-green-600 dark:text-green-400">Fill in these fields:</p>
+                        <div className="grid gap-1.5">
+                          <div><strong>Name:</strong> <code className="bg-muted px-1 rounded">{tool.name}</code></div>
+                          <div><strong>Description:</strong> <span className="text-muted-foreground">{tool.description}</span></div>
+                          <div><strong>Method:</strong> <code className="bg-muted px-1 rounded">POST</code></div>
+                          <div><strong>URL:</strong> <code className="bg-muted px-1 rounded text-[10px]">{WEBHOOK_URL}</code></div>
                         </div>
                       </div>
-                      
-                      <div className="bg-muted p-3 rounded text-xs space-y-2">
-                        <p className="font-medium mb-2">Add these properties:</p>
-                        {Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => (
-                          <div key={key} className="flex items-start gap-2 p-2 bg-background rounded border">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <span className="text-muted-foreground">Identifier:</span>
-                                <code className="font-bold text-primary">{key}</code>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-5 w-5 p-0"
-                                  onClick={() => copyToClipboard(key, `prop-${tool.id}-${key}`)}
-                                >
-                                  {copiedItems[`prop-${tool.id}-${key}`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                                </Button>
-                              </div>
-                              <div className="text-muted-foreground mt-1">
-                                Description: {value.description || (value.const ? `Must be "${value.const}"` : '')}
-                              </div>
-                            </div>
-                            {tool.parameters.required?.includes(key) && <Badge variant="secondary" className="text-[9px] h-4">required</Badge>}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
 
-                    {/* Full JSON Config for "Edit as JSON" */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium text-green-600 dark:text-green-400">✅ Full JSON Config (paste via "Edit as JSON")</span>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          className="h-7 gap-1"
-                          onClick={() => {
-                            const fullConfig = {
-                              name: tool.name,
-                              description: tool.description,
-                              parameters: {
-                                type: "object",
-                                properties: Object.fromEntries(
-                                  Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => {
-                                    if (key === 'company_id') {
-                                      return [key, {
-                                        type: "string",
-                                        description: value.description,
-                                        value: companyId
-                                      }];
-                                    }
-                                    if (key === 'action') {
-                                      return [key, {
-                                        type: "string",
-                                        description: value.description,
-                                        enum: value.enum,
-                                        value: value.enum?.[0]
-                                      }];
-                                    }
-                                    return [key, {
-                                      type: value.type || "string",
-                                      description: value.description
-                                    }];
-                                  })
-                                ),
-                                required: tool.parameters.required
-                              }
-                            };
-                            copyToClipboard(JSON.stringify(fullConfig, null, 2), `fullconfig-${tool.id}`);
-                          }}
-                        >
-                          {copiedItems[`fullconfig-${tool.id}`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                          Copy Full Config
-                        </Button>
+                      {/* Body parameters */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium">Body Parameters</span>
+                        </div>
+                        
+                        <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 text-xs">
+                          <p className="font-medium text-amber-600 dark:text-amber-400 mb-2">⚠️ How to add each property:</p>
+                          <ol className="list-decimal list-inside space-y-1">
+                            <li>Scroll down to the <strong>"Body"</strong> section</li>
+                            <li>Click <strong>"Add property"</strong></li>
+                            <li>In the <strong>"Identifier"</strong> field, type the property name exactly (e.g., <code className="bg-muted px-1 rounded">company_id</code>) — <strong>only letters, numbers, underscores allowed</strong></li>
+                            <li>Set <strong>"Data type"</strong> to <code className="bg-muted px-1 rounded">String</code></li>
+                            <li>Set <strong>"Value Type"</strong>: for <code>company_id</code> use <code className="bg-muted px-1 rounded">Value</code> and paste your ID; for others use <code className="bg-muted px-1 rounded">LLM Prompt</code></li>
+                            <li>Fill in the <strong>"Description"</strong></li>
+                            <li>Check <strong>"Required"</strong> if needed</li>
+                          </ol>
+                          <div className="mt-2 p-2 bg-background rounded border border-amber-500/30">
+                            <p className="text-amber-600 dark:text-amber-400">
+                              <strong>💡 For company_id:</strong> The "Identifier" field is just the name <code className="bg-muted px-1 rounded">company_id</code>. 
+                              Set "Value Type" to <strong>Value</strong> (not LLM Prompt), then paste your actual UUID in the value field. 
+                              The UUID with hyphens goes in the <em>value</em>, not the identifier.
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-muted p-3 rounded text-xs space-y-2">
+                          <p className="font-medium mb-2">Add these properties:</p>
+                          {Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => (
+                            <div key={key} className="flex items-start gap-2 p-2 bg-background rounded border">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-muted-foreground">Identifier:</span>
+                                  <code className="font-bold text-primary">{key}</code>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-5 w-5 p-0"
+                                    onClick={() => copyToClipboard(key, `prop-${tool.id}-${key}`)}
+                                  >
+                                    {copiedItems[`prop-${tool.id}-${key}`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                  </Button>
+                                </div>
+                                <div className="text-muted-foreground mt-1">
+                                  Description: {value.description || (value.const ? `Must be "${value.const}"` : '')}
+                                </div>
+                              </div>
+                              {tool.parameters.required?.includes(key) && <Badge variant="secondary" className="text-[9px] h-4">required</Badge>}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <pre className="bg-green-500/10 border border-green-500/20 p-3 rounded text-xs overflow-x-auto max-h-80 overflow-y-auto">
+
+                      {/* Full JSON Config for "Edit as JSON" */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-green-600 dark:text-green-400">✅ Full JSON Config (paste via "Edit as JSON")</span>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            className="h-7 gap-1"
+                            onClick={() => {
+                              const fullConfig = {
+                                name: tool.name,
+                                description: tool.description,
+                                parameters: {
+                                  type: "object",
+                                  properties: Object.fromEntries(
+                                    Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => {
+                                      if (key === 'company_id') {
+                                        return [key, {
+                                          type: "string",
+                                          description: value.description,
+                                          value: companyId
+                                        }];
+                                      }
+                                      if (key === 'action') {
+                                        return [key, {
+                                          type: "string",
+                                          description: value.description,
+                                          enum: value.enum,
+                                          value: value.enum?.[0]
+                                        }];
+                                      }
+                                      return [key, {
+                                        type: value.type || "string",
+                                        description: value.description
+                                      }];
+                                    })
+                                  ),
+                                  required: tool.parameters.required
+                                }
+                              };
+                              copyToClipboard(JSON.stringify(fullConfig, null, 2), `fullconfig-${tool.id}`);
+                            }}
+                          >
+                            {copiedItems[`fullconfig-${tool.id}`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                            Copy Full Config
+                          </Button>
+                        </div>
+                        <pre className="bg-green-500/10 border border-green-500/20 p-3 rounded text-xs overflow-x-auto max-h-80 overflow-y-auto">
 {JSON.stringify({
   name: tool.name,
   description: tool.description,
@@ -429,52 +434,71 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
     required: tool.parameters.required
   }
 }, null, 2)}
-                      </pre>
-                    </div>
-
-                    {/* Example request body for testing */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium text-muted-foreground">Example Request Body (for testing)</span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 gap-1"
-                          onClick={() => copyToClipboard(JSON.stringify(tool.exampleBody(companyId), null, 2), `body-${tool.id}`)}
-                        >
-                          {copiedItems[`body-${tool.id}`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                          Copy
-                        </Button>
+                        </pre>
                       </div>
-                      <pre className="bg-muted p-3 rounded text-xs overflow-x-auto">
-{JSON.stringify(tool.exampleBody(companyId), null, 2)}
-                      </pre>
-                    </div>
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
-          </div>
-        </div>
 
-        {/* Step 4: Test */}
-        <div className="space-y-2">
-          <h3 className="font-semibold flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-blue-500 text-white text-sm flex items-center justify-center">4</span>
-            Test Your Agent
-          </h3>
-          <div className="ml-8 space-y-2 text-sm text-muted-foreground">
-            <p>After configuring the tools:</p>
-            <ol className="list-decimal ml-4 space-y-1">
-              <li>Use ElevenLabs' built-in test feature to talk to your agent</li>
-              <li>Try booking an appointment - say something like "I need to schedule a plumbing repair"</li>
-              <li>Verify the appointment appears in your dashboard</li>
-            </ol>
-          </div>
-        </div>
+                      {/* Example request body for testing */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-muted-foreground">Example Request Body (for testing)</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 gap-1"
+                            onClick={() => copyToClipboard(JSON.stringify(tool.exampleBody(companyId), null, 2), `body-${tool.id}`)}
+                          >
+                            {copiedItems[`body-${tool.id}`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                            Copy
+                          </Button>
+                        </div>
+                        <pre className="bg-muted p-3 rounded text-xs overflow-x-auto">
+{JSON.stringify(tool.exampleBody(companyId), null, 2)}
+                        </pre>
+                      </div>
+                    </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Step 4: Test */}
+          <AccordionItem value="step-4">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-blue-500 text-white border-blue-500">4</Badge>
+                Test Your Agent
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+              <p>After configuring the tools:</p>
+              <ol className="list-decimal list-inside space-y-1">
+                <li>Use ElevenLabs' built-in test feature to talk to your agent</li>
+                <li>Try booking an appointment - say something like "I need to schedule a plumbing repair"</li>
+                <li>Verify the appointment appears in your dashboard</li>
+              </ol>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Troubleshooting */}
+          <AccordionItem value="troubleshooting">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">?</Badge>
+                Troubleshooting
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground space-y-2">
+              <p><strong>Agent doesn't call the tools:</strong> Make sure the tool names match exactly and the parameters are configured correctly.</p>
+              <p><strong>Getting errors:</strong> Check that your company ID is correct and the webhook URL is accessible.</p>
+              <p><strong>Appointment not showing:</strong> Verify all required fields (name, phone, service type, date, time) are being passed.</p>
+              <p><strong>No available times:</strong> Check that you have business hours configured and technicians with availability.</p>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
         {/* Company ID Reference */}
-        <div className="bg-muted/50 p-3 rounded-lg">
+        <div className="bg-muted/50 p-3 rounded-lg mt-4">
           <div className="flex items-center justify-between">
             <div>
               <span className="text-xs font-medium text-muted-foreground">Your Company ID</span>
@@ -490,21 +514,6 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
             </Button>
           </div>
         </div>
-
-        {/* Troubleshooting */}
-        <Accordion type="single" collapsible>
-          <AccordionItem value="troubleshooting" className="border-none">
-            <AccordionTrigger className="text-sm font-medium py-2">
-              Troubleshooting
-            </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground space-y-2">
-              <p><strong>Agent doesn't call the tools:</strong> Make sure the tool names match exactly and the parameters are configured correctly.</p>
-              <p><strong>Getting errors:</strong> Check that your company ID is correct and the webhook URL is accessible.</p>
-              <p><strong>Appointment not showing:</strong> Verify all required fields (name, phone, service type, date, time) are being passed.</p>
-              <p><strong>No available times:</strong> Check that you have business hours configured and technicians with availability.</p>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
       </CardContent>
     </Card>
   );
