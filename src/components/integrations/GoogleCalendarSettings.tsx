@@ -900,7 +900,7 @@ export function GoogleCalendarSettings() {
                 )}
               </>
             ) : (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-4">
                 <Button
                   onClick={() => connectMutation.mutate()}
                   disabled={connectMutation.isPending}
@@ -913,9 +913,85 @@ export function GoogleCalendarSettings() {
                   )}
                   Connect Google Calendar
                 </Button>
-                <p className="text-sm text-muted-foreground">
-                  Requires Google OAuth credentials to be configured by platform admin.
-                </p>
+                
+                {/* Setup Instructions Accordion */}
+                <div className="border border-amber-500/30 bg-amber-500/5 rounded-lg p-4 space-y-3">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <div className="space-y-2">
+                      <p className="font-medium text-amber-700 dark:text-amber-400">
+                        Setup Required: Google Cloud Console Configuration
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        If you see a 403 error or "access denied", follow these steps:
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3 text-sm">
+                    <div className="p-3 bg-background rounded border border-border">
+                      <p className="font-medium mb-2">1. Go to Google Cloud Console</p>
+                      <a 
+                        href="https://console.cloud.google.com/apis/credentials" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline inline-flex items-center gap-1"
+                      >
+                        Open Google Cloud Console →
+                      </a>
+                    </div>
+                    
+                    <div className="p-3 bg-background rounded border border-border">
+                      <p className="font-medium mb-2">2. Select your OAuth 2.0 Client ID</p>
+                      <p className="text-muted-foreground">
+                        Click on your OAuth 2.0 Client (Web application type)
+                      </p>
+                    </div>
+                    
+                    <div className="p-3 bg-background rounded border border-border">
+                      <p className="font-medium mb-2">3. Add this Authorized redirect URI:</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <code className="flex-1 p-2 bg-muted rounded text-xs break-all font-mono">
+                          {`https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/google-calendar-auth`}
+                        </code>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-shrink-0"
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              `https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/google-calendar-auth`
+                            );
+                            toast.success('Redirect URI copied!');
+                          }}
+                        >
+                          Copy
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="p-3 bg-background rounded border border-border">
+                      <p className="font-medium mb-2">4. Configure OAuth Consent Screen</p>
+                      <ul className="text-muted-foreground space-y-1 list-disc list-inside">
+                        <li>Add test users (your email) if app is in "Testing" mode</li>
+                        <li>Or publish the app for external users</li>
+                        <li>Required scopes: <code className="text-xs bg-muted px-1 rounded">calendar.events</code>, <code className="text-xs bg-muted px-1 rounded">calendar.readonly</code></li>
+                      </ul>
+                    </div>
+                    
+                    <div className="p-3 bg-background rounded border border-border">
+                      <p className="font-medium mb-2">5. Ensure secrets are configured</p>
+                      <ul className="text-muted-foreground space-y-1 list-disc list-inside">
+                        <li><code className="text-xs bg-muted px-1 rounded">GOOGLE_CLIENT_ID</code></li>
+                        <li><code className="text-xs bg-muted px-1 rounded">GOOGLE_CLIENT_SECRET</code></li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <p className="text-xs text-muted-foreground pt-2 border-t border-border">
+                    <strong>Alternative:</strong> Use ICS calendar feeds (below) for simpler, OAuth-free integration with any calendar app.
+                  </p>
+                </div>
               </div>
             )}
 
