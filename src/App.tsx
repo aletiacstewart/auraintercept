@@ -41,6 +41,7 @@ import Referrals from "./pages/Referrals";
 import Campaigns from "./pages/Campaigns";
 import Help from "./pages/Help";
 import Architecture from "./pages/Architecture";
+import Calculators from "./pages/Calculators";
 import NotFound from "./pages/NotFound";
 
 // Technician Dashboard Pages
@@ -101,6 +102,7 @@ const App = () => (
             <Route path="/dashboard/campaigns" element={<Campaigns />} />
             <Route path="/dashboard/help" element={<Help />} />
             <Route path="/dashboard/architecture" element={<Architecture />} />
+            <Route path="/dashboard/calculators" element={<Calculators />} />
             
             {/* Customer Portal Routes */}
             <Route path="/customer" element={<CustomerPortalHome />} />
