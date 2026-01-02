@@ -238,11 +238,11 @@ export function CalDAVSubscription({
             <div className="rounded-lg border p-4 space-y-2">
               <div className="flex items-center gap-2">
                 <Monitor className="h-5 w-5 text-muted-foreground" />
-                <h4 className="font-medium">Thunderbird / Other Clients</h4>
+                <h4 className="font-medium">Outlook / Thunderbird / Other Clients</h4>
               </div>
               <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
                 <li>Open Calendar settings</li>
-                <li>Add a new CalDAV calendar</li>
+                <li>Add a new CalDAV calendar (Outlook requires a CalDAV add-in)</li>
                 <li>Paste the URL above as the server address</li>
                 <li>Credentials: leave empty or enter anything</li>
               </ol>
