@@ -15,7 +15,7 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
       <nav className="container max-w-7xl mx-auto flex items-center justify-between px-6">
         <div className="flex items-center">
           <button onClick={() => navigate('/')} className="flex items-center">
-            <img src={logo} alt="AI Bot Company" style={{ width: '325px', height: 'auto' }} className="object-contain" />
+            <img src={logo} alt="AI Bot Company" style={{ width: '250px', height: '208px' }} className="object-contain" />
           </button>
         </div>
         <div className="flex items-center gap-3">
