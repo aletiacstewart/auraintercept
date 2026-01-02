@@ -3,7 +3,7 @@ import { QuickStartWizard } from '@/components/integrations/QuickStartWizard';
 import { CalendarSubscription } from '@/components/integrations/CalendarSubscription';
 import { CRMConnectionSettings } from '@/components/integrations/CRMConnectionSettings';
 import { ElevenLabsSetupGuide } from '@/components/integrations/ElevenLabsSetupGuide';
-import { TwilioSetupGuide } from '@/components/integrations/TwilioSetupGuide';
+
 import { ResendSetupGuide } from '@/components/integrations/ResendSetupGuide';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -467,9 +467,6 @@ export default function Integrations() {
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Detailed Setup Guides</h2>
           <p className="text-sm text-muted-foreground">Step-by-step instructions for configuring each integration</p>
-          
-          {/* Twilio Setup Guide */}
-          <TwilioSetupGuide />
           
           {/* Resend Setup Guide */}
           <ResendSetupGuide />

@@ -9,12 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+import { TwilioSetupGuide } from '@/components/integrations/TwilioSetupGuide';
 import {
   Dialog,
   DialogContent,
@@ -159,55 +154,8 @@ export default function SMSIntegration() {
           </div>
         </div>
 
-        {/* Setup Guide */}
-        <Card className="border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Getting Started</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="twilio">
-                <AccordionTrigger className="text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-red-500 flex items-center justify-center">
-                      <Phone className="w-3 h-3 text-white" />
-                    </div>
-                    Twilio Setup (Voice & SMS)
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4 text-sm text-muted-foreground">
-                  <ol className="list-decimal list-inside space-y-1">
-                    <li>Create a Twilio account at <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">twilio.com</a></li>
-                    <li>Get Account SID and Auth Token from <a href="https://console.twilio.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Console</a></li>
-                    <li>Purchase a phone number with Voice capabilities</li>
-                    <li>Enter credentials in the Twilio card below</li>
-                  </ol>
-                  <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-2">
-                    <p className="font-medium text-foreground">Voice Webhook URL:</p>
-                    <div className="flex gap-2">
-                      <Input
-                        readOnly
-                        value="https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=incoming"
-                        className="font-mono text-xs"
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          navigator.clipboard.writeText('https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=incoming');
-                          toast.success('Copied!');
-                        }}
-                      >
-                        Copy
-                      </Button>
-                    </div>
-                    <p className="text-xs">Set as "A CALL COMES IN" webhook (HTTP POST)</p>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </CardContent>
-        </Card>
+        {/* Twilio Setup Guide */}
+        <TwilioSetupGuide />
 
         {/* Integration Cards */}
         <div className="grid gap-4 md:grid-cols-2">
