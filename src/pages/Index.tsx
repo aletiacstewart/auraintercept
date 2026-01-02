@@ -14,7 +14,7 @@ import {
   Search, UserPlus, Globe, Headphones, Bell, Mail, 
   Smartphone, Video, Mic, Brain, Layers, Lock
 } from 'lucide-react';
-import logo from '@/assets/ai-header-logo-new.png';
+import logo from '@/assets/ai-bot-company-logo-new.png';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 

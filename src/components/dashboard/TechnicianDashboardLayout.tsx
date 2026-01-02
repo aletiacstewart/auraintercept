@@ -22,7 +22,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/ai-bot-company-logo-new.png';
 
 interface TechnicianDashboardLayoutProps {
   children: React.ReactNode;
