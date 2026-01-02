@@ -33,7 +33,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/ai-bot-company-logo-new.png';
 
 interface Company {
   id: string;

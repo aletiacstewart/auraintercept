@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import logo from '@/assets/ai-header-logo-new.png';
+import logo from '@/assets/ai-bot-company-logo-new.png';
 
 export function PublicFooter() {
   const navigate = useNavigate();

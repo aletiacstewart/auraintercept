@@ -45,7 +45,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/ai-bot-company-logo-new.png';
 import { differenceInDays, parseISO } from 'date-fns';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
