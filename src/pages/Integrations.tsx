@@ -44,8 +44,18 @@ import {
   Rss,
   Server,
   ArrowRight,
+  Users,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// CRM Provider display names
+const CRM_PROVIDER_NAMES: Record<string, string> = {
+  salesforce: 'Salesforce',
+  hubspot: 'HubSpot',
+  zoho: 'Zoho CRM',
+  pipedrive: 'Pipedrive',
+  freshsales: 'Freshsales',
+};
 
 interface Integration {
   id: string;
@@ -140,6 +150,40 @@ export default function Integrations() {
         .from('tenant_integrations')
         .select('*')
         .eq('company_id', companyId)
+        .maybeSingle();
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  // Fetch CRM connection status
+  const { data: crmConnection } = useQuery({
+    queryKey: ['crm-connection', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data, error } = await supabase
+        .from('crm_connections')
+        .select('provider, status')
+        .eq('company_id', companyId)
+        .eq('status', 'connected')
+        .maybeSingle();
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  // Fetch Google Calendar connection status
+  const { data: calendarConnection } = useQuery({
+    queryKey: ['calendar-connection', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data, error } = await supabase
+        .from('google_calendar_connections')
+        .select('sync_enabled, calendar_id')
+        .eq('company_id', companyId)
+        .eq('sync_enabled', true)
         .maybeSingle();
       if (error && error.code !== 'PGRST116') throw error;
       return data;
@@ -314,6 +358,91 @@ export default function Integrations() {
             </Card>
           );
         })()}
+
+        {/* CRM & Calendar Setup Progress */}
+        <div className="grid gap-4 md:grid-cols-2">
+          {/* CRM Setup Progress */}
+          <Card className={cn(
+            "border-border/50",
+            crmConnection && "border-green-500/30 bg-green-500/5"
+          )}>
+            <CardContent className="py-4">
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">CRM Integration</span>
+                    </div>
+                    <span className={cn(
+                      "text-sm font-bold",
+                      crmConnection ? "text-green-600" : "text-muted-foreground"
+                    )}>
+                      {crmConnection ? '100%' : '0%'}
+                    </span>
+                  </div>
+                  <Progress value={crmConnection ? 100 : 0} className="h-2" />
+                </div>
+                <div className="flex items-center gap-2">
+                  {crmConnection ? (
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-500/10 text-green-600">
+                      <Users className="w-3 h-3" />
+                      {CRM_PROVIDER_NAMES[crmConnection.provider] || crmConnection.provider}
+                      <Check className="w-3 h-3" />
+                    </div>
+                  ) : (
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to="/dashboard/integrations/crm">
+                        Connect CRM <ArrowRight className="w-3 h-3 ml-1" />
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Calendar Setup Progress */}
+          <Card className={cn(
+            "border-border/50",
+            calendarConnection && "border-green-500/30 bg-green-500/5"
+          )}>
+            <CardContent className="py-4">
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">Calendar Sync</span>
+                    </div>
+                    <span className={cn(
+                      "text-sm font-bold",
+                      calendarConnection ? "text-green-600" : "text-muted-foreground"
+                    )}>
+                      {calendarConnection ? '100%' : '0%'}
+                    </span>
+                  </div>
+                  <Progress value={calendarConnection ? 100 : 0} className="h-2" />
+                </div>
+                <div className="flex items-center gap-2">
+                  {calendarConnection ? (
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-500/10 text-green-600">
+                      <Calendar className="w-3 h-3" />
+                      Google Calendar
+                      <Check className="w-3 h-3" />
+                    </div>
+                  ) : (
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to="/dashboard/integrations/calendar">
+                        Set Up Calendar <ArrowRight className="w-3 h-3 ml-1" />
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Getting Started - Simplified link to sub-pages */}
         <Card className="border-border/50">
