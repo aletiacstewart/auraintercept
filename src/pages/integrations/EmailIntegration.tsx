@@ -1,0 +1,311 @@
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { toast } from 'sonner';
+import { Mail, Check, ExternalLink, Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
+
+interface IntegrationField {
+  key: string;
+  label: string;
+  placeholder: string;
+  type: 'text' | 'password';
+  required: boolean;
+  helpText?: string;
+}
+
+interface Integration {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ElementType;
+  color: string;
+  docsUrl: string;
+  fields: IntegrationField[];
+  checkConnection: (data: Record<string, string>) => boolean;
+  note?: string;
+}
+
+const EMAIL_INTEGRATIONS: Integration[] = [
+  {
+    id: 'resend',
+    name: 'Resend',
+    description: 'Email notifications and reminders.',
+    icon: Mail,
+    color: 'bg-emerald-500',
+    docsUrl: 'https://resend.com/api-keys',
+    fields: [
+      { key: 'resend_api_key', label: 'API Key', placeholder: 're_...', type: 'password', required: true, helpText: 'Get from resend.com/api-keys' },
+    ],
+    checkConnection: (data) => !!data.resend_api_key,
+    note: '💡 3,000 free emails/mo, then $0.001/email. Most cost-effective reminder channel.',
+  },
+];
+
+export default function EmailIntegration() {
+  const { companyId } = useAuth();
+  const queryClient = useQueryClient();
+  const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
+  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
+
+  const { data: integrations, isLoading } = useQuery({
+    queryKey: ['integrations', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data, error } = await supabase
+        .from('tenant_integrations')
+        .select('*')
+        .eq('company_id', companyId)
+        .maybeSingle();
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: async (data: Record<string, string>) => {
+      if (!companyId) throw new Error('No company ID');
+      const payload = { company_id: companyId, ...data };
+      if (integrations?.id) {
+        const { error } = await supabase.from('tenant_integrations').update(payload).eq('id', integrations.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('tenant_integrations').insert(payload);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['integrations'] });
+      toast.success('Integration saved!');
+      setSelectedIntegration(null);
+      setFormData({});
+    },
+    onError: () => toast.error('Failed to save integration'),
+  });
+
+  const handleOpenSetup = (integration: Integration) => {
+    const existingData: Record<string, string> = {};
+    integration.fields.forEach((field) => {
+      const value = integrations?.[field.key as keyof typeof integrations];
+      if (value && typeof value === 'string') existingData[field.key] = value;
+    });
+    setFormData(existingData);
+    setSelectedIntegration(integration);
+  };
+
+  const handleSave = () => {
+    if (!selectedIntegration) return;
+    const missingFields = selectedIntegration.fields.filter((f) => f.required && !formData[f.key]).map((f) => f.label);
+    if (missingFields.length > 0) {
+      toast.error(`Please fill in: ${missingFields.join(', ')}`);
+      return;
+    }
+    saveMutation.mutate(formData);
+  };
+
+  const getConnectionStatus = (integration: Integration) => {
+    if (!integrations) return false;
+    const data: Record<string, string> = {};
+    integration.fields.forEach((field) => {
+      const value = integrations[field.key as keyof typeof integrations];
+      if (value && typeof value === 'string') data[field.key] = value;
+    });
+    return integration.checkConnection(data);
+  };
+
+  const togglePasswordVisibility = (key: string) => {
+    setShowPasswords((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  return (
+    <DashboardLayout>
+      <div className="space-y-6 animate-fade-in">
+        {/* Header */}
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" asChild>
+            <Link to="/dashboard/integrations">
+              <ArrowLeft className="w-4 h-4" />
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Email Integration</h1>
+            <p className="text-muted-foreground">Configure email notifications and reminders</p>
+          </div>
+        </div>
+
+        {/* Setup Guide */}
+        <Card className="border-border/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Getting Started</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="resend">
+                <AccordionTrigger className="text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-emerald-500 flex items-center justify-center">
+                      <Mail className="w-3 h-3 text-white" />
+                    </div>
+                    Resend Setup (Email)
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground">
+                  <ol className="list-decimal list-inside space-y-1">
+                    <li>Create a Resend account at <a href="https://resend.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">resend.com</a></li>
+                    <li>Verify your email domain at <a href="https://resend.com/domains" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">resend.com/domains</a></li>
+                    <li>Go to <a href="https://resend.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">API Keys</a> and create a new key</li>
+                    <li>Enter your API key below</li>
+                  </ol>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </CardContent>
+        </Card>
+
+        {/* Integration Cards */}
+        <div className="grid gap-4 md:grid-cols-2">
+          {EMAIL_INTEGRATIONS.map((integration) => {
+            const isConnected = getConnectionStatus(integration);
+            const Icon = integration.icon;
+            return (
+              <Card key={integration.id} className="border-border/50 relative">
+                {isConnected && (
+                  <Badge className="absolute top-3 right-3 bg-green-500/10 text-green-600 border-green-500/30">
+                    <Check className="w-3 h-3 mr-1" />
+                    Connected
+                  </Badge>
+                )}
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-3">
+                    <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', integration.color)}>
+                      <Icon className="w-5 h-5 text-white" />
+                    </div>
+                    <CardTitle className="text-base">{integration.name}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-sm text-muted-foreground mb-2">{integration.description}</p>
+                  {integration.note && (
+                    <p className="text-xs text-muted-foreground/80 mb-3 p-2 rounded bg-muted/50 border border-border/50">
+                      {integration.note}
+                    </p>
+                  )}
+                  {isLoading ? (
+                    <Skeleton className="h-9 w-full" />
+                  ) : (
+                    <div className="flex gap-2">
+                      <Button
+                        variant={isConnected ? 'outline' : 'default'}
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => handleOpenSetup(integration)}
+                      >
+                        {isConnected ? 'Update' : 'Connect'}
+                      </Button>
+                      <Button variant="ghost" size="sm" asChild>
+                        <a href={integration.docsUrl} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Setup Dialog */}
+        <Dialog open={!!selectedIntegration} onOpenChange={() => setSelectedIntegration(null)}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                {selectedIntegration && (
+                  <>
+                    <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center', selectedIntegration.color)}>
+                      <selectedIntegration.icon className="w-4 h-4 text-white" />
+                    </div>
+                    Connect {selectedIntegration.name}
+                  </>
+                )}
+              </DialogTitle>
+              <DialogDescription>Enter your API credentials</DialogDescription>
+            </DialogHeader>
+            {selectedIntegration && (
+              <div className="space-y-4 pt-4">
+                {selectedIntegration.fields.map((field) => (
+                  <div key={field.key} className="space-y-2">
+                    <Label htmlFor={field.key}>
+                      {field.label}
+                      {field.required && <span className="text-destructive ml-1">*</span>}
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id={field.key}
+                        type={field.type === 'password' && !showPasswords[field.key] ? 'password' : 'text'}
+                        placeholder={field.placeholder}
+                        value={formData[field.key] || ''}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, [field.key]: e.target.value }))}
+                      />
+                      {field.type === 'password' && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+                          onClick={() => togglePasswordVisibility(field.key)}
+                        >
+                          {showPasswords[field.key] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </Button>
+                      )}
+                    </div>
+                    {field.helpText && <p className="text-xs text-muted-foreground">{field.helpText}</p>}
+                  </div>
+                ))}
+                <div className="flex gap-3 pt-4">
+                  <Button variant="outline" className="flex-1" onClick={() => setSelectedIntegration(null)}>
+                    Cancel
+                  </Button>
+                  <Button className="flex-1" onClick={handleSave} disabled={saveMutation.isPending}>
+                    {saveMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      'Save'
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
+    </DashboardLayout>
+  );
+}
