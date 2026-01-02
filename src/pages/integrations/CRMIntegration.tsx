@@ -1,5 +1,6 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { CRMConnectionSettings } from '@/components/integrations/CRMConnectionSettings';
+import { CRMSetupGuides } from '@/components/integrations/CRMSetupGuides';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -23,6 +24,9 @@ export default function CRMIntegration() {
 
         {/* CRM Settings */}
         <CRMConnectionSettings />
+
+        {/* CRM Setup Guides */}
+        <CRMSetupGuides />
       </div>
     </DashboardLayout>
   );
