@@ -1,9 +1,7 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { QuickStartWizard } from '@/components/integrations/QuickStartWizard';
-import { CalendarSubscription } from '@/components/integrations/CalendarSubscription';
 import { CRMConnectionSettings } from '@/components/integrations/CRMConnectionSettings';
-
-
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,6 +40,10 @@ import {
   Loader2,
   Rocket,
   BookOpen,
+  Calendar,
+  Rss,
+  Server,
+  ArrowRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -468,8 +470,83 @@ export default function Integrations() {
 
         {/* Calendar Integrations */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Calendar</h2>
-          <CalendarSubscription type="company" />
+          <div>
+            <h2 className="text-lg font-semibold">Calendar</h2>
+            <p className="text-sm text-muted-foreground">Sync appointments with your preferred calendar</p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {/* ICS Feed */}
+            <Card className="border-border/50">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl bg-orange-500">
+                    <Rss className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-base">ICS Feed</CardTitle>
+                    <CardDescription className="text-xs">Universal, one-way sync</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-xs text-muted-foreground mb-3">Works with Google, Apple, Outlook, and any calendar app. Free and easy to set up.</p>
+                <Button variant="outline" size="sm" className="w-full" asChild>
+                  <Link to="/dashboard/integrations/calendar">
+                    Set Up <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* CalDAV */}
+            <Card className="border-border/50">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl bg-blue-500">
+                    <Server className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-base">CalDAV</CardTitle>
+                    <CardDescription className="text-xs">Two-way sync</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-xs text-muted-foreground mb-3">Real-time sync for Apple Calendar, Android, and Thunderbird. Free.</p>
+                <Button variant="outline" size="sm" className="w-full" asChild>
+                  <Link to="/dashboard/integrations/calendar">
+                    Set Up <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Google Calendar */}
+            <Card className="border-border/50">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl bg-green-500">
+                    <Calendar className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      Google Calendar
+                      <Badge variant="secondary" className="text-[10px]">Premium</Badge>
+                    </CardTitle>
+                    <CardDescription className="text-xs">Two-way instant sync</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-xs text-muted-foreground mb-3">OAuth-based integration with automatic updates. Requires Google Cloud setup.</p>
+                <Button variant="outline" size="sm" className="w-full" asChild>
+                  <Link to="/dashboard/integrations/calendar">
+                    Set Up <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
       </div>
