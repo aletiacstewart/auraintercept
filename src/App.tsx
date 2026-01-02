@@ -44,6 +44,7 @@ import Architecture from "./pages/Architecture";
 import Calculators from "./pages/Calculators";
 import ExportDocumentation from "./pages/ExportDocumentation";
 import NotFound from "./pages/NotFound";
+import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
 
 // Technician Dashboard Pages
 import {
@@ -69,6 +70,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
             <Route path="/customer-auth" element={<CustomerAuth />} />
             
             <Route path="/dashboard" element={<Dashboard />} />

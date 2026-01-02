@@ -42,6 +42,14 @@ export function GoogleCalendarSettings() {
     enabled: !!companyId,
   });
 
+  const isInIframe = (() => {
+    try {
+      return window.self !== window.top;
+    } catch {
+      return true;
+    }
+  })();
+
   // Connect to Google Calendar
   const connectMutation = useMutation({
     mutationFn: async () => {
@@ -60,20 +68,10 @@ export function GoogleCalendarSettings() {
       return data.authUrl;
     },
     onSuccess: (authUrl) => {
-      // Google OAuth blocks embedded flows; also, cross-origin iframes cannot access window.top.location
-      const isInIframe = (() => {
-        try {
-          return window.self !== window.top;
-        } catch {
-          return true;
-        }
-      })();
-
       if (isInIframe) {
-        const opened = window.open(authUrl, '_blank', 'noopener,noreferrer');
-        if (!opened) {
-          toast.error('Popup blocked — please allow popups and try again.');
-        }
+        // In embedded previews, open a same-origin page in a new tab; it will redirect to Google.
+        // This avoids cross-origin iframe restrictions and browser "refused to connect" issues.
+        window.open('/oauth/google-calendar', '_blank', 'noopener,noreferrer');
         return;
       }
 
@@ -243,14 +241,23 @@ export function GoogleCalendarSettings() {
                 </Button>
               </div>
 
-              <Button
-                onClick={() => connectMutation.mutate()}
-                disabled={connectMutation.isPending}
-                className="w-full"
-              >
-                <Link2 className={`h-4 w-4 mr-2 ${connectMutation.isPending ? 'animate-spin' : ''}`} />
-                Connect Google Calendar
-              </Button>
+              {isInIframe ? (
+                <Button asChild className="w-full">
+                  <a href="/oauth/google-calendar" target="_blank" rel="noopener noreferrer">
+                    <Link2 className="h-4 w-4 mr-2" />
+                    Connect Google Calendar
+                  </a>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => connectMutation.mutate()}
+                  disabled={connectMutation.isPending}
+                  className="w-full"
+                >
+                  <Link2 className={`h-4 w-4 mr-2 ${connectMutation.isPending ? 'animate-spin' : ''}`} />
+                  Connect Google Calendar
+                </Button>
+              )}
             </div>
           )}
         </CardContent>
