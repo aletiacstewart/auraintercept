@@ -350,10 +350,92 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                       </div>
                     </div>
 
-                    {/* Example values to test */}
+                    {/* Full JSON Config for "Edit as JSON" */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium">Example values (for testing)</span>
+                        <span className="text-xs font-medium text-green-600 dark:text-green-400">✅ Full JSON Config (paste via "Edit as JSON")</span>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="h-7 gap-1"
+                          onClick={() => {
+                            const fullConfig = {
+                              name: tool.name,
+                              description: tool.description,
+                              parameters: {
+                                type: "object",
+                                properties: Object.fromEntries(
+                                  Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => {
+                                    if (key === 'company_id') {
+                                      return [key, {
+                                        type: "string",
+                                        description: value.description,
+                                        value: companyId
+                                      }];
+                                    }
+                                    if (key === 'action') {
+                                      return [key, {
+                                        type: "string",
+                                        description: value.description,
+                                        enum: value.enum,
+                                        value: value.enum?.[0]
+                                      }];
+                                    }
+                                    return [key, {
+                                      type: value.type || "string",
+                                      description: value.description
+                                    }];
+                                  })
+                                ),
+                                required: tool.parameters.required
+                              }
+                            };
+                            copyToClipboard(JSON.stringify(fullConfig, null, 2), `fullconfig-${tool.id}`);
+                          }}
+                        >
+                          {copiedItems[`fullconfig-${tool.id}`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                          Copy Full Config
+                        </Button>
+                      </div>
+                      <pre className="bg-green-500/10 border border-green-500/20 p-3 rounded text-xs overflow-x-auto max-h-80 overflow-y-auto">
+{JSON.stringify({
+  name: tool.name,
+  description: tool.description,
+  parameters: {
+    type: "object",
+    properties: Object.fromEntries(
+      Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => {
+        if (key === 'company_id') {
+          return [key, {
+            type: "string",
+            description: value.description,
+            value: companyId
+          }];
+        }
+        if (key === 'action') {
+          return [key, {
+            type: "string",
+            description: value.description,
+            enum: value.enum,
+            value: value.enum?.[0]
+          }];
+        }
+        return [key, {
+          type: value.type || "string",
+          description: value.description
+        }];
+      })
+    ),
+    required: tool.parameters.required
+  }
+}, null, 2)}
+                      </pre>
+                    </div>
+
+                    {/* Example request body for testing */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-muted-foreground">Example Request Body (for testing)</span>
                         <Button
                           variant="ghost"
                           size="sm"
