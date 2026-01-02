@@ -14,7 +14,7 @@ import { AnalyticsAgentConsole } from '@/components/analytics/AnalyticsAgentCons
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall, FileText, Star, ThumbsUp, Globe, Truck, MapPin, Clock, CheckSquare, Navigation, HeadphonesIcon, Briefcase, Receipt, Package, Shield, Megaphone, BarChart3, DollarSign, Cpu } from 'lucide-react';
+import { Bot, Phone, MessageSquare, Calendar, Brain, CheckCircle2, XCircle, PhoneOutgoing, ExternalLink, Monitor, Code, Settings, PhoneCall, HeadphonesIcon, Briefcase, Megaphone, BarChart3, Cpu, Truck } from 'lucide-react';
 import { OutboundCallDialog } from '@/components/calls/OutboundCallDialog';
 import { TestCallDialog } from '@/components/ai/TestCallDialog';
 import { Button } from '@/components/ui/button';

@@ -25,6 +25,7 @@ export const AGENT_STYLES: Record<string, AgentStyle> = {
   invoice: { label: 'Invoice', color: 'text-purple-700', bgColor: 'bg-purple-100' },
   inventory: { label: 'Inventory', color: 'text-purple-700', bgColor: 'bg-purple-100' },
   warranty: { label: 'Warranty', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
+  admin: { label: 'Admin', color: 'text-purple-700', bgColor: 'bg-purple-100' },
   
   // Marketing & Sales Agents
   marketing: { label: 'Marketing', color: 'text-orange-700', bgColor: 'bg-orange-100' },

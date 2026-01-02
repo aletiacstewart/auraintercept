@@ -52,7 +52,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [lastAgent, setLastAgent] = useState<string>('admin');
+  const [lastAgent, setLastAgent] = useState<string>('quoting');
   
   // Form visibility states
   const [showQuoteForm, setShowQuoteForm] = useState(false);
@@ -80,7 +80,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     userId: user?.id,
-    initialAgent: 'admin',
+    initialAgent: 'quoting',
     onAgentChange: (agent) => {
       console.log('[BusinessOps] Agent changed to:', agent);
       setLastAgent(agent);
@@ -153,7 +153,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     hideAllForms();
     setInputValue('');
     setActiveTab('chat');
-    setLastAgent('admin');
+    setLastAgent('quoting');
   };
 
   // Form submission handlers
