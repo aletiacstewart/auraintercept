@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { QuickStartWizard } from '@/components/integrations/QuickStartWizard';
 import { CalendarSubscription } from '@/components/integrations/CalendarSubscription';
 import { CRMConnectionSettings } from '@/components/integrations/CRMConnectionSettings';
-import { ElevenLabsSetupGuide } from '@/components/integrations/ElevenLabsSetupGuide';
+
 
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -461,20 +461,6 @@ export default function Integrations() {
               </Card>
             );
           })}
-        </div>
-
-        {/* Detailed Setup Guides */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Detailed Setup Guides</h2>
-          <p className="text-sm text-muted-foreground">Step-by-step instructions for configuring each integration</p>
-          
-          {/* ElevenLabs Voice Agent Setup Guide - Show when ElevenLabs is connected */}
-          {integrations?.elevenlabs_api_key && companyId && (
-            <ElevenLabsSetupGuide 
-              companyId={companyId} 
-              agentId={integrations?.elevenlabs_agent_id || undefined}
-            />
-          )}
         </div>
 
         {/* CRM Integrations */}
