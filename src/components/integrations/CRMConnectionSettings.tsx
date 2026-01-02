@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -125,7 +125,7 @@ interface CRMConnection {
   sync_activities: boolean;
 }
 
-export function CRMConnectionSettings() {
+export const CRMConnectionSettings = forwardRef<HTMLDivElement, {}>(function CRMConnectionSettings(_props, ref) {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [selectedProvider, setSelectedProvider] = useState<typeof CRM_PROVIDERS[0] | null>(null);
@@ -574,4 +574,4 @@ export function CRMConnectionSettings() {
       </Dialog>
     </div>
   );
-}
+});
