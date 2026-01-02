@@ -42,6 +42,7 @@ import Campaigns from "./pages/Campaigns";
 import Help from "./pages/Help";
 import Architecture from "./pages/Architecture";
 import Calculators from "./pages/Calculators";
+import ExportDocumentation from "./pages/ExportDocumentation";
 import NotFound from "./pages/NotFound";
 
 // Technician Dashboard Pages
@@ -103,6 +104,7 @@ const App = () => (
             <Route path="/dashboard/help" element={<Help />} />
             <Route path="/dashboard/architecture" element={<Architecture />} />
             <Route path="/dashboard/calculators" element={<Calculators />} />
+            <Route path="/dashboard/documentation" element={<ExportDocumentation />} />
             
             {/* Customer Portal Routes */}
             <Route path="/customer" element={<CustomerPortalHome />} />
