@@ -320,7 +320,6 @@ const diagrams = {
         
         subgraph Voice["Voice AI"]
             ElevenLabs[elevenlabs-tts]
-            OpenAITTS[openai-tts]
             VoiceClone[elevenlabs-clone-voice]
         end
         

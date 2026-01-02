@@ -57,7 +57,7 @@ const AIAgent = () => {
       if (!companyId) return null;
       const { data } = await supabase
         .from('tenant_integrations')
-        .select('twilio_account_sid, twilio_phone_number, elevenlabs_api_key, tts_provider, openai_api_key, google_tts_api_key')
+        .select('twilio_account_sid, twilio_phone_number, elevenlabs_api_key, tts_provider, google_tts_api_key')
         .eq('company_id', companyId)
         .maybeSingle();
       return data;
@@ -68,11 +68,10 @@ const AIAgent = () => {
   // Check which TTS providers are connected
   const connectedTTSProviders = {
     elevenlabs: !!integrations?.elevenlabs_api_key,
-    openai: !!integrations?.openai_api_key,
     google: !!integrations?.google_tts_api_key,
   };
   
-  const hasAnyTTS = connectedTTSProviders.elevenlabs || connectedTTSProviders.openai || connectedTTSProviders.google;
+  const hasAnyTTS = connectedTTSProviders.elevenlabs || connectedTTSProviders.google;
   const hasTwilio = !!(integrations?.twilio_account_sid && integrations?.twilio_phone_number);
   const hasVoice = hasTwilio && hasAnyTTS;
 
@@ -81,7 +80,6 @@ const AIAgent = () => {
   const getProviderName = (provider: string) => {
     const names: Record<string, string> = {
       elevenlabs: 'ElevenLabs',
-      openai: 'OpenAI TTS',
       google: 'Google TTS',
     };
     return names[provider] || 'ElevenLabs';
@@ -91,7 +89,6 @@ const AIAgent = () => {
   const getConnectedProviderNames = () => {
     const connected: string[] = [];
     if (connectedTTSProviders.elevenlabs) connected.push('ElevenLabs');
-    if (connectedTTSProviders.openai) connected.push('OpenAI');
     if (connectedTTSProviders.google) connected.push('Google');
     return connected;
   };

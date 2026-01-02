@@ -127,19 +127,6 @@ const INTEGRATIONS: Integration[] = [
     note: '💡 3,000 free emails/mo, then $0.001/email. Most cost-effective reminder channel.',
   },
   {
-    id: 'openai-tts',
-    name: 'OpenAI TTS',
-    description: 'Fast, affordable text-to-speech.',
-    icon: Bot,
-    color: 'bg-slate-700',
-    docsUrl: 'https://platform.openai.com/api-keys',
-    fields: [
-      { key: 'openai_api_key', label: 'API Key', placeholder: 'sk-...', type: 'password', required: true, helpText: 'Get from platform.openai.com/api-keys' },
-    ],
-    checkConnection: (data) => !!data.openai_api_key,
-    note: '💡 Best for: Budget-conscious, high volume. $0.015/1K chars. Great balance of cost & quality.',
-  },
-  {
     id: 'google-tts',
     name: 'Google TTS',
     description: 'Enterprise-grade WaveNet voices.',
@@ -235,10 +222,9 @@ export default function Integrations() {
   // Get TTS connection status
   const connectedTTS = {
     elevenlabs: !!integrations?.elevenlabs_api_key,
-    openai: !!integrations?.openai_api_key,
     google: !!integrations?.google_tts_api_key,
   };
-  const hasAnyTTS = connectedTTS.elevenlabs || connectedTTS.openai || connectedTTS.google;
+  const hasAnyTTS = connectedTTS.elevenlabs || connectedTTS.google;
 
   // Fetch cost estimates to determine recommended TTS
   const { data: costEstimates } = useQuery({
@@ -269,10 +255,6 @@ export default function Integrations() {
     // Google's free tier is 1M chars/month
     if (totalChars <= 1000000) {
       return { provider: 'google', reason: 'Free tier covers your volume', icon: Volume2 };
-    }
-    // For moderate to high volume, OpenAI is most cost-effective
-    if (totalChars <= 500000) {
-      return { provider: 'openai', reason: 'Best value for your volume', icon: Bot };
     }
     // For premium quality needs or very high volume with budget
     return { provider: 'elevenlabs', reason: 'Premium quality voices', icon: Mic };
@@ -317,23 +299,6 @@ export default function Integrations() {
                   )}
                 </Button>
                 <Button
-                  variant={connectedTTS.openai ? "secondary" : "outline"}
-                  size="sm"
-                  className={cn(
-                    "h-7 px-2 text-xs relative",
-                    connectedTTS.openai && "bg-green-500/10 text-green-600 border-green-500/30",
-                    recommendedTTS.provider === 'openai' && !connectedTTS.openai && "ring-2 ring-primary/50"
-                  )}
-                  onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'openai-tts')!)}
-                >
-                  <Bot className="w-3 h-3 mr-1" />
-                  OpenAI
-                  {connectedTTS.openai && <Check className="w-3 h-3 ml-1" />}
-                  {recommendedTTS.provider === 'openai' && !connectedTTS.openai && (
-                    <Badge className="absolute -top-2 -right-2 h-4 px-1 text-[10px] bg-primary">★</Badge>
-                  )}
-                </Button>
-                <Button
                   variant={connectedTTS.google ? "secondary" : "outline"}
                   size="sm"
                   className={cn(
@@ -353,7 +318,7 @@ export default function Integrations() {
               </div>
               {!hasAnyTTS && (
                 <p className="text-[10px] text-muted-foreground">
-                  ★ Recommended: {recommendedTTS.provider === 'google' ? 'Google' : recommendedTTS.provider === 'openai' ? 'OpenAI' : 'ElevenLabs'} - {recommendedTTS.reason}
+                  ★ Recommended: {recommendedTTS.provider === 'google' ? 'Google' : 'ElevenLabs'} - {recommendedTTS.reason}
                 </p>
               )}
             </div>
@@ -517,29 +482,6 @@ export default function Integrations() {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="openai-tts">
-                <AccordionTrigger className="text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-slate-700 flex items-center justify-center">
-                      <Bot className="w-3 h-3 text-white" />
-                    </div>
-                    OpenAI TTS Setup
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground space-y-3">
-                  <ol className="list-decimal list-inside space-y-1">
-                    <li>Create an OpenAI account at <a href="https://platform.openai.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">platform.openai.com</a></li>
-                    <li>Go to <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">API Keys</a> section</li>
-                    <li>Create a new secret key and copy it</li>
-                    <li>Enter the API key in the OpenAI TTS card below</li>
-                  </ol>
-                  <div className="p-3 rounded-lg bg-muted/50 border">
-                    <p className="font-medium text-foreground mb-1">Available Voices:</p>
-                    <p className="text-xs">alloy, echo, fable, onyx, nova, shimmer</p>
-                    <p className="text-xs mt-1">Models: tts-1 (fast), tts-1-hd (high quality)</p>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
 
               <AccordionItem value="google-tts">
                 <AccordionTrigger className="text-sm">
