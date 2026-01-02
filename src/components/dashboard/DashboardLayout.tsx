@@ -42,7 +42,9 @@ import {
   ClipboardList,
   History,
   User,
-  BookOpen
+  BookOpen,
+  Mic,
+  Mail,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/ai-bot-company-logo-new.png';
@@ -114,11 +116,21 @@ const navGroups: NavGroup[] = [
       { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
       { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin', 'company_admin'] },
       { label: 'Warranties', icon: Shield, href: '/dashboard/warranties', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'] },
       { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin'] },
       { label: 'Profile', icon: User, href: '/technician/profile', roles: ['employee'] },
       { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'] },
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin', 'company_admin'] },
+    ],
+  },
+  {
+    label: 'Integrations',
+    items: [
+      { label: 'Overview', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Voice Agent', icon: Mic, href: '/dashboard/integrations/voice', roles: ['platform_admin', 'company_admin'] },
+      { label: 'SMS & Text', icon: MessageSquare, href: '/dashboard/integrations/sms', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Email', icon: Mail, href: '/dashboard/integrations/email', roles: ['platform_admin', 'company_admin'] },
+      { label: 'CRM', icon: Users, href: '/dashboard/integrations/crm', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Calendar', icon: Calendar, href: '/dashboard/integrations/calendar', roles: ['platform_admin', 'company_admin'] },
     ],
   },
 ];

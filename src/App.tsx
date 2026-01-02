@@ -21,6 +21,7 @@ import EmployeeAppointments from "./pages/EmployeeAppointments";
 
 import Messages from "./pages/Messages";
 import Integrations from "./pages/Integrations";
+import { VoiceIntegration, SMSIntegration, EmailIntegration, CRMIntegration, CalendarIntegration } from "./pages/integrations";
 import KnowledgeBase from "./pages/KnowledgeBase";
 import AIAgent from "./pages/AIAgent";
 import AIAgentsHub from "./pages/AIAgentsHub";
@@ -79,6 +80,11 @@ const App = () => (
             
             <Route path="/dashboard/messages" element={<Messages />} />
             <Route path="/dashboard/integrations" element={<Integrations />} />
+            <Route path="/dashboard/integrations/voice" element={<VoiceIntegration />} />
+            <Route path="/dashboard/integrations/sms" element={<SMSIntegration />} />
+            <Route path="/dashboard/integrations/email" element={<EmailIntegration />} />
+            <Route path="/dashboard/integrations/crm" element={<CRMIntegration />} />
+            <Route path="/dashboard/integrations/calendar" element={<CalendarIntegration />} />
             <Route path="/dashboard/knowledge" element={<KnowledgeBase />} />
             <Route path="/dashboard/ai-agent" element={<AIAgent />} />
             <Route path="/dashboard/ai-agents" element={<AIAgentsHub />} />
