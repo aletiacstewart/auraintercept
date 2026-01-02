@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { forwardRef } from 'react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { FileText, Download, Loader2, CheckCircle } from 'lucide-react';
 import PlatformDocumentPDF from '@/components/documentation/PlatformDocumentPDF';
 
-export default function ExportDocumentation() {
-  const [isGenerating, setIsGenerating] = useState(true);
+const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
 
   return (
     <DashboardLayout>
@@ -138,4 +137,8 @@ export default function ExportDocumentation() {
       </div>
     </DashboardLayout>
   );
-}
+});
+
+ExportDocumentation.displayName = 'ExportDocumentation';
+
+export default ExportDocumentation;
