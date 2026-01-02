@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -70,14 +70,14 @@ const PLANS = {
   },
 };
 
-export const QuickStartWizard = forwardRef<HTMLDivElement, QuickStartWizardProps>(function QuickStartWizard({ 
+export function QuickStartWizard({ 
   open, 
   onOpenChange, 
   onComplete,
   hasResend,
   hasTwilio,
   hasElevenLabs,
-}, ref) {
+}: QuickStartWizardProps) {
   const [currentStep, setCurrentStep] = useState<Step>('welcome');
   const [businessInfo, setBusinessInfo] = useState<BusinessInfo>({
     monthlyAppointments: 100,
@@ -644,4 +644,4 @@ export const QuickStartWizard = forwardRef<HTMLDivElement, QuickStartWizardProps
       </DialogContent>
     </Dialog>
   );
-});
+}
