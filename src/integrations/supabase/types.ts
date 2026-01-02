@@ -346,31 +346,43 @@ export type Database = {
       calendar_event_mappings: {
         Row: {
           appointment_id: string
+          caldav_etag: string | null
+          caldav_uid: string | null
           company_id: string
           created_at: string | null
           google_event_id: string
           id: string
           last_synced_at: string | null
+          sync_direction: string | null
+          sync_source: string | null
           sync_status: string | null
           updated_at: string | null
         }
         Insert: {
           appointment_id: string
+          caldav_etag?: string | null
+          caldav_uid?: string | null
           company_id: string
           created_at?: string | null
           google_event_id: string
           id?: string
           last_synced_at?: string | null
+          sync_direction?: string | null
+          sync_source?: string | null
           sync_status?: string | null
           updated_at?: string | null
         }
         Update: {
           appointment_id?: string
+          caldav_etag?: string | null
+          caldav_uid?: string | null
           company_id?: string
           created_at?: string | null
           google_event_id?: string
           id?: string
           last_synced_at?: string | null
+          sync_direction?: string | null
+          sync_source?: string | null
           sync_status?: string | null
           updated_at?: string | null
         }
@@ -384,6 +396,75 @@ export type Database = {
           },
           {
             foreignKeyName: "calendar_event_mappings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calendar_sync_jobs: {
+        Row: {
+          appointment_id: string | null
+          company_id: string
+          completed_at: string | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          max_retries: number | null
+          operation: string
+          payload: Json | null
+          retry_count: number | null
+          scheduled_at: string | null
+          started_at: string | null
+          status: string
+          sync_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          appointment_id?: string | null
+          company_id: string
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          max_retries?: number | null
+          operation: string
+          payload?: Json | null
+          retry_count?: number | null
+          scheduled_at?: string | null
+          started_at?: string | null
+          status?: string
+          sync_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          appointment_id?: string | null
+          company_id?: string
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          max_retries?: number | null
+          operation?: string
+          payload?: Json | null
+          retry_count?: number | null
+          scheduled_at?: string | null
+          started_at?: string | null
+          status?: string
+          sync_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_sync_jobs_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_sync_jobs_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
@@ -1585,6 +1666,68 @@ export type Database = {
             foreignKeyName: "faqs_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      google_calendar_connections: {
+        Row: {
+          access_token: string | null
+          calendar_id: string | null
+          company_id: string
+          created_at: string | null
+          id: string
+          last_error: string | null
+          last_sync_at: string | null
+          refresh_token: string | null
+          sync_enabled: boolean | null
+          token_expires_at: string | null
+          updated_at: string | null
+          user_id: string
+          webhook_channel_id: string | null
+          webhook_expiration: string | null
+          webhook_resource_id: string | null
+        }
+        Insert: {
+          access_token?: string | null
+          calendar_id?: string | null
+          company_id: string
+          created_at?: string | null
+          id?: string
+          last_error?: string | null
+          last_sync_at?: string | null
+          refresh_token?: string | null
+          sync_enabled?: boolean | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+          user_id: string
+          webhook_channel_id?: string | null
+          webhook_expiration?: string | null
+          webhook_resource_id?: string | null
+        }
+        Update: {
+          access_token?: string | null
+          calendar_id?: string | null
+          company_id?: string
+          created_at?: string | null
+          id?: string
+          last_error?: string | null
+          last_sync_at?: string | null
+          refresh_token?: string | null
+          sync_enabled?: boolean | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+          webhook_channel_id?: string | null
+          webhook_expiration?: string | null
+          webhook_resource_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "google_calendar_connections_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
