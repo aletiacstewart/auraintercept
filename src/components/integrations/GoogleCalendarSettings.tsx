@@ -220,14 +220,31 @@ export function GoogleCalendarSettings() {
           ) : (
             <div className="space-y-4">
               <div className="rounded-lg border p-4 bg-muted/30">
-                <h4 className="text-sm font-medium mb-2">Setup Required</h4>
-                <p className="text-xs text-muted-foreground mb-3">
-                  To use Google Calendar sync, your company needs Google OAuth credentials. 
-                  This requires setting up a project in Google Cloud Console.
-                </p>
+                <h4 className="text-sm font-medium mb-2">Setup Requirements</h4>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
+                    <p className="text-xs text-muted-foreground">
+                      <strong className="text-foreground">Important:</strong> The email you use to sign in to the platform must match the email on the Google account you're connecting.
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-1.5">
+                    <p className="text-xs font-medium text-foreground">Steps to connect:</p>
+                    <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
+                      <li>Create a project in Google Cloud Console</li>
+                      <li>Enable the Google Calendar API</li>
+                      <li>Configure OAuth consent screen (add your email as test user)</li>
+                      <li>Create OAuth 2.0 Client ID credentials</li>
+                      <li>Add redirect URI: <code className="bg-muted px-1 py-0.5 rounded text-[10px]">{SUPABASE_URL}/functions/v1/google-calendar-auth?action=callback</code></li>
+                      <li>Click "Connect Google Calendar" below and sign in with the same email</li>
+                    </ol>
+                  </div>
+                </div>
+                
                 <Button
                   variant="link"
-                  className="h-auto p-0 text-xs"
+                  className="h-auto p-0 text-xs mt-3"
                   asChild
                 >
                   <a 
@@ -236,7 +253,7 @@ export function GoogleCalendarSettings() {
                     rel="noopener noreferrer"
                   >
                     <ExternalLink className="h-3 w-3 mr-1" />
-                    Google Cloud Console
+                    Open Google Cloud Console
                   </a>
                 </Button>
               </div>
