@@ -53,6 +53,7 @@ const agentCategories = [
       { name: 'Invoice Agent', description: 'Automated invoicing with payment tracking', icon: DollarSign },
       { name: 'Inventory Agent', description: 'Parts tracking with low-stock alerts', icon: Package },
       { name: 'Warranty Agent', description: 'Warranty registration and claims management', icon: Award },
+      { name: 'Admin Agent', description: 'Business administration and company management tasks', icon: Building2 },
     ]
   },
   {
@@ -61,10 +62,11 @@ const agentCategories = [
     icon: Megaphone,
     color: 'from-orange-500 to-red-500',
     agents: [
-      { name: 'Campaign Agent', description: 'Multi-channel promotional campaign automation', icon: Megaphone },
-      { name: 'Referral Agent', description: 'Customer referral tracking with rewards', icon: Gift },
+      { name: 'Marketing Agent', description: 'Strategic marketing planning and campaign orchestration', icon: Megaphone },
+      { name: 'Promo Agent', description: 'Promotional campaign creation and coupon management', icon: Gift },
+      { name: 'Referral Agent', description: 'Customer referral tracking with rewards automation', icon: UserPlus },
       { name: 'Win-back Agent', description: 'Re-engage inactive customers with personalized offers', icon: RotateCcw },
-      { name: 'Lead Agent', description: 'Lead capture and qualification automation', icon: UserPlus },
+      { name: 'Seasonal Agent', description: 'Holiday and seasonal campaign automation', icon: Sun },
     ]
   },
   {
@@ -75,8 +77,9 @@ const agentCategories = [
     agents: [
       { name: 'Insights Agent', description: 'Real-time business performance dashboards', icon: BarChart3 },
       { name: 'Forecast Agent', description: 'AI-powered demand and revenue predictions', icon: TrendingUp },
-      { name: 'KPI Agent', description: 'Custom metrics and goal tracking', icon: Target },
-      { name: 'Report Agent', description: 'Automated weekly and monthly digest reports', icon: FileText },
+      { name: 'Revenue Agent', description: 'Revenue analysis and financial trend tracking', icon: DollarSign },
+      { name: 'Performance Agent', description: 'Team and individual performance metrics', icon: Target },
+      { name: 'Analytics Agent', description: 'Custom analytics and comprehensive reporting', icon: FileText },
     ]
   }
 ];
