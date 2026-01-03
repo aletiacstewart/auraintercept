@@ -45,7 +45,7 @@ const agentCategories = [
   },
   {
     id: 'business',
-    name: 'Business Operations',
+    name: 'Business & Accounting',
     icon: Building2,
     color: 'from-purple-500 to-violet-500',
     agents: [

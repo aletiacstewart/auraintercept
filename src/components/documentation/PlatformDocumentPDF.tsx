@@ -454,7 +454,7 @@ const PlatformDocumentPDF = () => (
       </View>
       
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>Business Operations Console</Text>
+        <Text style={styles.agentName}>Business & Accounting Console</Text>
         <Text style={styles.agentDescription}>
           Financial and administrative hub. Manages quotes, invoices, inventory, warranties, 
           and business administration tasks. Integrates with payment processing and accounting.

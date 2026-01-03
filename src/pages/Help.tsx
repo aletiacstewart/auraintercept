@@ -70,7 +70,7 @@ const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType;
     ]
   },
   businessops: {
-    title: 'Business Operations',
+    title: 'Business & Accounting',
     icon: Briefcase,
     description: 'Manage invoices, quotes, inventory, warranties, and day-to-day business administration.',
     features: [
@@ -196,7 +196,7 @@ export default function Help() {
                 </TabsTrigger>
                 <TabsTrigger value="businessops">
                   <Briefcase className="h-4 w-4 mr-2" />
-                  Business Operations
+                  Business & Accounting
                 </TabsTrigger>
                 <TabsTrigger value="marketing">
                   <Megaphone className="h-4 w-4 mr-2" />

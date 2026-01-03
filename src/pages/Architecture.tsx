@@ -237,7 +237,7 @@ const diagrams = {
         Booking[BookingAgentConsole<br/>Appointment Management]
         FieldOps[FieldOpsAgentConsole<br/>Technician Support]
         Billing[BillingAgentConsole<br/>Financial Operations]
-        BizOps[BusinessOpsAgentConsole<br/>Business Operations]
+        BizOps[BusinessOpsAgentConsole<br/>Business & Accounting]
         Marketing[MarketingSalesAgentConsole<br/>Marketing & Sales]
         Analytics[AnalyticsAgentConsole<br/>Analytics & Insights]
     end

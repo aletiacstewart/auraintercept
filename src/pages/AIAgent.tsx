@@ -288,7 +288,7 @@ const AIAgent = () => {
                   </TabsTrigger>
                   <TabsTrigger value="businessops">
                     <Briefcase className="h-4 w-4 mr-2" />
-                    Business Operations
+                    Business & Accounting
                   </TabsTrigger>
                   <TabsTrigger value="marketing">
                     <Megaphone className="h-4 w-4 mr-2" />
@@ -313,7 +313,7 @@ const AIAgent = () => {
                       {userRole === 'employee' || consoleType === 'fieldops' 
                         ? 'Field Operations Console' 
                         : consoleType === 'businessops'
-                          ? 'Business Operations Console'
+                          ? 'Business & Accounting Console'
                           : consoleType === 'marketing'
                             ? 'Marketing & Sales Console'
                             : consoleType === 'analytics'
