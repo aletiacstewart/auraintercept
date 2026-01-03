@@ -230,7 +230,7 @@ const agents = {
     { name: 'AI Receptionist', desc: 'AI-powered inquiry routing and classification' },
     { name: 'Booking Agent', desc: 'Natural language appointment scheduling with availability checks' },
     { name: 'Follow-up Agent', desc: 'Automated reminders via email, SMS, and voice calls' },
-    { name: 'Review Agent', desc: 'Feedback collection and review platform integration' },
+    { name: 'Social Media Review Agent', desc: 'Feedback collection and review platform integration' },
     { name: 'Support Agent', desc: 'Customer support and inquiry handling' },
     { name: 'Portal Agent', desc: 'Customer self-service portal assistance' },
   ],

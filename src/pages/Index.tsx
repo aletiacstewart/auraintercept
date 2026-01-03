@@ -28,7 +28,7 @@ const agentCategories = [
       { name: 'AI Receptionist', description: 'AI-powered inquiry routing to the right department instantly', icon: Target },
       { name: 'Booking Agent', description: 'Natural language appointment scheduling with calendar sync', icon: Calendar },
       { name: 'Follow-up Agent', description: 'Automated reminders via email, SMS, and voice calls', icon: Bell },
-      { name: 'Review Agent', description: 'Collects feedback and manages multi-platform reviews', icon: Star },
+      { name: 'Social Media Review Agent', description: 'Collects feedback and manages multi-platform reviews', icon: Star },
     ]
   },
   {

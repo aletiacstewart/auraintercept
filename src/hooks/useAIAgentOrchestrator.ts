@@ -50,7 +50,7 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'triage', name: 'AI Receptionist', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
   { type: 'booking', name: 'Booking Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
   { type: 'followup', name: 'Follow-up Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
-  { type: 'review', name: 'Review Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
+  { type: 'review', name: 'Social Media Review Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
   // Field Operations (Phase 2) - 4 agents
   { type: 'dispatch', name: 'Dispatch Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
   { type: 'route', name: 'Route Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },

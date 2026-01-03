@@ -108,7 +108,7 @@ const AGENT_DEFINITIONS: Record<string, {
     ]
   },
   review: {
-    name: 'Review Agent',
+    name: 'Social Media Review Agent',
     description: 'Collects and manages customer reviews, handles responses, and monitors reputation.',
     category: 'customer_engagement',
     phase: 1,
