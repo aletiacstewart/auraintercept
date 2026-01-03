@@ -48,7 +48,7 @@ export interface AgentEvent {
 const DEFAULT_AGENTS: AgentInfo[] = [
   // Customer Engagement (Phase 1) - 4 agents
   { type: 'triage', name: 'AI Receptionist', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
-  { type: 'booking', name: 'Booking Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
+  { type: 'booking', name: 'Scheduling Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
   { type: 'followup', name: 'Follow-up Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
   { type: 'review', name: 'Social Media Review Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
   // Field Operations (Phase 2) - 4 agents

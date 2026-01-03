@@ -66,7 +66,7 @@ const AGENT_DEFINITIONS: Record<string, {
     ]
   },
   booking: {
-    name: 'Booking Agent',
+    name: 'Scheduling Agent',
     description: 'Handles appointment scheduling, rescheduling, and cancellations with intelligent slot management.',
     category: 'customer_engagement',
     phase: 1,

@@ -337,7 +337,7 @@ export default function Help() {
                     Inviting Your Team
                   </h3>
                   <div className="ml-7 space-y-3">
-                    <p className="text-sm text-muted-foreground">To add employees (technicians, booking agents, etc.) to your company:</p>
+                    <p className="text-sm text-muted-foreground">To add employees (technicians, scheduling agents, etc.) to your company:</p>
                     <div className="space-y-4">
                       <div className="flex gap-3">
                         <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">1</Badge>
