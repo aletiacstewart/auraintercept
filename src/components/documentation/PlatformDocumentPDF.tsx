@@ -228,7 +228,7 @@ const BulletPoint = ({ children }: { children: string }) => (
 const agents = {
   customerEngagement: [
     { name: 'AI Receptionist', desc: 'AI-powered inquiry routing and classification' },
-    { name: 'Booking Agent', desc: 'Natural language appointment scheduling with availability checks' },
+    { name: 'Scheduling Agent', desc: 'Natural language appointment scheduling with availability checks' },
     { name: 'Follow-up Agent', desc: 'Automated reminders via email, SMS, and voice calls' },
     { name: 'Social Media Review Agent', desc: 'Feedback collection and review platform integration' },
     { name: 'Support Agent', desc: 'Customer support and inquiry handling' },
@@ -681,7 +681,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.agentName}>Employee</Text>
         <Text style={styles.agentDescription}>
           Role-based access to specific agent consoles based on job type assignments. Can have 
-          multiple job types (e.g., booking agent, dispatcher, marketing manager).
+          multiple job types (e.g., scheduling agent, dispatcher, marketing manager).
         </Text>
       </View>
       
@@ -706,7 +706,7 @@ const PlatformDocumentPDF = () => (
         Employees are assigned job types that automatically grant access to relevant AI agents:
       </Text>
       <BulletPoint>Technicians → Dispatch Agent, ETA Agent, Check-in Agent</BulletPoint>
-      <BulletPoint>Booking Agents → Booking Agent, Quoting Agent, Support Agent</BulletPoint>
+      <BulletPoint>Scheduling Agents → Scheduling Agent, Quoting Agent, Support Agent</BulletPoint>
       <BulletPoint>Dispatchers → Dispatch Agent, Route Agent, ETA Agent</BulletPoint>
       <BulletPoint>Marketing Managers → Marketing Agent, Promo Agent, Win-back Agent</BulletPoint>
     </Page>
@@ -740,7 +740,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.agentCard}>
         <Text style={styles.agentName}>Business Hours</Text>
         <Text style={styles.agentDescription}>
-          Operating hours by day of week including holiday closures. Used by Booking agent 
+          Operating hours by day of week including holiday closures. Used by Scheduling agent 
           to ensure appointments are only scheduled during open hours.
         </Text>
       </View>

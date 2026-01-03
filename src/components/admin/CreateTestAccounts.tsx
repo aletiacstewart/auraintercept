@@ -11,7 +11,7 @@ import { Loader2, CheckCircle, UserPlus, Users } from 'lucide-react';
 
 const JOB_TYPES = [
   { value: 'technician', label: 'Technician' },
-  { value: 'booking_agent', label: 'Booking Agent' },
+  { value: 'booking_agent', label: 'Scheduling Agent' },
   { value: 'dispatch', label: 'Dispatch' },
   { value: 'marketing_manager', label: 'Marketing Manager' },
   { value: 'sales_rep', label: 'Sales Rep' },

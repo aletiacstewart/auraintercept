@@ -52,7 +52,7 @@ const DEFAULT_QUICK_ACTIONS: QuickAction[] = [
 
 const AGENT_LABELS: Record<string, { label: string; color: string }> = {
   triage: { label: 'Assistant', color: 'bg-blue-500' },
-  booking: { label: 'Booking Agent', color: 'bg-green-500' },
+  booking: { label: 'Scheduling Agent', color: 'bg-green-500' },
   dispatch: { label: 'Dispatch Agent', color: 'bg-orange-500' },
   quote: { label: 'Quote Agent', color: 'bg-purple-500' },
   review: { label: 'Social Media Review Agent', color: 'bg-yellow-500' },
