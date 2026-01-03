@@ -36,7 +36,7 @@ const PHASE_CONFIG = [
   },
   {
     phase: 3,
-    name: 'Business Operations',
+    name: 'Business & Accounting',
     description: 'Quotes, invoices, and inventory',
     icon: Briefcase,
     color: 'text-purple-500',

@@ -196,7 +196,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       {/* Glass Header */}
       <GlassHeader
         logoUrl={company?.logo_url}
-        companyName={company?.name || 'Business Operations'}
+        companyName={company?.name || 'Business & Accounting'}
         agentLabel={agentStyle.label}
         agentColor={agentStyle.color}
         agentBgColor={agentStyle.bgColor}
@@ -217,8 +217,8 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
         <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
           {showWelcome ? (
             <WelcomeScreen
-              companyName={company?.name || 'Business Operations'}
-              title="Business Operations"
+              companyName={company?.name || 'Business & Accounting'}
+              title="Business & Accounting"
               subtitle="I can help you with quotes, invoices, inventory, and warranties. How can I assist you today?"
               actions={QUICK_ACTIONS}
               onAction={handleQuickAction}

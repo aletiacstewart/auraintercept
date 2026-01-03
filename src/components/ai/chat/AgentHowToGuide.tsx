@@ -534,7 +534,7 @@ const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
 const CONSOLE_TITLES: Record<ConsoleType, string> = {
   customer: 'How to use our AI agents',
   fieldops: 'How to use Field Operations AI',
-  businessops: 'How to use Business Operations AI',
+  businessops: 'How to use Business & Accounting AI',
   marketing: 'How to use Marketing & Sales AI',
   analytics: 'How to use Analytics & Insights AI',
 };
