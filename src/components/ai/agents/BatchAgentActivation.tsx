@@ -52,7 +52,7 @@ const PHASE_CONFIG = [
   },
   {
     phase: 5,
-    name: 'Analytics & Insights',
+    name: 'Analytics & Optimization',
     description: 'Business intelligence and forecasting',
     icon: BarChart3,
     color: 'text-cyan-500',

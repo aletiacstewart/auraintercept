@@ -239,7 +239,7 @@ const diagrams = {
         Billing[BillingAgentConsole<br/>Financial Operations]
         BizOps[BusinessOpsAgentConsole<br/>Business & Accounting]
         Marketing[MarketingSalesAgentConsole<br/>Marketing & Sales]
-        Analytics[AnalyticsAgentConsole<br/>Analytics & Insights]
+        Analytics[AnalyticsAgentConsole<br/>Analytics & Optimization]
     end
     
     subgraph SharedUI["Shared UI Components"]

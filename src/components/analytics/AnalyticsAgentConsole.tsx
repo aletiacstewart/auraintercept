@@ -32,7 +32,7 @@ const TABS = [
   { id: 'chat', label: 'Home', icon: BarChart3 },
 ];
 
-// Quick actions for Analytics & Insights
+// Quick actions for Analytics & Optimization
 const QUICK_ACTIONS = [
   { id: 'performance', label: 'Performance Report', icon: BarChart3, message: 'I need a performance report' },
   { id: 'revenue', label: 'Revenue Analysis', icon: DollarSign, message: 'Show me revenue analysis' },
@@ -205,7 +205,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       {/* Glass Header */}
       <GlassHeader
         logoUrl={company?.logo_url}
-        companyName={company?.name || 'Analytics & Insights'}
+        companyName={company?.name || 'Analytics & Optimization'}
         agentLabel={agentStyle.label}
         agentColor={agentStyle.color}
         agentBgColor={agentStyle.bgColor}
@@ -226,8 +226,8 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
         <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
           {showWelcome ? (
             <WelcomeScreen
-              companyName={company?.name || 'Analytics & Insights'}
-              title="Analytics & Insights"
+              companyName={company?.name || 'Analytics & Optimization'}
+              title="Analytics & Optimization"
               subtitle="I can help you with performance reports, revenue analysis, customer insights, and forecasting. What would you like to explore?"
               actions={QUICK_ACTIONS}
               onAction={handleQuickAction}
