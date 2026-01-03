@@ -55,7 +55,7 @@ const AGENT_LABELS: Record<string, { label: string; color: string }> = {
   booking: { label: 'Booking Agent', color: 'bg-green-500' },
   dispatch: { label: 'Dispatch Agent', color: 'bg-orange-500' },
   quote: { label: 'Quote Agent', color: 'bg-purple-500' },
-  review: { label: 'Review Agent', color: 'bg-yellow-500' },
+  review: { label: 'Social Media Review Agent', color: 'bg-yellow-500' },
   eta: { label: 'ETA Agent', color: 'bg-cyan-500' },
   'follow-up': { label: 'Follow-up Agent', color: 'bg-pink-500' },
 };

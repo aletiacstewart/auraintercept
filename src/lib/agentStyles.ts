@@ -12,7 +12,7 @@ export const AGENT_STYLES: Record<string, AgentStyle> = {
   triage: { label: 'AI Receptionist', color: 'text-blue-700', bgColor: 'bg-blue-100' },
   booking: { label: 'Booking', color: 'text-blue-700', bgColor: 'bg-blue-100' },
   followup: { label: 'Follow-up', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  review: { label: 'Review', color: 'text-blue-700', bgColor: 'bg-blue-100' },
+  review: { label: 'Social Media Review', color: 'text-blue-700', bgColor: 'bg-blue-100' },
   
   // Field Operations Agents
   dispatch: { label: 'Dispatch', color: 'text-green-700', bgColor: 'bg-green-100' },
