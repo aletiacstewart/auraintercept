@@ -22,8 +22,10 @@ export function TwilioSetupGuide() {
     }
   };
 
-  const VOICE_WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler';
-  const SMS_WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/missed-call-handler';
+  const VOICE_WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=incoming';
+  const MISSED_CALL_WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/missed-call-handler';
+  const STATUS_CALLBACK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=status';
+  const SMS_WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=sms';
 
   return (
     <Card className="border-red-500/20 bg-red-500/5">
@@ -135,18 +137,18 @@ export function TwilioSetupGuide() {
             <AccordionTrigger className="text-sm">
               <span className="flex items-center gap-2">
                 <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-red-500 text-white border-red-500">4</Badge>
-                Configure Webhooks (Optional)
+                Configure Webhooks (Required for AI Features)
               </span>
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground space-y-3">
-              <p>To receive inbound calls and SMS, configure these webhook URLs on your Twilio phone number:</p>
+              <p>To enable AI voice handling and missed call callbacks, configure these webhook URLs on your Twilio phone number:</p>
               
               {/* Voice Webhook */}
               <div className="bg-muted p-3 rounded-lg space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-red-500" />
-                    <span className="text-xs font-medium text-foreground">Voice Webhook URL</span>
+                    <Phone className="w-4 h-4 text-green-500" />
+                    <span className="text-xs font-medium text-foreground">Voice "A Call Comes In"</span>
                   </div>
                   <Button
                     variant="ghost"
@@ -158,7 +160,47 @@ export function TwilioSetupGuide() {
                   </Button>
                 </div>
                 <code className="text-xs break-all block">{VOICE_WEBHOOK_URL}</code>
-                <p className="text-xs text-muted-foreground">Set this under "A Call Comes In" → HTTP POST</p>
+                <p className="text-xs text-muted-foreground">Set to HTTP POST - Handles incoming calls with AI</p>
+              </div>
+
+              {/* Primary Handler Fails (Missed Call) */}
+              <div className="bg-muted p-3 rounded-lg space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-amber-500" />
+                    <span className="text-xs font-medium text-foreground">Voice "Primary Handler Fails"</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 gap-1"
+                    onClick={() => copyToClipboard(MISSED_CALL_WEBHOOK_URL, 'missed-call-webhook')}
+                  >
+                    {copiedItems['missed-call-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  </Button>
+                </div>
+                <code className="text-xs break-all block">{MISSED_CALL_WEBHOOK_URL}</code>
+                <p className="text-xs text-muted-foreground">Set to HTTP POST - Triggers AI callback or SMS for missed calls</p>
+              </div>
+
+              {/* Status Callback */}
+              <div className="bg-muted p-3 rounded-lg space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-blue-500" />
+                    <span className="text-xs font-medium text-foreground">Voice "Call Status Changes"</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 gap-1"
+                    onClick={() => copyToClipboard(STATUS_CALLBACK_URL, 'status-webhook')}
+                  >
+                    {copiedItems['status-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  </Button>
+                </div>
+                <code className="text-xs break-all block">{STATUS_CALLBACK_URL}</code>
+                <p className="text-xs text-muted-foreground">Set to HTTP POST - Tracks call completion status</p>
               </div>
 
               {/* SMS Webhook */}
@@ -166,7 +208,7 @@ export function TwilioSetupGuide() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-red-500" />
-                    <span className="text-xs font-medium text-foreground">SMS Webhook URL</span>
+                    <span className="text-xs font-medium text-foreground">SMS "A Message Comes In"</span>
                   </div>
                   <Button
                     variant="ghost"
@@ -178,7 +220,13 @@ export function TwilioSetupGuide() {
                   </Button>
                 </div>
                 <code className="text-xs break-all block">{SMS_WEBHOOK_URL}</code>
-                <p className="text-xs text-muted-foreground">Set this under "A Message Comes In" → HTTP POST</p>
+                <p className="text-xs text-muted-foreground">Set to HTTP POST - Handles incoming SMS messages</p>
+              </div>
+
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                <p className="text-amber-600 dark:text-amber-400 text-xs">
+                  <strong>💡 Important:</strong> All webhooks must be set to HTTP POST. The "Primary Handler Fails" webhook enables AI callbacks when calls are missed.
+                </p>
               </div>
             </AccordionContent>
           </AccordionItem>
