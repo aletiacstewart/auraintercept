@@ -635,6 +635,8 @@ export type Database = {
           bounce_alert_enabled: boolean | null
           bounce_alert_threshold: number | null
           calendar_feed_token: string | null
+          callback_delay_seconds: number | null
+          callback_retry_count: number | null
           cost_alert_email: string | null
           cost_alert_enabled: boolean | null
           cost_alert_threshold: number | null
@@ -651,6 +653,7 @@ export type Database = {
           last_unsubscribe_alert_at: string | null
           last_weekly_digest_at: string | null
           logo_url: string | null
+          missed_call_action: string | null
           monthly_digest_day: number | null
           monthly_digest_email: string | null
           monthly_digest_enabled: boolean | null
@@ -706,6 +709,8 @@ export type Database = {
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
           calendar_feed_token?: string | null
+          callback_delay_seconds?: number | null
+          callback_retry_count?: number | null
           cost_alert_email?: string | null
           cost_alert_enabled?: boolean | null
           cost_alert_threshold?: number | null
@@ -722,6 +727,7 @@ export type Database = {
           last_unsubscribe_alert_at?: string | null
           last_weekly_digest_at?: string | null
           logo_url?: string | null
+          missed_call_action?: string | null
           monthly_digest_day?: number | null
           monthly_digest_email?: string | null
           monthly_digest_enabled?: boolean | null
@@ -777,6 +783,8 @@ export type Database = {
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
           calendar_feed_token?: string | null
+          callback_delay_seconds?: number | null
+          callback_retry_count?: number | null
           cost_alert_email?: string | null
           cost_alert_enabled?: boolean | null
           cost_alert_threshold?: number | null
@@ -793,6 +801,7 @@ export type Database = {
           last_unsubscribe_alert_at?: string | null
           last_weekly_digest_at?: string | null
           logo_url?: string | null
+          missed_call_action?: string | null
           monthly_digest_day?: number | null
           monthly_digest_email?: string | null
           monthly_digest_enabled?: boolean | null
@@ -2232,6 +2241,68 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      missed_call_callbacks: {
+        Row: {
+          attempt_number: number | null
+          callback_call_sid: string | null
+          company_id: string
+          completed_at: string | null
+          created_at: string
+          customer_name: string | null
+          customer_phone: string
+          error_message: string | null
+          id: string
+          initiated_at: string | null
+          original_call_sid: string | null
+          scheduled_at: string
+          sms_fallback_sent: boolean | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attempt_number?: number | null
+          callback_call_sid?: string | null
+          company_id: string
+          completed_at?: string | null
+          created_at?: string
+          customer_name?: string | null
+          customer_phone: string
+          error_message?: string | null
+          id?: string
+          initiated_at?: string | null
+          original_call_sid?: string | null
+          scheduled_at?: string
+          sms_fallback_sent?: boolean | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempt_number?: number | null
+          callback_call_sid?: string | null
+          company_id?: string
+          completed_at?: string | null
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string
+          error_message?: string | null
+          id?: string
+          initiated_at?: string | null
+          original_call_sid?: string | null
+          scheduled_at?: string
+          sms_fallback_sent?: boolean | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "missed_call_callbacks_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {

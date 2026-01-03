@@ -14,6 +14,7 @@ import { ReviewRequestSettings } from '@/components/company/ReviewRequestSetting
 import { ProfileSettings } from '@/components/employee/ProfileSettings';
 import { WarrantySettings } from '@/components/settings/WarrantySettings';
 import { CampaignSettings } from '@/components/settings/CampaignSettings';
+import { MissedCallSettings } from '@/components/company/MissedCallSettings';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -34,6 +35,7 @@ export default function Settings() {
             <TabsList className="flex-wrap h-auto gap-1">
               <TabsTrigger value="branding">Branding</TabsTrigger>
               <TabsTrigger value="reminders">Reminders</TabsTrigger>
+              <TabsTrigger value="missed-calls">Missed Calls</TabsTrigger>
               <TabsTrigger value="default-prefs">Default Prefs</TabsTrigger>
               <TabsTrigger value="reminder-analytics">Reminder Stats</TabsTrigger>
               <TabsTrigger value="reports">Reports & Digests</TabsTrigger>
@@ -52,6 +54,9 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="reminders">
               <ReminderSettings />
+            </TabsContent>
+            <TabsContent value="missed-calls">
+              <MissedCallSettings />
             </TabsContent>
             <TabsContent value="default-prefs">
               <DefaultPreferencesSettings />
