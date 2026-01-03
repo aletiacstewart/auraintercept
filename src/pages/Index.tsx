@@ -71,7 +71,7 @@ const agentCategories = [
   },
   {
     id: 'analytics',
-    name: 'Analytics & Insights',
+    name: 'Analytics & Optimization',
     icon: BarChart3,
     color: 'from-indigo-500 to-blue-600',
     agents: [

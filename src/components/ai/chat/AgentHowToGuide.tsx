@@ -439,7 +439,7 @@ const MARKETING_SALES_GUIDES: AgentGuide[] = [
   },
 ];
 
-// Analytics & Insights Guides
+// Analytics & Optimization Guides
 const ANALYTICS_GUIDES: AgentGuide[] = [
   {
     id: 'performance',
@@ -536,7 +536,7 @@ const CONSOLE_TITLES: Record<ConsoleType, string> = {
   fieldops: 'How to use Field Operations AI',
   businessops: 'How to use Business & Accounting AI',
   marketing: 'How to use Marketing & Sales AI',
-  analytics: 'How to use Analytics & Insights AI',
+  analytics: 'How to use Analytics & Optimization AI',
 };
 
 interface AgentHowToGuideProps {

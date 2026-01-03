@@ -297,7 +297,7 @@ const AIAgent = () => {
                   {(userRole === 'platform_admin' || userRole === 'company_admin') && (
                     <TabsTrigger value="analytics">
                       <BarChart3 className="h-4 w-4 mr-2" />
-                      Analytics & Insights
+                      Analytics & Optimization
                     </TabsTrigger>
                   )}
                 </TabsList>
@@ -317,7 +317,7 @@ const AIAgent = () => {
                           : consoleType === 'marketing'
                             ? 'Marketing & Sales Console'
                             : consoleType === 'analytics'
-                              ? 'Analytics & Insights Console'
+                              ? 'Analytics & Optimization Console'
                               : 'Customer Engagement Console'}
                     </h2>
                     {canManageSettings && (

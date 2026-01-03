@@ -172,7 +172,7 @@ export function CompanyAdminDashboard() {
     { label: 'Field Operations', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', gradient: 'from-green-500 to-emerald-500' },
     { label: 'Business & Accounting', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', gradient: 'from-purple-500 to-violet-500' },
     { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-agent?console=marketing', gradient: 'from-orange-500 to-red-500' },
-    { label: 'Analytics & Insights', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', gradient: 'from-indigo-500 to-blue-600' },
+    { label: 'Analytics & Optimization', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', gradient: 'from-indigo-500 to-blue-600' },
   ];
 
   return (

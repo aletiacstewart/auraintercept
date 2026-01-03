@@ -38,7 +38,7 @@ const CATEGORY_INFO: Record<string, { label: string; icon: React.ElementType; co
   field_operations: { label: 'Field Operations', icon: Truck, color: 'text-green-500' },
   business_operations: { label: 'Business Operations', icon: Briefcase, color: 'text-purple-500' },
   marketing_sales: { label: 'Marketing & Sales', icon: Megaphone, color: 'text-orange-500' },
-  analytics: { label: 'Analytics & Insights', icon: BarChart3, color: 'text-cyan-500' },
+  analytics: { label: 'Analytics & Optimization', icon: BarChart3, color: 'text-cyan-500' },
 };
 
 const PHASE_LABELS: Record<number, string> = {

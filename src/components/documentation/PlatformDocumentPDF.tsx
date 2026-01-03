@@ -406,7 +406,7 @@ const PlatformDocumentPDF = () => (
     <Page size="A4" style={styles.page}>
       <Header title="AI Agents Catalog" />
       
-      <Text style={styles.categoryHeader}>Analytics & Insights (4 Agents)</Text>
+      <Text style={styles.categoryHeader}>Analytics & Optimization (4 Agents)</Text>
       {agents.analytics.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>
@@ -471,7 +471,7 @@ const PlatformDocumentPDF = () => (
       </View>
       
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>Analytics & Insights Console</Text>
+        <Text style={styles.agentName}>Analytics & Optimization Console</Text>
         <Text style={styles.agentDescription}>
           Business intelligence dashboard. Real-time KPIs, revenue forecasting, performance 
           metrics, and trend analysis. AI-powered insights and recommendations for optimization.

@@ -110,7 +110,7 @@ const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType;
     ]
   },
   analytics: {
-    title: 'Analytics & Insights',
+    title: 'Analytics & Optimization',
     icon: BarChart3,
     description: 'Access performance reports, revenue analysis, customer insights, and business intelligence.',
     features: [
@@ -204,7 +204,7 @@ export default function Help() {
                 </TabsTrigger>
                 <TabsTrigger value="analytics">
                   <BarChart3 className="h-4 w-4 mr-2" />
-                  Analytics & Insights
+                  Analytics & Optimization
                 </TabsTrigger>
               </TabsList>
             </Tabs>
