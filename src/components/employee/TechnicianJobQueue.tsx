@@ -650,7 +650,7 @@ const JobCard = forwardRef<HTMLDivElement, JobCardProps>(({
         </div>
       )}
 
-      {/* Customer Notes from Triage/Booking Agent */}
+      {/* Customer Notes from AI Receptionist/Booking Agent */}
       {appointment.notes && (
         <div className="bg-blue-500/5 border border-blue-500/20 p-3 rounded-lg mb-3">
           <p className="text-xs font-medium text-blue-600 uppercase tracking-wide flex items-center gap-1 mb-1">

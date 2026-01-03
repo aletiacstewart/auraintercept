@@ -9,7 +9,7 @@ const corsHeaders = {
 // Agent types and their capabilities
 const AGENT_TYPES = {
   // Customer Engagement (Phase 1)
-  triage: { name: 'Triage Agent', category: 'customer_engagement', phase: 1 },
+  triage: { name: 'AI Receptionist', category: 'customer_engagement', phase: 1 },
   booking: { name: 'Booking Agent', category: 'customer_engagement', phase: 1 },
   followup: { name: 'Follow-up Agent', category: 'customer_engagement', phase: 1 },
   review: { name: 'Review Agent', category: 'customer_engagement', phase: 1 },

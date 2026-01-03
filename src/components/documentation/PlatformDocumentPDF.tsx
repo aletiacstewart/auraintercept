@@ -227,7 +227,7 @@ const BulletPoint = ({ children }: { children: string }) => (
 
 const agents = {
   customerEngagement: [
-    { name: 'Triage Agent', desc: 'AI-powered inquiry routing and classification' },
+    { name: 'AI Receptionist', desc: 'AI-powered inquiry routing and classification' },
     { name: 'Booking Agent', desc: 'Natural language appointment scheduling with availability checks' },
     { name: 'Follow-up Agent', desc: 'Automated reminders via email, SMS, and voice calls' },
     { name: 'Review Agent', desc: 'Feedback collection and review platform integration' },
@@ -421,7 +421,7 @@ const PlatformDocumentPDF = () => (
         conversations while preserving full context. For example, a customer calling about a 
         broken AC might interact with:
       </Text>
-      <BulletPoint>Triage Agent → classifies as urgent HVAC issue</BulletPoint>
+      <BulletPoint>AI Receptionist → classifies as urgent HVAC issue</BulletPoint>
       <BulletPoint>Dispatch Agent → assigns nearest available technician</BulletPoint>
       <BulletPoint>ETA Agent → provides real-time arrival estimate</BulletPoint>
       <BulletPoint>Follow-up Agent → sends confirmation and reminder notifications</BulletPoint>

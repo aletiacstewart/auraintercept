@@ -120,7 +120,7 @@ const diagrams = {
     
     subgraph Agents["🤖 Specialized Agents"]
         subgraph Phase1["Customer Engagement"]
-            Triage[Triage Agent]
+            Triage[AI Receptionist]
             Booking[Booking Agent]
             Support[Support Agent]
         end
@@ -166,7 +166,7 @@ const diagrams = {
     description: 'How agents collaborate and hand off conversations',
     chart: `sequenceDiagram
     participant C as Customer
-    participant T as Triage Agent
+    participant T as AI Receptionist
     participant B as Booking Agent
     participant D as Dispatch Agent
     participant N as Notification System

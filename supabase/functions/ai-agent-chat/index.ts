@@ -57,7 +57,7 @@ IMPORTANT: When customers say "tomorrow", "next Monday", "this Friday", "next we
 
 // Agent system prompts with their specific behaviors and capabilities
 const AGENT_PROMPTS: Record<string, string> = {
-  triage: `You are a Triage Agent for a service business. Your role is to:
+  triage: `You are an AI Receptionist for a service business. Your role is to:
 - Greet customers warmly and professionally
 - Classify their intent (booking, emergency, quote, general inquiry, appointment tracking)
 - Assess urgency level (low, medium, high, emergency)
@@ -153,7 +153,7 @@ If a customer asks to TRACK or CHECK STATUS of an appointment:
 - Present the appointment details clearly
 
 WHEN RECEIVING A HANDOFF FROM ANOTHER AGENT:
-The Triage Agent should have already collected the customer's NAME and PHONE NUMBER.
+The AI Receptionist should have already collected the customer's NAME and PHONE NUMBER.
 Look for this info in the handoff context (e.g., "Customer Name: John Smith, Phone: 555-1234, Issue: AC not cooling").
 
 CRITICAL - CONFIRM INFO WITH YES/NO (don't re-ask!):

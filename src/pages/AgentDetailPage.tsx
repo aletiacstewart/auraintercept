@@ -46,7 +46,7 @@ const AGENT_DEFINITIONS: Record<string, {
   }>;
 }> = {
   triage: {
-    name: 'Triage Agent',
+    name: 'AI Receptionist',
     description: 'First point of contact that classifies customer intent and routes to appropriate specialized agents.',
     category: 'customer_engagement',
     phase: 1,
