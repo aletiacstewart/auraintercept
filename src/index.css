@@ -130,6 +130,7 @@
 
   .gradient-button {
     background: linear-gradient(135deg, #00F2FF 0%, #7000FF 100%);
+    color: hsl(222 51% 6%);
   }
 
   .gradient-text {
@@ -277,6 +278,7 @@
   /* Message bubble styles */
   .message-bubble-user {
     background: linear-gradient(135deg, #00F2FF 0%, #7000FF 100%);
+    color: hsl(222 51% 6%);
     border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
   }
 
@@ -290,6 +292,7 @@
   /* Button gradient hover */
   .btn-gradient {
     background: linear-gradient(135deg, #00F2FF 0%, #7000FF 100%);
+    color: hsl(222 51% 6%);
     transition: all 0.3s ease;
   }
 
