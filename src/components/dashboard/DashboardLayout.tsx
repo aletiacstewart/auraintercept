@@ -217,13 +217,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <div className="flex items-center gap-3 px-4 py-5">
           <div className="w-10 h-10 rounded-xl gradient-primary p-0.5 flex-shrink-0">
             <div className="w-full h-full rounded-xl bg-sidebar flex items-center justify-center overflow-hidden">
-              <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
+              <img src={logo} alt="Aura Intercept" className="w-8 h-8 object-contain" />
             </div>
           </div>
           {!collapsed && (
             <div className="overflow-hidden">
-              <h1 className="font-bold text-sm truncate">AI Bot Company</h1>
-              <p className="text-xs text-sidebar-foreground/60 truncate">Platform</p>
+              <h1 className="font-bold text-sm truncate">Aura Intercept</h1>
+              <p className="text-xs text-sidebar-foreground/60 truncate">Infrastructure of Intent</p>
             </div>
           )}
         </div>

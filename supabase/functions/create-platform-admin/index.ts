@@ -21,8 +21,8 @@ serve(async (req) => {
 
     const adminEmail = 'aibotcompany.ai@gmail.com';
     const adminPassword = 'aibotcompany*!';
-    const companyName = 'AI Bot Company';
-    const companySlug = 'ai-bot-company';
+    const companyName = 'Aura Intercept Platform';
+    const companySlug = 'aura-intercept';
 
     console.log('Creating platform admin account for:', adminEmail);
 
@@ -31,7 +31,7 @@ serve(async (req) => {
       email: adminEmail,
       password: adminPassword,
       email_confirm: true,
-      user_metadata: { full_name: 'AI Bot Company Admin' }
+      user_metadata: { full_name: 'Aura Intercept Admin' }
     });
 
     if (userError) {
@@ -106,7 +106,7 @@ serve(async (req) => {
         // Update profile
         await supabaseAdmin
           .from('profiles')
-          .update({ company_id: companyId, full_name: 'AI Bot Company Admin' })
+          .update({ company_id: companyId, full_name: 'Aura Intercept Admin' })
           .eq('id', existingUser.id);
 
         return new Response(JSON.stringify({
@@ -160,7 +160,7 @@ serve(async (req) => {
       .from('profiles')
       .update({ 
         company_id: company.id,
-        full_name: 'AI Bot Company Admin'
+        full_name: 'Aura Intercept Admin'
       })
       .eq('id', userId);
 

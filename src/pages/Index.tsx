@@ -310,12 +310,14 @@ export default function Index() {
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 animate-fade-in">
               <Sparkles className="w-4 h-4" />
-              20+ AI Agents • 5 Consoles • One Platform
+              Infrastructure of Intent • 20+ AI Agents • 5 Consoles
             </div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 animate-fade-in">
-              Automate Your Business with{' '}
-              <span className="gradient-text">AI Agent Consoles</span>
+              <span className="gradient-text">Aura Intercept</span>
+              <span className="block text-2xl sm:text-3xl md:text-4xl mt-2 text-muted-foreground font-normal">
+                Multi-Agent Orchestration Engine
+              </span>
             </h1>
 
             <div className="h-8 mb-6 animate-fade-in">
@@ -325,8 +327,8 @@ export default function Index() {
             </div>
             
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
-              Deploy 20+ specialized AI agents across 5 powerful consoles to handle customer engagement, 
-              field operations, billing, marketing, and analytics. White-label ready with customer portal.
+              Deploy 20+ specialized AI agents across 5 powerful consoles. Intelligent handoffs, 
+              context preservation, and seamless orchestration for customer engagement, field ops, and beyond.
             </p>
 
             {/* Hero Stats */}
