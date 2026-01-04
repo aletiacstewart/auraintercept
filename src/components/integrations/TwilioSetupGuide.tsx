@@ -231,11 +231,41 @@ export function TwilioSetupGuide() {
             </AccordionContent>
           </AccordionItem>
 
-          {/* Step 5: Pricing */}
+          {/* Step 5: Configure Missed Call Settings */}
           <AccordionItem value="step-5">
             <AccordionTrigger className="text-sm">
               <span className="flex items-center gap-2">
                 <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-red-500 text-white border-red-500">5</Badge>
+                Configure AI Missed Call Callbacks
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+              <p>Enable automatic AI-powered callbacks when customer calls are missed:</p>
+              <ol className="list-decimal list-inside space-y-2">
+                <li>Go to <strong>Settings → Missed Calls</strong> in your dashboard</li>
+                <li>Choose your preferred action:
+                  <ul className="list-disc list-inside ml-4 mt-1 space-y-1">
+                    <li><strong>SMS Only</strong> - Send a follow-up text message</li>
+                    <li><strong>AI Callback Only</strong> - Initiate an AI-powered return call</li>
+                    <li><strong>Callback then SMS</strong> - Try AI callback first, SMS if it fails</li>
+                  </ul>
+                </li>
+                <li>Set the callback delay (how long to wait before calling back)</li>
+                <li>Ensure ElevenLabs is configured for AI voice callbacks</li>
+              </ol>
+              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                <p className="text-green-600 dark:text-green-400 text-xs">
+                  <strong>✅ How it works:</strong> When a call is missed, the system waits for your configured delay (default 30s), then automatically calls the customer back with an AI agent to help them book an appointment or get assistance.
+                </p>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Step 6: Pricing */}
+          <AccordionItem value="step-6">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-red-500 text-white border-red-500">6</Badge>
                 Pricing Overview
               </span>
             </AccordionTrigger>
