@@ -43,6 +43,7 @@ import Help from "./pages/Help";
 import Architecture from "./pages/Architecture";
 import Calculators from "./pages/Calculators";
 import ExportDocumentation from "./pages/ExportDocumentation";
+import FieldOperations from "./pages/FieldOperations";
 import NotFound from "./pages/NotFound";
 import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
 
@@ -107,6 +108,7 @@ const App = () => (
             <Route path="/dashboard/architecture" element={<Architecture />} />
             <Route path="/dashboard/calculators" element={<Calculators />} />
             <Route path="/dashboard/documentation" element={<ExportDocumentation />} />
+            <Route path="/dashboard/field-operations" element={<FieldOperations />} />
             
             {/* Customer Portal Routes */}
             <Route path="/customer" element={<CustomerPortalHome />} />
