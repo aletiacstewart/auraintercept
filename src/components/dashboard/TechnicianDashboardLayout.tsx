@@ -70,17 +70,18 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
   if (isMobile) {
     return (
       <div className="flex flex-col h-screen bg-background">
-        {/* Mobile Header */}
-        <header className="flex items-center justify-between px-4 h-14 border-b bg-sidebar text-sidebar-foreground">
+        {/* Mobile Header - Aura Intercept themed */}
+        <header className="flex items-center justify-between px-4 h-14 border-b border-accent/20 bg-primary text-primary-foreground">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg gradient-primary p-0.5">
-              <div className="w-full h-full rounded-lg bg-sidebar flex items-center justify-center overflow-hidden">
-                <img src={logo} alt="Aura Intercept" className="w-6 h-6 object-contain" />
-              </div>
+            <div className="w-8 h-8 rounded-lg bg-accent/20 p-0.5 flex items-center justify-center">
+              <img src={logo} alt="Aura Intercept" className="w-6 h-6 object-contain" />
             </div>
-            <h1 className="font-semibold text-lg">
-              {mobileNavItems.find(item => isActive(item.path))?.label || 'Field Ops'}
-            </h1>
+            <div>
+              <h1 className="font-semibold text-base leading-tight">
+                {mobileNavItems.find(item => isActive(item.path))?.label || 'Field Ops'}
+              </h1>
+              <p className="text-[10px] text-accent/80">Aura Intercept</p>
+            </div>
           </div>
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
@@ -142,8 +143,8 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
           {children}
         </main>
 
-        {/* Mobile Bottom Navigation */}
-        <nav className="fixed bottom-0 left-0 right-0 h-16 bg-sidebar border-t border-sidebar-border safe-area-bottom">
+        {/* Mobile Bottom Navigation - Aura Intercept themed */}
+        <nav className="fixed bottom-0 left-0 right-0 h-16 bg-primary border-t border-accent/20 safe-area-bottom">
           <div className="flex items-center justify-around h-full">
             {mobileNavItems.map((item) => {
               const active = isActive(item.path);
@@ -152,14 +153,19 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    'flex flex-col items-center justify-center gap-0.5 w-16 h-full transition-colors',
-                    active ? 'text-primary' : 'text-sidebar-foreground/60'
+                    'flex flex-col items-center justify-center gap-0.5 w-16 h-full transition-all relative',
+                    active ? 'text-accent' : 'text-primary-foreground/60'
                   )}
                 >
-                  <item.icon className={cn('h-5 w-5', active && 'scale-110')} />
+                  <div className={cn(
+                    "p-1.5 rounded-lg transition-all",
+                    active && "bg-accent/20"
+                  )}>
+                    <item.icon className={cn('h-5 w-5', active && 'scale-110')} />
+                  </div>
                   <span className="text-[10px] font-medium">{item.label}</span>
                   {active && (
-                    <div className="absolute bottom-1 w-1 h-1 rounded-full bg-primary" />
+                    <div className="absolute bottom-1 w-8 h-0.5 rounded-full bg-accent" />
                   )}
                 </Link>
               );
