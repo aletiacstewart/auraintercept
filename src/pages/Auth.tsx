@@ -116,8 +116,8 @@ export default function Auth() {
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
         .insert({
-          name: 'AI Bot Company',
-          slug: 'ai-bot-company-' + authData.user.id.slice(0, 8),
+          name: 'Aura Intercept Platform',
+          slug: 'aura-intercept-' + authData.user.id.slice(0, 8),
           primary_color: '#0EA5E9',
           secondary_color: '#8B5CF6'
         })
@@ -152,7 +152,7 @@ export default function Auth() {
         return;
       }
 
-      toast({ title: 'Account Created!', description: 'Welcome to AI Bot Company Platform!' });
+      toast({ title: 'Account Created!', description: 'Welcome to Aura Intercept!' });
       navigate('/dashboard');
     }
 
@@ -453,12 +453,12 @@ export default function Auth() {
           <div className="flex flex-col items-center space-y-4 mb-8">
             <div className="w-20 h-20 rounded-2xl gradient-primary p-0.5 shadow-glow">
               <div className="w-full h-full rounded-2xl bg-background flex items-center justify-center overflow-hidden">
-                <img src={logo} alt="AI Bot Company" className="w-16 h-16 object-contain" />
+                <img src={logo} alt="Aura Intercept" className="w-16 h-16 object-contain" />
               </div>
             </div>
             <div className="text-center">
-              <h1 className="text-2xl font-bold tracking-tight">AI Bot Company</h1>
-              <p className="text-sm text-muted-foreground">The Future of Work</p>
+              <h1 className="text-2xl font-bold tracking-tight">Aura Intercept</h1>
+              <p className="text-sm text-muted-foreground">Infrastructure of Intent</p>
             </div>
           </div>
 

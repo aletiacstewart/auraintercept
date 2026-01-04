@@ -162,12 +162,12 @@ export default function CustomerAuth() {
         <div className="flex flex-col items-center space-y-4">
           <div className="w-20 h-20 rounded-2xl gradient-primary p-0.5 shadow-glow">
             <div className="w-full h-full rounded-2xl bg-background flex items-center justify-center overflow-hidden">
-              <img src={logo} alt="AI Bot Company" className="w-16 h-16 object-contain" />
+              <img src={logo} alt="Aura Intercept" className="w-16 h-16 object-contain" />
             </div>
           </div>
           <div className="text-center">
             <h1 className="text-2xl font-bold tracking-tight">Customer Portal</h1>
-            <p className="text-sm text-muted-foreground">Access services from top companies</p>
+            <p className="text-sm text-muted-foreground">Powered by Aura Intercept</p>
           </div>
         </div>
 

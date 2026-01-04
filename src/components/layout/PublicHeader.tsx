@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, Users } from 'lucide-react';
+import { Home, Users, Zap } from 'lucide-react';
 import logo from '@/assets/ai-bot-company-logo-new.png';
 
 interface PublicHeaderProps {
@@ -13,10 +13,17 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
   return (
     <header className="bg-black border-b border-border/50 sticky top-0 z-50 py-0.5">
       <nav className="container max-w-7xl mx-auto flex items-center justify-between px-6">
-        <div className="flex items-center">
-          <button onClick={() => navigate('/')} className="flex items-center">
-            <img src={logo} alt="AI Bot Company" style={{ width: '200px', height: '160px' }} className="object-contain" />
+        <div className="flex items-center gap-3">
+          <button onClick={() => navigate('/')} className="flex items-center gap-3">
+            <img src={logo} alt="Aura Intercept" style={{ width: '200px', height: '160px' }} className="object-contain" />
           </button>
+          <div className="hidden md:flex flex-col">
+            <span className="text-white font-bold text-lg tracking-tight">Aura Intercept</span>
+            <span className="text-white/60 text-xs flex items-center gap-1">
+              <Zap className="w-3 h-3" />
+              Infrastructure of Intent
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           {showHomeLink && (

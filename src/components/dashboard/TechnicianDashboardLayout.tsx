@@ -75,11 +75,11 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg gradient-primary p-0.5">
               <div className="w-full h-full rounded-lg bg-sidebar flex items-center justify-center overflow-hidden">
-                <img src={logo} alt="Logo" className="w-6 h-6 object-contain" />
+                <img src={logo} alt="Aura Intercept" className="w-6 h-6 object-contain" />
               </div>
             </div>
             <h1 className="font-semibold text-lg">
-              {mobileNavItems.find(item => isActive(item.path))?.label || 'Technician'}
+              {mobileNavItems.find(item => isActive(item.path))?.label || 'Field Ops'}
             </h1>
           </div>
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
@@ -184,13 +184,13 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
         <div className="flex items-center gap-3 px-4 py-5">
           <div className="w-10 h-10 rounded-xl gradient-primary p-0.5 flex-shrink-0">
             <div className="w-full h-full rounded-xl bg-sidebar flex items-center justify-center overflow-hidden">
-              <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
+              <img src={logo} alt="Aura Intercept" className="w-8 h-8 object-contain" />
             </div>
           </div>
           {!collapsed && (
             <div className="overflow-hidden">
-              <h1 className="font-bold text-sm truncate">Technician</h1>
-              <p className="text-xs text-sidebar-foreground/60 truncate">Field Operations</p>
+              <h1 className="font-bold text-sm truncate">Field Operations</h1>
+              <p className="text-xs text-sidebar-foreground/60 truncate">Aura Intercept</p>
             </div>
           )}
         </div>

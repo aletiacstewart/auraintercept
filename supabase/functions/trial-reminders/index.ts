@@ -105,7 +105,7 @@ serve(async (req) => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              from: 'AI Bot Company <noreply@aibot.company>',
+              from: 'Aura Intercept <noreply@aura-intercept.com>',
               to: adminEmail,
               subject: getEmailSubject(reminderType, company.name),
               html: getEmailHtml(reminderType, company.name, daysRemaining),
@@ -167,7 +167,7 @@ serve(async (req) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'AI Bot Company <noreply@aibot.company>',
+            from: 'Aura Intercept <noreply@aura-intercept.com>',
             to: admins[0].email,
             subject: `Your free trial has ended - ${company.name}`,
             html: getExpiredEmailHtml(company.name),
@@ -210,7 +210,7 @@ function getEmailSubject(reminderType: string, companyName: string): string {
     case '7-day':
       return `Your free trial ends in 7 days - Subscribe to keep your AI Agent`;
     case '3-day':
-      return `Only 3 days left! Subscribe to continue using AI Bot Company`;
+      return `Only 3 days left! Subscribe to continue using Aura Intercept`;
     case '1-day':
       return `⚠️ Last day of your free trial - ${companyName}`;
     default:
@@ -240,7 +240,7 @@ function getEmailHtml(reminderType: string, companyName: string, daysRemaining: 
     <body>
       <div class="container">
         <div class="header">
-          <div class="logo">🤖 AI Bot Company</div>
+          <div class="logo">⚡ Aura Intercept</div>
         </div>
         
         <h2>Hi ${companyName},</h2>
@@ -291,17 +291,17 @@ function getExpiredEmailHtml(companyName: string): string {
     <body>
       <div class="container">
         <div class="header">
-          <div class="logo">🤖 AI Bot Company</div>
+          <div class="logo">⚡ Aura Intercept</div>
         </div>
         
-        <h2>Hi ${companyName},</h2>
+        <h2>Hi \${companyName},</h2>
         
         <div class="alert">
           <strong>Your free trial has ended.</strong>
           <p>Your access to premium features has been restricted.</p>
         </div>
         
-        <p>We hope you enjoyed using AI Bot Company! To restore full access to your AI appointment assistant, subscribe to our Enterprise plan.</p>
+        <p>We hope you enjoyed using Aura Intercept! To restore full access to your AI appointment assistant, subscribe to our Enterprise plan.</p>
         
         <div style="text-align: center;">
           <a href="${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '.lovable.app')}/dashboard/subscription" class="cta-button">
