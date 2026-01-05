@@ -111,6 +111,13 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: 'Operations',
+    items: [
+      { label: 'Field Ops Console', icon: Map, href: '/dashboard/field-operations', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Business Ops Console', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'] },
+    ],
+  },
+  {
     label: 'Configuration',
     items: [
       { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },

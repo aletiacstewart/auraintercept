@@ -25,16 +25,21 @@ const AGENT_TYPES = {
   invoice: { name: 'Invoice Agent', category: 'business_operations', phase: 3 },
   inventory: { name: 'Inventory Agent', category: 'business_operations', phase: 3 },
   warranty: { name: 'Warranty Agent', category: 'business_operations', phase: 3 },
+  admin: { name: 'Admin Agent', category: 'business_operations', phase: 3 },
   
   // Marketing & Sales (Phase 4)
   promo: { name: 'Promo Agent', category: 'marketing_sales', phase: 4 },
   referral: { name: 'Referral Agent', category: 'marketing_sales', phase: 4 },
   winback: { name: 'Win-back Agent', category: 'marketing_sales', phase: 4 },
   seasonal: { name: 'Seasonal Agent', category: 'marketing_sales', phase: 4 },
+  marketing: { name: 'Marketing Agent', category: 'marketing_sales', phase: 4 },
   
   // Analytics & Insights (Phase 5)
   insights: { name: 'Insights Agent', category: 'analytics', phase: 5 },
   forecast: { name: 'Forecast Agent', category: 'analytics', phase: 5 },
+  revenue: { name: 'Revenue Agent', category: 'analytics', phase: 5 },
+  performance: { name: 'Performance Agent', category: 'analytics', phase: 5 },
+  analytics: { name: 'Analytics Agent', category: 'analytics', phase: 5 },
 };
 
 // Event routing rules - which agents should receive which events

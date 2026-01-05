@@ -252,11 +252,11 @@ const howItWorks = [
     icon: Building2
   },
   {
-    step: 2,
-    title: 'Activate AI Agents',
-    description: 'Enable 20+ specialized AI agents and configure knowledge base for your business.',
-    icon: Bot
-  },
+      step: 2,
+      title: 'Activate AI Agents',
+      description: 'Enable 22 specialized AI agents and configure knowledge base for your business.',
+      icon: Bot
+    },
   {
     step: 3,
     title: 'Connect Customers',
@@ -272,7 +272,7 @@ const howItWorks = [
 ];
 
 const heroStats = [
-  { value: '20+', label: 'AI Agents' },
+  { value: '22', label: 'AI Agents' },
   { value: '24/7', label: 'Automation' },
   { value: '5', label: 'Agent Consoles' },
   { value: '40%', label: 'Less No-Shows' },
@@ -310,7 +310,7 @@ export default function Index() {
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 animate-fade-in">
               <Sparkles className="w-4 h-4" />
-              Infrastructure of Intent • 20+ AI Agents • 5 Consoles
+              Infrastructure of Intent • 22 AI Agents • 5 Consoles
             </div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 animate-fade-in">
@@ -327,7 +327,7 @@ export default function Index() {
             </div>
             
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
-              Deploy 20+ specialized AI agents across 5 powerful consoles. Intelligent handoffs, 
+              Deploy 22 specialized AI agents across 5 powerful consoles. Intelligent handoffs, 
               context preservation, and seamless orchestration for customer engagement, field ops, and beyond.
             </p>
 
@@ -401,7 +401,7 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">AI Agents</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">20+ Specialized AI Agents</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">22 Specialized AI Agents</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Each agent is purpose-built to handle specific business functions, 
               working together seamlessly with intelligent handoffs and context preservation.
