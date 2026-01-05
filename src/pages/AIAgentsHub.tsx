@@ -170,7 +170,7 @@ export default function AIAgentsHub() {
             </h1>
             <p className="text-muted-foreground mt-1">
               {canManageAgents 
-                ? '18 specialized AI agents powering your business automation'
+                ? '22 specialized AI agents powering your business automation'
                 : `${totalCount} AI agents available based on your job roles`}
             </p>
           </div>
