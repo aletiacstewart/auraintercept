@@ -58,7 +58,10 @@ import {
   TechnicianAvailability,
   TechnicianHistory,
   TechnicianProfile,
+  TechnicianInstall,
 } from "./pages/technician";
+
+import IntegrationDocs from "./pages/IntegrationDocs";
 
 const queryClient = new QueryClient();
 
@@ -111,6 +114,7 @@ const App = () => (
             <Route path="/dashboard/documentation" element={<ExportDocumentation />} />
             <Route path="/dashboard/field-operations" element={<FieldOperations />} />
             <Route path="/dashboard/business-operations" element={<BusinessOperations />} />
+            <Route path="/dashboard/integrations/embed" element={<IntegrationDocs />} />
             
             {/* Customer Portal Routes */}
             <Route path="/customer" element={<CustomerPortalHome />} />
@@ -131,6 +135,7 @@ const App = () => (
             <Route path="/technician/availability" element={<TechnicianAvailability />} />
             <Route path="/technician/history" element={<TechnicianHistory />} />
             <Route path="/technician/profile" element={<TechnicianProfile />} />
+            <Route path="/technician/install" element={<TechnicianInstall />} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,0 +1,35 @@
+{
+  "name": "Aura Intercept Field Ops",
+  "short_name": "Field Ops",
+  "description": "Technician mobile app for field operations management",
+  "start_url": "/technician",
+  "scope": "/technician",
+  "display": "standalone",
+  "background_color": "#0A0E17",
+  "theme_color": "#00F2FF",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
