@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { 
   Home, 
   Bot, 
@@ -15,7 +16,10 @@ import {
   LogOut,
   Menu,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Download,
+  X,
+  Smartphone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -44,6 +48,7 @@ const sidebarNavItems = [
   { icon: History, label: 'Job History', path: '/technician/history' },
   { icon: Clock, label: 'Availability', path: '/technician/availability' },
   { icon: User, label: 'Profile', path: '/technician/profile' },
+  { icon: Smartphone, label: 'Install App', path: '/technician/install' },
 ];
 
 export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps> = ({ children }) => {
@@ -51,8 +56,10 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { isInstallable, promptInstall, dismissPrompt } = usePWAInstall();
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [collapsed, setCollapsed] = React.useState(false);
+  const [showInstallBanner, setShowInstallBanner] = React.useState(true);
 
   const handleSignOut = async () => {
     await signOut();
@@ -70,6 +77,36 @@ export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps>
   if (isMobile) {
     return (
       <div className="flex flex-col h-screen bg-background">
+        {/* PWA Install Banner */}
+        {isInstallable && showInstallBanner && (
+          <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white">
+            <div className="flex items-center gap-2">
+              <Download className="h-4 w-4" />
+              <span className="text-sm font-medium">Install Field Ops app</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button 
+                size="sm" 
+                variant="secondary" 
+                className="h-7 text-xs"
+                onClick={promptInstall}
+              >
+                Install
+              </Button>
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className="h-7 w-7 text-white hover:bg-white/20"
+                onClick={() => {
+                  setShowInstallBanner(false);
+                  dismissPrompt();
+                }}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
         {/* Mobile Header - Aura Intercept themed */}
         <header className="flex items-center justify-between px-4 h-14 border-b border-accent/20 bg-primary text-primary-foreground">
           <div className="flex items-center gap-3">

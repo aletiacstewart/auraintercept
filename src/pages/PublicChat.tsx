@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -52,12 +52,22 @@ const QUICK_ACTIONS = [
 
 export default function PublicChat() {
   const { companySlug } = useParams<{ companySlug: string }>();
+  const [searchParams] = useSearchParams();
+  const isEmbedMode = searchParams.get('embed') === 'true';
   const [config, setConfig] = useState<CompanyConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [activeTab, setActiveTab] = useState('chat');
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Communicate with parent window in embed mode
+  useEffect(() => {
+    if (isEmbedMode && window.parent !== window) {
+      // Notify parent that chat is ready
+      window.parent.postMessage({ type: 'aura-chat-ready', companySlug }, '*');
+    }
+  }, [isEmbedMode, companySlug]);
 
   // Use multi-agent chat hook
   const { 
@@ -162,44 +172,46 @@ export default function PublicChat() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header 
-        className="px-4 py-4 text-white"
-        style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }}
-      >
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {config.company.logo_url ? (
-              <img 
-                src={config.company.logo_url} 
-                alt={config.company.name} 
-                className="h-10 w-10 rounded-full object-cover bg-white p-1"
-              />
-            ) : (
-              <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
-                <Building2 className="h-5 w-5" />
-              </div>
-            )}
-            <div>
-              <h1 className="font-semibold">{config.company.name}</h1>
-              <div className="flex items-center gap-2">
-                <p className="text-xs text-white/80">Virtual Assistant</p>
-                <Badge 
-                  variant="secondary" 
-                  className={cn('text-[10px] px-1.5 py-0 border-0', agentInfo.bgColor, agentInfo.color)}
-                >
-                  {agentInfo.label}
-                </Badge>
+    <div className={cn("bg-background flex flex-col", isEmbedMode ? "h-full" : "min-h-screen")}>
+      {/* Header - hidden in embed mode */}
+      {!isEmbedMode && (
+        <header 
+          className="px-4 py-4 text-white"
+          style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }}
+        >
+          <div className="max-w-2xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {config.company.logo_url ? (
+                <img 
+                  src={config.company.logo_url} 
+                  alt={config.company.name} 
+                  className="h-10 w-10 rounded-full object-cover bg-white p-1"
+                />
+              ) : (
+                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
+                  <Building2 className="h-5 w-5" />
+                </div>
+              )}
+              <div>
+                <h1 className="font-semibold">{config.company.name}</h1>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs text-white/80">Virtual Assistant</p>
+                  <Badge 
+                    variant="secondary" 
+                    className={cn('text-[10px] px-1.5 py-0 border-0', agentInfo.bgColor, agentInfo.color)}
+                  >
+                    {agentInfo.label}
+                  </Badge>
+                </div>
               </div>
             </div>
+            <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
+              <Clock className="h-3 w-3 mr-1" />
+              {getTodayHours()}
+            </Badge>
           </div>
-          <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
-            <Clock className="h-3 w-3 mr-1" />
-            {getTodayHours()}
-          </Badge>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* Navigation Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col max-w-2xl mx-auto w-full">

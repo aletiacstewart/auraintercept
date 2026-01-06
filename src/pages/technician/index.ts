@@ -6,3 +6,4 @@ export { default as TechnicianSettings } from './TechnicianSettings';
 export { default as TechnicianAvailability } from './TechnicianAvailability';
 export { default as TechnicianHistory } from './TechnicianHistory';
 export { default as TechnicianProfile } from './TechnicianProfile';
+export { default as TechnicianInstall } from './TechnicianInstall';
