@@ -69,7 +69,7 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'seasonal', name: 'Seasonal Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
   { type: 'marketing', name: 'Marketing Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
   // Analytics (Phase 5) - 4 agents
-  { type: 'insights', name: 'Insights Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },
+  { type: 'insights', name: 'Business Insights Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },
   { type: 'forecast', name: 'Forecast Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },
   { type: 'revenue', name: 'Revenue Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },
   { type: 'performance', name: 'Performance Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },

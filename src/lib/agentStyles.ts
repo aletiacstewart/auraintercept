@@ -35,11 +35,11 @@ export const AGENT_STYLES: Record<string, AgentStyle> = {
   seasonal: { label: 'Seasonal', color: 'text-green-700', bgColor: 'bg-green-100' },
   
   // Analytics & Insights Agents
-  insights: { label: 'Insights', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
+  insights: { label: 'Business Insights', color: 'text-indigo-700', bgColor: 'bg-indigo-100' },
   forecast: { label: 'Forecast', color: 'text-teal-700', bgColor: 'bg-teal-100' },
   revenue: { label: 'Revenue', color: 'text-emerald-700', bgColor: 'bg-emerald-100' },
-  performance: { label: 'Performance', color: 'text-indigo-700', bgColor: 'bg-indigo-100' },
-  analytics: { label: 'Analytics', color: 'text-purple-700', bgColor: 'bg-purple-100' },
+  performance: { label: 'Performance', color: 'text-violet-700', bgColor: 'bg-violet-100' },
+  analytics: { label: 'Data Analytics', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
 };
 
 // Default style for unknown agents
