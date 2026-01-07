@@ -960,7 +960,7 @@ const PlatformGuides: React.FC = () => {
               <CardTitle className="text-base">Guide Categories</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <ScrollArea className="h-[500px]">
+              <ScrollArea className="h-auto max-h-[600px]">
                 <div className="space-y-1 p-3">
                   {guideCategories.map((category) => {
                     const Icon = category.icon;
