@@ -152,6 +152,45 @@ const guideCategories = [
           'Test the complete field operations workflow'
         ],
         tips: ['Train technicians on mobile check-in process', 'Use GPS tracking for accurate ETAs']
+      },
+      {
+        title: 'Business Ops Agents',
+        duration: '12 min',
+        steps: [
+          'Enable Quoting, Invoicing, and Inventory agents in AI Agents Hub',
+          'Configure Quote Agent for automated quote generation',
+          'Set up Invoice Agent for payment tracking and reminders',
+          'Enable Inventory Agent for stock level monitoring',
+          'Configure pricing rules and discount limits',
+          'Test quote-to-invoice conversion workflow'
+        ],
+        tips: ['Link agents to your service catalog for accurate pricing', 'Set up low-stock alerts for proactive ordering']
+      },
+      {
+        title: 'Marketing & Campaign Agents',
+        duration: '10 min',
+        steps: [
+          'Enable Marketing, Promotion, and Winback agents',
+          'Configure campaign automation rules',
+          'Set up customer segmentation criteria',
+          'Define promotion triggers and discount limits',
+          'Enable winback campaigns for inactive customers',
+          'Monitor campaign performance in analytics'
+        ],
+        tips: ['Start with simple campaigns before complex automation', 'A/B test messaging for best results']
+      },
+      {
+        title: 'Analytics & Reporting Agents',
+        duration: '8 min',
+        steps: [
+          'Enable Business Insights and Data Analytics agents',
+          'Configure KPI tracking thresholds',
+          'Set up automated report generation',
+          'Define alert triggers for anomalies',
+          'Enable revenue forecasting features',
+          'Schedule regular performance digests'
+        ],
+        tips: ['Use natural language queries for quick insights', 'Set up weekly automated reports for stakeholders']
       }
     ]
   },
