@@ -384,9 +384,9 @@ export function AppointmentCalendar() {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
+    <div className="grid gap-6 md:grid-cols-2">
       {/* Calendar */}
-      <Card className="border-border/50 lg:col-span-1">
+      <Card className="border-border/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <CalendarIcon className="w-5 h-5" />
@@ -396,7 +396,7 @@ export function AppointmentCalendar() {
             Select a date to view appointments
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex justify-center">
           <Calendar
             mode="single"
             selected={selectedDate}
@@ -419,7 +419,7 @@ export function AppointmentCalendar() {
       </Card>
 
       {/* Appointments List */}
-      <Card className="border-border/50 lg:col-span-2">
+      <Card className="border-border/50">
         <CardHeader className="flex flex-row items-start justify-between space-y-0">
           <div>
             <CardTitle>
