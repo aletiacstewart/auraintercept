@@ -91,7 +91,7 @@ serve(async (req) => {
 
     // Chat action with multi-agent support
     if (action === 'chat' && req.method === 'POST') {
-      const { messages, session_id } = await req.json();
+      const { messages, session_id, customer_user_id } = await req.json();
 
       // Build comprehensive knowledge base context
       const [servicesRes, faqsRes, hoursRes, docsRes, employeesRes] = await Promise.all([
@@ -417,6 +417,7 @@ GUIDELINES:
                 duration_minutes: service?.duration_minutes || 60,
                 notes: args.notes || null,
                 status: args.is_emergency ? 'emergency' : 'pending',
+                customer_user_id: customer_user_id || null,
               })
               .select()
               .single();

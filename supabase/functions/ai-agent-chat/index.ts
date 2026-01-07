@@ -2025,7 +2025,7 @@ CRITICAL RULES:
           });
         } else {
           // Execute the tool
-          const result = await executeAgentTool(supabase, companyId, agentType, funcName, args);
+          const result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
           toolCalls.push({
             name: funcName,
             arguments: args,
@@ -2121,7 +2121,7 @@ CRITICAL RULES:
                 result: `Handing off to ${args.target_agent}: ${args.reason}`,
               });
             } else {
-              const result = await executeAgentTool(supabase, companyId, agentType, funcName, args);
+              const result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
               toolCalls.push({
                 name: funcName,
                 arguments: args,
@@ -2284,7 +2284,8 @@ async function executeAgentTool(
   companyId: string,
   agentType: string,
   toolName: string,
-  args: any
+  args: any,
+  userId?: string | null
 ): Promise<any> {
   console.log(`[AI Agent] Executing tool: ${toolName} for ${agentType}`);
 
@@ -2520,6 +2521,7 @@ async function executeAgentTool(
           notes: args.notes || null,
           status: 'scheduled',
           employee_id: employeeId,
+          customer_user_id: userId || null,
         })
         .select()
         .single();

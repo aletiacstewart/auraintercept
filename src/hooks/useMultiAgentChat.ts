@@ -9,7 +9,7 @@ export interface ChatMessage {
   actions?: Array<{ label: string; action: string }>;
 }
 
-interface UseMultiAgentChatOptions {
+export interface UseMultiAgentChatOptions {
   companyId?: string;
   userId?: string;
   onAgentChange?: (agent: string) => void;

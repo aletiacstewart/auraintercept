@@ -14,6 +14,8 @@ import {
 import { cn } from '@/lib/utils';
 import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
 import { getAgentStyle } from '@/lib/agentStyles';
+import { supabase } from '@/integrations/supabase/client';
+import { EmbedAuthPrompt } from '@/components/widget/EmbedAuthPrompt';
 
 interface CompanyConfig {
   company: {
@@ -60,6 +62,32 @@ export default function PublicChat() {
   const [input, setInput] = useState('');
   const [activeTab, setActiveTab] = useState('chat');
   const scrollRef = useRef<HTMLDivElement>(null);
+  
+  // Customer authentication state
+  const [customerUserId, setCustomerUserId] = useState<string | null>(null);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [authPromptDismissed, setAuthPromptDismissed] = useState(false);
+  
+  // Check for existing session on mount
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setCustomerUserId(session.user.id);
+      }
+    };
+    checkSession();
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setCustomerUserId(session.user.id);
+      } else {
+        setCustomerUserId(null);
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Communicate with parent window in embed mode
   useEffect(() => {
@@ -69,7 +97,7 @@ export default function PublicChat() {
     }
   }, [isEmbedMode, companySlug]);
 
-  // Use multi-agent chat hook
+  // Use multi-agent chat hook - pass userId when authenticated
   const { 
     messages, 
     isLoading: isStreaming, 
@@ -78,10 +106,18 @@ export default function PublicChat() {
     clearMessages 
   } = useMultiAgentChat({
     companyId: config?.company?.id,
+    userId: customerUserId || undefined,
     onAgentChange: (agent) => {
       console.log('[PublicChat] Agent changed to:', agent);
     }
   });
+  
+  // Show auth prompt after first user interaction if not signed in
+  useEffect(() => {
+    if (messages.length >= 2 && !customerUserId && !authPromptDismissed) {
+      setShowAuthPrompt(true);
+    }
+  }, [messages.length, customerUserId, authPromptDismissed]);
 
   const API_BASE = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
@@ -350,6 +386,22 @@ export default function PublicChat() {
               )}
             </div>
           </ScrollArea>
+
+          {/* Auth prompt - shows after first interaction */}
+          {showAuthPrompt && !customerUserId && config?.company?.id && (
+            <EmbedAuthPrompt
+              companyId={config.company.id}
+              primaryColor={primaryColor}
+              onAuthenticated={(userId) => {
+                setCustomerUserId(userId);
+                setShowAuthPrompt(false);
+              }}
+              onDismiss={() => {
+                setShowAuthPrompt(false);
+                setAuthPromptDismissed(true);
+              }}
+            />
+          )}
 
           <form onSubmit={handleSubmit} className="flex gap-2 p-4 border-t">
             <Input

@@ -226,6 +226,7 @@ export type Database = {
           customer_name: string
           customer_phone: string | null
           customer_token: string | null
+          customer_user_id: string | null
           datetime: string
           duration_minutes: number
           email_opt_out: boolean
@@ -250,6 +251,7 @@ export type Database = {
           customer_name: string
           customer_phone?: string | null
           customer_token?: string | null
+          customer_user_id?: string | null
           datetime: string
           duration_minutes?: number
           email_opt_out?: boolean
@@ -274,6 +276,7 @@ export type Database = {
           customer_name?: string
           customer_phone?: string | null
           customer_token?: string | null
+          customer_user_id?: string | null
           datetime?: string
           duration_minutes?: number
           email_opt_out?: boolean
@@ -1930,6 +1933,7 @@ export type Database = {
           customer_email: string | null
           customer_name: string
           customer_phone: string | null
+          customer_user_id: string | null
           due_date: string | null
           id: string
           invoice_number: string | null
@@ -1953,6 +1957,7 @@ export type Database = {
           customer_email?: string | null
           customer_name: string
           customer_phone?: string | null
+          customer_user_id?: string | null
           due_date?: string | null
           id?: string
           invoice_number?: string | null
@@ -1976,6 +1981,7 @@ export type Database = {
           customer_email?: string | null
           customer_name?: string
           customer_phone?: string | null
+          customer_user_id?: string | null
           due_date?: string | null
           id?: string
           invoice_number?: string | null
@@ -2414,6 +2420,7 @@ export type Database = {
           customer_email: string | null
           customer_name: string
           customer_phone: string | null
+          customer_user_id: string | null
           id: string
           notes: string | null
           status: string
@@ -2432,6 +2439,7 @@ export type Database = {
           customer_email?: string | null
           customer_name: string
           customer_phone?: string | null
+          customer_user_id?: string | null
           id?: string
           notes?: string | null
           status?: string
@@ -2450,6 +2458,7 @@ export type Database = {
           customer_email?: string | null
           customer_name?: string
           customer_phone?: string | null
+          customer_user_id?: string | null
           id?: string
           notes?: string | null
           status?: string

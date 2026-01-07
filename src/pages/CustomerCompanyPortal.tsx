@@ -85,23 +85,27 @@ export default function CustomerCompanyPortal() {
     enabled: !!company?.id,
   });
 
-  // Fetch customer's appointments with this company
+  // Fetch customer's appointments with this company - use customer_user_id first, fallback to email
   const { data: appointments } = useQuery({
     queryKey: ['customer-appointments', user?.id, company?.id],
     queryFn: async () => {
       if (!user || !company) return [];
       
-      // Get customer profile for this company
-      const { data: profile } = await supabase
-        .from('customer_profiles')
-        .select('id')
+      // First try to find appointments by customer_user_id (most reliable)
+      const { data: appointmentsByUserId, error: userIdError } = await supabase
+        .from('appointments')
+        .select('id, service_type, datetime, status, customer_address')
         .eq('company_id', company.id)
-        .eq('email', user.email)
-        .single();
+        .eq('customer_user_id', user.id)
+        .order('datetime', { ascending: false })
+        .limit(10);
 
-      if (!profile) return [];
+      if (!userIdError && appointmentsByUserId && appointmentsByUserId.length > 0) {
+        return appointmentsByUserId;
+      }
 
-      const { data, error } = await supabase
+      // Fallback: find appointments by email (for legacy/anonymous bookings)
+      const { data: appointmentsByEmail, error } = await supabase
         .from('appointments')
         .select('id, service_type, datetime, status, customer_address')
         .eq('company_id', company.id)
@@ -110,7 +114,7 @@ export default function CustomerCompanyPortal() {
         .limit(10);
 
       if (error) throw error;
-      return data || [];
+      return appointmentsByEmail || [];
     },
     enabled: !!user && !!company?.id,
   });
