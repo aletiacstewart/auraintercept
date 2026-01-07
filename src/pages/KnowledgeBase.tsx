@@ -7,11 +7,16 @@ import { BusinessHoursManager } from '@/components/knowledge/BusinessHoursManage
 import { DocumentsManager } from '@/components/knowledge/DocumentsManager';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
-import { Briefcase, HelpCircle, Clock, FileText, Package, Shield } from 'lucide-react';
+import { PlatformAnalytics } from '@/components/analytics/PlatformAnalytics';
+import { useAuth } from '@/contexts/AuthContext';
+import { Briefcase, HelpCircle, Clock, FileText, Package, Shield, BarChart3 } from 'lucide-react';
 
 export default function KnowledgeBase() {
   const [searchParams] = useSearchParams();
+  const { userRole } = useAuth();
   const defaultTab = searchParams.get('tab') || 'services';
+  const isPlatformAdmin = userRole === 'platform_admin';
+  
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
@@ -23,7 +28,7 @@ export default function KnowledgeBase() {
         </div>
 
         <Tabs defaultValue={defaultTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7 lg:w-auto lg:inline-grid">
             <TabsTrigger value="services" className="gap-2">
               <Briefcase className="w-4 h-4 hidden sm:block" />
               Services
@@ -48,6 +53,12 @@ export default function KnowledgeBase() {
               <Shield className="w-4 h-4 hidden sm:block" />
               Warranties
             </TabsTrigger>
+            {isPlatformAdmin && (
+              <TabsTrigger value="analytics" className="gap-2">
+                <BarChart3 className="w-4 h-4 hidden sm:block" />
+                Analytics
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="services">
@@ -73,6 +84,12 @@ export default function KnowledgeBase() {
           <TabsContent value="warranties">
             <WarrantiesManager />
           </TabsContent>
+
+          {isPlatformAdmin && (
+            <TabsContent value="analytics">
+              <PlatformAnalytics />
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </DashboardLayout>
