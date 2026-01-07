@@ -6,16 +6,18 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { 
   Bot, Send, User, Loader2, Calendar, Clock, DollarSign, 
   AlertTriangle, Star, MessageSquare, Sparkles, Building2,
-  Phone, X, MapPin
+  Phone, X, MapPin, Mic
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { supabase } from '@/integrations/supabase/client';
 import { EmbedAuthPrompt } from '@/components/widget/EmbedAuthPrompt';
+import { VoiceChat } from '@/components/ai/VoiceChat';
 
 interface CompanyConfig {
   company: {
@@ -67,6 +69,10 @@ export default function PublicChat() {
   const [customerUserId, setCustomerUserId] = useState<string | null>(null);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [authPromptDismissed, setAuthPromptDismissed] = useState(false);
+  
+  // Voice chat dialog state
+  const [showVoiceDialog, setShowVoiceDialog] = useState(false);
+  const [voiceTranscript, setVoiceTranscript] = useState<Array<{ role: 'user' | 'assistant'; text: string }>>([]);
   
   // Check for existing session on mount
   useEffect(() => {
@@ -241,10 +247,20 @@ export default function PublicChat() {
                 </div>
               </div>
             </div>
-            <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
-              <Clock className="h-3 w-3 mr-1" />
-              {getTodayHours()}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full"
+                onClick={() => setShowVoiceDialog(true)}
+              >
+                <Mic className="h-4 w-4" />
+              </Button>
+              <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
+                <Clock className="h-3 w-3 mr-1" />
+                {getTodayHours()}
+              </Badge>
+            </div>
           </div>
         </header>
       )}
@@ -411,6 +427,14 @@ export default function PublicChat() {
               disabled={isStreaming}
               className="flex-1"
             />
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setShowVoiceDialog(true)}
+              className="shrink-0"
+            >
+              <Mic className="h-4 w-4" />
+            </Button>
             <Button type="submit" disabled={isStreaming || !input.trim()}>
               <Send className="h-4 w-4" />
             </Button>
@@ -529,6 +553,52 @@ export default function PublicChat() {
           </ScrollArea>
         </TabsContent>
       </Tabs>
+
+      {/* Voice Chat Dialog */}
+      <Dialog open={showVoiceDialog} onOpenChange={setShowVoiceDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mic className="h-5 w-5" />
+              Voice Assistant
+            </DialogTitle>
+            <DialogDescription>
+              Speak with our AI assistant for {config.company.name}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            {voiceTranscript.length > 0 && (
+              <ScrollArea className="h-32 mb-4 rounded-lg border p-3">
+                <div className="space-y-2">
+                  {voiceTranscript.map((msg, idx) => (
+                    <div 
+                      key={idx}
+                      className={cn(
+                        "text-sm p-2 rounded",
+                        msg.role === 'user' ? 'bg-primary/10 ml-4' : 'bg-muted mr-4'
+                      )}
+                    >
+                      <span className="font-medium text-xs text-muted-foreground">
+                        {msg.role === 'user' ? 'You' : 'Assistant'}:
+                      </span>
+                      <p>{msg.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            )}
+            
+            <VoiceChat
+              companyId={config.company.id}
+              companyName={config.company.name}
+              onTranscript={(role, text) => {
+                setVoiceTranscript(prev => [...prev, { role, text }]);
+              }}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
