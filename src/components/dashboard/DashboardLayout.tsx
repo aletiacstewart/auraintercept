@@ -45,6 +45,7 @@ import {
   BookOpen,
   Mic,
   Mail,
+  Globe,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/ai-bot-company-logo-new.png';
@@ -137,6 +138,17 @@ const navGroups: NavGroup[] = [
       { label: 'Email', icon: Mail, href: '/dashboard/integrations/email', roles: ['platform_admin', 'company_admin'] },
       { label: 'CRM', icon: Users, href: '/dashboard/integrations/crm', roles: ['platform_admin', 'company_admin'] },
       { label: 'Calendar', icon: Calendar, href: '/dashboard/integrations/calendar', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Website Embed', icon: Globe, href: '/dashboard/integrations/embed', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Chat Widget', icon: MessageCircle, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
+    ],
+  },
+  {
+    label: 'Resources',
+    items: [
+      { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Warranties', icon: FileCheck, href: '/dashboard/warranties', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Export Docs', icon: FileText, href: '/dashboard/documentation', roles: ['platform_admin', 'company_admin'] },
     ],
   },
 ];
