@@ -200,7 +200,7 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Main View */}
-        <div className={cn("flex-1 overflow-hidden", showETASidebar && "mr-80")}>
+        <div className="flex-1 overflow-hidden">
           {activeView === 'map' ? (
             <DispatcherMapView jobs={jobs || []} isLoading={isLoading} />
           ) : (
