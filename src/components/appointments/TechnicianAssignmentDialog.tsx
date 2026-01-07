@@ -48,9 +48,9 @@ export function TechnicianAssignmentDialog({
   const [notes, setNotes] = useState('');
   const queryClient = useQueryClient();
 
-  // Fetch technicians with their active job counts
+  // Fetch technicians with their active job counts, filtered by service capability
   const { data: technicians, isLoading: loadingTechnicians } = useQuery({
-    queryKey: ['technicians', appointment.company_id],
+    queryKey: ['technicians', appointment.company_id, appointment.service_type],
     queryFn: async () => {
       // Get employees with technician job type
       const { data: techAssignments, error: techError } = await supabase
@@ -64,11 +64,37 @@ export function TechnicianAssignmentDialog({
 
       const techIds = techAssignments.map(t => t.employee_id);
 
+      // Get the service ID for this service type
+      const { data: serviceData } = await supabase
+        .from('services')
+        .select('id')
+        .eq('company_id', appointment.company_id)
+        .eq('name', appointment.service_type)
+        .single();
+
+      // Get technicians assigned to this specific service (if service assignments exist)
+      let filteredTechIds = techIds;
+      if (serviceData?.id) {
+        const { data: serviceAssignments } = await supabase
+          .from('technician_service_assignments')
+          .select('technician_id')
+          .eq('service_id', serviceData.id)
+          .in('technician_id', techIds);
+
+        // If there are service assignments, only show technicians assigned to this service
+        // If no service assignments exist yet, show all technicians (backward compatibility)
+        if (serviceAssignments && serviceAssignments.length > 0) {
+          filteredTechIds = serviceAssignments.map(sa => sa.technician_id);
+        }
+      }
+
+      if (filteredTechIds.length === 0) return [];
+
       // Get profiles for these technicians
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('id, full_name, email, phone_number, avatar_url')
-        .in('id', techIds);
+        .in('id', filteredTechIds);
 
       if (profilesError) throw profilesError;
 
@@ -77,7 +103,7 @@ export function TechnicianAssignmentDialog({
         .from('job_assignments')
         .select('employee_id')
         .eq('company_id', appointment.company_id)
-        .in('employee_id', techIds)
+        .in('employee_id', filteredTechIds)
         .in('status', ['pending_acceptance', 'accepted', 'en_route', 'arrived', 'in_progress']);
 
       if (jobsError) throw jobsError;

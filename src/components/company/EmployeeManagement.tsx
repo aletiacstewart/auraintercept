@@ -42,8 +42,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Plus, Copy, Users, Mail, Clock, Check, Briefcase, Settings2, Trash2 } from 'lucide-react';
+import { Plus, Copy, Users, Mail, Clock, Check, Briefcase, Settings2, Trash2, Wrench } from 'lucide-react';
 import { format } from 'date-fns';
+import { TechnicianServiceAssignments } from './TechnicianServiceAssignments';
 
 // Job types that correspond to AI agent categories
 const JOB_TYPES = [
@@ -74,6 +75,10 @@ export function EmployeeManagement() {
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
+  const [serviceAssignmentEmployee, setServiceAssignmentEmployee] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   // Fetch employees
   const { data: employees, isLoading: employeesLoading } = useQuery({
@@ -487,6 +492,22 @@ export function EmployeeManagement() {
                             </PopoverContent>
                           </Popover>
                           
+                          {/* Show service assignments button only for technicians */}
+                          {employeeJobs.includes('technician') && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="gap-1"
+                              onClick={() => setServiceAssignmentEmployee({
+                                id: employee.id,
+                                name: employee.full_name || employee.email || 'Unknown',
+                              })}
+                            >
+                              <Wrench className="w-4 h-4" />
+                              Services
+                            </Button>
+                          )}
+                          
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10">
@@ -571,6 +592,16 @@ export function EmployeeManagement() {
             </Table>
           </CardContent>
         </Card>
+      )}
+
+      {/* Technician Service Assignments Dialog */}
+      {serviceAssignmentEmployee && (
+        <TechnicianServiceAssignments
+          open={!!serviceAssignmentEmployee}
+          onOpenChange={(open) => !open && setServiceAssignmentEmployee(null)}
+          employeeId={serviceAssignmentEmployee.id}
+          employeeName={serviceAssignmentEmployee.name}
+        />
       )}
     </div>
   );

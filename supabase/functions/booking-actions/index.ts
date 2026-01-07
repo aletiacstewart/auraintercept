@@ -84,13 +84,49 @@ async function checkAvailability(supabase: any, companyId: string, params: any) 
   const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
   const dayName = dayNames[dayOfWeek];
 
+  // Get technicians assigned to this specific service
+  const { data: serviceAssignments } = await supabase
+    .from('technician_service_assignments')
+    .select('technician_id')
+    .eq('company_id', companyId)
+    .eq('service_id', service.id);
+
+  // Get technicians with the technician job type
+  const { data: techJobAssignments } = await supabase
+    .from('employee_job_assignments')
+    .select('employee_id')
+    .eq('company_id', companyId)
+    .eq('job_type', 'technician');
+
+  const allTechIds = (techJobAssignments || []).map((t: any) => t.employee_id);
+  
+  // Filter to technicians assigned to this service (if any assignments exist)
+  // If no service assignments exist, use all technicians (backward compatibility)
+  let eligibleTechIds = allTechIds;
+  if (serviceAssignments && serviceAssignments.length > 0) {
+    const assignedTechIds = serviceAssignments.map((sa: any) => sa.technician_id);
+    eligibleTechIds = allTechIds.filter((id: string) => assignedTechIds.includes(id));
+  }
+
+  if (eligibleTechIds.length === 0) {
+    return { success: true, available_slots: [], message: 'No technicians available for this service' };
+  }
+
   let employeesQuery = supabase
     .from('profiles')
     .select('id, full_name, availability_json')
-    .eq('company_id', companyId);
+    .eq('company_id', companyId)
+    .in('id', eligibleTechIds);
 
   if (employee_id) {
-    employeesQuery = employeesQuery.eq('id', employee_id);
+    // Only use specified employee if they're eligible for this service
+    if (!eligibleTechIds.includes(employee_id)) {
+      return { success: false, error: 'Selected technician cannot perform this service', available_slots: [] };
+    }
+    employeesQuery = supabase
+      .from('profiles')
+      .select('id, full_name, availability_json')
+      .eq('id', employee_id);
   }
 
   const { data: employees } = await employeesQuery;

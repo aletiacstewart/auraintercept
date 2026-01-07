@@ -2769,6 +2769,62 @@ export type Database = {
           },
         ]
       }
+      technician_service_assignments: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          company_id: string
+          id: string
+          service_id: string
+          technician_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          company_id: string
+          id?: string
+          service_id: string
+          technician_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          company_id?: string
+          id?: string
+          service_id?: string
+          technician_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "technician_service_assignments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "technician_service_assignments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "technician_service_assignments_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "technician_service_assignments_technician_id_fkey"
+            columns: ["technician_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_integrations: {
         Row: {
           company_id: string
