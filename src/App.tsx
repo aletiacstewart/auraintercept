@@ -62,6 +62,7 @@ import {
 } from "./pages/technician";
 
 import IntegrationDocs from "./pages/IntegrationDocs";
+import PlatformGuides from "./pages/PlatformGuides";
 
 const queryClient = new QueryClient();
 
@@ -115,6 +116,7 @@ const App = () => (
             <Route path="/dashboard/field-operations" element={<FieldOperations />} />
             <Route path="/dashboard/business-operations" element={<BusinessOperations />} />
             <Route path="/dashboard/integrations/embed" element={<IntegrationDocs />} />
+            <Route path="/dashboard/guides" element={<PlatformGuides />} />
             
             {/* Customer Portal Routes */}
             <Route path="/customer" element={<CustomerPortalHome />} />
