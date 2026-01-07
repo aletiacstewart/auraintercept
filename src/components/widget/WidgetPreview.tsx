@@ -17,6 +17,10 @@ export const WidgetPreview = () => {
   const [companySlug, setCompanySlug] = useState<string>('');
   const [copied, setCopied] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewMessage, setPreviewMessage] = useState('');
+  const [previewMessages, setPreviewMessages] = useState<{role: 'user' | 'assistant', content: string}[]>([
+    { role: 'assistant', content: 'Hi! How can we help you today?' }
+  ]);
 
   useEffect(() => {
     const fetchCompany = async () => {
@@ -161,15 +165,45 @@ export const WidgetPreview = () => {
                     ×
                   </Button>
                 </div>
-                <div className="flex-1 p-4 flex items-center justify-center text-muted-foreground text-sm">
-                  Hi! How can we help you today?
+                <div className="flex-1 p-4 overflow-y-auto space-y-3">
+                  {previewMessages.map((msg, idx) => (
+                    <div key={idx} className={`text-sm ${msg.role === 'user' ? 'text-right' : ''}`}>
+                      <span className={`inline-block px-3 py-2 rounded-lg max-w-[85%] ${
+                        msg.role === 'user' 
+                          ? 'bg-primary text-primary-foreground' 
+                          : 'bg-muted text-foreground'
+                      }`}>
+                        {msg.content}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-                <div className="p-4 border-t flex gap-2">
-                  <Input placeholder="Type a message..." className="flex-1" disabled />
-                  <Button size="icon" disabled>
+                <form 
+                  className="p-4 border-t flex gap-2"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!previewMessage.trim()) return;
+                    setPreviewMessages(prev => [...prev, { role: 'user', content: previewMessage }]);
+                    setPreviewMessage('');
+                    // Simulate AI response
+                    setTimeout(() => {
+                      setPreviewMessages(prev => [...prev, { 
+                        role: 'assistant', 
+                        content: 'This is a preview. Deploy the widget to your website for full AI functionality!' 
+                      }]);
+                    }, 500);
+                  }}
+                >
+                  <Input 
+                    placeholder="Type a message..." 
+                    className="flex-1" 
+                    value={previewMessage}
+                    onChange={(e) => setPreviewMessage(e.target.value)}
+                  />
+                  <Button size="icon" type="submit">
                     <ExternalLink className="h-4 w-4" />
                   </Button>
-                </div>
+                </form>
               </div>
             )}
 
