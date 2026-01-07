@@ -953,9 +953,9 @@ const PlatformGuides: React.FC = () => {
         </div>
 
         {/* Main Content */}
-        <div className="grid lg:grid-cols-4 gap-6">
+        <div className="grid lg:grid-cols-12 gap-6">
           {/* Category Sidebar */}
-          <Card className="lg:col-span-1">
+          <Card className="lg:col-span-4 xl:col-span-3">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Guide Categories</CardTitle>
             </CardHeader>
@@ -975,11 +975,11 @@ const PlatformGuides: React.FC = () => {
                             : 'hover:bg-muted'
                         }`}
                       >
-                        <div className={`p-2 rounded-lg ${isSelected ? 'bg-primary-foreground/20' : `bg-gradient-to-br ${category.color} bg-opacity-10`}`}>
+                        <div className={`p-2 rounded-lg shrink-0 ${isSelected ? 'bg-primary-foreground/20' : `bg-gradient-to-br ${category.color}`}`}>
                           <Icon className={`h-4 w-4 ${isSelected ? 'text-primary-foreground' : 'text-white'}`} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`font-medium truncate ${isSelected ? '' : 'text-foreground'}`}>
+                          <p className={`font-medium text-sm ${isSelected ? '' : 'text-foreground'}`}>
                             {category.title}
                           </p>
                           <p className={`text-xs ${isSelected ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
@@ -995,7 +995,7 @@ const PlatformGuides: React.FC = () => {
           </Card>
 
           {/* Guides Content */}
-          <Card className="lg:col-span-3">
+          <Card className="lg:col-span-8 xl:col-span-9">
             <CardHeader>
               <div className="flex items-center gap-3">
                 {currentCategory && (
