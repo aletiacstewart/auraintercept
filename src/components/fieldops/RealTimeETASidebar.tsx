@@ -82,16 +82,16 @@ export function RealTimeETASidebar({ jobs, companyId }: RealTimeETASidebarProps)
   };
 
   return (
-    <div className="fixed right-0 top-0 bottom-0 w-80 bg-primary border-l border-border/30 flex flex-col z-10">
+    <div className="fixed right-0 top-0 bottom-0 w-80 bg-card border-l border-border flex flex-col z-10">
       {/* Header */}
-      <div className="p-4 border-b border-border/30">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-accent/20">
             <Clock className="h-5 w-5 text-accent" />
           </div>
           <div>
-            <h2 className="font-semibold text-primary-foreground">Real-Time ETAs</h2>
-            <p className="text-xs text-primary-foreground/60">Customer notifications</p>
+            <h2 className="font-semibold text-foreground">Real-Time ETAs</h2>
+            <p className="text-xs text-muted-foreground">Customer notifications</p>
           </div>
         </div>
 
@@ -100,12 +100,12 @@ export function RealTimeETASidebar({ jobs, companyId }: RealTimeETASidebarProps)
           <div className="flex items-center gap-2 text-sm">
             <Bell className="h-4 w-4 text-green-400" />
             <span className="text-green-400 font-medium">{notifiedCount}</span>
-            <span className="text-primary-foreground/60">notified</span>
+            <span className="text-muted-foreground">notified</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <BellOff className="h-4 w-4 text-yellow-400" />
             <span className="text-yellow-400 font-medium">{pendingNotifications.length}</span>
-            <span className="text-primary-foreground/60">pending</span>
+            <span className="text-muted-foreground">pending</span>
           </div>
         </div>
       </div>
@@ -115,9 +115,9 @@ export function RealTimeETASidebar({ jobs, companyId }: RealTimeETASidebarProps)
         <div className="p-4 space-y-3">
           {relevantJobs.length === 0 ? (
             <div className="text-center py-8">
-              <Navigation className="h-10 w-10 mx-auto text-primary-foreground/20 mb-3" />
-              <p className="text-sm text-primary-foreground/50">No technicians en route</p>
-              <p className="text-xs text-primary-foreground/30 mt-1">
+              <Navigation className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
+              <p className="text-sm text-muted-foreground">No technicians en route</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">
                 ETAs will appear here when technicians are dispatched
               </p>
             </div>
@@ -135,9 +135,9 @@ export function RealTimeETASidebar({ jobs, companyId }: RealTimeETASidebarProps)
 
       {/* Footer */}
       {pendingNotifications.length > 0 && (
-        <div className="p-4 border-t border-border/30">
+        <div className="p-4 border-t border-border">
           <Button 
-            className="w-full bg-accent hover:bg-accent/90 text-primary"
+            className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
             onClick={() => {
               pendingNotifications.forEach(job => {
                 const type = job.status === 'en_route' ? 'en_route' : 'arrived';
@@ -177,7 +177,7 @@ function ETAJobCard({
   const statusTime = isEnRoute ? job.en_route_at : job.arrived_at;
 
   return (
-    <Card className="bg-primary-foreground/5 border-border/30">
+    <Card className="bg-muted/50 border-border">
       <CardContent className="p-3">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
@@ -186,10 +186,10 @@ function ETAJobCard({
               <StatusIcon className={cn("h-4 w-4", statusColor)} />
             </div>
             <div>
-              <p className="font-medium text-sm text-primary-foreground">
+              <p className="font-medium text-sm text-foreground">
                 {job.appointments?.customer_name || 'Customer'}
               </p>
-              <p className="text-xs text-primary-foreground/60">
+              <p className="text-xs text-muted-foreground">
                 {job.appointments?.service_type}
               </p>
             </div>
@@ -210,7 +210,7 @@ function ETAJobCard({
         </div>
 
         {/* Tech Info */}
-        <div className="flex items-center gap-2 text-xs text-primary-foreground/70 mb-2">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
           <User className="h-3 w-3" />
           <span>{job.employee?.full_name || 'Technician'}</span>
         </div>
@@ -225,7 +225,7 @@ function ETAJobCard({
               </div>
             )}
             {statusTime && (
-              <span className="text-xs text-primary-foreground/50">
+              <span className="text-xs text-muted-foreground">
                 {formatDistanceToNow(new Date(statusTime), { addSuffix: true })}
               </span>
             )}

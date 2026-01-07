@@ -228,7 +228,7 @@ export function DispatcherMapView({ jobs, isLoading, onJobSelect }: DispatcherMa
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center bg-primary">
+      <div className="h-full flex items-center justify-center bg-background">
         <RefreshCw className="h-8 w-8 animate-spin text-accent" />
       </div>
     );
@@ -241,9 +241,9 @@ export function DispatcherMapView({ jobs, isLoading, onJobSelect }: DispatcherMa
 
       {/* Legend */}
       <div className="absolute bottom-4 left-4 z-[1000]">
-        <Card className="bg-primary/90 border-border/30 backdrop-blur-sm">
+        <Card className="bg-card/90 border-border backdrop-blur-sm">
           <CardContent className="p-3">
-            <div className="text-xs font-medium text-primary-foreground/70 mb-2">Status Legend</div>
+            <div className="text-xs font-medium text-muted-foreground mb-2">Status Legend</div>
             <div className="flex flex-wrap gap-3">
               {Object.entries(STATUS_CONFIG).map(([status, config]) => (
                 <div key={status} className="flex items-center gap-1.5">
@@ -251,7 +251,7 @@ export function DispatcherMapView({ jobs, isLoading, onJobSelect }: DispatcherMa
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: STATUS_COLORS[status] }}
                   />
-                  <span className="text-xs text-primary-foreground/80">{config.label}</span>
+                  <span className="text-xs text-foreground">{config.label}</span>
                 </div>
               ))}
             </div>
@@ -261,7 +261,7 @@ export function DispatcherMapView({ jobs, isLoading, onJobSelect }: DispatcherMa
 
       {/* Job Count */}
       <div className="absolute top-4 left-4 z-[1000]">
-        <Badge className="bg-primary/90 text-accent border-accent/50 backdrop-blur-sm">
+        <Badge className="bg-card/90 text-accent border-accent/50 backdrop-blur-sm">
           <MapPin className="h-3 w-3 mr-1" />
           {jobsWithCoords.length} jobs on map
         </Badge>

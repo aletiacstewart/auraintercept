@@ -131,16 +131,16 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-primary text-primary-foreground">
+    <div className="h-full flex flex-col bg-background text-foreground">
       {/* Header */}
-      <div className="p-4 border-b border-border/30 bg-primary/95">
+      <div className="p-4 border-b border-border bg-card">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-3">
               <Truck className="h-6 w-6 text-accent" />
               Field Operations Console
             </h1>
-            <p className="text-primary-foreground/70 text-sm mt-1">
+            <p className="text-muted-foreground text-sm mt-1">
               Real-time dispatcher view • Aura Intercept
             </p>
           </div>
@@ -167,17 +167,17 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
         {/* View Tabs */}
         <div className="flex items-center justify-between mt-4">
           <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'map' | 'agenda')}>
-            <TabsList className="bg-primary-foreground/10">
+            <TabsList className="bg-muted">
               <TabsTrigger 
                 value="map" 
-                className="data-[state=active]:bg-accent data-[state=active]:text-primary"
+                className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
               >
                 <Map className="h-4 w-4 mr-2" />
                 Map View
               </TabsTrigger>
               <TabsTrigger 
                 value="agenda"
-                className="data-[state=active]:bg-accent data-[state=active]:text-primary"
+                className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
               >
                 <List className="h-4 w-4 mr-2" />
                 Agenda View
@@ -229,7 +229,7 @@ function StatBadge({
   variant?: 'default' | 'accent' | 'success';
 }) {
   const variants = {
-    default: 'bg-primary-foreground/10 text-primary-foreground',
+    default: 'bg-muted text-foreground',
     accent: 'bg-accent/20 text-accent',
     success: 'bg-green-500/20 text-green-400',
   };
@@ -252,7 +252,7 @@ interface AgendaViewProps {
 function AgendaView({ jobs, isLoading, jobsByStatus }: AgendaViewProps) {
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center bg-primary">
+      <div className="h-full flex items-center justify-center bg-background">
         <RefreshCw className="h-8 w-8 animate-spin text-accent" />
       </div>
     );
@@ -261,7 +261,7 @@ function AgendaView({ jobs, isLoading, jobsByStatus }: AgendaViewProps) {
   const statusOrder = ['in_progress', 'arrived', 'en_route', 'accepted', 'pending_acceptance'];
 
   return (
-    <ScrollArea className="h-full p-4 bg-primary">
+    <ScrollArea className="h-full p-4 bg-background">
       <div className="space-y-6">
         {statusOrder.map((status) => {
           const statusJobs = jobsByStatus[status];
@@ -293,8 +293,8 @@ function AgendaView({ jobs, isLoading, jobsByStatus }: AgendaViewProps) {
 
         {jobs.length === 0 && (
           <div className="text-center py-12">
-            <Wrench className="h-12 w-12 mx-auto text-primary-foreground/30 mb-4" />
-            <p className="text-primary-foreground/50">No active jobs</p>
+            <Wrench className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
+            <p className="text-muted-foreground">No active jobs</p>
           </div>
         )}
       </div>
@@ -307,7 +307,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
   const Icon = config.icon;
 
   return (
-    <Card className="bg-primary-foreground/5 border-border/30 hover:bg-primary-foreground/10 transition-colors">
+    <Card className="bg-card border-border hover:bg-muted/50 transition-colors">
       <CardContent className="p-4">
         <div className="flex items-start gap-4">
           {/* Status Icon */}
@@ -329,7 +329,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
               </Badge>
             </div>
 
-            <div className="flex items-center gap-4 text-sm text-primary-foreground/70">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <User className="h-3.5 w-3.5" />
                 {job.appointments?.customer_name || 'Customer'}
@@ -346,7 +346,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
             </div>
 
             {job.customer_address && (
-              <div className="flex items-center gap-1.5 mt-2 text-sm text-primary-foreground/60">
+              <div className="flex items-center gap-1.5 mt-2 text-sm text-muted-foreground">
                 <MapPin className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">{job.customer_address}</span>
               </div>
@@ -376,7 +376,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
                 ? format(new Date(job.appointments.datetime), 'h:mm a') 
                 : '-'}
             </div>
-            <div className="text-xs text-primary-foreground/50 mt-1">
+            <div className="text-xs text-muted-foreground mt-1">
               {formatDistanceToNow(new Date(job.assigned_at), { addSuffix: true })}
             </div>
 
@@ -395,7 +395,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 text-primary-foreground/70 hover:bg-primary-foreground/10"
+                  className="h-8 w-8 p-0 text-muted-foreground hover:bg-muted"
                   onClick={() => window.open(`tel:${job.employee?.phone_number}`)}
                 >
                   <Users className="h-4 w-4" />
