@@ -24,7 +24,10 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
   }
 
   if (!user) {
-    return <Navigate to="/auth" state={{ from: location }} replace />;
+    // Redirect technician routes to employee auth mode
+    const isTechnicianRoute = location.pathname.startsWith('/technician');
+    const authPath = isTechnicianRoute ? '/auth?mode=employee' : '/auth';
+    return <Navigate to={authPath} state={{ from: location }} replace />;
   }
 
   if (requiredRole && userRole !== requiredRole) {
