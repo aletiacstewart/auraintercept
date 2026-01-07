@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink, Info, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Info, CheckCircle, Building2, Cloud, Zap, Target, Link2 } from 'lucide-react';
 
 export function CRMSetupGuides() {
   return (
@@ -22,24 +22,23 @@ export function CRMSetupGuides() {
       </Alert>
 
       {/* HubSpot Setup Guide */}
-      <Card>
+      <Card className="border-orange-500/20 bg-orange-500/5">
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-orange-500 flex items-center justify-center text-xl">
-              🟠
-            </div>
-            <div>
-              <CardTitle className="text-lg">HubSpot Setup Guide</CardTitle>
-              <CardDescription>Marketing, sales, and service platform</CardDescription>
-            </div>
+          <div className="flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-orange-500" />
+            <CardTitle className="text-lg">HubSpot Setup Guide</CardTitle>
+            <Badge variant="secondary">CRM</Badge>
           </div>
+          <CardDescription>
+            Marketing, sales, and service platform. Connect to sync contacts, deals, and activities.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="step-1">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">1</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-orange-500 text-white border-orange-500">1</Badge>
                   Create a Private App in HubSpot
                 </span>
               </AccordionTrigger>
@@ -64,26 +63,26 @@ export function CRMSetupGuides() {
             <AccordionItem value="step-2">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">2</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-orange-500 text-white border-orange-500">2</Badge>
                   Configure Scopes
                 </span>
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground space-y-3">
                 <p>Under the <strong>Scopes</strong> tab, enable the following permissions:</p>
-                <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li><code className="bg-muted px-1 rounded">crm.objects.contacts.read</code></li>
-                  <li><code className="bg-muted px-1 rounded">crm.objects.contacts.write</code></li>
-                  <li><code className="bg-muted px-1 rounded">crm.objects.deals.read</code></li>
-                  <li><code className="bg-muted px-1 rounded">crm.objects.deals.write</code></li>
-                  <li><code className="bg-muted px-1 rounded">crm.objects.companies.read</code></li>
-                </ul>
+                <div className="bg-muted p-3 rounded-lg space-y-1">
+                  <code className="text-xs block">crm.objects.contacts.read</code>
+                  <code className="text-xs block">crm.objects.contacts.write</code>
+                  <code className="text-xs block">crm.objects.deals.read</code>
+                  <code className="text-xs block">crm.objects.deals.write</code>
+                  <code className="text-xs block">crm.objects.companies.read</code>
+                </div>
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="step-3">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">3</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-orange-500 text-white border-orange-500">3</Badge>
                   Copy Your Access Token
                 </span>
               </AccordionTrigger>
@@ -94,7 +93,7 @@ export function CRMSetupGuides() {
                   <li>Use the "Connect" button above to enter your token</li>
                 </ol>
                 <div className="flex items-center gap-2 text-green-600">
-                  <CheckCircle2 className="w-4 h-4" />
+                  <CheckCircle className="w-4 h-4" />
                   <span className="text-xs">Token is stored securely and encrypted</span>
                 </div>
               </AccordionContent>
@@ -104,24 +103,23 @@ export function CRMSetupGuides() {
       </Card>
 
       {/* Salesforce Setup Guide */}
-      <Card>
+      <Card className="border-blue-500/20 bg-blue-500/5">
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center text-xl">
-              ☁️
-            </div>
-            <div>
-              <CardTitle className="text-lg">Salesforce Setup Guide</CardTitle>
-              <CardDescription>Enterprise CRM platform</CardDescription>
-            </div>
+          <div className="flex items-center gap-2">
+            <Cloud className="w-5 h-5 text-blue-500" />
+            <CardTitle className="text-lg">Salesforce Setup Guide</CardTitle>
+            <Badge variant="secondary">CRM</Badge>
           </div>
+          <CardDescription>
+            Enterprise CRM platform. Connect to sync leads, opportunities, and customer data.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="step-1">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">1</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-blue-500 text-white border-blue-500">1</Badge>
                   Find Your Instance URL
                 </span>
               </AccordionTrigger>
@@ -145,7 +143,7 @@ export function CRMSetupGuides() {
             <AccordionItem value="step-2">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">2</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-blue-500 text-white border-blue-500">2</Badge>
                   Create a Connected App
                 </span>
               </AccordionTrigger>
@@ -163,7 +161,7 @@ export function CRMSetupGuides() {
             <AccordionItem value="step-3">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">3</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-blue-500 text-white border-blue-500">3</Badge>
                   Get Your Security Token
                 </span>
               </AccordionTrigger>
@@ -174,7 +172,7 @@ export function CRMSetupGuides() {
                   <li>Combine your password + token as the Access Token</li>
                 </ol>
                 <div className="flex items-center gap-2 text-green-600">
-                  <CheckCircle2 className="w-4 h-4" />
+                  <CheckCircle className="w-4 h-4" />
                   <span className="text-xs">Credentials are stored securely and encrypted</span>
                 </div>
               </AccordionContent>
@@ -184,24 +182,23 @@ export function CRMSetupGuides() {
       </Card>
 
       {/* Zoho CRM Setup Guide */}
-      <Card>
+      <Card className="border-red-500/20 bg-red-500/5">
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-red-500 flex items-center justify-center text-xl">
-              🔴
-            </div>
-            <div>
-              <CardTitle className="text-lg">Zoho CRM Setup Guide</CardTitle>
-              <CardDescription>Cloud-based CRM solution</CardDescription>
-            </div>
+          <div className="flex items-center gap-2">
+            <Zap className="w-5 h-5 text-red-500" />
+            <CardTitle className="text-lg">Zoho CRM Setup Guide</CardTitle>
+            <Badge variant="secondary">CRM</Badge>
           </div>
+          <CardDescription>
+            Cloud-based CRM solution. Connect to sync contacts, leads, and deal pipelines.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="step-1">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">1</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-red-500 text-white border-red-500">1</Badge>
                   Access Zoho API Console
                 </span>
               </AccordionTrigger>
@@ -225,7 +222,7 @@ export function CRMSetupGuides() {
             <AccordionItem value="step-2">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">2</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-red-500 text-white border-red-500">2</Badge>
                   Generate Access Token
                 </span>
               </AccordionTrigger>
@@ -242,7 +239,7 @@ export function CRMSetupGuides() {
             <AccordionItem value="step-3">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">3</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-red-500 text-white border-red-500">3</Badge>
                   Connect to Platform
                 </span>
               </AccordionTrigger>
@@ -253,7 +250,7 @@ export function CRMSetupGuides() {
                   <li>Paste your API credentials</li>
                 </ol>
                 <div className="flex items-center gap-2 text-green-600">
-                  <CheckCircle2 className="w-4 h-4" />
+                  <CheckCircle className="w-4 h-4" />
                   <span className="text-xs">Credentials are stored securely and encrypted</span>
                 </div>
               </AccordionContent>
@@ -263,24 +260,23 @@ export function CRMSetupGuides() {
       </Card>
 
       {/* Pipedrive Setup Guide */}
-      <Card>
+      <Card className="border-green-500/20 bg-green-500/5">
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center text-xl">
-              🟢
-            </div>
-            <div>
-              <CardTitle className="text-lg">Pipedrive Setup Guide</CardTitle>
-              <CardDescription>Sales-focused CRM</CardDescription>
-            </div>
+          <div className="flex items-center gap-2">
+            <Target className="w-5 h-5 text-green-500" />
+            <CardTitle className="text-lg">Pipedrive Setup Guide</CardTitle>
+            <Badge variant="secondary">CRM</Badge>
           </div>
+          <CardDescription>
+            Sales-focused CRM. Connect to sync deals, contacts, and sales activities.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="step-1">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">1</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-green-500 text-white border-green-500">1</Badge>
                   Find Your API Token
                 </span>
               </AccordionTrigger>
@@ -304,7 +300,7 @@ export function CRMSetupGuides() {
             <AccordionItem value="step-2">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">2</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-green-500 text-white border-green-500">2</Badge>
                   Copy Your Personal API Token
                 </span>
               </AccordionTrigger>
@@ -314,14 +310,18 @@ export function CRMSetupGuides() {
                   <li>Click <strong>"Show"</strong> to reveal the token</li>
                   <li>Copy the token</li>
                 </ol>
-                <p className="text-xs text-amber-600">Note: Keep this token private. Anyone with it can access your Pipedrive data.</p>
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                  <p className="text-amber-600 dark:text-amber-400 text-xs">
+                    <strong>💡 Security:</strong> Keep this token private. Anyone with it can access your Pipedrive data.
+                  </p>
+                </div>
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="step-3">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">3</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-green-500 text-white border-green-500">3</Badge>
                   Connect to Platform
                 </span>
               </AccordionTrigger>
@@ -332,7 +332,7 @@ export function CRMSetupGuides() {
                   <li>Select which data to sync (contacts, deals, activities)</li>
                 </ol>
                 <div className="flex items-center gap-2 text-green-600">
-                  <CheckCircle2 className="w-4 h-4" />
+                  <CheckCircle className="w-4 h-4" />
                   <span className="text-xs">Token is stored securely and encrypted</span>
                 </div>
               </AccordionContent>
@@ -342,24 +342,23 @@ export function CRMSetupGuides() {
       </Card>
 
       {/* Custom Webhook Setup Guide */}
-      <Card>
+      <Card className="border-purple-500/20 bg-purple-500/5">
         <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-purple-500 flex items-center justify-center text-xl">
-              🔗
-            </div>
-            <div>
-              <CardTitle className="text-lg">Custom Webhook Setup Guide</CardTitle>
-              <CardDescription>Send data to your own endpoint</CardDescription>
-            </div>
+          <div className="flex items-center gap-2">
+            <Link2 className="w-5 h-5 text-purple-500" />
+            <CardTitle className="text-lg">Custom Webhook Setup Guide</CardTitle>
+            <Badge variant="secondary">Integration</Badge>
           </div>
+          <CardDescription>
+            Send data to your own endpoint. Perfect for custom integrations and automation.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="step-1">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">1</Badge>
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-purple-500 text-white border-purple-500">1</Badge>
                   Prepare Your Webhook Endpoint
                 </span>
               </AccordionTrigger>
@@ -369,7 +368,6 @@ export function CRMSetupGuides() {
                   <li>Accept <code className="bg-muted px-1 rounded">POST</code> requests</li>
                   <li>Parse JSON request bodies</li>
                   <li>Return a 2xx status code on success</li>
-                  <li>Be accessible from the internet (HTTPS preferred)</li>
                 </ul>
               </AccordionContent>
             </AccordionItem>
@@ -377,43 +375,45 @@ export function CRMSetupGuides() {
             <AccordionItem value="step-2">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">2</Badge>
-                  Webhook Payload Format
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-purple-500 text-white border-purple-500">2</Badge>
+                  Expected Payload Format
                 </span>
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground space-y-3">
-                <p>Events will be sent with this structure:</p>
-                <pre className="bg-muted p-3 rounded text-xs overflow-x-auto">
-{`{
-  "event": "contact.created | contact.updated | deal.created",
-  "timestamp": "2024-01-15T10:30:00Z",
+                <p>Your endpoint will receive JSON payloads with this structure:</p>
+                <div className="bg-muted p-3 rounded-lg">
+                  <pre className="text-xs overflow-x-auto">{`{
+  "event": "customer.created",
   "data": {
     "id": "...",
     "name": "...",
     "email": "...",
-    // ... other fields
-  }
-}`}
-                </pre>
+    "phone": "..."
+  },
+  "timestamp": "2024-..."
+}`}</pre>
+                </div>
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="step-3">
               <AccordionTrigger className="text-sm">
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">3</Badge>
-                  Configure Webhook (Optional: Add Secret)
+                  <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs bg-purple-500 text-white border-purple-500">3</Badge>
+                  Connect Your Endpoint
                 </span>
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground space-y-3">
                 <ol className="list-decimal list-inside space-y-2">
                   <li>Click the "Connect" button above</li>
                   <li>Enter your webhook URL</li>
-                  <li>Optionally add a secret for request verification</li>
+                  <li>Optional: Add an authentication header</li>
+                  <li>Select which events to send</li>
                 </ol>
-                <p className="text-xs text-muted-foreground">
-                  If a secret is provided, requests will include an <code className="bg-muted px-1 rounded">X-Webhook-Signature</code> header with an HMAC-SHA256 signature.
-                </p>
+                <div className="flex items-center gap-2 text-green-600">
+                  <CheckCircle className="w-4 h-4" />
+                  <span className="text-xs">We'll verify your endpoint is reachable before saving</span>
+                </div>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
