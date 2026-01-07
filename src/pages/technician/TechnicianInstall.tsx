@@ -20,7 +20,7 @@ const TechnicianInstall = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [platform, setPlatform] = useState<'ios' | 'android' | 'desktop'>('desktop');
 
-  const installUrl = `${window.location.origin}/technician`;
+  const installUrl = `${window.location.origin}/auth?mode=employee`;
 
   useEffect(() => {
     // Detect platform

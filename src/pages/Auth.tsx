@@ -24,7 +24,8 @@ export default function Auth() {
   const [searchParams] = useSearchParams();
   const mode = (searchParams.get('mode') as AuthMode) || 'company';
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
+  // Default to login for employee mode (existing accounts), signup for new companies
+  const [activeTab, setActiveTab] = useState<'login' | 'signup'>(mode === 'employee' ? 'login' : 'signup');
   const navigate = useNavigate();
   const { toast } = useToast();
 
