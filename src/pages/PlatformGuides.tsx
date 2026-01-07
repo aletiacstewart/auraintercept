@@ -68,6 +68,19 @@ const guideCategories = [
         tips: ['Use the Onboarding Wizard for guided setup', 'Test all configurations before going live']
       },
       {
+        title: 'Onboarding Wizard',
+        duration: '10 min',
+        steps: [
+          'Access the Onboarding Wizard from Dashboard',
+          'Follow the guided checklist of required setup steps',
+          'Complete each section: Profile, Hours, Services, Employees',
+          'Track your progress with the completion indicator',
+          'Required items are marked with priority badges',
+          'Finish all required items before going live'
+        ],
+        tips: ['Complete required items first, then recommended ones', 'The wizard tracks progress automatically']
+      },
+      {
         title: 'User Roles & Permissions',
         duration: '8 min',
         steps: [
@@ -79,6 +92,19 @@ const guideCategories = [
           'Configure job types for specialized access'
         ],
         tips: ['Follow principle of least privilege', 'Regularly audit user access permissions']
+      },
+      {
+        title: 'Customer Portal Setup',
+        duration: '8 min',
+        steps: [
+          'Customers access the portal at /customer-portal',
+          'They can view appointments across multiple companies',
+          'Each company\'s data remains completely separate',
+          'Customers can request quotes and track services',
+          'Portal shows appointment history and invoices',
+          'Enable widget authentication for linked accounts'
+        ],
+        tips: ['Promote the customer portal for self-service', 'Customers can manage preferences per company']
       }
     ]
   },
@@ -115,6 +141,19 @@ const guideCategories = [
         tips: ['Configure agents during low-traffic periods', 'Document custom configurations for reference']
       },
       {
+        title: 'Agent Test Console',
+        duration: '8 min',
+        steps: [
+          'Access the Agent Test Console from AI Agents Hub',
+          'Select an agent to test from the dropdown',
+          'Choose a predefined test scenario or create custom',
+          'Send test messages and observe agent responses',
+          'Review handoff indicators showing agent transitions',
+          'Verify agent behavior before enabling for customers'
+        ],
+        tips: ['Test each agent with realistic scenarios', 'Check handoff logic between related agents']
+      },
+      {
         title: 'AI Receptionist (Triage Agent)',
         duration: '8 min',
         steps: [
@@ -139,6 +178,19 @@ const guideCategories = [
           'Test booking flow end-to-end'
         ],
         tips: ['Sync with external calendars for accurate availability', 'Set buffer times between appointments']
+      },
+      {
+        title: 'Customer Engagement Agents',
+        duration: '12 min',
+        steps: [
+          'Enable Voice, SMS, and Email agents for multi-channel support',
+          'Configure Voice Agent for phone interactions',
+          'Set up SMS Agent for text-based conversations',
+          'Enable Email Agent for email inquiries',
+          'Configure channel preferences per customer',
+          'Test each channel with sample interactions'
+        ],
+        tips: ['Customers can opt out of specific channels', 'Use consistent messaging across all channels']
       },
       {
         title: 'Field Operations Agents',
@@ -213,6 +265,34 @@ const guideCategories = [
           'Test with a phone call to your Twilio number'
         ],
         tips: ['Use a local number for better answer rates', 'Configure voicemail fallback for missed calls']
+      },
+      {
+        title: 'ElevenLabs Voice Setup',
+        duration: '15 min',
+        steps: [
+          'Navigate to Integrations → Voice Agent → TTS Settings',
+          'Create an ElevenLabs account at elevenlabs.io',
+          'Generate an API key from your ElevenLabs dashboard',
+          'Enter the API key in Voice Integration settings',
+          'Select a voice from the available options',
+          'Adjust voice settings (stability, clarity)',
+          'Test voice output with sample text'
+        ],
+        tips: ['Choose a voice that matches your brand personality', 'Higher stability = more consistent voice']
+      },
+      {
+        title: 'Voice Cloning',
+        duration: '10 min',
+        steps: [
+          'Navigate to Voice Agent → Voice Cloning',
+          'Record or upload a voice sample (30+ seconds)',
+          'Ensure clear audio without background noise',
+          'Submit for voice clone processing',
+          'Wait for clone to be ready (usually minutes)',
+          'Select your cloned voice in TTS settings',
+          'Test the cloned voice with your greeting'
+        ],
+        tips: ['Use high-quality audio for best results', 'Record in a quiet environment']
       },
       {
         title: 'SMS Integration (Twilio)',
@@ -306,6 +386,20 @@ const guideCategories = [
         tips: ['Use color coding for appointment status', 'Set up automatic reminders 24h and 1h before']
       },
       {
+        title: 'Field Operations Console',
+        duration: '15 min',
+        steps: [
+          'Navigate to Field Operations from the sidebar',
+          'Use Map View to see technician locations in real-time',
+          'Switch to Agenda View for schedule overview',
+          'Monitor Real-Time ETAs in the sidebar panel',
+          'Drag and drop to reassign jobs on the map',
+          'Track job status updates as they happen',
+          'Use filters to focus on specific technicians or areas'
+        ],
+        tips: ['Map View is ideal for dispatch decisions', 'Agenda View works better for daily planning']
+      },
+      {
         title: 'Technician Management',
         duration: '12 min',
         steps: [
@@ -334,6 +428,20 @@ const guideCategories = [
         tips: ['The app works offline for basic features', 'Enable location services for accurate ETAs']
       },
       {
+        title: 'Technician Check-In Process',
+        duration: '8 min',
+        steps: [
+          'Technician taps large Check-In button on job',
+          'Select status: En Route, On Site, or Completed',
+          'Upload before photos when arriving on site',
+          'Use Get Directions for navigation to customer',
+          'Upload after photos when job is complete',
+          'Add notes about work performed',
+          'Customer receives automatic status notifications'
+        ],
+        tips: ['Photos document work for warranty purposes', 'GPS location is captured with each check-in']
+      },
+      {
         title: 'Dispatch & Routing',
         duration: '15 min',
         steps: [
@@ -356,6 +464,20 @@ const guideCategories = [
     color: 'from-indigo-500 to-violet-500',
     guides: [
       {
+        title: 'Business & Accounting Console',
+        duration: '12 min',
+        steps: [
+          'Navigate to Business Operations from the sidebar',
+          'View Financial Pulse dashboard for quick overview',
+          'Monitor outstanding quotes and invoices',
+          'Track revenue trends and payment status',
+          'Use Quote Forge for AI-powered quote generation',
+          'Access Inventory Matrix for stock levels',
+          'Configure payment connections in Settings'
+        ],
+        tips: ['Financial Pulse updates in real-time', 'Use Quote Forge for branded PDF quotes']
+      },
+      {
         title: 'Creating Quotes',
         duration: '8 min',
         steps: [
@@ -368,6 +490,20 @@ const guideCategories = [
           'Email quote directly to customer'
         ],
         tips: ['Save quote templates for common services', 'Set quote expiration dates']
+      },
+      {
+        title: 'Quote Forge (AI Quotes)',
+        duration: '10 min',
+        steps: [
+          'Access Quote Forge from Business Operations Console',
+          'Select customer or enter new customer details',
+          'Describe the job or select from service catalog',
+          'AI generates detailed quote with line items',
+          'Review and adjust pricing as needed',
+          'Generate branded PDF quote',
+          'Send directly to customer via email'
+        ],
+        tips: ['AI uses your service catalog for accurate pricing', 'Customize PDF template in branding settings']
       },
       {
         title: 'Managing Invoices',
@@ -384,10 +520,24 @@ const guideCategories = [
         tips: ['Convert accepted quotes to invoices automatically', 'Set up payment reminders']
       },
       {
+        title: 'Payment Connections (Stripe)',
+        duration: '15 min',
+        steps: [
+          'Navigate to Business Operations → Payment Connections',
+          'Click Connect Stripe Account',
+          'Create or link your Stripe account',
+          'Complete Stripe onboarding requirements',
+          'Enable payment links on invoices',
+          'Configure payment notification settings',
+          'Test a payment with a small transaction'
+        ],
+        tips: ['Stripe handles all payment security', 'Payment links work on any device']
+      },
+      {
         title: 'Inventory Tracking',
         duration: '12 min',
         steps: [
-          'Navigate to Resources → Inventory',
+          'Navigate to Knowledge Base → Inventory',
           'Add inventory items with SKUs',
           'Set minimum quantity thresholds',
           'Track parts usage per job',
@@ -401,7 +551,7 @@ const guideCategories = [
         title: 'Warranty Management',
         duration: '10 min',
         steps: [
-          'Navigate to Resources → Warranties',
+          'Navigate to Knowledge Base → Warranties',
           'Create warranty policies for products/services',
           'Set warranty durations and terms',
           'Link warranties to completed jobs',
@@ -410,6 +560,20 @@ const guideCategories = [
           'Track warranty expiration dates'
         ],
         tips: ['Automate warranty registration on job completion', 'Send warranty expiration reminders']
+      },
+      {
+        title: 'Financial Reports',
+        duration: '10 min',
+        steps: [
+          'Navigate to Settings → Reports',
+          'Select report type (revenue, expenses, etc.)',
+          'Choose date range for the report',
+          'Apply filters (customer, service type, etc.)',
+          'Generate report with visualizations',
+          'Export to PDF or CSV format',
+          'Schedule automated report delivery'
+        ],
+        tips: ['Compare periods to identify trends', 'Use filters for detailed analysis']
       }
     ]
   },
@@ -434,6 +598,34 @@ const guideCategories = [
         tips: ['A/B test subject lines for better open rates', 'Segment audiences for personalized messaging']
       },
       {
+        title: 'Customer Segmentation',
+        duration: '10 min',
+        steps: [
+          'Navigate to Campaigns → Segments',
+          'Create new segment with criteria filters',
+          'Filter by service history, location, or spend',
+          'Use date-based filters (last visit, signup date)',
+          'Preview segment size before saving',
+          'Save segment for reuse in campaigns',
+          'Segments update dynamically as data changes'
+        ],
+        tips: ['Create segments for repeat customers', 'Use geographic segments for local promotions']
+      },
+      {
+        title: 'Winback Campaigns',
+        duration: '12 min',
+        steps: [
+          'Navigate to Campaigns → Winback',
+          'Define "inactive" customer criteria (e.g., 90+ days)',
+          'Create compelling winback offer',
+          'Set up automated campaign trigger',
+          'Choose communication channel (email/SMS)',
+          'Track winback conversion rates',
+          'Adjust offer based on performance'
+        ],
+        tips: ['Start with 60-90 day inactivity threshold', 'Offer incentives for returning customers']
+      },
+      {
         title: 'Referral Program',
         duration: '10 min',
         steps: [
@@ -446,6 +638,20 @@ const guideCategories = [
           'Promote program through automated emails'
         ],
         tips: ['Make rewards attractive enough to motivate sharing', 'Remind customers about referral program post-service']
+      },
+      {
+        title: 'Promo Codes & Discounts',
+        duration: '8 min',
+        steps: [
+          'Navigate to Campaigns → Promo Codes',
+          'Create new promo code with unique identifier',
+          'Set discount type (percentage or fixed amount)',
+          'Define usage limits and expiration date',
+          'Restrict to specific services if desired',
+          'Share codes through campaigns',
+          'Track redemption analytics'
+        ],
+        tips: ['Use memorable codes for better recall', 'Set reasonable usage limits to prevent abuse']
       },
       {
         title: 'Review Collection',
@@ -487,7 +693,7 @@ const guideCategories = [
         title: 'Analytics Console',
         duration: '12 min',
         steps: [
-          'Navigate to Resources → Analytics',
+          'Navigate to Knowledge Base → Analytics',
           'Use AI-powered insights for recommendations',
           'Generate custom reports by date range',
           'Analyze revenue trends and forecasts',
@@ -496,6 +702,34 @@ const guideCategories = [
           'Schedule automated report delivery'
         ],
         tips: ['Use Analytics Agent for natural language queries', 'Compare weekly performance trends']
+      },
+      {
+        title: 'KPI Dashboard',
+        duration: '10 min',
+        steps: [
+          'Access KPI metrics from Analytics console',
+          'View key performance indicators at a glance',
+          'Monitor conversion rates and response times',
+          'Track customer lifetime value trends',
+          'Set up alerts for KPI thresholds',
+          'Compare KPIs against industry benchmarks',
+          'Export KPI reports for stakeholders'
+        ],
+        tips: ['Focus on 5-7 key metrics', 'Set realistic targets based on historical data']
+      },
+      {
+        title: 'Revenue Analysis',
+        duration: '10 min',
+        steps: [
+          'Navigate to Analytics → Revenue',
+          'View revenue breakdown by service type',
+          'Analyze trends over time periods',
+          'Identify top-performing services',
+          'Review revenue per customer metrics',
+          'Forecast future revenue with AI predictions',
+          'Export revenue reports to CSV/PDF'
+        ],
+        tips: ['Compare seasonal trends year over year', 'Use forecasts for capacity planning']
       },
       {
         title: 'Setting Up Digests',
@@ -510,6 +744,20 @@ const guideCategories = [
           'Review delivery history for past digests'
         ],
         tips: ['Include key stakeholders in digest recipients', 'Keep digest content focused and actionable']
+      },
+      {
+        title: 'Performance Trends',
+        duration: '8 min',
+        steps: [
+          'Access trend analysis from Analytics console',
+          'Compare metrics across time periods',
+          'Identify patterns and seasonality',
+          'Drill down into specific metrics',
+          'Use AI to detect anomalies',
+          'Set up trend alerts for significant changes',
+          'Share trend reports with team'
+        ],
+        tips: ['Look for weekly and monthly patterns', 'Investigate sudden changes immediately']
       }
     ]
   },
@@ -565,7 +813,7 @@ const guideCategories = [
         title: 'Business Hours Configuration',
         duration: '5 min',
         steps: [
-          'Navigate to Knowledge Base → Business Hours',
+          'Navigate to Knowledge Base → Hours',
           'Set operating hours for each day',
           'Mark days as closed if applicable',
           'Add holiday closures',
@@ -573,6 +821,32 @@ const guideCategories = [
           'AI agents respect business hours for scheduling'
         ],
         tips: ['Update hours for holidays in advance', 'Set up emergency contact for after-hours']
+      },
+      {
+        title: 'Inventory Management',
+        duration: '12 min',
+        steps: [
+          'Navigate to Knowledge Base → Inventory',
+          'Add parts and supplies with SKU codes',
+          'Set stock quantities and minimum levels',
+          'Configure low-stock alert thresholds',
+          'Track inventory usage per job',
+          'Run inventory reports for ordering'
+        ],
+        tips: ['Regular stock audits ensure accuracy', 'Link common parts to service types']
+      },
+      {
+        title: 'Warranty Policies',
+        duration: '8 min',
+        steps: [
+          'Navigate to Knowledge Base → Warranties',
+          'Create warranty policy templates',
+          'Define coverage terms and durations',
+          'Set up automatic warranty assignment',
+          'Enable customer warranty lookups',
+          'Process and track warranty claims'
+        ],
+        tips: ['Clear warranty terms reduce disputes', 'Send reminders before warranties expire']
       }
     ]
   }
