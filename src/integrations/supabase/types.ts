@@ -634,6 +634,13 @@ export type Database = {
         Row: {
           ai_agent_prompt: string | null
           ai_voice_greeting: string | null
+          assignment_distance_weight: number | null
+          assignment_history_weight: number | null
+          assignment_max_distance_miles: number | null
+          assignment_use_customer_history: boolean | null
+          assignment_use_distance_routing: boolean | null
+          assignment_use_load_balancing: boolean | null
+          assignment_workload_weight: number | null
           bounce_alert_email: string | null
           bounce_alert_enabled: boolean | null
           bounce_alert_threshold: number | null
@@ -708,6 +715,13 @@ export type Database = {
         Insert: {
           ai_agent_prompt?: string | null
           ai_voice_greeting?: string | null
+          assignment_distance_weight?: number | null
+          assignment_history_weight?: number | null
+          assignment_max_distance_miles?: number | null
+          assignment_use_customer_history?: boolean | null
+          assignment_use_distance_routing?: boolean | null
+          assignment_use_load_balancing?: boolean | null
+          assignment_workload_weight?: number | null
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
@@ -782,6 +796,13 @@ export type Database = {
         Update: {
           ai_agent_prompt?: string | null
           ai_voice_greeting?: string | null
+          assignment_distance_weight?: number | null
+          assignment_history_weight?: number | null
+          assignment_max_distance_miles?: number | null
+          assignment_use_customer_history?: boolean | null
+          assignment_use_distance_routing?: boolean | null
+          assignment_use_load_balancing?: boolean | null
+          assignment_workload_weight?: number | null
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
@@ -1256,6 +1277,8 @@ export type Database = {
           email: string
           email_opt_out: boolean | null
           id: string
+          latitude: number | null
+          longitude: number | null
           name: string
           notes: string | null
           phone: string | null
@@ -1271,6 +1294,8 @@ export type Database = {
           email: string
           email_opt_out?: boolean | null
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           name: string
           notes?: string | null
           phone?: string | null
@@ -1286,6 +1311,8 @@ export type Database = {
           email?: string
           email_opt_out?: boolean | null
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           name?: string
           notes?: string | null
           phone?: string | null
@@ -1367,6 +1394,60 @@ export type Database = {
             columns: ["appointment_id"]
             isOneToOne: false
             referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_technician_history: {
+        Row: {
+          company_id: string
+          created_at: string | null
+          customer_email: string | null
+          customer_phone: string | null
+          customer_rating: number | null
+          id: string
+          last_service_at: string | null
+          service_count: number | null
+          technician_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string | null
+          customer_email?: string | null
+          customer_phone?: string | null
+          customer_rating?: number | null
+          id?: string
+          last_service_at?: string | null
+          service_count?: number | null
+          technician_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string | null
+          customer_email?: string | null
+          customer_phone?: string | null
+          customer_rating?: number | null
+          id?: string
+          last_service_at?: string | null
+          service_count?: number | null
+          technician_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_technician_history_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_technician_history_technician_id_fkey"
+            columns: ["technician_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2317,10 +2398,16 @@ export type Database = {
           calendar_feed_token: string | null
           company_id: string | null
           created_at: string
+          current_latitude: number | null
+          current_longitude: number | null
           email: string | null
           email_notifications_enabled: boolean | null
           full_name: string | null
+          home_address: string | null
+          home_latitude: number | null
+          home_longitude: number | null
           id: string
+          location_updated_at: string | null
           phone_number: string | null
           sms_notifications_enabled: boolean | null
           updated_at: string
@@ -2331,10 +2418,16 @@ export type Database = {
           calendar_feed_token?: string | null
           company_id?: string | null
           created_at?: string
+          current_latitude?: number | null
+          current_longitude?: number | null
           email?: string | null
           email_notifications_enabled?: boolean | null
           full_name?: string | null
+          home_address?: string | null
+          home_latitude?: number | null
+          home_longitude?: number | null
           id: string
+          location_updated_at?: string | null
           phone_number?: string | null
           sms_notifications_enabled?: boolean | null
           updated_at?: string
@@ -2345,10 +2438,16 @@ export type Database = {
           calendar_feed_token?: string | null
           company_id?: string | null
           created_at?: string
+          current_latitude?: number | null
+          current_longitude?: number | null
           email?: string | null
           email_notifications_enabled?: boolean | null
           full_name?: string | null
+          home_address?: string | null
+          home_latitude?: number | null
+          home_longitude?: number | null
           id?: string
+          location_updated_at?: string | null
           phone_number?: string | null
           sms_notifications_enabled?: boolean | null
           updated_at?: string

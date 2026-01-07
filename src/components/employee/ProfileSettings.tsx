@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
 import { User, Mail, Camera, Lock, Loader2, Save, Building2, Briefcase } from 'lucide-react';
+import { TechnicianLocationSettings } from './TechnicianLocationSettings';
 
 export function ProfileSettings() {
   const { user, userRole } = useAuth();
@@ -262,6 +263,11 @@ export function ProfileSettings() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Technician Location Settings - show if user has technician role */}
+      {jobAssignments?.some(j => j.job_type === 'technician') && (
+        <TechnicianLocationSettings />
+      )}
 
       {/* Profile Information */}
       <Card className="border-border/50">
