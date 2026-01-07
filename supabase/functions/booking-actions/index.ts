@@ -6,6 +6,197 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Haversine formula to calculate distance between two coordinates in miles
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 3959; // Earth's radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+interface TechnicianScore {
+  technician_id: string;
+  technician_name: string;
+  workload_score: number;
+  distance_score: number;
+  history_score: number;
+  total_score: number;
+  active_jobs: number;
+  distance_miles: number | null;
+  is_preferred: boolean;
+  service_count: number;
+}
+
+interface AssignmentSettings {
+  use_load_balancing: boolean;
+  use_distance_routing: boolean;
+  use_customer_history: boolean;
+  workload_weight: number;
+  distance_weight: number;
+  history_weight: number;
+  max_distance_miles: number;
+}
+
+async function getAssignmentSettings(supabase: any, companyId: string): Promise<AssignmentSettings> {
+  const { data: company } = await supabase
+    .from('companies')
+    .select(`
+      assignment_use_load_balancing,
+      assignment_use_distance_routing,
+      assignment_use_customer_history,
+      assignment_workload_weight,
+      assignment_distance_weight,
+      assignment_history_weight,
+      assignment_max_distance_miles
+    `)
+    .eq('id', companyId)
+    .single();
+
+  return {
+    use_load_balancing: company?.assignment_use_load_balancing ?? true,
+    use_distance_routing: company?.assignment_use_distance_routing ?? true,
+    use_customer_history: company?.assignment_use_customer_history ?? true,
+    workload_weight: company?.assignment_workload_weight ?? 40,
+    distance_weight: company?.assignment_distance_weight ?? 35,
+    history_weight: company?.assignment_history_weight ?? 25,
+    max_distance_miles: company?.assignment_max_distance_miles ?? 50,
+  };
+}
+
+async function calculateTechnicianScores(
+  supabase: any,
+  companyId: string,
+  technicianIds: string[],
+  customerEmail: string | null,
+  customerPhone: string | null,
+  customerLat: number | null,
+  customerLng: number | null
+): Promise<Map<string, TechnicianScore>> {
+  const settings = await getAssignmentSettings(supabase, companyId);
+  const scores = new Map<string, TechnicianScore>();
+
+  // Get technician profiles with location info
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('id, full_name, home_latitude, home_longitude, current_latitude, current_longitude')
+    .in('id', technicianIds);
+
+  // Get active job counts for each technician
+  const { data: activeJobs } = await supabase
+    .from('job_assignments')
+    .select('employee_id')
+    .in('employee_id', technicianIds)
+    .eq('company_id', companyId)
+    .in('status', ['pending_acceptance', 'accepted', 'en_route', 'arrived', 'in_progress']);
+
+  // Count jobs per technician
+  const jobCounts = new Map<string, number>();
+  (activeJobs || []).forEach((job: any) => {
+    jobCounts.set(job.employee_id, (jobCounts.get(job.employee_id) || 0) + 1);
+  });
+
+  // Get customer history
+  let customerHistory = new Map<string, { service_count: number; last_service_at: string }>();
+  
+  if (settings.use_customer_history && (customerEmail || customerPhone)) {
+    let historyQuery = supabase
+      .from('customer_technician_history')
+      .select('technician_id, service_count, last_service_at')
+      .eq('company_id', companyId)
+      .in('technician_id', technicianIds);
+
+    if (customerEmail) {
+      historyQuery = historyQuery.eq('customer_email', customerEmail);
+    } else if (customerPhone) {
+      historyQuery = historyQuery.eq('customer_phone', customerPhone);
+    }
+
+    const { data: history } = await historyQuery;
+    (history || []).forEach((h: any) => {
+      customerHistory.set(h.technician_id, {
+        service_count: h.service_count,
+        last_service_at: h.last_service_at
+      });
+    });
+  }
+
+  // Calculate scores for each technician
+  for (const profile of profiles || []) {
+    const activeJobCount = jobCounts.get(profile.id) || 0;
+    const history = customerHistory.get(profile.id);
+
+    // Workload score: fewer active jobs = higher score (max 100)
+    let workloadScore = 100;
+    if (settings.use_load_balancing) {
+      workloadScore = Math.max(0, 100 - (activeJobCount * 20));
+    }
+
+    // Distance score: closer = higher score (max 100)
+    let distanceScore = 50; // Default middle score if no location data
+    let distanceMiles: number | null = null;
+    
+    if (settings.use_distance_routing && customerLat && customerLng) {
+      const techLat = profile.current_latitude || profile.home_latitude;
+      const techLng = profile.current_longitude || profile.home_longitude;
+      
+      if (techLat && techLng) {
+        distanceMiles = haversineDistance(techLat, techLng, customerLat, customerLng);
+        
+        // Exclude technicians beyond max distance
+        if (distanceMiles > settings.max_distance_miles) {
+          distanceScore = 0;
+        } else {
+          // Score decreases as distance increases
+          distanceScore = Math.max(0, 100 - (distanceMiles * 3));
+        }
+      }
+    }
+
+    // History score: served this customer before = bonus (max 100)
+    let historyScore = 0;
+    const isPreferred = !!history;
+    
+    if (settings.use_customer_history && history) {
+      historyScore = 100;
+      
+      // Extra bonus for recent service (within 30 days)
+      const lastService = new Date(history.last_service_at);
+      const daysSinceService = (Date.now() - lastService.getTime()) / (1000 * 60 * 60 * 24);
+      if (daysSinceService <= 30) {
+        historyScore = 100; // Already at max
+      }
+    }
+
+    // Calculate weighted total score
+    const totalWeight = settings.workload_weight + settings.distance_weight + settings.history_weight;
+    const totalScore = (
+      (workloadScore * settings.workload_weight) +
+      (distanceScore * settings.distance_weight) +
+      (historyScore * settings.history_weight)
+    ) / totalWeight;
+
+    scores.set(profile.id, {
+      technician_id: profile.id,
+      technician_name: profile.full_name,
+      workload_score: Math.round(workloadScore),
+      distance_score: Math.round(distanceScore),
+      history_score: Math.round(historyScore),
+      total_score: Math.round(totalScore),
+      active_jobs: activeJobCount,
+      distance_miles: distanceMiles ? Math.round(distanceMiles * 10) / 10 : null,
+      is_preferred: isPreferred,
+      service_count: history?.service_count || 0
+    });
+  }
+
+  return scores;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -31,6 +222,9 @@ serve(async (req) => {
       case 'get_business_hours':
         result = await getBusinessHours(supabase, company_id, params.day_of_week);
         break;
+      case 'get_technician_scores':
+        result = await getTechnicianScores(supabase, company_id, params);
+        break;
       default:
         throw new Error(`Unknown action: ${action}`);
     }
@@ -51,8 +245,31 @@ serve(async (req) => {
   }
 });
 
+async function getTechnicianScores(supabase: any, companyId: string, params: any) {
+  const { technician_ids, customer_email, customer_phone, customer_lat, customer_lng } = params;
+
+  if (!technician_ids || technician_ids.length === 0) {
+    return { success: true, scores: [] };
+  }
+
+  const scores = await calculateTechnicianScores(
+    supabase,
+    companyId,
+    technician_ids,
+    customer_email,
+    customer_phone,
+    customer_lat,
+    customer_lng
+  );
+
+  return {
+    success: true,
+    scores: Array.from(scores.values()).sort((a, b) => b.total_score - a.total_score)
+  };
+}
+
 async function checkAvailability(supabase: any, companyId: string, params: any) {
-  const { service_name, date, employee_id } = params;
+  const { service_name, date, employee_id, customer_email, customer_phone, customer_address } = params;
 
   // Get service details
   const { data: service } = await supabase
@@ -101,7 +318,6 @@ async function checkAvailability(supabase: any, companyId: string, params: any) 
   const allTechIds = (techJobAssignments || []).map((t: any) => t.employee_id);
   
   // Filter to technicians assigned to this service (if any assignments exist)
-  // If no service assignments exist, use all technicians (backward compatibility)
   let eligibleTechIds = allTechIds;
   if (serviceAssignments && serviceAssignments.length > 0) {
     const assignedTechIds = serviceAssignments.map((sa: any) => sa.technician_id);
@@ -112,6 +328,41 @@ async function checkAvailability(supabase: any, companyId: string, params: any) 
     return { success: true, available_slots: [], message: 'No technicians available for this service' };
   }
 
+  // Try to geocode customer address for distance scoring
+  let customerLat: number | null = null;
+  let customerLng: number | null = null;
+  
+  // Check if we have cached coordinates from customer profile
+  if (customer_email || customer_phone) {
+    let profileQuery = supabase
+      .from('customer_profiles')
+      .select('latitude, longitude')
+      .eq('company_id', companyId);
+    
+    if (customer_email) {
+      profileQuery = profileQuery.eq('email', customer_email);
+    } else if (customer_phone) {
+      profileQuery = profileQuery.eq('phone', customer_phone);
+    }
+    
+    const { data: customerProfile } = await profileQuery.single();
+    if (customerProfile?.latitude && customerProfile?.longitude) {
+      customerLat = customerProfile.latitude;
+      customerLng = customerProfile.longitude;
+    }
+  }
+
+  // Calculate scores for all eligible technicians
+  const technicianScores = await calculateTechnicianScores(
+    supabase,
+    companyId,
+    eligibleTechIds,
+    customer_email,
+    customer_phone,
+    customerLat,
+    customerLng
+  );
+
   let employeesQuery = supabase
     .from('profiles')
     .select('id, full_name, availability_json')
@@ -119,7 +370,6 @@ async function checkAvailability(supabase: any, companyId: string, params: any) 
     .in('id', eligibleTechIds);
 
   if (employee_id) {
-    // Only use specified employee if they're eligible for this service
     if (!eligibleTechIds.includes(employee_id)) {
       return { success: false, error: 'Selected technician cannot perform this service', available_slots: [] };
     }
@@ -143,23 +393,20 @@ async function checkAvailability(supabase: any, companyId: string, params: any) 
     .lte('datetime', endOfDay)
     .neq('status', 'cancelled');
 
-  // Calculate available slots
+  // Calculate available slots with technician scores
   const availableSlots: any[] = [];
   const serviceDuration = service.duration_minutes;
 
   for (const employee of employees || []) {
     const availability = employee.availability_json?.[dayName] || [];
+    const score = technicianScores.get(employee.id);
     
     for (const slot of availability) {
-      const [startHour, startMin] = slot.start.split(':').map(Number);
-      const [endHour, endMin] = slot.end.split(':').map(Number);
-      
       let currentTime = new Date(`${date}T${slot.start}:00`);
       const endTime = new Date(`${date}T${slot.end}:00`);
 
       while (currentTime.getTime() + serviceDuration * 60000 <= endTime.getTime()) {
         const slotStart = currentTime.toISOString();
-        const slotEnd = new Date(currentTime.getTime() + serviceDuration * 60000).toISOString();
 
         // Check for conflicts
         const hasConflict = (existingAppointments || []).some((apt: any) => {
@@ -178,28 +425,50 @@ async function checkAvailability(supabase: any, companyId: string, params: any) 
             start_time: currentTime.toTimeString().slice(0, 5),
             datetime: slotStart,
             service: service.name,
-            duration: serviceDuration
+            duration: serviceDuration,
+            // Include scoring info
+            score: score?.total_score || 50,
+            active_jobs: score?.active_jobs || 0,
+            distance_miles: score?.distance_miles,
+            is_preferred: score?.is_preferred || false,
+            service_count: score?.service_count || 0
           });
         }
 
-        currentTime = new Date(currentTime.getTime() + 30 * 60000); // 30-min intervals
+        currentTime = new Date(currentTime.getTime() + 30 * 60000);
       }
     }
   }
 
-  // Sort by time, then by first available employee
-  availableSlots.sort((a, b) => a.datetime.localeCompare(b.datetime));
+  // Sort by time first, then by score (highest first) for same time slots
+  availableSlots.sort((a, b) => {
+    const timeCompare = a.datetime.localeCompare(b.datetime);
+    if (timeCompare !== 0) return timeCompare;
+    return (b.score || 0) - (a.score || 0);
+  });
+
+  // Group slots by time and return top-scored technician for each time
+  const slotsByTime = new Map<string, any>();
+  for (const slot of availableSlots) {
+    const timeKey = slot.start_time;
+    if (!slotsByTime.has(timeKey) || slot.score > slotsByTime.get(timeKey).score) {
+      slotsByTime.set(timeKey, slot);
+    }
+  }
+
+  const bestSlots = Array.from(slotsByTime.values()).slice(0, 10);
 
   return { 
     success: true, 
-    available_slots: availableSlots.slice(0, 10), // Return first 10 slots
+    available_slots: bestSlots,
+    all_slots: availableSlots.slice(0, 50), // Also return all for manual selection
     service: service.name,
     date 
   };
 }
 
 async function bookAppointment(supabase: any, companyId: string, params: any) {
-  const { service_name, datetime, customer_name, customer_email, customer_phone, employee_id } = params;
+  const { service_name, datetime, customer_name, customer_email, customer_phone, customer_address, employee_id } = params;
 
   // Get service
   const { data: service } = await supabase
@@ -225,21 +494,29 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
   const emailOptOut = !(company?.default_email_enabled ?? true);
   const callOptOut = !(company?.default_call_enabled ?? true);
 
-  // Find first available employee if not specified
+  // Find best available employee using smart scoring if not specified
   let assignedEmployeeId = employee_id;
   
   if (!assignedEmployeeId) {
     const checkResult = await checkAvailability(supabase, companyId, {
       service_name,
-      date: datetime.split('T')[0]
+      date: datetime.split('T')[0],
+      customer_email,
+      customer_phone,
+      customer_address
     });
 
-    const matchingSlot = checkResult.available_slots.find((s: any) => 
+    // Find the slot matching the requested datetime with the best score
+    const matchingSlots = (checkResult.all_slots || checkResult.available_slots || []).filter((s: any) => 
       s.datetime === datetime || s.start_time === datetime.split('T')[1]?.slice(0, 5)
     );
 
-    if (matchingSlot) {
-      assignedEmployeeId = matchingSlot.employee_id;
+    if (matchingSlots.length > 0) {
+      // Sort by score and pick the best
+      matchingSlots.sort((a: any, b: any) => (b.score || 0) - (a.score || 0));
+      assignedEmployeeId = matchingSlots[0].employee_id;
+      
+      console.log(`Smart assignment: Selected technician ${matchingSlots[0].employee_name} with score ${matchingSlots[0].score}`);
     }
   }
 
@@ -255,6 +532,7 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
       customer_name,
       customer_email,
       customer_phone,
+      customer_address,
       status: 'scheduled',
       sms_opt_out: smsOptOut,
       email_opt_out: emailOptOut,
@@ -268,7 +546,7 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
     return { success: false, error: 'Failed to book appointment' };
   }
 
-  // Send confirmation notifications asynchronously (don't wait for them)
+  // Send confirmation notifications asynchronously
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   
   if (appointment?.id && customer_email) {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
@@ -7,9 +7,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, User, Phone, Briefcase, CheckCircle } from 'lucide-react';
+import { Loader2, User, Phone, Briefcase, CheckCircle, Star, MapPin, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface TechnicianAssignmentDialogProps {
   open: boolean;
@@ -17,6 +18,8 @@ interface TechnicianAssignmentDialogProps {
   appointment: {
     id: string;
     customer_name: string;
+    customer_email?: string | null;
+    customer_phone?: string | null;
     customer_address: string | null;
     service_type: string;
     datetime: string;
@@ -29,13 +32,20 @@ interface TechnicianAssignmentDialogProps {
   } | null;
 }
 
-interface Technician {
+interface TechnicianWithScore {
   id: string;
   full_name: string | null;
   email: string | null;
   phone_number: string | null;
   avatar_url: string | null;
   active_jobs_count: number;
+  total_score: number;
+  workload_score: number;
+  distance_score: number;
+  history_score: number;
+  distance_miles: number | null;
+  is_preferred: boolean;
+  service_count: number;
 }
 
 export function TechnicianAssignmentDialog({
@@ -48,9 +58,9 @@ export function TechnicianAssignmentDialog({
   const [notes, setNotes] = useState('');
   const queryClient = useQueryClient();
 
-  // Fetch technicians with their active job counts, filtered by service capability
+  // Fetch technicians with their active job counts and scores
   const { data: technicians, isLoading: loadingTechnicians } = useQuery({
-    queryKey: ['technicians', appointment.company_id, appointment.service_type],
+    queryKey: ['technicians-with-scores', appointment.company_id, appointment.service_type, appointment.customer_email, appointment.customer_phone],
     queryFn: async () => {
       // Get employees with technician job type
       const { data: techAssignments, error: techError } = await supabase
@@ -72,7 +82,7 @@ export function TechnicianAssignmentDialog({
         .eq('name', appointment.service_type)
         .single();
 
-      // Get technicians assigned to this specific service (if service assignments exist)
+      // Get technicians assigned to this specific service
       let filteredTechIds = techIds;
       if (serviceData?.id) {
         const { data: serviceAssignments } = await supabase
@@ -81,8 +91,6 @@ export function TechnicianAssignmentDialog({
           .eq('service_id', serviceData.id)
           .in('technician_id', techIds);
 
-        // If there are service assignments, only show technicians assigned to this service
-        // If no service assignments exist yet, show all technicians (backward compatibility)
         if (serviceAssignments && serviceAssignments.length > 0) {
           filteredTechIds = serviceAssignments.map(sa => sa.technician_id);
         }
@@ -98,29 +106,52 @@ export function TechnicianAssignmentDialog({
 
       if (profilesError) throw profilesError;
 
-      // Get active job counts for each technician
-      const { data: activeJobs, error: jobsError } = await supabase
-        .from('job_assignments')
-        .select('employee_id')
-        .eq('company_id', appointment.company_id)
-        .in('employee_id', filteredTechIds)
-        .in('status', ['pending_acceptance', 'accepted', 'en_route', 'arrived', 'in_progress']);
+      // Get scores from edge function
+      const { data: scoreData, error: scoreError } = await supabase.functions.invoke('booking-actions', {
+        body: {
+          action: 'get_technician_scores',
+          company_id: appointment.company_id,
+          technician_ids: filteredTechIds,
+          customer_email: appointment.customer_email,
+          customer_phone: appointment.customer_phone
+        }
+      });
 
-      if (jobsError) throw jobsError;
+      const scoresMap = new Map<string, any>();
+      if (scoreData?.scores) {
+        scoreData.scores.forEach((s: any) => {
+          scoresMap.set(s.technician_id, s);
+        });
+      }
 
-      // Count jobs per technician
-      const jobCounts = (activeJobs || []).reduce((acc, job) => {
-        acc[job.employee_id!] = (acc[job.employee_id!] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+      // Merge profiles with scores
+      const techniciansWithScores = (profiles || []).map(profile => {
+        const scoreInfo = scoresMap.get(profile.id) || {};
+        return {
+          ...profile,
+          active_jobs_count: scoreInfo.active_jobs || 0,
+          total_score: scoreInfo.total_score || 50,
+          workload_score: scoreInfo.workload_score || 50,
+          distance_score: scoreInfo.distance_score || 50,
+          history_score: scoreInfo.history_score || 0,
+          distance_miles: scoreInfo.distance_miles,
+          is_preferred: scoreInfo.is_preferred || false,
+          service_count: scoreInfo.service_count || 0
+        } as TechnicianWithScore;
+      });
 
-      return (profiles || []).map(profile => ({
-        ...profile,
-        active_jobs_count: jobCounts[profile.id] || 0
-      })) as Technician[];
+      // Sort by total score descending
+      return techniciansWithScores.sort((a, b) => b.total_score - a.total_score);
     },
     enabled: open
   });
+
+  // Auto-select the best technician when dialog opens
+  useEffect(() => {
+    if (technicians && technicians.length > 0 && !selectedTechnicianId) {
+      setSelectedTechnicianId(technicians[0].id);
+    }
+  }, [technicians, selectedTechnicianId]);
 
   // Mutation to assign technician
   const assignMutation = useMutation({
@@ -163,7 +194,6 @@ export function TechnicianAssignmentDialog({
         });
       } catch (notifyError) {
         console.error('Failed to send notification:', notifyError);
-        // Don't fail the assignment if notification fails
       }
 
       return newAssignment;
@@ -181,11 +211,22 @@ export function TechnicianAssignmentDialog({
     }
   });
 
-  const selectedTechnician = technicians?.find(t => t.id === selectedTechnicianId);
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-yellow-600';
+    if (score >= 40) return 'text-orange-600';
+    return 'text-red-600';
+  };
+
+  const getScoreBadgeVariant = (score: number): 'default' | 'secondary' | 'outline' | 'destructive' => {
+    if (score >= 80) return 'default';
+    if (score >= 60) return 'secondary';
+    return 'outline';
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {existingAssignment ? 'Reassign Technician' : 'Assign Technician'}
@@ -205,59 +246,131 @@ export function TechnicianAssignmentDialog({
           {/* Technician Selection */}
           <div className="space-y-2">
             <Label>Select Technician</Label>
+            <p className="text-xs text-muted-foreground">
+              Technicians are ranked by workload, distance, and customer history
+            </p>
             {loadingTechnicians ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : !technicians?.length ? (
               <p className="text-sm text-muted-foreground py-4 text-center">
-                No technicians available. Add employees with "technician" job type first.
+                No technicians available for this service.
               </p>
             ) : (
-              <RadioGroup
-                value={selectedTechnicianId || ''}
-                onValueChange={setSelectedTechnicianId}
-                className="space-y-2"
-              >
-                {technicians.map((tech) => (
-                  <label
-                    key={tech.id}
-                    className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                      selectedTechnicianId === tech.id
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:bg-muted/50'
-                    }`}
-                  >
-                    <RadioGroupItem value={tech.id} className="sr-only" />
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={tech.avatar_url || undefined} />
-                      <AvatarFallback>
-                        <User className="h-5 w-5" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">
-                        {tech.full_name || tech.email || 'Unknown'}
-                      </p>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        {tech.phone_number && (
-                          <span className="flex items-center gap-1">
-                            <Phone className="h-3 w-3" />
-                            {tech.phone_number}
-                          </span>
-                        )}
+              <TooltipProvider>
+                <RadioGroup
+                  value={selectedTechnicianId || ''}
+                  onValueChange={setSelectedTechnicianId}
+                  className="space-y-2"
+                >
+                  {technicians.map((tech, index) => (
+                    <label
+                      key={tech.id}
+                      className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                        selectedTechnicianId === tech.id
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border hover:bg-muted/50'
+                      }`}
+                    >
+                      <RadioGroupItem value={tech.id} className="sr-only" />
+                      
+                      {/* Rank indicator */}
+                      {index === 0 && (
+                        <div className="absolute -top-1 -left-1">
+                          <Badge variant="default" className="text-[10px] px-1.5 py-0">
+                            Recommended
+                          </Badge>
+                        </div>
+                      )}
+                      
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={tech.avatar_url || undefined} />
+                        <AvatarFallback>
+                          <User className="h-5 w-5" />
+                        </AvatarFallback>
+                      </Avatar>
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium truncate">
+                            {tech.full_name || tech.email || 'Unknown'}
+                          </p>
+                          {tech.is_preferred && (
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Served this customer {tech.service_count} time{tech.service_count !== 1 ? 's' : ''} before</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                        </div>
+                        
+                        {/* Score indicators */}
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
+                          <Tooltip>
+                            <TooltipTrigger className="flex items-center gap-1">
+                              <Briefcase className="h-3 w-3" />
+                              <span>{tech.active_jobs_count} jobs</span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Active jobs: {tech.active_jobs_count}</p>
+                              <p>Workload score: {tech.workload_score}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                          
+                          {tech.distance_miles !== null && (
+                            <Tooltip>
+                              <TooltipTrigger className="flex items-center gap-1">
+                                <MapPin className="h-3 w-3" />
+                                <span>{tech.distance_miles} mi</span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Distance: ~{tech.distance_miles} miles</p>
+                                <p>Distance score: {tech.distance_score}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                          
+                          {tech.phone_number && (
+                            <span className="flex items-center gap-1">
+                              <Phone className="h-3 w-3" />
+                              {tech.phone_number}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <Badge variant={tech.active_jobs_count > 0 ? 'secondary' : 'outline'}>
-                      <Briefcase className="h-3 w-3 mr-1" />
-                      {tech.active_jobs_count} active
-                    </Badge>
-                    {selectedTechnicianId === tech.id && (
-                      <CheckCircle className="h-5 w-5 text-primary" />
-                    )}
-                  </label>
-                ))}
-              </RadioGroup>
+                      
+                      {/* Score badge */}
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Badge 
+                            variant={getScoreBadgeVariant(tech.total_score)}
+                            className={`${getScoreColor(tech.total_score)}`}
+                          >
+                            <TrendingUp className="h-3 w-3 mr-1" />
+                            {tech.total_score}
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <div className="text-xs space-y-1">
+                            <p className="font-medium">Match Score: {tech.total_score}</p>
+                            <p>Workload: {tech.workload_score}</p>
+                            <p>Distance: {tech.distance_score}</p>
+                            <p>History: {tech.history_score}</p>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                      
+                      {selectedTechnicianId === tech.id && (
+                        <CheckCircle className="h-5 w-5 text-primary" />
+                      )}
+                    </label>
+                  ))}
+                </RadioGroup>
+              </TooltipProvider>
             )}
           </div>
 
