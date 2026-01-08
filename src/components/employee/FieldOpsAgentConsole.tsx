@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAIAgentOrchestrator } from '@/hooks/useAIAgentOrchestrator';
+import { useFieldOpsWorkflow } from '@/hooks/useFieldOpsWorkflow';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -34,7 +35,10 @@ import {
   Lock,
   CheckSquare,
   UserCheck,
-  Wrench
+  Wrench,
+  FileText,
+  Receipt,
+  CreditCard
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -47,6 +51,8 @@ import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { QuickActionBar } from '@/components/ai/chat/QuickActionGrid';
 import { TechnicianMap } from './TechnicianMap';
 import { getAgentStyle } from '@/lib/agentStyles';
+import { BusinessQuoteForm, BusinessQuoteData } from '@/components/billing/forms/BusinessQuoteForm';
+import { InvoiceForm, InvoiceFormData } from '@/components/billing/forms/InvoiceForm';
 
 // Field Operations AI Agent icons and descriptions
 const FIELD_OPS_AGENT_CONFIG: Record<string, { icon: LucideIcon; description: string }> = {
@@ -61,8 +67,10 @@ const FIELD_OPS_AGENTS = [
   { id: 'directions', name: 'Get Directions', color: 'bg-blue-100', textColor: 'text-blue-700' },
   { id: 'enroute', name: 'En Route', color: 'bg-blue-100', textColor: 'text-blue-700' },
   { id: 'eta', name: 'Update ETA', color: 'bg-blue-100', textColor: 'text-blue-700' },
-  { id: 'arrived', name: 'Arrived', color: 'bg-blue-100', textColor: 'text-blue-700' },
+  { id: 'arrive_start', name: 'Arrive & Start', color: 'bg-blue-100', textColor: 'text-blue-700' },
   { id: 'complete', name: 'Complete Job', color: 'bg-blue-100', textColor: 'text-blue-700' },
+  { id: 'quote', name: 'Generate Quote', color: 'bg-emerald-100', textColor: 'text-emerald-700' },
+  { id: 'invoice', name: 'Generate Invoice', color: 'bg-emerald-100', textColor: 'text-emerald-700' },
   { id: 'dispatch', name: 'Contact Dispatch', color: 'bg-blue-100', textColor: 'text-blue-700' },
 ];
 
@@ -80,18 +88,18 @@ interface FieldOpsQuickAction {
 }
 
 // Job action IDs that require employee role (not available to company/platform admins for execution)
-const EMPLOYEE_ONLY_ACTIONS = ['accept', 'enroute', 'eta', 'eta-agent', 'arrived', 'start', 'complete'];
+const EMPLOYEE_ONLY_ACTIONS = ['accept', 'enroute', 'eta', 'eta-agent', 'arrive_start', 'complete'];
 
-// All 9 Field Operations AI Agent quick actions
+// Field Operations AI Agent quick actions - optimized workflow
 const QUICK_ACTIONS: FieldOpsQuickAction[] = [
   { id: 'accept', label: 'Accept Job', icon: UserCheck, message: "I want to accept my next assigned job." },
   { id: 'directions', label: 'Get Directions', icon: Navigation, message: "Get directions to my next job" },
   { id: 'enroute', label: 'Mark En Route', icon: Truck, message: "I'm ready to head out. Mark me as en route to my next job and notify the customer." },
   { id: 'eta', label: 'Update ETA', icon: Clock, message: "I need to update my ETA for my current job." },
-  { id: 'eta-agent', label: 'ETA Agent', icon: Bot, message: "I need help with ETA updates and customer notifications. Can you check my current jobs and help me calculate and send accurate ETAs to customers?" },
-  { id: 'arrived', label: 'Marked Arrived', icon: MapPin, message: "I have arrived at the customer's location. Please mark me as arrived and notify the customer." },
-  { id: 'start', label: 'Start Job', icon: Wrench, message: "I'm starting work on the job now." },
+  { id: 'arrive_start', label: 'Arrive & Start', icon: Play, message: "I have arrived at the customer's location and I'm ready to start the job." },
   { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: "I have finished the job. Please mark it as completed and notify the customer.", variant: 'destructive' },
+  { id: 'quote', label: 'Generate Quote', icon: FileText, message: "I need to create a quote for this job." },
+  { id: 'invoice', label: 'Generate Invoice', icon: Receipt, message: "I need to create an invoice for this completed job." },
   { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: "Contact dispatch" },
 ];
 
@@ -117,7 +125,17 @@ interface FieldOpsAgentConsoleProps {
   className?: string;
 }
 
-type SelectorMode = 'accept' | 'directions' | 'enroute' | 'eta' | 'arrived' | 'start' | 'complete' | null;
+interface JobContextForForms {
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  customerAddress: string;
+  serviceType: string;
+  jobId?: string;
+  appointmentId?: string;
+}
+
+type SelectorMode = 'accept' | 'directions' | 'enroute' | 'eta' | 'arrive_start' | 'complete' | 'quote' | 'invoice' | null;
 
 export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }: FieldOpsAgentConsoleProps) {
   const { user, companyId: authCompanyId, userRole } = useAuth();
@@ -147,6 +165,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const [etaMinutes, setEtaMinutes] = useState('');
   const [activeTab, setActiveTab] = useState('chat');
   const [navigationAddress, setNavigationAddress] = useState<string | null>(null);
+  const [lastCompletedJobContext, setLastCompletedJobContext] = useState<JobContextForForms | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -227,11 +246,8 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (selectorMode === 'eta') {
       return assignedJobs.filter(job => ['accepted', 'en_route'].includes(job.status));
     }
-    if (selectorMode === 'arrived') {
+    if (selectorMode === 'arrive_start') {
       return assignedJobs.filter(job => job.status === 'en_route');
-    }
-    if (selectorMode === 'start') {
-      return assignedJobs.filter(job => job.status === 'arrived');
     }
     if (selectorMode === 'complete') {
       return assignedJobs.filter(job => ['arrived', 'in_progress'].includes(job.status));
@@ -289,21 +305,27 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       return;
     }
     
-    // Arrived opens job selector
-    if (action.id === 'arrived') {
-      setSelectorMode('arrived');
-      return;
-    }
-    
-    // Start Job opens job selector
-    if (action.id === 'start') {
-      setSelectorMode('start');
+    // Combined Arrive & Start opens job selector
+    if (action.id === 'arrive_start') {
+      setSelectorMode('arrive_start');
       return;
     }
     
     // Complete job opens job selector
     if (action.id === 'complete') {
       setSelectorMode('complete');
+      return;
+    }
+    
+    // Quote opens the quote form
+    if (action.id === 'quote') {
+      setSelectorMode('quote');
+      return;
+    }
+    
+    // Invoice opens the invoice form
+    if (action.id === 'invoice') {
+      setSelectorMode('invoice');
       return;
     }
     
@@ -474,14 +496,16 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     }
   }, [processingJobId, refetchJobs, sendMessage]);
 
-  const handleSelectJobForArrived = useCallback(async (job: JobAssignment) => {
+  // Combined Arrive & Start handler - marks as arrived, notifies customer, then starts job
+  const handleSelectJobForArriveAndStart = useCallback(async (job: JobAssignment) => {
     if (processingJobId) return;
     
     setProcessingJobId(job.id);
     const customerName = job.appointments?.customer_name || 'Customer';
     
     try {
-      const { error: updateError } = await supabase
+      // First update to arrived
+      const { error: arrivedError } = await supabase
         .from('job_assignments')
         .update({ 
           status: 'arrived',
@@ -490,8 +514,9 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         })
         .eq('id', job.id);
 
-      if (updateError) throw updateError;
+      if (arrivedError) throw arrivedError;
 
+      // Send arrival notification to customer
       await supabase.functions.invoke('send-job-notification', {
         body: {
           jobAssignmentId: job.id,
@@ -500,27 +525,8 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         }
       });
 
-      toast.success(`Arrived at ${customerName}'s location`, { description: 'Customer has been notified of your arrival' });
-      refetchJobs();
-      setSelectorMode(null);
-      sendMessage(`I have arrived at ${customerName}'s location for their ${job.appointments?.service_type || 'service'} appointment.`);
-
-    } catch (error) {
-      console.error('Arrived error:', error);
-      toast.error('Failed to update status', { description: 'Please try again' });
-    } finally {
-      setProcessingJobId(null);
-    }
-  }, [processingJobId, refetchJobs, sendMessage]);
-
-  const handleSelectJobForStart = useCallback(async (job: JobAssignment) => {
-    if (processingJobId) return;
-    
-    setProcessingJobId(job.id);
-    const customerName = job.appointments?.customer_name || 'Customer';
-    
-    try {
-      const { error: updateError } = await supabase
+      // Then immediately update to in_progress
+      const { error: startError } = await supabase
         .from('job_assignments')
         .update({ 
           status: 'in_progress',
@@ -529,16 +535,30 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         })
         .eq('id', job.id);
 
-      if (updateError) throw updateError;
+      if (startError) throw startError;
 
-      toast.success(`Job started for ${customerName}`, { description: 'Work in progress' });
+      toast.success(`Arrived & started job for ${customerName}`, { 
+        description: 'Customer has been notified of your arrival' 
+      });
       refetchJobs();
       setSelectorMode(null);
-      sendMessage(`I have started working on the ${job.appointments?.service_type || 'service'} job for ${customerName}.`);
+      
+      // Store job context for potential quote/invoice
+      setLastCompletedJobContext({
+        customerName: job.appointments?.customer_name || '',
+        customerPhone: job.appointments?.customer_phone || '',
+        customerEmail: job.appointments?.customer_email || '',
+        customerAddress: job.appointments?.customer_address || job.customer_address || '',
+        serviceType: job.appointments?.service_type || '',
+        jobId: job.id,
+        appointmentId: job.appointments?.id,
+      });
+      
+      sendMessage(`I have arrived at ${customerName}'s location and started working on the ${job.appointments?.service_type || 'service'} job.`);
 
     } catch (error) {
-      console.error('Start job error:', error);
-      toast.error('Failed to start job', { description: 'Please try again' });
+      console.error('Arrive & Start error:', error);
+      toast.error('Failed to update status', { description: 'Please try again' });
     } finally {
       setProcessingJobId(null);
     }
@@ -570,10 +590,23 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         }
       });
 
-      toast.success(`Job completed for ${customerName}`, { description: 'Customer has been notified' });
+      // Store job context for quote/invoice generation
+      setLastCompletedJobContext({
+        customerName: job.appointments?.customer_name || '',
+        customerPhone: job.appointments?.customer_phone || '',
+        customerEmail: job.appointments?.customer_email || '',
+        customerAddress: job.appointments?.customer_address || job.customer_address || '',
+        serviceType: job.appointments?.service_type || '',
+        jobId: job.id,
+        appointmentId: job.appointments?.id,
+      });
+
+      toast.success(`Job completed for ${customerName}`, { 
+        description: 'Customer has been notified. Generate a quote or invoice?' 
+      });
       refetchJobs();
       setSelectorMode(null);
-      sendMessage(`I have completed the ${job.appointments?.service_type || 'service'} job for ${customerName}.`);
+      sendMessage(`I have completed the ${job.appointments?.service_type || 'service'} job for ${customerName}. Would you like to generate a quote or invoice?`);
 
     } catch (error) {
       console.error('Complete job error:', error);
@@ -582,6 +615,21 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       setProcessingJobId(null);
     }
   }, [processingJobId, refetchJobs, sendMessage]);
+
+  // Handle quote form submission
+  const handleQuoteSubmit = useCallback((data: BusinessQuoteData) => {
+    const serviceNames = data.selectedServices.join(', ');
+    sendMessage(`Create a quote for ${data.customerName} (${data.customerPhone}) for services: ${serviceNames}. ${data.issueDescription ? `Notes: ${data.issueDescription}` : ''} Send via ${data.sendEmail ? 'email' : ''}${data.sendEmail && data.sendSms ? ' and ' : ''}${data.sendSms ? 'SMS' : ''}.`);
+    setSelectorMode(null);
+    toast.success('Quote request sent to AI agent');
+  }, [sendMessage]);
+
+  // Handle invoice form submission
+  const handleInvoiceSubmit = useCallback((data: InvoiceFormData) => {
+    sendMessage(`Create an invoice for ${data.customerName} (${data.customerPhone}) for ${data.serviceType}, amount: $${data.amount}. ${data.notes ? `Notes: ${data.notes}` : ''} Send via ${data.sendEmail ? 'email' : ''}${data.sendEmail && data.sendSms ? ' and ' : ''}${data.sendSms ? 'SMS' : ''}.`);
+    setSelectorMode(null);
+    toast.success('Invoice request sent to AI agent');
+  }, [sendMessage]);
 
   const getAgentBadge = (agentType?: string) => {
     const style = getAgentStyle(agentType);
@@ -689,22 +737,13 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
         onSelect: handleSelectJobForEta,
       };
     }
-    if (selectorMode === 'arrived') {
+    if (selectorMode === 'arrive_start') {
       return {
-        icon: MapPin,
-        title: 'Select appointment to mark as arrived',
-        emptyMessage: 'No en route appointments to mark as arrived',
-        actionIcon: MapPin,
-        onSelect: handleSelectJobForArrived,
-      };
-    }
-    if (selectorMode === 'start') {
-      return {
-        icon: Wrench,
-        title: 'Select job to start working on',
-        emptyMessage: 'No arrived jobs to start',
-        actionIcon: Wrench,
-        onSelect: handleSelectJobForStart,
+        icon: Play,
+        title: 'Select job to arrive & start',
+        emptyMessage: 'No en route jobs available',
+        actionIcon: Play,
+        onSelect: handleSelectJobForArriveAndStart,
       };
     }
     if (selectorMode === 'complete') {
@@ -756,8 +795,34 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Quick Actions moved inside chat content area */}
 
+      {/* Quote Form Panel */}
+      {selectorMode === 'quote' && effectiveCompanyId && (
+        <div className="shrink-0 border-b bg-emerald-50 dark:bg-emerald-950/30 max-h-[60%] overflow-auto">
+          <BusinessQuoteForm
+            companyId={effectiveCompanyId}
+            onSubmit={handleQuoteSubmit}
+            onCancel={() => setSelectorMode(null)}
+            mode="ai"
+            showBackButton={true}
+          />
+        </div>
+      )}
+
+      {/* Invoice Form Panel */}
+      {selectorMode === 'invoice' && effectiveCompanyId && (
+        <div className="shrink-0 border-b bg-emerald-50 dark:bg-emerald-950/30 max-h-[60%] overflow-auto">
+          <InvoiceForm
+            companyId={effectiveCompanyId}
+            onSubmit={handleInvoiceSubmit}
+            onCancel={() => setSelectorMode(null)}
+            mode="ai"
+            showBackButton={true}
+          />
+        </div>
+      )}
+
       {/* Job Selector Panel */}
-      {selectorMode && selectorConfig && (
+      {selectorMode && selectorConfig && selectorMode !== 'quote' && selectorMode !== 'invoice' && (
         <div className="shrink-0 border-b bg-blue-50 dark:bg-blue-950/30 p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="text-sm font-medium flex items-center gap-2">
