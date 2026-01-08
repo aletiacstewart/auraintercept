@@ -420,37 +420,38 @@ export function AppointmentCalendar() {
 
       {/* Appointments List */}
       <Card className="border-border/50">
-        <CardHeader className="flex flex-row items-start justify-between space-y-0">
-          <div>
-            <CardTitle>
-              {format(selectedDate, 'EEEE, MMMM d, yyyy')}
-            </CardTitle>
-            <CardDescription>
-              {selectedDayAppointments.length} appointment{selectedDayAppointments.length !== 1 ? 's' : ''} scheduled
-            </CardDescription>
-          </div>
-          {isAdmin && (
-            <div className="flex flex-col items-end gap-2">
-              {/* Sync Status Summary */}
-              {appointments && appointments.length > 0 && (
-                <div className="flex items-center gap-3 text-xs">
-                  <div className="flex items-center gap-1 text-green-600">
-                    <Cloud className="w-3 h-3" />
-                    <span>{syncSummary.synced} synced</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-muted-foreground">
-                    <CloudOff className="w-3 h-3" />
-                    <span>{syncSummary.notSynced} not synced</span>
-                  </div>
-                  {syncSummary.failed > 0 && (
-                    <div className="flex items-center gap-1 text-red-600">
-                      <AlertTriangle className="w-3 h-3" />
-                      <span>{syncSummary.failed} failed</span>
+        <CardHeader className="pb-4">
+          <div className="flex flex-col gap-3">
+            <div>
+              <CardTitle>
+                {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+              </CardTitle>
+              <CardDescription>
+                {selectedDayAppointments.length} appointment{selectedDayAppointments.length !== 1 ? 's' : ''} scheduled
+              </CardDescription>
+            </div>
+            {isAdmin && (
+              <div className="flex flex-col gap-2">
+                {/* Sync Status Summary */}
+                {appointments && appointments.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-3 text-xs">
+                    <div className="flex items-center gap-1 text-green-600">
+                      <Cloud className="w-3 h-3" />
+                      <span>{syncSummary.synced} synced</span>
                     </div>
-                  )}
-                </div>
-              )}
-              <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 text-muted-foreground">
+                      <CloudOff className="w-3 h-3" />
+                      <span>{syncSummary.notSynced} not synced</span>
+                    </div>
+                    {syncSummary.failed > 0 && (
+                      <div className="flex items-center gap-1 text-red-600">
+                        <AlertTriangle className="w-3 h-3" />
+                        <span>{syncSummary.failed} failed</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div className="flex flex-wrap items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
@@ -480,6 +481,7 @@ export function AppointmentCalendar() {
               </div>
             </div>
           )}
+          </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
