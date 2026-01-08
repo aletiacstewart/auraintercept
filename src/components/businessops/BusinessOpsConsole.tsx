@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card } from '@/components/ui/card';
 import { FinancialPulseDashboard } from './FinancialPulseDashboard';
-import { QuoteForge } from './QuoteForge';
 import { InventoryMatrix } from './InventoryMatrix';
 import { PaymentConnectionsSettings } from './PaymentConnectionsSettings';
 import { Briefcase } from 'lucide-react';
 
-type ViewType = 'dashboard' | 'quotes' | 'invoices' | 'inventory' | 'payments';
+type ViewType = 'dashboard' | 'inventory' | 'payments';
 
 interface BusinessOpsConsoleProps {
   companyId?: string;
@@ -21,10 +20,6 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
   const isPlatformAdmin = userRole === 'platform_admin';
 
   const handleNavigate = (section: ViewType) => {
-    // Block quotes navigation for non-platform-admins
-    if ((section === 'quotes' || section === 'invoices') && !isPlatformAdmin) {
-      return;
-    }
     setCurrentView(section);
   };
 
@@ -50,7 +45,7 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
         <div>
           <h1 className="font-semibold text-foreground">Business Operations</h1>
           <p className="text-xs text-muted-foreground">
-            Financial Pulse{isPlatformAdmin ? ' • Quote Forge' : ''} • Inventory Matrix
+            Financial Pulse • Inventory Matrix
           </p>
         </div>
       </div>
@@ -61,13 +56,7 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
           <FinancialPulseDashboard 
             companyId={effectiveCompanyId} 
             onNavigate={handleNavigate}
-            showQuotes={isPlatformAdmin}
-          />
-        )}
-        {currentView === 'quotes' && isPlatformAdmin && (
-          <QuoteForge 
-            companyId={effectiveCompanyId} 
-            onBack={handleBack}
+            showQuotes={false}
           />
         )}
         {currentView === 'inventory' && (
@@ -78,12 +67,6 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
         )}
         {currentView === 'payments' && (
           <PaymentConnectionsSettings 
-            companyId={effectiveCompanyId} 
-            onBack={handleBack}
-          />
-        )}
-        {currentView === 'invoices' && isPlatformAdmin && (
-          <QuoteForge 
             companyId={effectiveCompanyId} 
             onBack={handleBack}
           />

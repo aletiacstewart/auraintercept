@@ -42,29 +42,13 @@ interface QuoteLineItem {
 }
 
 export default function Quotes() {
-  const { companyId, userRole } = useAuth();
+  const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [viewQuote, setViewQuote] = useState<Quote | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  // Restrict access to platform admins only
-  if (userRole !== 'platform_admin') {
-    return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Card className="p-12 text-center max-w-md">
-            <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Access Restricted</h3>
-            <p className="text-muted-foreground">
-              The Quotes feature is only available to platform administrators.
-            </p>
-          </Card>
-        </div>
-      </DashboardLayout>
-    );
-  }
 
   const { data: quotes = [], isLoading } = useQuery({
     queryKey: ['quotes', companyId],
