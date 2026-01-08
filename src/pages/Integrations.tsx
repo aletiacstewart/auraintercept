@@ -135,7 +135,7 @@ const INTEGRATIONS: Integration[] = [
 ];
 
 export default function Integrations() {
-  const { companyId } = useAuth();
+  const { companyId, userRole } = useAuth();
   const queryClient = useQueryClient();
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
@@ -360,47 +360,49 @@ export default function Integrations() {
         })()}
 
         {/* CRM & Calendar Setup Progress */}
-        <div className="grid gap-4 md:grid-cols-2">
-          {/* CRM Setup Progress */}
-          <Card className={cn(
-            "border-border/50",
-            crmConnection && "border-green-500/30 bg-green-500/5"
-          )}>
-            <CardContent className="py-4">
-              <div className="flex items-center gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">CRM Integration</span>
+        <div className={cn("grid gap-4", userRole === 'platform_admin' ? "md:grid-cols-2" : "md:grid-cols-1")}>
+          {/* CRM Setup Progress - Platform Admin Only */}
+          {userRole === 'platform_admin' && (
+            <Card className={cn(
+              "border-border/50",
+              crmConnection && "border-green-500/30 bg-green-500/5"
+            )}>
+              <CardContent className="py-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">CRM Integration</span>
+                      </div>
+                      <span className={cn(
+                        "text-sm font-bold",
+                        crmConnection ? "text-green-600" : "text-muted-foreground"
+                      )}>
+                        {crmConnection ? '100%' : '0%'}
+                      </span>
                     </div>
-                    <span className={cn(
-                      "text-sm font-bold",
-                      crmConnection ? "text-green-600" : "text-muted-foreground"
-                    )}>
-                      {crmConnection ? '100%' : '0%'}
-                    </span>
+                    <Progress value={crmConnection ? 100 : 0} className="h-2" />
                   </div>
-                  <Progress value={crmConnection ? 100 : 0} className="h-2" />
+                  <div className="flex items-center gap-2">
+                    {crmConnection ? (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-500/10 text-green-600">
+                        <Users className="w-3 h-3" />
+                        {CRM_PROVIDER_NAMES[crmConnection.provider] || crmConnection.provider}
+                        <Check className="w-3 h-3" />
+                      </div>
+                    ) : (
+                      <Button variant="outline" size="sm" asChild>
+                        <Link to="/dashboard/integrations/crm">
+                          Connect CRM <ArrowRight className="w-3 h-3 ml-1" />
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {crmConnection ? (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-500/10 text-green-600">
-                      <Users className="w-3 h-3" />
-                      {CRM_PROVIDER_NAMES[crmConnection.provider] || crmConnection.provider}
-                      <Check className="w-3 h-3" />
-                    </div>
-                  ) : (
-                    <Button variant="outline" size="sm" asChild>
-                      <Link to="/dashboard/integrations/crm">
-                        Connect CRM <ArrowRight className="w-3 h-3 ml-1" />
-                      </Link>
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Calendar Setup Progress */}
           <Card className={cn(
@@ -527,8 +529,8 @@ export default function Integrations() {
           })}
         </div>
 
-        {/* CRM Integrations */}
-        <CRMConnectionSettings />
+        {/* CRM Integrations - Platform Admin Only */}
+        {userRole === 'platform_admin' && <CRMConnectionSettings />}
 
         {/* Calendar Integrations */}
         <div className="space-y-4">
