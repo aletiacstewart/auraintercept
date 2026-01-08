@@ -20,7 +20,9 @@ const TechnicianInstall = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [platform, setPlatform] = useState<'ios' | 'android' | 'desktop'>('desktop');
 
-  const installUrl = `${window.location.origin}/auth?mode=employee&tab=login&source=qr`;
+  // Add version param to bust cache on new builds
+  const buildVersion = import.meta.env.VITE_BUILD_TIME || Date.now().toString(36);
+  const installUrl = `${window.location.origin}/auth?mode=employee&tab=login&source=qr&v=${buildVersion}`;
 
   useEffect(() => {
     // Detect platform
