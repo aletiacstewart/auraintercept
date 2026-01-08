@@ -57,6 +57,7 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
             companyId={effectiveCompanyId} 
             onNavigate={handleNavigate}
             showQuotes={false}
+            userRole={userRole}
           />
         )}
         {currentView === 'inventory' && (

@@ -21,9 +21,11 @@ interface FinancialPulseDashboardProps {
   companyId: string;
   onNavigate: (section: 'inventory' | 'payments') => void;
   showQuotes?: boolean;
+  userRole?: string;
 }
 
-export function FinancialPulseDashboard({ companyId, onNavigate }: FinancialPulseDashboardProps) {
+export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: FinancialPulseDashboardProps) {
+  const isPlatformAdmin = userRole === 'platform_admin';
   // Fetch pending quotes for display only
   const { data: quotes = [] } = useQuery({
     queryKey: ['pending-quotes', companyId],
@@ -236,8 +238,8 @@ export function FinancialPulseDashboard({ companyId, onNavigate }: FinancialPuls
         </Card>
       </div>
 
-      {/* Inventory Alerts */}
-      {inventoryAlerts.length > 0 && (
+      {/* Inventory Alerts - Platform Admin Only */}
+      {isPlatformAdmin && inventoryAlerts.length > 0 && (
         <Card className="glass-panel border-destructive/30">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
