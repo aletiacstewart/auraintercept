@@ -36,6 +36,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>Executive Summary</li>
                   <li>Development Timeline (6 phases)</li>
+                  <li>Project Complexity Score (87/100)</li>
                   <li>Complete AI Agents Catalog (22+ agents)</li>
                   <li>5 Agent Console Descriptions</li>
                   <li>Platform Features Overview</li>
@@ -85,8 +86,8 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
           <Card>
             <CardHeader>
               <CardTitle>Document Contents</CardTitle>
-              <CardDescription>
-                16-page comprehensive business document
+            <CardDescription>
+                17-page comprehensive business document
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -96,16 +97,17 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   { page: 2, title: 'Table of Contents', desc: 'Full document navigation' },
                   { page: 3, title: 'Executive Summary', desc: 'Platform overview and value proposition' },
                   { page: 4, title: 'Development Timeline', desc: '6 phases with 30+ milestones' },
-                  { page: '5-7', title: 'AI Agents Catalog', desc: '22+ agents across 5 categories' },
-                  { page: 8, title: 'Agent Consoles', desc: '5 specialized control centers' },
-                  { page: 9, title: 'Platform Features', desc: '8 key platform capabilities' },
-                  { page: 10, title: 'Integrations', desc: 'Third-party services and APIs' },
-                  { page: 11, title: 'Technical Architecture', desc: 'Frontend, backend, and AI stack' },
-                  { page: 12, title: 'User Roles', desc: 'Role-based access control' },
-                  { page: 13, title: 'Knowledge Base', desc: 'Company information management' },
-                  { page: 14, title: 'Communication Channels', desc: 'Voice, SMS, email, and chat' },
-                  { page: 15, title: 'Target Industries', desc: 'Service business verticals' },
-                  { page: 16, title: 'Pricing Model', desc: 'Enterprise tier and usage costs' },
+                  { page: 5, title: 'Complexity Score', desc: '87/100 enterprise-grade rating' },
+                  { page: '6-8', title: 'AI Agents Catalog', desc: '22+ agents across 5 categories' },
+                  { page: 9, title: 'Agent Consoles', desc: '5 specialized control centers' },
+                  { page: 10, title: 'Platform Features', desc: '8 key platform capabilities' },
+                  { page: 11, title: 'Integrations', desc: 'Third-party services and APIs' },
+                  { page: 12, title: 'Technical Architecture', desc: 'Frontend, backend, and AI stack' },
+                  { page: 13, title: 'User Roles', desc: 'Role-based access control' },
+                  { page: 14, title: 'Knowledge Base', desc: 'Company information management' },
+                  { page: 15, title: 'Communication Channels', desc: 'Voice, SMS, email, and chat' },
+                  { page: 16, title: 'Target Industries', desc: 'Service business verticals' },
+                  { page: 17, title: 'Pricing Model', desc: 'Enterprise tier and usage costs' },
                 ].map((section, i) => (
                   <div key={i} className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors">
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
