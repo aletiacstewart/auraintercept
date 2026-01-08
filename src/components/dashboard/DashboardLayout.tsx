@@ -100,7 +100,8 @@ const navGroups: NavGroup[] = [
   {
     label: 'Communications',
     items: [
-      { label: 'Messages', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Communication Logs', icon: MessageSquare, href: '/dashboard/messages', roles: ['platform_admin', 'company_admin'] },
+      { label: 'SMS / Texts', icon: MessageSquare, href: '/dashboard/sms-logs', roles: ['platform_admin', 'company_admin'] },
       { label: 'Email', icon: Mail, href: '/dashboard/email-logs', roles: ['platform_admin', 'company_admin'] },
       { label: 'Call History', icon: PhoneCall, href: '/dashboard/calls', roles: ['platform_admin', 'company_admin'] },
       { label: 'Campaigns', icon: Megaphone, href: '/dashboard/campaigns', roles: ['platform_admin'] },
