@@ -10,13 +10,11 @@ import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { CampaignForm } from './forms/CampaignForm';
-import { LeadForm } from './forms/LeadForm';
 import { CustomerSegmentsForm } from './forms/CustomerSegmentsForm';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Megaphone, 
   Users, 
-  UserPlus, 
 } from 'lucide-react';
 
 // Tab configuration
@@ -27,7 +25,6 @@ const TABS = [
 // Quick actions for Marketing & Sales - consolidated campaign creation
 const QUICK_ACTIONS = [
   { id: 'campaign', label: 'Create Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign' },
-  { id: 'lead', label: 'New Lead', icon: UserPlus, message: 'I need to add a new lead' },
   { id: 'customers', label: 'Customer Segments', icon: Users, message: 'Show me customer segments' },
 ];
 
@@ -46,7 +43,6 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   
   // Form visibility states
   const [showCampaignForm, setShowCampaignForm] = useState(false);
-  const [showLeadForm, setShowLeadForm] = useState(false);
   const [showSegmentsForm, setShowSegmentsForm] = useState(false);
 
   // Company branding
@@ -81,7 +77,6 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
 
   const hideAllForms = () => {
     setShowCampaignForm(false);
-    setShowLeadForm(false);
     setShowSegmentsForm(false);
   };
 
@@ -99,11 +94,6 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     if (actionId === 'campaign') {
       hideAllForms();
       setShowCampaignForm(true);
-      return;
-    }
-    if (actionId === 'lead') {
-      hideAllForms();
-      setShowLeadForm(true);
       return;
     }
     if (actionId === 'customers') {
@@ -129,14 +119,13 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     hideAllForms();
     const messages: Record<string, string> = {
       campaign: `I just created a new ${data.type} campaign called "${data.name}". Can you help me optimize it and suggest the best channels and messaging?`,
-      lead: `I just added a new lead: ${data.name} from ${data.source}. What's the best nurturing sequence for this type of lead?`,
     };
     if (messages[formType]) {
       await sendMessage(messages[formType]);
     }
   };
 
-  const isShowingForm = showCampaignForm || showLeadForm || showSegmentsForm;
+  const isShowingForm = showCampaignForm || showSegmentsForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
 
@@ -181,14 +170,6 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
                   onSuccess={(data) => handleFormSuccess('campaign', data)}
-                />
-              )}
-              
-              {showLeadForm && effectiveCompanyId && (
-                <LeadForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                  onSuccess={(data) => handleFormSuccess('lead', data)}
                 />
               )}
               
