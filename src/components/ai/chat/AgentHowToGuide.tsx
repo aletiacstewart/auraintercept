@@ -605,7 +605,7 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
         </CollapsibleTrigger>
         
         <CollapsibleContent className="mt-2 space-y-2">
-          <div className="grid gap-2 max-h-[400px] overflow-y-auto pr-1">
+          <div className="grid gap-2 pr-1">
             {guides.map((guide) => (
               <Card
                 key={guide.id}
