@@ -46,6 +46,7 @@ import {
   Mic,
   Mail,
   Globe,
+  Smartphone,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/ai-bot-company-logo-new.png';
@@ -146,6 +147,7 @@ const navGroups: NavGroup[] = [
       { label: 'Calendar', icon: Calendar, href: '/dashboard/integrations/calendar', roles: ['platform_admin', 'company_admin'] },
       { label: 'Website Embed', icon: Globe, href: '/dashboard/integrations/embed', roles: ['platform_admin', 'company_admin'] },
       { label: 'Chat Widget', icon: MessageCircle, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Technician App', icon: Smartphone, href: '/technician/install', roles: ['platform_admin', 'company_admin'] },
     ],
   },
   {
