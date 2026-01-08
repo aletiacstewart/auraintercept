@@ -40,12 +40,12 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         </p>
       </div>
       
-      {/* Two Column Layout */}
-      <div className="grid md:grid-cols-2 gap-4 max-w-2xl mx-auto px-2">
+      {/* Two Column Layout - more compact */}
+      <div className="grid md:grid-cols-2 gap-3 max-w-2xl mx-auto px-2">
         {/* Left Column - How To Guide */}
         {showHowToGuide && (
           <div className="order-2 md:order-1">
-            <AgentHowToGuide defaultExpanded={true} className="max-w-none" consoleType={consoleType} />
+            <AgentHowToGuide defaultExpanded={false} className="max-w-none" consoleType={consoleType} />
           </div>
         )}
         
