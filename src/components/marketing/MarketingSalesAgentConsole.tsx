@@ -10,19 +10,13 @@ import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { CampaignForm } from './forms/CampaignForm';
-import { PromoCodeForm } from './forms/PromoCodeForm';
-import { ReferralForm } from './forms/ReferralForm';
-import { WinbackForm } from './forms/WinbackForm';
 import { LeadForm } from './forms/LeadForm';
 import { CustomerSegmentsForm } from './forms/CustomerSegmentsForm';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Megaphone, 
-  Tag, 
   Users, 
   UserPlus, 
-  TrendingUp,
-  Gift
 } from 'lucide-react';
 
 // Tab configuration
@@ -30,12 +24,9 @@ const TABS = [
   { id: 'chat', label: 'Home', icon: Megaphone },
 ];
 
-// Quick actions for Marketing & Sales
+// Quick actions for Marketing & Sales - consolidated campaign creation
 const QUICK_ACTIONS = [
   { id: 'campaign', label: 'Create Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign' },
-  { id: 'promo', label: 'Generate Promo', icon: Tag, message: 'I need to generate a promotional code' },
-  { id: 'referral', label: 'Referral Program', icon: Gift, message: 'I need to set up a referral' },
-  { id: 'winback', label: 'Win-Back Campaign', icon: TrendingUp, message: 'I need to create a win-back campaign' },
   { id: 'lead', label: 'New Lead', icon: UserPlus, message: 'I need to add a new lead' },
   { id: 'customers', label: 'Customer Segments', icon: Users, message: 'Show me customer segments' },
 ];
@@ -55,9 +46,6 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   
   // Form visibility states
   const [showCampaignForm, setShowCampaignForm] = useState(false);
-  const [showPromoForm, setShowPromoForm] = useState(false);
-  const [showReferralForm, setShowReferralForm] = useState(false);
-  const [showWinbackForm, setShowWinbackForm] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [showSegmentsForm, setShowSegmentsForm] = useState(false);
 
@@ -93,9 +81,6 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
 
   const hideAllForms = () => {
     setShowCampaignForm(false);
-    setShowPromoForm(false);
-    setShowReferralForm(false);
-    setShowWinbackForm(false);
     setShowLeadForm(false);
     setShowSegmentsForm(false);
   };
@@ -114,21 +99,6 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     if (actionId === 'campaign') {
       hideAllForms();
       setShowCampaignForm(true);
-      return;
-    }
-    if (actionId === 'promo') {
-      hideAllForms();
-      setShowPromoForm(true);
-      return;
-    }
-    if (actionId === 'referral') {
-      hideAllForms();
-      setShowReferralForm(true);
-      return;
-    }
-    if (actionId === 'winback') {
-      hideAllForms();
-      setShowWinbackForm(true);
       return;
     }
     if (actionId === 'lead') {
@@ -158,10 +128,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const handleFormSuccess = async (formType: string, data: Record<string, unknown>) => {
     hideAllForms();
     const messages: Record<string, string> = {
-      campaign: `I just created a new marketing campaign called "${data.name}" (${data.type}). Can you help me optimize it and suggest the best channels and messaging?`,
-      promo: `I just created a promo code "${data.code}" for ${data.discount} off. What's the best way to promote this code to maximize conversions?`,
-      referral: `I just set up a referral for ${data.referrerName} with code "${data.code}". How can we encourage them to share this with more people?`,
-      winback: `I just created a win-back campaign "${data.name}" targeting ${data.targetCount} inactive customers. What strategies work best for re-engaging inactive customers?`,
+      campaign: `I just created a new ${data.type} campaign called "${data.name}". Can you help me optimize it and suggest the best channels and messaging?`,
       lead: `I just added a new lead: ${data.name} from ${data.source}. What's the best nurturing sequence for this type of lead?`,
     };
     if (messages[formType]) {
@@ -169,7 +136,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     }
   };
 
-  const isShowingForm = showCampaignForm || showPromoForm || showReferralForm || showWinbackForm || showLeadForm || showSegmentsForm;
+  const isShowingForm = showCampaignForm || showLeadForm || showSegmentsForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
 
@@ -214,30 +181,6 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
                   onSuccess={(data) => handleFormSuccess('campaign', data)}
-                />
-              )}
-              
-              {showPromoForm && effectiveCompanyId && (
-                <PromoCodeForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                  onSuccess={(data) => handleFormSuccess('promo', data)}
-                />
-              )}
-              
-              {showReferralForm && effectiveCompanyId && (
-                <ReferralForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                  onSuccess={(data) => handleFormSuccess('referral', data)}
-                />
-              )}
-              
-              {showWinbackForm && effectiveCompanyId && (
-                <WinbackForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                  onSuccess={(data) => handleFormSuccess('winback', data)}
                 />
               )}
               

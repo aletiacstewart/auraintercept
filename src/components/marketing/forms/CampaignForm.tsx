@@ -8,9 +8,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { X, Megaphone, Send, Mail, MessageSquare, Calendar, Sparkles, Loader2 } from 'lucide-react';
+import { X, Megaphone, Send, Mail, MessageSquare, Calendar, Sparkles, Loader2, Gift, TrendingUp, Tag, Users } from 'lucide-react';
+import { subDays } from 'date-fns';
 
 interface CampaignFormProps {
   companyId: string;
@@ -51,6 +51,46 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
     startDate: '',
     endDate: '',
     channels: [] as string[],
+    // Referral-specific fields
+    referrerName: '',
+    referrerEmail: '',
+    referrerPhone: '',
+    referredName: '',
+    referredEmail: '',
+    referredPhone: '',
+    rewardType: 'percent',
+    rewardValue: '10',
+    // Win-back specific fields
+    inactivePeriod: '90',
+  });
+
+  // Fetch inactive customers count for win-back
+  const { data: inactiveCustomers } = useQuery({
+    queryKey: ['inactive-customers', companyId, formData.inactivePeriod],
+    queryFn: async () => {
+      const cutoffDate = subDays(new Date(), parseInt(formData.inactivePeriod)).toISOString();
+      
+      const { data: recentCustomers, error } = await supabase
+        .from('appointments')
+        .select('customer_email, customer_phone, customer_name')
+        .eq('company_id', companyId)
+        .lt('datetime', cutoffDate)
+        .order('datetime', { ascending: false })
+        .limit(100);
+      
+      if (error) throw error;
+      
+      const uniqueCustomers = new Map();
+      recentCustomers?.forEach(c => {
+        const key = c.customer_email || c.customer_phone;
+        if (key && !uniqueCustomers.has(key)) {
+          uniqueCustomers.set(key, c);
+        }
+      });
+      
+      return Array.from(uniqueCustomers.values());
+    },
+    enabled: formData.campaignType === 'winback',
   });
 
   const generateContent = async (field: 'subject' | 'message') => {
@@ -68,6 +108,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           promoCode: formData.promoCode,
           discountType: formData.discountType,
           discountValue: formData.discountValue,
+          inactivePeriod: formData.inactivePeriod,
         },
       });
 
@@ -89,15 +130,67 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
     }
   };
 
+  const generatePromoCode = () => {
+    const prefixes: Record<string, string> = {
+      promotional: 'PROMO',
+      winback: 'COMEBACK',
+      referral: 'REF',
+      seasonal: 'SEASON',
+      loyalty: 'LOYAL',
+    };
+    const prefix = prefixes[formData.campaignType] || 'CODE';
+    const code = prefix + Math.random().toString(36).substring(2, 6).toUpperCase();
+    setFormData(prev => ({ ...prev, promoCode: code }));
+  };
+
+  const generateReferralCode = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let code = 'REF-';
+    for (let i = 0; i < 6; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  };
+
   const createCampaign = useMutation({
     mutationFn: async () => {
+      // For referral type, create a referral record
+      if (formData.campaignType === 'referral') {
+        const referralCode = generateReferralCode();
+        const expiresAt = new Date();
+        expiresAt.setMonth(expiresAt.getMonth() + 3);
+
+        const { data, error } = await supabase
+          .from('customer_referrals')
+          .insert({
+            company_id: companyId,
+            referrer_name: formData.referrerName,
+            referrer_email: formData.referrerEmail || null,
+            referrer_phone: formData.referrerPhone || null,
+            referred_name: formData.referredName || null,
+            referred_email: formData.referredEmail || null,
+            referred_phone: formData.referredPhone || null,
+            referral_code: referralCode,
+            reward_type: formData.rewardType,
+            reward_value: parseFloat(formData.rewardValue),
+            expires_at: expiresAt.toISOString(),
+            status: 'pending',
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+        return { ...data, campaign_type: 'referral', name: `Referral: ${formData.referrerName}` };
+      }
+
+      // For other campaign types, create a marketing campaign
       const { data, error } = await supabase
         .from('marketing_campaigns')
         .insert({
           company_id: companyId,
-          name: formData.name,
+          name: formData.name || `${formData.campaignType} Campaign`,
           campaign_type: formData.campaignType,
-          target_segment: formData.targetSegment,
+          target_segment: formData.campaignType === 'winback' ? 'inactive' : formData.targetSegment,
           email_subject: formData.emailSubject || null,
           message_template: formData.messageTemplate || null,
           promo_code: formData.promoCode || null,
@@ -115,9 +208,20 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
       return data;
     },
     onSuccess: (data) => {
-      toast.success('Campaign created successfully!');
+      const isReferral = formData.campaignType === 'referral';
+      const referralCode = isReferral && 'referral_code' in data ? (data as { referral_code: string }).referral_code : '';
+      
+      const successMessages: Record<string, string> = {
+        promotional: 'Promotional campaign created!',
+        winback: 'Win-back campaign created!',
+        referral: `Referral created! Code: ${referralCode}`,
+        seasonal: 'Seasonal campaign created!',
+        loyalty: 'Loyalty campaign created!',
+      };
+      toast.success(successMessages[formData.campaignType] || 'Campaign created!');
       queryClient.invalidateQueries({ queryKey: ['marketing-campaigns'] });
-      onSuccess?.({ name: data.name, type: data.campaign_type });
+      queryClient.invalidateQueries({ queryKey: ['referrals'] });
+      onSuccess?.({ name: data.name, type: formData.campaignType });
       onCancel();
     },
     onError: (error) => {
@@ -136,20 +240,46 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name) {
-      toast.error('Please enter a campaign name');
-      return;
+    
+    if (formData.campaignType === 'referral') {
+      if (!formData.referrerName) {
+        toast.error('Please enter referrer name');
+        return;
+      }
+    } else {
+      if (!formData.name) {
+        toast.error('Please enter a campaign name');
+        return;
+      }
     }
+    
     createCampaign.mutate();
   };
 
+  const getCampaignTypeIcon = () => {
+    switch (formData.campaignType) {
+      case 'referral': return <Gift className="h-5 w-5 text-pink-600" />;
+      case 'winback': return <TrendingUp className="h-5 w-5 text-purple-600" />;
+      case 'promotional': return <Tag className="h-5 w-5 text-orange-600" />;
+      default: return <Megaphone className="h-5 w-5 text-orange-600" />;
+    }
+  };
+
+  const getCampaignTypeColor = () => {
+    switch (formData.campaignType) {
+      case 'referral': return 'border-pink-200 bg-pink-50/50';
+      case 'winback': return 'border-purple-200 bg-purple-50/50';
+      default: return 'border-orange-200 bg-orange-50/50';
+    }
+  };
+
   return (
-    <Card className="border-orange-200 bg-orange-50/50">
+    <Card className={getCampaignTypeColor()}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
-            <Megaphone className="h-5 w-5 text-orange-600" />
-            Create Marketing Campaign
+            {getCampaignTypeIcon()}
+            Create Campaign
           </CardTitle>
           <Button variant="ghost" size="icon" onClick={onCancel}>
             <X className="h-4 w-4" />
@@ -158,151 +288,326 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Campaign Name */}
+          {/* Campaign Type Selection */}
           <div className="space-y-2">
-            <Label htmlFor="name">Campaign Name *</Label>
-            <Input
-              id="name"
-              placeholder="e.g., Summer Sale 2024"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-            />
+            <Label>Campaign Type</Label>
+            <Select
+              value={formData.campaignType}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, campaignType: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="promotional">
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-4 w-4" />
+                    Promotional / Promo Code
+                  </div>
+                </SelectItem>
+                <SelectItem value="referral">
+                  <div className="flex items-center gap-2">
+                    <Gift className="h-4 w-4" />
+                    Referral Program
+                  </div>
+                </SelectItem>
+                <SelectItem value="winback">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Win-Back Campaign
+                  </div>
+                </SelectItem>
+                <SelectItem value="seasonal">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    Seasonal
+                  </div>
+                </SelectItem>
+                <SelectItem value="loyalty">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    Loyalty
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Campaign Type & Target */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label>Campaign Type</Label>
-              <Select
-                value={formData.campaignType}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, campaignType: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="promotional">Promotional</SelectItem>
-                  <SelectItem value="seasonal">Seasonal</SelectItem>
-                  <SelectItem value="winback">Win-Back</SelectItem>
-                  <SelectItem value="referral">Referral</SelectItem>
-                  <SelectItem value="loyalty">Loyalty</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Target Segment</Label>
-              <Select
-                value={formData.targetSegment}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, targetSegment: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Customers</SelectItem>
-                  <SelectItem value="new">New Customers</SelectItem>
-                  <SelectItem value="returning">Returning Customers</SelectItem>
-                  <SelectItem value="inactive">Inactive Customers</SelectItem>
-                  <SelectItem value="vip">VIP Customers</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Promo Details */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="space-y-2">
-              <Label>Promo Code</Label>
-              <Input
-                placeholder="SUMMER20"
-                value={formData.promoCode}
-                onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value.toUpperCase() }))}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Discount Type</Label>
-              <Select
-                value={formData.discountType}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, discountType: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="percent">Percentage</SelectItem>
-                  <SelectItem value="fixed">Fixed Amount</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Discount Value</Label>
-              <Input
-                type="number"
-                placeholder={formData.discountType === 'percent' ? '20' : '50'}
-                value={formData.discountValue}
-                onChange={(e) => setFormData(prev => ({ ...prev, discountValue: e.target.value }))}
-              />
-            </div>
-          </div>
-
-          {/* Dates */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                Start Date
-              </Label>
-              <Input
-                type="date"
-                value={formData.startDate}
-                onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                End Date
-              </Label>
-              <Input
-                type="date"
-                value={formData.endDate}
-                onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
-              />
-            </div>
-          </div>
-
-          {/* Channels */}
-          <div className="space-y-2">
-            <Label>Channels</Label>
-            <div className="flex gap-4">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="email-channel"
-                  checked={formData.channels.includes('email')}
-                  onCheckedChange={() => handleChannelToggle('email')}
-                />
-                <Label htmlFor="email-channel" className="flex items-center gap-1 text-sm cursor-pointer">
-                  <Mail className="h-4 w-4" />
-                  Email
-                </Label>
+          {/* Referral-specific fields */}
+          {formData.campaignType === 'referral' && (
+            <>
+              <div className="space-y-3 p-3 rounded-lg border bg-background">
+                <h4 className="font-medium text-sm">Referrer (Existing Customer)</h4>
+                <div className="space-y-2">
+                  <Label>Name *</Label>
+                  <Input
+                    placeholder="John Smith"
+                    value={formData.referrerName}
+                    onChange={(e) => setFormData(prev => ({ ...prev, referrerName: e.target.value }))}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Input
+                      type="email"
+                      placeholder="john@email.com"
+                      value={formData.referrerEmail}
+                      onChange={(e) => setFormData(prev => ({ ...prev, referrerEmail: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Phone</Label>
+                    <Input
+                      placeholder="(555) 123-4567"
+                      value={formData.referrerPhone}
+                      onChange={(e) => setFormData(prev => ({ ...prev, referrerPhone: e.target.value }))}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="sms-channel"
-                  checked={formData.channels.includes('sms')}
-                  onCheckedChange={() => handleChannelToggle('sms')}
+
+              <div className="space-y-3 p-3 rounded-lg border bg-background">
+                <h4 className="font-medium text-sm">Referred (New Customer - Optional)</h4>
+                <div className="space-y-2">
+                  <Label>Name</Label>
+                  <Input
+                    placeholder="Jane Doe"
+                    value={formData.referredName}
+                    onChange={(e) => setFormData(prev => ({ ...prev, referredName: e.target.value }))}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Input
+                      type="email"
+                      placeholder="jane@email.com"
+                      value={formData.referredEmail}
+                      onChange={(e) => setFormData(prev => ({ ...prev, referredEmail: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Phone</Label>
+                    <Input
+                      placeholder="(555) 987-6543"
+                      value={formData.referredPhone}
+                      onChange={(e) => setFormData(prev => ({ ...prev, referredPhone: e.target.value }))}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label>Reward Type</Label>
+                  <Select
+                    value={formData.rewardType}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, rewardType: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="percent">Percentage Off</SelectItem>
+                      <SelectItem value="fixed">Fixed Amount</SelectItem>
+                      <SelectItem value="credit">Account Credit</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Reward Value</Label>
+                  <Input
+                    type="number"
+                    placeholder="10"
+                    value={formData.rewardValue}
+                    onChange={(e) => setFormData(prev => ({ ...prev, rewardValue: e.target.value }))}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Win-back specific fields */}
+          {formData.campaignType === 'winback' && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="name">Campaign Name</Label>
+                <Input
+                  id="name"
+                  placeholder="e.g., Q1 Win-Back Campaign"
+                  value={formData.name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 />
-                <Label htmlFor="sms-channel" className="flex items-center gap-1 text-sm cursor-pointer">
-                  <MessageSquare className="h-4 w-4" />
-                  SMS
+              </div>
+
+              <div className="space-y-2">
+                <Label className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  Inactive Period
                 </Label>
+                <Select
+                  value={formData.inactivePeriod}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, inactivePeriod: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30">30 days</SelectItem>
+                    <SelectItem value="60">60 days</SelectItem>
+                    <SelectItem value="90">90 days</SelectItem>
+                    <SelectItem value="180">6 months</SelectItem>
+                    <SelectItem value="365">1 year</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Users className="h-4 w-4" />
+                  <span>~{inactiveCustomers?.length || 0} inactive customers found</span>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Standard campaign fields (not for referral) */}
+          {formData.campaignType !== 'referral' && formData.campaignType !== 'winback' && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="name">Campaign Name *</Label>
+                <Input
+                  id="name"
+                  placeholder="e.g., Summer Sale 2024"
+                  value={formData.name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Target Segment</Label>
+                <Select
+                  value={formData.targetSegment}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, targetSegment: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Customers</SelectItem>
+                    <SelectItem value="new">New Customers</SelectItem>
+                    <SelectItem value="returning">Returning Customers</SelectItem>
+                    <SelectItem value="inactive">Inactive Customers</SelectItem>
+                    <SelectItem value="vip">VIP Customers</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
+          )}
+
+          {/* Promo Details (for promotional, winback, seasonal, loyalty) */}
+          {formData.campaignType !== 'referral' && (
+            <div className="space-y-3 p-3 rounded-lg border bg-background">
+              <h4 className="font-medium text-sm">Promo Details</h4>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="space-y-2">
+                  <Label>Promo Code</Label>
+                  <Input
+                    placeholder="SUMMER20"
+                    value={formData.promoCode}
+                    onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value.toUpperCase() }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Discount Type</Label>
+                  <Select
+                    value={formData.discountType}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, discountType: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="percent">Percentage</SelectItem>
+                      <SelectItem value="fixed">Fixed Amount</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Discount Value</Label>
+                  <Input
+                    type="number"
+                    placeholder={formData.discountType === 'percent' ? '20' : '50'}
+                    value={formData.discountValue}
+                    onChange={(e) => setFormData(prev => ({ ...prev, discountValue: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <Button type="button" variant="outline" size="sm" onClick={generatePromoCode}>
+                Generate Code
+              </Button>
+            </div>
+          )}
+
+          {/* Dates (not for referral) */}
+          {formData.campaignType !== 'referral' && (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  Start Date
+                </Label>
+                <Input
+                  type="date"
+                  value={formData.startDate}
+                  onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  End Date
+                </Label>
+                <Input
+                  type="date"
+                  value={formData.endDate}
+                  onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
+                />
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Email Subject */}
-          {formData.channels.includes('email') && (
+          {/* Channels (not for referral) */}
+          {formData.campaignType !== 'referral' && (
+            <div className="space-y-2">
+              <Label>Channels</Label>
+              <div className="flex gap-4">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="email-channel"
+                    checked={formData.channels.includes('email')}
+                    onCheckedChange={() => handleChannelToggle('email')}
+                  />
+                  <Label htmlFor="email-channel" className="flex items-center gap-1 text-sm cursor-pointer">
+                    <Mail className="h-4 w-4" />
+                    Email
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="sms-channel"
+                    checked={formData.channels.includes('sms')}
+                    onCheckedChange={() => handleChannelToggle('sms')}
+                  />
+                  <Label htmlFor="sms-channel" className="flex items-center gap-1 text-sm cursor-pointer">
+                    <MessageSquare className="h-4 w-4" />
+                    SMS
+                  </Label>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Email Subject (when email channel selected and not referral) */}
+          {formData.channels.includes('email') && formData.campaignType !== 'referral' && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label>Email Subject</Label>
@@ -323,43 +628,45 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                 </Button>
               </div>
               <Input
-                placeholder="Don't miss our summer sale!"
+                placeholder="Don't miss our special offer!"
                 value={formData.emailSubject}
                 onChange={(e) => setFormData(prev => ({ ...prev, emailSubject: e.target.value }))}
               />
             </div>
           )}
 
-          {/* Message Template */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label>Message Template</Label>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => generateContent('message')}
-                disabled={isGeneratingMessage}
-                className="h-7 text-xs gap-1 text-primary hover:text-primary"
-              >
-                {isGeneratingMessage ? (
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                ) : (
-                  <Sparkles className="h-3 w-3" />
-                )}
-                AI Generate
-              </Button>
+          {/* Message Template (not for referral) */}
+          {formData.campaignType !== 'referral' && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Message Template</Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => generateContent('message')}
+                  disabled={isGeneratingMessage}
+                  className="h-7 text-xs gap-1 text-primary hover:text-primary"
+                >
+                  {isGeneratingMessage ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-3 w-3" />
+                  )}
+                  AI Generate
+                </Button>
+              </div>
+              <Textarea
+                placeholder="Hi {customer_name}, we have an exciting offer for you..."
+                value={formData.messageTemplate}
+                onChange={(e) => setFormData(prev => ({ ...prev, messageTemplate: e.target.value }))}
+                rows={3}
+              />
+              <p className="text-xs text-muted-foreground">
+                Variables: {'{customer_name}'}, {'{promo_code}'}, {'{discount}'}
+              </p>
             </div>
-            <Textarea
-              placeholder="Hi {customer_name}, we have an exciting offer for you..."
-              value={formData.messageTemplate}
-              onChange={(e) => setFormData(prev => ({ ...prev, messageTemplate: e.target.value }))}
-              rows={3}
-            />
-            <p className="text-xs text-muted-foreground">
-              Variables: {'{customer_name}'}, {'{promo_code}'}, {'{discount}'}
-            </p>
-          </div>
+          )}
 
           {/* Actions */}
           <div className="flex gap-2 pt-2">
