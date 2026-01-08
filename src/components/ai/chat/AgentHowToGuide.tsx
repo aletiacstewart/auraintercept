@@ -30,7 +30,8 @@ import {
   Users,
   BarChart3,
   Target,
-  Download
+  Download,
+  Smartphone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -178,6 +179,19 @@ const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
 // Field Operations Guides
 const FIELD_OPS_GUIDES: AgentGuide[] = [
   {
+    id: 'install-app',
+    label: 'Install Field Ops App',
+    icon: Smartphone,
+    description: 'Install the mobile app for field technicians',
+    steps: [
+      { step: 1, title: 'Go to Install Page', description: 'Navigate to Settings → Install Field Ops App in your technician dashboard' },
+      { step: 2, title: 'Scan QR Code', description: 'Use your phone camera to scan the QR code displayed' },
+      { step: 3, title: 'Add to Home Screen', description: 'Follow prompts to install the app on your device' },
+      { step: 4, title: 'Login', description: 'Sign in with your employee credentials to access your jobs' },
+    ],
+    tips: ['The app works offline for viewing job details', 'Enable notifications for real-time job assignments', 'Use the app for hands-free navigation and status updates']
+  },
+  {
     id: 'accept',
     label: 'Accept Job',
     icon: CheckCircle,
@@ -186,9 +200,9 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
       { step: 1, title: 'View Assignment', description: 'Review the job details including customer info and service type' },
       { step: 2, title: 'Check Schedule', description: 'Confirm you can make the scheduled time' },
       { step: 3, title: 'Accept Job', description: 'Click Accept to confirm you will handle this job' },
-      { step: 4, title: 'Prepare', description: 'Gather necessary tools and parts for the service' },
+      { step: 4, title: 'Get Directions', description: 'AI will automatically prompt you to get directions to the job site' },
     ],
-    tips: ['Accept jobs promptly to avoid reassignment', 'Contact dispatch if you have scheduling conflicts']
+    tips: ['Accept jobs promptly to avoid reassignment', 'Contact dispatch if you have scheduling conflicts', 'After accepting, follow the AI prompts for next steps']
   },
   {
     id: 'directions',
@@ -199,6 +213,7 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
       { step: 1, title: 'Select Job', description: 'Choose the job you need directions to' },
       { step: 2, title: 'Click Directions', description: 'Open navigation in your preferred maps app' },
       { step: 3, title: 'Follow Route', description: 'Follow the optimal route to the customer' },
+      { step: 4, title: 'Mark En Route', description: 'AI will prompt you to mark yourself as en route' },
     ],
     tips: ['Check traffic conditions before departing', 'Save customer address for future visits']
   },
@@ -210,47 +225,36 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     steps: [
       { step: 1, title: 'Start Travel', description: 'Begin traveling to the customer location' },
       { step: 2, title: 'Update Status', description: 'Click En Route to update your status' },
-      { step: 3, title: 'Customer Notified', description: 'Customer automatically receives notification' },
+      { step: 3, title: 'Auto ETA', description: 'AI calculates and sends ETA to customer automatically' },
+      { step: 4, title: 'Customer Notified', description: 'Customer receives SMS/email with your ETA' },
     ],
-    tips: ['Update status as soon as you leave', 'Customers appreciate real-time updates']
+    tips: ['Update status as soon as you leave', 'ETA is automatically sent to customer via SMS and email']
   },
   {
     id: 'eta',
     label: 'Update ETA',
     icon: Clock,
-    description: 'Provide accurate arrival time estimates',
+    description: 'Manually override arrival time estimates',
     steps: [
-      { step: 1, title: 'Check Traffic', description: 'Assess current travel conditions' },
-      { step: 2, title: 'Calculate Time', description: 'Estimate realistic arrival time' },
+      { step: 1, title: 'Check Conditions', description: 'Assess current travel or delay conditions' },
+      { step: 2, title: 'Calculate Time', description: 'Estimate your new realistic arrival time' },
       { step: 3, title: 'Update ETA', description: 'Enter your expected arrival time' },
       { step: 4, title: 'Auto-Notify', description: 'Customer receives updated ETA notification' },
     ],
-    tips: ['Update ETA if delays occur', 'Be realistic with time estimates']
+    tips: ['Update ETA if unexpected delays occur', 'Be realistic with time estimates']
   },
   {
-    id: 'eta-agent',
-    label: 'ETA Agent',
-    icon: Bot,
-    description: 'AI-powered ETA calculations and notifications',
-    steps: [
-      { step: 1, title: 'Request Help', description: 'Ask the AI agent for ETA assistance' },
-      { step: 2, title: 'Review Jobs', description: 'AI analyzes your current job queue' },
-      { step: 3, title: 'Get Suggestions', description: 'Receive optimized ETA recommendations' },
-      { step: 4, title: 'Send Updates', description: 'AI can help send customer notifications' },
-    ],
-    tips: ['Use ETA Agent for complex scheduling', 'AI considers traffic and job duration']
-  },
-  {
-    id: 'arrived',
-    label: 'Mark Arrived',
+    id: 'arrive-start',
+    label: 'Arrive & Start Job',
     icon: MapPin,
-    description: 'Confirm arrival at customer location',
+    description: 'Confirm arrival and begin work in one step',
     steps: [
-      { step: 1, title: 'Arrive On-Site', description: 'Park and prepare to meet customer' },
-      { step: 2, title: 'Click Arrived', description: 'Update your status to Arrived' },
-      { step: 3, title: 'Customer Notified', description: 'Customer knows you have arrived' },
+      { step: 1, title: 'Arrive On-Site', description: 'Park and prepare to meet the customer' },
+      { step: 2, title: 'Click Arrive & Start', description: 'Update status to Arrived and In Progress simultaneously' },
+      { step: 3, title: 'Take Before Photos', description: 'Document the job site before starting work' },
+      { step: 4, title: 'Begin Service', description: 'Start the service work for the customer' },
     ],
-    tips: ['Mark arrived immediately when on-site', 'Take before photos if needed']
+    tips: ['Mark arrived immediately when on-site', 'Take before photos for documentation', 'Customer is automatically notified of your arrival']
   },
   {
     id: 'complete',
@@ -260,10 +264,36 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
     steps: [
       { step: 1, title: 'Finish Service', description: 'Complete all required service work' },
       { step: 2, title: 'Document Work', description: 'Add notes and take after photos' },
-      { step: 3, title: 'Customer Sign-off', description: 'Get customer approval if required' },
-      { step: 4, title: 'Mark Complete', description: 'Click Complete Job to finish' },
+      { step: 3, title: 'Mark Complete', description: 'Click Complete Job to finish' },
+      { step: 4, title: 'Quote or Invoice', description: 'AI will offer to generate a quote or invoice' },
     ],
-    tips: ['Always document parts used', 'Take clear after photos for records']
+    tips: ['Always document parts used', 'Take clear after photos for records', 'Generate invoice on-site for faster payment']
+  },
+  {
+    id: 'quote',
+    label: 'Generate Quote',
+    icon: FileText,
+    description: 'Create on-site quotes for additional work',
+    steps: [
+      { step: 1, title: 'Click Generate Quote', description: 'Open the quote form with job details pre-filled' },
+      { step: 2, title: 'Add Line Items', description: 'Enter services and parts with pricing' },
+      { step: 3, title: 'Review Total', description: 'Verify the quote total and details' },
+      { step: 4, title: 'Send to Customer', description: 'Email or SMS the quote directly to customer' },
+    ],
+    tips: ['Generate quotes on-site while with the customer', 'Include detailed descriptions for clarity', 'Quotes can be converted to invoices later']
+  },
+  {
+    id: 'invoice',
+    label: 'Generate Invoice',
+    icon: Receipt,
+    description: 'Create invoices with optional payment links',
+    steps: [
+      { step: 1, title: 'Click Generate Invoice', description: 'Open invoice form with job details pre-filled' },
+      { step: 2, title: 'Add Services', description: 'List all services and parts provided' },
+      { step: 3, title: 'Add Payment Link', description: 'Toggle on Stripe payment link for instant pay' },
+      { step: 4, title: 'Send to Customer', description: 'Email or SMS invoice with payment link' },
+    ],
+    tips: ['Include Stripe payment links for faster payment', 'Send invoice before leaving job site', 'Customer can pay immediately via the payment link']
   },
   {
     id: 'dispatch',
@@ -533,7 +563,7 @@ const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
 
 const CONSOLE_TITLES: Record<ConsoleType, string> = {
   customer: 'How to use our AI agents',
-  fieldops: 'How to use Field Operations AI',
+  fieldops: 'How to use Field Ops Console and App',
   businessops: 'How to use Business & Accounting AI',
   marketing: 'How to use Marketing & Sales AI',
   analytics: 'How to use Analytics & Optimization AI',
