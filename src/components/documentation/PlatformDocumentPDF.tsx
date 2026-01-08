@@ -241,6 +241,114 @@ const styles = StyleSheet.create({
     fontSize: 9,
     lineHeight: 1.4,
   },
+  // Complexity Score Styles
+  complexityScoreCard: {
+    backgroundColor: colors.primary,
+    padding: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  complexityScoreNumber: {
+    fontSize: 48,
+    fontWeight: 700,
+    color: colors.white,
+  },
+  complexityScoreLabel: {
+    fontSize: 12,
+    color: '#a5b4fc',
+    marginTop: 4,
+  },
+  complexityRating: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: colors.white,
+    marginTop: 8,
+  },
+  dimensionRow: {
+    flexDirection: 'row',
+    marginBottom: 8,
+    alignItems: 'center',
+  },
+  dimensionName: {
+    fontSize: 9,
+    fontWeight: 600,
+    width: 130,
+  },
+  dimensionBar: {
+    flex: 1,
+    height: 12,
+    backgroundColor: colors.lightGray,
+    borderRadius: 6,
+    marginHorizontal: 8,
+  },
+  dimensionBarFill: {
+    height: 12,
+    backgroundColor: colors.primary,
+    borderRadius: 6,
+  },
+  dimensionScore: {
+    fontSize: 9,
+    fontWeight: 600,
+    width: 35,
+    textAlign: 'right',
+  },
+  metricGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 12,
+  },
+  metricCard: {
+    width: '48%',
+    backgroundColor: colors.lightGray,
+    padding: 10,
+    borderRadius: 4,
+    marginBottom: 4,
+  },
+  metricCardTitle: {
+    fontSize: 10,
+    fontWeight: 600,
+    color: colors.primary,
+    marginBottom: 6,
+  },
+  metricItem: {
+    flexDirection: 'row',
+    marginBottom: 3,
+  },
+  metricLabel: {
+    fontSize: 8,
+    color: colors.gray,
+    flex: 1,
+  },
+  metricValue: {
+    fontSize: 8,
+    fontWeight: 600,
+  },
+  effortGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginTop: 12,
+  },
+  effortCard: {
+    width: '23%',
+    backgroundColor: colors.dark,
+    padding: 10,
+    borderRadius: 4,
+    alignItems: 'center',
+  },
+  effortValue: {
+    fontSize: 14,
+    fontWeight: 700,
+    color: colors.accent,
+    marginBottom: 4,
+  },
+  effortLabel: {
+    fontSize: 7,
+    color: '#a5b4fc',
+    textAlign: 'center',
+  },
 });
 
 // Development Timeline Data
@@ -404,16 +512,17 @@ const PlatformDocumentPDF = () => (
         {[
           { title: '1. Executive Summary', page: '3' },
           { title: '2. Development Timeline', page: '4' },
-          { title: '3. AI Agents Catalog', page: '5' },
-          { title: '4. Agent Consoles', page: '8' },
-          { title: '5. Platform Features', page: '9' },
-          { title: '6. Third-Party Integrations', page: '10' },
-          { title: '7. Technical Architecture', page: '11' },
-          { title: '8. User Roles & Portals', page: '12' },
-          { title: '9. Knowledge Base System', page: '13' },
-          { title: '10. Communication Channels', page: '14' },
-          { title: '11. Target Industries', page: '15' },
-          { title: '12. Pricing Model', page: '16' },
+          { title: '3. Project Complexity Score', page: '5' },
+          { title: '4. AI Agents Catalog', page: '6' },
+          { title: '5. Agent Consoles', page: '9' },
+          { title: '6. Platform Features', page: '10' },
+          { title: '7. Third-Party Integrations', page: '11' },
+          { title: '8. Technical Architecture', page: '12' },
+          { title: '9. User Roles & Portals', page: '13' },
+          { title: '10. Knowledge Base System', page: '14' },
+          { title: '11. Communication Channels', page: '15' },
+          { title: '12. Target Industries', page: '16' },
+          { title: '13. Pricing Model', page: '17' },
         ].map((item, i) => (
           <View key={i} style={styles.tocItem}>
             <Text style={styles.tocTitle}>{item.title}</Text>
@@ -480,6 +589,117 @@ const PlatformDocumentPDF = () => (
           ))}
         </View>
       ))}
+    </Page>
+
+    {/* Project Complexity Score */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Project Complexity Score" />
+      <Text style={styles.sectionTitle}>Project Complexity Score</Text>
+      
+      <View style={styles.complexityScoreCard}>
+        <Text style={styles.complexityScoreNumber}>87</Text>
+        <Text style={styles.complexityScoreLabel}>out of 100</Text>
+        <Text style={styles.complexityRating}>Enterprise-Grade Complexity</Text>
+      </View>
+
+      <Text style={styles.subsectionTitle}>Scoring Dimensions</Text>
+      {[
+        { name: 'Frontend Complexity', score: 18, max: 20 },
+        { name: 'Backend Complexity', score: 19, max: 20 },
+        { name: 'AI/ML Integration', score: 14, max: 15 },
+        { name: 'Third-Party Integrations', score: 13, max: 15 },
+        { name: 'Security & Architecture', score: 12, max: 15 },
+        { name: 'User Experience', score: 11, max: 15 },
+      ].map((dim, i) => (
+        <View key={i} style={styles.dimensionRow}>
+          <Text style={styles.dimensionName}>{dim.name}</Text>
+          <View style={styles.dimensionBar}>
+            <View style={[styles.dimensionBarFill, { width: `${(dim.score / dim.max) * 100}%` }]} />
+          </View>
+          <Text style={styles.dimensionScore}>{dim.score}/{dim.max}</Text>
+        </View>
+      ))}
+
+      <View style={styles.metricGrid}>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricCardTitle}>Frontend Metrics</Text>
+          {[
+            { label: 'React Components', value: '150+' },
+            { label: 'Pages/Routes', value: '44+' },
+            { label: 'UI Components (shadcn)', value: '30+' },
+            { label: 'Custom Hooks', value: '15+' },
+            { label: 'Form Components', value: '25+' },
+          ].map((m, i) => (
+            <View key={i} style={styles.metricItem}>
+              <Text style={styles.metricLabel}>{m.label}</Text>
+              <Text style={styles.metricValue}>{m.value}</Text>
+            </View>
+          ))}
+        </View>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricCardTitle}>Backend Metrics</Text>
+          {[
+            { label: 'Database Tables', value: '55' },
+            { label: 'Edge Functions', value: '48' },
+            { label: 'Database Functions', value: '11' },
+            { label: 'Storage Buckets', value: '4' },
+            { label: 'Scheduled Jobs', value: '8+' },
+          ].map((m, i) => (
+            <View key={i} style={styles.metricItem}>
+              <Text style={styles.metricLabel}>{m.label}</Text>
+              <Text style={styles.metricValue}>{m.value}</Text>
+            </View>
+          ))}
+        </View>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricCardTitle}>AI System Metrics</Text>
+          {[
+            { label: 'Specialized Agents', value: '22+' },
+            { label: 'Agent Consoles', value: '5' },
+            { label: 'Orchestration Flows', value: 'Multi-agent' },
+            { label: 'Supported Channels', value: '4' },
+          ].map((m, i) => (
+            <View key={i} style={styles.metricItem}>
+              <Text style={styles.metricLabel}>{m.label}</Text>
+              <Text style={styles.metricValue}>{m.value}</Text>
+            </View>
+          ))}
+        </View>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricCardTitle}>Security Metrics</Text>
+          {[
+            { label: 'Row-Level Security', value: 'All tables' },
+            { label: 'Role-Based Access', value: '4 roles' },
+            { label: 'Multi-Tenant Isolation', value: 'company_id' },
+            { label: 'API Encryption', value: 'Vault' },
+          ].map((m, i) => (
+            <View key={i} style={styles.metricItem}>
+              <Text style={styles.metricLabel}>{m.label}</Text>
+              <Text style={styles.metricValue}>{m.value}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <Text style={styles.subsectionTitle}>Estimated Development Effort</Text>
+      <View style={styles.effortGrid}>
+        <View style={styles.effortCard}>
+          <Text style={styles.effortValue}>800-1200+</Text>
+          <Text style={styles.effortLabel}>Development Hours</Text>
+        </View>
+        <View style={styles.effortCard}>
+          <Text style={styles.effortValue}>3-4</Text>
+          <Text style={styles.effortLabel}>Developers</Text>
+        </View>
+        <View style={styles.effortCard}>
+          <Text style={styles.effortValue}>4-6</Text>
+          <Text style={styles.effortLabel}>Months</Text>
+        </View>
+        <View style={styles.effortCard}>
+          <Text style={styles.effortValue}>50,000+</Text>
+          <Text style={styles.effortLabel}>Lines of Code</Text>
+        </View>
+      </View>
     </Page>
 
     {/* AI Agents Catalog - Page 1 */}
