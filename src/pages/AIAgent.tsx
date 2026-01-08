@@ -290,11 +290,13 @@ const AIAgent = () => {
                     <Briefcase className="h-4 w-4 mr-2" />
                     Business & Accounting
                   </TabsTrigger>
-                  <TabsTrigger value="marketing">
-                    <Megaphone className="h-4 w-4 mr-2" />
-                    Marketing & Sales
-                  </TabsTrigger>
-                  {(userRole === 'platform_admin' || userRole === 'company_admin') && (
+                  {userRole === 'platform_admin' && (
+                    <TabsTrigger value="marketing">
+                      <Megaphone className="h-4 w-4 mr-2" />
+                      Marketing & Sales
+                    </TabsTrigger>
+                  )}
+                  {userRole === 'platform_admin' && (
                     <TabsTrigger value="analytics">
                       <BarChart3 className="h-4 w-4 mr-2" />
                       Analytics & Optimization
