@@ -88,7 +88,10 @@ export default function AIAgentsHub() {
   const canManageAgents = userRole === 'platform_admin' || userRole === 'company_admin';
 
   // Agents hidden from non-platform-admin roles
-  const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty', 'quoting'];
+  const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty', 'quoting', 'promo', 'referral', 'winback', 'seasonal', 'marketing'];
+  
+  // Categories hidden from non-platform-admin roles
+  const HIDDEN_CATEGORIES_FOR_NON_PLATFORM_ADMIN = ['marketing_sales'];
 
   // Filter agents based on job roles for employees
   const accessibleAgents = useMemo(() => {
@@ -97,12 +100,15 @@ export default function AIAgentsHub() {
       return agents;
     }
     
-    // Company admins see all agents except hidden ones
+    // Company admins see all agents except hidden ones (including marketing_sales category)
     if (userRole === 'company_admin') {
-      return agents.filter(a => !HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN.includes(a.type));
+      return agents.filter(a => 
+        !HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN.includes(a.type) &&
+        !HIDDEN_CATEGORIES_FOR_NON_PLATFORM_ADMIN.includes(a.category)
+      );
     }
     
-    // Employees see only agents matching their job roles, excluding hidden agents
+    // Employees see only agents matching their job roles, excluding hidden agents and categories
     if (userJobAssignments && userJobAssignments.length > 0) {
       const allowedAgentTypes = new Set<string>();
       userJobAssignments.forEach(jobType => {
@@ -111,7 +117,8 @@ export default function AIAgentsHub() {
       });
       return agents.filter(a => 
         allowedAgentTypes.has(a.type) && 
-        !HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN.includes(a.type)
+        !HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN.includes(a.type) &&
+        !HIDDEN_CATEGORIES_FOR_NON_PLATFORM_ADMIN.includes(a.category)
       );
     }
     
