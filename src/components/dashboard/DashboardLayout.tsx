@@ -93,7 +93,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Financial',
     items: [
-      { label: 'Quotes', icon: FileText, href: '/dashboard/quotes', roles: ['platform_admin'] },
+      { label: 'Quotes', icon: FileText, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'] },
       { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'] },
     ],
   },
