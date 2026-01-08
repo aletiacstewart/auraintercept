@@ -222,27 +222,36 @@ export default function PublicChat() {
 
   return (
     <div className={cn("bg-background flex flex-col", isEmbedMode ? "h-full" : "min-h-screen")}>
-      {/* Header - hidden in embed mode */}
-      {!isEmbedMode && (
-        <header 
-          className="px-4 py-4 text-white"
-          style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }}
-        >
-          <div className="max-w-2xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {config.company.logo_url ? (
-                <img 
-                  src={config.company.logo_url} 
-                  alt={config.company.name} 
-                  className="h-10 w-10 rounded-full object-cover bg-white p-1"
-                />
-              ) : (
-                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
-                  <Building2 className="h-5 w-5" />
-                </div>
-              )}
-              <div>
-                <h1 className="font-semibold">{config.company.name}</h1>
+      {/* Header - compact for embed mode, full for standalone */}
+      <header 
+        className={cn(
+          "px-4 text-white",
+          isEmbedMode ? "py-2" : "py-4"
+        )}
+        style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }}
+      >
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {config.company.logo_url ? (
+              <img 
+                src={config.company.logo_url} 
+                alt={config.company.name} 
+                className={cn(
+                  "rounded-full object-cover bg-white p-1",
+                  isEmbedMode ? "h-8 w-8" : "h-10 w-10"
+                )}
+              />
+            ) : (
+              <div className={cn(
+                "rounded-full bg-white/20 flex items-center justify-center",
+                isEmbedMode ? "h-8 w-8" : "h-10 w-10"
+              )}>
+                <Building2 className={isEmbedMode ? "h-4 w-4" : "h-5 w-5"} />
+              </div>
+            )}
+            <div>
+              <h1 className={cn("font-semibold", isEmbedMode && "text-sm")}>{config.company.name}</h1>
+              {!isEmbedMode && (
                 <div className="flex items-center gap-2">
                   <p className="text-xs text-white/80">Virtual Assistant</p>
                   <Badge 
@@ -252,25 +261,41 @@ export default function PublicChat() {
                     {agentInfo.label}
                   </Badge>
                 </div>
-              </div>
+              )}
             </div>
-            <div className="flex items-center gap-2">
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Voice Chat Button */}
+            <Button 
+              size="sm" 
+              variant="ghost" 
+              className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full"
+              onClick={() => setShowVoiceDialog(true)}
+              title="Voice Chat"
+            >
+              <Mic className="h-4 w-4" />
+            </Button>
+            {/* Call Button - shows emergency phone */}
+            {config?.company.dispatch_phone && (
               <Button 
                 size="sm" 
                 variant="ghost" 
                 className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full"
-                onClick={() => setShowVoiceDialog(true)}
+                onClick={() => setShowEmergencyPhone(true)}
+                title="Call Us"
               >
-                <Mic className="h-4 w-4" />
+                <Phone className="h-4 w-4" />
               </Button>
+            )}
+            {!isEmbedMode && (
               <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
                 <Clock className="h-3 w-3 mr-1" />
                 {getTodayHours()}
               </Badge>
-            </div>
+            )}
           </div>
-        </header>
-      )}
+        </div>
+      </header>
 
       {/* Navigation Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col max-w-2xl mx-auto w-full">
@@ -625,6 +650,46 @@ export default function PublicChat() {
                 setVoiceTranscript(prev => [...prev, { role, text }]);
               }}
             />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Emergency Phone Dialog */}
+      <Dialog open={showEmergencyPhone} onOpenChange={setShowEmergencyPhone}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <Phone className="h-5 w-5" />
+              Emergency Contact
+            </DialogTitle>
+            <DialogDescription>
+              Call us directly for urgent assistance
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-6 text-center">
+            <div className="h-16 w-16 rounded-full bg-destructive/10 mx-auto mb-4 flex items-center justify-center">
+              <Phone className="h-8 w-8 text-destructive" />
+            </div>
+            <p className="text-sm text-muted-foreground mb-2">
+              {config.company.name} Emergency Hotline
+            </p>
+            <a 
+              href={`tel:${config?.company.dispatch_phone}`}
+              className="text-2xl font-bold text-destructive hover:underline"
+            >
+              {config?.company.dispatch_phone}
+            </a>
+            <div className="mt-4">
+              <Button 
+                className="w-full"
+                variant="destructive"
+                onClick={() => window.location.href = `tel:${config?.company.dispatch_phone}`}
+              >
+                <Phone className="h-4 w-4 mr-2" />
+                Call Now
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
