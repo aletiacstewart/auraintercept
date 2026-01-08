@@ -674,6 +674,7 @@ export type Database = {
           monthly_digest_timezone: string | null
           name: string
           primary_color: string | null
+          public_app_url: string | null
           quarterly_digest_day: number | null
           quarterly_digest_email: string | null
           quarterly_digest_enabled: boolean | null
@@ -755,6 +756,7 @@ export type Database = {
           monthly_digest_timezone?: string | null
           name: string
           primary_color?: string | null
+          public_app_url?: string | null
           quarterly_digest_day?: number | null
           quarterly_digest_email?: string | null
           quarterly_digest_enabled?: boolean | null
@@ -836,6 +838,7 @@ export type Database = {
           monthly_digest_timezone?: string | null
           name?: string
           primary_color?: string | null
+          public_app_url?: string | null
           quarterly_digest_day?: number | null
           quarterly_digest_email?: string | null
           quarterly_digest_enabled?: boolean | null
