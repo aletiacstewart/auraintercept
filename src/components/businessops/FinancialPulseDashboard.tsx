@@ -121,18 +121,20 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           </CardContent>
         </Card>
 
-        <Card className={`glass-panel transition-colors cursor-pointer ${inventoryAlerts.length > 0 ? 'border-destructive/40 hover:border-destructive/60' : 'border-accent/20 hover:border-accent/40'}`} onClick={() => onNavigate('inventory')}>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <Package className="h-5 w-5 text-accent" />
-              {inventoryAlerts.length > 0 && (
-                <AlertTriangle className="h-4 w-4 text-destructive animate-pulse" />
-              )}
-            </div>
-            <p className="text-2xl font-bold mt-2">{inventoryAlerts.length}</p>
-            <p className="text-xs text-muted-foreground">Low Stock Alerts</p>
-          </CardContent>
-        </Card>
+        {isPlatformAdmin && (
+          <Card className={`glass-panel transition-colors cursor-pointer ${inventoryAlerts.length > 0 ? 'border-destructive/40 hover:border-destructive/60' : 'border-accent/20 hover:border-accent/40'}`} onClick={() => onNavigate('inventory')}>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <Package className="h-5 w-5 text-accent" />
+                {inventoryAlerts.length > 0 && (
+                  <AlertTriangle className="h-4 w-4 text-destructive animate-pulse" />
+                )}
+              </div>
+              <p className="text-2xl font-bold mt-2">{inventoryAlerts.length}</p>
+              <p className="text-xs text-muted-foreground">Low Stock Alerts</p>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="glass-panel border-accent/20 hover:border-accent/40 transition-colors cursor-pointer" onClick={() => onNavigate('payments')}>
           <CardContent className="p-4">
