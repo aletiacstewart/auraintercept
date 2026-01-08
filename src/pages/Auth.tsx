@@ -23,7 +23,8 @@ type AuthMode = 'platform_admin' | 'company' | 'employee' | 'customer';
 export default function Auth() {
   const [searchParams] = useSearchParams();
   const mode = (searchParams.get('mode') as AuthMode) || 'company';
-  const tabParam = searchParams.get('tab') as 'login' | 'signup' | null;
+  const rawTab = searchParams.get('tab');
+  const tabParam = rawTab === 'login' || rawTab === 'signup' ? rawTab : null;
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
   const navigate = useNavigate();
