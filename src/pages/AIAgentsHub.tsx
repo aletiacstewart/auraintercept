@@ -87,21 +87,32 @@ export default function AIAgentsHub() {
   // Employees can view but not manage agents
   const canManageAgents = userRole === 'platform_admin' || userRole === 'company_admin';
 
+  // Agents hidden from non-platform-admin roles
+  const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty'];
+
   // Filter agents based on job roles for employees
   const accessibleAgents = useMemo(() => {
-    // Admins see all agents
-    if (userRole === 'platform_admin' || userRole === 'company_admin') {
+    // Platform admins see all agents
+    if (userRole === 'platform_admin') {
       return agents;
     }
     
-    // Employees see only agents matching their job roles
+    // Company admins see all agents except hidden ones
+    if (userRole === 'company_admin') {
+      return agents.filter(a => !HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN.includes(a.type));
+    }
+    
+    // Employees see only agents matching their job roles, excluding hidden agents
     if (userJobAssignments && userJobAssignments.length > 0) {
       const allowedAgentTypes = new Set<string>();
       userJobAssignments.forEach(jobType => {
         const agentTypes = JOB_TYPE_TO_AGENTS[jobType] || [];
         agentTypes.forEach(at => allowedAgentTypes.add(at));
       });
-      return agents.filter(a => allowedAgentTypes.has(a.type));
+      return agents.filter(a => 
+        allowedAgentTypes.has(a.type) && 
+        !HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN.includes(a.type)
+      );
     }
     
     // No job roles assigned - show nothing

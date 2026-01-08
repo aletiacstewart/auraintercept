@@ -28,7 +28,7 @@ export default function KnowledgeBase() {
         </div>
 
         <Tabs defaultValue={defaultTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7 lg:w-auto lg:inline-grid">
+          <TabsList className={`grid w-full ${isPlatformAdmin ? 'grid-cols-3 lg:grid-cols-7' : 'grid-cols-2 lg:grid-cols-4'} lg:w-auto lg:inline-grid`}>
             <TabsTrigger value="services" className="gap-2">
               <Briefcase className="w-4 h-4 hidden sm:block" />
               Services
@@ -45,14 +45,18 @@ export default function KnowledgeBase() {
               <FileText className="w-4 h-4 hidden sm:block" />
               Documents
             </TabsTrigger>
-            <TabsTrigger value="inventory" className="gap-2">
-              <Package className="w-4 h-4 hidden sm:block" />
-              Inventory
-            </TabsTrigger>
-            <TabsTrigger value="warranties" className="gap-2">
-              <Shield className="w-4 h-4 hidden sm:block" />
-              Warranties
-            </TabsTrigger>
+            {isPlatformAdmin && (
+              <TabsTrigger value="inventory" className="gap-2">
+                <Package className="w-4 h-4 hidden sm:block" />
+                Inventory
+              </TabsTrigger>
+            )}
+            {isPlatformAdmin && (
+              <TabsTrigger value="warranties" className="gap-2">
+                <Shield className="w-4 h-4 hidden sm:block" />
+                Warranties
+              </TabsTrigger>
+            )}
             {isPlatformAdmin && (
               <TabsTrigger value="analytics" className="gap-2">
                 <BarChart3 className="w-4 h-4 hidden sm:block" />
@@ -77,13 +81,17 @@ export default function KnowledgeBase() {
             <DocumentsManager />
           </TabsContent>
 
-          <TabsContent value="inventory">
-            <InventoryManager />
-          </TabsContent>
+          {isPlatformAdmin && (
+            <TabsContent value="inventory">
+              <InventoryManager />
+            </TabsContent>
+          )}
 
-          <TabsContent value="warranties">
-            <WarrantiesManager />
-          </TabsContent>
+          {isPlatformAdmin && (
+            <TabsContent value="warranties">
+              <WarrantiesManager />
+            </TabsContent>
+          )}
 
           {isPlatformAdmin && (
             <TabsContent value="analytics">

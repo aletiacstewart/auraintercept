@@ -11,18 +11,10 @@ import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { BusinessQuoteForm, BusinessQuoteData } from './forms/BusinessQuoteForm';
 import { InvoiceForm, InvoiceFormData } from './forms/InvoiceForm';
-import { InventorySearchForm } from './forms/InventorySearchForm';
-import { WarrantyForm, WarrantyFormData } from './forms/WarrantyForm';
-import { WarrantyLookupForm } from './forms/WarrantyLookupForm';
-import { PriceLookupForm } from './forms/PriceLookupForm';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   FileText, 
   Receipt, 
-  Package, 
-  Shield, 
-  DollarSign, 
-  ClipboardList,
   Briefcase
 } from 'lucide-react';
 
@@ -31,14 +23,10 @@ const TABS = [
   { id: 'chat', label: 'Home', icon: Briefcase },
 ];
 
-// Quick actions for Business Operations (removed Parts Lookup - duplicate of Inventory)
+// Quick actions for Business Operations
 const QUICK_ACTIONS = [
   { id: 'quote', label: 'Create Quote', icon: FileText, message: 'I need to create a new quote for a customer' },
   { id: 'invoice', label: 'Generate Invoice', icon: Receipt, message: 'I need to generate an invoice' },
-  { id: 'inventory', label: 'Check Inventory', icon: Package, message: 'I need to check inventory levels' },
-  { id: 'warranty-check', label: 'Warranty Check', icon: Shield, message: 'I need to check a warranty status' },
-  { id: 'warranty-claim', label: 'Warranty Claim', icon: ClipboardList, message: 'I need to file a warranty claim' },
-  { id: 'pricing', label: 'Price Lookup', icon: DollarSign, message: 'I need to look up service pricing' },
 ];
 
 interface BusinessOpsAgentConsoleProps {
@@ -57,10 +45,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   // Form visibility states
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
-  const [showInventoryForm, setShowInventoryForm] = useState(false);
-  const [showWarrantyForm, setShowWarrantyForm] = useState(false);
-  const [showWarrantyLookupForm, setShowWarrantyLookupForm] = useState(false);
-  const [showPriceLookupForm, setShowPriceLookupForm] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -95,10 +79,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const hideAllForms = () => {
     setShowQuoteForm(false);
     setShowInvoiceForm(false);
-    setShowInventoryForm(false);
-    setShowWarrantyForm(false);
-    setShowWarrantyLookupForm(false);
-    setShowPriceLookupForm(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -120,26 +100,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     if (actionId === 'invoice') {
       hideAllForms();
       setShowInvoiceForm(true);
-      return;
-    }
-    if (actionId === 'inventory') {
-      hideAllForms();
-      setShowInventoryForm(true);
-      return;
-    }
-    if (actionId === 'warranty-claim') {
-      hideAllForms();
-      setShowWarrantyForm(true);
-      return;
-    }
-    if (actionId === 'warranty-check') {
-      hideAllForms();
-      setShowWarrantyLookupForm(true);
-      return;
-    }
-    if (actionId === 'pricing') {
-      hideAllForms();
-      setShowPriceLookupForm(true);
       return;
     }
     
@@ -177,17 +137,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     await sendMessage(message);
   };
 
-  const handleWarrantySubmit = async (data: WarrantyFormData) => {
-    hideAllForms();
-    const channels = [];
-    if (data.sendEmail) channels.push('email');
-    if (data.sendSms) channels.push('SMS');
-    
-    const message = `File warranty claim for ${data.customerName}${data.serviceType ? ` regarding ${data.serviceType}` : ''}. Issue: ${data.issueDescription}${data.warrantyDetails ? `. Resolution details: ${data.warrantyDetails}` : ''}. Send confirmation via: ${channels.join(' and ')}.`;
-    await sendMessage(message);
-  };
-
-  const isShowingForm = showQuoteForm || showInvoiceForm || showInventoryForm || showWarrantyForm || showWarrantyLookupForm || showPriceLookupForm;
+  const isShowingForm = showQuoteForm || showInvoiceForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
 
@@ -219,7 +169,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
             <WelcomeScreen
               companyName={company?.name || 'Business & Accounting'}
               title="Business & Accounting"
-              subtitle="I can help you with quotes, invoices, inventory, and warranties. How can I assist you today?"
+              subtitle="I can help you with quotes and invoices. How can I assist you today?"
               actions={QUICK_ACTIONS}
               onAction={handleQuickAction}
               consoleType="businessops"
@@ -242,40 +192,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
                   onSubmit={handleInvoiceSubmit}
                   onCancel={handleHome}
                   isLoading={isLoading}
-                />
-              )}
-              
-              {showInventoryForm && effectiveCompanyId && (
-                <InventorySearchForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                  onSelectItem={(item) => {
-                    hideAllForms();
-                    sendMessage(`Tell me about inventory item: ${item.name} (SKU: ${item.sku || 'N/A'}). Current stock: ${item.quantity}`);
-                  }}
-                />
-              )}
-              
-              {showWarrantyForm && effectiveCompanyId && (
-                <WarrantyForm
-                  companyId={effectiveCompanyId}
-                  onSubmit={handleWarrantySubmit}
-                  onCancel={handleHome}
-                  isLoading={isLoading}
-                />
-              )}
-              
-              {showWarrantyLookupForm && effectiveCompanyId && (
-                <WarrantyLookupForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                />
-              )}
-              
-              {showPriceLookupForm && effectiveCompanyId && (
-                <PriceLookupForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
                 />
               )}
 
@@ -319,7 +235,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
           onSubmit={handleSubmit}
           onHome={handleHome}
           isLoading={isLoading}
-          placeholder="Ask about quotes, invoices, inventory..."
+          placeholder="Ask about quotes or invoices..."
         />
       </div>
     </Card>

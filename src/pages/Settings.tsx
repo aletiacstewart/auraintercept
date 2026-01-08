@@ -21,6 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Settings() {
   const { userRole } = useAuth();
+  const isPlatformAdmin = userRole === 'platform_admin';
 
   return (
     <DashboardLayout>
@@ -48,7 +49,7 @@ export default function Settings() {
               <TabsTrigger value="emails">Email Templates</TabsTrigger>
               <TabsTrigger value="sms">SMS Templates</TabsTrigger>
               <TabsTrigger value="reviews">Reviews</TabsTrigger>
-              <TabsTrigger value="warranties">Warranties</TabsTrigger>
+              {isPlatformAdmin && <TabsTrigger value="warranties">Warranties</TabsTrigger>}
               <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
             </TabsList>
             <TabsContent value="branding">
@@ -93,9 +94,11 @@ export default function Settings() {
             <TabsContent value="reviews">
               <ReviewRequestSettings />
             </TabsContent>
-            <TabsContent value="warranties">
-              <WarrantySettings />
-            </TabsContent>
+            {isPlatformAdmin && (
+              <TabsContent value="warranties">
+                <WarrantySettings />
+              </TabsContent>
+            )}
             <TabsContent value="campaigns">
               <CampaignSettings />
             </TabsContent>

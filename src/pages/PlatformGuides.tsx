@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -852,10 +853,26 @@ const guideCategories = [
   }
 ];
 
+// Guides restricted to platform_admin only (containing inventory/warranty content)
+const RESTRICTED_GUIDE_TITLES = ['Inventory Tracking', 'Warranty Management', 'Inventory Management', 'Warranty Policies'];
+
 const PlatformGuides: React.FC = () => {
+  const { userRole } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('getting-started');
 
-  const currentCategory = guideCategories.find(c => c.id === selectedCategory);
+  // Filter out restricted guides for non-platform-admin users
+  const filteredCategories = useMemo(() => {
+    if (userRole === 'platform_admin') {
+      return guideCategories;
+    }
+    
+    return guideCategories.map(category => ({
+      ...category,
+      guides: category.guides.filter(guide => !RESTRICTED_GUIDE_TITLES.includes(guide.title))
+    }));
+  }, [userRole]);
+
+  const currentCategory = filteredCategories.find(c => c.id === selectedCategory);
 
   return (
     <DashboardLayout>
@@ -903,7 +920,7 @@ const PlatformGuides: React.FC = () => {
                   <BookOpen className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{guideCategories.length}</p>
+                  <p className="text-2xl font-bold">{filteredCategories.length}</p>
                   <p className="text-xs text-muted-foreground">Categories</p>
                 </div>
               </div>
@@ -917,7 +934,7 @@ const PlatformGuides: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">
-                    {guideCategories.reduce((acc, c) => acc + c.guides.length, 0)}
+                    {filteredCategories.reduce((acc, c) => acc + c.guides.length, 0)}
                   </p>
                   <p className="text-xs text-muted-foreground">Guides</p>
                 </div>
@@ -962,7 +979,7 @@ const PlatformGuides: React.FC = () => {
             <CardContent className="p-0">
               <ScrollArea className="h-auto max-h-[600px]">
                 <div className="space-y-1 p-3">
-                  {guideCategories.map((category) => {
+                  {filteredCategories.map((category) => {
                     const Icon = category.icon;
                     const isSelected = selectedCategory === category.id;
                     return (
