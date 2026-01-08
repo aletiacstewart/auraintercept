@@ -209,7 +209,110 @@ const styles = StyleSheet.create({
     fontSize: 8,
     color: colors.gray,
   },
+  timelinePhase: {
+    marginBottom: 12,
+    paddingLeft: 12,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.primary,
+  },
+  timelinePhaseName: {
+    fontSize: 11,
+    fontWeight: 600,
+    color: colors.primary,
+    marginBottom: 2,
+  },
+  timelinePeriod: {
+    fontSize: 9,
+    color: colors.gray,
+    marginBottom: 6,
+  },
+  timelineMilestone: {
+    flexDirection: 'row',
+    marginBottom: 3,
+    paddingLeft: 8,
+  },
+  timelineBullet: {
+    width: 12,
+    fontSize: 8,
+    color: colors.secondary,
+  },
+  timelineMilestoneText: {
+    flex: 1,
+    fontSize: 9,
+    lineHeight: 1.4,
+  },
 });
+
+// Development Timeline Data
+const developmentTimeline = [
+  {
+    name: 'Phase 1: Foundation',
+    period: 'Core Platform Setup',
+    milestones: [
+      'Multi-tenant architecture with Row-Level Security (RLS)',
+      'User authentication and role-based access control',
+      'Company and employee management systems',
+      'Basic customer portal and booking interface',
+      'Database schema design (55 tables)',
+    ],
+  },
+  {
+    name: 'Phase 2: Customer Engagement',
+    period: 'AI-Powered Interactions',
+    milestones: [
+      'AI Agent orchestration system',
+      'Customer Engagement Console with 6 agents',
+      'Multi-channel chat interface (web, widget)',
+      'Appointment scheduling with availability checking',
+      'Automated reminders (email, SMS)',
+    ],
+  },
+  {
+    name: 'Phase 3: Field Operations',
+    period: 'Dispatch & Technician Tools',
+    milestones: [
+      'Field Operations Console with dispatch agents',
+      'Technician mobile app (PWA)',
+      'Real-time location tracking and ETA',
+      'Job queue management and photo documentation',
+      'Route optimization integration',
+    ],
+  },
+  {
+    name: 'Phase 4: Business Operations',
+    period: 'Financial Workflows',
+    milestones: [
+      'Quote generation with service catalog',
+      'Invoice creation with Stripe payment links',
+      'Inventory management system',
+      'Warranty registration and claims processing',
+      'Financial reporting dashboards',
+    ],
+  },
+  {
+    name: 'Phase 5: Marketing & Analytics',
+    period: 'Growth & Insights',
+    milestones: [
+      'Marketing & Sales Console with campaign agents',
+      'Customer referral program tracking',
+      'Win-back campaign automation',
+      'Analytics Console with KPI dashboards',
+      'AI-powered forecasting and insights',
+    ],
+  },
+  {
+    name: 'Phase 6: Integrations & Polish',
+    period: 'Third-Party Connections',
+    milestones: [
+      'Stripe payment processing integration',
+      'Twilio voice and SMS integration',
+      'ElevenLabs voice synthesis and cloning',
+      'Google Calendar OAuth sync',
+      'CRM adapter framework',
+      'Platform documentation and guides',
+    ],
+  },
+];
 
 const Header = ({ title }: { title: string }) => (
   <View style={styles.header} fixed>
@@ -300,16 +403,17 @@ const PlatformDocumentPDF = () => (
       <View style={styles.tableOfContents}>
         {[
           { title: '1. Executive Summary', page: '3' },
-          { title: '2. AI Agents Catalog', page: '4' },
-          { title: '3. Agent Consoles', page: '7' },
-          { title: '4. Platform Features', page: '8' },
-          { title: '5. Third-Party Integrations', page: '9' },
-          { title: '6. Technical Architecture', page: '10' },
-          { title: '7. User Roles & Portals', page: '11' },
-          { title: '8. Knowledge Base System', page: '12' },
-          { title: '9. Communication Channels', page: '13' },
-          { title: '10. Target Industries', page: '14' },
-          { title: '11. Pricing Model', page: '15' },
+          { title: '2. Development Timeline', page: '4' },
+          { title: '3. AI Agents Catalog', page: '5' },
+          { title: '4. Agent Consoles', page: '8' },
+          { title: '5. Platform Features', page: '9' },
+          { title: '6. Third-Party Integrations', page: '10' },
+          { title: '7. Technical Architecture', page: '11' },
+          { title: '8. User Roles & Portals', page: '12' },
+          { title: '9. Knowledge Base System', page: '13' },
+          { title: '10. Communication Channels', page: '14' },
+          { title: '11. Target Industries', page: '15' },
+          { title: '12. Pricing Model', page: '16' },
         ].map((item, i) => (
           <View key={i} style={styles.tocItem}>
             <Text style={styles.tocTitle}>{item.title}</Text>
@@ -352,6 +456,30 @@ const PlatformDocumentPDF = () => (
       <BulletPoint>White-label ready with full custom branding capabilities</BulletPoint>
       <BulletPoint>Multi-tenant architecture with enterprise-grade security (RLS, RBAC)</BulletPoint>
       <BulletPoint>Platform-managed integrations eliminating need for third-party dashboard configuration</BulletPoint>
+    </Page>
+
+    {/* Development Timeline */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Development Timeline" />
+      <Text style={styles.sectionTitle}>Development Timeline</Text>
+      <Text style={styles.paragraph}>
+        The platform was developed through 6 major phases, each building upon the previous 
+        to create a comprehensive AI-powered service business solution. Key milestones 
+        represent significant feature completions and capability additions.
+      </Text>
+      
+      {developmentTimeline.map((phase, i) => (
+        <View key={i} style={styles.timelinePhase}>
+          <Text style={styles.timelinePhaseName}>{phase.name}</Text>
+          <Text style={styles.timelinePeriod}>{phase.period}</Text>
+          {phase.milestones.map((milestone, j) => (
+            <View key={j} style={styles.timelineMilestone}>
+              <Text style={styles.timelineBullet}>●</Text>
+              <Text style={styles.timelineMilestoneText}>{milestone}</Text>
+            </View>
+          ))}
+        </View>
+      ))}
     </Page>
 
     {/* AI Agents Catalog - Page 1 */}
