@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useAIAgentOrchestrator, AgentInfo } from '@/hooks/useAIAgentOrchestrator';
+import { useAuth } from '@/contexts/AuthContext';
 import { AgentSettingsPanel } from '@/components/ai/agents/AgentSettingsPanel';
 import { AgentTestConsole } from '@/components/ai/agents/AgentTestConsole';
 import { AgentEventLog } from '@/components/ai/agents/AgentEventLog';
@@ -449,23 +450,37 @@ const AGENT_DEFINITIONS: Record<string, {
   }
 };
 
+// Agents restricted to platform_admin only
+const PLATFORM_ADMIN_ONLY_AGENTS = ['inventory', 'warranty'];
+
 export default function AgentDetailPage() {
   const { agentId } = useParams<{ agentId: string }>();
   const navigate = useNavigate();
   const { agents, loading, toggleAgent, updateAgentSettings, companyId } = useAIAgentOrchestrator();
+  const { userRole } = useAuth();
   const [activeTab, setActiveTab] = useState('settings');
 
   const agentDef = agentId ? AGENT_DEFINITIONS[agentId] : null;
   const agentData = agents.find(a => a.type === agentId);
+  
+  // Check if this agent is restricted to platform_admin
+  const isRestrictedAgent = agentId && PLATFORM_ADMIN_ONLY_AGENTS.includes(agentId);
+  const hasAccess = !isRestrictedAgent || userRole === 'platform_admin';
 
-  if (!agentId || !agentDef) {
+  if (!agentId || !agentDef || !hasAccess) {
     return (
       <DashboardLayout>
         <div className="p-6">
           <Card className="p-12 text-center">
             <Bot className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Agent Not Found</h3>
-            <p className="text-muted-foreground mb-4">The requested agent does not exist.</p>
+            <h3 className="text-lg font-semibold mb-2">
+              {!hasAccess ? 'Access Restricted' : 'Agent Not Found'}
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              {!hasAccess 
+                ? 'This agent is only available to platform administrators.' 
+                : 'The requested agent does not exist.'}
+            </p>
             <Button onClick={() => navigate('/dashboard/ai-agents')}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Agents
