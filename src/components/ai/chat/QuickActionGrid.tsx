@@ -14,7 +14,7 @@ interface QuickAction {
 interface QuickActionGridProps {
   actions: QuickAction[];
   onAction: (message: string, actionId: string) => void;
-  columns?: 2 | 4;
+  columns?: 2 | 3 | 4 | 5;
   compact?: boolean;
 }
 
@@ -24,24 +24,28 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
   columns = 2,
   compact = false,
 }) => {
+  const gridClass = {
+    2: 'grid-cols-2',
+    3: 'grid-cols-2 sm:grid-cols-3',
+    4: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
+    5: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
+  };
+
   return (
-    <div className={cn(
-      'grid gap-1.5',
-      columns === 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-4'
-    )}>
+    <div className={cn('grid gap-2', gridClass[columns])}>
       {actions.map((action) => (
         <Button
           key={action.id}
           variant={action.variant || 'outline'}
           size="sm"
           className={cn(
-            'h-auto flex-col gap-1 py-2 px-1.5 text-[11px]',
+            'h-auto flex-col gap-1.5 py-3 px-2 text-xs',
             'hover:border-primary/50 transition-colors',
             action.variant === 'destructive' && 'bg-destructive text-destructive-foreground hover:bg-destructive/90 border-destructive'
           )}
           onClick={() => onAction(action.message, action.id)}
         >
-          <action.icon className="h-4 w-4" />
+          <action.icon className="h-5 w-5" />
           <span className="text-center leading-tight">{action.label}</span>
         </Button>
       ))}

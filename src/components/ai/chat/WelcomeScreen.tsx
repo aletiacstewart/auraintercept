@@ -31,33 +31,33 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   consoleType = 'customer',
 }) => {
   return (
-    <div className="py-4 animate-fade-in">
+    <div className="py-4 px-4 animate-fade-in w-full">
       {/* Header */}
       <div className="text-center mb-4">
         <h3 className="font-bold text-base mb-1">{title}</h3>
-        <p className="text-muted-foreground text-xs max-w-md mx-auto px-2">
+        <p className="text-muted-foreground text-xs max-w-lg mx-auto">
           {subtitle || `I'm your virtual assistant${companyName ? ` at ${companyName}` : ''}. How can I help?`}
         </p>
       </div>
       
-      {/* Two Column Layout - more compact */}
-      <div className="grid md:grid-cols-2 gap-3 max-w-2xl mx-auto px-2">
-        {/* Left Column - How To Guide */}
+      {/* Full Width Layout */}
+      <div className="w-full space-y-4">
+        {/* How To Guide - Collapsible at top */}
         {showHowToGuide && (
-          <div className="order-2 md:order-1">
+          <div className="w-full max-w-4xl mx-auto">
             <AgentHowToGuide defaultExpanded={false} className="max-w-none" consoleType={consoleType} />
           </div>
         )}
         
-        {/* Right Column - Action Buttons */}
-        <div className={showHowToGuide ? "order-1 md:order-2" : "md:col-span-2"}>
-          <div className="mb-2 text-center md:text-left">
+        {/* Quick Actions - Full width grid */}
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="mb-2 text-center">
             <p className="text-xs font-medium text-muted-foreground">Quick Actions</p>
           </div>
           <QuickActionGrid 
             actions={actions} 
             onAction={onAction} 
-            columns={2}
+            columns={4}
           />
         </div>
       </div>
