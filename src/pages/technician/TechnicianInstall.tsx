@@ -20,7 +20,7 @@ const TechnicianInstall = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [platform, setPlatform] = useState<'ios' | 'android' | 'desktop'>('desktop');
 
-  const installUrl = `${window.location.origin}/auth?mode=employee&tab=login`;
+  const installUrl = `${window.location.origin}/auth?mode=employee&tab=login&source=qr`;
 
   useEffect(() => {
     // Detect platform
@@ -222,7 +222,7 @@ const TechnicianInstall = () => {
                     Scan this QR code with your phone's camera to open the install page
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex justify-center">
+                <CardContent className="flex flex-col items-center justify-center">
                   <div className="bg-white p-4 rounded-xl">
                     <QRCodeSVG 
                       value={installUrl} 
@@ -231,6 +231,9 @@ const TechnicianInstall = () => {
                       includeMargin
                     />
                   </div>
+                  <p className="mt-3 text-xs text-muted-foreground break-all text-center max-w-[22rem]">
+                    {installUrl}
+                  </p>
                 </CardContent>
               </Card>
             )}
