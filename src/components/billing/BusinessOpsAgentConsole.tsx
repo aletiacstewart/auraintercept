@@ -11,11 +11,13 @@ import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { BusinessQuoteForm, BusinessQuoteData } from './forms/BusinessQuoteForm';
 import { InvoiceForm, InvoiceFormData } from './forms/InvoiceForm';
+import { LeadForm } from '@/components/marketing/forms/LeadForm';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   FileText, 
   Receipt, 
-  Briefcase
+  Briefcase,
+  UserPlus
 } from 'lucide-react';
 
 // Tab configuration - just Home for this console
@@ -27,6 +29,7 @@ const TABS = [
 const QUICK_ACTIONS = [
   { id: 'quote', label: 'Create Quote', icon: FileText, message: 'I need to create a new quote for a customer' },
   { id: 'invoice', label: 'Generate Invoice', icon: Receipt, message: 'I need to generate an invoice' },
+  { id: 'lead', label: 'New Lead', icon: UserPlus, message: 'I need to add a new lead' },
 ];
 
 interface BusinessOpsAgentConsoleProps {
@@ -45,6 +48,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   // Form visibility states
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
+  const [showLeadForm, setShowLeadForm] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -79,6 +83,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const hideAllForms = () => {
     setShowQuoteForm(false);
     setShowInvoiceForm(false);
+    setShowLeadForm(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,6 +105,11 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     if (actionId === 'invoice') {
       hideAllForms();
       setShowInvoiceForm(true);
+      return;
+    }
+    if (actionId === 'lead') {
+      hideAllForms();
+      setShowLeadForm(true);
       return;
     }
     
@@ -137,7 +147,13 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     await sendMessage(message);
   };
 
-  const isShowingForm = showQuoteForm || showInvoiceForm;
+  const handleLeadSuccess = async (data: { name: string; source: string }) => {
+    hideAllForms();
+    const message = `I just added a new lead: ${data.name} from ${data.source}. What's the best follow-up approach for this type of lead?`;
+    await sendMessage(message);
+  };
+
+  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
 
@@ -192,6 +208,14 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
                   onSubmit={handleInvoiceSubmit}
                   onCancel={handleHome}
                   isLoading={isLoading}
+                />
+              )}
+              
+              {showLeadForm && effectiveCompanyId && (
+                <LeadForm
+                  companyId={effectiveCompanyId}
+                  onCancel={handleHome}
+                  onSuccess={handleLeadSuccess}
                 />
               )}
 
