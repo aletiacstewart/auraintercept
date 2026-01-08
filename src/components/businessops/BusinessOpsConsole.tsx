@@ -45,7 +45,7 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
         <div>
           <h1 className="font-semibold text-foreground">Business Operations</h1>
           <p className="text-xs text-muted-foreground">
-            Financial Pulse • Inventory Matrix
+            {isPlatformAdmin ? 'Financial Pulse • Inventory Matrix' : 'Financial Pulse'}
           </p>
         </div>
       </div>
@@ -60,7 +60,7 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
             userRole={userRole}
           />
         )}
-        {currentView === 'inventory' && (
+        {currentView === 'inventory' && isPlatformAdmin && (
           <InventoryMatrix 
             companyId={effectiveCompanyId} 
             onBack={handleBack}

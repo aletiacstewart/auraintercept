@@ -853,23 +853,41 @@ const guideCategories = [
   }
 ];
 
-// Guides restricted to platform_admin only (containing inventory/warranty content)
-const RESTRICTED_GUIDE_TITLES = ['Inventory Tracking', 'Warranty Management', 'Inventory Management', 'Warranty Policies', 'Quote Forge (AI Quotes)', 'Creating Quotes'];
+// Guides restricted to platform_admin only (containing inventory/warranty/marketing content)
+const RESTRICTED_GUIDE_TITLES = [
+  'Inventory Tracking', 
+  'Warranty Management', 
+  'Inventory Management', 
+  'Warranty Policies', 
+  'Quote Forge (AI Quotes)',
+  'Business Ops Agents',
+  'Marketing & Campaign Agents',
+  'Analytics & Reporting Agents',
+  'Analytics Console',
+  'KPI Dashboard',
+  'Revenue Analysis',
+  'Performance Trends'
+];
+
+// Categories hidden from non-platform-admin
+const RESTRICTED_CATEGORIES = ['marketing', 'analytics'];
 
 const PlatformGuides: React.FC = () => {
   const { userRole } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('getting-started');
 
-  // Filter out restricted guides for non-platform-admin users
+  // Filter out restricted guides and categories for non-platform-admin users
   const filteredCategories = useMemo(() => {
     if (userRole === 'platform_admin') {
       return guideCategories;
     }
     
-    return guideCategories.map(category => ({
-      ...category,
-      guides: category.guides.filter(guide => !RESTRICTED_GUIDE_TITLES.includes(guide.title))
-    }));
+    return guideCategories
+      .filter(category => !RESTRICTED_CATEGORIES.includes(category.id))
+      .map(category => ({
+        ...category,
+        guides: category.guides.filter(guide => !RESTRICTED_GUIDE_TITLES.includes(guide.title))
+      }));
   }, [userRole]);
 
   const currentCategory = filteredCategories.find(c => c.id === selectedCategory);

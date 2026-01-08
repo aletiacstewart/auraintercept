@@ -38,12 +38,11 @@ export function CompanyAdminDashboard() {
       const monthStart = startOfMonth(now).toISOString();
       const monthEnd = endOfMonth(now).toISOString();
 
-      const [employees, appointments, quotes, invoices, inventory, monthlyRevenue, feedback, reminderLogs] = await Promise.all([
+      const [employees, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('appointments').select('id, status').eq('company_id', companyId),
         supabase.from('quotes').select('id, total_amount, status').eq('company_id', companyId),
         supabase.from('invoices').select('id, total, status, quote_id').eq('company_id', companyId),
-        supabase.from('inventory_items').select('id, quantity, min_quantity').eq('company_id', companyId).eq('is_active', true),
         supabase.from('invoices').select('total').eq('company_id', companyId).eq('status', 'paid').gte('paid_at', monthStart).lte('paid_at', monthEnd),
         supabase.from('customer_feedback').select('rating').eq('company_id', companyId).not('rating', 'is', null),
         supabase.from('reminder_logs').select('id', { count: 'exact', head: true }).eq('company_id', companyId).gte('created_at', monthStart).lte('created_at', monthEnd),
@@ -59,9 +58,6 @@ export function CompanyAdminDashboard() {
       const outstandingTotal = outstandingInvoices.reduce((sum, i) => sum + (i.total || 0), 0);
       
       const revenue = (monthlyRevenue.data ?? []).reduce((sum, i) => sum + (i.total || 0), 0);
-
-      // Calculate low stock items
-      const lowStockCount = (inventory.data ?? []).filter(item => item.quantity < item.min_quantity).length;
 
       // Calculate quote conversion rate
       const acceptedQuotes = allQuotes.filter(q => q.status === 'accepted').length;
@@ -92,7 +88,6 @@ export function CompanyAdminDashboard() {
         outstandingInvoices: outstandingInvoices.length,
         outstandingTotal,
         monthlyRevenue: revenue,
-        lowStockAlerts: lowStockCount,
         quoteConversionRate,
         appointmentCompletionRate,
         satisfactionRate,
