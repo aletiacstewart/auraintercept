@@ -42,13 +42,13 @@ const mobileNavItems = [
 
 const sidebarNavItems = [
   { icon: Home, label: 'Dashboard', path: '/technician' },
-  { icon: Bot, label: 'AI Console', path: '/technician/ai-console' },
+  { icon: Bot, label: 'Field Ops Console', path: '/technician/ai-console' },
   { icon: ClipboardList, label: 'My Jobs', path: '/technician/jobs' },
   { icon: Calendar, label: 'Calendar', path: '/technician/calendar' },
   { icon: History, label: 'Job History', path: '/technician/history' },
   { icon: Clock, label: 'Availability', path: '/technician/availability' },
   { icon: User, label: 'Profile', path: '/technician/profile' },
-  { icon: Smartphone, label: 'Install App', path: '/technician/install' },
+  { icon: Smartphone, label: 'Install Field Ops App', path: '/technician/install' },
 ];
 
 export const TechnicianDashboardLayout: React.FC<TechnicianDashboardLayoutProps> = ({ children }) => {
