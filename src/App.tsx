@@ -21,6 +21,7 @@ import EmployeeAvailability from "./pages/EmployeeAvailability";
 import EmployeeAppointments from "./pages/EmployeeAppointments";
 
 import Messages from "./pages/Messages";
+import EmailLogs from "./pages/EmailLogs";
 import Integrations from "./pages/Integrations";
 import { VoiceIntegration, SMSIntegration, EmailIntegration, CRMIntegration, CalendarIntegration } from "./pages/integrations";
 import KnowledgeBase from "./pages/KnowledgeBase";
@@ -104,6 +105,7 @@ const App = () => (
             <Route path="/dashboard/ai-agents/:agentId" element={<AgentDetailPage />} />
             <Route path="/dashboard/widget" element={<Widget />} />
             <Route path="/dashboard/calls" element={<CallHistory />} />
+            <Route path="/dashboard/email-logs" element={<EmailLogs />} />
             <Route path="/dashboard/analytics" element={<Analytics />} />
             <Route path="/dashboard/subscription" element={<Subscription />} />
             <Route path="/dashboard/inventory" element={<Inventory />} />
