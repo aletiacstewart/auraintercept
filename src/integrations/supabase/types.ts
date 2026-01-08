@@ -693,6 +693,9 @@ export type Database = {
           review_sms_template: string | null
           review_yelp_url: string | null
           secondary_color: string | null
+          service_area_cities: string[] | null
+          service_area_zip_codes: string[] | null
+          service_categories: string[] | null
           slug: string
           stripe_customer_id: string | null
           trial_ends_at: string | null
@@ -775,6 +778,9 @@ export type Database = {
           review_sms_template?: string | null
           review_yelp_url?: string | null
           secondary_color?: string | null
+          service_area_cities?: string[] | null
+          service_area_zip_codes?: string[] | null
+          service_categories?: string[] | null
           slug: string
           stripe_customer_id?: string | null
           trial_ends_at?: string | null
@@ -857,6 +863,9 @@ export type Database = {
           review_sms_template?: string | null
           review_yelp_url?: string | null
           secondary_color?: string | null
+          service_area_cities?: string[] | null
+          service_area_zip_codes?: string[] | null
+          service_categories?: string[] | null
           slug?: string
           stripe_customer_id?: string | null
           trial_ends_at?: string | null
