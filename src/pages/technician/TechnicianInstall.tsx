@@ -3,11 +3,16 @@ import { TechnicianDashboardLayout } from '@/components/dashboard/TechnicianDash
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Smartphone, Download, Share, Plus, MoreVertical, 
-  Check, Apple, Chrome, Wifi, WifiOff 
+  Check, Apple, Chrome, Wifi, WifiOff, Copy, AlertTriangle, ExternalLink, Settings 
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -15,14 +20,53 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const TechnicianInstall = () => {
+  const { companyId } = useAuth();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [platform, setPlatform] = useState<'ios' | 'android' | 'desktop'>('desktop');
+  const [publicAppUrl, setPublicAppUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch company's public_app_url
+  useEffect(() => {
+    const fetchPublicUrl = async () => {
+      if (!companyId) {
+        setIsLoading(false);
+        return;
+      }
+
+      const { data } = await supabase
+        .from('companies')
+        .select('public_app_url')
+        .eq('id', companyId)
+        .single();
+
+      if (data?.public_app_url) {
+        setPublicAppUrl(data.public_app_url);
+      }
+      setIsLoading(false);
+    };
+
+    fetchPublicUrl();
+  }, [companyId]);
+
+  // Determine base URL - prefer public URL, fallback to current origin
+  const baseUrl = publicAppUrl || window.location.origin;
+  const isUsingPreviewUrl = !publicAppUrl;
 
   // Add version param to bust cache on new builds
   const buildVersion = import.meta.env.VITE_BUILD_TIME || Date.now().toString(36);
-  const installUrl = `${window.location.origin}/auth?mode=employee&tab=login&source=qr&v=${buildVersion}`;
+  const installUrl = `${baseUrl}/auth?mode=employee&tab=login&source=qr&v=${buildVersion}`;
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(installUrl);
+      toast.success('Link copied to clipboard');
+    } catch {
+      toast.error('Failed to copy link');
+    }
+  };
 
   useEffect(() => {
     // Detect platform
@@ -224,18 +268,59 @@ const TechnicianInstall = () => {
                     Scan this QR code with your phone's camera to open the install page
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center">
-                  <div className="bg-white p-4 rounded-xl">
-                    <QRCodeSVG 
-                      value={installUrl} 
-                      size={200}
-                      level="H"
-                      includeMargin
-                    />
-                  </div>
-                  <p className="mt-3 text-xs text-muted-foreground break-all text-center max-w-[22rem]">
-                    {installUrl}
-                  </p>
+                <CardContent className="flex flex-col items-center justify-center space-y-4">
+                  {/* Warning for preview URL */}
+                  {isUsingPreviewUrl && (
+                    <Alert variant="destructive" className="max-w-md">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription className="text-sm">
+                        <strong>Preview URL detected.</strong> Technicians scanning this QR may be asked to create a Lovable account.{' '}
+                        <Link to="/settings" className="underline font-medium inline-flex items-center gap-1">
+                          Set a public app URL <Settings className="h-3 w-3" />
+                        </Link>{' '}
+                        to avoid this.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {isLoading ? (
+                    <div className="h-[232px] flex items-center justify-center text-muted-foreground">
+                      Loading...
+                    </div>
+                  ) : (
+                    <>
+                      <div className="bg-white p-4 rounded-xl">
+                        <QRCodeSVG 
+                          value={installUrl} 
+                          size={200}
+                          level="H"
+                          includeMargin
+                        />
+                      </div>
+                      
+                      {/* URL and helper buttons */}
+                      <div className="flex flex-col items-center gap-2 w-full max-w-md">
+                        <p className="text-xs text-muted-foreground break-all text-center">
+                          {installUrl}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" onClick={handleCopyLink} className="gap-1.5">
+                            <Copy className="h-3.5 w-3.5" />
+                            Copy Link
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => window.open(installUrl, '_blank')}
+                            className="gap-1.5"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            Test Link
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             )}
