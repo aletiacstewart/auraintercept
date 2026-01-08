@@ -152,8 +152,8 @@ const navGroups: NavGroup[] = [
   {
     label: 'Resources',
     items: [
-      { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Warranties', icon: FileCheck, href: '/dashboard/warranties', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin'] },
+      { label: 'Warranties', icon: FileCheck, href: '/dashboard/warranties', roles: ['platform_admin'] },
       { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin', 'company_admin'] },
       { label: 'Export Docs', icon: FileText, href: '/dashboard/documentation', roles: ['platform_admin', 'company_admin'] },
     ],
