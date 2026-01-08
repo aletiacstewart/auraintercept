@@ -60,10 +60,14 @@ serve(async (req) => {
 
       return new Response(JSON.stringify({
         company: {
+          id: company.id,
           name: company.name,
           logo_url: company.logo_url,
           primary_color: company.primary_color || '#6366f1',
           secondary_color: company.secondary_color || '#4f46e5',
+          dispatch_phone: company.dispatch_phone || null,
+          review_google_url: company.review_google_url || null,
+          review_facebook_url: company.review_facebook_url || null,
         },
         business_hours: hours || [],
         services: services || [],

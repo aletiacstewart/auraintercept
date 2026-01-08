@@ -26,6 +26,9 @@ interface CompanyConfig {
     logo_url: string | null;
     primary_color: string;
     secondary_color: string;
+    dispatch_phone: string | null;
+    review_google_url: string | null;
+    review_facebook_url: string | null;
   };
   business_hours: Array<{
     day_of_week: number;
@@ -44,6 +47,7 @@ interface CompanyConfig {
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+// Quick actions without Review button - customers only get routed to review via Feedback Agent handoff
 const QUICK_ACTIONS = [
   { id: 'schedule', label: 'Request Appointment', icon: Calendar, message: "I'd like to request an appointment" },
   { id: 'emergency', label: 'Emergency', icon: AlertTriangle, message: "I have an urgent emergency situation", variant: 'destructive' as const },
@@ -73,6 +77,9 @@ export default function PublicChat() {
   // Voice chat dialog state
   const [showVoiceDialog, setShowVoiceDialog] = useState(false);
   const [voiceTranscript, setVoiceTranscript] = useState<Array<{ role: 'user' | 'assistant'; text: string }>>([]);
+  
+  // Emergency phone dialog state
+  const [showEmergencyPhone, setShowEmergencyPhone] = useState(false);
   
   // Check for existing session on mount
   useEffect(() => {
@@ -319,13 +326,35 @@ export default function PublicChat() {
                           "justify-start gap-2",
                           action.variant === 'destructive' && "bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive/30"
                         )}
-                        onClick={() => handleSendMessage(action.message)}
+                        onClick={() => {
+                          // Emergency button shows phone number dialog
+                          if (action.id === 'emergency' && config?.company.dispatch_phone) {
+                            setShowEmergencyPhone(true);
+                          }
+                          handleSendMessage(action.message);
+                        }}
                       >
                         <action.icon className="h-4 w-4" />
                         <span className="truncate">{action.label}</span>
                       </Button>
                     ))}
                   </div>
+                  
+                  {/* Emergency Phone Number Display */}
+                  {config?.company.dispatch_phone && (
+                    <div className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 max-w-sm mx-auto">
+                      <div className="flex items-center gap-2 text-destructive">
+                        <Phone className="h-4 w-4" />
+                        <span className="text-sm font-medium">Emergency Hotline:</span>
+                      </div>
+                      <a 
+                        href={`tel:${config.company.dispatch_phone}`}
+                        className="text-lg font-bold text-destructive hover:underline"
+                      >
+                        {config.company.dispatch_phone}
+                      </a>
+                    </div>
+                  )}
                 </div>
               )}
 
