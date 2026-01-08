@@ -2020,9 +2020,12 @@ export type Database = {
           customer_user_id: string | null
           due_date: string | null
           id: string
+          include_payment_link: boolean | null
           invoice_number: string | null
           notes: string | null
           paid_at: string | null
+          payment_link_id: string | null
+          payment_link_url: string | null
           payment_method: string | null
           quote_id: string | null
           status: string
@@ -2044,9 +2047,12 @@ export type Database = {
           customer_user_id?: string | null
           due_date?: string | null
           id?: string
+          include_payment_link?: boolean | null
           invoice_number?: string | null
           notes?: string | null
           paid_at?: string | null
+          payment_link_id?: string | null
+          payment_link_url?: string | null
           payment_method?: string | null
           quote_id?: string | null
           status?: string
@@ -2068,9 +2074,12 @@ export type Database = {
           customer_user_id?: string | null
           due_date?: string | null
           id?: string
+          include_payment_link?: boolean | null
           invoice_number?: string | null
           notes?: string | null
           paid_at?: string | null
+          payment_link_id?: string | null
+          payment_link_url?: string | null
           payment_method?: string | null
           quote_id?: string | null
           status?: string
