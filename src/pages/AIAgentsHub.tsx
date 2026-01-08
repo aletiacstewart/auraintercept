@@ -88,7 +88,7 @@ export default function AIAgentsHub() {
   const canManageAgents = userRole === 'platform_admin' || userRole === 'company_admin';
 
   // Agents hidden from non-platform-admin roles
-  const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty'];
+  const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty', 'quoting'];
 
   // Filter agents based on job roles for employees
   const accessibleAgents = useMemo(() => {

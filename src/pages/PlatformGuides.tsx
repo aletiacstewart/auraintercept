@@ -854,7 +854,7 @@ const guideCategories = [
 ];
 
 // Guides restricted to platform_admin only (containing inventory/warranty content)
-const RESTRICTED_GUIDE_TITLES = ['Inventory Tracking', 'Warranty Management', 'Inventory Management', 'Warranty Policies'];
+const RESTRICTED_GUIDE_TITLES = ['Inventory Tracking', 'Warranty Management', 'Inventory Management', 'Warranty Policies', 'Quote Forge (AI Quotes)', 'Creating Quotes'];
 
 const PlatformGuides: React.FC = () => {
   const { userRole } = useAuth();
