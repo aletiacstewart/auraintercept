@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,9 +23,9 @@ type AuthMode = 'platform_admin' | 'company' | 'employee' | 'customer';
 export default function Auth() {
   const [searchParams] = useSearchParams();
   const mode = (searchParams.get('mode') as AuthMode) || 'company';
+  const tabParam = searchParams.get('tab') as 'login' | 'signup' | null;
   const [isLoading, setIsLoading] = useState(false);
-  // Default to login for employee mode (existing accounts), signup for new companies
-  const [activeTab, setActiveTab] = useState<'login' | 'signup'>(mode === 'employee' ? 'login' : 'signup');
+  const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -35,6 +35,22 @@ export default function Auth() {
   const [fullName, setFullName] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [registrationCode, setRegistrationCode] = useState('');
+
+  // Sync activeTab with URL params and mode - runs on mount and when params change
+  useEffect(() => {
+    if (tabParam) {
+      setActiveTab(tabParam);
+    } else {
+      // Default: login for employee mode, signup for others
+      setActiveTab(mode === 'employee' ? 'login' : 'signup');
+    }
+    // Reset form fields when mode changes
+    setEmail('');
+    setPassword('');
+    setFullName('');
+    setCompanyName('');
+    setRegistrationCode('');
+  }, [mode, tabParam]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

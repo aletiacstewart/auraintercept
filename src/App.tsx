@@ -63,6 +63,7 @@ import {
 
 import IntegrationDocs from "./pages/IntegrationDocs";
 import PlatformGuides from "./pages/PlatformGuides";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -128,16 +129,16 @@ const App = () => (
             <Route path="/customer-dashboard" element={<CustomerDashboard />} />
             <Route path="/chat/:companySlug" element={<PublicChat />} />
             
-            {/* Technician Dashboard Routes */}
-            <Route path="/technician" element={<TechnicianDashboard />} />
-            <Route path="/technician/ai-console" element={<TechnicianAIConsole />} />
-            <Route path="/technician/jobs" element={<TechnicianJobs />} />
-            <Route path="/technician/calendar" element={<TechnicianCalendar />} />
-            <Route path="/technician/settings" element={<TechnicianSettings />} />
-            <Route path="/technician/availability" element={<TechnicianAvailability />} />
-            <Route path="/technician/history" element={<TechnicianHistory />} />
-            <Route path="/technician/profile" element={<TechnicianProfile />} />
-            <Route path="/technician/install" element={<TechnicianInstall />} />
+            {/* Technician Dashboard Routes - Protected */}
+            <Route path="/technician" element={<ProtectedRoute><TechnicianDashboard /></ProtectedRoute>} />
+            <Route path="/technician/ai-console" element={<ProtectedRoute><TechnicianAIConsole /></ProtectedRoute>} />
+            <Route path="/technician/jobs" element={<ProtectedRoute><TechnicianJobs /></ProtectedRoute>} />
+            <Route path="/technician/calendar" element={<ProtectedRoute><TechnicianCalendar /></ProtectedRoute>} />
+            <Route path="/technician/settings" element={<ProtectedRoute><TechnicianSettings /></ProtectedRoute>} />
+            <Route path="/technician/availability" element={<ProtectedRoute><TechnicianAvailability /></ProtectedRoute>} />
+            <Route path="/technician/history" element={<ProtectedRoute><TechnicianHistory /></ProtectedRoute>} />
+            <Route path="/technician/profile" element={<ProtectedRoute><TechnicianProfile /></ProtectedRoute>} />
+            <Route path="/technician/install" element={<ProtectedRoute><TechnicianInstall /></ProtectedRoute>} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

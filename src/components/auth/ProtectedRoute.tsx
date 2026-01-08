@@ -24,9 +24,9 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
   }
 
   if (!user) {
-    // Redirect technician routes to employee auth mode
+    // Redirect technician routes to employee auth mode with login tab
     const isTechnicianRoute = location.pathname.startsWith('/technician');
-    const authPath = isTechnicianRoute ? '/auth?mode=employee' : '/auth';
+    const authPath = isTechnicianRoute ? '/auth?mode=employee&tab=login' : '/auth';
     return <Navigate to={authPath} state={{ from: location }} replace />;
   }
 
