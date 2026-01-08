@@ -143,7 +143,7 @@ const navGroups: NavGroup[] = [
       { label: 'Voice Agent', icon: Mic, href: '/dashboard/integrations/voice', roles: ['platform_admin', 'company_admin'] },
       { label: 'SMS & Text', icon: MessageSquare, href: '/dashboard/integrations/sms', roles: ['platform_admin', 'company_admin'] },
       { label: 'Email', icon: Mail, href: '/dashboard/integrations/email', roles: ['platform_admin', 'company_admin'] },
-      { label: 'CRM', icon: Users, href: '/dashboard/integrations/crm', roles: ['platform_admin', 'company_admin'] },
+      { label: 'CRM', icon: Users, href: '/dashboard/integrations/crm', roles: ['platform_admin'] },
       { label: 'Calendar', icon: Calendar, href: '/dashboard/integrations/calendar', roles: ['platform_admin', 'company_admin'] },
       { label: 'Customer App Widget', icon: Globe, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
       { label: 'Field Ops App', icon: Smartphone, href: '/technician/install', roles: ['platform_admin', 'company_admin'] },
