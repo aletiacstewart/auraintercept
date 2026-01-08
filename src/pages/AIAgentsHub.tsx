@@ -88,7 +88,7 @@ export default function AIAgentsHub() {
   const canManageAgents = userRole === 'platform_admin' || userRole === 'company_admin';
 
   // Agents hidden from non-platform-admin roles
-  const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty', 'quoting', 'promo', 'referral', 'winback', 'seasonal', 'marketing'];
+  const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty', 'promo', 'referral', 'winback', 'seasonal', 'marketing'];
   
   // Categories hidden from non-platform-admin roles
   const HIDDEN_CATEGORIES_FOR_NON_PLATFORM_ADMIN = ['marketing_sales'];
