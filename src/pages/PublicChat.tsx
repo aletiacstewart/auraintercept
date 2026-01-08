@@ -342,22 +342,13 @@ export default function PublicChat() {
                   
                   {/* Quick Actions */}
                   <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto">
-                    {QUICK_ACTIONS.map((action) => (
+                    {QUICK_ACTIONS.filter(a => a.id !== 'emergency').map((action) => (
                       <Button 
                         key={action.id}
                         variant={action.variant || 'outline'} 
                         size="sm"
-                        className={cn(
-                          "justify-start gap-2",
-                          action.variant === 'destructive' && "bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground border-destructive/30"
-                        )}
-                        onClick={() => {
-                          // Emergency button shows phone number dialog
-                          if (action.id === 'emergency' && config?.company.dispatch_phone) {
-                            setShowEmergencyPhone(true);
-                          }
-                          handleSendMessage(action.message);
-                        }}
+                        className="justify-start gap-2"
+                        onClick={() => handleSendMessage(action.message)}
                       >
                         <action.icon className="h-4 w-4" />
                         <span className="truncate">{action.label}</span>
@@ -365,19 +356,29 @@ export default function PublicChat() {
                     ))}
                   </div>
                   
-                  {/* Emergency Phone Number Display */}
+                  {/* Emergency Section with Phone Number and Call Button */}
                   {config?.company.dispatch_phone && (
-                    <div className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 max-w-sm mx-auto">
-                      <div className="flex items-center gap-2 text-destructive">
-                        <Phone className="h-4 w-4" />
-                        <span className="text-sm font-medium">Emergency Hotline:</span>
+                    <div className="mt-4 p-4 rounded-lg bg-destructive/10 border border-destructive/20 max-w-sm mx-auto">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="text-left">
+                          <div className="flex items-center gap-2 text-destructive mb-1">
+                            <AlertTriangle className="h-4 w-4" />
+                            <span className="text-sm font-semibold">Emergency</span>
+                          </div>
+                          <a 
+                            href={`tel:${config.company.dispatch_phone}`}
+                            className="text-xl font-bold text-destructive hover:underline"
+                          >
+                            {config.company.dispatch_phone}
+                          </a>
+                        </div>
+                        <a
+                          href={`tel:${config.company.dispatch_phone}`}
+                          className="flex items-center justify-center h-14 w-14 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors shadow-lg"
+                        >
+                          <Phone className="h-6 w-6" />
+                        </a>
                       </div>
-                      <a 
-                        href={`tel:${config.company.dispatch_phone}`}
-                        className="text-lg font-bold text-destructive hover:underline"
-                      >
-                        {config.company.dispatch_phone}
-                      </a>
                     </div>
                   )}
                 </div>
