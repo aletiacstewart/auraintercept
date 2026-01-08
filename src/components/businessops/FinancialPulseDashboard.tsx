@@ -20,10 +20,11 @@ import { format, isPast, parseISO } from 'date-fns';
 interface FinancialPulseDashboardProps {
   companyId: string;
   onNavigate: (section: 'quotes' | 'invoices' | 'inventory' | 'payments') => void;
+  showQuotes?: boolean;
 }
 
-export function FinancialPulseDashboard({ companyId, onNavigate }: FinancialPulseDashboardProps) {
-  // Fetch pending quotes
+export function FinancialPulseDashboard({ companyId, onNavigate, showQuotes = false }: FinancialPulseDashboardProps) {
+  // Fetch pending quotes (only if showQuotes is true)
   const { data: quotes = [] } = useQuery({
     queryKey: ['pending-quotes', companyId],
     queryFn: async () => {
@@ -36,7 +37,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate }: FinancialPuls
         .limit(5);
       return data || [];
     },
-    enabled: !!companyId,
+    enabled: !!companyId && showQuotes,
   });
 
   // Fetch unpaid invoices
@@ -92,18 +93,20 @@ export function FinancialPulseDashboard({ companyId, onNavigate }: FinancialPuls
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="glass-panel border-accent/20 hover:border-accent/40 transition-colors cursor-pointer" onClick={() => onNavigate('quotes')}>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <FileText className="h-5 w-5 text-accent" />
-              <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30">
-                {quotes.length}
-              </Badge>
-            </div>
-            <p className="text-2xl font-bold mt-2">${pendingQuoteValue.toFixed(0)}</p>
-            <p className="text-xs text-muted-foreground">Pending Quotes</p>
-          </CardContent>
-        </Card>
+        {showQuotes && (
+          <Card className="glass-panel border-accent/20 hover:border-accent/40 transition-colors cursor-pointer" onClick={() => onNavigate('quotes')}>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <FileText className="h-5 w-5 text-accent" />
+                <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30">
+                  {quotes.length}
+                </Badge>
+              </div>
+              <p className="text-2xl font-bold mt-2">${pendingQuoteValue.toFixed(0)}</p>
+              <p className="text-xs text-muted-foreground">Pending Quotes</p>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="glass-panel border-accent/20 hover:border-accent/40 transition-colors cursor-pointer" onClick={() => onNavigate('invoices')}>
           <CardContent className="p-4">
@@ -144,50 +147,52 @@ export function FinancialPulseDashboard({ companyId, onNavigate }: FinancialPuls
       </div>
 
       {/* Content Grid */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Pending Quotes */}
-        <Card className="glass-panel border-accent/20">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <FileText className="h-4 w-4 text-accent" />
-                Pending Quotes
-              </CardTitle>
-              <Button variant="ghost" size="sm" onClick={() => onNavigate('quotes')} className="text-accent hover:text-accent hover:bg-accent/10">
-                View All <ArrowRight className="h-3 w-3 ml-1" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <ScrollArea className="h-[200px]">
-              {quotes.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                  <FileText className="h-8 w-8 mb-2 opacity-50" />
-                  <p className="text-sm">No pending quotes</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {quotes.map(quote => (
-                    <div key={quote.id} className="flex items-center justify-between p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">{quote.customer_name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {format(new Date(quote.created_at), 'MMM d, yyyy')}
-                        </p>
+      <div className={`grid ${showQuotes ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-6`}>
+        {/* Pending Quotes - only for platform admins */}
+        {showQuotes && (
+          <Card className="glass-panel border-accent/20">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-accent" />
+                  Pending Quotes
+                </CardTitle>
+                <Button variant="ghost" size="sm" onClick={() => onNavigate('quotes')} className="text-accent hover:text-accent hover:bg-accent/10">
+                  View All <ArrowRight className="h-3 w-3 ml-1" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ScrollArea className="h-[200px]">
+                {quotes.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                    <FileText className="h-8 w-8 mb-2 opacity-50" />
+                    <p className="text-sm">No pending quotes</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {quotes.map(quote => (
+                      <div key={quote.id} className="flex items-center justify-between p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">{quote.customer_name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {format(new Date(quote.created_at), 'MMM d, yyyy')}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30 text-xs">
+                            {quote.status}
+                          </Badge>
+                          <span className="font-semibold text-sm">${quote.total_amount?.toFixed(0)}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30 text-xs">
-                          {quote.status}
-                        </Badge>
-                        <span className="font-semibold text-sm">${quote.total_amount?.toFixed(0)}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </ScrollArea>
-          </CardContent>
-        </Card>
+                    ))}
+                  </div>
+                )}
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Unpaid Invoices */}
         <Card className="glass-panel border-accent/20">

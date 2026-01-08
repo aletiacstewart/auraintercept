@@ -14,11 +14,17 @@ interface BusinessOpsConsoleProps {
 }
 
 export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsConsoleProps) {
-  const { companyId: authCompanyId } = useAuth();
+  const { companyId: authCompanyId, userRole } = useAuth();
   const effectiveCompanyId = propCompanyId || authCompanyId;
   const [currentView, setCurrentView] = useState<ViewType>('dashboard');
+  
+  const isPlatformAdmin = userRole === 'platform_admin';
 
   const handleNavigate = (section: ViewType) => {
+    // Block quotes navigation for non-platform-admins
+    if ((section === 'quotes' || section === 'invoices') && !isPlatformAdmin) {
+      return;
+    }
     setCurrentView(section);
   };
 
@@ -43,7 +49,9 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
         </div>
         <div>
           <h1 className="font-semibold text-foreground">Business Operations</h1>
-          <p className="text-xs text-muted-foreground">Financial Pulse • Quote Forge • Inventory Matrix</p>
+          <p className="text-xs text-muted-foreground">
+            Financial Pulse{isPlatformAdmin ? ' • Quote Forge' : ''} • Inventory Matrix
+          </p>
         </div>
       </div>
 
@@ -53,9 +61,10 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
           <FinancialPulseDashboard 
             companyId={effectiveCompanyId} 
             onNavigate={handleNavigate}
+            showQuotes={isPlatformAdmin}
           />
         )}
-        {currentView === 'quotes' && (
+        {currentView === 'quotes' && isPlatformAdmin && (
           <QuoteForge 
             companyId={effectiveCompanyId} 
             onBack={handleBack}
@@ -73,7 +82,7 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
             onBack={handleBack}
           />
         )}
-        {currentView === 'invoices' && (
+        {currentView === 'invoices' && isPlatformAdmin && (
           <QuoteForge 
             companyId={effectiveCompanyId} 
             onBack={handleBack}
