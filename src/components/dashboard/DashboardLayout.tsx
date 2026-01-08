@@ -133,7 +133,7 @@ const navGroups: NavGroup[] = [
       { label: 'Profile', icon: User, href: '/technician/profile', roles: ['employee'] },
       { label: 'Install App', icon: Puzzle, href: '/technician/install', roles: ['employee'] },
       { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'] },
-      { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'] },
     ],
   },
   {
@@ -155,7 +155,7 @@ const navGroups: NavGroup[] = [
       { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin'] },
       { label: 'Warranties', icon: FileCheck, href: '/dashboard/warranties', roles: ['platform_admin'] },
       { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Export Docs', icon: FileText, href: '/dashboard/documentation', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Export Docs', icon: FileText, href: '/dashboard/documentation', roles: ['platform_admin'] },
     ],
   },
 ];
