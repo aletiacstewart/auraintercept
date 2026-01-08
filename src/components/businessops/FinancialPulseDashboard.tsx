@@ -13,9 +13,10 @@ import {
   Clock,
   DollarSign,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  UserPlus
 } from 'lucide-react';
-import { format, isPast, parseISO } from 'date-fns';
+import { format, isPast, parseISO, subDays } from 'date-fns';
 
 interface FinancialPulseDashboardProps {
   companyId: string;
@@ -73,6 +74,23 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
     enabled: !!companyId,
   });
 
+  // Fetch new leads (customers created in last 30 days)
+  const { data: newLeads = [] } = useQuery({
+    queryKey: ['new-leads', companyId],
+    queryFn: async () => {
+      const thirtyDaysAgo = subDays(new Date(), 30).toISOString();
+      const { data } = await supabase
+        .from('customer_profiles')
+        .select('id, name, email, phone, created_at')
+        .eq('company_id', companyId)
+        .gte('created_at', thirtyDaysAgo)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
   // Calculate totals
   const pendingQuoteValue = quotes.reduce((sum, q) => sum + (q.total_amount || 0), 0);
   const unpaidInvoiceValue = invoices.reduce((sum, i) => sum + (i.total || 0), 0);
@@ -95,6 +113,19 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="glass-panel border-accent/20">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <UserPlus className="h-5 w-5 text-green-500" />
+              <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
+                30d
+              </Badge>
+            </div>
+            <p className="text-2xl font-bold mt-2">{newLeads.length}</p>
+            <p className="text-xs text-muted-foreground">New Leads</p>
+          </CardContent>
+        </Card>
+
         <Card className="glass-panel border-accent/20">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
