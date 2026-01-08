@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -35,7 +35,6 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import logo from '@/assets/ai-bot-company-logo-new.png';
-import { ServiceLocationSearch } from '@/components/customer/ServiceLocationSearch';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 
 interface Company {
@@ -45,9 +44,6 @@ interface Company {
   logo_url: string | null;
   primary_color: string | null;
   secondary_color: string | null;
-  service_categories?: string[] | null;
-  service_area_zip_codes?: string[] | null;
-  service_area_cities?: string[] | null;
 }
 
 interface CompanyAssociation {
@@ -61,14 +57,7 @@ interface CompanyAssociation {
 export default function CustomerPortalHome() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
-  const [serviceQuery, setServiceQuery] = useState('');
-  const [locationQuery, setLocationQuery] = useState('');
-  const [isAdvancedSearchActive, setIsAdvancedSearchActive] = useState(false);
-  
-  // Check if embedded (should not show search features)
-  const isEmbedded = searchParams.get('embed') === 'true';
   
   // PWA install hook
   const { isInstallable, isInstalled, promptInstall } = usePWAInstall();
@@ -120,13 +109,13 @@ export default function CustomerPortalHome() {
     enabled: !!user,
   });
 
-  // Fetch all companies for browsing - with advanced search support
-  const { data: allCompanies, isLoading: companiesLoading, refetch: refetchCompanies } = useQuery({
-    queryKey: ['browse-companies', searchTerm, serviceQuery, locationQuery],
+  // Fetch all companies for browsing
+  const { data: allCompanies, isLoading: companiesLoading } = useQuery({
+    queryKey: ['browse-companies', searchTerm],
     queryFn: async () => {
       let query = supabase
         .from('companies')
-        .select('id, name, slug, logo_url, primary_color, secondary_color, service_categories, service_area_zip_codes, service_area_cities')
+        .select('id, name, slug, logo_url, primary_color, secondary_color')
         .order('name');
 
       // Basic name search
@@ -137,45 +126,9 @@ export default function CustomerPortalHome() {
       const { data, error } = await query.limit(50);
       if (error) throw error;
       
-      let results = (data || []) as Company[];
-      
-      // Advanced filtering by service and location (client-side for now)
-      if (serviceQuery) {
-        const serviceLower = serviceQuery.toLowerCase();
-        results = results.filter(company => 
-          company.service_categories?.some(cat => 
-            cat.toLowerCase().includes(serviceLower)
-          ) || company.name.toLowerCase().includes(serviceLower)
-        );
-      }
-      
-      if (locationQuery) {
-        const locationLower = locationQuery.toLowerCase();
-        results = results.filter(company => 
-          company.service_area_zip_codes?.some(zip => 
-            zip.includes(locationQuery)
-          ) ||
-          company.service_area_cities?.some(city => 
-            city.toLowerCase().includes(locationLower)
-          )
-        );
-      }
-      
-      return results;
+      return (data || []) as Company[];
     },
   });
-
-  const handleAdvancedSearch = (service: string, location: string) => {
-    setServiceQuery(service);
-    setLocationQuery(location);
-    setIsAdvancedSearchActive(true);
-  };
-
-  const handleClearAdvancedSearch = () => {
-    setServiceQuery('');
-    setLocationQuery('');
-    setIsAdvancedSearchActive(false);
-  };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -238,8 +191,8 @@ export default function CustomerPortalHome() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {/* Install App Button - Only show in downloadable app (not embedded) */}
-            {!isEmbedded && isInstallable && !isInstalled && (
+            {/* Install App Button */}
+            {isInstallable && !isInstalled && (
               <Button variant="outline" size="sm" onClick={promptInstall} className="gap-2">
                 <Download className="w-4 h-4" />
                 <span className="hidden sm:inline">Install App</span>
@@ -257,7 +210,7 @@ export default function CustomerPortalHome() {
 
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
         {/* Install App Banner - Mobile */}
-        {!isEmbedded && isInstallable && !isInstalled && (
+        {isInstallable && !isInstalled && (
           <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
             <CardContent className="p-4">
               <div className="flex items-center justify-between gap-4">
@@ -280,40 +233,6 @@ export default function CustomerPortalHome() {
 
         {/* How It Works Section */}
         <HowItWorksSection />
-
-        {/* Advanced Service & Location Search - Only in downloadable app, NOT in embedded widget */}
-        {!isEmbedded && (
-          <Card className="border-2">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Search className="w-5 h-5 text-primary" />
-                Find Services Near You
-              </CardTitle>
-              <CardDescription>
-                Search by service type and location to find the right business
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ServiceLocationSearch 
-                onSearch={handleAdvancedSearch}
-                onClear={handleClearAdvancedSearch}
-                isSearching={companiesLoading}
-              />
-              {isAdvancedSearchActive && (
-                <div className="mt-3 flex items-center gap-2">
-                  <Badge variant="secondary">
-                    {serviceQuery && `Service: ${serviceQuery}`}
-                    {serviceQuery && locationQuery && ' • '}
-                    {locationQuery && `Location: ${locationQuery}`}
-                  </Badge>
-                  <span className="text-sm text-muted-foreground">
-                    {allCompanies?.length || 0} results
-                  </span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
 
         {/* Basic Name Search */}
         <div className="relative">
