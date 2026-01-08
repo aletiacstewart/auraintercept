@@ -20,11 +20,21 @@ const passwordSchema = z.string().min(6, 'Password must be at least 6 characters
 
 type AuthMode = 'platform_admin' | 'company' | 'employee' | 'customer';
 
+const VALID_MODES: AuthMode[] = ['platform_admin', 'company', 'employee', 'customer'];
+
 export default function Auth() {
   const [searchParams] = useSearchParams();
-  const mode = (searchParams.get('mode') as AuthMode) || 'company';
+  
+  // Runtime guard for mode - prevents malformed values from falling through
+  const rawMode = searchParams.get('mode');
+  const mode: AuthMode = rawMode && VALID_MODES.includes(rawMode as AuthMode) 
+    ? (rawMode as AuthMode) 
+    : 'company';
+  
   const rawTab = searchParams.get('tab');
   const tabParam = rawTab === 'login' || rawTab === 'signup' ? rawTab : null;
+  const source = searchParams.get('source');
+  
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('signup');
   const navigate = useNavigate();
@@ -39,11 +49,14 @@ export default function Auth() {
 
   // Sync activeTab with URL params and mode - runs on mount and when params change
   useEffect(() => {
-    if (tabParam) {
+    // Force login for QR source or employee mode (bulletproof the flow)
+    if (source === 'qr' || mode === 'employee') {
+      setActiveTab('login');
+    } else if (tabParam) {
       setActiveTab(tabParam);
     } else {
-      // Default: login for employee mode, signup for others
-      setActiveTab(mode === 'employee' ? 'login' : 'signup');
+      // Default: signup for company mode
+      setActiveTab('signup');
     }
     // Reset form fields when mode changes
     setEmail('');
@@ -51,7 +64,7 @@ export default function Auth() {
     setFullName('');
     setCompanyName('');
     setRegistrationCode('');
-  }, [mode, tabParam]);
+  }, [mode, tabParam, source]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -477,6 +490,12 @@ export default function Auth() {
             <div className="text-center">
               <h1 className="text-2xl font-bold tracking-tight">Aura Intercept</h1>
               <p className="text-sm text-muted-foreground">Infrastructure of Intent</p>
+              {/* Debug line for QR troubleshooting - only shows when source=qr */}
+              {source === 'qr' && (
+                <p className="mt-2 text-xs font-mono bg-muted px-2 py-1 rounded inline-block">
+                  Mode: {mode} | Tab: {activeTab} | Source: {source}
+                </p>
+              )}
             </div>
           </div>
 
