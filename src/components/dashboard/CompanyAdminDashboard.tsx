@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, Package, DollarSign, AlertTriangle, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Megaphone, BarChart3, Code, Smartphone } from 'lucide-react';
+import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Smartphone } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
@@ -142,14 +142,6 @@ export function CompanyAdminDashboard() {
       isString: true
     },
     { 
-      title: 'Low Stock', 
-      value: stats?.lowStockAlerts ?? 0, 
-      icon: AlertTriangle, 
-      description: 'Items need reorder',
-      gradient: 'from-yellow-500 to-yellow-600',
-      highlight: (stats?.lowStockAlerts ?? 0) > 0
-    },
-    { 
       title: 'AI Agent', 
       value: 'Active', 
       icon: Bot, 
@@ -171,8 +163,6 @@ export function CompanyAdminDashboard() {
     { label: 'Customer Engagement', icon: HeadphonesIcon, href: '/dashboard/ai-agent?console=customer', gradient: 'from-cyan-500 to-blue-500' },
     { label: 'Field Operations', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', gradient: 'from-green-500 to-emerald-500' },
     { label: 'Business & Accounting', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', gradient: 'from-purple-500 to-violet-500' },
-    { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-agent?console=marketing', gradient: 'from-orange-500 to-red-500' },
-    { label: 'Analytics & Optimization', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', gradient: 'from-indigo-500 to-blue-600' },
     { label: 'Embed Chat Widget', icon: Code, href: '/dashboard/widget', gradient: 'from-slate-600 to-slate-700' },
     { label: 'Technician App', icon: Smartphone, href: '/technician/install', gradient: 'from-teal-500 to-cyan-500' },
   ];
@@ -235,7 +225,7 @@ export function CompanyAdminDashboard() {
               {isLoading ? (
                 <Skeleton className="h-8 w-20" />
               ) : (
-                <div className={`text-3xl font-bold ${stat.highlight ? 'text-yellow-600' : ''}`}>
+                <div className="text-3xl font-bold">
                   {stat.isString ? stat.value : (stat.value as number).toLocaleString()}
                 </div>
               )}

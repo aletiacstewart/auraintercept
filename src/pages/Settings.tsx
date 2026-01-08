@@ -50,7 +50,7 @@ export default function Settings() {
               <TabsTrigger value="sms">SMS Templates</TabsTrigger>
               <TabsTrigger value="reviews">Reviews</TabsTrigger>
               {isPlatformAdmin && <TabsTrigger value="warranties">Warranties</TabsTrigger>}
-              <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+              {isPlatformAdmin && <TabsTrigger value="campaigns">Campaigns</TabsTrigger>}
             </TabsList>
             <TabsContent value="branding">
               <BrandingSettings />
@@ -99,9 +99,11 @@ export default function Settings() {
                 <WarrantySettings />
               </TabsContent>
             )}
-            <TabsContent value="campaigns">
-              <CampaignSettings />
-            </TabsContent>
+            {isPlatformAdmin && (
+              <TabsContent value="campaigns">
+                <CampaignSettings />
+              </TabsContent>
+            )}
           </Tabs>
         </div>
       ) : (
