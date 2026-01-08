@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { AgentInfo } from '@/hooks/useAIAgentOrchestrator';
+import { useAuth } from '@/contexts/AuthContext';
 
 const PHASE_CONFIG = [
   {
@@ -60,6 +61,12 @@ const PHASE_CONFIG = [
   },
 ];
 
+// Agents hidden from non-platform-admin roles
+const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty', 'promo', 'referral', 'winback', 'seasonal', 'marketing'];
+
+// Phases hidden entirely from non-platform-admin roles
+const HIDDEN_PHASES_FOR_NON_PLATFORM_ADMIN = [4, 5]; // Marketing & Sales, Analytics & Optimization
+
 interface BatchAgentActivationProps {
   agents: AgentInfo[];
   onActivatePhase: (agentTypes: string[]) => Promise<void>;
@@ -67,11 +74,28 @@ interface BatchAgentActivationProps {
 }
 
 export function BatchAgentActivation({ agents, onActivatePhase, onActivateAll }: BatchAgentActivationProps) {
+  const { userRole } = useAuth();
   const [selectedPhases, setSelectedPhases] = useState<number[]>([]);
   const [activating, setActivating] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const agentMap = new Map(agents.map(a => [a.type, a]));
+
+  // Filter phases and agents based on user role
+  const filteredPhaseConfig = useMemo(() => {
+    if (userRole === 'platform_admin') {
+      return PHASE_CONFIG;
+    }
+
+    // Filter out hidden phases for company_admin and employee
+    return PHASE_CONFIG
+      .filter(phase => !HIDDEN_PHASES_FOR_NON_PLATFORM_ADMIN.includes(phase.phase))
+      .map(phase => ({
+        ...phase,
+        agents: phase.agents.filter(agent => !HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN.includes(agent))
+      }))
+      .filter(phase => phase.agents.length > 0); // Remove phases with no visible agents
+  }, [userRole]);
 
   const togglePhase = (phase: number) => {
     setSelectedPhases(prev => 
@@ -99,7 +123,7 @@ export function BatchAgentActivation({ agents, onActivatePhase, onActivateAll }:
       const totalPhases = selectedPhases.length;
       for (let i = 0; i < totalPhases; i++) {
         const phase = selectedPhases[i];
-        const phaseConfig = PHASE_CONFIG.find(p => p.phase === phase);
+        const phaseConfig = filteredPhaseConfig.find(p => p.phase === phase);
         if (phaseConfig) {
           await onActivatePhase(phaseConfig.agents);
           setProgress(((i + 1) / totalPhases) * 100);
@@ -120,9 +144,9 @@ export function BatchAgentActivation({ agents, onActivatePhase, onActivateAll }:
     setProgress(0);
 
     try {
-      const totalPhases = PHASE_CONFIG.length;
+      const totalPhases = filteredPhaseConfig.length;
       for (let i = 0; i < totalPhases; i++) {
-        const phaseConfig = PHASE_CONFIG[i];
+        const phaseConfig = filteredPhaseConfig[i];
         await onActivatePhase(phaseConfig.agents);
         setProgress(((i + 1) / totalPhases) * 100);
       }
@@ -135,8 +159,11 @@ export function BatchAgentActivation({ agents, onActivatePhase, onActivateAll }:
     }
   };
 
-  const totalEnabled = agents.filter(a => a.is_enabled).length;
-  const totalAgents = agents.length;
+  // Calculate totals based on filtered agents for non-platform-admin
+  const visibleAgentTypes = new Set(filteredPhaseConfig.flatMap(p => p.agents));
+  const visibleAgents = agents.filter(a => visibleAgentTypes.has(a.type));
+  const totalEnabled = visibleAgents.filter(a => a.is_enabled).length;
+  const totalAgents = visibleAgents.length;
 
   return (
     <Card>
@@ -168,7 +195,7 @@ export function BatchAgentActivation({ agents, onActivatePhase, onActivateAll }:
 
         {/* Phase Selection */}
         <div className="space-y-3">
-          {PHASE_CONFIG.map((phase) => {
+          {filteredPhaseConfig.map((phase) => {
             const status = getPhaseStatus(phase.agents);
             const Icon = phase.icon;
             const isSelected = selectedPhases.includes(phase.phase);
