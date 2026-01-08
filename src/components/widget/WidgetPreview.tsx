@@ -30,7 +30,7 @@ export const WidgetPreview = () => {
         <CardHeader>
           <CardTitle>Live Preview</CardTitle>
           <CardDescription>
-            Test your Customer App before adding it to your website
+            Test your Customer App Widget before adding it to your website
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -39,7 +39,7 @@ export const WidgetPreview = () => {
               <iframe
                 src={`/chat/${companySlug}?embed=true`}
                 className="w-full h-[600px] border-0 rounded-lg"
-                title="Customer App Preview"
+                title="Customer App Widget Preview"
                 allow="microphone"
               />
             ) : (
