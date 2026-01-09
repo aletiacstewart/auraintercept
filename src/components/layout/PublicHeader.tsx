@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Home, Users, Zap } from 'lucide-react';
-import logo from '@/assets/ai-circle-logo-new.png';
+import logo from '@/assets/aura-intercept-logo.png';
 
 interface PublicHeaderProps {
   showHomeLink?: boolean;
