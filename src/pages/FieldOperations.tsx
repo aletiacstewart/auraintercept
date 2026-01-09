@@ -1,6 +1,6 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
-import { FieldOpsConsole } from '@/components/fieldops';
+import { FieldOpsManager } from '@/components/fieldops';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function FieldOperations() {
@@ -29,7 +29,7 @@ export default function FieldOperations() {
   return (
     <DashboardLayout>
       <div className="h-[calc(100vh-4rem)]">
-        <FieldOpsConsole companyId={companyId} />
+        <FieldOpsManager companyId={companyId} />
       </div>
     </DashboardLayout>
   );

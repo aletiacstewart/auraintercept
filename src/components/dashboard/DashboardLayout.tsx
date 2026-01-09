@@ -112,7 +112,7 @@ const navGroups: NavGroup[] = [
     label: 'AI Consoles',
     items: [
       { label: 'Customer Engagement', icon: HeadphonesIcon, href: '/dashboard/ai-agent?console=customer', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'] },
-      { label: 'Field Operations', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
+      { label: 'Field Ops App', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
       { label: 'Business & Accounting', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist', 'inventory_manager'] },
       { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-agent?console=marketing', roles: ['platform_admin'] },
       { label: 'Analytics & Optimization', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', roles: ['platform_admin'] },
@@ -121,7 +121,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Operations',
     items: [
-      { label: 'Field Ops Console', icon: Map, href: '/dashboard/field-operations', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Field Ops Manager', icon: Map, href: '/dashboard/field-operations', roles: ['platform_admin', 'company_admin'] },
       { label: 'Business Ops Console', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'] },
     ],
   },
