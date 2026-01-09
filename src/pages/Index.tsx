@@ -257,8 +257,8 @@ export default function Index() {
             
             <h1 className="text-5xl sm:text-6xl md:text-7xl tracking-wide mb-4 animate-fade-in">
               <span className="font-brand text-[#214ebb]">Aura Intercept</span>
-              <span className="block text-2xl sm:text-3xl md:text-4xl mt-2 text-muted-foreground font-normal font-sans">
-                Multi-Agent Orchestration Engine
+              <span className="block text-2xl sm:text-3xl md:text-4xl mt-2 font-normal font-sans" style={{ color: '#46a2d3' }}>
+                Smart Agents, Automated Service.
               </span>
             </h1>
 
