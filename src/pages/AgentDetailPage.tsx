@@ -456,6 +456,32 @@ const AGENT_DEFINITIONS: Record<string, {
       ]},
       { key: 'include_projections', label: 'Include Revenue Projections', type: 'switch', defaultValue: true }
     ]
+  },
+  performance: {
+    name: 'Performance Agent',
+    description: 'Tracks team and individual performance metrics, identifies improvement opportunities.',
+    category: 'analytics',
+    phase: 5,
+    icon: BarChart3,
+    color: 'text-cyan-500',
+    capabilities: [
+      'Team performance tracking',
+      'Individual metrics',
+      'Goal tracking',
+      'Performance trends',
+      'Improvement recommendations'
+    ],
+    configFields: [
+      { key: 'tracking_period', label: 'Tracking Period', type: 'select', options: [
+        { value: 'daily', label: 'Daily' },
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'monthly', label: 'Monthly' }
+      ], defaultValue: 'weekly' },
+      { key: 'show_individual_metrics', label: 'Show Individual Metrics', type: 'switch', defaultValue: true },
+      { key: 'show_team_metrics', label: 'Show Team Metrics', type: 'switch', defaultValue: true },
+      { key: 'performance_goal_completion', label: 'Goal Completion Target (%)', type: 'slider', min: 50, max: 100, step: 5, defaultValue: 85 },
+      { key: 'alert_low_performers', label: 'Alert on Low Performance', type: 'switch', defaultValue: false, description: 'Send alerts when performance drops below threshold' }
+    ]
   }
 };
 
