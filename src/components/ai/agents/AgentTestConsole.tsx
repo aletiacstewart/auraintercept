@@ -50,6 +50,7 @@ const AGENT_NAMES: Record<string, string> = {
   campaign: 'Campaign Specialist',
   insights: 'Insights Analyst',
   forecast: 'Forecast Analyst',
+  revenue: 'Revenue Analyst',
 };
 
 interface NextSteps {
@@ -164,6 +165,13 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
     { label: '30 Day Forecast', message: "Forecast demand for the next 30 days" },
     { label: 'Revenue Projection', message: "Project revenue for the next quarter" },
     { label: 'Staffing Needs', message: "Do we need to adjust staffing levels?" },
+  ],
+  revenue: [
+    { label: 'Revenue Summary', message: "Show me today's revenue breakdown by service type" },
+    { label: 'Profitability Analysis', message: "Which services have the highest profit margins?" },
+    { label: 'Growth Opportunities', message: "Identify revenue growth opportunities for this quarter" },
+    { label: 'Payment Reconciliation', message: "Show outstanding payments and reconciliation status" },
+    { label: 'Revenue Forecast', message: "What's the projected revenue for next month?" },
   ],
 };
 
