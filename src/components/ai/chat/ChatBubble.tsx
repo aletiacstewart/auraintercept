@@ -44,7 +44,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       <div className={cn(
         'max-w-[85%] sm:max-w-[75%] px-4 py-2.5 shadow-md',
         isUser 
-          ? 'message-bubble-user text-white' 
+          ? 'message-bubble-user' 
           : 'message-bubble-assistant'
       )}>
         {/* Agent badge for handoffs */}
