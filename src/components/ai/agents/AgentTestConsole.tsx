@@ -610,6 +610,7 @@ export function AgentTestConsole({
       setShowInvoiceForm(true);
     } else if (scenario.label === 'Generate Quote') {
       setShowQuoteForm(true);
+    } else {
       sendMessage(scenario.message);
     }
   };
