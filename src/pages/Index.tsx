@@ -507,7 +507,7 @@ export default function Index() {
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Industries</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Built for Service Businesses</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-foreground max-w-2xl mx-auto">
               Perfect for any appointment-based business that needs to manage scheduling, 
               field operations, and customer communications.
             </p>
