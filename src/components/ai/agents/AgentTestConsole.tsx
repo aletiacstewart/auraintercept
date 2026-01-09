@@ -11,6 +11,7 @@ import { FeedbackForm } from '@/components/ai/FeedbackForm';
 import { CampaignForm } from '@/components/marketing/forms/CampaignForm';
 import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
 import { BusinessQuoteForm } from '@/components/billing/forms/BusinessQuoteForm';
+import { PerformanceReportForm } from '@/components/analytics/forms/PerformanceReportForm';
 import { toast } from 'sonner';
 import { 
   Send, 
@@ -254,6 +255,8 @@ export function AgentTestConsole({
   const [showCampaignForm, setShowCampaignForm] = useState(false);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [showQuoteForm, setShowQuoteForm] = useState(false);
+  const [showPerformanceForm, setShowPerformanceForm] = useState(false);
+  const [performanceView, setPerformanceView] = useState<'team' | 'top_performers' | 'goals' | 'improvements' | 'individual'>('team');
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const scenarios = TEST_SCENARIOS[initialAgentType] || [];
@@ -295,6 +298,7 @@ export function AgentTestConsole({
     setShowCampaignForm(false);
     setShowInvoiceForm(false);
     setShowQuoteForm(false);
+    setShowPerformanceForm(false);
   }, [initialAgentType, initialAgentName]);
 
   const addMessage = useCallback((message: Omit<Message, 'id' | 'timestamp'>) => {
@@ -549,6 +553,7 @@ export function AgentTestConsole({
     setShowCampaignForm(false);
     setShowInvoiceForm(false);
     setShowQuoteForm(false);
+    setShowPerformanceForm(false);
   };
 
   const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string; serviceDate?: Date }) => {
@@ -635,9 +640,36 @@ export function AgentTestConsole({
       setShowInvoiceForm(true);
     } else if (scenario.label === 'Generate Quote') {
       setShowQuoteForm(true);
+    } else if (scenario.label === 'Team Overview') {
+      setPerformanceView('team');
+      setShowPerformanceForm(true);
+    } else if (scenario.label === 'Top Performers') {
+      setPerformanceView('top_performers');
+      setShowPerformanceForm(true);
+    } else if (scenario.label === 'Goal Progress') {
+      setPerformanceView('goals');
+      setShowPerformanceForm(true);
+    } else if (scenario.label === 'Improvement Areas') {
+      setPerformanceView('improvements');
+      setShowPerformanceForm(true);
+    } else if (scenario.label === 'Individual Metrics') {
+      setPerformanceView('individual');
+      setShowPerformanceForm(true);
     } else {
       sendMessage(scenario.message);
     }
+  };
+
+  const handlePerformanceClose = () => {
+    setShowPerformanceForm(false);
+    addMessage({
+      role: 'agent',
+      content: `Performance report completed. Would you like to view another report or export this data?`,
+      metadata: {
+        event_type: 'performance_report_closed',
+        current_agent: 'performance',
+      },
+    });
   };
 
   const handleCampaignSuccess = (data: { name: string; type: string }) => {
@@ -748,10 +780,10 @@ export function AgentTestConsole({
           <div className="border rounded-lg">
             {/* Messages */}
             <ScrollArea className="h-[400px] p-4" ref={scrollRef}>
-              {messages.length === 0 && !(showFeedbackForm || showCampaignForm || showInvoiceForm || showQuoteForm) ? (
+              {messages.length === 0 && !(showFeedbackForm || showCampaignForm || showInvoiceForm || showQuoteForm || showPerformanceForm) ? (
                 <div className="text-center text-muted-foreground py-12">
                   <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Send a message to test the agent</p>
+                  <p>Send a message or select a scenario to test the agent</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -914,6 +946,16 @@ export function AgentTestConsole({
                         onSuccess={handleQuoteSuccess}
                         showBackButton={false}
                         mode="direct"
+                      />
+                    </div>
+                  )}
+                  {showPerformanceForm && companyId && (
+                    <div className="py-4">
+                      <PerformanceReportForm
+                        companyId={companyId}
+                        onCancel={handlePerformanceClose}
+                        mode="ai"
+                        initialView={performanceView}
                       />
                     </div>
                   )}
