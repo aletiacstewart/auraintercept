@@ -34,7 +34,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import logo from '@/assets/ai-circle-logo-new.png';
+import logo from '@/assets/aura-intercept-logo.png';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 
 interface Company {

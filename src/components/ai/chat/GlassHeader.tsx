@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Phone, Mic, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import aiCircleLogo from '@/assets/ai-circle-logo-new.png';
+import aiCircleLogo from '@/assets/aura-intercept-logo.png';
 
 export interface GlassHeaderProps {
   companyName: string;
