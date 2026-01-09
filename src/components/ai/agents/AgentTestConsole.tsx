@@ -12,6 +12,7 @@ import { CampaignForm } from '@/components/marketing/forms/CampaignForm';
 import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
 import { BusinessQuoteForm } from '@/components/billing/forms/BusinessQuoteForm';
 import { PerformanceReportForm } from '@/components/analytics/forms/PerformanceReportForm';
+import { RevenueAnalysisForm } from '@/components/analytics/forms/RevenueAnalysisForm';
 import { toast } from 'sonner';
 import { 
   Send, 
@@ -169,11 +170,7 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
     { label: 'Staffing Needs', message: "Do we need to adjust staffing levels for next week?" },
   ],
   revenue: [
-    { label: 'Revenue Summary', message: "Show me today's revenue breakdown by service type" },
-    { label: 'Profitability Analysis', message: "Which services have the highest profit margins?" },
-    { label: 'Growth Opportunities', message: "Identify revenue growth opportunities for this quarter" },
-    { label: 'Payment Reconciliation', message: "Show outstanding payments and reconciliation status" },
-    { label: 'Revenue Forecast', message: "What's the projected revenue for next month?" },
+    { label: 'Revenue Analysis', message: "View revenue analysis report" },
   ],
   performance: [
     { label: 'Company Performance', message: "View company performance report" },
@@ -252,6 +249,7 @@ export function AgentTestConsole({
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [showPerformanceForm, setShowPerformanceForm] = useState(false);
+  const [showRevenueForm, setShowRevenueForm] = useState(false);
   const [performanceView, setPerformanceView] = useState<'team' | 'top_performers' | 'goals' | 'improvements' | 'individual'>('team');
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -295,6 +293,7 @@ export function AgentTestConsole({
     setShowInvoiceForm(false);
     setShowQuoteForm(false);
     setShowPerformanceForm(false);
+    setShowRevenueForm(false);
   }, [initialAgentType, initialAgentName]);
 
   const addMessage = useCallback((message: Omit<Message, 'id' | 'timestamp'>) => {
@@ -550,6 +549,7 @@ export function AgentTestConsole({
     setShowInvoiceForm(false);
     setShowQuoteForm(false);
     setShowPerformanceForm(false);
+    setShowRevenueForm(false);
   };
 
   const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string; serviceDate?: Date }) => {
@@ -636,21 +636,11 @@ export function AgentTestConsole({
       setShowInvoiceForm(true);
     } else if (scenario.label === 'Generate Quote') {
       setShowQuoteForm(true);
-    } else if (scenario.label === 'Team Overview') {
+    } else if (scenario.label === 'Company Performance') {
       setPerformanceView('team');
       setShowPerformanceForm(true);
-    } else if (scenario.label === 'Top Performers') {
-      setPerformanceView('top_performers');
-      setShowPerformanceForm(true);
-    } else if (scenario.label === 'Goal Progress') {
-      setPerformanceView('goals');
-      setShowPerformanceForm(true);
-    } else if (scenario.label === 'Improvement Areas') {
-      setPerformanceView('improvements');
-      setShowPerformanceForm(true);
-    } else if (scenario.label === 'Individual Metrics') {
-      setPerformanceView('individual');
-      setShowPerformanceForm(true);
+    } else if (scenario.label === 'Revenue Analysis') {
+      setShowRevenueForm(true);
     } else {
       sendMessage(scenario.message);
     }
@@ -664,6 +654,18 @@ export function AgentTestConsole({
       metadata: {
         event_type: 'performance_report_closed',
         current_agent: 'performance',
+      },
+    });
+  };
+
+  const handleRevenueClose = () => {
+    setShowRevenueForm(false);
+    addMessage({
+      role: 'agent',
+      content: `Revenue analysis completed. Would you like to view another report or drill down into specific metrics?`,
+      metadata: {
+        event_type: 'revenue_analysis_closed',
+        current_agent: 'revenue',
       },
     });
   };
@@ -776,7 +778,7 @@ export function AgentTestConsole({
           <div className="border rounded-lg">
             {/* Messages */}
             <ScrollArea className="h-[400px] p-4" ref={scrollRef}>
-              {messages.length === 0 && !(showFeedbackForm || showCampaignForm || showInvoiceForm || showQuoteForm || showPerformanceForm) ? (
+              {messages.length === 0 && !(showFeedbackForm || showCampaignForm || showInvoiceForm || showQuoteForm || showPerformanceForm || showRevenueForm) ? (
                 <div className="text-center text-muted-foreground py-12">
                   <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>Send a message or select a scenario to test the agent</p>
@@ -952,6 +954,14 @@ export function AgentTestConsole({
                         onCancel={handlePerformanceClose}
                         mode="ai"
                         initialView={performanceView}
+                      />
+                    </div>
+                  )}
+                  {showRevenueForm && companyId && (
+                    <div className="py-4">
+                      <RevenueAnalysisForm
+                        companyId={companyId}
+                        onCancel={handleRevenueClose}
                       />
                     </div>
                   )}
