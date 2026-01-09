@@ -106,7 +106,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           <Sparkles className="h-6 w-6 text-accent" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-foreground">Financial Pulse</h2>
+          <h2 className="text-xl font-bold text-foreground">Business Ops Overview</h2>
           <p className="text-sm text-muted-foreground">Real-time business operations overview</p>
         </div>
       </div>
