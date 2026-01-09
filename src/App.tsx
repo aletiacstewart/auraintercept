@@ -27,6 +27,13 @@ import Integrations from "./pages/Integrations";
 import { VoiceIntegration, SMSIntegration, EmailIntegration, CRMIntegration, CalendarIntegration } from "./pages/integrations";
 import KnowledgeBase from "./pages/KnowledgeBase";
 import AIAgent from "./pages/AIAgent";
+import {
+  CustomerPortalConsole,
+  FieldOpsConsole,
+  BusinessManagementConsole,
+  MarketingSalesConsole,
+  AnalyticsConsole,
+} from "./pages/ai-consoles";
 import AIAgentsHub from "./pages/AIAgentsHub";
 import AgentDetailPage from "./pages/AgentDetailPage";
 import Widget from "./pages/Widget";
@@ -103,6 +110,11 @@ const App = () => (
             <Route path="/dashboard/integrations/calendar" element={<CalendarIntegration />} />
             <Route path="/dashboard/knowledge" element={<KnowledgeBase />} />
             <Route path="/dashboard/ai-agent" element={<AIAgent />} />
+            <Route path="/dashboard/ai-consoles/customer-portal" element={<CustomerPortalConsole />} />
+            <Route path="/dashboard/ai-consoles/field-ops" element={<FieldOpsConsole />} />
+            <Route path="/dashboard/ai-consoles/business-management" element={<BusinessManagementConsole />} />
+            <Route path="/dashboard/ai-consoles/marketing-sales" element={<MarketingSalesConsole />} />
+            <Route path="/dashboard/ai-consoles/analytics" element={<AnalyticsConsole />} />
             <Route path="/dashboard/ai-agents" element={<AIAgentsHub />} />
             <Route path="/dashboard/ai-agents/:agentId" element={<AgentDetailPage />} />
             <Route path="/dashboard/widget" element={<Widget />} />
