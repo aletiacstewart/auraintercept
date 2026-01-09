@@ -127,13 +127,10 @@ const navGroups: NavGroup[] = [
     label: 'Configuration',
     items: [
       { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Platform Guides', icon: FileText, href: '/dashboard/guides', roles: ['platform_admin'] },
       { label: 'Calculators', icon: BarChart3, href: '/dashboard/calculators', roles: ['platform_admin', 'company_admin'] },
       { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin'] },
       { label: 'Profile', icon: User, href: '/technician/profile', roles: ['employee'] },
       { label: 'Install App', icon: Puzzle, href: '/technician/install', roles: ['employee'] },
-      { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'] },
-      { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'] },
     ],
   },
   {
@@ -155,8 +152,11 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'Resources',
+    label: 'Platform Resources',
     items: [
+      { label: 'Platform Guides', icon: FileText, href: '/dashboard/guides', roles: ['platform_admin'] },
+      { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'] },
+      { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'] },
       { label: 'Export Docs', icon: FileText, href: '/dashboard/documentation', roles: ['platform_admin'] },
     ],
   },
