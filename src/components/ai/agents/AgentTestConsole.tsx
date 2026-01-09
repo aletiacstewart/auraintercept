@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { FeedbackForm } from '@/components/ai/FeedbackForm';
+import { CampaignForm } from '@/components/marketing/forms/CampaignForm';
 import { toast } from 'sonner';
 import { 
   Send, 
@@ -44,10 +45,7 @@ const AGENT_NAMES: Record<string, string> = {
   invoice: 'Billing Specialist',
   inventory: 'Inventory Specialist',
   warranty: 'Warranty Specialist',
-  promo: 'Promotions Specialist',
-  referral: 'Referral Specialist',
-  winback: 'Win-back Specialist',
-  seasonal: 'Seasonal Campaign Specialist',
+  campaign: 'Campaign Specialist',
   insights: 'Insights Analyst',
   forecast: 'Forecast Analyst',
 };
@@ -150,25 +148,12 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
     { label: 'File Claim', message: "I need to file a warranty claim for a defective part" },
     { label: 'Claim Status', message: "What's the status of my warranty claim #WC-123?" },
   ],
-  promo: [
-    { label: 'Create Campaign', message: "Create a 20% off winter promotion campaign" },
-    { label: 'Target Segment', message: "Send promo to customers inactive for 60+ days" },
-    { label: 'Check Results', message: "Show performance of last month's promotion" },
-  ],
-  referral: [
-    { label: 'Generate Link', message: "Generate a referral link for a happy customer" },
-    { label: 'Track Referral', message: "Check status of referral from customer John" },
-    { label: 'Process Reward', message: "Process referral reward for successful signup" },
-  ],
-  winback: [
-    { label: 'Find Churned', message: "Identify customers inactive for 90+ days" },
-    { label: 'Send Offer', message: "Send win-back offer with 15% discount" },
-    { label: 'Campaign Status', message: "Show results of the current win-back campaign" },
-  ],
-  seasonal: [
-    { label: 'Plan Campaign', message: "Plan spring HVAC tune-up reminder campaign" },
-    { label: 'Send Reminders', message: "Send seasonal maintenance reminders to customers" },
-    { label: 'Weather Trigger', message: "Cold front coming - trigger heating service campaign" },
+  campaign: [
+    { label: 'Create Campaign', message: "I'd like to create a new marketing campaign" },
+    { label: 'Promotional', message: "Create a 20% off winter promotion campaign" },
+    { label: 'Referral Program', message: "Set up a referral program for happy customers" },
+    { label: 'Win-Back', message: "Identify and re-engage customers inactive for 90+ days" },
+    { label: 'Seasonal', message: "Plan spring HVAC tune-up reminder campaign" },
   ],
   insights: [
     { label: 'Weekly Report', message: "Generate this week's performance summary" },
@@ -250,6 +235,7 @@ export function AgentTestConsole({
   const [activeAgent, setActiveAgent] = useState(initialAgentType);
   const [activeAgentName, setActiveAgentName] = useState(initialAgentName);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [showCampaignForm, setShowCampaignForm] = useState(false);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const scenarios = TEST_SCENARIOS[initialAgentType] || [];
@@ -288,6 +274,7 @@ export function AgentTestConsole({
     setMessages([]);
     setConversationHistory([]);
     setShowFeedbackForm(false);
+    setShowCampaignForm(false);
   }, [initialAgentType, initialAgentName]);
 
   const addMessage = useCallback((message: Omit<Message, 'id' | 'timestamp'>) => {
@@ -530,6 +517,7 @@ export function AgentTestConsole({
     setActiveAgent(initialAgentType);
     setActiveAgentName(initialAgentName);
     setShowFeedbackForm(false);
+    setShowCampaignForm(false);
   };
 
   const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string; serviceDate?: Date }) => {
@@ -610,9 +598,23 @@ export function AgentTestConsole({
   const handleScenarioClick = (scenario: { label: string; message: string }) => {
     if (scenario.label === 'Leave Feedback') {
       setShowFeedbackForm(true);
+    } else if (scenario.label === 'Create Campaign') {
+      setShowCampaignForm(true);
     } else {
       sendMessage(scenario.message);
     }
+  };
+
+  const handleCampaignSuccess = (data: { name: string; type: string }) => {
+    setShowCampaignForm(false);
+    addMessage({
+      role: 'agent',
+      content: `Great! I've created your ${data.type} campaign "${data.name}". The campaign has been saved as a draft and is ready for your review. Would you like me to help you with anything else?`,
+      metadata: {
+        event_type: 'campaign_created',
+        current_agent: 'campaign',
+      },
+    });
   };
 
   if (!isEnabled) {
@@ -822,6 +824,15 @@ export function AgentTestConsole({
                         onSubmit={handleFeedbackSubmit}
                         isLoading={feedbackLoading}
                         reviewLinks={reviewLinks}
+                      />
+                    </div>
+                  )}
+                  {showCampaignForm && companyId && (
+                    <div className="py-4">
+                      <CampaignForm
+                        companyId={companyId}
+                        onCancel={() => setShowCampaignForm(false)}
+                        onSuccess={handleCampaignSuccess}
                       />
                     </div>
                   )}
