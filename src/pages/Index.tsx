@@ -405,7 +405,7 @@ export default function Index() {
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Agent Consoles</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">3 Powerful Control Centers</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-foreground max-w-2xl mx-auto">
               Purpose-built consoles give your team full control over AI agent operations with intuitive interfaces.
             </p>
           </div>
