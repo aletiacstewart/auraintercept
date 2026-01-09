@@ -17,7 +17,7 @@ export function PublicHeader({ showHomeLink = true }: PublicHeaderProps) {
           <button onClick={() => navigate('/')} className="flex items-center gap-3">
             <img src={logo} alt="Aura Intercept" className="w-12 h-12 rounded-full object-cover" />
             <div className="flex flex-col">
-              <span className="text-white font-bold text-lg tracking-tight">Aura Intercept</span>
+              <span className="font-brand text-[#5B8ED8] text-xl tracking-wide">Aura Intercept</span>
               <span className="text-white/60 text-xs flex items-center gap-1">
                 <Zap className="w-3 h-3" />
                 Infrastructure of Intent
