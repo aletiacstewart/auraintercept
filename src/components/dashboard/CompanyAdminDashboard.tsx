@@ -3,13 +3,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Smartphone } from 'lucide-react';
+import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Smartphone, Download } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
 import { TrialBanner } from '@/components/dashboard/TrialBanner';
 import { CompanyJobQueue } from '@/components/company/CompanyJobQueue';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import { CompanyGuidesPDF } from '@/components/documentation/CompanyGuidesPDF';
 
 export function CompanyAdminDashboard() {
   const { companyId } = useAuth();
@@ -184,23 +186,36 @@ export function CompanyAdminDashboard() {
             </>
           )}
         </div>
-        <div 
-          className="w-16 h-16 rounded-xl border-2 overflow-hidden"
-          style={{ borderColor: company?.primary_color || 'hsl(var(--primary))' }}
-        >
-          {company?.logo_url ? (
-            <img src={company.logo_url} alt="Company Logo" className="w-full h-full object-cover" />
-          ) : (
-            <div 
-              className="w-full h-full flex items-center justify-center text-2xl font-bold"
-              style={{ 
-                background: `linear-gradient(135deg, ${company?.primary_color || '#0EA5E9'}, ${company?.secondary_color || '#8B5CF6'})`,
-                color: 'white'
-              }}
-            >
-              {company?.name?.charAt(0) || 'C'}
-            </div>
-          )}
+        <div className="flex items-center gap-4">
+          <PDFDownloadLink 
+            document={<CompanyGuidesPDF />} 
+            fileName="company-admin-guide.pdf"
+          >
+            {({ loading }) => (
+              <Button variant="outline" disabled={loading} className="gap-2">
+                <Download className="h-4 w-4" />
+                {loading ? 'Generating...' : 'Company Guide Download'}
+              </Button>
+            )}
+          </PDFDownloadLink>
+          <div 
+            className="w-16 h-16 rounded-xl border-2 overflow-hidden"
+            style={{ borderColor: company?.primary_color || 'hsl(var(--primary))' }}
+          >
+            {company?.logo_url ? (
+              <img src={company.logo_url} alt="Company Logo" className="w-full h-full object-cover" />
+            ) : (
+              <div 
+                className="w-full h-full flex items-center justify-center text-2xl font-bold"
+                style={{ 
+                  background: `linear-gradient(135deg, ${company?.primary_color || '#0EA5E9'}, ${company?.secondary_color || '#8B5CF6'})`,
+                  color: 'white'
+                }}
+              >
+                {company?.name?.charAt(0) || 'C'}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
