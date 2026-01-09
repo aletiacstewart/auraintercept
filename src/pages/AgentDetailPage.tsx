@@ -429,6 +429,33 @@ const AGENT_DEFINITIONS: Record<string, {
         { value: 'weekly', label: 'Weekly' }
       ]}
     ]
+  },
+  revenue: {
+    name: 'Revenue Agent',
+    description: 'Tracks revenue streams, analyzes profitability, and identifies growth opportunities.',
+    category: 'analytics',
+    phase: 5,
+    icon: BarChart3,
+    color: 'text-cyan-500',
+    capabilities: [
+      'Revenue tracking',
+      'Profitability analysis',
+      'Growth opportunity identification',
+      'Payment reconciliation',
+      'Revenue forecasting'
+    ],
+    configFields: [
+      { key: 'revenue_goal_monthly', label: 'Monthly Revenue Goal ($)', type: 'number', min: 0, max: 1000000, defaultValue: 10000, description: 'Target monthly revenue' },
+      { key: 'alert_threshold_percent', label: 'Alert When Below Goal (%)', type: 'slider', min: 50, max: 100, step: 5, defaultValue: 80, description: 'Alert when revenue drops below this percentage of goal' },
+      { key: 'track_by_service', label: 'Track by Service Type', type: 'switch', defaultValue: true },
+      { key: 'track_by_technician', label: 'Track by Technician', type: 'switch', defaultValue: true },
+      { key: 'report_frequency', label: 'Report Frequency', type: 'select', options: [
+        { value: 'daily', label: 'Daily' },
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'monthly', label: 'Monthly' }
+      ]},
+      { key: 'include_projections', label: 'Include Revenue Projections', type: 'switch', defaultValue: true }
+    ]
   }
 };
 
