@@ -399,12 +399,9 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden min-h-0">
+      <div className="flex-1 flex min-h-0">
         {/* Main View */}
-        <div className={cn(
-          "flex-1 min-w-0 overflow-hidden",
-          showETASidebar ? "max-w-[calc(100%-320px)]" : "w-full"
-        )}>
+        <div className="flex-1 min-w-0 h-full overflow-auto">
           {activeView === 'map' ? (
             <DispatcherMapView 
               jobs={activeJobs} 
@@ -432,7 +429,7 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
 
         {/* ETA Sidebar */}
         {showETASidebar && (
-          <div className="w-80 shrink-0">
+          <div className="w-80 shrink-0 h-full overflow-hidden">
             <RealTimeETASidebar jobs={activeJobs} companyId={companyId} />
           </div>
         )}
