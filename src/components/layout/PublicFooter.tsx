@@ -57,13 +57,13 @@ export function PublicFooter() {
         <div className="border-t border-border/50 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <span className="text-sm text-muted-foreground">© 2025 Aura Intercept. All rights reserved.</span>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
+            <Button variant="ghost" size="sm" className="text-white hover:text-white/80" onClick={() => navigate('/')}>
               Home
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/customer-auth')}>
+            <Button variant="ghost" size="sm" className="text-white hover:text-white/80" onClick={() => navigate('/customer-auth')}>
               Customer Portal
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/auth')}>
+            <Button variant="ghost" size="sm" className="text-white hover:text-white/80" onClick={() => navigate('/auth')}>
               Sign In
             </Button>
           </div>
