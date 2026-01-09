@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { X, Megaphone, Send, Mail, MessageSquare, Calendar, Sparkles, Loader2, Gift, TrendingUp, Tag, Users } from 'lucide-react';
+import { X, Megaphone, Send, Mail, MessageSquare, Calendar, Sparkles, Loader2, Gift, TrendingUp, Tag, Users, Copy, RefreshCw } from 'lucide-react';
 import { subDays } from 'date-fns';
 
 interface CampaignFormProps {
@@ -60,6 +60,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
     referredPhone: '',
     rewardType: 'percent',
     rewardValue: '10',
+    referralCode: '',
     // Win-back specific fields
     inactivePeriod: '90',
   });
@@ -149,14 +150,22 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
     for (let i = 0; i < 6; i++) {
       code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
+    setFormData(prev => ({ ...prev, referralCode: code }));
     return code;
+  };
+
+  const copyReferralCode = () => {
+    if (formData.referralCode) {
+      navigator.clipboard.writeText(formData.referralCode);
+      toast.success('Referral code copied to clipboard!');
+    }
   };
 
   const createCampaign = useMutation({
     mutationFn: async () => {
       // For referral type, create a referral record
       if (formData.campaignType === 'referral') {
-        const referralCode = generateReferralCode();
+        const referralCode = formData.referralCode || generateReferralCode();
         const expiresAt = new Date();
         expiresAt.setMonth(expiresAt.getMonth() + 3);
 
@@ -336,6 +345,47 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           {/* Referral-specific fields */}
           {formData.campaignType === 'referral' && (
             <>
+              {/* Referral Code Generator */}
+              <div className="space-y-3 p-3 rounded-lg border border-pink-200 bg-pink-50/50">
+                <h4 className="font-medium text-sm flex items-center gap-2">
+                  <Gift className="h-4 w-4 text-pink-600" />
+                  Referral Code for Customer Sharing
+                </h4>
+                <div className="space-y-2">
+                  <Label>Referral Code</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Click generate to create a code"
+                      value={formData.referralCode}
+                      onChange={(e) => setFormData(prev => ({ ...prev, referralCode: e.target.value.toUpperCase() }))}
+                      className="font-mono text-lg tracking-wider"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => generateReferralCode()}
+                      className="shrink-0"
+                    >
+                      <RefreshCw className="h-4 w-4 mr-1" />
+                      Generate
+                    </Button>
+                    {formData.referralCode && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={copyReferralCode}
+                        className="shrink-0"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Share this code with customers to track referrals
+                  </p>
+                </div>
+              </div>
+
               <div className="space-y-3 p-3 rounded-lg border bg-background">
                 <h4 className="font-medium text-sm">Referrer (Existing Customer)</h4>
                 <div className="space-y-2">
