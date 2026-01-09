@@ -19,6 +19,7 @@ import logo from '@/assets/aura-intercept-logo.png';
 import heroVideo from '@/assets/aura-intercept-hero.mp4';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
+import { LandingAIChat } from '@/components/landing/LandingAIChat';
 
 const agentCategories = [
   {
@@ -613,38 +614,8 @@ export default function Index() {
             </div>
             
             <div className="relative">
-              <Card className="p-6 bg-card/80 backdrop-blur border-primary/20">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 pb-4 border-b border-border/50">
-                    <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center">
-                      <Bot className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <div className="font-semibold">AI Assistant</div>
-                      <div className="text-xs text-muted-foreground">Always available to help</div>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="bg-white rounded-lg p-3 max-w-[80%]">
-                      <p className="text-sm text-[hsl(220,60%,25%)]">Hi! I'm here to help you with your service needs. Would you like to book an appointment, get a quote, or track an existing service?</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-3 max-w-[80%] ml-auto">
-                      <p className="text-sm text-[hsl(220,60%,25%)]">I'd like to schedule a maintenance check</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-3 max-w-[80%]">
-                      <p className="text-sm text-[hsl(220,60%,25%)]">Great! I can help you with that. Let me check available slots. When works best for you?</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <Input 
-                      placeholder="Type your message..." 
-                      className="flex-1 bg-white border-border text-foreground"
-                    />
-                    <Button size="icon" className="shrink-0">
-                      <Send className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
+              <Card className="p-6 bg-card/80 backdrop-blur border-primary/20 h-[450px]">
+                <LandingAIChat />
               </Card>
             </div>
           </div>
