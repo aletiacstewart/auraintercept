@@ -102,7 +102,7 @@ const agentConsoles = [
     ]
   },
   {
-    name: 'Field Ops Tech Console',
+    name: 'Technician-Field Ops',
     description: 'Technician-focused mobile console for job management, navigation, and customer communication.',
     icon: Truck,
     gradient: 'from-green-500 to-emerald-500',
