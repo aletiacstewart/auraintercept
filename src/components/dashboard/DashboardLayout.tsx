@@ -73,7 +73,6 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
       { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'] },
       { label: 'My Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['employee'] },
       { label: 'AI Console', icon: Bot, href: '/technician/ai-console', roles: ['employee'] },
       { label: 'My Jobs', icon: ClipboardList, href: '/technician/jobs', roles: ['employee'] },
@@ -86,15 +85,19 @@ const navGroups: NavGroup[] = [
     label: 'Management',
     items: [
       { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'] },
+      { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'] },
       { label: 'Customers', icon: Users, href: '/dashboard/customers', roles: ['platform_admin', 'company_admin'] },
       { label: 'Employees', icon: UserCheck, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'] },
     ],
   },
   {
-    label: 'Financial',
+    label: 'Business & Financial',
     items: [
       { label: 'Quotes', icon: FileText, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'] },
       { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin'] },
+      { label: 'Warranties', icon: FileCheck, href: '/dashboard/warranties', roles: ['platform_admin'] },
+      { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin', 'company_admin'] },
     ],
   },
   {
@@ -149,9 +152,6 @@ const navGroups: NavGroup[] = [
   {
     label: 'Resources',
     items: [
-      { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin'] },
-      { label: 'Warranties', icon: FileCheck, href: '/dashboard/warranties', roles: ['platform_admin'] },
-      { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin', 'company_admin'] },
       { label: 'Export Docs', icon: FileText, href: '/dashboard/documentation', roles: ['platform_admin'] },
     ],
   },
