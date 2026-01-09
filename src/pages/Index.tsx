@@ -333,7 +333,7 @@ export default function Index() {
                       <item.icon className="w-7 h-7 text-primary-foreground" />
                     </div>
                     <div className="text-sm font-medium text-primary mb-2">Step {item.step}</div>
-                    <h3 className="text-lg font-semibold mb-2 text-primary">{item.title}</h3>
+                    <h3 className="text-lg font-semibold mb-2 text-secondary">{item.title}</h3>
                     <p className="text-sm text-muted-foreground">{item.description}</p>
                   </CardContent>
                 </Card>
