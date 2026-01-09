@@ -82,7 +82,7 @@ export function RealTimeETASidebar({ jobs, companyId }: RealTimeETASidebarProps)
   };
 
   return (
-    <div className="w-80 shrink-0 bg-card border-l border-border flex flex-col">
+    <div className="h-full bg-card border-l border-border flex flex-col overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center gap-3">
