@@ -117,7 +117,7 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'Customer Portal',
+    label: 'Customer Consoles',
     items: [
       { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'] },
     ],
