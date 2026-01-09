@@ -129,7 +129,7 @@ const navGroups: NavGroup[] = [
     label: 'Configuration',
     items: [
       { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Platform Guides', icon: FileText, href: '/dashboard/guides', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Platform Guides', icon: FileText, href: '/dashboard/guides', roles: ['platform_admin'] },
       { label: 'Calculators', icon: BarChart3, href: '/dashboard/calculators', roles: ['platform_admin', 'company_admin'] },
       { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin'] },
       { label: 'Profile', icon: User, href: '/technician/profile', roles: ['employee'] },
