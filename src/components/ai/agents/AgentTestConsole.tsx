@@ -51,6 +51,7 @@ const AGENT_NAMES: Record<string, string> = {
   insights: 'Insights Analyst',
   forecast: 'Forecast Analyst',
   revenue: 'Revenue Analyst',
+  performance: 'Performance Analyst',
 };
 
 interface NextSteps {
@@ -172,6 +173,13 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
     { label: 'Growth Opportunities', message: "Identify revenue growth opportunities for this quarter" },
     { label: 'Payment Reconciliation', message: "Show outstanding payments and reconciliation status" },
     { label: 'Revenue Forecast', message: "What's the projected revenue for next month?" },
+  ],
+  performance: [
+    { label: 'Team Overview', message: "Show me overall team performance for this week" },
+    { label: 'Top Performers', message: "Who are the top performing technicians this month?" },
+    { label: 'Goal Progress', message: "What's our progress toward this month's goals?" },
+    { label: 'Improvement Areas', message: "Identify areas where the team can improve" },
+    { label: 'Individual Metrics', message: "Show performance metrics for each team member" },
   ],
 };
 
