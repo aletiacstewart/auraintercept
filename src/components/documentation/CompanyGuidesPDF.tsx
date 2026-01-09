@@ -309,10 +309,10 @@ const companyGuideCategories = [
         tips: ['Practice common customer scenarios']
       },
       {
-        title: 'Field Operations Console',
+        title: 'Field Ops Tech Console',
         duration: '10 min',
         steps: [
-          'Access via AI Consoles → Field Operations',
+          'Access via AI Consoles → Field Ops Tech Console',
           'Manage dispatch and routing with AI assistance',
           'Check technician locations and ETAs',
           'Process check-ins and job updates',
@@ -453,10 +453,10 @@ const companyGuideCategories = [
         tips: ['Enable location services for ETAs']
       },
       {
-        title: 'Field Operations Console',
+        title: 'Field Ops Dispatch Console',
         duration: '15 min',
         steps: [
-          'Navigate to Field Operations from sidebar',
+          'Navigate to Field Ops Dispatch Console from sidebar',
           'View dispatch map with locations',
           'Switch between Map and Agenda views',
           'Monitor real-time ETA updates',
