@@ -278,7 +278,7 @@ export default function Index() {
             
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
               Deploy 11 specialized AI agents across 3 powerful consoles. Intelligent handoffs, 
-              context preservation, and seamless orchestration for customer portal, field ops, and business management.
+              context preservation, and seamless AI Power Operations for customer portal, field ops, and business management.
             </p>
 
             {/* Hero Stats */}
