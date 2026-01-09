@@ -306,8 +306,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <Separator className="bg-sidebar-border" />
 
         {/* Navigation */}
-        <div ref={sidebarScrollRootRef} className="flex-1 px-2 py-4">
-          <ScrollArea className="h-full">
+        <div ref={sidebarScrollRootRef} className="flex-1 min-h-0 px-2 py-4">
+          <ScrollArea className="h-full w-full">
             <nav className="space-y-4">
               {filteredNavGroups.map((group) => (
                 <div key={group.label} className="space-y-1">
