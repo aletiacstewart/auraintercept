@@ -676,39 +676,39 @@ export default function Index() {
                 <div className="space-y-3 text-left mb-8">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span>11 Specialized AI Agents</span>
+                    <span className="text-white">11 Specialized AI Agents</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span>3 AI Agent Consoles</span>
+                    <span className="text-white">3 AI Agent Consoles</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span>24/7 Automated Booking & Scheduling</span>
+                    <span className="text-white">24/7 Automated Booking & Scheduling</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span>Voice, SMS & Email Reminders</span>
+                    <span className="text-white">Voice, SMS & Email Reminders</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span>Field Operations Management</span>
+                    <span className="text-white">Field Operations Management</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span>Quoting & Invoicing System</span>
+                    <span className="text-white">Quoting & Invoicing System</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span>Custom Widget for Your Website</span>
+                    <span className="text-white">Custom Widget for Your Website</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span>10 Employee Accounts Included</span>
+                    <span className="text-white">10 Employee Accounts Included</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span>White-Label Branding</span>
+                    <span className="text-white">White-Label Branding</span>
                   </div>
                 </div>
 
