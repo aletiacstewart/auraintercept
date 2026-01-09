@@ -8,9 +8,9 @@
     --background: 0 0% 100%;
     --foreground: 208 30% 15%;
 
-    /* Dark navy cards for contrast */
+    /* Dark navy cards with sky blue text */
     --card: 208 30% 18%;
-    --card-foreground: 189 45% 95%;
+    --card-foreground: 199 55% 65%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 208 30% 15%;
