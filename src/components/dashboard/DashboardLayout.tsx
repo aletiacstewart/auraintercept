@@ -139,7 +139,7 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'Integrations',
+    label: '3rd Party Integrations',
     items: [
       { label: 'Overview', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'] },
       { label: 'Voice Agent', icon: Mic, href: '/dashboard/integrations/voice', roles: ['platform_admin', 'company_admin'] },
