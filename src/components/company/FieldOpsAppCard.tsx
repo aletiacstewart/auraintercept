@@ -42,7 +42,8 @@ export function FieldOpsAppCard() {
   }, [companyId]);
 
   // Determine base URL - prefer public URL, fallback to current origin
-  const baseUrl = publicAppUrl || window.location.origin;
+  const normalizeBaseUrl = (url: string) => url.replace(/\/$/, '');
+  const baseUrl = publicAppUrl ? normalizeBaseUrl(publicAppUrl) : window.location.origin;
   const isUsingPreviewUrl = !publicAppUrl;
 
   // Add version param to bust cache on new builds
@@ -85,7 +86,8 @@ export function FieldOpsAppCard() {
               <Alert variant="destructive" className="max-w-xs">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription className="text-xs">
-                  Preview URL detected.{' '}
+                  QR codes cant reliably install from the preview link (it can prompt a Lovable account).
+                  {' '}
                   <Link to="/dashboard/settings" className="underline font-medium inline-flex items-center gap-1">
                     Set public app URL <Settings className="h-3 w-3" />
                   </Link>
@@ -94,8 +96,12 @@ export function FieldOpsAppCard() {
             )}
 
             {isLoading ? (
-              <div className="h-[168px] w-[168px] flex items-center justify-center text-muted-foreground bg-muted rounded-xl">
+              <div className="h-[188px] w-[188px] flex items-center justify-center text-muted-foreground bg-muted rounded-xl">
                 Loading...
+              </div>
+            ) : isUsingPreviewUrl ? (
+              <div className="h-[188px] w-[188px] flex items-center justify-center text-muted-foreground bg-muted rounded-xl text-center text-xs px-4">
+                Set a public app URL to generate a scannable install QR code.
               </div>
             ) : (
               <div className="bg-white p-4 rounded-xl shadow-sm border">
