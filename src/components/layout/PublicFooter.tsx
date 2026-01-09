@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Zap } from 'lucide-react';
-import logo from '@/assets/ai-bot-company-logo-new.png';
+import logo from '@/assets/ai-circle-logo-new.png';
 
 export function PublicFooter() {
   const navigate = useNavigate();

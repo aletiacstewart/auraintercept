@@ -85,8 +85,8 @@ export default {
           to: { opacity: "1", transform: "translateX(0)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(0, 242, 255, 0.3), 0 0 40px rgba(112, 0, 255, 0.2)" },
-          "50%": { boxShadow: "0 0 30px rgba(0, 242, 255, 0.5), 0 0 60px rgba(112, 0, 255, 0.3)" },
+          "0%, 100%": { boxShadow: "0 0 20px rgba(33, 78, 187, 0.3), 0 0 40px rgba(70, 162, 211, 0.2)" },
+          "50%": { boxShadow: "0 0 30px rgba(33, 78, 187, 0.5), 0 0 60px rgba(70, 162, 211, 0.3)" },
         },
         "gradient-shift": {
           "0%, 100%": { backgroundPosition: "0% 50%" },
