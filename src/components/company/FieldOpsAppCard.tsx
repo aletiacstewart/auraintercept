@@ -98,12 +98,14 @@ export function FieldOpsAppCard() {
                 Loading...
               </div>
             ) : (
-              <div className="bg-white p-3 rounded-xl shadow-sm">
+              <div className="bg-white p-4 rounded-xl shadow-sm border">
                 <QRCodeSVG 
                   value={installUrl} 
-                  size={144}
-                  level="H"
-                  includeMargin
+                  size={180}
+                  level="M"
+                  marginSize={2}
+                  bgColor="#FFFFFF"
+                  fgColor="#000000"
                 />
               </div>
             )}
