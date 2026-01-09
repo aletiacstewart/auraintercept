@@ -446,7 +446,7 @@ export default function Index() {
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Multi-Channel</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Engage Customers Everywhere</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-foreground max-w-2xl mx-auto">
               AI agents work across all communication channels, providing consistent experiences.
             </p>
           </div>
