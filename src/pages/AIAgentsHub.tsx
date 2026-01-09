@@ -91,7 +91,7 @@ export default function AIAgentsHub() {
   const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty', 'campaign'];
   
   // Categories hidden from non-platform-admin roles
-  const HIDDEN_CATEGORIES_FOR_NON_PLATFORM_ADMIN = ['marketing_sales', 'analytics'];
+  const HIDDEN_CATEGORIES_FOR_NON_PLATFORM_ADMIN = ['marketing_sales'];
 
   // Filter agents based on job roles for employees
   const accessibleAgents = useMemo(() => {
