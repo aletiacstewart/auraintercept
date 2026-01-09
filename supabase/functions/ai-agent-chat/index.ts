@@ -1773,9 +1773,13 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo } = await req.json();
+    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest } = await req.json();
+    
+    // Internal agents that serve company admins, not customers
+    const INTERNAL_AGENTS = ['insights', 'forecast', 'revenue', 'performance', 'analytics', 'admin', 'inventory', 'marketing'];
+    const isInternalAgent = isInternalRequest || INTERNAL_AGENTS.includes(agentType);
 
-    console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}`);
+    console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}, isInternalAgent: ${isInternalAgent}`);
 
     // Get agent config for any custom settings
     const { data: config } = await supabase
@@ -1912,8 +1916,25 @@ YOUR FIRST MESSAGE MUST:
 
     const dateTimeContext = getDateTimeContext();
     
+    // Special instructions for internal agents (admins, not customers)
+    let internalAgentInstructions = '';
+    if (isInternalAgent) {
+      internalAgentInstructions = `
+CRITICAL - INTERNAL AGENT MODE:
+You are serving a COMPANY ADMINISTRATOR or MANAGER, NOT an external customer.
+- DO NOT ask for name, phone number, address, or any customer identification
+- DO NOT use customer-service-style language like "How can I help you today?"
+- DO NOT mention "connecting you to a specialist" or handoff messages
+- DO NOT show "Request Received" or "Contact Us" type responses
+- DO provide direct data, reports, and analytics
+- DO respond professionally as an internal business tool
+- BE direct and data-focused in your responses
+- IMMEDIATELY provide the requested information or analysis`;
+    }
+    
     const systemPrompt = `${basePrompt}
 ${handoffInstructions}
+${internalAgentInstructions}
 
 Company Name: ${company?.name || 'Our Company'}
 ${dateTimeContext}
@@ -1922,16 +1943,17 @@ ${knowledgeBaseContext}
 
 Current Context: ${JSON.stringify(contextData)}
 
-${settings.greeting_message ? `Custom Greeting: ${settings.greeting_message}` : ''}
+${settings.greeting_message && !isInternalAgent ? `Custom Greeting: ${settings.greeting_message}` : ''}
 ${settings.custom_instructions ? `Additional Instructions: ${settings.custom_instructions}` : ''}
 
 CRITICAL RULES:
-- NEVER ask for information you already have
+${isInternalAgent ? `- Provide data and analytics directly without customer-service language
+- Never ask for personal information - the user is a company admin` : `- NEVER ask for information you already have
 - When customers say "tomorrow", "next Monday", etc., use the date context above to determine the actual date. NEVER ask what tomorrow's date is!
 - After using a tool (like check_tech_availability), you MUST tell the customer the results and next steps
 - Never leave the conversation hanging after a tool call - always follow up with what you found
-- Be specific about technician names, distances, and ETAs when you have them
-- Be professional but friendly`;
+- Be specific about technician names, distances, and ETAs when you have them`}
+- Be professional ${isInternalAgent ? 'and data-focused' : 'but friendly'}`;
 
     // Build messages array with conversation history
     const messages: any[] = [
@@ -2168,10 +2190,9 @@ CRITICAL RULES:
 
     // Generate a friendly fallback message if AI didn't provide one during handoff
     // Internal/analytics agents don't use customer-facing handoff language
-    const INTERNAL_AGENTS = ['insights', 'forecast', 'revenue', 'performance', 'analytics', 'admin', 'inventory', 'marketing'];
     
     if (handoffTo && !responseText.trim()) {
-      if (INTERNAL_AGENTS.includes(handoffTo)) {
+      if (isInternalAgent || INTERNAL_AGENTS.includes(handoffTo)) {
         // For internal agents, skip customer-facing message - they will respond directly
         responseText = '';
       } else {

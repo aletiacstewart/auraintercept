@@ -402,6 +402,9 @@ export function AgentTestConsole({
     }
   }, [activeAgent, companyId, addMessage, conversationHistory]);
 
+  // Internal agents that serve company admins, not customers
+  const INTERNAL_AGENTS = ['insights', 'forecast', 'revenue', 'performance', 'analytics', 'admin', 'inventory', 'marketing'];
+  
   const sendMessage = async (content: string) => {
     if (!content.trim() || !companyId || isTransitioning) return;
 
@@ -411,6 +414,9 @@ export function AgentTestConsole({
 
     // Add to conversation history
     const updatedHistory = [...conversationHistory, { role: 'user' as const, content }];
+    
+    // Check if this is an internal agent
+    const isInternalAgent = INTERNAL_AGENTS.includes(activeAgent);
 
     try {
       const { data, error } = await supabase.functions.invoke('ai-agent-chat', {
@@ -419,15 +425,16 @@ export function AgentTestConsole({
           message: content,
           companyId,
           conversationHistory: updatedHistory,
+          isInternalRequest: isInternalAgent, // Flag for internal agents
         },
       });
 
       if (error) throw error;
 
-      // Generate a customer-friendly message if none provided
+      // Generate a customer-friendly message if none provided (only for customer-facing agents)
       let responseContent = data.response;
-      if (!responseContent?.trim() && data.handoff_to) {
-        // Generate fallback based on handoff target
+      if (!responseContent?.trim() && data.handoff_to && !isInternalAgent) {
+        // Generate fallback based on handoff target (only for customer-facing agents)
         const handoffMessages: Record<string, string> = {
           booking: "I understand you'd like to schedule an appointment. Let me connect you with our scheduling specialist who can help find the perfect time for you.",
           dispatch: "I can see this needs immediate attention. Let me connect you with our dispatch team who can get someone out to help you right away.",
@@ -439,7 +446,9 @@ export function AgentTestConsole({
           `I'll connect you with our ${data.handoff_to} specialist who can better assist you with this request.`;
       }
       
-      responseContent = responseContent || "I'm processing your request. How else can I help you?";
+      responseContent = responseContent || (isInternalAgent 
+        ? "Processing your request..." 
+        : "I'm processing your request. How else can I help you?");
       
       // Update conversation history with assistant response
       setConversationHistory([
