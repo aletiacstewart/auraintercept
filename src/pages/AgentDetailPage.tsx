@@ -421,6 +421,26 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'repeat_annually', label: 'Repeat Annually', type: 'switch', defaultValue: true }
     ]
   },
+  marketing: {
+    name: 'Marketing Agent',
+    description: 'Coordinates marketing operations: audience targeting, content planning, and campaign execution support.',
+    category: 'marketing_sales',
+    phase: 4,
+    icon: Megaphone,
+    color: 'text-orange-500',
+    capabilities: [
+      'Campaign planning',
+      'Audience segmentation',
+      'Content suggestions',
+      'Performance tracking'
+    ],
+    configFields: [
+      { key: 'primary_channels', label: 'Primary Channels', type: 'textarea', placeholder: 'Email\nSMS\nSocial', description: 'Channels the agent should prioritize (one per line)' },
+      { key: 'brand_voice', label: 'Brand Voice', type: 'textarea', placeholder: 'Friendly, professional, concise', description: 'Guidelines for tone and style' },
+      { key: 'approval_required', label: 'Require Approval', type: 'switch', defaultValue: true, description: 'Require manual approval before sending any outreach' },
+      { key: 'max_campaigns_per_month', label: 'Max Campaigns / Month', type: 'number', min: 0, max: 50, defaultValue: 4 }
+    ]
+  },
   insights: {
     name: 'Insights Agent',
     description: 'Analyzes business data and provides actionable recommendations.',
