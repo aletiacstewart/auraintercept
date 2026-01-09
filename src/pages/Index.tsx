@@ -15,6 +15,7 @@ import {
   Smartphone, Video, Mic, Brain, Layers, Lock
 } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
+import heroVideo from '@/assets/aura-intercept-hero.mp4';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 
@@ -319,6 +320,18 @@ export default function Index() {
                 Multi-Agent Orchestration Engine
               </span>
             </h1>
+
+            {/* Hero Video */}
+            <div className="max-w-md mx-auto mb-6 animate-fade-in">
+              <video 
+                src={heroVideo} 
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+                className="w-full h-auto rounded-2xl"
+              />
+            </div>
 
             <div className="h-8 mb-6 animate-fade-in">
               <p className="text-xl text-primary font-medium transition-all duration-500">
