@@ -29,7 +29,7 @@ const agentCategories = [
       { name: 'AI Receptionist', description: 'AI-powered inquiry routing to the right department instantly', icon: Target },
       { name: 'Scheduling Agent', description: 'Natural language appointment scheduling with calendar sync', icon: Calendar },
       { name: 'Follow-up Agent', description: 'Automated reminders via email, SMS, and voice calls', icon: Bell },
-      { name: 'Social Media Review Agent', description: 'Collects feedback and manages multi-platform reviews', icon: Star },
+      { name: 'Review Agent', description: 'Collects feedback and manages multi-platform reviews', icon: Star },
     ]
   },
   {
@@ -46,49 +46,21 @@ const agentCategories = [
   },
   {
     id: 'business',
-    name: 'Business & Accounting',
+    name: 'Business Management',
     icon: Building2,
     color: 'from-purple-500 to-violet-500',
     agents: [
       { name: 'Quoting Agent', description: 'Instant quote generation with service pricing lookup', icon: FileText },
       { name: 'Invoice Agent', description: 'Automated invoicing with payment tracking', icon: DollarSign },
-      { name: 'Inventory Agent', description: 'Parts tracking with low-stock alerts', icon: Package },
-      { name: 'Warranty Agent', description: 'Warranty registration and claims management', icon: Award },
       { name: 'Admin Agent', description: 'Business administration and company management tasks', icon: Building2 },
-    ]
-  },
-  {
-    id: 'marketing',
-    name: 'Marketing & Sales',
-    icon: Megaphone,
-    color: 'from-orange-500 to-red-500',
-    agents: [
-      { name: 'Marketing Agent', description: 'Strategic marketing planning and campaign orchestration', icon: Megaphone },
-      { name: 'Promo Agent', description: 'Promotional campaign creation and coupon management', icon: Gift },
-      { name: 'Referral Agent', description: 'Customer referral tracking with rewards automation', icon: UserPlus },
-      { name: 'Win-back Agent', description: 'Re-engage inactive customers with personalized offers', icon: RotateCcw },
-      { name: 'Seasonal Agent', description: 'Holiday and seasonal campaign automation', icon: Sun },
-    ]
-  },
-  {
-    id: 'analytics',
-    name: 'Analytics & Optimization',
-    icon: BarChart3,
-    color: 'from-indigo-500 to-blue-600',
-    agents: [
-      { name: 'Insights Agent', description: 'Real-time business performance dashboards', icon: BarChart3 },
-      { name: 'Forecast Agent', description: 'AI-powered demand and revenue predictions', icon: TrendingUp },
-      { name: 'Revenue Agent', description: 'Revenue analysis and financial trend tracking', icon: DollarSign },
-      { name: 'Performance Agent', description: 'Team and individual performance metrics', icon: Target },
-      { name: 'Analytics Agent', description: 'Custom analytics and comprehensive reporting', icon: FileText },
     ]
   }
 ];
 
 const agentConsoles = [
   {
-    name: 'Booking Console',
-    description: 'Complete customer portal hub for appointment scheduling, follow-ups, and review collection.',
+    name: 'Customer Portal Console',
+    description: 'Complete customer engagement hub for appointment scheduling, follow-ups, and review collection.',
     icon: Calendar,
     gradient: 'from-cyan-500 to-blue-500',
     iconBg: 'bg-cyan-500/10',
@@ -98,12 +70,12 @@ const agentConsoles = [
       'Multi-service appointment scheduling',
       'Automated email & SMS reminders',
       'Customer feedback collection',
-      'Quote generation wizard',
-      'Review request campaigns'
+      'Quote request handling',
+      'Review request automation'
     ]
   },
   {
-    name: 'Technician-Field Ops',
+    name: 'Field Operations Console',
     description: 'Technician-focused mobile console for job management, navigation, and customer communication.',
     icon: Truck,
     gradient: 'from-green-500 to-emerald-500',
@@ -114,13 +86,13 @@ const agentConsoles = [
       'Real-time GPS navigation',
       'ETA updates with notifications',
       'Before/after photo capture',
-      'Parts usage tracking',
+      'Job status tracking',
       'Dispatch communication'
     ]
   },
   {
-    name: 'Billing Console',
-    description: 'Financial operations center for quotes, invoices, payments, and warranty management.',
+    name: 'Business Management Console',
+    description: 'Financial operations center for quotes, invoices, and business administration.',
     icon: DollarSign,
     gradient: 'from-purple-500 to-violet-500',
     iconBg: 'bg-purple-500/10',
@@ -129,41 +101,9 @@ const agentConsoles = [
       'AI-assisted quote generation',
       'Automated invoice creation',
       'Payment status tracking',
-      'Warranty claim processing',
       'Price lookup assistant',
-      'Inventory cost tracking'
-    ]
-  },
-  {
-    name: 'Marketing Console',
-    description: 'Growth and retention hub for campaigns, referrals, and customer win-back automation.',
-    icon: Megaphone,
-    gradient: 'from-orange-500 to-red-500',
-    iconBg: 'bg-orange-500/10',
-    iconColor: 'text-orange-500',
-    features: [
-      'Multi-channel campaigns',
-      'Customer segmentation',
-      'Promo code management',
-      'Referral program tracking',
-      'Win-back automation',
-      'Lead capture forms'
-    ]
-  },
-  {
-    name: 'Analytics Console',
-    description: 'Business intelligence dashboard with KPIs, forecasting, and automated reporting.',
-    icon: BarChart3,
-    gradient: 'from-indigo-500 to-blue-600',
-    iconBg: 'bg-indigo-500/10',
-    iconColor: 'text-indigo-500',
-    features: [
-      'Real-time KPI dashboards',
-      'Revenue trend analysis',
-      'Customer insights reports',
-      'Performance forecasting',
-      'Automated weekly digests',
-      'Custom metric tracking'
+      'Business administration',
+      'Employee management'
     ]
   }
 ];
@@ -253,11 +193,11 @@ const howItWorks = [
     icon: Building2
   },
   {
-      step: 2,
-      title: 'Activate AI Agents',
-      description: 'Enable 22 specialized AI agents and configure knowledge base for your business.',
-      icon: Bot
-    },
+    step: 2,
+    title: 'Activate AI Agents',
+    description: 'Enable 11 specialized AI agents and configure your knowledge base for your business.',
+    icon: Bot
+  },
   {
     step: 3,
     title: 'Connect Customers',
@@ -267,15 +207,15 @@ const howItWorks = [
   {
     step: 4,
     title: 'Automate & Scale',
-    description: 'AI handles bookings, field ops, billing, and marketing 24/7 while you focus on growth.',
+    description: 'AI handles bookings, field ops, and billing 24/7 while you focus on growth.',
     icon: Zap
   }
 ];
 
 const heroStats = [
-  { value: '22', label: 'AI Agents' },
+  { value: '11', label: 'AI Agents' },
   { value: '24/7', label: 'Automation' },
-  { value: '5', label: 'Agent Consoles' },
+  { value: '3', label: 'Agent Consoles' },
   { value: '40%', label: 'Less No-Shows' },
 ];
 
@@ -284,8 +224,7 @@ const subtitles = [
   'Field Operations',
   'Billing & Invoicing',
   'Customer Portal',
-  'Marketing Automation',
-  'Analytics & Insights',
+  'Business Management',
 ];
 
 export default function Index() {
@@ -311,7 +250,7 @@ export default function Index() {
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 animate-fade-in">
               <Sparkles className="w-4 h-4" />
-              Infrastructure of Intent • 22 AI Agents • 5 Consoles
+              Infrastructure of Intent • 11 AI Agents • 3 Consoles
             </div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 animate-fade-in">
@@ -340,8 +279,8 @@ export default function Index() {
             </div>
             
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
-              Deploy 22 specialized AI agents across 5 powerful consoles. Intelligent handoffs, 
-              context preservation, and seamless orchestration for customer portal, field ops, and beyond.
+              Deploy 11 specialized AI agents across 3 powerful consoles. Intelligent handoffs, 
+              context preservation, and seamless orchestration for customer portal, field ops, and business management.
             </p>
 
             {/* Hero Stats */}
@@ -707,6 +646,89 @@ export default function Index() {
                   </div>
                 </div>
               </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-20">
+        <div className="container max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <Badge variant="secondary" className="mb-4">Simple Pricing</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">One Plan. Everything Included.</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              No hidden fees. No feature restrictions. Full access to all AI agents and consoles.
+            </p>
+          </div>
+
+          <div className="max-w-lg mx-auto">
+            <Card className="relative overflow-hidden border-primary/50 shadow-glow">
+              <div className="absolute top-0 left-0 right-0 h-1 gradient-primary" />
+              <CardContent className="p-8 text-center">
+                <Badge className="mb-4 gradient-primary border-0">Most Popular</Badge>
+                <h3 className="text-2xl font-bold mb-2">Enterprise</h3>
+                <div className="flex items-baseline justify-center gap-1 mb-6">
+                  <span className="text-5xl font-bold gradient-text">$250</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+                
+                <div className="space-y-3 text-left mb-8">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>11 Specialized AI Agents</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>3 AI Agent Consoles</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>24/7 Automated Booking & Scheduling</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>Voice, SMS & Email Reminders</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>Field Operations Management</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>Quoting & Invoicing System</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>Custom Widget for Your Website</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>10 Employee Accounts Included</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>White-Label Branding</span>
+                  </div>
+                </div>
+
+                <Button 
+                  size="lg" 
+                  className="w-full gradient-primary shadow-glow text-lg py-6"
+                  onClick={() => navigate('/auth?mode=company')}
+                >
+                  <Zap className="w-5 h-5 mr-2" />
+                  Start 14-Day Free Trial
+                </Button>
+                <p className="text-sm text-muted-foreground mt-4">
+                  No credit card required • Cancel anytime
+                </p>
+              </CardContent>
+            </Card>
+
+            <div className="mt-8 text-center">
+              <p className="text-sm text-muted-foreground mb-2">Additional employees beyond 10:</p>
+              <p className="font-medium">$10/month per employee</p>
             </div>
           </div>
         </div>
