@@ -255,9 +255,9 @@ export default function Index() {
               Infrastructure of Intent • 11 AI Agents • 3 Consoles
             </div>
             
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 animate-fade-in">
-              <span className="gradient-text">Aura Intercept</span>
-              <span className="block text-2xl sm:text-3xl md:text-4xl mt-2 text-muted-foreground font-normal">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl tracking-wide mb-4 animate-fade-in">
+              <span className="font-brand text-[#5B8ED8]">Aura Intercept</span>
+              <span className="block text-2xl sm:text-3xl md:text-4xl mt-2 text-muted-foreground font-normal font-sans">
                 Multi-Agent Orchestration Engine
               </span>
             </h1>
