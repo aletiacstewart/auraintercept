@@ -35,7 +35,10 @@ import {
   AlertCircle,
   Eye,
   Mail,
-  MessageSquare
+  MessageSquare,
+  UserCog,
+  XCircle,
+  ExternalLink
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { DispatcherMapView } from './DispatcherMapView';
@@ -128,8 +131,10 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
   const [selectedJob, setSelectedJob] = useState<JobAssignment | null>(null);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [showNotifyDialog, setShowNotifyDialog] = useState(false);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [notifyMessage, setNotifyMessage] = useState('');
   const [notifyAutoSend, setNotifyAutoSend] = useState(true);
+  const [cancelReason, setCancelReason] = useState('');
   const queryClient = useQueryClient();
 
   // Fetch all jobs (active and completed) for dispatchers
@@ -269,6 +274,51 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
     }
   });
 
+  // Cancel appointment mutation
+  const cancelAppointmentMutation = useMutation({
+    mutationFn: async ({ appointmentId, reason }: { appointmentId: string; reason: string }) => {
+      // Update appointment status
+      const { error: aptError } = await supabase
+        .from('appointments')
+        .update({ status: 'cancelled', notes: reason ? `Cancelled: ${reason}` : 'Cancelled by dispatcher' })
+        .eq('id', appointmentId);
+      
+      if (aptError) throw aptError;
+
+      // Update job assignment status
+      const { error: jobError } = await supabase
+        .from('job_assignments')
+        .update({ status: 'cancelled' })
+        .eq('appointment_id', appointmentId);
+      
+      if (jobError) throw jobError;
+
+      // Send notification to technician if assigned
+      if (selectedJob?.employee_id) {
+        await supabase.functions.invoke('send-job-notification', {
+          body: {
+            jobAssignmentId: selectedJob.id,
+            notificationType: 'cancelled',
+            recipientType: 'technician',
+            customMessage: `Job cancelled${reason ? `: ${reason}` : ''}`
+          }
+        });
+      }
+    },
+    onSuccess: () => {
+      toast.success('Appointment cancelled');
+      queryClient.invalidateQueries({ queryKey: ['field-ops-manager-jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['field-ops-appointments'] });
+      setShowCancelDialog(false);
+      setCancelReason('');
+      setSelectedJob(null);
+    },
+    onError: (error) => {
+      console.error('Cancel error:', error);
+      toast.error('Failed to cancel appointment');
+    }
+  });
+
   // Group jobs by status
   const jobsByStatus = useMemo(() => {
     if (!jobs) return {};
@@ -309,6 +359,16 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
     setShowAssignDialog(true);
   };
 
+  const handleReassignTechnician = (job: JobAssignment) => {
+    setSelectedJob(job);
+    setShowAssignDialog(true);
+  };
+
+  const handleCancelAppointment = (job: JobAssignment) => {
+    setSelectedJob(job);
+    setShowCancelDialog(true);
+  };
+
   const handleNotifyCustomer = (job: JobAssignment) => {
     setSelectedJob(job);
     setNotifyMessage(`Update regarding your ${job.appointments?.service_type || 'service'} appointment: `);
@@ -321,6 +381,14 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
       jobId: selectedJob.id,
       message: notifyMessage,
       channels
+    });
+  };
+
+  const handleConfirmCancel = () => {
+    if (!selectedJob?.appointments?.id) return;
+    cancelAppointmentMutation.mutate({
+      appointmentId: selectedJob.appointments.id,
+      reason: cancelReason
     });
   };
 
@@ -415,6 +483,8 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
               isLoading={isLoading} 
               jobsByStatus={jobsByStatus}
               onAssign={handleAssignTechnician}
+              onReassign={handleReassignTechnician}
+              onCancel={handleCancelAppointment}
               onNotify={handleNotifyCustomer}
               getAppointmentFinancials={getAppointmentFinancials}
             />
@@ -423,6 +493,7 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
               appointments={appointments}
               jobs={jobs || []}
               onAssign={handleAssignTechnician}
+              onCancel={handleCancelAppointment}
             />
           )}
         </div>
@@ -518,6 +589,50 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Cancel Appointment Dialog */}
+      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <XCircle className="h-5 w-5" />
+              Cancel Appointment
+            </DialogTitle>
+            <DialogDescription>
+              This will cancel the appointment for {selectedJob?.appointments?.customer_name || 'the customer'}.
+              The assigned technician will be notified.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Cancellation Reason (optional)</Label>
+              <Textarea
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder="Enter reason for cancellation..."
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowCancelDialog(false)}>
+              Keep Appointment
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={handleConfirmCancel}
+              disabled={cancelAppointmentMutation.isPending}
+            >
+              {cancelAppointmentMutation.isPending ? (
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <XCircle className="h-4 w-4 mr-2" />
+              )}
+              Cancel Appointment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -554,11 +669,13 @@ interface AgendaViewProps {
   isLoading: boolean;
   jobsByStatus: Record<string, JobAssignment[]>;
   onAssign: (job: JobAssignment) => void;
+  onReassign: (job: JobAssignment) => void;
+  onCancel: (job: JobAssignment) => void;
   onNotify: (job: JobAssignment) => void;
   getAppointmentFinancials: (appointmentId: string | null | undefined) => { quotes: Quote[]; invoices: Invoice[] };
 }
 
-function AgendaView({ jobs, completedJobs, isLoading, jobsByStatus, onAssign, onNotify, getAppointmentFinancials }: AgendaViewProps) {
+function AgendaView({ jobs, completedJobs, isLoading, jobsByStatus, onAssign, onReassign, onCancel, onNotify, getAppointmentFinancials }: AgendaViewProps) {
   const [showCompleted, setShowCompleted] = useState(false);
 
   if (isLoading) {
@@ -600,6 +717,8 @@ function AgendaView({ jobs, completedJobs, isLoading, jobsByStatus, onAssign, on
                     key={job.id} 
                     job={job} 
                     onAssign={onAssign}
+                    onReassign={onReassign}
+                    onCancel={onCancel}
                     onNotify={onNotify}
                     financials={getAppointmentFinancials(job.appointments?.id)}
                   />
@@ -638,6 +757,8 @@ function AgendaView({ jobs, completedJobs, isLoading, jobsByStatus, onAssign, on
                     key={job.id} 
                     job={job} 
                     onAssign={onAssign}
+                    onReassign={onReassign}
+                    onCancel={onCancel}
                     onNotify={onNotify}
                     financials={getAppointmentFinancials(job.appointments?.id)}
                   />
@@ -653,18 +774,24 @@ function AgendaView({ jobs, completedJobs, isLoading, jobsByStatus, onAssign, on
 
 function AgendaJobCard({ 
   job, 
-  onAssign, 
+  onAssign,
+  onReassign,
+  onCancel,
   onNotify,
   financials 
 }: { 
   job: JobAssignment; 
   onAssign: (job: JobAssignment) => void;
+  onReassign: (job: JobAssignment) => void;
+  onCancel: (job: JobAssignment) => void;
   onNotify: (job: JobAssignment) => void;
   financials: { quotes: Quote[]; invoices: Invoice[] };
 }) {
   const config = STATUS_CONFIG[job.status] || STATUS_CONFIG.pending_acceptance;
   const Icon = config.icon;
   const isOnSite = job.status === 'arrived' || job.status === 'in_progress';
+  const isCompleted = job.status === 'completed';
+  const hasAssignment = !!job.employee_id;
 
   return (
     <Card className="bg-card border-border hover:bg-muted/50 transition-colors">
@@ -744,18 +871,26 @@ function AgendaJobCard({
                 </div>
               )}
               
-              {/* Quotes & Invoices */}
+              {/* Quotes & Invoices with Links */}
               {financials.quotes.length > 0 && (
-                <div className="flex items-center gap-1 text-blue-400 text-xs">
+                <a 
+                  href={`/dashboard/quotes?search=${encodeURIComponent(job.appointments?.customer_name || '')}`}
+                  className="flex items-center gap-1 text-blue-400 text-xs hover:underline cursor-pointer"
+                >
                   <FileText className="h-3 w-3" />
                   {financials.quotes.length} Quote{financials.quotes.length > 1 ? 's' : ''}
-                </div>
+                  <ExternalLink className="h-2.5 w-2.5" />
+                </a>
               )}
               {financials.invoices.length > 0 && (
-                <div className="flex items-center gap-1 text-emerald-400 text-xs">
+                <a 
+                  href={`/dashboard/invoices?search=${encodeURIComponent(job.appointments?.customer_name || '')}`}
+                  className="flex items-center gap-1 text-emerald-400 text-xs hover:underline cursor-pointer"
+                >
                   <Receipt className="h-3 w-3" />
                   {financials.invoices.length} Invoice{financials.invoices.length > 1 ? 's' : ''}
-                </div>
+                  <ExternalLink className="h-2.5 w-2.5" />
+                </a>
               )}
             </div>
           </div>
@@ -772,22 +907,52 @@ function AgendaJobCard({
             </div>
 
             <div className="flex gap-2 mt-3 flex-wrap justify-end">
-              {/* Assign/Reassign Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-2 text-blue-400 hover:bg-blue-500/20"
-                onClick={() => onAssign(job)}
-              >
-                <UserPlus className="h-4 w-4" />
-              </Button>
+              {/* Assign Button (when unassigned) */}
+              {!hasAssignment && !isCompleted && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 text-blue-400 hover:bg-blue-500/20"
+                  onClick={() => onAssign(job)}
+                  title="Assign Technician"
+                >
+                  <UserPlus className="h-4 w-4" />
+                </Button>
+              )}
+
+              {/* Reassign Button (when already assigned) */}
+              {hasAssignment && !isCompleted && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 text-purple-400 hover:bg-purple-500/20"
+                  onClick={() => onReassign(job)}
+                  title="Reassign Technician"
+                >
+                  <UserCog className="h-4 w-4" />
+                </Button>
+              )}
               
+              {/* Cancel Button */}
+              {!isCompleted && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 text-destructive hover:bg-destructive/20"
+                  onClick={() => onCancel(job)}
+                  title="Cancel Appointment"
+                >
+                  <XCircle className="h-4 w-4" />
+                </Button>
+              )}
+
               {/* Notify Customer Button */}
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-8 px-2 text-accent hover:bg-accent/20"
                 onClick={() => onNotify(job)}
+                title="Notify Customer"
               >
                 <Bell className="h-4 w-4" />
               </Button>
@@ -799,6 +964,7 @@ function AgendaJobCard({
                   size="sm"
                   className="h-8 px-2 text-muted-foreground hover:bg-muted"
                   onClick={() => window.open(`tel:${job.appointments?.customer_phone}`)}
+                  title="Call Customer"
                 >
                   <Phone className="h-4 w-4" />
                 </Button>
@@ -815,9 +981,10 @@ interface CalendarViewProps {
   appointments: any[];
   jobs: JobAssignment[];
   onAssign: (job: JobAssignment) => void;
+  onCancel: (job: JobAssignment) => void;
 }
 
-function CalendarView({ appointments, jobs, onAssign }: CalendarViewProps) {
+function CalendarView({ appointments, jobs, onAssign, onCancel }: CalendarViewProps) {
   // Group appointments by date
   const appointmentsByDate = useMemo(() => {
     const grouped: Record<string, any[]> = {};
@@ -883,15 +1050,26 @@ function CalendarView({ appointments, jobs, onAssign }: CalendarViewProps) {
                               <Wrench className="h-3 w-3 mr-1" />
                               {job.employee.full_name}
                             </Badge>
-                          ) : (
+                          ) : job ? (
                             <Button
                               size="sm"
                               variant="outline"
                               className="h-7 text-xs"
-                              onClick={() => job && onAssign(job)}
+                              onClick={() => onAssign(job)}
                             >
                               <UserPlus className="h-3 w-3 mr-1" />
                               Assign
+                            </Button>
+                          ) : null}
+                          {job && apt.status !== 'cancelled' && apt.status !== 'completed' && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-7 w-7 p-0 text-destructive hover:bg-destructive/20"
+                              onClick={() => onCancel(job)}
+                              title="Cancel"
+                            >
+                              <XCircle className="h-3.5 w-3.5" />
                             </Button>
                           )}
                         </div>
