@@ -327,7 +327,7 @@ const AGENT_DEFINITIONS: Record<string, {
     ],
     configFields: [
       { key: 'auto_user_approval', label: 'Auto-Approve New Users', type: 'switch', defaultValue: false, description: 'Automatically approve new user registrations' },
-      { key: 'session_timeout_hours', label: 'Session Timeout (hours)', type: 'number', min: 1, max: 24, defaultValue: 8 },
+      { key: 'session_timeout_hours', label: 'Session Timeout (hours)', type: 'number', min: 1, max: 744, defaultValue: 744 },
       { key: 'require_2fa', label: 'Require 2FA for Admins', type: 'switch', defaultValue: false },
       { key: 'notification_email', label: 'Admin Notification Email', type: 'text', placeholder: 'admin@company.com', description: 'Email for admin notifications' }
     ]
