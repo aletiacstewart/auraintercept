@@ -109,18 +109,13 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'AI Consoles',
+    label: 'AI Consoles & Apps',
     items: [
       { label: 'Customer Engagement', icon: HeadphonesIcon, href: '/dashboard/ai-agent?console=customer', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'] },
-      { label: 'Field Ops App', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
+      { label: 'Field Ops Console', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
       { label: 'Business & Accounting', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist', 'inventory_manager'] },
       { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-agent?console=marketing', roles: ['platform_admin'] },
       { label: 'Analytics & Optimization', icon: BarChart3, href: '/dashboard/ai-agent?console=analytics', roles: ['platform_admin'] },
-    ],
-  },
-  {
-    label: 'Operations',
-    items: [
       { label: 'Field Ops Manager', icon: Map, href: '/dashboard/field-operations', roles: ['platform_admin', 'company_admin'] },
       { label: 'Business Ops Console', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'] },
     ],
@@ -148,7 +143,7 @@ const navGroups: NavGroup[] = [
       { label: 'CRM', icon: Users, href: '/dashboard/integrations/crm', roles: ['platform_admin'] },
       { label: 'Calendar', icon: Calendar, href: '/dashboard/integrations/calendar', roles: ['platform_admin', 'company_admin'] },
       { label: 'Customer App Widget', icon: Globe, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Field Ops App', icon: Smartphone, href: '/technician/install', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Field Ops App', icon: Smartphone, href: '/dashboard/field-ops-install', roles: ['platform_admin', 'company_admin'] },
     ],
   },
   {

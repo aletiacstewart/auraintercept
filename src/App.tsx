@@ -48,6 +48,7 @@ import Calculators from "./pages/Calculators";
 import ExportDocumentation from "./pages/ExportDocumentation";
 import FieldOperations from "./pages/FieldOperations";
 import BusinessOperations from "./pages/BusinessOperations";
+import FieldOpsInstall from "./pages/FieldOpsInstall";
 import NotFound from "./pages/NotFound";
 import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
 
@@ -122,6 +123,7 @@ const App = () => (
             <Route path="/dashboard/documentation" element={<ExportDocumentation />} />
             <Route path="/dashboard/field-operations" element={<FieldOperations />} />
             <Route path="/dashboard/business-operations" element={<BusinessOperations />} />
+            <Route path="/dashboard/field-ops-install" element={<FieldOpsInstall />} />
             <Route path="/dashboard/integrations/embed" element={<IntegrationDocs />} />
             <Route path="/dashboard/guides" element={<PlatformGuides />} />
             
