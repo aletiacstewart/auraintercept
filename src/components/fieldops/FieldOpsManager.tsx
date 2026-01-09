@@ -400,7 +400,7 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-3">
               <Truck className="h-6 w-6 text-accent" />
-              Field Ops Dispatch Console
+              Dispatch-Field Ops
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
               Dispatch, track & manage field operations
