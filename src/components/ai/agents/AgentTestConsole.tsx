@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { FeedbackForm } from '@/components/ai/FeedbackForm';
 import { CampaignForm } from '@/components/marketing/forms/CampaignForm';
+import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
 import { toast } from 'sonner';
 import { 
   Send, 
@@ -236,6 +237,7 @@ export function AgentTestConsole({
   const [activeAgentName, setActiveAgentName] = useState(initialAgentName);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [showCampaignForm, setShowCampaignForm] = useState(false);
+  const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const scenarios = TEST_SCENARIOS[initialAgentType] || [];
@@ -275,6 +277,7 @@ export function AgentTestConsole({
     setConversationHistory([]);
     setShowFeedbackForm(false);
     setShowCampaignForm(false);
+    setShowInvoiceForm(false);
   }, [initialAgentType, initialAgentName]);
 
   const addMessage = useCallback((message: Omit<Message, 'id' | 'timestamp'>) => {
@@ -518,6 +521,7 @@ export function AgentTestConsole({
     setActiveAgentName(initialAgentName);
     setShowFeedbackForm(false);
     setShowCampaignForm(false);
+    setShowInvoiceForm(false);
   };
 
   const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string; serviceDate?: Date }) => {
@@ -600,6 +604,8 @@ export function AgentTestConsole({
       setShowFeedbackForm(true);
     } else if (scenario.label === 'Create Campaign') {
       setShowCampaignForm(true);
+    } else if (scenario.label === 'Create Invoice') {
+      setShowInvoiceForm(true);
     } else {
       sendMessage(scenario.message);
     }
@@ -613,6 +619,18 @@ export function AgentTestConsole({
       metadata: {
         event_type: 'campaign_created',
         current_agent: 'campaign',
+      },
+    });
+  };
+
+  const handleInvoiceSuccess = () => {
+    setShowInvoiceForm(false);
+    addMessage({
+      role: 'agent',
+      content: `Great! The invoice has been created and sent to the customer. Would you like me to help you with anything else?`,
+      metadata: {
+        event_type: 'invoice_created',
+        current_agent: 'invoice',
       },
     });
   };
@@ -833,6 +851,17 @@ export function AgentTestConsole({
                         companyId={companyId}
                         onCancel={() => setShowCampaignForm(false)}
                         onSuccess={handleCampaignSuccess}
+                      />
+                    </div>
+                  )}
+                  {showInvoiceForm && companyId && (
+                    <div className="py-4">
+                      <InvoiceForm
+                        companyId={companyId}
+                        onCancel={() => setShowInvoiceForm(false)}
+                        onSuccess={handleInvoiceSuccess}
+                        showBackButton={false}
+                        mode="direct"
                       />
                     </div>
                   )}
