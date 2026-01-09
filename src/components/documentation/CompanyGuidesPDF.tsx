@@ -396,7 +396,7 @@ const companyGuideCategories = [
         title: 'Website Widget Embed',
         duration: '10 min',
         steps: [
-          'Navigate to Customer App Widget',
+          'Navigate to Customer App',
           'Choose embed method (JS, iframe, link)',
           'Copy embed code',
           'Paste into your website',

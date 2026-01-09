@@ -238,7 +238,7 @@ const guideCategories = [
           'Use batch activation for multiple agents',
           'Monitor agent activity in event logs'
         ],
-        tips: ['Start with Customer Engagement agents first']
+        tips: ['Start with Customer Portal agents first']
       },
       {
         title: 'Enabling & Configuring Agents',
@@ -746,7 +746,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         <Text style={styles.categoryTitle}>AI Agent Categories</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Customer Engagement (6 agents): Receptionist, Scheduling, Follow-up, Review, Support, Portal</Text>
+          <Text style={styles.bulletText}>Customer Portal (6 agents): Receptionist, Scheduling, Follow-up, Review, Support, Portal</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>

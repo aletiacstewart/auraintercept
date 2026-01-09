@@ -57,7 +57,7 @@ interface AgentGuide {
   tips?: string[];
 }
 
-// Customer Engagement Guides
+// Customer Portal Guides
 const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
   {
     id: 'schedule',
