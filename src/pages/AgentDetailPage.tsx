@@ -402,7 +402,7 @@ const AGENT_DEFINITIONS: Record<string, {
         { value: 'weekly', label: 'Weekly' },
         { value: 'monthly', label: 'Monthly' }
       ]},
-      { key: 'metrics_tracked', label: 'Key Metrics', type: 'textarea', placeholder: 'Revenue, Bookings, Customer Satisfaction, etc.', description: 'Metrics to track (one per line)' },
+      { key: 'metrics_tracked', label: 'Key Metrics', type: 'textarea', placeholder: 'Revenue\nBookings\nCustomer Satisfaction\nResponse Time\nCompletion Rate\nTechnician Utilization\nAverage Job Duration\nRepeat Customer Rate\nCancellation Rate', description: 'Metrics to track (one per line)', defaultValue: 'Revenue\nBookings\nCustomer Satisfaction\nResponse Time\nCompletion Rate\nTechnician Utilization\nAverage Job Duration\nRepeat Customer Rate\nCancellation Rate' },
       { key: 'anomaly_sensitivity', label: 'Anomaly Detection Sensitivity', type: 'slider', min: 1, max: 10, step: 1, defaultValue: 5 },
       { key: 'send_alerts', label: 'Send Alert Notifications', type: 'switch', defaultValue: true }
     ]
