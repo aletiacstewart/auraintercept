@@ -503,7 +503,7 @@ const companyGuideCategories = [
         duration: '12 min',
         steps: [
           'Navigate to Business Ops Console',
-          'View financial pulse dashboard',
+          'View Business Ops Overview dashboard',
           'Track pending quotes and invoices',
           'Monitor monthly revenue',
           'Access New Lead capture',

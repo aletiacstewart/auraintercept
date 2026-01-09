@@ -8,7 +8,7 @@ export default function BusinessOperations() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Business Operations</h1>
           <p className="text-muted-foreground">
-            Financial pulse, quotes, inventory, and payment management
+            Business ops overview, quotes, inventory, and payment management
           </p>
         </div>
         <BusinessOpsConsole />

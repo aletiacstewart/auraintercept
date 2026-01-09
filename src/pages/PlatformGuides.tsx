@@ -469,14 +469,14 @@ const guideCategories = [
         duration: '12 min',
         steps: [
           'Navigate to Business Operations from the sidebar',
-          'View Financial Pulse dashboard for quick overview',
+          'View Business Ops Overview dashboard for quick overview',
           'Monitor outstanding quotes and invoices',
           'Track revenue trends and payment status',
           'Use Quote Forge for AI-powered quote generation',
           'Access Inventory Matrix for stock levels',
           'Configure payment connections in Settings'
         ],
-        tips: ['Financial Pulse updates in real-time', 'Use Quote Forge for branded PDF quotes']
+        tips: ['Business Ops Overview updates in real-time', 'Use Quote Forge for branded PDF quotes']
       },
       {
         title: 'Creating Quotes',

@@ -45,7 +45,7 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
         <div>
           <h1 className="font-semibold text-foreground">Business Operations</h1>
           <p className="text-xs text-muted-foreground">
-            {isPlatformAdmin ? 'Financial Pulse • Inventory Matrix' : 'Financial Pulse'}
+            {isPlatformAdmin ? 'Business Ops Overview • Inventory Matrix' : 'Business Ops Overview'}
           </p>
         </div>
       </div>
