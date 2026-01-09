@@ -567,7 +567,7 @@ export default function Index() {
                 </div>
                 <div>
                   <h4 className="font-semibold mb-1">Easy Appointment Booking</h4>
-                  <p className="text-sm text-muted-foreground">Select from available services and time slots with real-time calendar sync.</p>
+                  <p className="text-sm text-foreground">Select from available services and time slots with real-time calendar sync.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -576,7 +576,7 @@ export default function Index() {
                 </div>
                 <div>
                   <h4 className="font-semibold mb-1">Instant Quote Requests</h4>
-                  <p className="text-sm text-muted-foreground">Get AI-powered quotes based on your service needs.</p>
+                  <p className="text-sm text-foreground">Get AI-powered quotes based on your service needs.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -585,7 +585,7 @@ export default function Index() {
                 </div>
                 <div>
                   <h4 className="font-semibold mb-1">Appointment Tracking</h4>
-                  <p className="text-sm text-muted-foreground">Real-time status updates with technician ETA and job completion notifications.</p>
+                  <p className="text-sm text-foreground">Real-time status updates with technician ETA and job completion notifications.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -594,7 +594,7 @@ export default function Index() {
                 </div>
                 <div>
                   <h4 className="font-semibold mb-1">AI Chat Support</h4>
-                  <p className="text-sm text-muted-foreground">Natural language conversations with AI agents for instant answers.</p>
+                  <p className="text-sm text-foreground">Natural language conversations with AI agents for instant answers.</p>
                 </div>
               </div>
 
