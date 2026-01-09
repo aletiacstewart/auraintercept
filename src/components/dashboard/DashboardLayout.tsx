@@ -169,30 +169,53 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const mainRef = useRef<HTMLElement>(null);
-  const sidebarScrollRef = useRef<HTMLDivElement>(null);
-  const sidebarScrollPositionRef = useRef<number>(0);
+  const sidebarScrollRootRef = useRef<HTMLDivElement>(null);
 
-  // Save sidebar scroll position before navigation
+  const SIDEBAR_SCROLL_STORAGE_KEY = 'dashboard.sidebar.scrollTop';
+
+  const getSidebarScrollViewport = () => {
+    return sidebarScrollRootRef.current?.querySelector(
+      '[data-radix-scroll-area-viewport]'
+    ) as HTMLElement | null;
+  };
+
+  // Persist sidebar scroll position (works even if DashboardLayout unmounts between routes)
   useEffect(() => {
-    const scrollElement = sidebarScrollRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
-    if (scrollElement) {
-      const handleScroll = () => {
-        sidebarScrollPositionRef.current = scrollElement.scrollTop;
-      };
-      scrollElement.addEventListener('scroll', handleScroll);
-      return () => scrollElement.removeEventListener('scroll', handleScroll);
-    }
+    const viewport = getSidebarScrollViewport();
+    if (!viewport) return;
+
+    const restore = () => {
+      const stored = sessionStorage.getItem(SIDEBAR_SCROLL_STORAGE_KEY);
+      const top = stored ? Number(stored) : 0;
+      if (Number.isFinite(top) && top > 0) viewport.scrollTop = top;
+    };
+
+    // Restore after first paint to avoid being overwritten by Radix layout
+    requestAnimationFrame(() => {
+      restore();
+      setTimeout(restore, 0);
+    });
+
+    const onScroll = () => {
+      sessionStorage.setItem(SIDEBAR_SCROLL_STORAGE_KEY, String(viewport.scrollTop));
+    };
+
+    viewport.addEventListener('scroll', onScroll, { passive: true });
+    return () => viewport.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Restore sidebar scroll position after navigation
+  // Re-apply scroll on route change (covers cases where the ScrollArea viewport is recreated)
   useEffect(() => {
-    const scrollElement = sidebarScrollRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
-    if (scrollElement && sidebarScrollPositionRef.current > 0) {
-      // Use requestAnimationFrame to ensure DOM has updated
-      requestAnimationFrame(() => {
-        scrollElement.scrollTop = sidebarScrollPositionRef.current;
-      });
-    }
+    const viewport = getSidebarScrollViewport();
+    if (!viewport) return;
+
+    const stored = sessionStorage.getItem(SIDEBAR_SCROLL_STORAGE_KEY);
+    const top = stored ? Number(stored) : 0;
+    if (!Number.isFinite(top) || top <= 0) return;
+
+    requestAnimationFrame(() => {
+      viewport.scrollTop = top;
+    });
   }, [location.pathname, location.search]);
 
   // Scroll main content to top when route changes
@@ -283,41 +306,46 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <Separator className="bg-sidebar-border" />
 
         {/* Navigation */}
-        <ScrollArea className="flex-1 px-2 py-4" ref={sidebarScrollRef}>
-          <nav className="space-y-4">
-            {filteredNavGroups.map((group) => (
-              <div key={group.label} className="space-y-1">
-                {!collapsed && (
-                  <p className="px-3 py-1 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider">
-                    {group.label}
-                  </p>
-                )}
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = location.pathname + location.search === item.href || 
-                    (location.pathname === item.href.split('?')[0] && item.href.includes('?') && location.search.includes(item.href.split('?')[1]?.split('=')[1] || ''));
-                  const displayLabel = item.label;
-                  
-                  return (
-                    <Button
-                      key={item.href}
-                      variant="ghost"
-                      className={cn(
-                        'w-full justify-start gap-3 text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent',
-                        isActive && 'bg-sidebar-accent text-sidebar-foreground',
-                        collapsed && 'justify-center px-2'
-                      )}
-                      onClick={() => navigate(item.href)}
-                    >
-                      <Icon className="w-5 h-5 flex-shrink-0" />
-                      {!collapsed && <span className="truncate">{displayLabel}</span>}
-                    </Button>
-                  );
-                })}
-              </div>
-            ))}
-          </nav>
-        </ScrollArea>
+        <div ref={sidebarScrollRootRef} className="flex-1 px-2 py-4">
+          <ScrollArea className="h-full">
+            <nav className="space-y-4">
+              {filteredNavGroups.map((group) => (
+                <div key={group.label} className="space-y-1">
+                  {!collapsed && (
+                    <p className="px-3 py-1 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider">
+                      {group.label}
+                    </p>
+                  )}
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const isActive =
+                      location.pathname + location.search === item.href ||
+                      (location.pathname === item.href.split('?')[0] &&
+                        item.href.includes('?') &&
+                        location.search.includes(item.href.split('?')[1]?.split('=')[1] || ''));
+                    const displayLabel = item.label;
+
+                    return (
+                      <Button
+                        key={item.href}
+                        variant="ghost"
+                        className={cn(
+                          'w-full justify-start gap-3 text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent',
+                          isActive && 'bg-sidebar-accent text-sidebar-foreground',
+                          collapsed && 'justify-center px-2'
+                        )}
+                        onClick={() => navigate(item.href)}
+                      >
+                        <Icon className="w-5 h-5 flex-shrink-0" />
+                        {!collapsed && <span className="truncate">{displayLabel}</span>}
+                      </Button>
+                    );
+                  })}
+                </div>
+              ))}
+            </nav>
+          </ScrollArea>
+        </div>
 
         <Separator className="bg-sidebar-border" />
 
