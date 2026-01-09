@@ -657,7 +657,7 @@ export default function Index() {
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Simple Pricing</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">One Plan. Everything Included.</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-foreground max-w-2xl mx-auto">
               No hidden fees. No feature restrictions. Full access to all AI agents and consoles.
             </p>
           </div>
