@@ -30,7 +30,7 @@ type MainTabType = 'ai-agents' | 'company-employee' | 'faq';
 
 const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType; description: string; features: string[]; useCases: string[] }> = {
   customer: {
-    title: 'Customer Engagement',
+    title: 'Customer Portal',
     icon: HeadphonesIcon,
     description: 'Handle customer inquiries, book appointments, provide quotes, and deliver exceptional customer service.',
     features: [
@@ -188,7 +188,7 @@ export default function Help() {
               <TabsList className="flex-wrap h-auto gap-1">
                 <TabsTrigger value="customer">
                   <HeadphonesIcon className="h-4 w-4 mr-2" />
-                  Customer Engagement
+                  Customer Portal
                 </TabsTrigger>
                 <TabsTrigger value="fieldops">
                   <Truck className="h-4 w-4 mr-2" />

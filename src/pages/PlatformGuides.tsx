@@ -126,7 +126,7 @@ const guideCategories = [
           'Use batch activation to enable multiple agents at once',
           'Monitor agent activity in the event logs'
         ],
-        tips: ['Start with Customer Engagement agents', 'Enable agents gradually to monitor performance']
+        tips: ['Start with Customer Portal agents', 'Enable agents gradually to monitor performance']
       },
       {
         title: 'Enabling & Configuring Agents',
@@ -181,7 +181,7 @@ const guideCategories = [
         tips: ['Sync with external calendars for accurate availability', 'Set buffer times between appointments']
       },
       {
-        title: 'Customer Engagement Agents',
+        title: 'Customer Portal Agents',
         duration: '12 min',
         steps: [
           'Enable Voice, SMS, and Email agents for multi-channel support',

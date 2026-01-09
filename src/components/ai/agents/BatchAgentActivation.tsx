@@ -21,7 +21,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const PHASE_CONFIG = [
   {
     phase: 1,
-    name: 'Customer Engagement',
+    name: 'Customer Portal',
     description: 'Core customer interaction agents',
     icon: Users,
     color: 'text-blue-500',

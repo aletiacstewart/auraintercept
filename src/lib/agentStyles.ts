@@ -8,7 +8,7 @@ export interface AgentStyle {
 }
 
 export const AGENT_STYLES: Record<string, AgentStyle> = {
-  // Customer Engagement Agents
+  // Customer Portal Agents
   triage: { label: 'AI Receptionist', color: 'text-blue-700', bgColor: 'bg-blue-100' },
   booking: { label: 'Scheduling', color: 'text-blue-700', bgColor: 'bg-blue-100' },
   followup: { label: 'Follow-up', color: 'text-blue-700', bgColor: 'bg-blue-100' },

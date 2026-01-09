@@ -21,7 +21,7 @@ import { PublicFooter } from '@/components/layout/PublicFooter';
 const agentCategories = [
   {
     id: 'customer',
-    name: 'Customer Engagement',
+    name: 'Customer Portal',
     icon: Users,
     color: 'from-cyan-500 to-blue-500',
     agents: [
@@ -87,7 +87,7 @@ const agentCategories = [
 const agentConsoles = [
   {
     name: 'Booking Console',
-    description: 'Complete customer engagement hub for appointment scheduling, follow-ups, and review collection.',
+    description: 'Complete customer portal hub for appointment scheduling, follow-ups, and review collection.',
     icon: Calendar,
     gradient: 'from-cyan-500 to-blue-500',
     iconBg: 'bg-cyan-500/10',
@@ -282,7 +282,7 @@ const subtitles = [
   'Booking & Scheduling',
   'Field Operations',
   'Billing & Invoicing',
-  'Customer Engagement',
+  'Customer Portal',
   'Marketing Automation',
   'Analytics & Insights',
 ];
@@ -328,7 +328,7 @@ export default function Index() {
             
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
               Deploy 22 specialized AI agents across 5 powerful consoles. Intelligent handoffs, 
-              context preservation, and seamless orchestration for customer engagement, field ops, and beyond.
+              context preservation, and seamless orchestration for customer portal, field ops, and beyond.
             </p>
 
             {/* Hero Stats */}

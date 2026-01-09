@@ -280,7 +280,7 @@ const AIAgent = () => {
                 <TabsList className="flex-wrap h-auto gap-1">
                   <TabsTrigger value="customer">
                     <HeadphonesIcon className="h-4 w-4 mr-2" />
-                    Customer Engagement
+                    Customer Portal
                   </TabsTrigger>
                   <TabsTrigger value="fieldops">
                     <Truck className="h-4 w-4 mr-2" />
@@ -320,7 +320,7 @@ const AIAgent = () => {
                             ? 'Marketing & Sales Console'
                             : consoleType === 'analytics'
                               ? 'Analytics & Optimization Console'
-                              : 'Customer Engagement Console'}
+                              : 'Customer Portal Console'}
                     </h2>
                     {canManageSettings && (
                       <Button
