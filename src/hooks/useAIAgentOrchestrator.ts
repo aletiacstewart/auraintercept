@@ -62,12 +62,8 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'inventory', name: 'Inventory Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
   { type: 'warranty', name: 'Warranty Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
   { type: 'admin', name: 'Admin Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
-  // Marketing & Sales (Phase 4) - 5 agents
-  { type: 'promo', name: 'Promo Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
-  { type: 'referral', name: 'Referral Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
-  { type: 'winback', name: 'Win-back Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
-  { type: 'seasonal', name: 'Seasonal Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
-  { type: 'marketing', name: 'Marketing Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
+  // Marketing & Sales (Phase 4) - 1 unified campaign agent
+  { type: 'campaign', name: 'Campaign Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
   // Analytics (Phase 5) - 4 agents
   { type: 'insights', name: 'Business Insights Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },
   { type: 'forecast', name: 'Forecast Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },

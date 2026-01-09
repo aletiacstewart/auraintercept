@@ -332,45 +332,37 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'notification_email', label: 'Admin Notification Email', type: 'text', placeholder: 'admin@company.com', description: 'Email for admin notifications' }
     ]
   },
-  promo: {
-    name: 'Promo Agent',
-    description: 'Creates and delivers targeted promotional campaigns and special offers.',
+  campaign: {
+    name: 'Campaign Agent',
+    description: 'Unified marketing agent handling promotions, referrals, win-back, and seasonal campaigns.',
     category: 'marketing_sales',
     phase: 4,
     icon: Megaphone,
     color: 'text-orange-500',
     capabilities: [
-      'Campaign creation',
-      'Audience targeting',
-      'Offer personalization',
-      'A/B testing'
+      'Promotional campaigns',
+      'Referral program management',
+      'Win-back & re-engagement',
+      'Seasonal outreach',
+      'Audience segmentation',
+      'A/B testing',
+      'Performance tracking'
     ],
     configFields: [
+      // General settings
+      { key: 'max_campaigns_per_month', label: 'Max Campaigns / Month', type: 'number', min: 1, max: 50, defaultValue: 4 },
+      { key: 'require_approval', label: 'Require Admin Approval', type: 'switch', defaultValue: true },
+      { key: 'primary_channels', label: 'Primary Channels', type: 'textarea', placeholder: 'Email\nSMS\nSocial', description: 'Channels to prioritize (one per line)' },
+      { key: 'brand_voice', label: 'Brand Voice', type: 'textarea', placeholder: 'Friendly, professional, concise', description: 'Tone and style guidelines' },
+      // Promo settings
       { key: 'target_segments', label: 'Target Segments', type: 'select', options: [
         { value: 'all', label: 'All Customers' },
         { value: 'inactive', label: 'Inactive Customers' },
         { value: 'high_value', label: 'High-Value Customers' },
         { value: 'new', label: 'New Customers' }
       ]},
-      { key: 'max_promos_per_month', label: 'Max Promos Per Month', type: 'number', min: 1, max: 10, defaultValue: 2 },
       { key: 'default_discount_percent', label: 'Default Discount (%)', type: 'number', min: 5, max: 50, defaultValue: 10 },
-      { key: 'require_approval', label: 'Require Admin Approval', type: 'switch', defaultValue: true }
-    ]
-  },
-  referral: {
-    name: 'Referral Agent',
-    description: 'Manages customer referral programs and tracks referral rewards.',
-    category: 'marketing_sales',
-    phase: 4,
-    icon: Megaphone,
-    color: 'text-orange-500',
-    capabilities: [
-      'Referral tracking',
-      'Reward calculation',
-      'Link generation',
-      'Success notifications'
-    ],
-    configFields: [
+      // Referral settings
       { key: 'referrer_reward', label: 'Referrer Reward ($)', type: 'number', min: 0, max: 100, defaultValue: 25 },
       { key: 'referee_discount', label: 'New Customer Discount (%)', type: 'number', min: 0, max: 50, defaultValue: 10 },
       { key: 'min_spend_for_reward', label: 'Min Spend for Reward ($)', type: 'number', min: 0, max: 500, defaultValue: 50 },
@@ -378,67 +370,17 @@ const AGENT_DEFINITIONS: Record<string, {
         { value: 'credit', label: 'Account Credit' },
         { value: 'discount', label: 'Future Discount' },
         { value: 'cash', label: 'Cash/Gift Card' }
-      ]}
-    ]
-  },
-  winback: {
-    name: 'Win-back Agent',
-    description: 'Re-engages churned or inactive customers with personalized outreach.',
-    category: 'marketing_sales',
-    phase: 4,
-    icon: Megaphone,
-    color: 'text-orange-500',
-    capabilities: [
-      'Churn detection',
-      'Re-engagement campaigns',
-      'Personalized offers',
-      'Success tracking'
-    ],
-    configFields: [
-      { key: 'inactive_threshold_days', label: 'Inactive Threshold (days)', type: 'number', min: 30, max: 365, defaultValue: 90 },
-      { key: 'winback_offer_percent', label: 'Win-back Offer Discount (%)', type: 'number', min: 5, max: 50, defaultValue: 15 },
+      ]},
+      // Win-back settings
+      { key: 'inactive_threshold_days', label: 'Win-back Inactive Threshold (days)', type: 'number', min: 30, max: 365, defaultValue: 90 },
+      { key: 'winback_offer_percent', label: 'Win-back Discount (%)', type: 'number', min: 5, max: 50, defaultValue: 15 },
       { key: 'max_attempts', label: 'Max Outreach Attempts', type: 'number', min: 1, max: 5, defaultValue: 3 },
-      { key: 'outreach_interval_days', label: 'Days Between Attempts', type: 'number', min: 7, max: 30, defaultValue: 14 }
-    ]
-  },
-  seasonal: {
-    name: 'Seasonal Agent',
-    description: 'Manages seasonal service reminders and maintenance schedules.',
-    category: 'marketing_sales',
-    phase: 4,
-    icon: Megaphone,
-    color: 'text-orange-500',
-    capabilities: [
-      'Seasonal campaigns',
-      'Maintenance reminders',
-      'Weather-based triggers',
-      'Annual scheduling'
-    ],
-    configFields: [
-      { key: 'services', label: 'Seasonal Services', type: 'textarea', placeholder: 'Spring HVAC tune-up, Fall furnace check, etc.', description: 'Seasonal services to promote (one per line)' },
-      { key: 'advance_notice_days', label: 'Advance Notice (days)', type: 'number', min: 7, max: 60, defaultValue: 30 },
+      { key: 'outreach_interval_days', label: 'Days Between Attempts', type: 'number', min: 7, max: 30, defaultValue: 14 },
+      // Seasonal settings
+      { key: 'seasonal_services', label: 'Seasonal Services', type: 'textarea', placeholder: 'Spring HVAC tune-up, Fall furnace check, etc.', description: 'Seasonal services to promote (one per line)' },
+      { key: 'advance_notice_days', label: 'Seasonal Advance Notice (days)', type: 'number', min: 7, max: 60, defaultValue: 30 },
       { key: 'weather_triggers', label: 'Enable Weather Triggers', type: 'switch', defaultValue: false },
       { key: 'repeat_annually', label: 'Repeat Annually', type: 'switch', defaultValue: true }
-    ]
-  },
-  marketing: {
-    name: 'Marketing Agent',
-    description: 'Coordinates marketing operations: audience targeting, content planning, and campaign execution support.',
-    category: 'marketing_sales',
-    phase: 4,
-    icon: Megaphone,
-    color: 'text-orange-500',
-    capabilities: [
-      'Campaign planning',
-      'Audience segmentation',
-      'Content suggestions',
-      'Performance tracking'
-    ],
-    configFields: [
-      { key: 'primary_channels', label: 'Primary Channels', type: 'textarea', placeholder: 'Email\nSMS\nSocial', description: 'Channels the agent should prioritize (one per line)' },
-      { key: 'brand_voice', label: 'Brand Voice', type: 'textarea', placeholder: 'Friendly, professional, concise', description: 'Guidelines for tone and style' },
-      { key: 'approval_required', label: 'Require Approval', type: 'switch', defaultValue: true, description: 'Require manual approval before sending any outreach' },
-      { key: 'max_campaigns_per_month', label: 'Max Campaigns / Month', type: 'number', min: 0, max: 50, defaultValue: 4 }
     ]
   },
   insights: {
