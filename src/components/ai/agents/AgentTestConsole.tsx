@@ -162,9 +162,9 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
     { label: 'Recommendations', message: "What should we focus on improving this month?" },
   ],
   forecast: [
-    { label: '30 Day Forecast', message: "Forecast demand for the next 30 days" },
+    { label: 'Monthly Forecast', message: "Forecast demand for the next month" },
     { label: 'Revenue Projection', message: "Project revenue for the next quarter" },
-    { label: 'Staffing Needs', message: "Do we need to adjust staffing levels?" },
+    { label: 'Staffing Needs', message: "Do we need to adjust staffing levels for next week?" },
   ],
   revenue: [
     { label: 'Revenue Summary', message: "Show me today's revenue breakdown by service type" },
