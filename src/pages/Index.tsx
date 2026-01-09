@@ -431,7 +431,7 @@ export default function Index() {
                     {console.features.slice(0, 4).map((feature, idx) => (
                       <li key={idx} className="flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>{feature}</span>
+                        <span className="text-white">{feature}</span>
                       </li>
                     ))}
                   </ul>
