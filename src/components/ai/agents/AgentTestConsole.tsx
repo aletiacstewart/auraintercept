@@ -723,7 +723,7 @@ export function AgentTestConsole({
           <div className="border rounded-lg">
             {/* Messages */}
             <ScrollArea className="h-[400px] p-4" ref={scrollRef}>
-              {messages.length === 0 && !showFeedbackForm ? (
+              {messages.length === 0 && !(showFeedbackForm || showCampaignForm || showInvoiceForm || showQuoteForm) ? (
                 <div className="text-center text-muted-foreground py-12">
                   <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>Send a message to test the agent</p>
