@@ -107,7 +107,7 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'AI Agent Consoles',
+    label: 'Business Consoles & Apps',
     items: [
       { label: 'Business Management', icon: Briefcase, href: '/dashboard/ai-consoles/business-management', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist', 'inventory_manager'] },
       { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'] },
