@@ -3,12 +3,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Smartphone, Download } from 'lucide-react';
+import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
 import { TrialBanner } from '@/components/dashboard/TrialBanner';
 import { CompanyJobQueue } from '@/components/company/CompanyJobQueue';
+import { FieldOpsAppCard } from '@/components/company/FieldOpsAppCard';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { CompanyGuidesPDF } from '@/components/documentation/CompanyGuidesPDF';
@@ -161,7 +162,6 @@ export function CompanyAdminDashboard() {
     { label: 'Field Operations', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', gradient: 'from-green-500 to-emerald-500' },
     { label: 'Business & Accounting', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', gradient: 'from-purple-500 to-violet-500' },
     { label: 'Embed Chat Widget', icon: Code, href: '/dashboard/widget', gradient: 'from-slate-600 to-slate-700' },
-    { label: 'Technician App', icon: Smartphone, href: '/technician/install', gradient: 'from-teal-500 to-cyan-500' },
   ];
 
   return (
@@ -319,6 +319,9 @@ export function CompanyAdminDashboard() {
 
       {/* Company Job Queue */}
       <CompanyJobQueue />
+
+      {/* Field Ops App Installation */}
+      <FieldOpsAppCard />
 
       {/* Onboarding Checklist */}
       <OnboardingChecklist />
