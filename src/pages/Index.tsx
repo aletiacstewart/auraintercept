@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
 import { 
   Bot, Building2, Zap, Shield, MessageSquare, Play, 
   Calendar, Phone, Users, TrendingUp, Clock, MapPin,
@@ -12,7 +13,7 @@ import {
   ArrowRight, Sparkles, Wrench, Home, Flame, Droplet,
   ChevronRight, Star, Navigation, Truck,
   Search, UserPlus, Globe, Headphones, Bell, Mail, 
-  Smartphone, Video, Mic, Brain, Layers, Lock
+  Smartphone, Video, Mic, Brain, Layers, Lock, Send
 } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import heroVideo from '@/assets/aura-intercept-hero.mp4';
@@ -635,13 +636,12 @@ export default function Index() {
                     </div>
                   </div>
                   <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      Book Now
-                    </Button>
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <FileText className="w-4 h-4 mr-1" />
-                      Get Quote
+                    <Input 
+                      placeholder="Type your message..." 
+                      className="flex-1 bg-white border-border text-foreground"
+                    />
+                    <Button size="icon" className="shrink-0">
+                      <Send className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
