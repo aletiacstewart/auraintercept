@@ -10,7 +10,7 @@ export default function TechnicianAIConsole() {
     <TechnicianDashboardLayout>
       <div className="space-y-6 animate-fade-in">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Field Ops Console</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Field Ops Tech Console</h1>
           <p className="text-muted-foreground mt-1">Your intelligent field operations assistant</p>
         </div>
         {loading ? (

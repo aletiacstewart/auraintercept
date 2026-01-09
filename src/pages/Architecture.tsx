@@ -53,7 +53,7 @@ const diagrams = {
         TechDash[Technician Dashboard]
         TechJobs[Job Queue]
         TechCalendar[Calendar]
-        TechAI[Field Ops AI]
+        TechAI[Field Ops Tech Console]
     end
     
     Landing --> Auth
@@ -96,7 +96,7 @@ const diagrams = {
     
     Tech --> JobQueue[Job Queue]
     Tech --> TechCalendar[Calendar]
-    Tech --> FieldOpsAI[Field Ops AI]
+    Tech --> FieldOpsAI[Field Ops Tech Console]
     
     Cust --> MyAppts[My Appointments]
     Cust --> CustAI[Customer AI Chat]`

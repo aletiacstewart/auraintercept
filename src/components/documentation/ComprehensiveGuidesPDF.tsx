@@ -415,7 +415,7 @@ const guideCategories = [
         title: 'Dispatch & Routing',
         duration: '15 min',
         steps: [
-          'Navigate to Field Operations Console',
+          'Navigate to Field Ops Dispatch Console',
           'View dispatch map with locations',
           'New jobs appear in unassigned queue',
           'Auto-dispatch suggests optimal tech',
