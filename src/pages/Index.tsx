@@ -553,7 +553,7 @@ export default function Index() {
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               Self-Service Customer Portal
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-foreground max-w-2xl mx-auto">
               Get 24/7 access to book appointments, get quotes, track service status, 
               and chat with AI agents - all in one convenient place.
             </p>
