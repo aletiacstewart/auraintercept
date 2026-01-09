@@ -131,10 +131,7 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
     { label: 'Photo Upload', message: "Need to upload before and after photos" },
   ],
   quoting: [
-    { label: 'Create Quote', message: "I'd like to create a new quote for a customer" },
-    { label: 'Generate Quote', message: "Generate a quote for AC compressor replacement" },
-    { label: 'Custom Quote', message: "Need a custom quote with labor and parts breakdown" },
-    { label: 'Quote Follow-up', message: "Following up on quote #Q-123 sent last week" },
+    { label: 'Generate Quote', message: "I'd like to create a new quote for a customer" },
   ],
   invoice: [
     { label: 'Create Invoice', message: "Create invoice for completed job #J-456" },
@@ -611,9 +608,8 @@ export function AgentTestConsole({
       setShowCampaignForm(true);
     } else if (scenario.label === 'Create Invoice') {
       setShowInvoiceForm(true);
-    } else if (scenario.label === 'Create Quote') {
+    } else if (scenario.label === 'Generate Quote') {
       setShowQuoteForm(true);
-    } else {
       sendMessage(scenario.message);
     }
   };
