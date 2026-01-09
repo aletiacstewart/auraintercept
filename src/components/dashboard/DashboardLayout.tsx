@@ -82,17 +82,12 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'Management',
+    label: 'Business Management',
     items: [
       { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'] },
       { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'] },
       { label: 'Customers', icon: Users, href: '/dashboard/customers', roles: ['platform_admin', 'company_admin'] },
       { label: 'Employees', icon: UserCheck, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'] },
-    ],
-  },
-  {
-    label: 'Business & Financial',
-    items: [
       { label: 'Quotes', icon: FileText, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'] },
       { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'] },
       { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin'] },
