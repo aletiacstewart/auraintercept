@@ -4,12 +4,13 @@
 
 @layer base {
   :root {
-    /* Light mode - New Aura Intercept brand colors */
-    --background: 189 45% 97%;
+    /* Light mode - White background with dark cards */
+    --background: 0 0% 100%;
     --foreground: 208 30% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 208 30% 15%;
+    /* Dark navy cards for contrast */
+    --card: 208 30% 18%;
+    --card-foreground: 189 45% 95%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 208 30% 15%;
@@ -22,8 +23,8 @@
     --secondary: 199 60% 55%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 189 45% 94%;
-    --muted-foreground: 210 5% 45%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 210 10% 40%;
 
     /* Accent: Sky Blue #46a2d3 */
     --accent: 199 60% 55%;
@@ -32,8 +33,8 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 189 30% 88%;
-    --input: 189 30% 88%;
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
     --ring: 223 73% 43%;
 
     --radius: 0.75rem;
@@ -50,7 +51,7 @@
 
     /* Custom gradients - Royal Blue → Sky Blue */
     --gradient-primary: linear-gradient(135deg, hsl(223, 73%, 43%) 0%, hsl(199, 60%, 55%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(189, 45%, 97%) 0%, hsl(189, 45%, 94%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(210, 20%, 96%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(223, 73%, 43%) 0%, hsl(199, 60%, 55%) 100%);
     --gradient-button: linear-gradient(135deg, #214ebb 0%, #46a2d3 100%);
 
