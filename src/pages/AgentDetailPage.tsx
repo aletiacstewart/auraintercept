@@ -312,6 +312,26 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'require_photos_for_claims', label: 'Require Photos for Claims', type: 'switch', defaultValue: true }
     ]
   },
+  admin: {
+    name: 'Admin Agent',
+    description: 'Handles administrative tasks, user management, and company configuration.',
+    category: 'business_operations',
+    phase: 3,
+    icon: Briefcase,
+    color: 'text-purple-500',
+    capabilities: [
+      'User management',
+      'Company settings',
+      'Access control',
+      'System configuration'
+    ],
+    configFields: [
+      { key: 'auto_user_approval', label: 'Auto-Approve New Users', type: 'switch', defaultValue: false, description: 'Automatically approve new user registrations' },
+      { key: 'session_timeout_hours', label: 'Session Timeout (hours)', type: 'number', min: 1, max: 24, defaultValue: 8 },
+      { key: 'require_2fa', label: 'Require 2FA for Admins', type: 'switch', defaultValue: false },
+      { key: 'notification_email', label: 'Admin Notification Email', type: 'text', placeholder: 'admin@company.com', description: 'Email for admin notifications' }
+    ]
+  },
   promo: {
     name: 'Promo Agent',
     description: 'Creates and delivers targeted promotional campaigns and special offers.',
