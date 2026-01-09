@@ -174,8 +174,33 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const mainRef = useRef<HTMLElement>(null);
+  const sidebarScrollRef = useRef<HTMLDivElement>(null);
+  const sidebarScrollPositionRef = useRef<number>(0);
 
-  // Scroll to top when route changes
+  // Save sidebar scroll position before navigation
+  useEffect(() => {
+    const scrollElement = sidebarScrollRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+    if (scrollElement) {
+      const handleScroll = () => {
+        sidebarScrollPositionRef.current = scrollElement.scrollTop;
+      };
+      scrollElement.addEventListener('scroll', handleScroll);
+      return () => scrollElement.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
+  // Restore sidebar scroll position after navigation
+  useEffect(() => {
+    const scrollElement = sidebarScrollRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+    if (scrollElement && sidebarScrollPositionRef.current > 0) {
+      // Use requestAnimationFrame to ensure DOM has updated
+      requestAnimationFrame(() => {
+        scrollElement.scrollTop = sidebarScrollPositionRef.current;
+      });
+    }
+  }, [location.pathname, location.search]);
+
+  // Scroll main content to top when route changes
   useEffect(() => {
     if (mainRef.current) {
       mainRef.current.scrollTo(0, 0);
@@ -263,7 +288,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <Separator className="bg-sidebar-border" />
 
         {/* Navigation */}
-        <ScrollArea className="flex-1 px-2 py-4">
+        <ScrollArea className="flex-1 px-2 py-4" ref={sidebarScrollRef}>
           <nav className="space-y-4">
             {filteredNavGroups.map((group) => (
               <div key={group.label} className="space-y-1">
