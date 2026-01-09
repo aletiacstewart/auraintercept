@@ -107,7 +107,7 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'AI Consoles & Apps',
+    label: 'AI Agent Consoles',
     items: [
       { label: 'Customer Engagement', icon: HeadphonesIcon, href: '/dashboard/ai-agent?console=customer', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'] },
       { label: 'Field Ops Tech Console', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
