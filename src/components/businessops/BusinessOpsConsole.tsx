@@ -37,18 +37,6 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
 
   return (
     <Card className="min-h-[600px] flex flex-col overflow-hidden shadow-lg border-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b border-accent/20 bg-background/50">
-        <div className="p-2 rounded-lg bg-gradient-to-br from-accent/20 to-accent/10">
-          <Briefcase className="h-5 w-5 text-accent" />
-        </div>
-        <div>
-          <h1 className="font-semibold text-foreground">Business Operations</h1>
-          <p className="text-xs text-muted-foreground">
-            {isPlatformAdmin ? 'Business Ops Overview • Inventory Matrix' : 'Business Ops Overview'}
-          </p>
-        </div>
-      </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4">
