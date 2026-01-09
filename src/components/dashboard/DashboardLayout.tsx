@@ -72,7 +72,6 @@ const navGroups: NavGroup[] = [
     label: 'Overview',
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
-      { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'] },
       { label: 'My Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['employee'] },
       { label: 'AI Console', icon: Bot, href: '/technician/ai-console', roles: ['employee'] },
       { label: 'My Jobs', icon: ClipboardList, href: '/technician/jobs', roles: ['employee'] },
@@ -131,6 +130,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Configuration',
     items: [
+      { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'] },
       { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
       { label: 'Calculators', icon: BarChart3, href: '/dashboard/calculators', roles: ['platform_admin', 'company_admin'] },
       { label: 'Settings', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin'] },
