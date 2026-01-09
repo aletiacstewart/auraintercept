@@ -727,7 +727,7 @@ export default function Index() {
             </Card>
 
             <div className="mt-8 text-center">
-              <p className="text-sm text-muted-foreground mb-2">Additional employees beyond 10:</p>
+              <p className="text-sm text-foreground mb-2">Additional employees beyond 10:</p>
               <p className="font-medium">$10/month per employee</p>
             </div>
           </div>
