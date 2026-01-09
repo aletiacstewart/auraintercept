@@ -625,14 +625,14 @@ export default function Index() {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <div className="bg-muted/50 rounded-lg p-3 max-w-[80%]">
-                      <p className="text-sm">Hi! I'm here to help you with your service needs. Would you like to book an appointment, get a quote, or track an existing service?</p>
+                    <div className="bg-white rounded-lg p-3 max-w-[80%]">
+                      <p className="text-sm text-[hsl(220,60%,25%)]">Hi! I'm here to help you with your service needs. Would you like to book an appointment, get a quote, or track an existing service?</p>
                     </div>
-                    <div className="bg-primary/10 rounded-lg p-3 max-w-[80%] ml-auto">
-                      <p className="text-sm">I'd like to schedule a maintenance check</p>
+                    <div className="bg-white rounded-lg p-3 max-w-[80%] ml-auto">
+                      <p className="text-sm text-[hsl(220,60%,25%)]">I'd like to schedule a maintenance check</p>
                     </div>
-                    <div className="bg-muted/50 rounded-lg p-3 max-w-[80%]">
-                      <p className="text-sm">Great! I can help you with that. Let me check available slots. When works best for you?</p>
+                    <div className="bg-white rounded-lg p-3 max-w-[80%]">
+                      <p className="text-sm text-[hsl(220,60%,25%)]">Great! I can help you with that. Let me check available slots. When works best for you?</p>
                     </div>
                   </div>
                   <div className="flex gap-2 pt-2">
