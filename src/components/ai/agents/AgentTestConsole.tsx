@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { FeedbackForm } from '@/components/ai/FeedbackForm';
 import { CampaignForm } from '@/components/marketing/forms/CampaignForm';
 import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
+import { BusinessQuoteForm } from '@/components/billing/forms/BusinessQuoteForm';
 import { toast } from 'sonner';
 import { 
   Send, 
@@ -130,6 +131,7 @@ const TEST_SCENARIOS: Record<string, Array<{ label: string; message: string }>> 
     { label: 'Photo Upload', message: "Need to upload before and after photos" },
   ],
   quoting: [
+    { label: 'Create Quote', message: "I'd like to create a new quote for a customer" },
     { label: 'Generate Quote', message: "Generate a quote for AC compressor replacement" },
     { label: 'Custom Quote', message: "Need a custom quote with labor and parts breakdown" },
     { label: 'Quote Follow-up', message: "Following up on quote #Q-123 sent last week" },
@@ -238,6 +240,7 @@ export function AgentTestConsole({
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [showCampaignForm, setShowCampaignForm] = useState(false);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
+  const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const scenarios = TEST_SCENARIOS[initialAgentType] || [];
@@ -278,6 +281,7 @@ export function AgentTestConsole({
     setShowFeedbackForm(false);
     setShowCampaignForm(false);
     setShowInvoiceForm(false);
+    setShowQuoteForm(false);
   }, [initialAgentType, initialAgentName]);
 
   const addMessage = useCallback((message: Omit<Message, 'id' | 'timestamp'>) => {
@@ -522,6 +526,7 @@ export function AgentTestConsole({
     setShowFeedbackForm(false);
     setShowCampaignForm(false);
     setShowInvoiceForm(false);
+    setShowQuoteForm(false);
   };
 
   const handleFeedbackSubmit = async (feedback: { rating: number; sentiment: 'positive' | 'neutral' | 'negative'; note: string; customerName: string; customerPhone: string; serviceDate?: Date }) => {
@@ -606,6 +611,8 @@ export function AgentTestConsole({
       setShowCampaignForm(true);
     } else if (scenario.label === 'Create Invoice') {
       setShowInvoiceForm(true);
+    } else if (scenario.label === 'Create Quote') {
+      setShowQuoteForm(true);
     } else {
       sendMessage(scenario.message);
     }
@@ -631,6 +638,18 @@ export function AgentTestConsole({
       metadata: {
         event_type: 'invoice_created',
         current_agent: 'invoice',
+      },
+    });
+  };
+
+  const handleQuoteSuccess = () => {
+    setShowQuoteForm(false);
+    addMessage({
+      role: 'agent',
+      content: `Great! The quote has been created successfully. Would you like me to help you with anything else?`,
+      metadata: {
+        event_type: 'quote_created',
+        current_agent: 'quoting',
       },
     });
   };
@@ -860,6 +879,17 @@ export function AgentTestConsole({
                         companyId={companyId}
                         onCancel={() => setShowInvoiceForm(false)}
                         onSuccess={handleInvoiceSuccess}
+                        showBackButton={false}
+                        mode="direct"
+                      />
+                    </div>
+                  )}
+                  {showQuoteForm && companyId && (
+                    <div className="py-4">
+                      <BusinessQuoteForm
+                        companyId={companyId}
+                        onCancel={() => setShowQuoteForm(false)}
+                        onSuccess={handleQuoteSuccess}
                         showBackButton={false}
                         mode="direct"
                       />
