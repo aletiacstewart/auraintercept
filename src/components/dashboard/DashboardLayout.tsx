@@ -109,10 +109,15 @@ const navGroups: NavGroup[] = [
   {
     label: 'AI Agent Consoles',
     items: [
-      { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
       { label: 'Business Management', icon: Briefcase, href: '/dashboard/ai-consoles/business-management', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist', 'inventory_manager'] },
       { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'] },
       { label: 'Analytics & Optimization', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'] },
+    ],
+  },
+  {
+    label: 'Field Ops Consoles & Apps',
+    items: [
+      { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
       { label: 'Dispatch-Field Ops', icon: Map, href: '/dashboard/field-operations', roles: ['platform_admin', 'company_admin'] },
     ],
   },
