@@ -250,10 +250,6 @@ export default function Index() {
         <div className="absolute inset-0 tech-grid opacity-30" />
         <div className="container max-w-7xl mx-auto px-6 py-20 relative">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 animate-fade-in">
-              <Sparkles className="w-4 h-4" />
-              Infrastructure of Intent • 11 AI Agents • 3 Consoles
-            </div>
             
             <h1 className="text-5xl sm:text-6xl md:text-7xl tracking-wide mb-4 animate-fade-in">
               <span className="font-brand text-[#214ebb]">Aura Intercept</span>
