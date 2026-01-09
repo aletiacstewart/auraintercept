@@ -5,17 +5,11 @@ import { ServicesManager } from '@/components/knowledge/ServicesManager';
 import { FAQsManager } from '@/components/knowledge/FAQsManager';
 import { BusinessHoursManager } from '@/components/knowledge/BusinessHoursManager';
 import { DocumentsManager } from '@/components/knowledge/DocumentsManager';
-import { InventoryManager } from '@/components/knowledge/InventoryManager';
-import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
-import { PlatformAnalytics } from '@/components/analytics/PlatformAnalytics';
-import { useAuth } from '@/contexts/AuthContext';
-import { Briefcase, HelpCircle, Clock, FileText, Package, Shield, BarChart3 } from 'lucide-react';
+import { Briefcase, HelpCircle, Clock, FileText } from 'lucide-react';
 
 export default function KnowledgeBase() {
   const [searchParams] = useSearchParams();
-  const { userRole } = useAuth();
   const defaultTab = searchParams.get('tab') || 'services';
-  const isPlatformAdmin = userRole === 'platform_admin';
   
   return (
     <DashboardLayout>
@@ -28,7 +22,7 @@ export default function KnowledgeBase() {
         </div>
 
         <Tabs defaultValue={defaultTab} className="space-y-6">
-          <TabsList className={`grid w-full ${isPlatformAdmin ? 'grid-cols-3 lg:grid-cols-7' : 'grid-cols-2 lg:grid-cols-4'} lg:w-auto lg:inline-grid`}>
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 lg:w-auto lg:inline-grid">
             <TabsTrigger value="services" className="gap-2">
               <Briefcase className="w-4 h-4 hidden sm:block" />
               Services
@@ -45,24 +39,6 @@ export default function KnowledgeBase() {
               <FileText className="w-4 h-4 hidden sm:block" />
               Documents
             </TabsTrigger>
-            {isPlatformAdmin && (
-              <TabsTrigger value="inventory" className="gap-2">
-                <Package className="w-4 h-4 hidden sm:block" />
-                Inventory
-              </TabsTrigger>
-            )}
-            {isPlatformAdmin && (
-              <TabsTrigger value="warranties" className="gap-2">
-                <Shield className="w-4 h-4 hidden sm:block" />
-                Warranties
-              </TabsTrigger>
-            )}
-            {isPlatformAdmin && (
-              <TabsTrigger value="analytics" className="gap-2">
-                <BarChart3 className="w-4 h-4 hidden sm:block" />
-                Analytics
-              </TabsTrigger>
-            )}
           </TabsList>
 
           <TabsContent value="services">
@@ -80,24 +56,6 @@ export default function KnowledgeBase() {
           <TabsContent value="documents">
             <DocumentsManager />
           </TabsContent>
-
-          {isPlatformAdmin && (
-            <TabsContent value="inventory">
-              <InventoryManager />
-            </TabsContent>
-          )}
-
-          {isPlatformAdmin && (
-            <TabsContent value="warranties">
-              <WarrantiesManager />
-            </TabsContent>
-          )}
-
-          {isPlatformAdmin && (
-            <TabsContent value="analytics">
-              <PlatformAnalytics />
-            </TabsContent>
-          )}
         </Tabs>
       </div>
     </DashboardLayout>
