@@ -136,7 +136,7 @@ const platformFeatures = [
   },
   {
     icon: Brain,
-    title: 'AI Automation',
+    title: 'AI Powered Ops',
     description: 'Intelligent agent handoffs with context preservation across conversations.'
   },
   {
