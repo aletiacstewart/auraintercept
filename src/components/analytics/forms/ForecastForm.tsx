@@ -42,15 +42,14 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
         .eq('status', 'paid')
         .gte('created_at', thirtyDaysAgo.toISOString());
         
-      const employeesResult = await supabase
+      const { data: employeesData } = await supabase
         .from('profiles')
         .select('id')
-        .eq('company_id', companyId)
-        .eq('role', 'employee');
+        .match({ company_id: companyId, role: 'employee' });
 
       const appointments = appointmentsResult.data || [];
       const invoices = invoicesResult.data || [];
-      const employees = employeesResult.data || [];
+      const employees = employeesData || [];
 
       const avgDailyAppointments = appointments.length / 30;
       const avgDailyRevenue = invoices.reduce((sum, i) => sum + (i.total || 0), 0) / 30;
