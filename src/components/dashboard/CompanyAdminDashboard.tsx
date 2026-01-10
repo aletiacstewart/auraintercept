@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
 import { TrialBanner } from '@/components/dashboard/TrialBanner';
 import { CompanyJobQueue } from '@/components/company/CompanyJobQueue';
-import { FieldOpsAppCard } from '@/components/company/FieldOpsAppCard';
+
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { CompanyGuidesPDF } from '@/components/documentation/CompanyGuidesPDF';
@@ -320,8 +320,6 @@ export function CompanyAdminDashboard() {
       {/* Company Job Queue */}
       <CompanyJobQueue />
 
-      {/* Field Ops App Installation */}
-      <FieldOpsAppCard />
 
       {/* Onboarding Checklist */}
       <OnboardingChecklist />
