@@ -184,14 +184,14 @@ function SortableRow({
           className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded"
           title="Drag to reorder"
         >
-          <GripVertical className="w-4 h-4 text-muted-foreground" />
+          <GripVertical className="w-4 h-4 text-white/60" />
         </button>
       </TableCell>
       <TableCell>
         <div>
           <p className="font-medium">{service.name}</p>
           {service.description && (
-            <p className="text-sm text-muted-foreground truncate max-w-xs">
+            <p className="text-sm text-white/60 truncate max-w-xs">
               {service.description}
             </p>
           )}
@@ -204,7 +204,7 @@ function SortableRow({
               {service.category}
             </Badge>
           ) : (
-            <span className="text-muted-foreground text-sm">-</span>
+            <span className="text-white/60 text-sm">-</span>
           )}
         </TableCell>
       )}
@@ -216,17 +216,17 @@ function SortableRow({
       </TableCell>
       <TableCell>
         {service.duration_minutes ? (
-          <div className="flex items-center gap-1 text-muted-foreground">
+          <div className="flex items-center gap-1 text-white/70">
             <Clock className="w-4 h-4" />
             {service.duration_minutes} min
           </div>
         ) : (
-          <span className="text-muted-foreground">-</span>
+          <span className="text-white/60">-</span>
         )}
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-1 text-sm">
-          <DollarSign className="w-4 h-4 text-muted-foreground" />
+          <DollarSign className="w-4 h-4 text-white/60" />
           {getPriceDisplay(service)}
         </div>
       </TableCell>
@@ -805,7 +805,7 @@ export function ServicesManager() {
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle>Services</CardTitle>
-          <CardDescription>Services your business offers</CardDescription>
+          <CardDescription className="text-white/70">Services your business offers</CardDescription>
         </div>
         <div className="flex gap-2">
           <input
@@ -899,7 +899,7 @@ export function ServicesManager() {
                         ) : (
                           <ChevronDown className="w-4 h-4" />
                         )}
-                        <FolderOpen className="w-4 h-4 text-muted-foreground" />
+                        <FolderOpen className="w-4 h-4 text-white/60" />
                         <span className="font-medium">{category}</span>
                         <Badge variant="secondary" className="ml-auto">
                           {categoryServices.length}
@@ -911,12 +911,12 @@ export function ServicesManager() {
                         <TableHeader>
                           <TableRow>
                             <TableHead className="w-10"></TableHead>
-                            <TableHead>Service</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Duration</TableHead>
-                            <TableHead>Pricing</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="w-40">Actions</TableHead>
+                            <TableHead className="text-white">Service</TableHead>
+                            <TableHead className="text-white">Type</TableHead>
+                            <TableHead className="text-white">Duration</TableHead>
+                            <TableHead className="text-white">Pricing</TableHead>
+                            <TableHead className="text-white">Status</TableHead>
+                            <TableHead className="w-40 text-white">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -946,13 +946,13 @@ export function ServicesManager() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-10"></TableHead>
-                    <TableHead>Service</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Duration</TableHead>
-                    <TableHead>Pricing</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="w-40">Actions</TableHead>
+                    <TableHead className="text-white">Service</TableHead>
+                    <TableHead className="text-white">Category</TableHead>
+                    <TableHead className="text-white">Type</TableHead>
+                    <TableHead className="text-white">Duration</TableHead>
+                    <TableHead className="text-white">Pricing</TableHead>
+                    <TableHead className="text-white">Status</TableHead>
+                    <TableHead className="w-40 text-white">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -978,8 +978,8 @@ export function ServicesManager() {
           </DndContext>
         ) : (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">No services yet</p>
-            <p className="text-sm text-muted-foreground">Add your first service to get started</p>
+            <p className="text-white/70">No services yet</p>
+            <p className="text-sm text-white/60">Add your first service to get started</p>
           </div>
         )}
       </CardContent>

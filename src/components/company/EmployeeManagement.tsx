@@ -405,11 +405,11 @@ export function EmployeeManagement() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Job Roles</TableHead>
-                  <TableHead>Joined</TableHead>
-                  <TableHead className="w-[100px]">Actions</TableHead>
+                  <TableHead className="text-white">Name</TableHead>
+                  <TableHead className="text-white">Email</TableHead>
+                  <TableHead className="text-white">Job Roles</TableHead>
+                  <TableHead className="text-white">Joined</TableHead>
+                  <TableHead className="w-[100px] text-white">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

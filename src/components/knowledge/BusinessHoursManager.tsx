@@ -303,13 +303,13 @@ export function BusinessHoursManager() {
                 checked={!hour.is_closed}
                 onCheckedChange={() => toggleDay(hourType, hour.day_of_week)}
               />
-              <Label className={cn('font-medium', hour.is_closed && 'text-muted-foreground')}>
+              <Label className={cn('font-medium text-white', hour.is_closed && 'text-white/60')}>
                 {DAYS[hour.day_of_week]}
               </Label>
             </div>
 
             {hour.is_closed ? (
-              <span className="text-muted-foreground text-sm">Closed</span>
+              <span className="text-white/60 text-sm">Closed</span>
             ) : (
               <div className="flex items-center gap-2">
                 <Select
@@ -327,7 +327,7 @@ export function BusinessHoursManager() {
                     ))}
                   </SelectContent>
                 </Select>
-                <span className="text-muted-foreground">to</span>
+                <span className="text-white/70">to</span>
                 <Select
                   value={hour.close_time || '17:00:00'}
                   onValueChange={(value) => updateHour(hourType, hour.day_of_week, 'close_time', value)}
@@ -377,7 +377,7 @@ export function BusinessHoursManager() {
               className="max-w-xs"
             />
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-white/60">
             Click on dates in the calendar to mark them as closed. Click again to remove.
           </p>
         </div>
@@ -457,7 +457,7 @@ export function BusinessHoursManager() {
                   className="gap-1 py-1 px-2"
                 >
                   {format(new Date(closure.closure_date + 'T00:00:00'), 'MMM d, yyyy')}
-                  {closure.name && <span className="text-muted-foreground">- {closure.name}</span>}
+                  {closure.name && <span className="text-white/60">- {closure.name}</span>}
                   <button
                     onClick={() => closure.id && removeClosureMutation.mutate(closure.id)}
                     className="ml-1 hover:text-destructive"
@@ -481,7 +481,7 @@ export function BusinessHoursManager() {
           <Clock className="w-5 h-5" />
           Business Hours
         </CardTitle>
-        <CardDescription>Set your operating hours for different scenarios</CardDescription>
+        <CardDescription className="text-white/70">Set your operating hours for different scenarios</CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading || isLoadingClosures ? (

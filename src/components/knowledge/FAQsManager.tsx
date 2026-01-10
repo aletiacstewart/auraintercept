@@ -250,7 +250,7 @@ export function FAQsManager() {
             <HelpCircle className="w-5 h-5" />
             FAQs
           </CardTitle>
-          <CardDescription>Common questions your AI can answer</CardDescription>
+          <CardDescription className="text-white/70">Common questions your AI can answer</CardDescription>
         </div>
         <div className="flex gap-2">
           <input
@@ -311,7 +311,7 @@ export function FAQsManager() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <p className="text-muted-foreground mb-4">{faq.answer}</p>
+                      <p className="text-white/70 mb-4">{faq.answer}</p>
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline" onClick={() => handleOpenDialog(faq)}>
                           <Pencil className="w-3 h-3 mr-1" />
@@ -335,9 +335,9 @@ export function FAQsManager() {
           </Accordion>
         ) : (
           <div className="text-center py-8">
-            <HelpCircle className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-            <p className="text-muted-foreground">No FAQs yet</p>
-            <p className="text-sm text-muted-foreground mb-4">Add questions your AI should know how to answer</p>
+            <HelpCircle className="w-12 h-12 mx-auto text-white/40 mb-3" />
+            <p className="text-white/70">No FAQs yet</p>
+            <p className="text-sm text-white/60 mb-4">Add questions your AI should know how to answer</p>
             <div className="flex justify-center gap-2">
               <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2">
                 <FileText className="w-4 h-4" />
