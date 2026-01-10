@@ -158,7 +158,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
 
   return (
-    <Card className="h-[600px] flex flex-col overflow-hidden shadow-xl border-0 bg-slate-800">
+    <Card className="h-[600px] flex flex-col overflow-hidden shadow-xl border-border bg-card">
       {/* Glass Header */}
       <GlassHeader
         logoUrl={company?.logo_url}

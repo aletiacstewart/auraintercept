@@ -430,24 +430,24 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
         {/* View Tabs */}
         <div className="flex items-center justify-between mt-4 flex-wrap gap-3">
           <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'map' | 'agenda' | 'calendar')}>
-            <TabsList className="bg-slate-700/80 border border-white/10">
+            <TabsList className="bg-muted border border-border">
               <TabsTrigger 
                 value="map" 
-                className="text-white/70 data-[state=active]:bg-accent data-[state=active]:text-white hover:text-white"
+                className="text-muted-foreground data-[state=active]:bg-accent data-[state=active]:text-white hover:text-foreground"
               >
                 <Map className="h-4 w-4 mr-2" />
                 Map View
               </TabsTrigger>
               <TabsTrigger 
                 value="agenda"
-                className="text-white/70 data-[state=active]:bg-accent data-[state=active]:text-white hover:text-white"
+                className="text-muted-foreground data-[state=active]:bg-accent data-[state=active]:text-white hover:text-foreground"
               >
                 <List className="h-4 w-4 mr-2" />
                 Agenda View
               </TabsTrigger>
               <TabsTrigger 
                 value="calendar"
-                className="text-white/70 data-[state=active]:bg-accent data-[state=active]:text-white hover:text-white"
+                className="text-muted-foreground data-[state=active]:bg-accent data-[state=active]:text-white hover:text-foreground"
               >
                 <Calendar className="h-4 w-4 mr-2" />
                 Calendar
