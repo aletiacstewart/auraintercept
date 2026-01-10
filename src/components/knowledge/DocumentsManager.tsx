@@ -221,7 +221,7 @@ export function DocumentsManager() {
           </div>
         )}
 
-        <div className="mt-4 p-3 rounded-lg bg-muted/50 text-sm text-white/70">
+        <div className="mt-4 p-3 rounded-lg bg-slate-700/50 border border-slate-600/50 text-sm text-white/80">
           <p><strong className="text-white">Supported formats:</strong> PDF, TXT, Markdown, DOC, DOCX</p>
           <p><strong className="text-white">Max file size:</strong> 10MB per file</p>
         </div>

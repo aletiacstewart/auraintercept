@@ -176,9 +176,9 @@ export default function TechnicianDashboard() {
             <CardContent className="space-y-3">
               {/* Address */}
               {currentJob.customer_address && (
-                <div className="flex items-start gap-2 p-2.5 rounded-lg bg-muted/50 text-sm">
+                <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-700/50 border border-slate-600/50 text-sm">
                   <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-accent" />
-                  <span className="text-white/70">{currentJob.customer_address}</span>
+                  <span className="text-white/80">{currentJob.customer_address}</span>
                 </div>
               )}
 
@@ -254,8 +254,8 @@ export default function TechnicianDashboard() {
           // No Jobs
           <Card className="border-border/50">
             <CardContent className="flex flex-col items-center justify-center py-10">
-              <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center mb-3">
-                <CheckCircle2 className="h-7 w-7 text-muted-foreground" />
+              <div className="w-14 h-14 rounded-xl bg-slate-600 flex items-center justify-center mb-3">
+                <CheckCircle2 className="h-7 w-7 text-white/70" />
               </div>
               <p className="font-medium">No Active Jobs</p>
               <p className="text-sm text-muted-foreground mt-1">You're all caught up!</p>
@@ -320,15 +320,15 @@ export default function TechnicianDashboard() {
                   <span className="text-white/70">Completed</span>
                   <span className="font-semibold">{completedJobs.length}/{jobs?.length || 0}</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                <div className="w-full h-2 rounded-full bg-slate-600 overflow-hidden">
                   <div 
                     className="h-full rounded-full bg-gradient-to-r from-accent to-accent/60 transition-all duration-500" 
                     style={{ width: jobs?.length ? `${(completedJobs.length / jobs.length) * 100}%` : '0%' }} 
                   />
                 </div>
               </div>
-              <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50">
-                <span className="text-sm text-white/70">Status</span>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-700/50 border border-slate-600/50">
+                <span className="text-sm text-white/80">Status</span>
                 <span className="text-sm font-medium text-green-400 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                   On Track

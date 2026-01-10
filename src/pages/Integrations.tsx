@@ -344,7 +344,7 @@ export default function Integrations() {
                           "flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium transition-colors",
                           status.connected 
                             ? "bg-green-500/10 text-green-600" 
-                            : "bg-muted text-muted-foreground"
+                            : "bg-slate-600/50 text-white/70"
                         )}
                       >
                         <status.icon className="w-3 h-3" />
@@ -496,7 +496,7 @@ export default function Integrations() {
                 <CardContent className="pt-0">
                   <p className="text-sm text-muted-foreground mb-2">{integration.description}</p>
                   {integration.note && (
-                    <p className="text-xs text-muted-foreground/80 mb-3 p-2 rounded bg-muted/50 border border-border/50">
+                    <p className="text-xs text-white/80 mb-3 p-2 rounded bg-slate-600/50 border border-slate-500/30">
                       {integration.note}
                     </p>
                   )}

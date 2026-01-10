@@ -309,7 +309,7 @@ export function CompanyAdminDashboard() {
                   <span>Quote Conversion</span>
                   <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-muted">
+                <div className="w-full h-2 rounded-full bg-slate-600">
                   <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${stats?.quoteConversionRate ?? 0}%` }} />
                 </div>
               </div>
@@ -318,7 +318,7 @@ export function CompanyAdminDashboard() {
                   <span>Appointment Completion</span>
                   <span className="font-medium">{stats?.appointmentCompletionRate ?? 0}%</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-muted">
+                <div className="w-full h-2 rounded-full bg-slate-600">
                   <div className="h-full rounded-full bg-secondary transition-all" style={{ width: `${stats?.appointmentCompletionRate ?? 0}%` }} />
                 </div>
               </div>
@@ -327,7 +327,7 @@ export function CompanyAdminDashboard() {
                   <span>Customer Satisfaction</span>
                   <span className="font-medium">{stats?.satisfactionRate ?? 0}%</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-muted">
+                <div className="w-full h-2 rounded-full bg-slate-600">
                   <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${stats?.satisfactionRate ?? 0}%` }} />
                 </div>
               </div>

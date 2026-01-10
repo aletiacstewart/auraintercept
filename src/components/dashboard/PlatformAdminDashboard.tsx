@@ -188,7 +188,7 @@ export function PlatformAdminDashboard() {
                   <span>Monthly Active Companies</span>
                   <span className="font-medium">{stats?.companies ?? 0}</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-muted">
+                <div className="w-full h-2 rounded-full bg-slate-600">
                   <div className="h-full rounded-full gradient-primary" style={{ width: '60%' }} />
                 </div>
               </div>
@@ -197,7 +197,7 @@ export function PlatformAdminDashboard() {
                   <span>User Engagement</span>
                   <span className="font-medium">78%</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-muted">
+                <div className="w-full h-2 rounded-full bg-slate-600">
                   <div className="h-full rounded-full bg-secondary" style={{ width: '78%' }} />
                 </div>
               </div>
@@ -206,7 +206,7 @@ export function PlatformAdminDashboard() {
                   <span>AI Response Rate</span>
                   <span className="font-medium">94%</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-muted">
+                <div className="w-full h-2 rounded-full bg-slate-600">
                   <div className="h-full rounded-full bg-accent" style={{ width: '94%' }} />
                 </div>
               </div>

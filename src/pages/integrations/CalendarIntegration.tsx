@@ -93,8 +93,8 @@ export default function CalendarIntegration() {
               </p>
               <div className="flex flex-wrap gap-2">
                 <span className="px-2 py-1 bg-green-500/10 text-green-600 text-xs rounded-full">Free</span>
-                <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">Works Everywhere</span>
-                <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">No Setup Required</span>
+                <span className="px-2 py-1 bg-slate-600/50 text-white/80 text-xs rounded-full">Works Everywhere</span>
+                <span className="px-2 py-1 bg-slate-600/50 text-white/80 text-xs rounded-full">No Setup Required</span>
               </div>
             </div>
             <CalendarSubscription type="company" />
@@ -111,7 +111,7 @@ export default function CalendarIntegration() {
               <div className="flex flex-wrap gap-2">
                 <span className="px-2 py-1 bg-green-500/10 text-green-600 text-xs rounded-full">Free</span>
                 <span className="px-2 py-1 bg-blue-500/10 text-blue-600 text-xs rounded-full">Two-Way Sync</span>
-                <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-full">Apple/Android/Thunderbird</span>
+                <span className="px-2 py-1 bg-slate-600/50 text-white/80 text-xs rounded-full">Apple/Android/Thunderbird</span>
               </div>
             </div>
             <CalDAVSubscription type="company" />
