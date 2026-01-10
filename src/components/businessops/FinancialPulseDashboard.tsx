@@ -113,68 +113,68 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="glass-panel border-accent/20">
+        <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <UserPlus className="h-5 w-5 text-green-500" />
-              <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
+              <UserPlus className="h-5 w-5 text-white" />
+              <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30">
                 30d
               </Badge>
             </div>
-            <p className="text-2xl font-bold mt-2">{newLeads.length}</p>
-            <p className="text-xs text-muted-foreground">New Leads</p>
+            <p className="text-2xl font-bold mt-2 text-accent">{newLeads.length}</p>
+            <p className="text-xs text-white/70">New Leads</p>
           </CardContent>
         </Card>
 
-        <Card className="glass-panel border-accent/20">
+        <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <FileText className="h-5 w-5 text-accent" />
-              <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30">
+              <FileText className="h-5 w-5 text-white" />
+              <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30">
                 {quotes.length}
               </Badge>
             </div>
-            <p className="text-2xl font-bold mt-2">${pendingQuoteValue.toFixed(0)}</p>
-            <p className="text-xs text-muted-foreground">Pending Quotes</p>
+            <p className="text-2xl font-bold mt-2 text-accent">${pendingQuoteValue.toFixed(0)}</p>
+            <p className="text-xs text-white/70">Pending Quotes</p>
           </CardContent>
         </Card>
 
-        <Card className="glass-panel border-accent/20">
+        <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <Receipt className="h-5 w-5 text-accent" />
-              <Badge variant="outline" className={`${overdueInvoices.length > 0 ? 'bg-destructive/10 text-destructive border-destructive/30' : 'bg-accent/10 text-accent border-accent/30'}`}>
+              <Receipt className="h-5 w-5 text-white" />
+              <Badge variant="outline" className={`${overdueInvoices.length > 0 ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-accent/20 text-accent border-accent/30'}`}>
                 {invoices.length}
               </Badge>
             </div>
-            <p className="text-2xl font-bold mt-2">${unpaidInvoiceValue.toFixed(0)}</p>
-            <p className="text-xs text-muted-foreground">Unpaid Invoices</p>
+            <p className="text-2xl font-bold mt-2 text-accent">${unpaidInvoiceValue.toFixed(0)}</p>
+            <p className="text-xs text-white/70">Unpaid Invoices</p>
           </CardContent>
         </Card>
 
         {isPlatformAdmin && (
-          <Card className={`glass-panel transition-colors cursor-pointer ${inventoryAlerts.length > 0 ? 'border-destructive/40 hover:border-destructive/60' : 'border-accent/20 hover:border-accent/40'}`} onClick={() => onNavigate('inventory')}>
+          <Card className={`bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50 transition-colors cursor-pointer hover:border-accent/40`} onClick={() => onNavigate('inventory')}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
-                <Package className="h-5 w-5 text-accent" />
+                <Package className="h-5 w-5 text-white" />
                 {inventoryAlerts.length > 0 && (
                   <AlertTriangle className="h-4 w-4 text-destructive animate-pulse" />
                 )}
               </div>
-              <p className="text-2xl font-bold mt-2">{inventoryAlerts.length}</p>
-              <p className="text-xs text-muted-foreground">Low Stock Alerts</p>
+              <p className="text-2xl font-bold mt-2 text-accent">{inventoryAlerts.length}</p>
+              <p className="text-xs text-white/70">Low Stock Alerts</p>
             </CardContent>
           </Card>
         )}
 
-        <Card className="glass-panel border-accent/20 hover:border-accent/40 transition-colors cursor-pointer" onClick={() => onNavigate('payments')}>
+        <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50 hover:border-accent/40 transition-colors cursor-pointer" onClick={() => onNavigate('payments')}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <DollarSign className="h-5 w-5 text-accent" />
-              <TrendingUp className="h-4 w-4 text-green-500" />
+              <DollarSign className="h-5 w-5 text-white" />
+              <TrendingUp className="h-4 w-4 text-green-400" />
             </div>
-            <p className="text-2xl font-bold mt-2">Active</p>
-            <p className="text-xs text-muted-foreground">Payment Gateway</p>
+            <p className="text-2xl font-bold mt-2 text-accent">Active</p>
+            <p className="text-xs text-white/70">Payment Gateway</p>
           </CardContent>
         </Card>
       </div>
