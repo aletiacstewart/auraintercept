@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -26,6 +27,7 @@ interface FinancialPulseDashboardProps {
 }
 
 export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: FinancialPulseDashboardProps) {
+  const navigate = useNavigate();
   const isPlatformAdmin = userRole === 'platform_admin';
   // Fetch pending quotes for display only
   const { data: quotes = [] } = useQuery({
@@ -113,7 +115,10 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-slate-800 border-white/10">
+        <Card 
+          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          onClick={() => navigate('/dashboard/leads')}
+        >
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <UserPlus className="h-5 w-5 text-white" />
@@ -126,7 +131,10 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-white/10">
+        <Card 
+          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          onClick={() => navigate('/dashboard/quotes')}
+        >
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <FileText className="h-5 w-5 text-white" />
@@ -139,7 +147,10 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-white/10">
+        <Card 
+          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          onClick={() => navigate('/dashboard/invoices')}
+        >
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <Receipt className="h-5 w-5 text-white" />
