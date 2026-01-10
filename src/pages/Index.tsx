@@ -381,7 +381,7 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">AI Agents</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">15 Specialized AI Agents</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">11 Specialized AI Agents</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Each agent is purpose-built to handle specific business functions, 
               working together seamlessly with intelligent handoffs and context preservation.
@@ -481,10 +481,9 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Platform Features</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Everything You Need to Succeed</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Built for service businesses that demand reliability, security, and scalability.
-            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">The All-in-One AI Intercept Center for Service Pros</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">Transform your service business software into a 24/7 revenue engine. Our Intercept Center offers a multi-channel AI safety net that captures every customer inquiry through intelligent ai chat agents and voice agents. Manage your mobile workforce with ease using our technician consoles and provide your clients with a self-service appointment tracking portal. By automating smart reminders and office workflows, Aura Intercept eliminates manual tasks,
+and allows your team to focus on delivering expert onsite service.</p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -508,9 +507,9 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Industries</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Industries We Empower</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">AI Automation for Field Service Industries</h2>
             <p className="text-foreground max-w-2xl mx-auto">
-              Aura Intercept provides specialized Agentic Logic for high-demand onsite service providers.
+              "In the fast-paced world of home and commercial services, responsiveness is the key to growth. Aura Intercept brings intelligent automation to the trades, providing a white-label AI workforce that intercepts every inquiry and books it directly into your calendar. Our platform is engineered for onsite service providers who need to eliminate manual office tasks and reduce no-shows without losing the personal touch. From landscaping to restoration, we empower service-based businesses to automate their workflow and focus on the work that matters."
             </p>
           </div>
 
