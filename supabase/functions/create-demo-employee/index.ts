@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
       auth: { autoRefreshToken: false, persistSession: false }
     });
 
-    const { email, password, fullName, companyId, jobType, mustChangePassword, sendWelcomeEmail } = await req.json();
+    const { email, password, fullName, phone, address, companyId, jobType, jobTypes, mustChangePassword, sendWelcomeEmail } = await req.json();
 
     if (!email || !password || !companyId) {
       return new Response(
@@ -27,6 +27,9 @@ Deno.serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Support both single jobType and multiple jobTypes
+    const assignedJobTypes: string[] = jobTypes || (jobType ? [jobType] : []);
 
     console.log(`Creating employee account for ${email} in company ${companyId}`);
 
@@ -48,12 +51,14 @@ Deno.serve(async (req) => {
 
     const userId = userData.user.id;
 
-    // Update profile with company_id and must_change_password flag
+    // Update profile with company_id, phone, address, and must_change_password flag
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .update({ 
         company_id: companyId, 
         full_name: fullName || 'Employee',
+        phone: phone || null,
+        address: address || null,
         must_change_password: mustChangePassword || false,
         email: email
       })
@@ -72,18 +77,20 @@ Deno.serve(async (req) => {
       console.error('Error assigning role:', roleError);
     }
 
-    // Assign job type if provided
-    if (jobType) {
+    // Assign job types if provided
+    if (assignedJobTypes.length > 0) {
+      const jobAssignments = assignedJobTypes.map(jt => ({
+        employee_id: userId,
+        company_id: companyId,
+        job_type: jt
+      }));
+
       const { error: jobTypeError } = await supabaseAdmin
         .from('employee_job_assignments')
-        .insert({ 
-          employee_id: userId, 
-          company_id: companyId,
-          job_type: jobType 
-        });
+        .insert(jobAssignments);
 
       if (jobTypeError) {
-        console.error('Error assigning job type:', jobTypeError);
+        console.error('Error assigning job types:', jobTypeError);
       }
     }
 
@@ -150,7 +157,7 @@ Deno.serve(async (req) => {
         success: true, 
         userId, 
         email,
-        jobType: jobType || null,
+        jobTypes: assignedJobTypes,
         mustChangePassword: mustChangePassword || false,
         message: 'Employee account created successfully' 
       }),
