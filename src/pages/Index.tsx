@@ -189,11 +189,11 @@ const industryCategories = [
     emoji: '⚡',
     subtitle: 'High-Urgency',
     industries: [
-      { name: 'HVAC', icon: Flame, description: 'Heating, Ventilation, & Air Conditioning' },
-      { name: 'Plumbing', icon: Droplet, description: 'Emergency Repairs & New Installations' },
-      { name: 'Electrical', icon: Zap, description: 'Residential & Commercial Power Solutions' },
-      { name: 'Restoration', icon: Wind, description: 'Water, Fire, & Mold Remediation' },
-      { name: 'Locksmiths', icon: Key, description: 'Emergency & Security Access' },
+      { name: 'HVAC', icon: Flame, description: 'Heating, Ventilation, & AC' },
+      { name: 'Plumbing', icon: Droplet, description: 'Emergency & Installations' },
+      { name: 'Electrical', icon: Zap, description: 'Residential & Commercial' },
+      { name: 'Restoration', icon: Wind, description: 'Water, Fire, & Mold' },
+      { name: 'Locksmiths', icon: Key, description: 'Emergency & Security' },
     ]
   },
   {
@@ -201,11 +201,10 @@ const industryCategories = [
     emoji: '🏠',
     subtitle: 'Services',
     industries: [
-      { name: 'Roofing', icon: Home, description: 'Repair, Replacement, & Storm Damage' },
-      { name: 'Garage Doors', icon: PanelTop, description: 'Spring Repair & Automated Openers' },
-      { name: 'Fencing & Decking', icon: Fence, description: 'Professional Perimeter Solutions' },
-      { name: 'Solar Energy', icon: Sun, description: 'Panel Installation & Maintenance' },
-      { name: 'Windows & Doors', icon: DoorOpen, description: 'Specialized Glass & Frame Fitting' },
+      { name: 'Roofing', icon: Home, description: 'Repair & Storm Damage' },
+      { name: 'Doors & Access', icon: DoorOpen, description: 'Garage, Windows, & Entries' },
+      { name: 'Fencing & Decking', icon: Fence, description: 'Perimeter Solutions' },
+      { name: 'Solar Energy', icon: Sun, description: 'Panels & Maintenance' },
     ]
   },
   {
@@ -213,11 +212,10 @@ const industryCategories = [
     emoji: '🌿',
     subtitle: 'Maintenance',
     industries: [
-      { name: 'Pest Control', icon: Bug, description: 'Recurring Residential & Commercial Protection' },
-      { name: 'Landscaping', icon: TreeDeciduous, description: 'Design, Maintenance, & Hardscaping' },
-      { name: 'Pool & Spa', icon: Waves, description: 'Water Chemistry & Equipment Repair' },
-      { name: 'Tree Services', icon: TreePine, description: 'Trimming, Removal, & Arborist Consulting' },
-      { name: 'Septic & Sewer', icon: Trash2, description: 'Waste Management & Line Maintenance' },
+      { name: 'Pest Control', icon: Bug, description: 'Residential & Commercial' },
+      { name: 'Landscape & Trees', icon: TreeDeciduous, description: 'Design, Trimming, & Removal' },
+      { name: 'Pool & Spa', icon: Waves, description: 'Chemistry & Equipment' },
+      { name: 'Septic & Sewer', icon: Trash2, description: 'Waste & Line Maintenance' },
     ]
   },
   {
@@ -225,11 +223,11 @@ const industryCategories = [
     emoji: '🛠',
     subtitle: 'Services',
     industries: [
-      { name: 'Appliance Repair', icon: Refrigerator, description: 'Kitchen & Laundry Machine Specialists' },
-      { name: 'Handyman', icon: Hammer, description: 'General Home Repair & Carpentry' },
-      { name: 'Painting & Coating', icon: PaintBucket, description: 'Professional Interior & Exterior Finishes' },
-      { name: 'Flooring & Tile', icon: Grid3X3, description: 'Hardwood, Laminate, & Stone Installation' },
-      { name: 'Cleaning Services', icon: Sparkle, description: 'Carpet, Pressure Washing, & Janitorial' },
+      { name: 'Appliance Repair', icon: Refrigerator, description: 'Kitchen & Laundry' },
+      { name: 'Handyman', icon: Hammer, description: 'Repair & Carpentry' },
+      { name: 'Painting', icon: PaintBucket, description: 'Interior & Exterior' },
+      { name: 'Flooring & Tile', icon: Grid3X3, description: 'Hardwood & Stone' },
+      { name: 'Cleaning', icon: Sparkle, description: 'Carpet & Janitorial' },
     ]
   },
   {
@@ -237,10 +235,10 @@ const industryCategories = [
     emoji: '🚗',
     subtitle: 'Services',
     industries: [
-      { name: 'Mobile Auto Care', icon: Car, description: 'Detailing & Mechanical Repair' },
-      { name: 'Facility Management', icon: HardHat, description: 'B2B Building Maintenance' },
-      { name: 'IT Field Services', icon: Wifi, description: 'Network & Hardware Infrastructure' },
-      { name: 'Security Systems', icon: Camera, description: 'Onsite Camera & Alarm Integration' },
+      { name: 'Auto Care', icon: Car, description: 'Detailing & Repair' },
+      { name: 'Facility Mgmt', icon: HardHat, description: 'B2B Maintenance' },
+      { name: 'IT Field Services', icon: Wifi, description: 'Network & Hardware' },
+      { name: 'Security Systems', icon: Camera, description: 'Cameras & Alarms' },
     ]
   },
 ];
