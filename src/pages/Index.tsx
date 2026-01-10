@@ -203,10 +203,6 @@ const industryCategories = [{
     name: 'Pool & Spa',
     icon: Waves,
     description: 'Chemistry & Equipment'
-  }, {
-    name: 'Septic & Sewer',
-    icon: Trash2,
-    description: 'Waste & Line Maintenance'
   }]
 }, {
   category: 'Specialized Home',
