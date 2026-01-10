@@ -489,7 +489,7 @@ export default function Auth() {
             </div>
             <div className="text-center">
               <h1 className="text-2xl font-bold tracking-tight">Aura Intercept</h1>
-              <p className="text-sm text-muted-foreground">Infrastructure of Intent</p>
+              <p className="text-sm text-muted-foreground">Smart Agents, Automated Service</p>
               {/* Debug line for QR troubleshooting - only shows when source=qr */}
               {source === 'qr' && (
                 <p className="mt-2 text-xs font-mono bg-muted px-2 py-1 rounded inline-block">

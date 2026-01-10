@@ -298,7 +298,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           {!collapsed && (
             <div className="overflow-hidden">
               <h1 className="font-bold text-sm truncate">Aura Intercept</h1>
-              <p className="text-xs text-sidebar-foreground/60 truncate">Infrastructure of Intent</p>
+              <p className="text-xs text-sidebar-foreground/60 truncate">Smart Agents, Automated Service</p>
             </div>
           )}
         </div>
