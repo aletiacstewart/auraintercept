@@ -252,7 +252,7 @@ export function InventoryManager() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Items</CardTitle>
+            <CardTitle className="text-sm font-medium text-white">Total Items</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{items.length}</div>
@@ -260,7 +260,7 @@ export function InventoryManager() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Value</CardTitle>
+            <CardTitle className="text-sm font-medium text-white">Total Value</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${totalValue.toFixed(2)}</div>
@@ -268,7 +268,7 @@ export function InventoryManager() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Categories</CardTitle>
+            <CardTitle className="text-sm font-medium text-white">Categories</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{categories.length}</div>
@@ -276,7 +276,7 @@ export function InventoryManager() {
         </Card>
         <Card className={lowStockItems.length > 0 ? 'border-destructive' : ''}>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-white flex items-center gap-2">
               {lowStockItems.length > 0 && <AlertTriangle className="w-4 h-4 text-destructive" />}
               Low Stock
             </CardTitle>

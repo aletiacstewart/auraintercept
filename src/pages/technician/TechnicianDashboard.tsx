@@ -136,7 +136,7 @@ export default function TechnicianDashboard() {
                   <stat.icon className="w-4 h-4 text-primary-foreground" />
                 </div>
                 <p className="text-xl font-bold text-center">{isLoading ? '-' : stat.value}</p>
-                <p className="text-[10px] text-muted-foreground text-center uppercase tracking-wide">{stat.label}</p>
+                <p className="text-[10px] text-white/70 text-center uppercase tracking-wide">{stat.label}</p>
               </CardContent>
             </Card>
           ))}
@@ -317,7 +317,7 @@ export default function TechnicianDashboard() {
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Completed</span>
+                  <span className="text-white/70">Completed</span>
                   <span className="font-semibold">{completedJobs.length}/{jobs?.length || 0}</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
@@ -328,7 +328,7 @@ export default function TechnicianDashboard() {
                 </div>
               </div>
               <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50">
-                <span className="text-sm text-muted-foreground">Status</span>
+                <span className="text-sm text-white/70">Status</span>
                 <span className="text-sm font-medium text-green-400 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                   On Track
@@ -341,7 +341,7 @@ export default function TechnicianDashboard() {
         {/* View All Jobs Link */}
         <Button 
           variant="ghost" 
-          className="w-full justify-between text-muted-foreground"
+          className="w-full justify-between text-white/70"
           onClick={() => navigate('/technician/jobs')}
         >
           View all jobs

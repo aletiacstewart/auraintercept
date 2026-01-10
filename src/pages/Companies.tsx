@@ -486,7 +486,7 @@ export default function Companies() {
         <div className="grid gap-4 md:grid-cols-3">
           <Card className="border-border/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium text-white">
                 Total Companies
               </CardTitle>
             </CardHeader>
@@ -496,7 +496,7 @@ export default function Companies() {
           </Card>
           <Card className="border-border/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium text-white">
                 Total Employees
               </CardTitle>
             </CardHeader>
@@ -508,7 +508,7 @@ export default function Companies() {
           </Card>
           <Card className="border-border/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium text-white">
                 This Month
               </CardTitle>
             </CardHeader>

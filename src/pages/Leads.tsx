@@ -149,10 +149,10 @@ export default function Leads() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-muted-foreground" />
+                <Users className="h-5 w-5 text-white/70" />
                 <span className="text-2xl font-bold">{stats.total}</span>
               </div>
-              <p className="text-sm text-muted-foreground">Total Leads</p>
+              <p className="text-sm text-white/70">Total Leads</p>
             </CardContent>
           </Card>
           <Card>
@@ -161,7 +161,7 @@ export default function Leads() {
                 <Clock className="h-5 w-5 text-blue-500" />
                 <span className="text-2xl font-bold">{stats.new}</span>
               </div>
-              <p className="text-sm text-muted-foreground">New Leads</p>
+              <p className="text-sm text-white/70">New Leads</p>
             </CardContent>
           </Card>
           <Card>
@@ -170,7 +170,7 @@ export default function Leads() {
                 <Flame className="h-5 w-5 text-red-500" />
                 <span className="text-2xl font-bold">{stats.hot}</span>
               </div>
-              <p className="text-sm text-muted-foreground">Hot Leads</p>
+              <p className="text-sm text-white/70">Hot Leads</p>
             </CardContent>
           </Card>
           <Card>
@@ -179,7 +179,7 @@ export default function Leads() {
                 <CheckCircle className="h-5 w-5 text-green-500" />
                 <span className="text-2xl font-bold">{stats.converted}</span>
               </div>
-              <p className="text-sm text-muted-foreground">Converted</p>
+              <p className="text-sm text-white/70">Converted</p>
             </CardContent>
           </Card>
         </div>

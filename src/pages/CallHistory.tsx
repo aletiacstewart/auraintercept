@@ -160,7 +160,7 @@ export default function CallHistory() {
         <div className="grid gap-4 md:grid-cols-4">
           <Card className="border-border/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Calls</CardTitle>
+              <CardTitle className="text-sm font-medium text-white">Total Calls</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.total}</div>
@@ -168,7 +168,7 @@ export default function CallHistory() {
           </Card>
           <Card className="border-border/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <CardTitle className="text-sm font-medium text-white flex items-center gap-2">
                 <PhoneIncoming className="w-4 h-4" /> Inbound
               </CardTitle>
             </CardHeader>
@@ -178,7 +178,7 @@ export default function CallHistory() {
           </Card>
           <Card className="border-border/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <CardTitle className="text-sm font-medium text-white flex items-center gap-2">
                 <PhoneOutgoing className="w-4 h-4" /> Outbound
               </CardTitle>
             </CardHeader>
@@ -188,7 +188,7 @@ export default function CallHistory() {
           </Card>
           <Card className="border-border/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Avg Duration</CardTitle>
+              <CardTitle className="text-sm font-medium text-white">Avg Duration</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{formatDuration(Math.round(stats.avgDuration))}</div>
