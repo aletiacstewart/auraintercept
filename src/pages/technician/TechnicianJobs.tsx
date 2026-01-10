@@ -8,7 +8,7 @@ export default function TechnicianJobs() {
       <div className="space-y-6 animate-fade-in">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">My Jobs</h1>
-          <p className="text-muted-foreground mt-1">Manage your assigned job queue</p>
+          <p className="text-white/70 mt-1">Manage your assigned job queue</p>
         </div>
         <TechnicianJobQueue />
       </div>

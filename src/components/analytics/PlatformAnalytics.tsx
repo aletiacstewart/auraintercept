@@ -231,7 +231,7 @@ export function PlatformAnalytics() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Platform Analytics</h1>
-        <p className="text-muted-foreground mt-1">
+        <p className="text-white/70 mt-1">
           Comprehensive metrics across all tenants
         </p>
       </div>

@@ -110,7 +110,7 @@ export function PlatformAdminDashboard() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Platform Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
+        <p className="text-white/70 mt-1">
           Welcome to the Aura Intercept admin panel
         </p>
       </div>

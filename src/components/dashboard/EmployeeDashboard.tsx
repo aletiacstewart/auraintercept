@@ -186,7 +186,7 @@ export function EmployeeDashboard() {
               <h1 className="text-3xl font-bold tracking-tight">
                 Welcome, {profile?.full_name?.split(' ')[0] || 'Team Member'}
               </h1>
-              <p className="text-muted-foreground mt-1">
+              <p className="text-white/70 mt-1">
                 {company?.name} • {primaryJobType ? primaryJobType.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Employee'}
               </p>
             </>

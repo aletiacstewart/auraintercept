@@ -144,7 +144,7 @@ export function CreateTestAccounts({ companyId }: CreateTestAccountsProps) {
           <UserPlus className="h-5 w-5" />
           Create Test Accounts
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-white/70">
           Create test accounts for employees and customers. Default password: Test123!
         </CardDescription>
       </CardHeader>
@@ -206,7 +206,7 @@ export function CreateTestAccounts({ companyId }: CreateTestAccountsProps) {
             {/* Bulk creation */}
             <div className="border-t pt-4">
               <h3 className="text-sm font-medium mb-4">Create All Test Employees</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-white/70 mb-4">
                 Creates one test account per job type with emails like technician@test.com, dispatch@test.com, etc.
               </p>
               <Button onClick={handleCreateAllEmployees} disabled={creatingAll} variant="outline">
@@ -238,7 +238,7 @@ export function CreateTestAccounts({ companyId }: CreateTestAccountsProps) {
                 <Users className="h-4 w-4" />
                 Create Customer Account
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-white/70">
                 Creates a customer account associated with this company. They can log in at the customer portal.
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
