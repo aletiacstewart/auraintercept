@@ -140,7 +140,7 @@ export default function Leads() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Leads</h1>
-            <p className="text-muted-foreground">Manage and follow up on potential customers</p>
+            <p className="text-white/70">Manage and follow up on potential customers</p>
           </div>
         </div>
 

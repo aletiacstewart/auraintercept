@@ -169,7 +169,7 @@ export default function TechnicianDashboard() {
               <CardTitle className="text-base mt-2">
                 {currentJob.appointment?.service_type || 'Service Call'}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/70">
                 {currentJob.appointment?.customer_name}
               </CardDescription>
             </CardHeader>
@@ -178,7 +178,7 @@ export default function TechnicianDashboard() {
               {currentJob.customer_address && (
                 <div className="flex items-start gap-2 p-2.5 rounded-lg bg-muted/50 text-sm">
                   <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-accent" />
-                  <span className="text-muted-foreground">{currentJob.customer_address}</span>
+                  <span className="text-white/70">{currentJob.customer_address}</span>
                 </div>
               )}
 
@@ -229,7 +229,7 @@ export default function TechnicianDashboard() {
                   Awaiting Acceptance
                 </Badge>
                 {nextJob.appointment?.datetime && (
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-white/70">
                     {format(new Date(nextJob.appointment.datetime), 'h:mm a')}
                   </span>
                 )}
@@ -237,7 +237,7 @@ export default function TechnicianDashboard() {
               <CardTitle className="text-base mt-2">
                 {nextJob.appointment?.service_type || 'Service Call'}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/70">
                 {nextJob.appointment?.customer_name}
               </CardDescription>
             </CardHeader>

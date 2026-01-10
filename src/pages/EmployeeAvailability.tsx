@@ -7,7 +7,7 @@ export default function EmployeeAvailability() {
       <div className="space-y-6 animate-fade-in">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Employee Availability</h1>
-          <p className="text-muted-foreground">
+          <p className="text-white/70">
             Manage employee schedules and time off
           </p>
         </div>

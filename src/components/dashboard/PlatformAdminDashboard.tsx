@@ -150,7 +150,7 @@ export function PlatformAdminDashboard() {
               <Activity className="w-5 h-5 text-primary" />
               Platform Activity
             </CardTitle>
-            <CardDescription>Recent activity across all tenants</CardDescription>
+            <CardDescription className="text-white/70">Recent activity across all tenants</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -179,7 +179,7 @@ export function PlatformAdminDashboard() {
               <TrendingUp className="w-5 h-5 text-secondary" />
               Growth Metrics
             </CardTitle>
-            <CardDescription>Platform performance overview</CardDescription>
+            <CardDescription className="text-white/70">Platform performance overview</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

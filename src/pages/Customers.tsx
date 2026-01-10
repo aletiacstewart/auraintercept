@@ -193,7 +193,7 @@ export default function Customers() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Customers</h1>
-            <p className="text-muted-foreground">
+            <p className="text-white/70">
               View and manage customer information, history, and preferences
             </p>
           </div>
@@ -220,7 +220,7 @@ export default function Customers() {
         <Card>
           <CardHeader>
             <CardTitle>Customer Directory</CardTitle>
-            <CardDescription>
+            <CardDescription className="text-white/70">
               Click on a customer to view their complete history and details
             </CardDescription>
           </CardHeader>
@@ -245,7 +245,7 @@ export default function Customers() {
                       </div>
                       <div>
                         <p className="font-medium">{customer.name}</p>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-4 text-sm text-white/70">
                           <span className="flex items-center gap-1">
                             <Mail className="h-3 w-3" />
                             {customer.email}
@@ -278,13 +278,13 @@ export default function Customers() {
                           </Badge>
                         ) : null}
                       </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      <ChevronRight className="h-4 w-4 text-white/70" />
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 text-muted-foreground">
+              <div className="text-center py-12 text-white/70">
                 <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p className="font-medium">No customers found</p>
                 <p className="text-sm">Customers will appear here when they book appointments or request quotes</p>

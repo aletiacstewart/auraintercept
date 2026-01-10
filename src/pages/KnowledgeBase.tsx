@@ -16,7 +16,7 @@ export default function KnowledgeBase() {
       <div className="space-y-6 animate-fade-in">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Knowledge Base</h1>
-          <p className="text-muted-foreground">
+          <p className="text-white/70">
             Train your AI agent with your business information
           </p>
         </div>

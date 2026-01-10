@@ -139,7 +139,7 @@ const AIAgent = () => {
             </CardHeader>
             <CardContent>
               <Badge variant="default" className="bg-green-500">Active</Badge>
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-xs text-white/70 mt-2">
                 Knowledge base connected
               </p>
             </CardContent>
@@ -154,7 +154,7 @@ const AIAgent = () => {
             </CardHeader>
             <CardContent>
               <Badge variant="default" className="bg-green-500">Ready</Badge>
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-xs text-white/70 mt-2">
                 Appointment logic enabled
               </p>
             </CardContent>
@@ -174,7 +174,7 @@ const AIAgent = () => {
                     <CheckCircle2 className="w-3 h-3 mr-1" />
                     Active
                   </Badge>
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-xs text-white/70 mt-2">
                     Twilio + {getConnectedProviderNames().join(', ')}
                   </p>
                 </>
@@ -184,7 +184,7 @@ const AIAgent = () => {
                     <XCircle className="w-3 h-3 mr-1" />
                     {canManageSettings ? 'Requires Setup' : 'Not Configured'}
                   </Badge>
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-xs text-white/70 mt-2">
                     {canManageSettings ? (
                       !hasTwilio && !hasAnyTTS 
                         ? 'Configure Twilio & a TTS provider'
@@ -232,7 +232,7 @@ const AIAgent = () => {
                     <CheckCircle2 className="w-3 h-3 mr-1" />
                     Active
                   </Badge>
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-xs text-white/70 mt-2">
                     Twilio connected
                   </p>
                 </>
@@ -242,7 +242,7 @@ const AIAgent = () => {
                     <XCircle className="w-3 h-3 mr-1" />
                     {canManageSettings ? 'Requires Setup' : 'Not Configured'}
                   </Badge>
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-xs text-white/70 mt-2">
                     {canManageSettings ? 'Configure Twilio integration' : 'Contact your admin to enable'}
                   </p>
                   {canManageSettings && (

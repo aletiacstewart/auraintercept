@@ -254,7 +254,7 @@ export function CompanyAdminDashboard() {
               <Activity className="w-5 h-5 text-primary" />
               Quick Actions
             </CardTitle>
-            <CardDescription>Common tasks to manage your business</CardDescription>
+            <CardDescription className="text-white/70">Common tasks to manage your business</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-3 grid-cols-2 lg:grid-cols-3">
@@ -281,7 +281,7 @@ export function CompanyAdminDashboard() {
               <TrendingUp className="w-5 h-5 text-secondary" />
               Business Metrics
             </CardTitle>
-            <CardDescription>Performance overview</CardDescription>
+            <CardDescription className="text-white/70">Performance overview</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

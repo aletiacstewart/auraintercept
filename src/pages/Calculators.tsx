@@ -22,7 +22,7 @@ export default function Calculators() {
               <Calculator className="w-5 h-5 text-primary" />
               Financial Planning Tools
             </CardTitle>
-            <CardDescription>Plan your budget and measure return on investment</CardDescription>
+            <CardDescription className="text-white/70">Plan your budget and measure return on investment</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="costs" className="w-full">
