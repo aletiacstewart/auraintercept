@@ -22,7 +22,7 @@ import logo from '@/assets/aura-intercept-logo.png';
 import heroVideo from '@/assets/aura-intercept-hero.mp4';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
-import { LandingAIChat } from '@/components/landing/LandingAIChat';
+import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 
 const agentCategories = [
   {
@@ -607,62 +607,54 @@ export default function Index() {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
-                  <Calendar className="w-5 h-5 text-cyan-500" />
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-1">Easy Appointment Booking</h4>
-                  <p className="text-sm text-foreground">Select from available services and time slots with real-time calendar sync.</p>
-                </div>
+          <div className="max-w-2xl mx-auto space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
+                <Calendar className="w-5 h-5 text-cyan-500" />
               </div>
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
-                  <FileText className="w-5 h-5 text-purple-500" />
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-1">Instant Quote Requests</h4>
-                  <p className="text-sm text-foreground">Get AI-powered quotes based on your service needs.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
-                  <Search className="w-5 h-5 text-green-500" />
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-1">Appointment Tracking</h4>
-                  <p className="text-sm text-foreground">Real-time status updates with technician ETA and job completion notifications.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center flex-shrink-0">
-                  <Headphones className="w-5 h-5 text-orange-500" />
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-1">AI Chat Support</h4>
-                  <p className="text-sm text-foreground">Natural language conversations with AI agents for instant answers.</p>
-                </div>
-              </div>
-
-              <div className="pt-4">
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  className="text-lg px-8 py-6"
-                  onClick={() => navigate('/customer-auth')}
-                >
-                  <Users className="w-5 h-5 mr-2" />
-                  Access Customer Portal
-                </Button>
+              <div>
+                <h4 className="font-semibold mb-1">Easy Appointment Booking</h4>
+                <p className="text-sm text-foreground">Select from available services and time slots with real-time calendar sync.</p>
               </div>
             </div>
-            
-            <div className="relative">
-              <Card className="p-6 bg-card/80 backdrop-blur border-primary/20 h-[450px]">
-                <LandingAIChat />
-              </Card>
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                <FileText className="w-5 h-5 text-purple-500" />
+              </div>
+              <div>
+                <h4 className="font-semibold mb-1">Instant Quote Requests</h4>
+                <p className="text-sm text-foreground">Get AI-powered quotes based on your service needs.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                <Search className="w-5 h-5 text-green-500" />
+              </div>
+              <div>
+                <h4 className="font-semibold mb-1">Appointment Tracking</h4>
+                <p className="text-sm text-foreground">Real-time status updates with technician ETA and job completion notifications.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center flex-shrink-0">
+                <Headphones className="w-5 h-5 text-orange-500" />
+              </div>
+              <div>
+                <h4 className="font-semibold mb-1">AI Chat Support</h4>
+                <p className="text-sm text-foreground">Natural language conversations with AI agents for instant answers.</p>
+              </div>
+            </div>
+
+            <div className="pt-4 text-center">
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="text-lg px-8 py-6"
+                onClick={() => navigate('/customer-auth')}
+              >
+                <Users className="w-5 h-5 mr-2" />
+                Access Customer Portal
+              </Button>
             </div>
           </div>
         </div>
@@ -752,6 +744,9 @@ export default function Index() {
       </section>
 
       <PublicFooter />
+      
+      {/* Floating Chat Widget */}
+      <FloatingChatWidget />
     </div>
   );
 }
