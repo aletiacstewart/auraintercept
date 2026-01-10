@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Globe, Save, ExternalLink, Info } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { normalizePublicBaseUrl } from '@/lib/url';
+import { isLovablePreviewOrigin, normalizePublicBaseUrl } from '@/lib/url';
 import { toast } from 'sonner';
 
 export function PublicAppUrlSettings() {
@@ -50,6 +50,11 @@ export function PublicAppUrlSettings() {
 
     if (raw && !normalized) {
       toast.error('Please enter a valid URL');
+      return;
+    }
+
+    if (normalized && isLovablePreviewOrigin(normalized)) {
+      toast.error('Please use your published app URL (not a preview lovableproject.com link).');
       return;
     }
 

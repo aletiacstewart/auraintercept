@@ -10,7 +10,7 @@ import {
 import { QRCodeSVG } from 'qrcode.react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { normalizePublicBaseUrl } from '@/lib/url';
+import { isLovablePreviewOrigin, normalizePublicBaseUrl } from '@/lib/url';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 
@@ -46,7 +46,7 @@ export function FieldOpsAppCard() {
 
   // Determine base URL - prefer public URL (normalized to origin), fallback to current origin
   const baseUrl = normalizedPublicBaseUrl ?? window.location.origin;
-  const isUsingPreviewUrl = !normalizedPublicBaseUrl;
+  const isUsingPreviewUrl = !normalizedPublicBaseUrl || isLovablePreviewOrigin(baseUrl);
 
   // Add version param to bust cache on new builds
   const buildVersion = import.meta.env.VITE_BUILD_TIME || Date.now().toString(36);
@@ -88,10 +88,10 @@ export function FieldOpsAppCard() {
               <Alert variant="destructive" className="max-w-xs">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription className="text-xs">
-                  QR codes cant reliably install from the preview link (it can prompt a Lovable account).
+                  Install links can’t use lovableproject.com (preview) — phones will be redirected to create a Lovable account.
                   {' '}
                   <Link to="/dashboard/settings" className="underline font-medium inline-flex items-center gap-1">
-                    Set public app URL <Settings className="h-3 w-3" />
+                    Set your published app URL <Settings className="h-3 w-3" />
                   </Link>
                 </AlertDescription>
               </Alert>
