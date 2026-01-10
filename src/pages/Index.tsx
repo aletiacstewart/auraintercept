@@ -332,7 +332,7 @@ export default function Index() {
                     </div>
                     <div className="text-sm font-medium text-primary mb-2">Step {item.step}</div>
                     <h3 className="text-lg font-semibold mb-2 text-secondary">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                    <p className="text-sm text-card-muted">{item.description}</p>
                   </CardContent>
                 </Card>
                 {index < howItWorks.length - 1 && (
@@ -386,7 +386,7 @@ export default function Index() {
                           <agent.icon className="w-5 h-5 text-white" />
                         </div>
                         <h4 className="font-semibold mb-1">{agent.name}</h4>
-                        <p className="text-sm text-muted-foreground">{agent.description}</p>
+                        <p className="text-sm text-card-muted">{agent.description}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -420,7 +420,7 @@ export default function Index() {
                     <console.icon className={`w-6 h-6 ${console.iconColor}`} />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">{console.name}</h3>
-                  <p className="text-muted-foreground text-sm mb-4">
+                  <p className="text-card-muted text-sm mb-4">
                     {console.description}
                   </p>
                   <ul className="space-y-2 text-sm">
@@ -460,7 +460,7 @@ export default function Index() {
                     <channel.icon className="w-7 h-7 text-white" />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">{channel.title}</h3>
-                  <p className="text-sm text-muted-foreground">{channel.description}</p>
+                  <p className="text-sm text-card-muted">{channel.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -491,7 +491,7 @@ export default function Index() {
                     <feature.icon className="w-6 h-6 text-primary-foreground" />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  <p className="text-sm text-card-muted">{feature.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -522,7 +522,7 @@ export default function Index() {
                     <industry.icon className="w-8 h-8 text-primary" />
                   </div>
                   <h3 className="font-semibold text-lg mb-1">{industry.name}</h3>
-                  <p className="text-sm text-muted-foreground">{industry.description}</p>
+                  <p className="text-sm text-card-muted">{industry.description}</p>
                 </CardContent>
               </Card>
             ))}
