@@ -182,8 +182,8 @@ export function CompanyAdminDashboard() {
               <div className="flex items-center gap-4 flex-wrap">
                 <h1 className="text-3xl font-bold tracking-tight">{company?.name}</h1>
                 {company?.registration_code && (
-                  <div className="flex items-center gap-2 bg-slate-700/80 border border-slate-600 rounded-lg px-3 py-1.5">
-                    <span className="text-xs text-white/70">Registration Code:</span>
+                  <div className="flex items-center gap-2 bg-muted border border-border rounded-lg px-3 py-1.5">
+                    <span className="text-xs text-muted-foreground">Registration Code:</span>
                     <code className="text-sm font-mono font-bold text-primary">{company.registration_code}</code>
                     <Button 
                       variant="ghost" 
