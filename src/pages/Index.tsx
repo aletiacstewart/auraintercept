@@ -276,24 +276,9 @@ export default function Index() {
               </p>
             </div>
             
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in">
-              Deploy 11 specialized AI agents across 3 powerful consoles. Intelligent handoffs, 
-              context preservation, and seamless AI Power Operations for customer portal, field ops, and business management.
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in">
+              Aura Intercept provides intelligent AI agents that automatically handle your customer service and scheduling, ensuring your trade business never misses a lead or a loyal client.
             </p>
-
-            {/* Hero Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto mb-10 animate-fade-in">
-              {heroStats.map((stat, index) => (
-                <div 
-                  key={stat.label} 
-                  className="p-4 rounded-xl border border-border/50 bg-card/80"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div className="text-2xl sm:text-3xl font-bold gradient-text">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
-                </div>
-              ))}
-            </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in">
               <Button 
