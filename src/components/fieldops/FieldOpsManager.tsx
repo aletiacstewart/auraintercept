@@ -44,6 +44,7 @@ import { formatDistanceToNow, format } from 'date-fns';
 import { DispatcherMapView } from './DispatcherMapView';
 import { RealTimeETASidebar } from './RealTimeETASidebar';
 import { TechnicianAssignmentDialog } from '@/components/appointments/TechnicianAssignmentDialog';
+import { AgentHowToGuide } from '@/components/ai/chat/AgentHowToGuide';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -463,6 +464,11 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
             <Clock className="h-4 w-4 mr-2" />
             {showETASidebar ? 'Hide' : 'Show'} ETA Panel
           </Button>
+        </div>
+
+        {/* How-To Guide */}
+        <div className="mt-4">
+          <AgentHowToGuide consoleType="dispatch" />
         </div>
       </div>
 
