@@ -203,7 +203,7 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
   };
 
   return (
-    <Card className="border shadow-sm">
+    <Card className="border shadow-sm bg-background text-foreground">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
@@ -243,7 +243,7 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
                 </div>
               ) : (
                 filteredSegments.map((segment) => (
-                  <Card key={segment.id} className="p-4">
+                  <Card key={segment.id} className="p-4 bg-background text-foreground">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
