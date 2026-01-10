@@ -158,7 +158,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
 
   return (
-    <Card className="h-[600px] flex flex-col overflow-hidden shadow-lg border-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <Card className="h-[600px] flex flex-col overflow-hidden shadow-xl border-0 bg-slate-800">
       {/* Glass Header */}
       <GlassHeader
         logoUrl={company?.logo_url}
@@ -166,7 +166,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
         agentLabel={agentStyle.label}
         agentColor={agentStyle.color}
         agentBgColor={agentStyle.bgColor}
-        useDefaultLogo={true}
+        useDefaultLogo={!company?.logo_url}
       />
 
       {/* Tab Navigation */}
