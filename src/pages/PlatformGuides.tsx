@@ -1040,7 +1040,7 @@ const PlatformGuides: React.FC = () => {
                 )}
                 <div>
                   <CardTitle>{currentCategory?.title} Guides</CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-card-foreground/70">
                     {currentCategory?.guides.length} step-by-step guides
                   </CardDescription>
                 </div>
@@ -1082,7 +1082,7 @@ const PlatformGuides: React.FC = () => {
                               <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium">
                                 {stepIndex + 1}
                               </div>
-                              <p className="text-sm text-muted-foreground pt-0.5">{step}</p>
+                               <p className="text-sm text-card-foreground/70 pt-0.5">{step}</p>
                             </div>
                           ))}
                         </div>
@@ -1096,10 +1096,10 @@ const PlatformGuides: React.FC = () => {
                             </div>
                             <ul className="space-y-1">
                               {guide.tips.map((tip, tipIndex) => (
-                                <li key={tipIndex} className="text-sm text-muted-foreground flex items-start gap-2">
-                                  <CheckCircle2 className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
-                                  {tip}
-                                </li>
+                                 <li key={tipIndex} className="text-sm text-card-foreground/70 flex items-start gap-2">
+                                   <CheckCircle2 className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                                   {tip}
+                                 </li>
                               ))}
                             </ul>
                           </div>
