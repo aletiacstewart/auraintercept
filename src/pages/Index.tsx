@@ -169,6 +169,10 @@ const industryCategories = [{
     name: 'Electrical',
     icon: Zap,
     description: 'Residential & Commercial'
+  }, {
+    name: 'Solar Energy',
+    icon: Sun,
+    description: 'Panels & Maintenance'
   }]
 }, {
   category: 'Exterior & Structural',
@@ -182,20 +186,12 @@ const industryCategories = [{
     name: 'Fencing & Decking',
     icon: Fence,
     description: 'Perimeter Solutions'
-  }, {
-    name: 'Solar Energy',
-    icon: Sun,
-    description: 'Panels & Maintenance'
   }]
 }, {
   category: 'Property & Estate',
   emoji: '🌿',
   subtitle: 'Maintenance',
   industries: [{
-    name: 'Pest Control',
-    icon: Bug,
-    description: 'Residential & Commercial'
-  }, {
     name: 'Landscape & Trees',
     icon: TreeDeciduous,
     description: 'Design, Trimming, & Removal'
@@ -203,6 +199,10 @@ const industryCategories = [{
     name: 'Pool & Spa',
     icon: Waves,
     description: 'Chemistry & Equipment'
+  }, {
+    name: 'Pest Control',
+    icon: Bug,
+    description: 'Residential & Commercial'
   }]
 }, {
   category: 'Specialized Home',
