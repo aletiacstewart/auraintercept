@@ -40,8 +40,8 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
           size="sm"
           className={cn(
             'h-auto flex-col gap-1.5 py-3 px-2 text-xs',
-            'hover:border-primary/50 transition-colors',
-            action.variant === 'destructive' && 'bg-destructive text-destructive-foreground hover:bg-destructive/90 border-destructive'
+            'bg-slate-700/80 border-white/20 text-white hover:bg-slate-600 hover:border-primary/50 transition-colors',
+            action.variant === 'destructive' && 'bg-destructive text-white hover:bg-destructive/90 border-destructive'
           )}
           onClick={() => onAction(action.message, action.id)}
         >
@@ -63,7 +63,7 @@ export const QuickActionBar: React.FC<QuickActionBarProps> = ({
   onAction,
 }) => {
   return (
-    <div className="shrink-0 border-t glass-panel p-2">
+    <div className="shrink-0 border-t border-white/10 bg-slate-700/80 p-2">
       <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1">
         {actions.map((action) => (
           <Button
@@ -71,8 +71,8 @@ export const QuickActionBar: React.FC<QuickActionBarProps> = ({
             variant={action.variant || 'ghost'}
             size="sm"
             className={cn(
-              'text-xs shrink-0 rounded-full px-3 h-8',
-              'hover:bg-primary/10 hover:text-primary transition-colors',
+              'text-xs shrink-0 rounded-full px-3 h-8 text-white/80',
+              'hover:bg-white/10 hover:text-white transition-colors',
               action.variant === 'destructive' && 'bg-destructive text-white hover:bg-destructive/90'
             )}
             onClick={() => onAction(action.message, action.id)}

@@ -31,7 +31,7 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
   };
 
   return (
-    <div className="shrink-0 border-b bg-background/80 backdrop-blur-sm">
+    <div className="shrink-0 border-b border-white/10 bg-slate-700/80">
       <div className="flex">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
@@ -44,8 +44,8 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
               className={cn(
                 'flex-1 flex flex-col items-center gap-0.5 py-2 px-1 text-[10px] font-medium transition-all relative',
                 isActive 
-                  ? 'text-primary' 
-                  : 'text-muted-foreground hover:text-foreground',
+                  ? 'text-white' 
+                  : 'text-white/60 hover:text-white',
                 tab.variant === 'destructive' && isActive && 'text-destructive'
               )}
             >
