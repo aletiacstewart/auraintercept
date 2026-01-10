@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { forwardRef, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -320,12 +320,15 @@ export function CompanyJobQueue() {
   );
 }
 
-function JobRow({ job }: { job: JobAssignment }) {
+const JobRow = forwardRef<HTMLDivElement, { job: JobAssignment }>(({ job }, ref) => {
   const statusConfig = STATUS_CONFIG[job.status] || STATUS_CONFIG.pending_acceptance;
   const StatusIcon = statusConfig.icon;
 
   return (
-    <div className="flex items-start gap-4 p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+    <div
+      ref={ref}
+      className="flex items-start gap-4 p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+    >
       {/* Status Badge */}
       <div className={`p-2 rounded-lg ${statusConfig.bgColor}`}>
         <StatusIcon className={`h-4 w-4 ${statusConfig.color}`} />
@@ -370,9 +373,7 @@ function JobRow({ job }: { job: JobAssignment }) {
         <div className="flex items-center gap-2 text-xs">
           <User className="h-3 w-3 text-white/70" />
           {job.employee ? (
-            <span className="text-foreground font-medium">
-              {job.employee.full_name}
-            </span>
+            <span className="text-foreground font-medium">{job.employee.full_name}</span>
           ) : (
             <span className="text-white/70 italic">Unassigned</span>
           )}
@@ -385,20 +386,17 @@ function JobRow({ job }: { job: JobAssignment }) {
       </div>
     </div>
   );
-}
+});
+JobRow.displayName = 'JobRow';
 
-function CompletedJobRow({ job }: { job: JobAssignment }) {
+const CompletedJobRow = forwardRef<HTMLDivElement, { job: JobAssignment }>(({ job }, ref) => {
   return (
-    <div className="flex items-center gap-3 p-2 rounded-md border bg-muted/30 text-sm">
+    <div ref={ref} className="flex items-center gap-3 p-2 rounded-md border bg-muted/30 text-sm">
       <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
       <div className="flex-1 min-w-0">
-        <span className="font-medium truncate">
-          {job.appointments?.customer_name || 'Unknown'}
-        </span>
+        <span className="font-medium truncate">{job.appointments?.customer_name || 'Unknown'}</span>
         <span className="text-white/70"> — </span>
-        <span className="text-white/70">
-          {job.appointments?.service_type || 'Service'}
-        </span>
+        <span className="text-white/70">{job.appointments?.service_type || 'Service'}</span>
       </div>
       {job.completed_at && (
         <span className="text-xs text-white/70 flex-shrink-0">
@@ -407,4 +405,5 @@ function CompletedJobRow({ job }: { job: JobAssignment }) {
       )}
     </div>
   );
-}
+});
+CompletedJobRow.displayName = 'CompletedJobRow';
