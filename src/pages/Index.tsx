@@ -436,9 +436,9 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Multi-Channel</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Engage Customers Everywhere</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Connect Everywhere Your Customers Are</h2>
             <p className="text-foreground max-w-2xl mx-auto">
-              AI agents work across all communication channels, providing consistent experiences.
+              In the service industry, the first company to respond wins the job. Our Aura Intercept AI platform ensures your business is always first, synchronizing Aura Voice, SMS, Email, and Ai Chat into a single, proactive workforce. Unlike basic chatbots, our intelligent AI agents maintain full context across every channel—meaning a customer can start a request via text and finish it over the phone without ever repeating a detail. It’s a 24/7 automated dispatch solution that captures leads, handles bookings, and keeps your brand responsive while your team is in the field.
             </p>
           </div>
 
@@ -494,15 +494,15 @@ and allows your team to focus on delivering expert onsite service.</p>
           </div>
 
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 justify-items-center max-w-4xl mx-auto">
-            {industryCategories.flatMap(cat => cat.industries).map((industry) => (
-              <div key={industry.name} className="rounded-xl p-3 text-center transition-all duration-300 hover:opacity-90 w-full" style={{ backgroundColor: '#2a3d4e' }}>
+            {industryCategories.flatMap(cat => cat.industries).map(industry => <div key={industry.name} className="rounded-xl p-3 text-center transition-all duration-300 hover:opacity-90 w-full" style={{
+            backgroundColor: '#2a3d4e'
+          }}>
                 <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center mx-auto mb-2">
                   <industry.icon className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <h4 className="font-medium text-xs mb-0.5 text-white">{industry.name}</h4>
                 <p className="text-[10px] text-white/70 leading-tight hidden sm:block">{industry.description}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
 
           <div className="text-center mt-12">
