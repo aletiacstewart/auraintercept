@@ -684,6 +684,7 @@ export type Database = {
           quarterly_digest_month: number | null
           quarterly_digest_time: string | null
           quarterly_digest_timezone: string | null
+          registration_code: string | null
           review_email_subject: string | null
           review_email_template: string | null
           review_facebook_url: string | null
@@ -769,6 +770,7 @@ export type Database = {
           quarterly_digest_month?: number | null
           quarterly_digest_time?: string | null
           quarterly_digest_timezone?: string | null
+          registration_code?: string | null
           review_email_subject?: string | null
           review_email_template?: string | null
           review_facebook_url?: string | null
@@ -854,6 +856,7 @@ export type Database = {
           quarterly_digest_month?: number | null
           quarterly_digest_time?: string | null
           quarterly_digest_timezone?: string | null
+          registration_code?: string | null
           review_email_subject?: string | null
           review_email_template?: string | null
           review_facebook_url?: string | null
@@ -2517,6 +2520,7 @@ export type Database = {
           home_longitude: number | null
           id: string
           location_updated_at: string | null
+          must_change_password: boolean | null
           phone_number: string | null
           sms_notifications_enabled: boolean | null
           updated_at: string
@@ -2537,6 +2541,7 @@ export type Database = {
           home_longitude?: number | null
           id: string
           location_updated_at?: string | null
+          must_change_password?: boolean | null
           phone_number?: string | null
           sms_notifications_enabled?: boolean | null
           updated_at?: string
@@ -2557,6 +2562,7 @@ export type Database = {
           home_longitude?: number | null
           id?: string
           location_updated_at?: string | null
+          must_change_password?: boolean | null
           phone_number?: string | null
           sms_notifications_enabled?: boolean | null
           updated_at?: string
