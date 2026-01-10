@@ -287,8 +287,8 @@ export function OnboardingChecklist() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className={cn('font-medium', isItemComplete && 'text-muted-foreground line-through')}>
+              <div className="flex items-center gap-2">
+                  <p className={cn('font-medium', isItemComplete && 'text-white/50 line-through')}>
                     {item.title}
                   </p>
                   {item.priority === 'required' && !isItemComplete && (
