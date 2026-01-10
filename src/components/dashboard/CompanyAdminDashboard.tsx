@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy } from 'lucide-react';
+import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
@@ -41,8 +41,9 @@ export function CompanyAdminDashboard() {
       const monthStart = startOfMonth(now).toISOString();
       const monthEnd = endOfMonth(now).toISOString();
 
-      const [employees, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs] = await Promise.all([
+      const [employees, customers, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
+        supabase.from('customer_profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('appointments').select('id, status').eq('company_id', companyId),
         supabase.from('quotes').select('id, total_amount, status').eq('company_id', companyId),
         supabase.from('invoices').select('id, total, status, quote_id').eq('company_id', companyId),
@@ -85,6 +86,7 @@ export function CompanyAdminDashboard() {
 
       return {
         employees: employees.count ?? 0,
+        customers: customers.count ?? 0,
         appointments: allAppointments.length,
         openQuotes: openQuotes.length,
         openQuotesTotal,
@@ -109,6 +111,13 @@ export function CompanyAdminDashboard() {
       icon: Users, 
       description: 'Team members',
       gradient: 'from-primary to-primary/80'
+    },
+    { 
+      title: 'Customers', 
+      value: stats?.customers ?? 0, 
+      icon: UserCircle, 
+      description: 'Total customers',
+      gradient: 'from-cyan-500 to-cyan-600'
     },
     { 
       title: 'Appointments', 
