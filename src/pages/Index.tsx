@@ -144,7 +144,7 @@ const communicationChannels = [{
   color: 'from-green-500 to-emerald-500'
 }, {
   icon: Mail,
-  title: 'Email',
+  title: 'Aura Email',
   description: 'Automated email campaigns, confirmations, and digest reports.',
   color: 'from-blue-500 to-cyan-500'
 }, {
