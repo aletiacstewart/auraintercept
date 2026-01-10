@@ -136,22 +136,26 @@ const communicationChannels = [{
   icon: Mic,
   title: 'Aura Voice AI',
   description: 'Natural voice conversations with AI agents for phone-based customer service.',
-  color: 'from-pink-500 to-rose-500'
+  color: 'bg-channel-voice',
+  gradientClass: 'from-[hsl(var(--channel-voice))] to-[hsl(348,83%,50%)]'
 }, {
   icon: MessageSquare,
   title: 'Aura SMS/Text',
   description: 'Two-way text messaging for appointment reminders and quick updates.',
-  color: 'from-green-500 to-emerald-500'
+  color: 'bg-channel-sms',
+  gradientClass: 'from-[hsl(var(--channel-sms))] to-[hsl(142,71%,35%)]'
 }, {
   icon: Mail,
   title: 'Aura Email',
   description: 'Automated email campaigns, confirmations, and digest reports.',
-  color: 'from-blue-500 to-cyan-500'
+  color: 'bg-channel-email',
+  gradientClass: 'from-[hsl(var(--channel-email))] to-[hsl(199,89%,38%)]'
 }, {
   icon: Headphones,
   title: 'Aura AI Chat',
   description: 'Embeddable chat widget for website visitor engagement.',
-  color: 'from-purple-500 to-violet-500'
+  color: 'bg-channel-chat',
+  gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(270,67%,48%)]'
 }];
 const industryCategories = [{
   category: 'Essential Trades',
@@ -445,7 +449,7 @@ export default function Index() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {communicationChannels.map((channel, index) => <Card key={channel.title} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 text-center">
                 <CardContent className="p-6">
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${channel.color} flex items-center justify-center mx-auto mb-4`}>
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${channel.gradientClass} flex items-center justify-center mx-auto mb-4`}>
                     <channel.icon className="w-7 h-7 text-white" />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">{channel.title}</h3>
