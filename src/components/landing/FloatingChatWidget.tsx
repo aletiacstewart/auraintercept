@@ -31,15 +31,15 @@ export const FloatingChatWidget: React.FC = () => {
       {/* Floating Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-lg gradient-primary hover:opacity-90 transition-all duration-300 ${
+        className={`fixed bottom-6 right-6 z-[9999] h-14 w-14 rounded-full shadow-2xl bg-gradient-to-r from-[#214ebb] to-[#46a2d3] hover:opacity-90 transition-all duration-300 ${
           isOpen ? 'rotate-0' : 'animate-pulse'
         }`}
         size="icon"
       >
         {isOpen ? (
-          <X className="w-6 h-6" />
+          <X className="w-6 h-6 text-white" />
         ) : (
-          <MessageCircle className="w-6 h-6" />
+          <MessageCircle className="w-6 h-6 text-white" />
         )}
       </Button>
     </>
