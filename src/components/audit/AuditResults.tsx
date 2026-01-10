@@ -112,7 +112,7 @@ export function AuditResults({ scores, onRestart }: AuditResultsProps) {
               })()}
               <div>
                 <CardTitle className="text-2xl">{topAgent.title}</CardTitle>
-                <CardDescription className="text-base mt-1">
+                <CardDescription className="text-base mt-1 text-white/80">
                   Score: {topAgent.score} points in {CATEGORY_LABELS[topAgent.category]}
                 </CardDescription>
               </div>
@@ -121,11 +121,11 @@ export function AuditResults({ scores, onRestart }: AuditResultsProps) {
           <CardContent className="space-y-4">
             <div>
               <h4 className="font-semibold text-destructive mb-1">Why This Matters:</h4>
-              <p className="text-muted-foreground">{topAgent.why}</p>
+              <p className="text-white/90">{topAgent.why}</p>
             </div>
             <div>
               <h4 className="font-semibold text-primary mb-1">The Impact:</h4>
-              <p className="text-muted-foreground">{topAgent.impact}</p>
+              <p className="text-white/90">{topAgent.impact}</p>
             </div>
           </CardContent>
         </Card>
@@ -135,7 +135,7 @@ export function AuditResults({ scores, onRestart }: AuditResultsProps) {
       <Card>
         <CardHeader>
           <CardTitle>Score Breakdown by Category</CardTitle>
-          <CardDescription>
+          <CardDescription className="text-white/80">
             See how your business scored in each automation opportunity area
           </CardDescription>
         </CardHeader>
@@ -155,7 +155,7 @@ export function AuditResults({ scores, onRestart }: AuditResultsProps) {
                       <CheckCircle2 className="h-4 w-4 text-primary" />
                     )}
                   </div>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-white/80">
                     {scores[category]} / {maxScore}
                   </span>
                 </div>
