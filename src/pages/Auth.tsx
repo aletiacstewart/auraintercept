@@ -500,7 +500,7 @@ export default function Auth() {
           </div>
 
           {/* Two Column Layout */}
-          <div className={`grid gap-8 ${mode === 'company' ? 'lg:grid-cols-2' : 'max-w-md mx-auto'}`}>
+          <div className={`grid gap-8 ${mode === 'company' ? 'md:grid-cols-2' : 'max-w-md mx-auto'}`}>
             {/* Left Column - What's Included (only for company mode) */}
             {mode === 'company' && (
               <Card className="border-border/50 shadow-md h-fit">
