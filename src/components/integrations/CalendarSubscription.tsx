@@ -139,7 +139,7 @@ export function CalendarSubscription({
         <CardContent className="space-y-4">
           <div className="flex items-center gap-2 flex-wrap">
             <Badge variant="secondary" className="text-xs">
-              Free Forever
+              Free
             </Badge>
             <Badge variant="outline" className="text-xs text-card-foreground">
               Works with All Calendar Apps
@@ -155,7 +155,7 @@ export function CalendarSubscription({
                 <Input
                   value={httpUrl}
                   readOnly
-                  className="font-mono text-xs"
+                  className="font-mono text-xs bg-white text-slate-800"
                 />
                 <Button
                   variant="outline"
