@@ -40,7 +40,7 @@ export function CompanyAdminDashboard() {
       const monthStart = startOfMonth(now).toISOString();
       const monthEnd = endOfMonth(now).toISOString();
 
-      const [employees, customers, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs] = await Promise.all([
+      const [employees, customers, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs, leads] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('customer_profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('appointments').select('id, status').eq('company_id', companyId),
@@ -49,6 +49,7 @@ export function CompanyAdminDashboard() {
         supabase.from('invoices').select('total').eq('company_id', companyId).eq('status', 'paid').gte('paid_at', monthStart).lte('paid_at', monthEnd),
         supabase.from('customer_feedback').select('rating').eq('company_id', companyId).not('rating', 'is', null),
         supabase.from('reminder_logs').select('id', { count: 'exact', head: true }).eq('company_id', companyId).gte('created_at', monthStart).lte('created_at', monthEnd),
+        supabase.from('leads').select('id, status').eq('company_id', companyId),
       ]);
 
       // Calculate totals
@@ -80,6 +81,12 @@ export function CompanyAdminDashboard() {
         : 0;
       const satisfactionRate = Math.round((avgRating / 5) * 100);
 
+      // Calculate lead conversion rate
+      const allLeads = leads.data ?? [];
+      const convertedLeads = allLeads.filter(l => l.status === 'converted' || l.status === 'won').length;
+      const totalLeadsForConversion = allLeads.length;
+      const leadConversionRate = totalLeadsForConversion > 0 ? Math.round((convertedLeads / totalLeadsForConversion) * 100) : 0;
+
       // Messages count (reminder logs as proxy)
       const messagesCount = reminderLogs.count ?? 0;
 
@@ -95,6 +102,7 @@ export function CompanyAdminDashboard() {
         quoteConversionRate,
         appointmentCompletionRate,
         satisfactionRate,
+        leadConversionRate,
         messagesCount,
       };
     },
@@ -313,6 +321,15 @@ export function CompanyAdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span>Lead Conversion</span>
+                  <span className="font-medium">{stats?.leadConversionRate ?? 0}%</span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-slate-600">
+                  <div className="h-full rounded-full bg-green-500 transition-all" style={{ width: `${stats?.leadConversionRate ?? 0}%` }} />
+                </div>
+              </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span>Quote Conversion</span>
