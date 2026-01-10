@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { CreateTestCustomers } from '@/components/admin/CreateTestCustomers';
+
 import { 
   Search, 
   Users, 
@@ -294,10 +294,6 @@ export default function Customers() {
           </CardContent>
         </Card>
 
-        {/* Create Test Customer */}
-        {(userRole === 'platform_admin' || userRole === 'company_admin') && companyId && (
-          <CreateTestCustomers companyId={companyId} />
-        )}
       </div>
 
       {/* Customer Details Dialog */}
