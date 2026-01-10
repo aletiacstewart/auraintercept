@@ -161,7 +161,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
   };
 
   return (
-    <Card className="border-blue-500/20 bg-blue-500/5">
+    <Card className="guide-card guide-card-voice">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Mic className="w-5 h-5 text-blue-500" />

@@ -25,7 +25,7 @@ export function ResendSetupGuide() {
   const WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/resend-webhook';
 
   return (
-    <Card className="border-emerald-500/20 bg-emerald-500/5">
+    <Card className="guide-card guide-card-email">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Mail className="w-5 h-5 text-emerald-500" />

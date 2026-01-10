@@ -13,16 +13,16 @@ export function CRMSetupGuides() {
   return (
     <div className="space-y-6">
       {/* Optional Note */}
-      <Alert className="border-blue-500/30 bg-blue-500/5">
-        <Info className="h-4 w-4 text-blue-500" />
+      <Alert className="guide-card guide-card-crm">
+        <Info className="h-4 w-4 text-primary" />
         <AlertDescription className="text-sm">
-          <strong>CRM integrations are optional.</strong> You can use the platform without connecting a CRM. 
+          <strong>CRM integrations are optional.</strong> You can use the platform without connecting a CRM.
           Connect your CRM only if you want to sync customer data, leads, deals, and activities between systems.
         </AlertDescription>
       </Alert>
 
       {/* HubSpot Setup Guide */}
-      <Card className="border-orange-500/20 bg-orange-500/5">
+      <Card className="guide-card guide-card-crm">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Building2 className="w-5 h-5 text-orange-500" />
