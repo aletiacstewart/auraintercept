@@ -32,14 +32,6 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
 }) => {
   return (
     <div className="py-4 px-4 animate-fade-in w-full">
-      {/* Header */}
-      <div className="text-center mb-4">
-        <h3 className="font-bold text-base mb-1 text-white">{title}</h3>
-        <p className="text-white/70 text-xs max-w-lg mx-auto">
-          {subtitle || `I'm your virtual assistant${companyName ? ` at ${companyName}` : ''}. How can I help?`}
-        </p>
-      </div>
-      
       {/* Full Width Layout */}
       <div className="w-full space-y-4">
         {/* How To Guide - Collapsible at top */}
@@ -51,9 +43,6 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         
         {/* Quick Actions - Full width grid */}
         <div className="w-full max-w-4xl mx-auto">
-          <div className="mb-2 text-center">
-            <p className="text-xs font-medium text-white/70">Quick Actions</p>
-          </div>
           <QuickActionGrid 
             actions={actions} 
             onAction={onAction} 

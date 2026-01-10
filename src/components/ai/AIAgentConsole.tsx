@@ -483,7 +483,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
   if (showCompanySelector) {
     return (
-      <Card className="h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden border-0 shadow-xl">
+      <Card className="h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden shadow-xl border-slate-600/50 bg-slate-800">
         <CompanySelector 
           onSelectCompany={handleCompanySelect}
           title="Select a Company"
@@ -494,7 +494,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   }
 
   return (
-    <Card className="h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden border-0 shadow-xl">
+    <Card className="h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden shadow-xl border-slate-600/50 bg-slate-800">
       {/* Header */}
       <GlassHeader
         companyName={company?.name || 'AI Assistant'}
