@@ -488,7 +488,7 @@ export function EmployeeManagement() {
                                             <div className={`w-2 h-2 rounded-full ${job.color}`} />
                                             <span className="text-sm font-medium">{job.label}</span>
                                           </div>
-                                          <p className="text-xs text-muted-foreground ml-4">{job.description}</p>
+                                          <p className="text-xs text-slate-600 ml-4">{job.description}</p>
                                         </div>
                                       </div>
                                     );
