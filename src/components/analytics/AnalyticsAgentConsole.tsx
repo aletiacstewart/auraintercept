@@ -182,7 +182,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
-  // Get active label based on form type
+  // Get active label based on form type - show "Home" when no form is active
   const getActiveLabel = () => {
     if (showPerformanceForm) return 'Performance';
     if (showRevenueForm) return 'Revenue';
@@ -190,7 +190,8 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     if (showForecastForm) return 'Forecast';
     if (showKpiForm) return 'KPI';
     if (showExportForm) return 'Export';
-    return agentStyle.label;
+    if (messages.length > 0) return agentStyle.label; // Show agent label during chat
+    return 'Home';
   };
   
   const activeLabel = getActiveLabel();

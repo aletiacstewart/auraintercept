@@ -642,7 +642,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
   const agentInfo = getAgentStyle(currentAgent);
   
-  // Get active label based on selector mode
+  // Get active label based on selector mode - show "Home" when no action is active
   const getActiveLabel = () => {
     if (selectorMode === 'accept') return 'Job Accept';
     if (selectorMode === 'directions') return 'Directions';
@@ -652,7 +652,8 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     if (selectorMode === 'complete') return 'Completion';
     if (selectorMode === 'quote') return 'Quoting';
     if (selectorMode === 'invoice') return 'Invoicing';
-    return agentInfo.label;
+    if (messages.length > 0) return agentInfo.label; // Show agent label during chat
+    return 'Home';
   };
   
   const activeLabel = getActiveLabel();
