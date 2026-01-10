@@ -365,7 +365,7 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">AI Agents</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">11 Specialized AI Agents</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">10+ Specialized AI Agents</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Each agent is purpose-built to handle specific business functions, 
               working together seamlessly with intelligent handoffs and context preservation.
@@ -599,7 +599,7 @@ export default function Index() {
                 <div className="space-y-3 text-left mb-8">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">11 Specialized AI Agents</span>
+                    <span className="text-white">10+ Specialized AI Agents</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
