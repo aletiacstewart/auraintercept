@@ -340,7 +340,7 @@ const JobRow = forwardRef<HTMLDivElement, { job: JobAssignment }>(({ job }, ref)
           <span className="font-medium truncate">
             {job.appointments?.customer_name || 'Unknown Customer'}
           </span>
-          <Badge variant="outline" className="text-xs">
+          <Badge variant="outline" className="text-xs text-white border-white/30">
             {job.appointments?.service_type || 'Service'}
           </Badge>
           <Badge className={`text-xs ${statusConfig.bgColor} ${statusConfig.color} border-0`}>
