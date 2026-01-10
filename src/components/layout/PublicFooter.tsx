@@ -2,12 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Zap } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
-
 export function PublicFooter() {
   const navigate = useNavigate();
-
-  return (
-    <footer className="border-t border-border/50 py-12 bg-card">
+  return <footer className="border-t border-border/50 py-12 bg-card">
       <div className="container max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
@@ -21,9 +18,7 @@ export function PublicFooter() {
                 </span>
               </div>
             </div>
-            <p className="text-sm text-white/70">
-              20+ AI agents automating appointment-based businesses worldwide.
-            </p>
+            <p className="text-sm text-white/70">10+ AI agents automating appointment-based businesses worldwide.</p>
           </div>
           
           <div>
@@ -69,6 +64,5 @@ export function PublicFooter() {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 }
