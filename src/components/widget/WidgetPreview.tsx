@@ -29,7 +29,7 @@ export const WidgetPreview = () => {
       <Card>
         <CardHeader>
           <CardTitle>Live Preview</CardTitle>
-          <CardDescription>
+          <CardDescription className="text-foreground/70">
             Test your Customer App before adding it to your website
           </CardDescription>
         </CardHeader>
@@ -43,7 +43,7 @@ export const WidgetPreview = () => {
                 allow="microphone"
               />
             ) : (
-              <div className="flex items-center justify-center h-[600px] text-muted-foreground">
+              <div className="flex items-center justify-center h-[600px] text-foreground/70">
                 Loading preview...
               </div>
             )}

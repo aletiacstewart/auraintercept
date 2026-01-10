@@ -35,7 +35,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
       {/* Header */}
       <div className="text-center mb-4">
         <h3 className="font-bold text-base mb-1">{title}</h3>
-        <p className="text-muted-foreground text-xs max-w-lg mx-auto">
+        <p className="text-foreground/70 text-xs max-w-lg mx-auto">
           {subtitle || `I'm your virtual assistant${companyName ? ` at ${companyName}` : ''}. How can I help?`}
         </p>
       </div>
@@ -52,7 +52,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         {/* Quick Actions - Full width grid */}
         <div className="w-full max-w-4xl mx-auto">
           <div className="mb-2 text-center">
-            <p className="text-xs font-medium text-muted-foreground">Quick Actions</p>
+            <p className="text-xs font-medium text-foreground/70">Quick Actions</p>
           </div>
           <QuickActionGrid 
             actions={actions} 

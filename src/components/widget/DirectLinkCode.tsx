@@ -46,7 +46,7 @@ export const DirectLinkCode = ({ companySlug }: DirectLinkCodeProps) => {
           </a>
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-foreground/70">
         Use this link for QR codes, email signatures, social media, or as a "Chat with us" button.
       </p>
     </div>

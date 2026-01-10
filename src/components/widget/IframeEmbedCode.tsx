@@ -44,7 +44,7 @@ export const IframeEmbedCode = ({ companySlug }: IframeEmbedCodeProps) => {
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-foreground/70">
         Best for WordPress, Wix, Squarespace, and other website builders. 
         Simply paste into a Custom HTML block.
       </p>

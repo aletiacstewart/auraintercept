@@ -356,7 +356,7 @@ export function UnifiedCustomerConsole({
                     <Bot className="h-8 w-8 text-white" />
                   </div>
                   <h3 className="font-semibold text-lg">Hi there! 👋</h3>
-                  <p className="text-muted-foreground mt-1 mb-6">
+                  <p className="text-foreground/70 mt-1 mb-6">
                     I'm the virtual assistant for {config.company.name}. How can I help you today?
                   </p>
                   
@@ -416,7 +416,7 @@ export function UnifiedCustomerConsole({
                 return (
                   <React.Fragment key={index}>
                     {showHandoffIndicator && (
-                      <div className="flex items-center justify-center gap-2 py-2 text-xs text-muted-foreground">
+                      <div className="flex items-center justify-center gap-2 py-2 text-xs text-foreground/70">
                         <div className="h-px flex-1 bg-border" />
                         <span className="flex items-center gap-1 px-2 py-1 rounded-full bg-muted">
                           → Transferred to {msgAgentInfo?.label}
