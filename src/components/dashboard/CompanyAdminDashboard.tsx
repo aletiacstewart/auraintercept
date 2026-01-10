@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle } from 'lucide-react';
+import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
@@ -156,14 +156,6 @@ export function CompanyAdminDashboard() {
       isString: true
     },
     { 
-      title: 'AI Agent', 
-      value: 'Active', 
-      icon: Bot, 
-      description: 'Ready to assist',
-      gradient: 'from-purple-500 to-purple-600',
-      isString: true
-    },
-    { 
       title: 'Messages', 
       value: stats?.messagesCount ?? 0, 
       icon: MessageSquare, 
@@ -196,7 +188,7 @@ export function CompanyAdminDashboard() {
             </>
           ) : (
             <>
-              <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-3 flex-wrap">
                 <h1 className="text-3xl font-bold tracking-tight">{company?.name}</h1>
                 {company?.registration_code && (
                   <div className="flex items-center gap-2 bg-slate-700/80 border border-slate-600/50 rounded-lg px-3 py-1.5">
@@ -208,13 +200,22 @@ export function CompanyAdminDashboard() {
                       className="h-6 w-6 text-white/70 hover:text-white"
                       onClick={() => {
                         navigator.clipboard.writeText(company.registration_code || '');
-                        // Show a toast or visual feedback
                       }}
                     >
                       <Copy className="h-3 w-3" />
                     </Button>
                   </div>
                 )}
+                {/* Aura AI Agent Status Badge */}
+                <div 
+                  className="flex items-center gap-2 bg-slate-700/80 border border-slate-600/50 rounded-lg px-3 py-1.5 cursor-pointer hover:bg-slate-600/80 transition-colors"
+                  onClick={() => navigate('/dashboard/ai-agents')}
+                >
+                  <span className="text-xs text-white/70">Aura AI Agent:</span>
+                  <span className="text-sm font-medium text-green-400">Active</span>
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <ExternalLink className="h-3 w-3 text-green-400 hover:text-green-300" />
+                </div>
               </div>
               <p className="text-white/70 mt-1">
                 Company Dashboard {companyId && <span className="text-xs opacity-60">• ID: {companyId.slice(0, 8)}...</span>}
