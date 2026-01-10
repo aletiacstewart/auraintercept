@@ -579,8 +579,6 @@ export default function Auth() {
                   </div>
                 </CardContent>
               </Card>
-                </CardContent>
-              </Card>
             )}
 
             {/* Right Column - Auth Card */}
