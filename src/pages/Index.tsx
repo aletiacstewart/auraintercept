@@ -569,8 +569,8 @@ export default function Index() {
                       className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 text-center bg-card/80"
                     >
                       <CardContent className="p-5">
-                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                          <industry.icon className="w-6 h-6 text-primary" />
+                        <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mx-auto mb-3">
+                          <industry.icon className="w-6 h-6 text-primary-foreground" />
                         </div>
                         <h4 className="font-semibold text-sm mb-1">{industry.name}</h4>
                         <p className="text-xs text-card-muted leading-tight">{industry.description}</p>
