@@ -71,7 +71,7 @@ export function AuditResults({ scores, onRestart }: AuditResultsProps) {
               <div className="text-6xl sm:text-7xl font-bold text-primary">
                 {totalScore}
               </div>
-              <div className="text-muted-foreground text-center mt-1">
+              <div className="text-white/80 text-center mt-1">
                 out of {maxPossibleScore} points
               </div>
             </div>
@@ -85,7 +85,7 @@ export function AuditResults({ scores, onRestart }: AuditResultsProps) {
               <span className="text-xl font-semibold">
                 ~{hoursSaved} hours/week
               </span>
-              <span className="text-muted-foreground">potential time savings</span>
+              <span className="text-white/80">potential time savings</span>
             </div>
           </div>
         </CardContent>
