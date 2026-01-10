@@ -238,14 +238,6 @@ const industryCategories = [{
     icon: Car,
     description: 'Detailing & Repair'
   }, {
-    name: 'Facility Mgmt',
-    icon: HardHat,
-    description: 'B2B Maintenance'
-  }, {
-    name: 'IT Field Services',
-    icon: Wifi,
-    description: 'Network & Hardware'
-  }, {
     name: 'Security Systems',
     icon: Camera,
     description: 'Cameras & Alarms'
