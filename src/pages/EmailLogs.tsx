@@ -95,41 +95,41 @@ export default function EmailLogs() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-4">
-          <Card className="border-border/50">
+          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Mail className="h-5 w-5 text-primary" />
+                <div className="p-2 rounded-lg bg-primary/20">
+                  <Mail className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{totalEmails}</p>
-                  <p className="text-xs text-muted-foreground">Total Emails</p>
+                  <p className="text-2xl font-bold text-accent">{totalEmails}</p>
+                  <p className="text-xs text-white/70">Total Emails</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="border-border/50">
+          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-500/10">
-                  <CheckCircle className="h-5 w-5 text-green-500" />
+                <div className="p-2 rounded-lg bg-green-500/20">
+                  <CheckCircle className="h-5 w-5 text-green-400" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{sentEmails}</p>
-                  <p className="text-xs text-muted-foreground">Delivered</p>
+                  <p className="text-2xl font-bold text-accent">{sentEmails}</p>
+                  <p className="text-xs text-white/70">Delivered</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="border-border/50">
+          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-destructive/10">
+                <div className="p-2 rounded-lg bg-destructive/20">
                   <XCircle className="h-5 w-5 text-destructive" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{failedEmails}</p>
-                  <p className="text-xs text-muted-foreground">Failed</p>
+                  <p className="text-2xl font-bold text-accent">{failedEmails}</p>
+                  <p className="text-xs text-white/70">Failed</p>
                 </div>
               </div>
             </CardContent>
