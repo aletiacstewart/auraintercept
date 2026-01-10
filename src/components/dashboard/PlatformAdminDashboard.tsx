@@ -154,20 +154,20 @@ export function PlatformAdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <span className="text-sm">System Status</span>
-                <span className="text-sm font-medium text-green-500 flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-green-500" />
+              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 border border-slate-600/50">
+                <span className="text-sm text-white">System Status</span>
+                <span className="text-sm font-medium text-green-400 flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-green-400" />
                   Operational
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <span className="text-sm">API Endpoints</span>
-                <span className="text-sm font-medium text-green-500">All Active</span>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 border border-slate-600/50">
+                <span className="text-sm text-white">API Endpoints</span>
+                <span className="text-sm font-medium text-green-400">All Active</span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <span className="text-sm">Edge Functions</span>
-                <span className="text-sm font-medium text-green-500">Running</span>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 border border-slate-600/50">
+                <span className="text-sm text-white">Edge Functions</span>
+                <span className="text-sm font-medium text-green-400">Running</span>
               </div>
             </div>
           </CardContent>
