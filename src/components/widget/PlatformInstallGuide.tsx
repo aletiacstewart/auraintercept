@@ -147,7 +147,7 @@ ${iframeCode}`,
           <Globe className="h-5 w-5" />
           Platform Installation Guides
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-foreground/70">
           Step-by-step instructions for adding the chat widget to your website
         </CardDescription>
       </CardHeader>
@@ -176,7 +176,7 @@ ${iframeCode}`,
                 <span className={`w-3 h-3 rounded-full ${PLATFORM_INFO[selectedPlatform].color}`} />
                 {PLATFORM_INFO[selectedPlatform].name} Installation
               </h4>
-              <p className="text-sm text-muted-foreground">{PLATFORM_INFO[selectedPlatform].description}</p>
+              <p className="text-sm text-foreground/70">{PLATFORM_INFO[selectedPlatform].description}</p>
             </div>
             <Badge variant="secondary">{selectedPlatform === 'html' ? 'Universal' : 'Platform-specific'}</Badge>
           </div>
@@ -184,7 +184,7 @@ ${iframeCode}`,
           {/* Step-by-step instructions */}
           <div className="space-y-2">
             <h5 className="text-sm font-medium">Steps:</h5>
-            <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
+            <ol className="list-decimal list-inside space-y-1 text-sm text-foreground/70">
               {platformCode.instructions.map((instruction, idx) => (
                 <li key={idx}>{instruction}</li>
               ))}
@@ -232,7 +232,7 @@ ${iframeCode}`,
           </TabsList>
 
           <TabsContent value="iframe" className="mt-4 space-y-2">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-foreground/70">
               <strong>Recommended:</strong> Works on all platforms. Displays as a floating chat window.
             </p>
             <div className="relative">
@@ -251,7 +251,7 @@ ${iframeCode}`,
           </TabsContent>
 
           <TabsContent value="script" className="mt-4 space-y-2">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-foreground/70">
               <strong>Advanced:</strong> Creates a floating chat button with more customization options.
             </p>
             <div className="relative">
@@ -270,7 +270,7 @@ ${iframeCode}`,
           </TabsContent>
 
           <TabsContent value="link" className="mt-4 space-y-2">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-foreground/70">
               <strong>Simple:</strong> Share as a direct link in emails, QR codes, or social media.
             </p>
             <div className="flex gap-2">
