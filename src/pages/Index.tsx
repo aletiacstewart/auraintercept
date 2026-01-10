@@ -139,7 +139,7 @@ const communicationChannels = [{
   color: 'from-pink-500 to-rose-500'
 }, {
   icon: MessageSquare,
-  title: 'SMS/Text',
+  title: 'Aura SMS/Text',
   description: 'Two-way text messaging for appointment reminders and quick updates.',
   color: 'from-green-500 to-emerald-500'
 }, {
