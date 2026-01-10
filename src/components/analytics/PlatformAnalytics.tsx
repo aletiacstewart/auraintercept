@@ -38,11 +38,13 @@ export function PlatformAnalytics() {
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['platform-analytics-stats'],
     queryFn: async () => {
-      const [companies, profiles, appointments, callLogs] = await Promise.all([
+      const [companies, profiles, appointments, callLogs, invoices, quotes] = await Promise.all([
         supabase.from('companies').select('id, created_at'),
         supabase.from('profiles').select('id, company_id'),
         supabase.from('appointments').select('id, status, datetime, company_id'),
         supabase.from('call_logs').select('id, status, direction, duration_seconds, company_id, started_at'),
+        supabase.from('invoices').select('id, status, total, paid_at'),
+        supabase.from('quotes').select('id, status, total_amount'),
       ]);
 
       const totalCompanies = companies.data?.length ?? 0;
@@ -59,6 +61,23 @@ export function PlatformAnalytics() {
         (callLogs.data?.reduce((sum, c) => sum + (c.duration_seconds || 0), 0) ?? 0) / 60
       );
 
+      // Revenue calculations
+      const paidInvoices = invoices.data?.filter(i => i.status === 'paid') ?? [];
+      const outstandingInvoices = invoices.data?.filter(i => i.status !== 'paid' && i.status !== 'cancelled') ?? [];
+      const totalRevenue = paidInvoices.reduce((sum, i) => sum + (i.total || 0), 0);
+      const outstandingAmount = outstandingInvoices.reduce((sum, i) => sum + (i.total || 0), 0);
+      const collectionRate = invoices.data && invoices.data.length > 0 
+        ? Math.round((paidInvoices.length / invoices.data.length) * 100) 
+        : 0;
+
+      // Quote calculations
+      const totalQuotes = quotes.data?.length ?? 0;
+      const acceptedQuotes = quotes.data?.filter(q => q.status === 'accepted').length ?? 0;
+      const quoteConversionRate = totalQuotes > 0 ? Math.round((acceptedQuotes / totalQuotes) * 100) : 0;
+      const avgQuoteValue = totalQuotes > 0 
+        ? (quotes.data?.reduce((sum, q) => sum + (q.total_amount || 0), 0) ?? 0) / totalQuotes 
+        : 0;
+
       return {
         totalCompanies,
         totalUsers,
@@ -73,6 +92,12 @@ export function PlatformAnalytics() {
         callCompletionRate: totalCalls > 0 
           ? Math.round((completedCalls / totalCalls) * 100) 
           : 0,
+        totalRevenue,
+        outstandingAmount,
+        collectionRate,
+        totalQuotes,
+        quoteConversionRate,
+        avgQuoteValue,
       };
     },
   });
@@ -448,15 +473,15 @@ export function PlatformAnalytics() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                   <span className="text-sm">Total Platform Revenue</span>
-                  <span className="font-medium text-green-600">Coming Soon</span>
+                  <span className="font-medium text-green-500">${(stats?.totalRevenue ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                   <span className="text-sm">Outstanding Invoices</span>
-                  <span className="font-medium">Coming Soon</span>
+                  <span className="font-medium text-amber-500">${(stats?.outstandingAmount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                   <span className="text-sm">Collection Rate</span>
-                  <span className="font-medium">Coming Soon</span>
+                  <span className="font-medium">{stats?.collectionRate ?? 0}%</span>
                 </div>
               </CardContent>
             </Card>
@@ -466,9 +491,25 @@ export function PlatformAnalytics() {
                 <CardDescription>Top performing companies</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[200px] flex items-center justify-center text-muted-foreground">
-                  Revenue data visualization coming soon
-                </div>
+                {companyLoading ? (
+                  <Skeleton className="h-[200px]" />
+                ) : companyStats && companyStats.length > 0 ? (
+                  <div className="space-y-3">
+                    {companyStats.slice(0, 5).map((company, idx) => (
+                      <div key={company.name} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-muted-foreground">#{idx + 1}</span>
+                          <span className="text-sm font-medium truncate max-w-[120px]">{company.name}</span>
+                        </div>
+                        <span className="text-sm">{company.appointments} appts</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+                    No revenue data yet
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -487,26 +528,42 @@ export function PlatformAnalytics() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                   <span className="text-sm">Total Quotes</span>
-                  <span className="font-medium">Coming Soon</span>
+                  <span className="font-medium">{stats?.totalQuotes ?? 0}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                   <span className="text-sm">Conversion Rate</span>
-                  <span className="font-medium">Coming Soon</span>
+                  <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                   <span className="text-sm">Average Quote Value</span>
-                  <span className="font-medium">Coming Soon</span>
+                  <span className="font-medium">${(stats?.avgQuoteValue ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
               </CardContent>
             </Card>
             <Card className="border-border/50">
               <CardHeader>
-                <CardTitle>Quote Volume Trend</CardTitle>
-                <CardDescription>Daily quote activity</CardDescription>
+                <CardTitle>Quote Status</CardTitle>
+                <CardDescription>Overall distribution</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="h-[200px] flex items-center justify-center text-muted-foreground">
-                  Quote trends coming soon
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <span className="text-sm">Accepted</span>
+                  </div>
+                  <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Conversion Rate</span>
+                    <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-muted overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-primary to-secondary transition-all" 
+                      style={{ width: `${stats?.quoteConversionRate ?? 0}%` }} 
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>
