@@ -520,7 +520,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       />
 
       {/* Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-white">
         {/* Chat Tab */}
         {activeTab === 'chat' && (
           <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
