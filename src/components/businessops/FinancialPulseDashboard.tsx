@@ -113,7 +113,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-slate-700/50 border-slate-600/50">
+        <Card className="bg-slate-800 border-white/10">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <UserPlus className="h-5 w-5 text-white" />
@@ -126,7 +126,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-700/50 border-slate-600/50">
+        <Card className="bg-slate-800 border-white/10">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <FileText className="h-5 w-5 text-white" />
@@ -139,7 +139,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-700/50 border-slate-600/50">
+        <Card className="bg-slate-800 border-white/10">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <Receipt className="h-5 w-5 text-white" />
@@ -153,7 +153,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
         </Card>
 
         {isPlatformAdmin && (
-          <Card className={`bg-slate-700/50 border-slate-600/50 transition-colors cursor-pointer hover:border-accent/40`} onClick={() => onNavigate('inventory')}>
+          <Card className={`bg-slate-800 border-white/10 transition-colors cursor-pointer hover:border-accent/40`} onClick={() => onNavigate('inventory')}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <Package className="h-5 w-5 text-white" />
@@ -167,7 +167,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           </Card>
         )}
 
-        <Card className="bg-slate-700/50 border-slate-600/50 hover:border-accent/40 transition-colors cursor-pointer" onClick={() => onNavigate('payments')}>
+        <Card className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" onClick={() => onNavigate('payments')}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <DollarSign className="h-5 w-5 text-white" />
@@ -182,7 +182,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
       {/* Content Grid */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Pending Quotes - display only */}
-        <Card className="bg-slate-700/50 border-slate-600/50">
+        <Card className="bg-slate-800 border-white/10">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
@@ -201,7 +201,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
               ) : (
                 <div className="space-y-2">
                   {quotes.map(quote => (
-                    <div key={quote.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-600/50 hover:bg-slate-600/80 transition-colors">
+                    <div key={quote.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-colors border border-white/5">
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate text-white">{quote.customer_name}</p>
                         <p className="text-xs text-white/60">
@@ -223,7 +223,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
         </Card>
 
         {/* Unpaid Invoices */}
-        <Card className="bg-slate-700/50 border-slate-600/50">
+        <Card className="bg-slate-800 border-white/10">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
@@ -244,7 +244,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                   {invoices.map(invoice => {
                     const isOverdue = invoice.due_date && isPast(parseISO(invoice.due_date)) && invoice.status !== 'paid';
                     return (
-                      <div key={invoice.id} className={`flex items-center justify-between p-3 rounded-lg transition-colors ${isOverdue ? 'bg-destructive/20 hover:bg-destructive/30' : 'bg-slate-600/50 hover:bg-slate-600/80'}`}>
+                      <div key={invoice.id} className={`flex items-center justify-between p-3 rounded-lg transition-colors border border-white/5 ${isOverdue ? 'bg-destructive/20 hover:bg-destructive/30' : 'bg-slate-700/50 hover:bg-slate-700'}`}>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium truncate text-white">{invoice.customer_name}</p>
                           <div className="flex items-center gap-1 text-xs text-white/60">
@@ -273,7 +273,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
 
       {/* Inventory Alerts - Platform Admin Only */}
       {isPlatformAdmin && inventoryAlerts.length > 0 && (
-        <Card className="glass-panel border-destructive/30">
+        <Card className="bg-slate-800 border-white/10">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium flex items-center gap-2 text-destructive">
@@ -293,7 +293,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                 </Badge>
               ))}
               {inventoryAlerts.length > 6 && (
-                <Badge variant="outline" className="bg-muted text-muted-foreground">
+                <Badge variant="outline" className="bg-slate-700 text-white/70 border-white/10">
                   +{inventoryAlerts.length - 6} more
                 </Badge>
               )}
