@@ -182,10 +182,10 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
       {/* Content Grid */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Pending Quotes - display only */}
-        <Card className="glass-panel border-accent/20">
+        <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
                 <FileText className="h-4 w-4 text-accent" />
                 Pending Quotes
               </CardTitle>
@@ -194,17 +194,17 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           <CardContent>
             <ScrollArea className="h-[200px]">
               {quotes.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                <div className="flex flex-col items-center justify-center h-full text-white/60">
                   <FileText className="h-8 w-8 mb-2 opacity-50" />
                   <p className="text-sm">No pending quotes</p>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {quotes.map(quote => (
-                    <div key={quote.id} className="flex items-center justify-between p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors">
+                    <div key={quote.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-600/50 hover:bg-slate-600/80 transition-colors">
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">{quote.customer_name}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="font-medium truncate text-white">{quote.customer_name}</p>
+                        <p className="text-xs text-white/60">
                           {format(new Date(quote.created_at), 'MMM d, yyyy')}
                         </p>
                       </div>
@@ -212,7 +212,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                         <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30 text-xs">
                           {quote.status}
                         </Badge>
-                        <span className="font-semibold text-sm">${quote.total_amount?.toFixed(0)}</span>
+                        <span className="font-semibold text-sm text-white">${quote.total_amount?.toFixed(0)}</span>
                       </div>
                     </div>
                   ))}
@@ -223,10 +223,10 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
         </Card>
 
         {/* Unpaid Invoices */}
-        <Card className="glass-panel border-accent/20">
+        <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
                 <Receipt className="h-4 w-4 text-accent" />
                 Unpaid Invoices
               </CardTitle>
@@ -235,7 +235,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           <CardContent>
             <ScrollArea className="h-[200px]">
               {invoices.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                <div className="flex flex-col items-center justify-center h-full text-white/60">
                   <Receipt className="h-8 w-8 mb-2 opacity-50" />
                   <p className="text-sm">All invoices paid</p>
                 </div>
@@ -244,10 +244,10 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                   {invoices.map(invoice => {
                     const isOverdue = invoice.due_date && isPast(parseISO(invoice.due_date)) && invoice.status !== 'paid';
                     return (
-                      <div key={invoice.id} className={`flex items-center justify-between p-3 rounded-lg transition-colors ${isOverdue ? 'bg-destructive/10 hover:bg-destructive/20' : 'bg-background/50 hover:bg-background/80'}`}>
+                      <div key={invoice.id} className={`flex items-center justify-between p-3 rounded-lg transition-colors ${isOverdue ? 'bg-destructive/20 hover:bg-destructive/30' : 'bg-slate-600/50 hover:bg-slate-600/80'}`}>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{invoice.customer_name}</p>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <p className="font-medium truncate text-white">{invoice.customer_name}</p>
+                          <div className="flex items-center gap-1 text-xs text-white/60">
                             <Clock className="h-3 w-3" />
                             {invoice.due_date ? format(new Date(invoice.due_date), 'MMM d') : 'No due date'}
                           </div>
@@ -259,7 +259,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                           >
                             {isOverdue ? 'Overdue' : invoice.status}
                           </Badge>
-                          <span className="font-semibold text-sm">${invoice.total?.toFixed(0)}</span>
+                          <span className="font-semibold text-sm text-white">${invoice.total?.toFixed(0)}</span>
                         </div>
                       </div>
                     );
