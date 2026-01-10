@@ -178,7 +178,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       />
 
       {/* Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 relative bg-white">
+      <div className="flex-1 flex flex-col min-h-0 relative console-surface"> 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
           {showWelcome ? (

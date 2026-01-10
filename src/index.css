@@ -150,6 +150,28 @@
     --muted-foreground: var(--card-muted);
   }
 
+  /* Console surfaces: force a light reading surface even when the app is in dark mode.
+     This prevents light-mode-optimized forms (bg-white) from inheriting dark-mode text tokens. */
+  .console-surface {
+    background: hsl(0 0% 100%);
+    color: hsl(208 30% 15%);
+
+    /* Override tokens locally so shadcn components render with proper contrast */
+    --background: 0 0% 100%;
+    --foreground: 208 30% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 208 30% 15%;
+
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 208 30% 15%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+  }
+
   .guide-card-email {
     border-color: hsl(var(--channel-email) / 0.35);
     box-shadow: inset 0 0 0 1px hsl(var(--channel-email) / 0.18);
