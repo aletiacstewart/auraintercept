@@ -74,7 +74,7 @@ const agentConsoles = [
       '24/7 natural language booking',
       'Multi-service appointment scheduling',
       'Automated email & SMS reminders',
-      'Customer feedback collection',
+      'Customer review & Feedback',
       'Quote request handling',
       'Review request automation'
     ]
