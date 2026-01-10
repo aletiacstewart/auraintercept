@@ -134,7 +134,7 @@ const platformFeatures = [{
 }];
 const communicationChannels = [{
   icon: Mic,
-  title: 'Voice AI',
+  title: 'Aura Voice AI',
   description: 'Natural voice conversations with AI agents for phone-based customer service.',
   color: 'from-pink-500 to-rose-500'
 }, {
