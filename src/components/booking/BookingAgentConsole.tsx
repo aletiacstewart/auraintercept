@@ -609,7 +609,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
 
       {/* Booking Form View */}
       {showBookingForm ? (
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-4 bg-white">
           <BookingForm
             services={services}
             onSubmit={handleBookingSubmit}
@@ -617,21 +617,21 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
           />
         </div>
       ) : showFeedbackForm ? (
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-4 bg-white">
           <FeedbackForm
             onSubmit={handleFeedbackSubmit}
             isLoading={isSubmittingFeedback}
           />
         </div>
       ) : showQuoteForm ? (
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-4 bg-white">
           <QuoteForm
             services={services}
             onSubmit={handleQuoteSubmit}
           />
         </div>
       ) : showReviewForm ? (
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-4 bg-white">
           <ReviewForm
             onSubmit={handleReviewSubmit}
             isLoading={isSubmittingReview}
@@ -639,7 +639,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
           />
         </div>
       ) : showCustomerSearch ? (
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-4 bg-white">
           <div className="space-y-4">
             <form
               onSubmit={(e) => {
@@ -701,7 +701,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
           </div>
         </div>
       ) : (
-        <>
+        <div className="flex-1 flex flex-col bg-white">
           {/* Quick Actions */}
           <div className="px-4 py-3 border-b border-border bg-muted/30">
             <div className="flex flex-wrap gap-2">
@@ -836,7 +836,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
               </Button>
             </form>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

@@ -972,7 +972,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Directions Tab - TechnicianMap */}
       {activeTab === 'directions' && (
-        <div className="flex-1 relative min-h-[300px] overflow-hidden">
+        <div className="flex-1 relative min-h-[300px] overflow-hidden bg-white">
           <TechnicianMap
             initialAddress={navigationAddress}
             onAddressSearched={() => setNavigationAddress(null)}
@@ -985,7 +985,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* ETA Tab - Update ETA for jobs */}
       {activeTab === 'eta' && (
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-4 bg-white">
           <div className="space-y-4">
             <div className="text-center pb-3 border-b">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 mx-auto mb-3 flex items-center justify-center shadow-lg">
@@ -1097,7 +1097,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Dispatch Tab - Contact dispatch */}
       {activeTab === 'dispatch' && (
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-4 bg-white">
           <div className="text-center py-8">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 mx-auto mb-4 flex items-center justify-center shadow-lg">
               <Phone className="w-8 h-8 text-white" />
@@ -1127,7 +1127,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Chat Tab - matching AIAgentConsole structure */}
       {activeTab === 'chat' && (
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-white">
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
             {messages.length === 0 && !selectorMode && (
               <WelcomeScreen
