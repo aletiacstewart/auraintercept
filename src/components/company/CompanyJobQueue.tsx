@@ -213,7 +213,7 @@ export function CompanyJobQueue() {
               All Company Jobs
               <Badge variant="secondary">{totalJobs}</Badge>
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-white/80">
               View-only job queue for CRM sync and monitoring
             </CardDescription>
           </div>
@@ -222,7 +222,7 @@ export function CompanyJobQueue() {
             className="p-2 rounded-md hover:bg-muted transition-colors"
             title="Refresh"
           >
-            <RefreshCw className="h-4 w-4 text-muted-foreground" />
+            <RefreshCw className="h-4 w-4 text-white/70" />
           </button>
         </div>
       </CardHeader>
@@ -275,9 +275,9 @@ export function CompanyJobQueue() {
         {/* Empty State */}
         {totalJobs === 0 && (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <Wrench className="h-10 w-10 text-muted-foreground mb-3" />
-            <p className="font-medium">No Active Jobs</p>
-            <p className="text-sm text-muted-foreground">
+            <Wrench className="h-10 w-10 text-white/70 mb-3" />
+            <p className="font-medium text-white">No Active Jobs</p>
+            <p className="text-sm text-white/70">
               Job assignments will appear here when created
             </p>
           </div>
@@ -294,7 +294,7 @@ export function CompanyJobQueue() {
               {Object.entries(completedByEmployee).map(([employeeName, employeeJobs]) => (
                 <div key={employeeName} className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
-                    <User className="h-4 w-4 text-muted-foreground" />
+                    <User className="h-4 w-4 text-white/70" />
                     <span className="font-medium">{employeeName}</span>
                     <Badge variant="secondary" className="text-xs">
                       {employeeJobs.length} completed
@@ -305,7 +305,7 @@ export function CompanyJobQueue() {
                       <CompletedJobRow key={job.id} job={job} />
                     ))}
                     {employeeJobs.length > 5 && (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-white/70">
                         + {employeeJobs.length - 5} more completed jobs
                       </p>
                     )}
@@ -345,7 +345,7 @@ function JobRow({ job }: { job: JobAssignment }) {
           </Badge>
         </div>
 
-        <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
+        <div className="flex items-center gap-4 text-xs text-white/70 flex-wrap">
           {job.appointments?.datetime && (
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
@@ -368,16 +368,16 @@ function JobRow({ job }: { job: JobAssignment }) {
 
         {/* Assigned Employee */}
         <div className="flex items-center gap-2 text-xs">
-          <User className="h-3 w-3 text-muted-foreground" />
+          <User className="h-3 w-3 text-white/70" />
           {job.employee ? (
             <span className="text-foreground font-medium">
               {job.employee.full_name}
             </span>
           ) : (
-            <span className="text-muted-foreground italic">Unassigned</span>
+            <span className="text-white/70 italic">Unassigned</span>
           )}
           {job.assigned_at && (
-            <span className="text-muted-foreground">
+            <span className="text-white/70">
               • Assigned {formatDistanceToNow(new Date(job.assigned_at), { addSuffix: true })}
             </span>
           )}
@@ -395,13 +395,13 @@ function CompletedJobRow({ job }: { job: JobAssignment }) {
         <span className="font-medium truncate">
           {job.appointments?.customer_name || 'Unknown'}
         </span>
-        <span className="text-muted-foreground"> — </span>
-        <span className="text-muted-foreground">
+        <span className="text-white/70"> — </span>
+        <span className="text-white/70">
           {job.appointments?.service_type || 'Service'}
         </span>
       </div>
       {job.completed_at && (
-        <span className="text-xs text-muted-foreground flex-shrink-0">
+        <span className="text-xs text-white/70 flex-shrink-0">
           {format(new Date(job.completed_at), 'MMM d')}
         </span>
       )}

@@ -245,13 +245,13 @@ export function OnboardingChecklist() {
                 </Badge>
               )}
             </CardTitle>
-            <CardDescription className="mt-1">
+            <CardDescription className="mt-1 text-white/80">
               Complete these steps to get your AI agent up and running
             </CardDescription>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold">{progress}%</div>
-            <div className="text-xs text-muted-foreground">complete</div>
+            <div className="text-2xl font-bold text-white">{progress}%</div>
+            <div className="text-xs text-white/70">complete</div>
           </div>
         </div>
         <Progress value={progress} className="mt-4" />
@@ -297,7 +297,7 @@ export function OnboardingChecklist() {
                     </Badge>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground truncate">{item.description}</p>
+                <p className="text-sm text-white/70 truncate">{item.description}</p>
               </div>
               {!isItemComplete && (
                 <Button size="sm" variant="ghost" className="shrink-0">

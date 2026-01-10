@@ -68,7 +68,7 @@ export function FieldOpsAppCard() {
               <Smartphone className="w-5 h-5 text-primary" />
               Field Ops App
             </CardTitle>
-            <CardDescription className="mt-1">
+            <CardDescription className="mt-1 text-white/80">
               Install the mobile app on your technicians' devices
             </CardDescription>
           </div>
@@ -138,24 +138,24 @@ export function FieldOpsAppCard() {
             {/* iOS Instructions */}
             <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
               <div className="flex items-center gap-2 mb-3">
-                <Apple className="h-4 w-4" />
-                <span className="font-medium text-sm">iPhone / iPad</span>
+                <Apple className="h-4 w-4 text-white" />
+                <span className="font-medium text-sm text-white">iPhone / iPad</span>
               </div>
-              <ol className="space-y-2 text-xs text-muted-foreground">
+              <ol className="space-y-2 text-xs text-white/70">
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">1</span>
-                  <span>Open in <strong className="text-foreground">Safari</strong></span>
+                  <span>Open in <strong className="text-white">Safari</strong></span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">2</span>
                   <span className="flex items-center gap-1">
-                    Tap <Share className="h-3 w-3" /> Share
+                    Tap <Share className="h-3 w-3 text-white" /> Share
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">3</span>
                   <span className="flex items-center gap-1">
-                    Tap <Plus className="h-3 w-3" /> Add to Home Screen
+                    Tap <Plus className="h-3 w-3 text-white" /> Add to Home Screen
                   </span>
                 </li>
               </ol>
@@ -164,18 +164,18 @@ export function FieldOpsAppCard() {
             {/* Android Instructions */}
             <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
               <div className="flex items-center gap-2 mb-3">
-                <Chrome className="h-4 w-4" />
-                <span className="font-medium text-sm">Android</span>
+                <Chrome className="h-4 w-4 text-white" />
+                <span className="font-medium text-sm text-white">Android</span>
               </div>
-              <ol className="space-y-2 text-xs text-muted-foreground">
+              <ol className="space-y-2 text-xs text-white/70">
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">1</span>
-                  <span>Open in <strong className="text-foreground">Chrome</strong></span>
+                  <span>Open in <strong className="text-white">Chrome</strong></span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">2</span>
                   <span className="flex items-center gap-1">
-                    Tap <MoreVertical className="h-3 w-3" /> Menu
+                    Tap <MoreVertical className="h-3 w-3 text-white" /> Menu
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -191,21 +191,21 @@ export function FieldOpsAppCard() {
         <div className="grid gap-3 grid-cols-3 pt-2 border-t border-border/50">
           <div className="flex items-center gap-2 text-sm">
             <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <Smartphone className="h-4 w-4 text-primary" />
+              <Smartphone className="h-4 w-4 text-white" />
             </div>
-            <span className="text-xs text-muted-foreground">Native Feel</span>
+            <span className="text-xs text-white/70">Native Feel</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <Download className="h-4 w-4 text-primary" />
+              <Download className="h-4 w-4 text-white" />
             </div>
-            <span className="text-xs text-muted-foreground">Quick Access</span>
+            <span className="text-xs text-white/70">Quick Access</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <Check className="h-4 w-4 text-primary" />
+              <Check className="h-4 w-4 text-white" />
             </div>
-            <span className="text-xs text-muted-foreground">Works Offline</span>
+            <span className="text-xs text-white/70">Works Offline</span>
           </div>
         </div>
       </CardContent>
