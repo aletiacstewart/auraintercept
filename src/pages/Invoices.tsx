@@ -275,21 +275,21 @@ export default function Invoices() {
                       <TableCell className="text-right font-medium">${invoice.total.toFixed(2)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => setViewInvoice(invoice)}>
+                          <Button variant="ghost" size="icon" className="text-blue-400 hover:text-white hover:bg-blue-600" onClick={() => setViewInvoice(invoice)}>
                             <Eye className="w-4 h-4" />
                           </Button>
                           {invoice.status === 'draft' && (
-                            <Button variant="ghost" size="icon" onClick={() => updateStatusMutation.mutate({ id: invoice.id, status: 'sent' })}>
+                            <Button variant="ghost" size="icon" className="text-blue-400 hover:text-white hover:bg-blue-600" onClick={() => updateStatusMutation.mutate({ id: invoice.id, status: 'sent' })}>
                               <Send className="w-4 h-4" />
                             </Button>
                           )}
                           {invoice.status === 'sent' && (
-                            <Button variant="ghost" size="icon" onClick={() => updateStatusMutation.mutate({ id: invoice.id, status: 'paid' })}>
-                              <Check className="w-4 h-4 text-green-600" />
+                            <Button variant="ghost" size="icon" className="text-green-500 hover:text-white hover:bg-green-600" onClick={() => updateStatusMutation.mutate({ id: invoice.id, status: 'paid' })}>
+                              <Check className="w-4 h-4" />
                             </Button>
                           )}
-                          <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(invoice.id)}>
-                            <Trash2 className="w-4 h-4 text-destructive" />
+                          <Button variant="ghost" size="icon" className="text-red-400 hover:text-white hover:bg-red-600" onClick={() => deleteMutation.mutate(invoice.id)}>
+                            <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
                       </TableCell>
