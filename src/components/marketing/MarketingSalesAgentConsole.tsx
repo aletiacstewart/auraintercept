@@ -129,11 +129,12 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
-  // Get active label based on form type
+  // Get active label based on form type - show "Home" when no form is active
   const getActiveLabel = () => {
     if (showCampaignForm) return 'Campaign';
     if (showSegmentsForm) return 'Segments';
-    return agentStyle.label;
+    if (messages.length > 0) return agentStyle.label; // Show agent label during chat
+    return 'Home';
   };
   
   const activeLabel = getActiveLabel();
