@@ -119,7 +119,7 @@ export function CalendarSubscription({
         </CardHeader>
         <CardContent>
           <div className="h-20 flex items-center justify-center">
-            <RefreshCw className="h-5 w-5 animate-spin text-muted-foreground" />
+            <RefreshCw className="h-5 w-5 animate-spin text-card-foreground" />
           </div>
         </CardContent>
       </Card>
@@ -134,17 +134,17 @@ export function CalendarSubscription({
             <Calendar className="h-5 w-5 text-primary" />
             {title}
           </CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardDescription className="text-card-foreground">{description}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-2 flex-wrap">
             <Badge variant="secondary" className="text-xs">
               Free Forever
             </Badge>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs text-card-foreground">
               Works with All Calendar Apps
             </Badge>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs text-card-foreground">
               Auto-Updates
             </Badge>
           </div>
@@ -194,7 +194,7 @@ export function CalendarSubscription({
               </div>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-card-foreground">
               Calendar feed not available. Please contact support.
             </p>
           )}
