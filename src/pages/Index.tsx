@@ -522,15 +522,13 @@ and allows your team to focus on delivering expert onsite service.</p>
                   </h3>
                 </div>
                 <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {cat.industries.map((industry, index) => <Card key={industry.name} className="hover:shadow-md transition-all duration-300 hover:border-primary/50 text-center bg-card/80">
-                      <CardContent className="p-3">
-                        <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center mx-auto mb-2">
-                          <industry.icon className="w-5 h-5 text-primary-foreground" />
-                        </div>
-                        <h4 className="font-medium text-xs mb-0.5">{industry.name}</h4>
-                        <p className="text-[10px] text-card-muted leading-tight hidden sm:block">{industry.description}</p>
-                      </CardContent>
-                    </Card>)}
+                  {cat.industries.map((industry, index) => <div key={industry.name} className="rounded-xl p-3 text-center transition-all duration-300 hover:opacity-90" style={{ backgroundColor: '#2a3d4e' }}>
+                      <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center mx-auto mb-2">
+                        <industry.icon className="w-5 h-5 text-primary-foreground" />
+                      </div>
+                      <h4 className="font-medium text-xs mb-0.5 text-white">{industry.name}</h4>
+                      <p className="text-[10px] text-white/70 leading-tight hidden sm:block">{industry.description}</p>
+                    </div>)}
                 </div>
               </div>)}
           </div>
