@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download } from 'lucide-react';
+import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
@@ -179,9 +179,28 @@ export function CompanyAdminDashboard() {
             </>
           ) : (
             <>
-              <h1 className="text-3xl font-bold tracking-tight">{company?.name}</h1>
+              <div className="flex items-center gap-4 flex-wrap">
+                <h1 className="text-3xl font-bold tracking-tight">{company?.name}</h1>
+                {company?.registration_code && (
+                  <div className="flex items-center gap-2 bg-primary/10 border border-primary/30 rounded-lg px-3 py-1.5">
+                    <span className="text-xs text-white/70">Registration Code:</span>
+                    <code className="text-sm font-mono font-bold text-primary">{company.registration_code}</code>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6"
+                      onClick={() => {
+                        navigator.clipboard.writeText(company.registration_code || '');
+                        // Show a toast or visual feedback
+                      }}
+                    >
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
+                )}
+              </div>
               <p className="text-white/70 mt-1">
-                Company Dashboard
+                Company Dashboard {companyId && <span className="text-xs opacity-60">• ID: {companyId.slice(0, 8)}...</span>}
               </p>
             </>
           )}

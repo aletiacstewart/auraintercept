@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, CheckCircle, UserPlus } from 'lucide-react';
+import { Loader2, CheckCircle, UserPlus, Info } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const JOB_TYPES = [
   { value: 'technician', label: 'Technician' },
@@ -21,50 +22,57 @@ const JOB_TYPES = [
   { value: 'analytics_manager', label: 'Analytics Manager' },
 ];
 
-interface CreateTestEmployeesProps {
+interface CreateEmployeeAccountsProps {
   companyId: string;
 }
 
-export function CreateTestEmployees({ companyId }: CreateTestEmployeesProps) {
+function generateTempPassword(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
+  let password = '';
+  for (let i = 0; i < 12; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
+}
+
+export function CreateTestEmployees({ companyId }: CreateEmployeeAccountsProps) {
   const [loading, setLoading] = useState(false);
-  const [creatingAll, setCreatingAll] = useState(false);
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('Test123!');
   const [fullName, setFullName] = useState('');
   const [jobType, setJobType] = useState('');
-  const [createdAccounts, setCreatedAccounts] = useState<string[]>([]);
+  const [createdAccounts, setCreatedAccounts] = useState<{ email: string; jobType: string }[]>([]);
   
   const { toast } = useToast();
 
-  const createEmployeeAccount = async (type: string, emailOverride?: string, nameOverride?: string) => {
-    const accountEmail = emailOverride || `${type.replace('_', '')}@test.com`;
-    const accountName = nameOverride || `Test ${type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}`;
-
-    const { data, error } = await supabase.functions.invoke('create-demo-employee', {
-      body: {
-        email: accountEmail,
-        password: 'Test123!',
-        fullName: accountName,
-        companyId,
-        jobType: type,
-      },
-    });
-
-    if (error) throw error;
-    return data;
-  };
-
-  const handleCreateSingleEmployee = async () => {
-    if (!email || !jobType) {
-      toast({ title: 'Missing fields', description: 'Please fill in email and job type', variant: 'destructive' });
+  const handleCreateEmployee = async () => {
+    if (!email || !jobType || !fullName) {
+      toast({ title: 'Missing fields', description: 'Please fill in all fields', variant: 'destructive' });
       return;
     }
 
     setLoading(true);
     try {
-      await createEmployeeAccount(jobType, email, fullName || undefined);
-      setCreatedAccounts(prev => [...prev, jobType]);
-      toast({ title: 'Account created', description: `Test account for ${jobType} created successfully` });
+      const tempPassword = generateTempPassword();
+      
+      const { data, error } = await supabase.functions.invoke('create-demo-employee', {
+        body: {
+          email,
+          password: tempPassword,
+          fullName,
+          companyId,
+          jobType,
+          mustChangePassword: true,
+          sendWelcomeEmail: true,
+        },
+      });
+
+      if (error) throw error;
+      
+      setCreatedAccounts(prev => [...prev, { email, jobType }]);
+      toast({ 
+        title: 'Account created', 
+        description: `Employee account created. A temporary password has been sent to ${email}. They will be prompted to change it on first login.` 
+      });
       setEmail('');
       setFullName('');
       setJobType('');
@@ -75,49 +83,28 @@ export function CreateTestEmployees({ companyId }: CreateTestEmployeesProps) {
     }
   };
 
-  const handleCreateAllEmployees = async () => {
-    setCreatingAll(true);
-    const results: string[] = [];
-
-    for (const type of JOB_TYPES) {
-      try {
-        await createEmployeeAccount(type.value);
-        results.push(type.value);
-        setCreatedAccounts(prev => [...prev, type.value]);
-      } catch (error: any) {
-        console.error(`Failed to create ${type.value}:`, error);
-      }
-    }
-
-    toast({
-      title: 'Bulk creation complete',
-      description: `Created ${results.length} of ${JOB_TYPES.length} test accounts`,
-    });
-    setCreatingAll(false);
-  };
-
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <UserPlus className="h-5 w-5" />
-          Create Test Employees
+          Create Accounts
         </CardTitle>
         <CardDescription className="text-white/70">
-          Create test employee accounts. Default password: Test123!
+          Create employee accounts, assign roles, and send temporary passwords via email. Employees will be prompted to change their password on first login.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Single employee account creation */}
+        {/* Employee account creation */}
         <div className="space-y-4">
-          <h3 className="text-sm font-medium">Create Single Employee</h3>
+          <h3 className="text-sm font-medium">Create Employee Account</h3>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="test@test.com"
+                placeholder="employee@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -126,7 +113,7 @@ export function CreateTestEmployees({ companyId }: CreateTestEmployeesProps) {
               <Label htmlFor="fullName">Full Name</Label>
               <Input
                 id="fullName"
-                placeholder="Test User"
+                placeholder="John Smith"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
@@ -147,7 +134,7 @@ export function CreateTestEmployees({ companyId }: CreateTestEmployeesProps) {
               </Select>
             </div>
             <div className="flex items-end">
-              <Button onClick={handleCreateSingleEmployee} disabled={loading}>
+              <Button onClick={handleCreateEmployee} disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Create Employee
               </Button>
@@ -155,27 +142,25 @@ export function CreateTestEmployees({ companyId }: CreateTestEmployeesProps) {
           </div>
         </div>
 
-        {/* Bulk creation */}
-        <div className="border-t pt-4">
-          <h3 className="text-sm font-medium mb-4">Create All Test Employees</h3>
-          <p className="text-sm text-white/70 mb-4">
-            Creates one test account per job type with emails like technician@test.com, dispatch@test.com, etc.
-          </p>
-          <Button onClick={handleCreateAllEmployees} disabled={creatingAll} variant="outline">
-            {creatingAll && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create All 10 Test Employees
-          </Button>
-        </div>
+        {/* Info about self-registration */}
+        <Alert className="border-blue-500/50 bg-blue-500/10">
+          <Info className="h-4 w-4 text-blue-400" />
+          <AlertDescription className="text-white/80">
+            <strong>Employee Self-Registration:</strong> If you prefer employees to sign up themselves, 
+            share your company's <strong>Registration Code</strong> (found on the dashboard next to your company name). 
+            Employees can use this code during signup to join your company.
+          </AlertDescription>
+        </Alert>
 
         {/* Created accounts list */}
         {createdAccounts.length > 0 && (
           <div className="border-t pt-4">
-            <h3 className="text-sm font-medium mb-2">Created Employees</h3>
+            <h3 className="text-sm font-medium mb-2">Recently Created Employees</h3>
             <div className="flex flex-wrap gap-2">
-              {createdAccounts.map((type, idx) => (
-                <div key={`${type}-${idx}`} className="flex items-center gap-1 text-sm bg-green-100 text-green-800 px-2 py-1 rounded">
+              {createdAccounts.map((account, idx) => (
+                <div key={`${account.email}-${idx}`} className="flex items-center gap-1 text-sm bg-green-500/20 text-green-400 px-2 py-1 rounded">
                   <CheckCircle className="h-3 w-3" />
-                  {type.replace('_', ' ')}
+                  {account.email} ({account.jobType.replace('_', ' ')})
                 </div>
               ))}
             </div>
