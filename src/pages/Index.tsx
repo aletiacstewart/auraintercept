@@ -280,7 +280,7 @@ const heroStats = [{
 const subtitles = ['Booking & Scheduling', 'Field Operations', 'Billing & Invoicing', 'Customer Portal', 'Business Management'];
 export default function Index() {
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState('field');
+  const [activeCategory, setActiveCategory] = useState('business');
   const [currentSubtitle, setCurrentSubtitle] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -374,13 +374,13 @@ export default function Index() {
 
           <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
             <TabsList className="flex flex-wrap justify-center gap-2 mb-8 h-auto bg-transparent">
-              {agentCategories.filter(category => category.id !== 'customer').map(category => <TabsTrigger key={category.id} value={category.id} className="data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground px-4 py-2">
+              {agentCategories.filter(category => category.id !== 'customer' && category.id !== 'field').map(category => <TabsTrigger key={category.id} value={category.id} className="data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground px-4 py-2">
                   <category.icon className="w-4 h-4 mr-2" />
                   {category.name}
                 </TabsTrigger>)}
             </TabsList>
 
-            {agentCategories.filter(category => category.id !== 'customer').map(category => <TabsContent key={category.id} value={category.id}>
+            {agentCategories.filter(category => category.id !== 'customer' && category.id !== 'field').map(category => <TabsContent key={category.id} value={category.id}>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {category.agents.map((agent, index) => <Card key={agent.name} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 animate-fade-in" style={{
                 animationDelay: `${index * 50}ms`
