@@ -193,7 +193,6 @@ const industryCategories = [
       { name: 'Plumbing', icon: Droplet, description: 'Emergency & Installations' },
       { name: 'Electrical', icon: Zap, description: 'Residential & Commercial' },
       { name: 'Restoration', icon: Wind, description: 'Water, Fire, & Mold' },
-      { name: 'Locksmiths', icon: Key, description: 'Emergency & Security' },
     ]
   },
   {
