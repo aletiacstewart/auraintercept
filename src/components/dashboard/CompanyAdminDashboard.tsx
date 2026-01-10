@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink } from 'lucide-react';
+import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink, Target } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
@@ -93,6 +93,8 @@ export function CompanyAdminDashboard() {
       return {
         employees: employees.count ?? 0,
         customers: customers.count ?? 0,
+        leads: allLeads.length,
+        newLeads: allLeads.filter(l => l.status === 'new').length,
         appointments: allAppointments.length,
         openQuotes: openQuotes.length,
         openQuotesTotal,
@@ -127,6 +129,13 @@ export function CompanyAdminDashboard() {
       gradient: 'from-cyan-500 to-cyan-600'
     },
     { 
+      title: 'Leads', 
+      value: stats?.leads ?? 0, 
+      icon: Target, 
+      description: `${stats?.newLeads ?? 0} new`,
+      gradient: 'from-orange-500 to-orange-600'
+    },
+    {
       title: 'Appointments', 
       value: stats?.appointments ?? 0, 
       icon: Calendar, 
