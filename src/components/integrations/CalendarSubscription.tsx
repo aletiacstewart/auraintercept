@@ -141,10 +141,10 @@ export function CalendarSubscription({
             <Badge variant="secondary" className="text-xs">
               Free Forever
             </Badge>
-            <Badge variant="outline" className="text-xs text-white/70 border-white/30">
+            <Badge variant="outline" className="text-xs">
               Works with All Calendar Apps
             </Badge>
-            <Badge variant="outline" className="text-xs text-white/70 border-white/30">
+            <Badge variant="outline" className="text-xs">
               Auto-Updates
             </Badge>
           </div>
@@ -166,7 +166,7 @@ export function CalendarSubscription({
                   {copied ? (
                     <Check className="h-4 w-4 text-green-500" />
                   ) : (
-                    <Copy className="h-4 w-4" />
+                    <Copy className="h-4 w-4 text-foreground" />
                   )}
                 </Button>
               </div>
@@ -189,7 +189,7 @@ export function CalendarSubscription({
                   disabled={regenerateMutation.isPending}
                   title="Generate new URL (old links will stop working)"
                 >
-                  <RefreshCw className={`h-4 w-4 ${regenerateMutation.isPending ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`h-4 w-4 text-foreground ${regenerateMutation.isPending ? 'animate-spin' : ''}`} />
                 </Button>
               </div>
             </div>
