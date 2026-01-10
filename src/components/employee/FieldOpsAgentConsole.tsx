@@ -169,14 +169,14 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch company dispatch phone
+  // Fetch company data including logo
   const { data: companyData } = useQuery({
-    queryKey: ['company-dispatch-phone', effectiveCompanyId],
+    queryKey: ['company-data-fieldops', effectiveCompanyId],
     queryFn: async () => {
       if (!effectiveCompanyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('dispatch_phone, name')
+        .select('dispatch_phone, name, logo_url')
         .eq('id', effectiveCompanyId)
         .single();
       if (error) {
@@ -764,7 +764,8 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
     <Card className={cn('h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden border-0 shadow-xl', className)}>
       {/* Header - matching AIAgentConsole glass style */}
       <GlassHeader
-        companyName="Field Ops Assistant"
+        companyName={companyData?.name || "Field Ops Assistant"}
+        logoUrl={companyData?.logo_url}
         agentLabel={agentInfo.label}
         agentColor={agentInfo.color}
         agentBgColor={agentInfo.bgColor}
@@ -776,6 +777,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           }
         }}
         isOnline={true}
+        useDefaultLogo={!companyData?.logo_url}
       />
 
       {/* Tab Navigation - matching AIAgentConsole */}
