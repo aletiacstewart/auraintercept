@@ -15,7 +15,8 @@ import {
   DollarSign,
   ArrowRight,
   Sparkles,
-  UserPlus
+  UserPlus,
+  CheckCircle2
 } from 'lucide-react';
 import { format, isPast, parseISO, subDays } from 'date-fns';
 
@@ -55,6 +56,22 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
         .eq('company_id', companyId)
         .in('status', ['draft', 'sent', 'overdue'])
         .order('due_date', { ascending: true })
+        .limit(5);
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
+  // Fetch recently paid invoices
+  const { data: paidInvoices = [] } = useQuery({
+    queryKey: ['paid-invoices', companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('invoices')
+        .select('*')
+        .eq('company_id', companyId)
+        .eq('status', 'paid')
+        .order('paid_at', { ascending: false })
         .limit(5);
       return data || [];
     },
@@ -290,7 +307,56 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
         </Card>
       </div>
 
-      {/* Inventory Alerts - Platform Admin Only */}
+      {/* Recently Paid Invoices */}
+      {paidInvoices.length > 0 && (
+        <Card className="bg-slate-800 border-white/10">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
+                <CheckCircle2 className="h-4 w-4 text-green-400" />
+                Recently Paid
+              </CardTitle>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate('/dashboard/invoices')} 
+                className="text-accent hover:text-accent hover:bg-accent/10"
+              >
+                View All <ArrowRight className="h-3 w-3 ml-1" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-2">
+              {paidInvoices.map(invoice => (
+                <div 
+                  key={invoice.id} 
+                  className="flex items-center justify-between p-3 rounded-lg bg-green-500/10 hover:bg-green-500/20 transition-colors border border-green-500/20 cursor-pointer"
+                  onClick={() => navigate(`/dashboard/invoices?id=${invoice.id}`)}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate text-white">{invoice.customer_name}</p>
+                    <div className="flex items-center gap-1 text-xs text-white/60">
+                      <CheckCircle2 className="h-3 w-3 text-green-400" />
+                      {invoice.paid_at ? format(new Date(invoice.paid_at), 'MMM d') : 'Paid'}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge 
+                      variant="outline" 
+                      className="text-xs bg-green-500/20 text-green-400 border-green-500/30"
+                    >
+                      paid
+                    </Badge>
+                    <span className="font-semibold text-sm text-white">${invoice.total?.toFixed(0)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {isPlatformAdmin && inventoryAlerts.length > 0 && (
         <Card className="bg-slate-800 border-white/10">
           <CardHeader className="pb-3">
