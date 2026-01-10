@@ -553,27 +553,27 @@ export default function Index() {
             </p>
           </div>
 
-          <div className="space-y-12">
+          <div className="space-y-8">
             {industryCategories.map((cat, catIndex) => (
               <div key={cat.category}>
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="text-2xl">{cat.emoji}</span>
-                  <h3 className="text-xl font-semibold">
-                    {cat.category} <span className="text-muted-foreground font-normal">({cat.subtitle})</span>
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-xl">{cat.emoji}</span>
+                  <h3 className="text-lg font-semibold">
+                    {cat.category} <span className="text-muted-foreground font-normal text-sm">({cat.subtitle})</span>
                   </h3>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
                   {cat.industries.map((industry, index) => (
                     <Card 
                       key={industry.name}
-                      className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 text-center bg-card/80"
+                      className="hover:shadow-md transition-all duration-300 hover:border-primary/50 text-center bg-card/80"
                     >
-                      <CardContent className="p-5">
-                        <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mx-auto mb-3">
-                          <industry.icon className="w-6 h-6 text-primary-foreground" />
+                      <CardContent className="p-3">
+                        <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center mx-auto mb-2">
+                          <industry.icon className="w-5 h-5 text-primary-foreground" />
                         </div>
-                        <h4 className="font-semibold text-sm mb-1">{industry.name}</h4>
-                        <p className="text-xs text-card-muted leading-tight">{industry.description}</p>
+                        <h4 className="font-medium text-xs mb-0.5">{industry.name}</h4>
+                        <p className="text-[10px] text-card-muted leading-tight hidden sm:block">{industry.description}</p>
                       </CardContent>
                     </Card>
                   ))}
