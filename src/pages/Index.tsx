@@ -107,7 +107,7 @@ const agentConsoles = [
       'Automated invoice creation',
       'Payment status tracking',
       'Price lookup assistant',
-      'Business administration',
+      'Dashboard & Analytics',
       'Employee management'
     ]
   }
