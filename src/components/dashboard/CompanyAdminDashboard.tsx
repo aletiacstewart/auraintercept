@@ -157,11 +157,12 @@ export function CompanyAdminDashboard() {
   ];
 
   const quickActions = [
-    { label: 'Add Employee', icon: Plus, href: '/dashboard/employees', gradient: 'from-primary to-primary/80' },
-    { label: 'Customer Engagement', icon: HeadphonesIcon, href: '/dashboard/ai-agent?console=customer', gradient: 'from-cyan-500 to-blue-500' },
-    { label: 'Field Operations', icon: Truck, href: '/dashboard/ai-agent?console=fieldops', gradient: 'from-green-500 to-emerald-500' },
-    { label: 'Business & Accounting', icon: Briefcase, href: '/dashboard/ai-agent?console=businessops', gradient: 'from-purple-500 to-violet-500' },
-    { label: 'Embed Chat Widget', icon: Code, href: '/dashboard/widget', gradient: 'from-slate-600 to-slate-700' },
+    { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', gradient: 'from-primary to-primary/80' },
+    { label: 'Analytics', icon: TrendingUp, href: '/dashboard/analytics', gradient: 'from-cyan-500 to-blue-500' },
+    { label: 'Communication Logs', icon: MessageSquare, href: '/dashboard/communication-logs', gradient: 'from-green-500 to-emerald-500' },
+    { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', gradient: 'from-purple-500 to-violet-500' },
+    { label: 'Calculators', icon: DollarSign, href: '/dashboard/calculators', gradient: 'from-amber-500 to-orange-500' },
+    { label: 'Integrations Overview', icon: Puzzle, href: '/dashboard/integrations', gradient: 'from-slate-600 to-slate-700' },
   ];
 
   return (
