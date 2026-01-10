@@ -193,7 +193,7 @@ export function CompanyAdminDashboard() {
                 {company?.registration_code && (
                   <div className="flex items-center gap-2 bg-slate-700/80 border border-slate-600/50 rounded-lg px-3 py-1.5">
                     <span className="text-xs text-white/70">Registration Code:</span>
-                    <code className="text-sm font-mono font-bold text-primary">{company.registration_code}</code>
+                    <code className="text-sm font-mono font-bold text-white">{company.registration_code}</code>
                     <Button 
                       variant="ghost" 
                       size="icon" 
