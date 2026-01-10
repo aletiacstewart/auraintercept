@@ -89,7 +89,7 @@ export function AuditQuestion({
           <Button
             onClick={onNext}
             disabled={!selectedOption}
-            className="gap-2 text-white"
+            className="gap-2 text-white disabled:opacity-100 disabled:text-white/70"
           >
             {isLast ? "See Results" : "Next"}
             <ArrowRight className="h-4 w-4" />
