@@ -26,7 +26,6 @@ export function PublicFooter() {
             <ul className="space-y-2 text-sm text-white/70">
               <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-white transition-colors">Start Trial</button></li>
               <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-white transition-colors">Company Subscription</button></li>
-              <li><button onClick={() => navigate('/customer-auth')} className="hover:text-white transition-colors">Customer Portal</button></li>
             </ul>
           </div>
           
@@ -54,9 +53,6 @@ export function PublicFooter() {
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="sm" className="text-white hover:text-white/80" onClick={() => navigate('/')}>
               Home
-            </Button>
-            <Button variant="ghost" size="sm" className="text-white hover:text-white/80" onClick={() => navigate('/customer-auth')}>
-              Customer Portal
             </Button>
             <Button variant="ghost" size="sm" className="text-white hover:text-white/80" onClick={() => navigate('/auth')}>
               Sign In
