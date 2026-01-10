@@ -31,7 +31,9 @@ import {
   BarChart3,
   Target,
   Download,
-  Smartphone
+  Smartphone,
+  Bell,
+  AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -551,7 +553,115 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
   },
 ];
 
-export type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics';
+// Dispatch Field Ops Guides
+const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
+  {
+    id: 'map-view',
+    label: 'Map View',
+    icon: MapPin,
+    description: 'Monitor all technicians and jobs on an interactive map',
+    steps: [
+      { step: 1, title: 'View Map', description: 'Click Map View tab to see all active jobs and technicians' },
+      { step: 2, title: 'Track Locations', description: 'See real-time technician locations with status indicators' },
+      { step: 3, title: 'Click Job Markers', description: 'Click on job markers to view details and take actions' },
+      { step: 4, title: 'Monitor Coverage', description: 'Ensure technicians are optimally distributed across service area' },
+    ],
+    tips: ['Color-coded markers indicate job status', 'Technician locations update automatically every 30 seconds']
+  },
+  {
+    id: 'agenda-view',
+    label: 'Agenda View',
+    icon: ClipboardList,
+    description: 'View all jobs in a detailed list format',
+    steps: [
+      { step: 1, title: 'Switch to Agenda', description: 'Click Agenda View tab to see job list' },
+      { step: 2, title: 'Filter by Status', description: 'Jobs are grouped by status: Pending, En Route, On Site, Completed' },
+      { step: 3, title: 'View Details', description: 'Click any job to see customer info, technician, and financials' },
+      { step: 4, title: 'Take Actions', description: 'Assign, reassign, notify customer, or cancel from each job card' },
+    ],
+    tips: ['Use Agenda View for detailed job management', 'Completed jobs are shown separately for review']
+  },
+  {
+    id: 'assign-tech',
+    label: 'Assign Technician',
+    icon: UserPlus,
+    description: 'Assign or reassign technicians to jobs',
+    steps: [
+      { step: 1, title: 'Find Unassigned Job', description: 'Locate jobs with pending or no technician assignment' },
+      { step: 2, title: 'Click Assign', description: 'Open the technician assignment dialog' },
+      { step: 3, title: 'Select Technician', description: 'Choose from available technicians based on location and workload' },
+      { step: 4, title: 'Confirm Assignment', description: 'Technician receives notification and job appears in their queue' },
+    ],
+    tips: ['Smart assignment considers distance, workload, and service history', 'You can reassign jobs if a technician becomes unavailable']
+  },
+  {
+    id: 'real-time-eta',
+    label: 'Real-Time ETAs',
+    icon: Clock,
+    description: 'Monitor and manage customer arrival notifications',
+    steps: [
+      { step: 1, title: 'View ETA Panel', description: 'Click Show ETA Panel to see all en-route technicians' },
+      { step: 2, title: 'Monitor Arrivals', description: 'See estimated arrival times for each active job' },
+      { step: 3, title: 'Track Notifications', description: 'View which customers have been notified of technician approach' },
+      { step: 4, title: 'Send Updates', description: 'Manually trigger ETA updates if needed' },
+    ],
+    tips: ['Customers are auto-notified when technician marks en-route', 'ETA panel shows notification status for each job']
+  },
+  {
+    id: 'notify-customer',
+    label: 'Notify Customer',
+    icon: Bell,
+    description: 'Send updates and notifications to customers',
+    steps: [
+      { step: 1, title: 'Select Job', description: 'Find the job you need to send a notification for' },
+      { step: 2, title: 'Click Notify', description: 'Open the notification dialog from job actions' },
+      { step: 3, title: 'Compose Message', description: 'Write or customize the notification message' },
+      { step: 4, title: 'Send via Email/SMS', description: 'Choose channels and send notification to customer' },
+    ],
+    tips: ['Use for delays, schedule changes, or special instructions', 'Customers can reply to SMS notifications']
+  },
+  {
+    id: 'cancel-job',
+    label: 'Cancel Appointment',
+    icon: AlertCircle,
+    description: 'Cancel jobs and notify relevant parties',
+    steps: [
+      { step: 1, title: 'Select Job', description: 'Find the appointment to cancel' },
+      { step: 2, title: 'Click Cancel', description: 'Open the cancellation dialog' },
+      { step: 3, title: 'Enter Reason', description: 'Provide a reason for cancellation (optional)' },
+      { step: 4, title: 'Confirm Cancel', description: 'Technician and customer are automatically notified' },
+    ],
+    tips: ['Cancelled jobs are logged for reporting', 'Consider rescheduling instead of cancelling when possible']
+  },
+  {
+    id: 'job-financials',
+    label: 'View Job Financials',
+    icon: Receipt,
+    description: 'Track quotes and invoices for each job',
+    steps: [
+      { step: 1, title: 'Open Job Details', description: 'Click on a job in Agenda View to expand details' },
+      { step: 2, title: 'View Financials Tab', description: 'See linked quotes and invoices for the appointment' },
+      { step: 3, title: 'Check Status', description: 'View payment status and amounts for each document' },
+      { step: 4, title: 'Open Documents', description: 'Click to view full quote or invoice details' },
+    ],
+    tips: ['Technicians can generate quotes and invoices on-site', 'Payment status updates automatically when customer pays']
+  },
+  {
+    id: 'status-legend',
+    label: 'Status Legend',
+    icon: CheckCircle,
+    description: 'Understand job status indicators',
+    steps: [
+      { step: 1, title: 'Pending (Yellow)', description: 'Job assigned but not yet accepted by technician' },
+      { step: 2, title: 'Accepted (Blue)', description: 'Technician has accepted the job assignment' },
+      { step: 3, title: 'En Route (Cyan)', description: 'Technician is traveling to customer location' },
+      { step: 4, title: 'On Site/In Progress (Orange)', description: 'Technician has arrived and is working on the job' },
+    ],
+    tips: ['Green indicates completed jobs', 'Status updates are real-time from technician app']
+  },
+];
+
+export type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics' | 'dispatch';
 
 const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
   customer: CUSTOMER_ENGAGEMENT_GUIDES,
@@ -559,6 +669,7 @@ const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
   businessops: BUSINESS_OPS_GUIDES,
   marketing: MARKETING_SALES_GUIDES,
   analytics: ANALYTICS_GUIDES,
+  dispatch: DISPATCH_FIELD_OPS_GUIDES,
 };
 
 const CONSOLE_TITLES: Record<ConsoleType, string> = {
@@ -567,6 +678,7 @@ const CONSOLE_TITLES: Record<ConsoleType, string> = {
   businessops: 'How to use Business & Accounting AI',
   marketing: 'How to use Marketing & Sales AI',
   analytics: 'How to use Analytics & Optimization AI',
+  dispatch: 'How to use Dispatch-Field Ops Console',
 };
 
 interface AgentHowToGuideProps {
