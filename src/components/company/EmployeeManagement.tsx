@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -71,6 +72,7 @@ function generateRegistrationCode(): string {
 
 export function EmployeeManagement() {
   const { companyId, user } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
@@ -416,7 +418,11 @@ export function EmployeeManagement() {
                 {employees.map((employee) => {
                   const employeeJobs = getEmployeeJobs(employee.id);
                   return (
-                    <TableRow key={employee.id}>
+                    <TableRow 
+                      key={employee.id} 
+                      className="cursor-pointer hover:bg-white/10 transition-colors"
+                      onClick={() => navigate(`/dashboard/employees/${employee.id}`)}
+                    >
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-primary-foreground text-sm font-bold">

@@ -15,6 +15,7 @@ import Dashboard from "./pages/Dashboard";
 import Companies from "./pages/Companies";
 import Customers from "./pages/Customers";
 import Employees from "./pages/Employees";
+import EmployeeDetail from "./pages/EmployeeDetail";
 import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
 import EmployeeAvailability from "./pages/EmployeeAvailability";
@@ -99,6 +100,7 @@ const App = () => (
             <Route path="/dashboard/companies" element={<Companies />} />
             <Route path="/dashboard/customers" element={<Customers />} />
             <Route path="/dashboard/employees" element={<Employees />} />
+            <Route path="/dashboard/employees/:id" element={<EmployeeDetail />} />
             <Route path="/dashboard/settings" element={<Settings />} />
             <Route path="/dashboard/onboarding" element={<Onboarding />} />
             <Route path="/dashboard/availability" element={<EmployeeAvailability />} />
