@@ -128,6 +128,15 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const isShowingForm = showCampaignForm || showSegmentsForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
+  
+  // Get active label based on form type
+  const getActiveLabel = () => {
+    if (showCampaignForm) return 'Campaign';
+    if (showSegmentsForm) return 'Segments';
+    return agentStyle.label;
+  };
+  
+  const activeLabel = getActiveLabel();
 
   return (
     <Card className="h-[600px] flex flex-col overflow-hidden shadow-xl border-slate-600/50 bg-slate-800">
@@ -135,7 +144,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       <GlassHeader
         logoUrl={company?.logo_url}
         companyName={company?.name || 'Marketing & Sales'}
-        agentLabel={agentStyle.label}
+        agentLabel={activeLabel}
         agentColor={agentStyle.color}
         agentBgColor={agentStyle.bgColor}
         useDefaultLogo={true}

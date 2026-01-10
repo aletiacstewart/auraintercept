@@ -181,6 +181,19 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   const isShowingForm = showPerformanceForm || showRevenueForm || showCustomersForm || showForecastForm || showKpiForm || showExportForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
+  
+  // Get active label based on form type
+  const getActiveLabel = () => {
+    if (showPerformanceForm) return 'Performance';
+    if (showRevenueForm) return 'Revenue';
+    if (showCustomersForm) return 'Customers';
+    if (showForecastForm) return 'Forecast';
+    if (showKpiForm) return 'KPI';
+    if (showExportForm) return 'Export';
+    return agentStyle.label;
+  };
+  
+  const activeLabel = getActiveLabel();
 
   // Access denied UI
   if (!hasAccess) {
@@ -206,7 +219,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       <GlassHeader
         logoUrl={company?.logo_url}
         companyName={company?.name || 'Analytics & Optimization'}
-        agentLabel={agentStyle.label}
+        agentLabel={activeLabel}
         agentColor={agentStyle.color}
         agentBgColor={agentStyle.bgColor}
         useDefaultLogo={true}

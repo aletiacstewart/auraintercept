@@ -641,6 +641,21 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   };
 
   const agentInfo = getAgentStyle(currentAgent);
+  
+  // Get active label based on selector mode
+  const getActiveLabel = () => {
+    if (selectorMode === 'accept') return 'Job Accept';
+    if (selectorMode === 'directions') return 'Directions';
+    if (selectorMode === 'enroute') return 'En Route';
+    if (selectorMode === 'eta') return 'ETA Update';
+    if (selectorMode === 'arrive_start') return 'Arrival';
+    if (selectorMode === 'complete') return 'Completion';
+    if (selectorMode === 'quote') return 'Quoting';
+    if (selectorMode === 'invoice') return 'Invoicing';
+    return agentInfo.label;
+  };
+  
+  const activeLabel = getActiveLabel();
 
   const renderMessage = (msg: ChatMessage, index: number) => {
     const isUser = msg.role === 'user';
@@ -766,7 +781,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       <GlassHeader
         companyName={companyData?.name || "Field Ops Assistant"}
         logoUrl={companyData?.logo_url}
-        agentLabel={agentInfo.label}
+        agentLabel={activeLabel}
         agentColor={agentInfo.color}
         agentBgColor={agentInfo.bgColor}
         showPhone={!!companyData?.dispatch_phone}
