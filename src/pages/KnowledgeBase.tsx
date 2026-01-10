@@ -6,7 +6,8 @@ import { FAQsManager } from '@/components/knowledge/FAQsManager';
 import { BusinessHoursManager } from '@/components/knowledge/BusinessHoursManager';
 import { DocumentsManager } from '@/components/knowledge/DocumentsManager';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
-import { Briefcase, HelpCircle, Clock, FileText, Package } from 'lucide-react';
+import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
+import { Briefcase, HelpCircle, Clock, FileText, Package, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function KnowledgeBase() {
@@ -16,10 +17,9 @@ export default function KnowledgeBase() {
   
   const isPlatformAdmin = userRole === 'platform_admin';
   
-  // Determine grid columns based on whether inventory tab is shown
-  const tabCount = isPlatformAdmin ? 5 : 4;
+  // Determine grid columns based on whether platform admin tabs are shown
   const gridColsClass = isPlatformAdmin 
-    ? 'grid-cols-2 lg:grid-cols-5' 
+    ? 'grid-cols-2 lg:grid-cols-6' 
     : 'grid-cols-2 lg:grid-cols-4';
   
   return (
@@ -56,6 +56,12 @@ export default function KnowledgeBase() {
                 Inventory
               </TabsTrigger>
             )}
+            {isPlatformAdmin && (
+              <TabsTrigger value="warranties" className="gap-2">
+                <Shield className="w-4 h-4 hidden sm:block" />
+                Warranties
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="services">
@@ -77,6 +83,12 @@ export default function KnowledgeBase() {
           {isPlatformAdmin && (
             <TabsContent value="inventory">
               <InventoryManager />
+            </TabsContent>
+          )}
+
+          {isPlatformAdmin && (
+            <TabsContent value="warranties">
+              <WarrantiesManager />
             </TabsContent>
           )}
         </Tabs>
