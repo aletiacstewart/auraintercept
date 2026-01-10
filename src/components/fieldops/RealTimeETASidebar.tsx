@@ -90,8 +90,8 @@ export function RealTimeETASidebar({ jobs, companyId }: RealTimeETASidebarProps)
             <Clock className="h-5 w-5 text-accent" />
           </div>
           <div>
-            <h2 className="font-semibold text-foreground">Real-Time ETAs</h2>
-            <p className="text-xs text-muted-foreground">Customer notifications</p>
+            <h2 className="font-semibold text-white">Real-Time ETAs</h2>
+            <p className="text-xs text-white/70">Customer notifications</p>
           </div>
         </div>
 
@@ -100,12 +100,12 @@ export function RealTimeETASidebar({ jobs, companyId }: RealTimeETASidebarProps)
           <div className="flex items-center gap-2 text-sm">
             <Bell className="h-4 w-4 text-green-400" />
             <span className="text-green-400 font-medium">{notifiedCount}</span>
-            <span className="text-muted-foreground">notified</span>
+            <span className="text-white/70">notified</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <BellOff className="h-4 w-4 text-yellow-400" />
             <span className="text-yellow-400 font-medium">{pendingNotifications.length}</span>
-            <span className="text-muted-foreground">pending</span>
+            <span className="text-white/70">pending</span>
           </div>
         </div>
       </div>
@@ -115,9 +115,9 @@ export function RealTimeETASidebar({ jobs, companyId }: RealTimeETASidebarProps)
         <div className="p-4 space-y-3">
           {relevantJobs.length === 0 ? (
             <div className="text-center py-8">
-              <Navigation className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
-              <p className="text-sm text-muted-foreground">No technicians en route</p>
-              <p className="text-xs text-muted-foreground/60 mt-1">
+              <Navigation className="h-10 w-10 mx-auto text-white/30 mb-3" />
+              <p className="text-sm text-white/70">No technicians en route</p>
+              <p className="text-xs text-white/50 mt-1">
                 ETAs will appear here when technicians are dispatched
               </p>
             </div>
