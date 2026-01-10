@@ -939,7 +939,7 @@ const PlatformGuides: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{filteredCategories.length}</p>
-                  <p className="text-xs text-muted-foreground">Categories</p>
+                  <p className="text-xs text-card-foreground/70">Categories</p>
                 </div>
               </div>
             </CardContent>
@@ -954,7 +954,7 @@ const PlatformGuides: React.FC = () => {
                   <p className="text-2xl font-bold">
                     {filteredCategories.reduce((acc, c) => acc + c.guides.length, 0)}
                   </p>
-                  <p className="text-xs text-muted-foreground">Guides</p>
+                  <p className="text-xs text-card-foreground/70">Guides</p>
                 </div>
               </div>
             </CardContent>
@@ -967,7 +967,7 @@ const PlatformGuides: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">22</p>
-                  <p className="text-xs text-muted-foreground">AI Agents</p>
+                  <p className="text-xs text-card-foreground/70">AI Agents</p>
                 </div>
               </div>
             </CardContent>
@@ -980,7 +980,7 @@ const PlatformGuides: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">6</p>
-                  <p className="text-xs text-muted-foreground">Integrations</p>
+                  <p className="text-xs text-card-foreground/70">Integrations</p>
                 </div>
               </div>
             </CardContent>
@@ -1014,10 +1014,10 @@ const PlatformGuides: React.FC = () => {
                           <Icon className={`h-4 w-4 ${isSelected ? 'text-primary-foreground' : 'text-white'}`} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`font-medium text-sm ${isSelected ? '' : 'text-foreground'}`}>
+                          <p className={`font-medium text-sm ${isSelected ? '' : 'text-card-foreground'}`}>
                             {category.title}
                           </p>
-                          <p className={`text-xs ${isSelected ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                          <p className={`text-xs ${isSelected ? 'text-primary-foreground/70' : 'text-card-foreground/70'}`}>
                             {category.guides.length} guides
                           </p>
                         </div>
