@@ -186,7 +186,7 @@ export default function AIAgentsHub() {
               <Bot className="h-8 w-8 text-primary" />
               AI Agents Hub
             </h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-white/70 mt-1">
               {canManageAgents 
                 ? '22 specialized AI agents powering your business automation'
                 : `${totalCount} AI agents available based on your job roles`}
@@ -195,7 +195,7 @@ export default function AIAgentsHub() {
           <div className="flex items-center gap-4">
             <div className="text-right">
               <p className="text-2xl font-bold">{enabledCount}/{totalCount}</p>
-              <p className="text-sm text-muted-foreground">Agents Active</p>
+              <p className="text-sm text-white/70">Agents Active</p>
             </div>
             <Button variant="outline" onClick={() => navigate('/dashboard/ai-agent')}>
               <Settings className="h-4 w-4 mr-2" />
@@ -360,7 +360,7 @@ function AgentCard({
             </div>
             <div>
               <CardTitle className="text-lg">{agent.name}</CardTitle>
-              <CardDescription className="text-xs">
+              <CardDescription className="text-xs text-white/70">
                 {PHASE_LABELS[agent.phase]}
               </CardDescription>
             </div>

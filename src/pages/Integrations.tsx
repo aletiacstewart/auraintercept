@@ -256,7 +256,7 @@ export default function Integrations() {
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Integrations</h1>
-            <p className="text-muted-foreground">Connect services to power your reminders</p>
+            <p className="text-white/70">Connect services to power your reminders</p>
           </div>
           <div className="flex flex-col gap-2">
             <Button onClick={() => setShowQuickStart(true)} className="gap-2">

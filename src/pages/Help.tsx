@@ -159,7 +159,7 @@ export default function Help() {
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold">Help & Documentation</h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-white/70 mt-2">
             Learn how to use your AI agents, set up your dashboard, and manage your team.
           </p>
         </div>

@@ -390,7 +390,7 @@ export function EmployeeManagement() {
       <Card className="border-border/50">
         <CardHeader>
           <CardTitle>Team Members</CardTitle>
-          <CardDescription>
+          <CardDescription className="text-white/70">
             Manage employees and their job roles for AI agent access
           </CardDescription>
         </CardHeader>
@@ -438,7 +438,7 @@ export function EmployeeManagement() {
                               );
                             })
                           ) : (
-                            <span className="text-muted-foreground text-sm">No roles assigned</span>
+                            <span className="text-white/70 text-sm">No roles assigned</span>
                           )}
                         </div>
                       </TableCell>

@@ -114,7 +114,7 @@ export default function Referrals() {
               <Users className="h-6 w-6" />
               Referral Program
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-white/70">
               Manage customer referrals and rewards
             </p>
           </div>

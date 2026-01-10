@@ -19,7 +19,7 @@ export default function FieldOperations() {
   if (!companyId) {
     return (
       <DashboardLayout>
-        <div className="h-full flex items-center justify-center text-muted-foreground">
+        <div className="h-full flex items-center justify-center text-white/70">
           No company selected
         </div>
       </DashboardLayout>
