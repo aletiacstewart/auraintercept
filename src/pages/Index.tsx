@@ -523,7 +523,7 @@ export default function Index() {
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">For Customers</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">24/7 Customer Portal: Your Office on Aura Autopilot</h2>
-            <p className="text-lg text-foreground max-w-2xl mx-auto">Aura Intercept provides a professional, white-labeled Customer Portal. Give your customers the modern convenience of online appointment booking with real-time calendar sync, instant AI-Aura Powered quotes, and live technician tracking. By providing a Aura Intercept AI Center for service status and AI chat support, you reduce administrative overhead and improve customer retention, ensuring your trade business operates at peak efficiency even while you’re off the clock.</p>
+            <p className="text-lg text-foreground max-w-2xl mx-auto">Aura Intercept provides a professional, Customer Portal that can be embedded in to your website for that personal touch. Give your customers the modern convenience of online appointment booking with real-time calendar sync, instant AI-Aura Powered quotes, and live technician tracking. By providing a Aura Intercept AI Center for service status and AI chat support, you reduce administrative overhead and improve customer retention, ensuring your trade business operates at peak efficiency even while you’re off the clock.</p>
           </div>
 
           <div className="max-w-2xl mx-auto space-y-4">
