@@ -13,7 +13,10 @@ import {
   ArrowRight, Sparkles, Wrench, Home, Flame, Droplet,
   ChevronRight, Star, Navigation, Truck,
   Search, UserPlus, Globe, Headphones, Bell, Mail, 
-  Smartphone, Video, Mic, Brain, Layers, Lock, Send
+  Smartphone, Video, Mic, Brain, Layers, Lock, Send,
+  Key, Fence, PanelTop, Wind, DoorOpen, Bug, TreeDeciduous,
+  Waves, TreePine, Trash2, Refrigerator, Hammer, PaintBucket,
+  Grid3X3, Sparkle, Car, HardHat, Wifi, Camera
 } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import heroVideo from '@/assets/aura-intercept-hero.mp4';
@@ -180,11 +183,66 @@ const communicationChannels = [
   }
 ];
 
-const industries = [
-  { name: 'HVAC', icon: Flame, description: 'Heating, ventilation, and AC services' },
-  { name: 'Plumbing', icon: Droplet, description: 'Residential and commercial plumbing' },
-  { name: 'Home Services', icon: Home, description: 'Cleaning, pest control, landscaping' },
-  { name: 'Repair Services', icon: Wrench, description: 'Appliance and equipment repair' },
+const industryCategories = [
+  {
+    category: 'Essential Trades',
+    emoji: '⚡',
+    subtitle: 'High-Urgency',
+    industries: [
+      { name: 'HVAC', icon: Flame, description: 'Heating, Ventilation, & Air Conditioning' },
+      { name: 'Plumbing', icon: Droplet, description: 'Emergency Repairs & New Installations' },
+      { name: 'Electrical', icon: Zap, description: 'Residential & Commercial Power Solutions' },
+      { name: 'Restoration', icon: Wind, description: 'Water, Fire, & Mold Remediation' },
+      { name: 'Locksmiths', icon: Key, description: 'Emergency & Security Access' },
+    ]
+  },
+  {
+    category: 'Exterior & Structural',
+    emoji: '🏠',
+    subtitle: 'Services',
+    industries: [
+      { name: 'Roofing', icon: Home, description: 'Repair, Replacement, & Storm Damage' },
+      { name: 'Garage Doors', icon: PanelTop, description: 'Spring Repair & Automated Openers' },
+      { name: 'Fencing & Decking', icon: Fence, description: 'Professional Perimeter Solutions' },
+      { name: 'Solar Energy', icon: Sun, description: 'Panel Installation & Maintenance' },
+      { name: 'Windows & Doors', icon: DoorOpen, description: 'Specialized Glass & Frame Fitting' },
+    ]
+  },
+  {
+    category: 'Property & Estate',
+    emoji: '🌿',
+    subtitle: 'Maintenance',
+    industries: [
+      { name: 'Pest Control', icon: Bug, description: 'Recurring Residential & Commercial Protection' },
+      { name: 'Landscaping', icon: TreeDeciduous, description: 'Design, Maintenance, & Hardscaping' },
+      { name: 'Pool & Spa', icon: Waves, description: 'Water Chemistry & Equipment Repair' },
+      { name: 'Tree Services', icon: TreePine, description: 'Trimming, Removal, & Arborist Consulting' },
+      { name: 'Septic & Sewer', icon: Trash2, description: 'Waste Management & Line Maintenance' },
+    ]
+  },
+  {
+    category: 'Specialized Home',
+    emoji: '🛠',
+    subtitle: 'Services',
+    industries: [
+      { name: 'Appliance Repair', icon: Refrigerator, description: 'Kitchen & Laundry Machine Specialists' },
+      { name: 'Handyman', icon: Hammer, description: 'General Home Repair & Carpentry' },
+      { name: 'Painting & Coating', icon: PaintBucket, description: 'Professional Interior & Exterior Finishes' },
+      { name: 'Flooring & Tile', icon: Grid3X3, description: 'Hardwood, Laminate, & Stone Installation' },
+      { name: 'Cleaning Services', icon: Sparkle, description: 'Carpet, Pressure Washing, & Janitorial' },
+    ]
+  },
+  {
+    category: 'Mobile & Commercial',
+    emoji: '🚗',
+    subtitle: 'Services',
+    industries: [
+      { name: 'Mobile Auto Care', icon: Car, description: 'Detailing & Mechanical Repair' },
+      { name: 'Facility Management', icon: HardHat, description: 'B2B Building Maintenance' },
+      { name: 'IT Field Services', icon: Wifi, description: 'Network & Hardware Infrastructure' },
+      { name: 'Security Systems', icon: Camera, description: 'Onsite Camera & Alarm Integration' },
+    ]
+  },
 ];
 
 const howItWorks = [
@@ -489,31 +547,42 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Industries</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Built for Service Businesses</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Industries We Empower</h2>
             <p className="text-foreground max-w-2xl mx-auto">
-              Perfect for any appointment-based business that needs to manage scheduling, 
-              field operations, and customer communications.
+              Aura Intercept provides specialized Agentic Logic for high-demand onsite service providers.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {industries.map((industry, index) => (
-              <Card 
-                key={industry.name}
-                className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 text-center"
-              >
-                <CardContent className="p-6">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                    <industry.icon className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-1">{industry.name}</h3>
-                  <p className="text-sm text-card-muted">{industry.description}</p>
-                </CardContent>
-              </Card>
+          <div className="space-y-12">
+            {industryCategories.map((cat, catIndex) => (
+              <div key={cat.category}>
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="text-2xl">{cat.emoji}</span>
+                  <h3 className="text-xl font-semibold">
+                    {cat.category} <span className="text-muted-foreground font-normal">({cat.subtitle})</span>
+                  </h3>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                  {cat.industries.map((industry, index) => (
+                    <Card 
+                      key={industry.name}
+                      className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 text-center bg-card/80"
+                    >
+                      <CardContent className="p-5">
+                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                          <industry.icon className="w-6 h-6 text-primary" />
+                        </div>
+                        <h4 className="font-semibold text-sm mb-1">{industry.name}</h4>
+                        <p className="text-xs text-card-muted leading-tight">{industry.description}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
 
-          <div className="text-center mt-10">
+          <div className="text-center mt-12">
             <Button 
               size="lg" 
               className="gradient-primary shadow-glow text-lg px-8 py-6"
