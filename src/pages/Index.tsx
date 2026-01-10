@@ -280,7 +280,7 @@ const heroStats = [{
 const subtitles = ['Booking & Scheduling', 'Field Operations', 'Billing & Invoicing', 'Customer Portal', 'Business Management'];
 export default function Index() {
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState('business');
+  const [activeCategory, setActiveCategory] = useState('customer');
   const [currentSubtitle, setCurrentSubtitle] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -374,13 +374,13 @@ export default function Index() {
 
           <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
             <TabsList className="flex flex-wrap justify-center gap-2 mb-8 h-auto bg-transparent">
-              {agentCategories.filter(category => category.id !== 'customer' && category.id !== 'field').map(category => <TabsTrigger key={category.id} value={category.id} className="data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground px-4 py-2">
+              {agentCategories.map(category => <TabsTrigger key={category.id} value={category.id} className="data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground px-4 py-2">
                   <category.icon className="w-4 h-4 mr-2" />
                   {category.name}
                 </TabsTrigger>)}
             </TabsList>
 
-            {agentCategories.filter(category => category.id !== 'customer' && category.id !== 'field').map(category => <TabsContent key={category.id} value={category.id}>
+            {agentCategories.map(category => <TabsContent key={category.id} value={category.id}>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {category.agents.map((agent, index) => <Card key={agent.name} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 animate-fade-in" style={{
                 animationDelay: `${index * 50}ms`
@@ -491,7 +491,7 @@ export default function Index() {
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Industries</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">AI Automation for Field Service Industries</h2>
-            <p className="text-foreground max-w-2xl mx-auto">In the fast-paced world of home and commercial services, responsiveness is the key to growth. Aura Intercept brings intelligent automation to the trades, providing a white-label AI workforce that intercepts every inquiry and books it directly into your calendar. Our platform is engineered for onsite service providers who need to eliminate manual office tasks and reduce no-shows without losing the personal touch. From landscaping to restoration, we empower service-based businesses to automate their workflow and focus on the work that matters.</p>
+            <p className="text-foreground max-w-2xl mx-auto">In the fast-paced world of home and commercial services, responsiveness is the key to growth. Aura Intercept brings intelligent automation to the trades, providing a white-label AI workforce that intercepts every inquiry and books it directly into your calendar. Our platform is engineered for onsite service providers who need to eliminate manual office tasks, without losing the personal touch. We empower service-based businesses to automate their workflow and focus on the work that matters.</p>
           </div>
 
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 justify-items-center max-w-4xl mx-auto">
