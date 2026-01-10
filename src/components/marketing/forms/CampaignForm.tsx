@@ -283,7 +283,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
   };
 
   return (
-    <Card className={getCampaignTypeColor()}>
+    <Card className={`${getCampaignTypeColor()} text-foreground`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
