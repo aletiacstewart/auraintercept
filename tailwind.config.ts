@@ -63,6 +63,12 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        channel: {
+          voice: "hsl(var(--channel-voice))",
+          sms: "hsl(var(--channel-sms))",
+          email: "hsl(var(--channel-email))",
+          chat: "hsl(var(--channel-chat))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
