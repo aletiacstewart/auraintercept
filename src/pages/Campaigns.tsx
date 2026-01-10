@@ -304,44 +304,44 @@ export default function Campaigns() {
 
         {/* Stats */}
         <div className="grid gap-4 md:grid-cols-5">
-          <Card>
+          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
             <CardHeader className="pb-2">
-              <CardDescription>Total Campaigns</CardDescription>
-              <CardTitle className="text-2xl">{stats.total}</CardTitle>
+              <CardDescription className="text-white/70">Total Campaigns</CardDescription>
+              <CardTitle className="text-2xl text-accent">{stats.total}</CardTitle>
             </CardHeader>
           </Card>
-          <Card>
+          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
             <CardHeader className="pb-2">
-              <CardDescription>Messages Sent</CardDescription>
-              <CardTitle className="text-2xl flex items-center gap-2">
-                <Send className="h-5 w-5 text-blue-500" />
+              <CardDescription className="text-white/70">Messages Sent</CardDescription>
+              <CardTitle className="text-2xl flex items-center gap-2 text-accent">
+                <Send className="h-5 w-5 text-blue-400" />
                 {stats.totalSent}
               </CardTitle>
             </CardHeader>
           </Card>
-          <Card>
+          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
             <CardHeader className="pb-2">
-              <CardDescription>Opened</CardDescription>
-              <CardTitle className="text-2xl flex items-center gap-2">
-                <Eye className="h-5 w-5 text-amber-500" />
+              <CardDescription className="text-white/70">Opened</CardDescription>
+              <CardTitle className="text-2xl flex items-center gap-2 text-accent">
+                <Eye className="h-5 w-5 text-amber-400" />
                 {stats.totalOpened}
               </CardTitle>
             </CardHeader>
           </Card>
-          <Card>
+          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
             <CardHeader className="pb-2">
-              <CardDescription>Clicked</CardDescription>
-              <CardTitle className="text-2xl flex items-center gap-2">
-                <MousePointer className="h-5 w-5 text-purple-500" />
+              <CardDescription className="text-white/70">Clicked</CardDescription>
+              <CardTitle className="text-2xl flex items-center gap-2 text-accent">
+                <MousePointer className="h-5 w-5 text-purple-400" />
                 {stats.totalClicked}
               </CardTitle>
             </CardHeader>
           </Card>
-          <Card>
+          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
             <CardHeader className="pb-2">
-              <CardDescription>Conversions</CardDescription>
-              <CardTitle className="text-2xl flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-green-500" />
+              <CardDescription className="text-white/70">Conversions</CardDescription>
+              <CardTitle className="text-2xl flex items-center gap-2 text-accent">
+                <TrendingUp className="h-5 w-5 text-green-400" />
                 {stats.totalConverted}
               </CardTitle>
             </CardHeader>
