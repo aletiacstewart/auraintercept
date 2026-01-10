@@ -149,7 +149,7 @@ const communicationChannels = [{
   color: 'from-blue-500 to-cyan-500'
 }, {
   icon: Headphones,
-  title: 'Web Chat',
+  title: 'Aura AI Chat',
   description: 'Embeddable chat widget for website visitor engagement.',
   color: 'from-purple-500 to-violet-500'
 }];
