@@ -455,6 +455,8 @@ export default function Index() {
               >
                 <div className={`h-2 bg-gradient-to-r ${console.gradient}`} />
                 <CardContent className="p-6">
+                  <p className="text-xs text-white/80 font-medium tracking-wide mb-1">AI Aura Intercept</p>
+                  <p className="text-[10px] text-white/60 mb-3">The All-in-One AI Command Center for Service Pros</p>
                   <div className={`w-12 h-12 rounded-xl ${console.iconBg} flex items-center justify-center mb-4`}>
                     <console.icon className={`w-6 h-6 ${console.iconColor}`} />
                   </div>
