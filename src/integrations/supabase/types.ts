@@ -2281,6 +2281,94 @@ export type Database = {
           },
         ]
       }
+      leads: {
+        Row: {
+          address: string | null
+          channel: string | null
+          company_id: string
+          conversation_id: string | null
+          converted_to_appointment_id: string | null
+          converted_to_customer_id: string | null
+          created_at: string | null
+          email: string | null
+          follow_up_at: string | null
+          id: string
+          intent: string | null
+          name: string | null
+          notes: string | null
+          phone: string | null
+          priority: string | null
+          service_interest: string | null
+          source: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          channel?: string | null
+          company_id: string
+          conversation_id?: string | null
+          converted_to_appointment_id?: string | null
+          converted_to_customer_id?: string | null
+          created_at?: string | null
+          email?: string | null
+          follow_up_at?: string | null
+          id?: string
+          intent?: string | null
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          priority?: string | null
+          service_interest?: string | null
+          source: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          channel?: string | null
+          company_id?: string
+          conversation_id?: string | null
+          converted_to_appointment_id?: string | null
+          converted_to_customer_id?: string | null
+          created_at?: string | null
+          email?: string | null
+          follow_up_at?: string | null
+          id?: string
+          intent?: string | null
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          priority?: string | null
+          service_interest?: string | null
+          source?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_converted_to_appointment_id_fkey"
+            columns: ["converted_to_appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_converted_to_customer_id_fkey"
+            columns: ["converted_to_customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marketing_campaigns: {
         Row: {
           campaign_type: string
