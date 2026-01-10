@@ -1,6 +1,6 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { EmployeeManagement } from '@/components/company/EmployeeManagement';
-import { CreateTestAccounts } from '@/components/admin/CreateTestAccounts';
+import { CreateTestEmployees } from '@/components/admin/CreateTestEmployees';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Employees() {
@@ -11,7 +11,7 @@ export default function Employees() {
       <div className="space-y-6">
         <EmployeeManagement />
         {(userRole === 'platform_admin' || userRole === 'company_admin') && companyId && (
-          <CreateTestAccounts companyId={companyId} />
+          <CreateTestEmployees companyId={companyId} />
         )}
       </div>
     </DashboardLayout>
