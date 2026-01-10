@@ -169,10 +169,6 @@ const industryCategories = [{
     name: 'Electrical',
     icon: Zap,
     description: 'Residential & Commercial'
-  }, {
-    name: 'Restoration',
-    icon: Wind,
-    description: 'Water, Fire, & Mold'
   }]
 }, {
   category: 'Exterior & Structural',
@@ -182,10 +178,6 @@ const industryCategories = [{
     name: 'Roofing',
     icon: Home,
     description: 'Repair & Storm Damage'
-  }, {
-    name: 'Doors & Access',
-    icon: DoorOpen,
-    description: 'Garage, Windows, & Entries'
   }, {
     name: 'Fencing & Decking',
     icon: Fence,
