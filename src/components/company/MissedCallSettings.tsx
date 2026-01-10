@@ -295,7 +295,7 @@ export function MissedCallSettings() {
                   </div>
                   <div className="flex items-center gap-2">
                     {callback.sms_fallback_sent && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs text-white/70 border-white/30">
                         <MessageSquare className="h-3 w-3 mr-1" />
                         SMS Sent
                       </Badge>

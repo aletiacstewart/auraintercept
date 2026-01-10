@@ -31,7 +31,7 @@ export default function FieldOpsInstall() {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <CardTitle className="text-lg">Web Backup Access</CardTitle>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs text-white border-white/30">
                     <Globe className="h-3 w-3 mr-1" />
                     Desktop / Browser
                   </Badge>

@@ -383,9 +383,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           )}
           
           {!collapsed && roleBadge && (
-            <div className={cn('flex items-center gap-2 px-3 py-2 rounded-lg bg-sidebar-accent/50', roleBadge.color)}>
-              <roleBadge.icon className="w-4 h-4" />
-              <span className="text-xs font-medium">{roleBadge.label}</span>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-sidebar-accent/50 border border-white/20">
+              <roleBadge.icon className={cn('w-4 h-4', roleBadge.color)} />
+              <span className="text-xs font-medium text-white">{roleBadge.label}</span>
             </div>
           )}
           <Button

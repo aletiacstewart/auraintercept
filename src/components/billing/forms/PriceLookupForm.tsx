@@ -322,7 +322,7 @@ export function PriceLookupForm({ companyId, onCancel }: PriceLookupFormProps) {
                           )}
                           <div className="flex items-center gap-2 mt-1">
                             {service.category && (
-                              <Badge variant="outline" className="text-xs">{service.category}</Badge>
+                              <Badge variant="outline" className="text-xs text-white/70 border-white/30">{service.category}</Badge>
                             )}
                           </div>
                         </div>
@@ -379,7 +379,7 @@ export function PriceLookupForm({ companyId, onCancel }: PriceLookupFormProps) {
                           </div>
                           <div className="flex items-center gap-2 mt-1">
                             {item.category && (
-                              <Badge variant="outline" className="text-xs">{item.category}</Badge>
+                              <Badge variant="outline" className="text-xs text-white/70 border-white/30">{item.category}</Badge>
                             )}
                             <span className="text-xs text-muted-foreground">{item.quantity} in stock</span>
                           </div>

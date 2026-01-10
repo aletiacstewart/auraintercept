@@ -398,7 +398,7 @@ function AgentCard({
                 'Disabled'
               )}
             </Badge>
-            <Badge variant="outline">{agent.category.replace('_', ' ')}</Badge>
+            <Badge variant="outline" className="text-white/70 border-white/30">{agent.category.replace('_', ' ')}</Badge>
           </div>
           
           <div className="flex items-center justify-between pt-2">
