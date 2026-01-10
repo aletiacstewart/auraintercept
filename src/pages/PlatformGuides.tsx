@@ -1066,7 +1066,7 @@ const PlatformGuides: React.FC = () => {
                               <Clock className="h-3 w-3 mr-1" />
                               {guide.duration}
                             </Badge>
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs text-white/70 border-white/30">
                               {guide.steps.length} steps
                             </Badge>
                           </div>

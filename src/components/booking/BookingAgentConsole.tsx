@@ -595,7 +595,7 @@ export function BookingAgentConsole({ companyId, className }: BookingAgentConsol
             {showBookingForm ? 'Book New Appointment' : showFeedbackForm ? 'Customer Follow Up' : showQuoteForm ? 'Create Quote' : showReviewForm ? 'Request Review' : showCustomerSearch ? 'Look Up Customer' : 'Booking AI Assistant'}
           </span>
           {!showBookingForm && !showFeedbackForm && !showQuoteForm && !showReviewForm && !showCustomerSearch && currentAgent && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs text-white/70 border-white/30">
               {getAgentStyle(currentAgent).label}
             </Badge>
           )}

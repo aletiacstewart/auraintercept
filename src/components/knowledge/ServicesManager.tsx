@@ -200,7 +200,7 @@ function SortableRow({
       {showCategory && (
         <TableCell>
           {service.category ? (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs text-white/70 border-white/30">
               {service.category}
             </Badge>
           ) : (

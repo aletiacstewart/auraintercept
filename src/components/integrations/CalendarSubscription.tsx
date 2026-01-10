@@ -141,10 +141,10 @@ export function CalendarSubscription({
             <Badge variant="secondary" className="text-xs">
               Free Forever
             </Badge>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs text-white/70 border-white/30">
               Works with All Calendar Apps
             </Badge>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs text-white/70 border-white/30">
               Auto-Updates
             </Badge>
           </div>

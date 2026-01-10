@@ -214,7 +214,7 @@ export function InventoryMatrix({ companyId, onBack }: InventoryMatrixProps) {
                       </TableCell>
                       <TableCell>
                         {item.category ? (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs text-white/70 border-white/30">
                             {item.category}
                           </Badge>
                         ) : '-'}

@@ -247,7 +247,7 @@ export function EmailTemplatesEditor() {
                 <Icon className={`w-4 h-4 ${info.color}`} />
                 {info.description}
                 {isCustomized(type) && (
-                  <Badge variant="outline" className="ml-2">Customized</Badge>
+                  <Badge variant="outline" className="ml-2 text-white/70 border-white/30">Customized</Badge>
                 )}
               </div>
 
