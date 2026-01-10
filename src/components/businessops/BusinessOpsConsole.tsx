@@ -29,14 +29,14 @@ export function BusinessOpsConsole({ companyId: propCompanyId }: BusinessOpsCons
 
   if (!effectiveCompanyId) {
     return (
-      <Card className="h-[600px] flex items-center justify-center">
-        <p className="text-muted-foreground">No company selected</p>
+      <Card className="h-[600px] flex items-center justify-center shadow-xl border-slate-600/50 bg-slate-800">
+        <p className="text-white/70">No company selected</p>
       </Card>
     );
   }
 
   return (
-    <Card className="min-h-[600px] flex flex-col overflow-hidden shadow-lg border-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <Card className="min-h-[600px] flex flex-col overflow-hidden shadow-xl border-slate-600/50 bg-slate-800">
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4">
