@@ -11,7 +11,7 @@ import {
 import { QRCodeSVG } from 'qrcode.react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { normalizePublicBaseUrl } from '@/lib/url';
+import { isLovablePreviewOrigin, normalizePublicBaseUrl } from '@/lib/url';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 
@@ -56,7 +56,7 @@ const TechnicianInstall = () => {
 
   // Determine base URL - prefer public URL (normalized to origin), fallback to current origin
   const baseUrl = normalizedPublicBaseUrl ?? window.location.origin;
-  const isUsingPreviewUrl = !normalizedPublicBaseUrl;
+  const isUsingPreviewUrl = !normalizedPublicBaseUrl || isLovablePreviewOrigin(baseUrl);
 
   // Add version param to bust cache on new builds
   const buildVersion = import.meta.env.VITE_BUILD_TIME || Date.now().toString(36);
@@ -277,11 +277,13 @@ const TechnicianInstall = () => {
                     <Alert variant="destructive" className="max-w-md">
                       <AlertTriangle className="h-4 w-4" />
                       <AlertDescription className="text-sm">
-                        <strong>Preview URL detected.</strong> Technicians scanning this QR may be asked to create a Lovable account.{' '}
+                        <strong>Preview URL detected.</strong> The install link must use your published app URL (not lovableproject.com),
+                        otherwise phones will be redirected to create a Lovable account.
+                        {' '}
                         <Link to="/settings" className="underline font-medium inline-flex items-center gap-1">
-                          Set a public app URL <Settings className="h-3 w-3" />
+                          Set a published app URL <Settings className="h-3 w-3" />
                         </Link>{' '}
-                        to avoid this.
+                        to fix this.
                       </AlertDescription>
                     </Alert>
                   )}
