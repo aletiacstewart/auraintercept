@@ -224,7 +224,7 @@ export function CompanyAdminDashboard() {
         {statCards.map((stat) => (
           <Card key={stat.title} className="relative overflow-hidden border-border/50">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium text-white">
                 {stat.title}
               </CardTitle>
               <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}>
@@ -239,7 +239,7 @@ export function CompanyAdminDashboard() {
                   {stat.isString ? stat.value : (stat.value as number).toLocaleString()}
                 </div>
               )}
-              <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
+              <p className="text-xs text-white/70 mt-1">{stat.description}</p>
             </CardContent>
             <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`} />
           </Card>
