@@ -218,7 +218,7 @@ export default function Help() {
                   </div>
                   <div>
                     <CardTitle>{currentConsole.title} AI Agent</CardTitle>
-                    <CardDescription>{currentConsole.description}</CardDescription>
+                    <CardDescription className="text-card-foreground/70">{currentConsole.description}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -231,8 +231,8 @@ export default function Help() {
                   </h3>
                   <ul className="space-y-2 ml-7">
                     {currentConsole.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm">
-                        <ArrowRight className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
+                      <li key={index} className="flex items-start gap-2 text-sm text-card-foreground/80">
+                        <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -268,7 +268,7 @@ export default function Help() {
                   </div>
                   <div>
                     <CardTitle>For Company Admins</CardTitle>
-                    <CardDescription>Getting started and managing your company</CardDescription>
+                    <CardDescription className="text-card-foreground/70">Getting started and managing your company</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -283,22 +283,22 @@ export default function Help() {
                     <div className="flex gap-3">
                       <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">1</Badge>
                       <div>
-                        <p className="font-medium">Sign Up</p>
-                        <p className="text-sm text-muted-foreground">Visit <code className="bg-muted px-1.5 py-0.5 rounded text-xs">/auth</code> and select "Company Sign Up" to create your company account. You'll receive a 30-day free trial with full access to all features.</p>
+                        <p className="font-medium text-card-foreground">Sign Up</p>
+                        <p className="text-sm text-card-foreground/70">Visit <code className="bg-white text-slate-800 px-1.5 py-0.5 rounded text-xs">/auth</code> and select "Company Sign Up" to create your company account. You'll receive a 30-day free trial with full access to all features.</p>
                       </div>
                     </div>
                     <div className="flex gap-3">
                       <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">2</Badge>
                       <div>
-                        <p className="font-medium">Access Your Dashboard</p>
-                        <p className="text-sm text-muted-foreground">After signing in, you'll be automatically redirected to your dashboard at <code className="bg-muted px-1.5 py-0.5 rounded text-xs">/dashboard</code>. This is your central hub for managing appointments, AI agents, and more.</p>
+                        <p className="font-medium text-card-foreground">Access Your Dashboard</p>
+                        <p className="text-sm text-card-foreground/70">After signing in, you'll be automatically redirected to your dashboard at <code className="bg-white text-slate-800 px-1.5 py-0.5 rounded text-xs">/dashboard</code>. This is your central hub for managing appointments, AI agents, and more.</p>
                       </div>
                     </div>
                     <div className="flex gap-3">
                       <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">3</Badge>
                       <div>
-                        <p className="font-medium">Complete Onboarding</p>
-                        <p className="text-sm text-muted-foreground">Follow the onboarding checklist to set up integrations (Twilio, ElevenLabs), configure your knowledge base, and customize your AI agents.</p>
+                        <p className="font-medium text-card-foreground">Complete Onboarding</p>
+                        <p className="text-sm text-card-foreground/70">Follow the onboarding checklist to set up integrations (Twilio, ElevenLabs), configure your knowledge base, and customize your AI agents.</p>
                       </div>
                     </div>
                   </div>
@@ -311,22 +311,22 @@ export default function Help() {
                     Setting Up Your Brand
                   </h3>
                   <div className="ml-7 space-y-3">
-                    <p className="text-sm text-muted-foreground">Navigate to <strong>Settings → Branding</strong> to customize:</p>
+                    <p className="text-sm text-card-foreground/70">Navigate to <strong className="text-card-foreground">Settings → Branding</strong> to customize:</p>
                     <ul className="space-y-2 text-sm">
-                      <li className="flex items-start gap-2">
-                        <ArrowRight className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-                        <span><strong>Company Logo:</strong> Upload your logo (recommended size: 200x200px). This appears in your chat widget and customer-facing interfaces.</span>
+                      <li className="flex items-start gap-2 text-card-foreground/80">
+                        <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
+                        <span><strong className="text-card-foreground">Company Logo:</strong> Upload your logo (recommended size: 200x200px). This appears in your chat widget and customer-facing interfaces.</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <ArrowRight className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-                        <span><strong>Primary Color:</strong> Set your brand's main color for buttons, accents, and the chat widget.</span>
+                      <li className="flex items-start gap-2 text-card-foreground/80">
+                        <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
+                        <span><strong className="text-card-foreground">Primary Color:</strong> Set your brand's main color for buttons, accents, and the chat widget.</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <ArrowRight className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-                        <span><strong>Secondary Color:</strong> A complementary color for additional UI elements.</span>
+                      <li className="flex items-start gap-2 text-card-foreground/80">
+                        <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
+                        <span><strong className="text-card-foreground">Secondary Color:</strong> A complementary color for additional UI elements.</span>
                       </li>
                     </ul>
-                    <p className="text-sm text-muted-foreground mt-2">Your branding automatically applies to the embeddable chat widget your customers see on your website.</p>
+                    <p className="text-sm text-card-foreground/70 mt-2">Your branding automatically applies to the embeddable chat widget your customers see on your website.</p>
                   </div>
                 </div>
 
@@ -337,27 +337,27 @@ export default function Help() {
                     Inviting Your Team
                   </h3>
                   <div className="ml-7 space-y-3">
-                    <p className="text-sm text-muted-foreground">To add employees (technicians, scheduling agents, etc.) to your company:</p>
+                    <p className="text-sm text-card-foreground/70">To add employees (technicians, scheduling agents, etc.) to your company:</p>
                     <div className="space-y-4">
                       <div className="flex gap-3">
                         <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">1</Badge>
                         <div>
-                          <p className="font-medium">Generate Registration Code</p>
-                          <p className="text-sm text-muted-foreground">Go to <strong>Employees</strong> page and click "Add Employee" to generate a unique registration code.</p>
+                          <p className="font-medium text-card-foreground">Generate Registration Code</p>
+                          <p className="text-sm text-card-foreground/70">Go to <strong className="text-card-foreground">Employees</strong> page and click "Add Employee" to generate a unique registration code.</p>
                         </div>
                       </div>
                       <div className="flex gap-3">
                         <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">2</Badge>
                         <div>
-                          <p className="font-medium">Share with Employee</p>
-                          <p className="text-sm text-muted-foreground">Share the code with your employee. They'll need this to register.</p>
+                          <p className="font-medium text-card-foreground">Share with Employee</p>
+                          <p className="text-sm text-card-foreground/70">Share the code with your employee. They'll need this to register.</p>
                         </div>
                       </div>
                       <div className="flex gap-3">
                         <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">3</Badge>
                         <div>
-                          <p className="font-medium">Employee Signs Up</p>
-                          <p className="text-sm text-muted-foreground">Employee visits <code className="bg-muted px-1.5 py-0.5 rounded text-xs">/auth</code>, selects "Employee Sign Up", and enters the registration code to join your company.</p>
+                          <p className="font-medium text-card-foreground">Employee Signs Up</p>
+                          <p className="text-sm text-card-foreground/70">Employee visits <code className="bg-white text-slate-800 px-1.5 py-0.5 rounded text-xs">/auth</code>, selects "Employee Sign Up", and enters the registration code to join your company.</p>
                         </div>
                       </div>
                     </div>
@@ -375,7 +375,7 @@ export default function Help() {
                   </div>
                   <div>
                     <CardTitle>For Employees & Technicians</CardTitle>
-                    <CardDescription>How to join your company and access your dashboard</CardDescription>
+                    <CardDescription className="text-card-foreground/70">How to join your company and access your dashboard</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -390,29 +390,29 @@ export default function Help() {
                     <div className="flex gap-3">
                       <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">1</Badge>
                       <div>
-                        <p className="font-medium">Get Your Code</p>
-                        <p className="text-sm text-muted-foreground">Your company admin will provide you with a unique registration code. This code links your account to your company.</p>
+                        <p className="font-medium text-card-foreground">Get Your Code</p>
+                        <p className="text-sm text-card-foreground/70">Your company admin will provide you with a unique registration code. This code links your account to your company.</p>
                       </div>
                     </div>
                     <div className="flex gap-3">
                       <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">2</Badge>
                       <div>
-                        <p className="font-medium">Visit the Sign Up Page</p>
-                        <p className="text-sm text-muted-foreground">Go to <code className="bg-muted px-1.5 py-0.5 rounded text-xs">/auth</code> and select "Employee Sign Up" at the bottom of the form.</p>
+                        <p className="font-medium text-card-foreground">Visit the Sign Up Page</p>
+                        <p className="text-sm text-card-foreground/70">Go to <code className="bg-white text-slate-800 px-1.5 py-0.5 rounded text-xs">/auth</code> and select "Employee Sign Up" at the bottom of the form.</p>
                       </div>
                     </div>
                     <div className="flex gap-3">
                       <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">3</Badge>
                       <div>
-                        <p className="font-medium">Enter Your Details</p>
-                        <p className="text-sm text-muted-foreground">Fill in your email, password, full name, and the registration code provided by your admin.</p>
+                        <p className="font-medium text-card-foreground">Enter Your Details</p>
+                        <p className="text-sm text-card-foreground/70">Fill in your email, password, full name, and the registration code provided by your admin.</p>
                       </div>
                     </div>
                     <div className="flex gap-3">
                       <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">4</Badge>
                       <div>
-                        <p className="font-medium">Access Your Dashboard</p>
-                        <p className="text-sm text-muted-foreground">Once registered, you'll be redirected to your dashboard. Technicians go to the mobile-optimized <code className="bg-muted px-1.5 py-0.5 rounded text-xs">/technician</code> dashboard.</p>
+                        <p className="font-medium text-card-foreground">Access Your Dashboard</p>
+                        <p className="text-sm text-card-foreground/70">Once registered, you'll be redirected to your dashboard. Technicians go to the mobile-optimized <code className="bg-white text-slate-800 px-1.5 py-0.5 rounded text-xs">/technician</code> dashboard.</p>
                       </div>
                     </div>
                   </div>
@@ -425,23 +425,23 @@ export default function Help() {
                     Technician Dashboard Features
                   </h3>
                   <div className="ml-7 space-y-2 text-sm">
-                    <p className="text-muted-foreground">As a technician, your mobile-optimized dashboard includes:</p>
+                    <p className="text-card-foreground/70">As a technician, your mobile-optimized dashboard includes:</p>
                     <ul className="space-y-2 mt-2">
-                      <li className="flex items-start gap-2">
-                        <ArrowRight className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-                        <span><strong>Job Queue:</strong> View and manage assigned jobs, update status (en route, arrived, completed)</span>
+                      <li className="flex items-start gap-2 text-card-foreground/80">
+                        <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
+                        <span><strong className="text-card-foreground">Job Queue:</strong> View and manage assigned jobs, update status (en route, arrived, completed)</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <ArrowRight className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-                        <span><strong>AI Console:</strong> Access the Field Operations AI agent for navigation and support</span>
+                      <li className="flex items-start gap-2 text-card-foreground/80">
+                        <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
+                        <span><strong className="text-card-foreground">AI Console:</strong> Access the Field Operations AI agent for navigation and support</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <ArrowRight className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-                        <span><strong>Calendar:</strong> View your schedule and upcoming appointments</span>
+                      <li className="flex items-start gap-2 text-card-foreground/80">
+                        <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
+                        <span><strong className="text-card-foreground">Calendar:</strong> View your schedule and upcoming appointments</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <ArrowRight className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-                        <span><strong>Availability:</strong> Set your working hours and time off</span>
+                      <li className="flex items-start gap-2 text-card-foreground/80">
+                        <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
+                        <span><strong className="text-card-foreground">Availability:</strong> Set your working hours and time off</span>
                       </li>
                     </ul>
                   </div>
@@ -460,7 +460,7 @@ export default function Help() {
                   </div>
                   <div>
                     <CardTitle>Frequently Asked Questions</CardTitle>
-                    <CardDescription>Common questions and answers</CardDescription>
+                    <CardDescription className="text-card-foreground/70">Common questions and answers</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -474,7 +474,7 @@ export default function Help() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <p className="text-muted-foreground">
+                      <p className="text-card-foreground/70">
                         Custom domains are planned as an enterprise feature. Currently, all companies access their dashboards through the main platform URL. Your branding (logo, colors) is applied throughout the interface to maintain your company identity. Contact us if you're interested in custom domain support.
                       </p>
                     </AccordionContent>
@@ -488,11 +488,11 @@ export default function Help() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <div className="text-muted-foreground space-y-2">
+                      <div className="text-card-foreground/70 space-y-2">
                         <p>There are two ways customers can interact with your AI agent:</p>
                         <ul className="list-disc ml-5 space-y-1">
-                          <li><strong>Embeddable Widget:</strong> Go to <strong>Chat Widget</strong> in your dashboard to get the embed code. Add this to your website and customers can chat directly on your site.</li>
-                          <li><strong>Public Chat Link:</strong> Share your public chat URL: <code className="bg-muted px-1.5 py-0.5 rounded text-xs">/chat/your-company-slug</code> - customers can access this directly without visiting your website.</li>
+                          <li><strong className="text-card-foreground">Embeddable Widget:</strong> Go to <strong className="text-card-foreground">Chat Widget</strong> in your dashboard to get the embed code. Add this to your website and customers can chat directly on your site.</li>
+                          <li><strong className="text-card-foreground">Public Chat Link:</strong> Share your public chat URL: <code className="bg-white text-slate-800 px-1.5 py-0.5 rounded text-xs">/chat/your-company-slug</code> - customers can access this directly without visiting your website.</li>
                         </ul>
                       </div>
                     </AccordionContent>
@@ -506,8 +506,8 @@ export default function Help() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <p className="text-muted-foreground">
-                        On the login page (<code className="bg-muted px-1.5 py-0.5 rounded text-xs">/auth</code>), click "Forgot Password" below the sign-in button. Enter your email address and you'll receive a password reset link.
+                      <p className="text-card-foreground/70">
+                        On the login page (<code className="bg-white text-slate-800 px-1.5 py-0.5 rounded text-xs">/auth</code>), click "Forgot Password" below the sign-in button. Enter your email address and you'll receive a password reset link.
                       </p>
                     </AccordionContent>
                   </AccordionItem>
@@ -520,13 +520,13 @@ export default function Help() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <div className="text-muted-foreground space-y-2">
+                      <div className="text-card-foreground/70 space-y-2">
                         <p>All AI agent configuration is done within the platform:</p>
                         <ul className="list-disc ml-5 space-y-1">
-                          <li><strong>AI Agent:</strong> Test and interact with your main AI assistant</li>
-                          <li><strong>AI Agents Hub:</strong> Enable/disable specific agents, configure settings, and test each agent individually</li>
-                          <li><strong>Knowledge Base:</strong> Add FAQs, services, business hours, and documents that your AI uses to answer questions</li>
-                          <li><strong>Integrations:</strong> Connect your Twilio (SMS/calls), ElevenLabs (voice), and other services</li>
+                          <li><strong className="text-card-foreground">AI Agent:</strong> Test and interact with your main AI assistant</li>
+                          <li><strong className="text-card-foreground">AI Agents Hub:</strong> Enable/disable specific agents, configure settings, and test each agent individually</li>
+                          <li><strong className="text-card-foreground">Knowledge Base:</strong> Add FAQs, services, business hours, and documents that your AI uses to answer questions</li>
+                          <li><strong className="text-card-foreground">Integrations:</strong> Connect your Twilio (SMS/calls), ElevenLabs (voice), and other services</li>
                         </ul>
                       </div>
                     </AccordionContent>
@@ -540,8 +540,8 @@ export default function Help() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <p className="text-muted-foreground">
-                        Your 30-day trial includes full access to all Enterprise features. You'll receive email reminders 7 days, 3 days, and 1 day before expiration. To continue using all features after your trial, subscribe through the <strong>Subscription</strong> page in your dashboard. If you don't subscribe, some features will become restricted.
+                      <p className="text-card-foreground/70">
+                        Your 30-day trial includes full access to all Enterprise features. You'll receive email reminders 7 days, 3 days, and 1 day before expiration. To continue using all features after your trial, subscribe through the <strong className="text-card-foreground">Subscription</strong> page in your dashboard. If you don't subscribe, some features will become restricted.
                       </p>
                     </AccordionContent>
                   </AccordionItem>
