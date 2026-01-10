@@ -163,7 +163,7 @@ export function CommunicationLogs() {
               <MessageSquare className="w-5 h-5" />
               Communication Logs
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-white/70">
               View your call, SMS, and email history with customers
             </CardDescription>
           </div>
@@ -261,9 +261,9 @@ export function CommunicationLogs() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-                <p className="text-muted-foreground">No communication logs found</p>
-                <p className="text-sm text-muted-foreground">
+                <MessageSquare className="w-12 h-12 mx-auto text-white/50 mb-3" />
+                <p className="text-white/70">No communication logs found</p>
+                <p className="text-sm text-white/60">
                   Your calls, SMS, and emails will appear here
                 </p>
               </div>

@@ -6,7 +6,7 @@ export default function Messages() {
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Messages & Calls</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Messages & Calls</h1>
           <p className="text-white/70">
             View your communication history with customers
           </p>

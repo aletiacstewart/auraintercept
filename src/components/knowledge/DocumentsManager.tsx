@@ -140,7 +140,7 @@ export function DocumentsManager() {
             <FileText className="w-5 h-5" />
             Documents
           </CardTitle>
-          <CardDescription>Upload documents to train your AI agent</CardDescription>
+          <CardDescription className="text-white/70">Upload documents to train your AI agent</CardDescription>
         </div>
         <div className="relative">
           <Input
@@ -186,7 +186,7 @@ export function DocumentsManager() {
                   <div className="text-2xl">{getFileIcon(doc.file_type)}</div>
                   <div>
                     <p className="font-medium">{doc.name}</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-white/60">
                       {formatFileSize(doc.file_size)} • Uploaded {format(new Date(doc.created_at), 'MMM d, yyyy')}
                     </p>
                   </div>
@@ -221,9 +221,9 @@ export function DocumentsManager() {
           </div>
         )}
 
-        <div className="mt-4 p-3 rounded-lg bg-muted/50 text-sm text-muted-foreground">
-          <p><strong>Supported formats:</strong> PDF, TXT, Markdown, DOC, DOCX</p>
-          <p><strong>Max file size:</strong> 10MB per file</p>
+        <div className="mt-4 p-3 rounded-lg bg-muted/50 text-sm text-white/70">
+          <p><strong className="text-white">Supported formats:</strong> PDF, TXT, Markdown, DOC, DOCX</p>
+          <p><strong className="text-white">Max file size:</strong> 10MB per file</p>
         </div>
       </CardContent>
     </Card>
