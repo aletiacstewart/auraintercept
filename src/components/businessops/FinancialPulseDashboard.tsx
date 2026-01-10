@@ -113,68 +113,68 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-muted border-border">
+        <Card className="bg-slate-700/50 border-slate-600/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <UserPlus className="h-5 w-5 text-foreground" />
-              <Badge variant="outline" className="bg-green-500/20 text-green-600 border-green-500/30">
+              <UserPlus className="h-5 w-5 text-white" />
+              <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30">
                 30d
               </Badge>
             </div>
-            <p className="text-2xl font-bold mt-2 text-primary">{newLeads.length}</p>
-            <p className="text-xs text-muted-foreground">New Leads</p>
+            <p className="text-2xl font-bold mt-2 text-accent">{newLeads.length}</p>
+            <p className="text-xs text-white/70">New Leads</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-muted border-border">
+        <Card className="bg-slate-700/50 border-slate-600/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <FileText className="h-5 w-5 text-foreground" />
-              <Badge variant="outline" className="bg-primary/20 text-primary border-primary/30">
+              <FileText className="h-5 w-5 text-white" />
+              <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30">
                 {quotes.length}
               </Badge>
             </div>
-            <p className="text-2xl font-bold mt-2 text-primary">${pendingQuoteValue.toFixed(0)}</p>
-            <p className="text-xs text-muted-foreground">Pending Quotes</p>
+            <p className="text-2xl font-bold mt-2 text-accent">${pendingQuoteValue.toFixed(0)}</p>
+            <p className="text-xs text-white/70">Pending Quotes</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-muted border-border">
+        <Card className="bg-slate-700/50 border-slate-600/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <Receipt className="h-5 w-5 text-foreground" />
-              <Badge variant="outline" className={`${overdueInvoices.length > 0 ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-primary/20 text-primary border-primary/30'}`}>
+              <Receipt className="h-5 w-5 text-white" />
+              <Badge variant="outline" className={`${overdueInvoices.length > 0 ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-accent/20 text-accent border-accent/30'}`}>
                 {invoices.length}
               </Badge>
             </div>
-            <p className="text-2xl font-bold mt-2 text-primary">${unpaidInvoiceValue.toFixed(0)}</p>
-            <p className="text-xs text-muted-foreground">Unpaid Invoices</p>
+            <p className="text-2xl font-bold mt-2 text-accent">${unpaidInvoiceValue.toFixed(0)}</p>
+            <p className="text-xs text-white/70">Unpaid Invoices</p>
           </CardContent>
         </Card>
 
         {isPlatformAdmin && (
-          <Card className={`bg-muted border-border transition-colors cursor-pointer hover:border-primary/40`} onClick={() => onNavigate('inventory')}>
+          <Card className={`bg-slate-700/50 border-slate-600/50 transition-colors cursor-pointer hover:border-accent/40`} onClick={() => onNavigate('inventory')}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
-                <Package className="h-5 w-5 text-foreground" />
+                <Package className="h-5 w-5 text-white" />
                 {inventoryAlerts.length > 0 && (
                   <AlertTriangle className="h-4 w-4 text-destructive animate-pulse" />
                 )}
               </div>
-              <p className="text-2xl font-bold mt-2 text-primary">{inventoryAlerts.length}</p>
-              <p className="text-xs text-muted-foreground">Low Stock Alerts</p>
+              <p className="text-2xl font-bold mt-2 text-accent">{inventoryAlerts.length}</p>
+              <p className="text-xs text-white/70">Low Stock Alerts</p>
             </CardContent>
           </Card>
         )}
 
-        <Card className="bg-muted border-border hover:border-primary/40 transition-colors cursor-pointer" onClick={() => onNavigate('payments')}>
+        <Card className="bg-slate-700/50 border-slate-600/50 hover:border-accent/40 transition-colors cursor-pointer" onClick={() => onNavigate('payments')}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <DollarSign className="h-5 w-5 text-foreground" />
-              <TrendingUp className="h-4 w-4 text-green-600" />
+              <DollarSign className="h-5 w-5 text-white" />
+              <TrendingUp className="h-4 w-4 text-green-400" />
             </div>
-            <p className="text-2xl font-bold mt-2 text-primary">Active</p>
-            <p className="text-xs text-muted-foreground">Payment Gateway</p>
+            <p className="text-2xl font-bold mt-2 text-accent">Active</p>
+            <p className="text-xs text-white/70">Payment Gateway</p>
           </CardContent>
         </Card>
       </div>
@@ -182,11 +182,11 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
       {/* Content Grid */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Pending Quotes - display only */}
-        <Card className="bg-muted border-border">
+        <Card className="bg-slate-700/50 border-slate-600/50">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-foreground">
-                <FileText className="h-4 w-4 text-primary" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
+                <FileText className="h-4 w-4 text-accent" />
                 Pending Quotes
               </CardTitle>
             </div>
@@ -194,25 +194,25 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           <CardContent>
             <ScrollArea className="h-[200px]">
               {quotes.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                <div className="flex flex-col items-center justify-center h-full text-white/60">
                   <FileText className="h-8 w-8 mb-2 opacity-50" />
                   <p className="text-sm">No pending quotes</p>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {quotes.map(quote => (
-                    <div key={quote.id} className="flex items-center justify-between p-3 rounded-lg bg-background border border-border hover:bg-muted/50 transition-colors">
+                    <div key={quote.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-600/50 hover:bg-slate-600/80 transition-colors">
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate text-foreground">{quote.customer_name}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="font-medium truncate text-white">{quote.customer_name}</p>
+                        <p className="text-xs text-white/60">
                           {format(new Date(quote.created_at), 'MMM d, yyyy')}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 text-xs">
+                        <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30 text-xs">
                           {quote.status}
                         </Badge>
-                        <span className="font-semibold text-sm text-foreground">${quote.total_amount?.toFixed(0)}</span>
+                        <span className="font-semibold text-sm text-white">${quote.total_amount?.toFixed(0)}</span>
                       </div>
                     </div>
                   ))}
@@ -223,11 +223,11 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
         </Card>
 
         {/* Unpaid Invoices */}
-        <Card className="bg-muted border-border">
+        <Card className="bg-slate-700/50 border-slate-600/50">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-foreground">
-                <Receipt className="h-4 w-4 text-primary" />
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
+                <Receipt className="h-4 w-4 text-accent" />
                 Unpaid Invoices
               </CardTitle>
             </div>
@@ -235,7 +235,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           <CardContent>
             <ScrollArea className="h-[200px]">
               {invoices.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                <div className="flex flex-col items-center justify-center h-full text-white/60">
                   <Receipt className="h-8 w-8 mb-2 opacity-50" />
                   <p className="text-sm">All invoices paid</p>
                 </div>
@@ -244,10 +244,10 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                   {invoices.map(invoice => {
                     const isOverdue = invoice.due_date && isPast(parseISO(invoice.due_date)) && invoice.status !== 'paid';
                     return (
-                      <div key={invoice.id} className={`flex items-center justify-between p-3 rounded-lg transition-colors ${isOverdue ? 'bg-destructive/10 hover:bg-destructive/20' : 'bg-background border border-border hover:bg-muted/50'}`}>
+                      <div key={invoice.id} className={`flex items-center justify-between p-3 rounded-lg transition-colors ${isOverdue ? 'bg-destructive/20 hover:bg-destructive/30' : 'bg-slate-600/50 hover:bg-slate-600/80'}`}>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate text-foreground">{invoice.customer_name}</p>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <p className="font-medium truncate text-white">{invoice.customer_name}</p>
+                          <div className="flex items-center gap-1 text-xs text-white/60">
                             <Clock className="h-3 w-3" />
                             {invoice.due_date ? format(new Date(invoice.due_date), 'MMM d') : 'No due date'}
                           </div>
@@ -255,11 +255,11 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                         <div className="flex items-center gap-2">
                           <Badge 
                             variant="outline" 
-                            className={`text-xs ${isOverdue ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-primary/10 text-primary border-primary/30'}`}
+                            className={`text-xs ${isOverdue ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-accent/10 text-accent border-accent/30'}`}
                           >
                             {isOverdue ? 'Overdue' : invoice.status}
                           </Badge>
-                          <span className="font-semibold text-sm text-foreground">${invoice.total?.toFixed(0)}</span>
+                          <span className="font-semibold text-sm text-white">${invoice.total?.toFixed(0)}</span>
                         </div>
                       </div>
                     );
