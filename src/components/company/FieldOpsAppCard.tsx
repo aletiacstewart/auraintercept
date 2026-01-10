@@ -116,19 +116,19 @@ export function FieldOpsAppCard() {
               </div>
             )}
             
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap justify-center">
               <Button variant="outline" size="sm" onClick={handleCopyLink} className="gap-1.5">
                 <Copy className="h-3.5 w-3.5" />
-                Copy Link
+                Copy Install Link
               </Button>
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={() => window.open(installUrl, '_blank')}
+                onClick={() => window.open('/technician', '_blank')}
                 className="gap-1.5"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
-                Open
+                Preview App
               </Button>
             </div>
           </div>
