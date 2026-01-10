@@ -255,7 +255,11 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                   {invoices.map(invoice => {
                     const isOverdue = invoice.due_date && isPast(parseISO(invoice.due_date)) && invoice.status !== 'paid';
                     return (
-                      <div key={invoice.id} className={`flex items-center justify-between p-3 rounded-lg transition-colors border border-white/5 ${isOverdue ? 'bg-destructive/20 hover:bg-destructive/30' : 'bg-slate-700/50 hover:bg-slate-700'}`}>
+                      <div 
+                        key={invoice.id} 
+                        className={`flex items-center justify-between p-3 rounded-lg transition-colors border border-white/5 cursor-pointer ${isOverdue ? 'bg-destructive/20 hover:bg-destructive/30' : 'bg-slate-700/50 hover:bg-slate-700'}`}
+                        onClick={() => navigate(`/dashboard/invoices?id=${invoice.id}`)}
+                      >
                         <div className="flex-1 min-w-0">
                           <p className="font-medium truncate text-white">{invoice.customer_name}</p>
                           <div className="flex items-center gap-1 text-xs text-white/60">
