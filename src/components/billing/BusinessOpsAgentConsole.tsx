@@ -44,6 +44,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [lastAgent, setLastAgent] = useState<string>('quoting');
+  const [activeFormType, setActiveFormType] = useState<'quote' | 'invoice' | 'lead' | null>(null);
   
   // Form visibility states
   const [showQuoteForm, setShowQuoteForm] = useState(false);
@@ -84,6 +85,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setShowQuoteForm(false);
     setShowInvoiceForm(false);
     setShowLeadForm(false);
+    setActiveFormType(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,16 +102,19 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     if (actionId === 'quote') {
       hideAllForms();
       setShowQuoteForm(true);
+      setActiveFormType('quote');
       return;
     }
     if (actionId === 'invoice') {
       hideAllForms();
       setShowInvoiceForm(true);
+      setActiveFormType('invoice');
       return;
     }
     if (actionId === 'lead') {
       hideAllForms();
       setShowLeadForm(true);
+      setActiveFormType('lead');
       return;
     }
     
@@ -156,6 +161,16 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
+  
+  // Get active label based on form type or agent
+  const getActiveLabel = () => {
+    if (activeFormType === 'quote') return 'Quoting';
+    if (activeFormType === 'invoice') return 'Invoicing';
+    if (activeFormType === 'lead') return 'Lead Capture';
+    return agentStyle.label;
+  };
+  
+  const activeLabel = getActiveLabel();
 
   return (
     <Card className="h-[600px] flex flex-col overflow-hidden shadow-xl border-slate-600/50 bg-slate-800">
@@ -163,7 +178,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       <GlassHeader
         logoUrl={company?.logo_url}
         companyName={company?.name || 'Business & Accounting'}
-        agentLabel={agentStyle.label}
+        agentLabel={activeLabel}
         agentColor={agentStyle.color}
         agentBgColor={agentStyle.bgColor}
         useDefaultLogo={!company?.logo_url}
