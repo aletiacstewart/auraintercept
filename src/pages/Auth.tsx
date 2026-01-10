@@ -509,8 +509,8 @@ export default function Auth() {
                     <Zap className="w-5 h-5 text-primary" />
                     What's Included
                   </CardTitle>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    <span className="font-medium text-foreground">For Businesses:</span> This platform subscription is designed for small to large companies — not individual employees.
+                  <p className="text-sm text-card-foreground/80 mt-2">
+                    <span className="font-medium text-card-foreground">For Businesses:</span> This platform subscription is designed for small to large companies — not individual employees.
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -520,7 +520,7 @@ export default function Auth() {
                       <Crown className="w-4 h-4 text-amber-500" />
                       30-Day Free Trial
                     </h4>
-                    <p className="text-xs text-muted-foreground mb-3">
+                    <p className="text-xs text-card-foreground/80 mb-3">
                       Full access to all features during your trial. No credit card required.
                     </p>
                     <div className="grid grid-cols-2 gap-2 text-xs">
@@ -544,39 +544,41 @@ export default function Auth() {
                   </div>
 
                   {/* After Trial */}
-                  <div className="p-4 rounded-lg bg-muted/50 border">
-                    <h4 className="font-semibold text-sm mb-2">After Trial: $250/month</h4>
-                    <div className="space-y-2 text-xs text-muted-foreground">
+                  <div className="p-4 rounded-lg muted-box-card">
+                    <h4 className="font-semibold text-sm mb-2 text-card-foreground">After Trial: $250/month</h4>
+                    <div className="space-y-2 text-xs text-card-foreground/80">
                       <div className="flex items-center gap-2">
-                        <Mail className="w-3 h-3" />
+                        <Mail className="w-3 h-3 text-card-foreground/70" />
                         <span>Email reminders included</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <MessageSquare className="w-3 h-3" />
+                        <MessageSquare className="w-3 h-3 text-card-foreground/70" />
                         <span>SMS reminders (usage-based)</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Mic className="w-3 h-3" />
+                        <Mic className="w-3 h-3 text-card-foreground/70" />
                         <span>AI Voice calls (usage-based)</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Users className="w-3 h-3" />
+                        <Users className="w-3 h-3 text-card-foreground/70" />
                         <span>10 employees free, +$10/mo each additional</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Upgrade Note */}
-                  <p className="text-xs text-center text-muted-foreground">
+                  <p className="text-xs text-center text-card-foreground/70">
                     Upgrade anytime from your dashboard under Subscription
                   </p>
 
                   {/* Customer Info */}
                   <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                    <p className="text-xs text-center text-green-700 dark:text-green-400">
-                      <span className="font-medium">Customers get free accounts</span> to engage with registered companies — book appointments, chat with AI agents, and more!
+                    <p className="text-xs text-center text-card-foreground/80">
+                      <span className="font-medium text-card-foreground">Customers get free accounts</span> to engage with registered companies — book appointments, chat with AI agents, and more!
                     </p>
                   </div>
+                </CardContent>
+              </Card>
                 </CardContent>
               </Card>
             )}
