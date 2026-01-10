@@ -100,7 +100,7 @@ const AIAgent = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold">AI Agent</h1>
-              <p className="text-muted-foreground mt-1">
+              <p className="text-white/70 mt-1">
                 Test and monitor your AI-powered virtual assistant
               </p>
             </div>

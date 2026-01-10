@@ -110,7 +110,7 @@ export default function Settings() {
         <div className="space-y-6 animate-fade-in">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-            <p className="text-muted-foreground">
+            <p className="text-white/70">
               Manage your account settings
             </p>
           </div>

@@ -180,7 +180,7 @@ export default function Customers() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">You don't have access to this page.</p>
+          <p className="text-white/70">You don't have access to this page.</p>
         </div>
       </DashboardLayout>
     );
@@ -315,7 +315,7 @@ export default function Customers() {
             <div className="space-y-6 pr-4">
               {/* Contact Info */}
               <div className="space-y-3">
-                <h4 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Contact Information</h4>
+                <h4 className="font-medium text-sm text-white/70 uppercase tracking-wide">Contact Information</h4>
                 <div className="grid gap-3">
                   <div className="flex items-center gap-3">
                     <Mail className="h-4 w-4 text-muted-foreground" />
@@ -386,18 +386,18 @@ export default function Customers() {
                           <div key={apt.id} className="flex items-center justify-between p-3 rounded-lg border">
                             <div>
                               <p className="font-medium">{apt.service_type}</p>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="text-sm text-white/70">
                                 {format(new Date(apt.datetime), 'PPP p')}
                               </p>
                               {apt.notes && (
-                                <p className="text-sm text-muted-foreground mt-1">{apt.notes}</p>
+                                <p className="text-sm text-white/70 mt-1">{apt.notes}</p>
                               )}
                             </div>
                             {getStatusBadge(apt.status)}
                           </div>
                         ))
                       ) : (
-                        <p className="text-center py-6 text-muted-foreground">No appointments found</p>
+                        <p className="text-center py-6 text-white/70">No appointments found</p>
                       )}
                     </TabsContent>
 
@@ -407,7 +407,7 @@ export default function Customers() {
                           <div key={quote.id} className="flex items-center justify-between p-3 rounded-lg border">
                             <div>
                               <p className="font-medium">${quote.total_amount.toFixed(2)}</p>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="text-sm text-white/70">
                                 {format(new Date(quote.created_at), 'PPP')}
                               </p>
                             </div>
@@ -415,7 +415,7 @@ export default function Customers() {
                           </div>
                         ))
                       ) : (
-                        <p className="text-center py-6 text-muted-foreground">No quotes found</p>
+                        <p className="text-center py-6 text-white/70">No quotes found</p>
                       )}
                     </TabsContent>
 
@@ -427,7 +427,7 @@ export default function Customers() {
                               <p className="font-medium">
                                 {invoice.invoice_number || 'Invoice'} - ${invoice.total.toFixed(2)}
                               </p>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="text-sm text-white/70">
                                 {format(new Date(invoice.created_at), 'PPP')}
                               </p>
                             </div>
@@ -435,7 +435,7 @@ export default function Customers() {
                           </div>
                         ))
                       ) : (
-                        <p className="text-center py-6 text-muted-foreground">No invoices found</p>
+                        <p className="text-center py-6 text-white/70">No invoices found</p>
                       )}
                     </TabsContent>
 
@@ -451,7 +451,7 @@ export default function Customers() {
                                       <Star
                                         key={i}
                                         className={`h-4 w-4 ${
-                                          i < fb.rating! ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'
+                                          i < fb.rating! ? 'text-yellow-400 fill-yellow-400' : 'text-white/50'
                                         }`}
                                       />
                                     ))}
@@ -463,23 +463,23 @@ export default function Customers() {
                                   </Badge>
                                 )}
                               </div>
-                              <span className="text-sm text-muted-foreground">
+                              <span className="text-sm text-white/70">
                                 {format(new Date(fb.created_at), 'PPP')}
                               </span>
                             </div>
                             {fb.service_type && (
-                              <p className="text-sm text-muted-foreground">Service: {fb.service_type}</p>
+                              <p className="text-sm text-white/70">Service: {fb.service_type}</p>
                             )}
                             {fb.feedback_note && (
                               <div className="flex items-start gap-2 mt-2">
-                                <MessageSquare className="h-4 w-4 text-muted-foreground mt-0.5" />
+                                <MessageSquare className="h-4 w-4 text-white/70 mt-0.5" />
                                 <p className="text-sm">{fb.feedback_note}</p>
                               </div>
                             )}
                           </div>
                         ))
                       ) : (
-                        <p className="text-center py-6 text-muted-foreground">No feedback found</p>
+                        <p className="text-center py-6 text-white/70">No feedback found</p>
                       )}
                     </TabsContent>
                   </>

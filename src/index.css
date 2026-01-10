@@ -25,7 +25,7 @@
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 20% 96%;
-    --muted-foreground: 215 14% 34%;
+    --muted-foreground: 210 10% 75%;
 
     /* Accent: Sky Blue #46a2d3 */
     --accent: 199 60% 55%;
@@ -91,7 +91,7 @@
     --secondary-foreground: 0 0% 100%;
 
     --muted: 208 30% 20%;
-    --muted-foreground: 210 5% 65%;
+    --muted-foreground: 210 10% 80%;
 
     /* Accent: Sky Blue */
     --accent: 199 60% 55%;
