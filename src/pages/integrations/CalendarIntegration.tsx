@@ -21,7 +21,7 @@ export default function CalendarIntegration() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Calendar Integration</h1>
-            <p className="text-muted-foreground">Sync appointments with your calendar</p>
+            <p className="text-foreground">Sync appointments with your calendar</p>
           </div>
         </div>
 
@@ -32,31 +32,31 @@ export default function CalendarIntegration() {
               <CalendarDays className="w-5 h-5 text-primary" />
               Choose Your Sync Method
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-card-foreground">
               Multiple options to fit your needs - from simple one-way feeds to full two-way sync
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div className="flex items-start gap-2">
-                <Rss className="w-4 h-4 text-muted-foreground mt-0.5" />
+                <Rss className="w-4 h-4 text-card-foreground mt-0.5" />
                 <div>
                   <p className="font-medium">ICS Feeds</p>
-                  <p className="text-muted-foreground text-xs">One-way, works everywhere</p>
+                  <p className="text-card-foreground text-xs">One-way, works everywhere</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Server className="w-4 h-4 text-muted-foreground mt-0.5" />
+                <Server className="w-4 h-4 text-card-foreground mt-0.5" />
                 <div>
                   <p className="font-medium">CalDAV</p>
-                  <p className="text-muted-foreground text-xs">Two-way, Apple/Android</p>
+                  <p className="text-card-foreground text-xs">Two-way, Apple/Android</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Zap className="w-4 h-4 text-muted-foreground mt-0.5" />
+                <Zap className="w-4 h-4 text-card-foreground mt-0.5" />
                 <div>
                   <p className="font-medium">Google Calendar</p>
-                  <p className="text-muted-foreground text-xs">Two-way, instant updates</p>
+                  <p className="text-card-foreground text-xs">Two-way, instant updates</p>
                 </div>
               </div>
             </div>
@@ -65,18 +65,18 @@ export default function CalendarIntegration() {
 
         {/* Tabs */}
         <Tabs defaultValue="ics" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="ics" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-3 text-white">
+            <TabsTrigger value="ics" className="flex items-center gap-2 text-white">
               <Rss className="w-4 h-4" />
               <span className="hidden sm:inline">ICS Feeds</span>
               <span className="sm:hidden">ICS</span>
             </TabsTrigger>
-            <TabsTrigger value="caldav" className="flex items-center gap-2">
+            <TabsTrigger value="caldav" className="flex items-center gap-2 text-white">
               <Server className="w-4 h-4" />
               <span className="hidden sm:inline">CalDAV</span>
               <span className="sm:hidden">CalDAV</span>
             </TabsTrigger>
-            <TabsTrigger value="google" className="flex items-center gap-2">
+            <TabsTrigger value="google" className="flex items-center gap-2 text-white">
               <Zap className="w-4 h-4" />
               <span className="hidden sm:inline">Google</span>
               <span className="sm:hidden">Google</span>
@@ -87,7 +87,7 @@ export default function CalendarIntegration() {
           <TabsContent value="ics" className="space-y-4">
             <div className="rounded-lg border bg-card p-4">
               <h3 className="font-medium mb-1">ICS Calendar Feeds</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-card-foreground mb-4">
                 Simple subscription URLs that work with any calendar app. 
                 One-way sync - your calendar will automatically show appointments.
               </p>
@@ -104,7 +104,7 @@ export default function CalendarIntegration() {
           <TabsContent value="caldav" className="space-y-4">
             <div className="rounded-lg border bg-card p-4">
               <h3 className="font-medium mb-1">CalDAV Two-Way Sync</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-card-foreground mb-4">
                 Full two-way sync with CalDAV-compatible apps. 
                 Changes you make in your calendar app sync back to the platform.
               </p>
@@ -121,7 +121,7 @@ export default function CalendarIntegration() {
           <TabsContent value="google" className="space-y-4">
             <div className="rounded-lg border bg-card p-4">
               <h3 className="font-medium mb-1">Google Calendar Integration</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-card-foreground mb-4">
                 Native Google Calendar integration with instant two-way sync. 
                 Requires Google Cloud OAuth setup.
               </p>
