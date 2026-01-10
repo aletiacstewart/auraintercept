@@ -142,10 +142,12 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const effectiveCompanyId = companyId || authCompanyId;
   const navigate = useNavigate();
   
-  // Only employees can perform job actions (accept, enroute, arrived, complete)
+  // Company admins and platform admins have full access to all actions (for testing/management)
+  // Employees can perform job actions as part of their normal workflow
   const isEmployee = userRole === 'employee';
-  const canPerformJobActions = isEmployee;
-  const canManageAgents = userRole === 'platform_admin' || userRole === 'company_admin';
+  const isAdmin = userRole === 'platform_admin' || userRole === 'company_admin';
+  const canPerformJobActions = isEmployee || isAdmin;
+  const canManageAgents = isAdmin;
   
   // Get field operations agents
   const { agents, loading: agentsLoading, toggleAgent } = useAIAgentOrchestrator();
