@@ -265,7 +265,7 @@ export function EmployeeManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Employees</h1>
-          <p className="text-muted-foreground">
+          <p className="text-white/70">
             Manage your team and assign job roles
           </p>
         </div>
@@ -295,7 +295,7 @@ export function EmployeeManagement() {
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-white/70">
                     If provided, only this email can use the code
                   </p>
                 </div>
@@ -311,7 +311,7 @@ export function EmployeeManagement() {
               <div className="space-y-4 pt-4">
                 <div className="text-center">
                   <Check className="w-12 h-12 mx-auto text-green-500 mb-3" />
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <p className="text-sm text-white/70 mb-4">
                     Share this code with your employee
                   </p>
                   <div className="flex items-center gap-2 justify-center">
@@ -322,7 +322,7 @@ export function EmployeeManagement() {
                       <Copy className="w-4 h-4" />
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-3">
+                  <p className="text-xs text-white/70 mt-3">
                     This code expires in 7 days
                   </p>
                 </div>
@@ -457,7 +457,7 @@ export function EmployeeManagement() {
                             <PopoverContent className="w-72 max-h-[400px] overflow-y-auto" align="end" side="left">
                               <div className="space-y-3">
                                 <h4 className="font-medium text-sm">Assign Job Roles</h4>
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-xs text-white/70">
                                   Selected roles grant access to related AI agents
                                 </p>
                                 <div className="space-y-2">
@@ -482,7 +482,7 @@ export function EmployeeManagement() {
                                             <div className={`w-2 h-2 rounded-full ${job.color}`} />
                                             <span className="text-sm font-medium">{job.label}</span>
                                           </div>
-                                          <p className="text-xs text-muted-foreground">{job.description}</p>
+                                          <p className="text-xs text-white/70">{job.description}</p>
                                         </div>
                                       </div>
                                     );
@@ -543,8 +543,8 @@ export function EmployeeManagement() {
           ) : (
             <div className="text-center py-8">
               <Users className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-              <p className="text-muted-foreground">No employees yet</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-white/70">No employees yet</p>
+              <p className="text-sm text-white/70">
                 Invite your first team member to get started
               </p>
             </div>
@@ -557,7 +557,7 @@ export function EmployeeManagement() {
         <Card className="border-border/50 border-dashed">
           <CardHeader>
             <CardTitle className="text-lg">Pending Invitations</CardTitle>
-            <CardDescription>
+            <CardDescription className="text-white/70">
               Codes waiting to be used
             </CardDescription>
           </CardHeader>

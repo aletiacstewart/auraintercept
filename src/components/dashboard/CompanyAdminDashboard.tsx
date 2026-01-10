@@ -180,7 +180,7 @@ export function CompanyAdminDashboard() {
           ) : (
             <>
               <h1 className="text-3xl font-bold tracking-tight">{company?.name}</h1>
-              <p className="text-muted-foreground mt-1">
+              <p className="text-white/70 mt-1">
                 Company Dashboard
               </p>
             </>
