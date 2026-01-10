@@ -28,7 +28,7 @@ export function TwilioSetupGuide() {
   const SMS_WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=sms';
 
   return (
-    <Card className="border-red-500/20 bg-red-500/5">
+    <Card className="guide-card guide-card-voice">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Phone className="w-5 h-5 text-red-500" />

@@ -6,7 +6,7 @@ import { ExternalLink, Volume2, Shield, CheckCircle, Settings, Key } from 'lucid
 
 export function GoogleTTSSetupGuide() {
   return (
-    <Card className="border-amber-500/20 bg-amber-500/5">
+    <Card className="guide-card guide-card-voice">
       <CardHeader>
         <div className="flex items-center gap-2">
           <Volume2 className="w-5 h-5 text-amber-500" />
