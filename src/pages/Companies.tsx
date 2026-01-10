@@ -578,7 +578,7 @@ export default function Companies() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="font-mono text-xs">
+                          <Badge variant="outline" className="font-mono text-xs text-white border-white/30">
                             {company.slug}
                           </Badge>
                         </TableCell>
