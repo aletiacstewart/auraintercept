@@ -212,7 +212,11 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
               ) : (
                 <div className="space-y-2">
                   {quotes.map(quote => (
-                    <div key={quote.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-colors border border-white/5">
+                    <div 
+                      key={quote.id} 
+                      className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-colors border border-white/5 cursor-pointer"
+                      onClick={() => navigate(`/dashboard/quotes?id=${quote.id}`)}
+                    >
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate text-white">{quote.customer_name}</p>
                         <p className="text-xs text-white/60">
