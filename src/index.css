@@ -135,7 +135,7 @@
   /* Brand headings */
   h1, h2, h3, .font-brand {
     font-family: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.08em;
   }
 }
 
