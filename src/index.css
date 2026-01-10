@@ -331,4 +331,18 @@
     box-shadow: 0 0 30px hsl(223 73% 43% / 0.4), 0 0 60px hsl(199 60% 55% / 0.3);
     transform: translateY(-1px);
   }
+
+  /* Note box for inside dark cards - high contrast */
+  .note-box-card {
+    background: hsl(208 30% 28% / 0.8);
+    border: 1px solid hsl(208 30% 38%);
+    color: hsl(189 45% 85%);
+  }
+
+  /* Muted box for inside dark cards - slate background with white text */
+  .muted-box-card {
+    background: hsl(215 25% 27% / 0.5);
+    border: 1px solid hsl(215 25% 35% / 0.5);
+    color: hsl(0 0% 100% / 0.9);
+  }
 }

@@ -198,7 +198,7 @@ export default function VoiceIntegration() {
                 <CardContent className="pt-0">
                   <p className="text-sm text-muted-foreground mb-2">{integration.description}</p>
                   {integration.note && (
-                    <p className="text-xs text-muted-foreground/80 mb-3 p-2 rounded bg-muted/50 border border-border/50">
+                    <p className="text-xs text-white/80 mb-3 p-2 rounded bg-slate-600/50 border border-slate-500/30">
                       {integration.note}
                     </p>
                   )}

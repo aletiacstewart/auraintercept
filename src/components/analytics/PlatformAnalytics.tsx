@@ -357,7 +357,7 @@ export function PlatformAnalytics() {
                     <span>Completion Rate</span>
                     <span className="font-medium">{stats?.appointmentCompletionRate ?? 0}%</span>
                   </div>
-                  <div className="h-2 rounded-full bg-muted overflow-hidden">
+                  <div className="h-2 rounded-full bg-slate-600 overflow-hidden">
                     <div 
                       className="h-full bg-gradient-to-r from-primary to-secondary transition-all" 
                       style={{ width: `${stats?.appointmentCompletionRate ?? 0}%` }} 
@@ -558,7 +558,7 @@ export function PlatformAnalytics() {
                     <span>Conversion Rate</span>
                     <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
                   </div>
-                  <div className="h-2 rounded-full bg-muted overflow-hidden">
+                  <div className="h-2 rounded-full bg-slate-600 overflow-hidden">
                     <div 
                       className="h-full bg-gradient-to-r from-primary to-secondary transition-all" 
                       style={{ width: `${stats?.quoteConversionRate ?? 0}%` }} 

@@ -254,11 +254,11 @@ export function VoiceCloningCard({ hasElevenLabs }: VoiceCloningCardProps) {
               {audioFiles.map((audio, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-2 p-2 rounded-lg bg-muted/50"
+                  className="flex items-center gap-2 p-2 rounded-lg bg-slate-700/50 border border-slate-600/50"
                 >
                   <FileAudio className="w-4 h-4 text-primary flex-shrink-0" />
-                  <span className="text-sm truncate flex-1">{audio.name}</span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-sm truncate flex-1 text-white">{audio.name}</span>
+                  <span className="text-xs text-white/70">
                     {formatFileSize(audio.file.size)}
                   </span>
                   <Button
