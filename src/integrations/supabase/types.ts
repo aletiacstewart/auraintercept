@@ -2505,6 +2505,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address: string | null
           availability_json: Json | null
           avatar_url: string | null
           calendar_feed_token: string | null
@@ -2521,11 +2522,13 @@ export type Database = {
           id: string
           location_updated_at: string | null
           must_change_password: boolean | null
+          phone: string | null
           phone_number: string | null
           sms_notifications_enabled: boolean | null
           updated_at: string
         }
         Insert: {
+          address?: string | null
           availability_json?: Json | null
           avatar_url?: string | null
           calendar_feed_token?: string | null
@@ -2542,11 +2545,13 @@ export type Database = {
           id: string
           location_updated_at?: string | null
           must_change_password?: boolean | null
+          phone?: string | null
           phone_number?: string | null
           sms_notifications_enabled?: boolean | null
           updated_at?: string
         }
         Update: {
+          address?: string | null
           availability_json?: Json | null
           avatar_url?: string | null
           calendar_feed_token?: string | null
@@ -2563,6 +2568,7 @@ export type Database = {
           id?: string
           location_updated_at?: string | null
           must_change_password?: boolean | null
+          phone?: string | null
           phone_number?: string | null
           sms_notifications_enabled?: boolean | null
           updated_at?: string
