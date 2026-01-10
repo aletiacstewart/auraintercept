@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Globe, Save, ExternalLink, Info } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { normalizePublicBaseUrl } from '@/lib/url';
 import { toast } from 'sonner';
 
 export function PublicAppUrlSettings() {
@@ -37,17 +38,31 @@ export function PublicAppUrlSettings() {
   const handleSave = async () => {
     if (!companyId) return;
 
+    const raw = publicUrl.trim();
+
     // Basic URL validation
-    if (publicUrl && !publicUrl.startsWith('https://')) {
+    if (raw && !raw.startsWith('https://')) {
       toast.error('URL must start with https://');
       return;
     }
 
+    const normalized = raw ? normalizePublicBaseUrl(raw) : null;
+
+    if (raw && !normalized) {
+      toast.error('Please enter a valid URL');
+      return;
+    }
+
+    // If user pasted a full path, store just the origin so install links don't double up.
+    if (normalized && normalized !== raw) {
+      setPublicUrl(normalized);
+    }
+
     setIsSaving(true);
-    
+
     const { error } = await supabase
       .from('companies')
-      .update({ public_app_url: publicUrl || null })
+      .update({ public_app_url: normalized })
       .eq('id', companyId);
 
     if (error) {
@@ -56,7 +71,7 @@ export function PublicAppUrlSettings() {
     } else {
       toast.success('Public app URL saved');
     }
-    
+
     setIsSaving(false);
   };
 

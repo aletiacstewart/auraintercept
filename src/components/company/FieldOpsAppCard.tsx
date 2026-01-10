@@ -3,13 +3,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Smartphone, Download, Share, Plus, MoreVertical, 
-  Check, Apple, Chrome, Copy, AlertTriangle, ExternalLink, Settings 
+import {
+  Smartphone, Download, Share, Plus, MoreVertical,
+  Check, Apple, Chrome, Copy, AlertTriangle, ExternalLink, Settings
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { normalizePublicBaseUrl } from '@/lib/url';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 
@@ -41,10 +42,11 @@ export function FieldOpsAppCard() {
     fetchPublicUrl();
   }, [companyId]);
 
-  // Determine base URL - prefer public URL, fallback to current origin
-  const normalizeBaseUrl = (url: string) => url.replace(/\/$/, '');
-  const baseUrl = publicAppUrl ? normalizeBaseUrl(publicAppUrl) : window.location.origin;
-  const isUsingPreviewUrl = !publicAppUrl;
+  const normalizedPublicBaseUrl = publicAppUrl ? normalizePublicBaseUrl(publicAppUrl) : null;
+
+  // Determine base URL - prefer public URL (normalized to origin), fallback to current origin
+  const baseUrl = normalizedPublicBaseUrl ?? window.location.origin;
+  const isUsingPreviewUrl = !normalizedPublicBaseUrl;
 
   // Add version param to bust cache on new builds
   const buildVersion = import.meta.env.VITE_BUILD_TIME || Date.now().toString(36);
