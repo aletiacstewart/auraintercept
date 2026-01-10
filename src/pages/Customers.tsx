@@ -236,16 +236,16 @@ export default function Customers() {
                   <div
                     key={customer.id}
                     onClick={() => handleCustomerClick(customer)}
-                    className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 cursor-pointer transition-colors"
+                    className="flex items-center justify-between p-4 rounded-lg border border-slate-600 bg-slate-700/50 hover:bg-slate-600/50 cursor-pointer transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
                         <span className="text-sm font-medium text-primary">
                           {customer.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                         </span>
                       </div>
                       <div>
-                        <p className="font-medium">{customer.name}</p>
+                        <p className="font-medium text-white">{customer.name}</p>
                         <div className="flex items-center gap-4 text-sm text-white/70">
                           <span className="flex items-center gap-1">
                             <Mail className="h-3 w-3" />
@@ -264,17 +264,17 @@ export default function Customers() {
                       {/* Communication preferences */}
                       <div className="flex items-center gap-1">
                         {customer.email_opt_out ? (
-                          <Badge variant="outline" className="text-xs gap-1">
+                          <Badge variant="outline" className="text-xs gap-1 text-white/70 border-white/30">
                             <Ban className="h-3 w-3" /> Email
                           </Badge>
                         ) : null}
                         {customer.sms_opt_out ? (
-                          <Badge variant="outline" className="text-xs gap-1">
+                          <Badge variant="outline" className="text-xs gap-1 text-white/70 border-white/30">
                             <Ban className="h-3 w-3" /> SMS
                           </Badge>
                         ) : null}
                         {customer.call_opt_out ? (
-                          <Badge variant="outline" className="text-xs gap-1">
+                          <Badge variant="outline" className="text-xs gap-1 text-white/70 border-white/30">
                             <Ban className="h-3 w-3" /> Call
                           </Badge>
                         ) : null}
