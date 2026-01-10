@@ -162,7 +162,7 @@ export default function Quotes() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Quotes</CardTitle>
+              <CardTitle className="text-sm font-medium text-white">Total Quotes</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{quotes.length}</div>
@@ -170,7 +170,7 @@ export default function Quotes() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Pending</CardTitle>
+              <CardTitle className="text-sm font-medium text-white">Pending</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{pendingQuotes}</div>
@@ -178,7 +178,7 @@ export default function Quotes() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Accepted Value</CardTitle>
+              <CardTitle className="text-sm font-medium text-white">Accepted Value</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">${totalQuoteValue.toFixed(2)}</div>
@@ -186,7 +186,7 @@ export default function Quotes() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Conversion Rate</CardTitle>
+              <CardTitle className="text-sm font-medium text-white">Conversion Rate</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">

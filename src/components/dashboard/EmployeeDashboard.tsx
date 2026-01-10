@@ -217,7 +217,7 @@ export function EmployeeDashboard() {
         {statCards.map((stat) => (
           <Card key={stat.title} className="relative overflow-hidden border-border/50">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{stat.title}</CardTitle>
+              <CardTitle className="text-sm font-medium text-white">{stat.title}</CardTitle>
               <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}>
                 <stat.icon className="w-5 h-5 text-primary-foreground" />
               </div>
@@ -228,7 +228,7 @@ export function EmployeeDashboard() {
               ) : (
                 <div className={`text-3xl font-bold ${stat.highlight ? 'text-yellow-600' : ''}`}>{stat.value}</div>
               )}
-              <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
+              <p className="text-xs text-white/70 mt-1">{stat.description}</p>
             </CardContent>
             <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`} />
           </Card>
@@ -242,7 +242,7 @@ export function EmployeeDashboard() {
             <Settings className="w-5 h-5 text-primary" />
             Quick Actions
           </CardTitle>
-          <CardDescription>Access your most used features</CardDescription>
+          <CardDescription className="text-white/70">Access your most used features</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
@@ -267,8 +267,8 @@ export function EmployeeDashboard() {
       {jobTypes.length > 0 && (
         <Card className="border-border/50">
           <CardHeader>
-            <CardTitle>Your Roles</CardTitle>
-            <CardDescription>Your assigned job responsibilities</CardDescription>
+            <CardTitle className="text-white">Your Roles</CardTitle>
+            <CardDescription className="text-white/70">Your assigned job responsibilities</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">

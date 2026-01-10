@@ -339,7 +339,7 @@ export function EmployeeManagement() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="border-border/50">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-white">
               Total Employees
             </CardTitle>
             <Users className="w-5 h-5 text-primary" />
@@ -355,7 +355,7 @@ export function EmployeeManagement() {
 
         <Card className="border-border/50">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-white">
               Pending Invites
             </CardTitle>
             <Mail className="w-5 h-5 text-secondary" />
@@ -371,7 +371,7 @@ export function EmployeeManagement() {
 
         <Card className="border-border/50">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-white">
               Job Roles Assigned
             </CardTitle>
             <Briefcase className="w-5 h-5 text-accent" />

@@ -173,7 +173,7 @@ export default function Invoices() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Invoices</CardTitle>
+              <CardTitle className="text-sm font-medium text-white">Total Invoices</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{invoices.length}</div>
@@ -181,7 +181,7 @@ export default function Invoices() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Paid</CardTitle>
+              <CardTitle className="text-sm font-medium text-white">Total Paid</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-green-600">${totalPaid.toFixed(2)}</div>
@@ -189,7 +189,7 @@ export default function Invoices() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Outstanding</CardTitle>
+              <CardTitle className="text-sm font-medium text-white">Outstanding</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">${totalOutstanding.toFixed(2)}</div>
@@ -197,7 +197,7 @@ export default function Invoices() {
           </Card>
           <Card className={overdueCount > 0 ? 'border-destructive' : ''}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Overdue</CardTitle>
+              <CardTitle className="text-sm font-medium text-white">Overdue</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-destructive">{overdueCount}</div>
