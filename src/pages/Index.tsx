@@ -97,7 +97,7 @@ const agentConsoles = [{
   gradient: 'from-purple-500 to-violet-500',
   iconBg: 'bg-purple-500/10',
   iconColor: 'text-purple-500',
-  features: ['AI-assisted quote generation', 'Automated invoice creation', 'Payment status tracking', 'Company Platform Analytics']
+  features: ['AI-assisted quote generation', 'Automated invoice creation', 'Appointment Management', 'Company Platform Analytics']
 }];
 const platformFeatures = [{
   icon: MessageSquare,
