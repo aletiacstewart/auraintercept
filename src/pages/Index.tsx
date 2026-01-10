@@ -251,7 +251,7 @@ const howItWorks = [{
 }, {
   step: 2,
   title: 'Activate AI Agents',
-  description: 'Enable 11 specialized AI agents and configure your knowledge base for your business.',
+  description: 'Enable 10+ specialized AI agents and configure your knowledge base for your business.',
   icon: Bot
 }, {
   step: 3,
