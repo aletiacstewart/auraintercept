@@ -15,8 +15,7 @@ import {
   DollarSign,
   ArrowRight,
   Sparkles,
-  UserPlus,
-  CheckCircle2
+  UserPlus
 } from 'lucide-react';
 import { format, isPast, parseISO, subDays } from 'date-fns';
 
@@ -30,15 +29,14 @@ interface FinancialPulseDashboardProps {
 export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: FinancialPulseDashboardProps) {
   const navigate = useNavigate();
   const isPlatformAdmin = userRole === 'platform_admin';
-  // Fetch pending quotes for display only
+  // Fetch all quotes
   const { data: quotes = [] } = useQuery({
-    queryKey: ['pending-quotes', companyId],
+    queryKey: ['all-quotes', companyId],
     queryFn: async () => {
       const { data } = await supabase
         .from('quotes')
         .select('*')
         .eq('company_id', companyId)
-        .in('status', ['draft', 'sent'])
         .order('created_at', { ascending: false })
         .limit(5);
       return data || [];
@@ -46,32 +44,15 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
     enabled: !!companyId,
   });
 
-  // Fetch unpaid invoices
+  // Fetch all invoices
   const { data: invoices = [] } = useQuery({
-    queryKey: ['unpaid-invoices', companyId],
+    queryKey: ['all-invoices', companyId],
     queryFn: async () => {
       const { data } = await supabase
         .from('invoices')
         .select('*')
         .eq('company_id', companyId)
-        .in('status', ['draft', 'sent', 'overdue'])
-        .order('due_date', { ascending: true })
-        .limit(5);
-      return data || [];
-    },
-    enabled: !!companyId,
-  });
-
-  // Fetch recently paid invoices
-  const { data: paidInvoices = [] } = useQuery({
-    queryKey: ['paid-invoices', companyId],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('invoices')
-        .select('*')
-        .eq('company_id', companyId)
-        .eq('status', 'paid')
-        .order('paid_at', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(5);
       return data || [];
     },
@@ -209,13 +190,13 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
 
       {/* Content Grid */}
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Pending Quotes - display only */}
+        {/* Quotes */}
         <Card className="bg-slate-800 border-white/10">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
                 <FileText className="h-4 w-4 text-accent" />
-                Pending Quotes
+                Quotes
               </CardTitle>
             </div>
           </CardHeader>
@@ -224,43 +205,50 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
               {quotes.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-white/60">
                   <FileText className="h-8 w-8 mb-2 opacity-50" />
-                  <p className="text-sm">No pending quotes</p>
+                  <p className="text-sm">No quotes</p>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {quotes.map(quote => (
-                    <div 
-                      key={quote.id} 
-                      className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-colors border border-white/5 cursor-pointer"
-                      onClick={() => navigate(`/dashboard/quotes?id=${quote.id}`)}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate text-white">{quote.customer_name}</p>
-                        <p className="text-xs text-white/60">
-                          {format(new Date(quote.created_at), 'MMM d, yyyy')}
-                        </p>
+                  {quotes.map(quote => {
+                    const isPending = quote.status === 'draft' || quote.status === 'sent';
+                    const isAccepted = quote.status === 'accepted';
+                    return (
+                      <div 
+                        key={quote.id} 
+                        className={`flex items-center justify-between p-3 rounded-lg transition-colors border border-white/5 cursor-pointer ${isAccepted ? 'bg-green-500/10 hover:bg-green-500/20' : 'bg-slate-700/50 hover:bg-slate-700'}`}
+                        onClick={() => navigate(`/dashboard/quotes?id=${quote.id}`)}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate text-white">{quote.customer_name}</p>
+                          <p className="text-xs text-white/60">
+                            {format(new Date(quote.created_at), 'MMM d, yyyy')}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge 
+                            variant="outline" 
+                            className={`text-xs ${isAccepted ? 'bg-green-500/20 text-green-400 border-green-500/30' : isPending ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-accent/10 text-accent border-accent/30'}`}
+                          >
+                            {isPending ? 'pending' : quote.status}
+                          </Badge>
+                          <span className="font-semibold text-sm text-white">${quote.total_amount?.toFixed(0)}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30 text-xs">
-                          {quote.status}
-                        </Badge>
-                        <span className="font-semibold text-sm text-white">${quote.total_amount?.toFixed(0)}</span>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </ScrollArea>
           </CardContent>
         </Card>
 
-        {/* Unpaid Invoices */}
+        {/* Invoices */}
         <Card className="bg-slate-800 border-white/10">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
                 <Receipt className="h-4 w-4 text-accent" />
-                Unpaid Invoices
+                Invoices
               </CardTitle>
             </div>
           </CardHeader>
@@ -269,16 +257,17 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
               {invoices.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-white/60">
                   <Receipt className="h-8 w-8 mb-2 opacity-50" />
-                  <p className="text-sm">All invoices paid</p>
+                  <p className="text-sm">No invoices</p>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {invoices.map(invoice => {
+                    const isPaid = invoice.status === 'paid';
                     const isOverdue = invoice.due_date && isPast(parseISO(invoice.due_date)) && invoice.status !== 'paid';
                     return (
                       <div 
                         key={invoice.id} 
-                        className={`flex items-center justify-between p-3 rounded-lg transition-colors border border-white/5 cursor-pointer ${isOverdue ? 'bg-destructive/20 hover:bg-destructive/30' : 'bg-slate-700/50 hover:bg-slate-700'}`}
+                        className={`flex items-center justify-between p-3 rounded-lg transition-colors border border-white/5 cursor-pointer ${isPaid ? 'bg-green-500/10 hover:bg-green-500/20' : isOverdue ? 'bg-destructive/20 hover:bg-destructive/30' : 'bg-slate-700/50 hover:bg-slate-700'}`}
                         onClick={() => navigate(`/dashboard/invoices?id=${invoice.id}`)}
                       >
                         <div className="flex-1 min-w-0">
@@ -291,9 +280,9 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                         <div className="flex items-center gap-2">
                           <Badge 
                             variant="outline" 
-                            className={`text-xs ${isOverdue ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-accent/10 text-accent border-accent/30'}`}
+                            className={`text-xs ${isPaid ? 'bg-green-500/20 text-green-400 border-green-500/30' : isOverdue ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-amber-500/20 text-amber-400 border-amber-500/30'}`}
                           >
-                            {isOverdue ? 'Overdue' : invoice.status}
+                            {isPaid ? 'paid' : isOverdue ? 'overdue' : 'unpaid'}
                           </Badge>
                           <span className="font-semibold text-sm text-white">${invoice.total?.toFixed(0)}</span>
                         </div>
@@ -306,56 +295,6 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           </CardContent>
         </Card>
       </div>
-
-      {/* Recently Paid Invoices */}
-      {paidInvoices.length > 0 && (
-        <Card className="bg-slate-800 border-white/10">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
-                <CheckCircle2 className="h-4 w-4 text-green-400" />
-                Recently Paid
-              </CardTitle>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate('/dashboard/invoices')} 
-                className="text-accent hover:text-accent hover:bg-accent/10"
-              >
-                View All <ArrowRight className="h-3 w-3 ml-1" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-2">
-              {paidInvoices.map(invoice => (
-                <div 
-                  key={invoice.id} 
-                  className="flex items-center justify-between p-3 rounded-lg bg-green-500/10 hover:bg-green-500/20 transition-colors border border-green-500/20 cursor-pointer"
-                  onClick={() => navigate(`/dashboard/invoices?id=${invoice.id}`)}
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate text-white">{invoice.customer_name}</p>
-                    <div className="flex items-center gap-1 text-xs text-white/60">
-                      <CheckCircle2 className="h-3 w-3 text-green-400" />
-                      {invoice.paid_at ? format(new Date(invoice.paid_at), 'MMM d') : 'Paid'}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge 
-                      variant="outline" 
-                      className="text-xs bg-green-500/20 text-green-400 border-green-500/30"
-                    >
-                      paid
-                    </Badge>
-                    <span className="font-semibold text-sm text-white">${invoice.total?.toFixed(0)}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {isPlatformAdmin && inventoryAlerts.length > 0 && (
         <Card className="bg-slate-800 border-white/10">
