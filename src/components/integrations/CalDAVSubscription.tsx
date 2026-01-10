@@ -116,7 +116,7 @@ export function CalDAVSubscription({
         </CardHeader>
         <CardContent>
           <div className="h-20 flex items-center justify-center">
-            <RefreshCw className="h-5 w-5 animate-spin text-muted-foreground" />
+            <RefreshCw className="h-5 w-5 animate-spin text-card-foreground" />
           </div>
         </CardContent>
       </Card>
@@ -131,17 +131,17 @@ export function CalDAVSubscription({
             <Server className="h-5 w-5 text-primary" />
             {title}
           </CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardDescription className="text-card-foreground">{description}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-2 flex-wrap">
             <Badge variant="secondary" className="text-xs">
-              Free Forever
+              Free
             </Badge>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs text-card-foreground">
               Two-Way Sync
             </Badge>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs text-card-foreground">
               Apple / Android / Thunderbird
             </Badge>
           </div>
@@ -152,7 +152,7 @@ export function CalDAVSubscription({
                 <Input
                   value={caldavUrl}
                   readOnly
-                  className="font-mono text-xs"
+                  className="font-mono text-xs bg-white text-slate-800"
                 />
                 <Button
                   variant="outline"
@@ -188,7 +188,7 @@ export function CalDAVSubscription({
               </div>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-card-foreground">
               CalDAV sync not available. Please contact support.
             </p>
           )}

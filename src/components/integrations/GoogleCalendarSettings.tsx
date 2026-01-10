@@ -243,7 +243,7 @@ export function GoogleCalendarSettings() {
             
             <div className="flex items-start gap-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/20 mb-4">
               <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-card-foreground">
                 <strong className="text-foreground">Important:</strong> The email you use to sign in to this platform must match the email on your Google account.
               </p>
             </div>
@@ -256,7 +256,7 @@ export function GoogleCalendarSettings() {
                     Create a Google Cloud Project
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-xs text-muted-foreground pb-3">
+                <AccordionContent className="text-xs text-card-foreground pb-3">
                   <ol className="space-y-1.5 list-decimal list-inside ml-1">
                     <li>Go to <a href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">console.cloud.google.com</a></li>
                     <li>Click the project dropdown at the top left (next to "Google Cloud")</li>
@@ -275,7 +275,7 @@ export function GoogleCalendarSettings() {
                     Enable Google Calendar API
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-xs text-muted-foreground pb-3">
+                <AccordionContent className="text-xs text-card-foreground pb-3">
                   <ol className="space-y-1.5 list-decimal list-inside ml-1">
                     <li>In the left sidebar, go to <strong>"APIs & Services"</strong> → <strong>"Library"</strong></li>
                     <li>Search for <strong>"Google Calendar API"</strong></li>
@@ -291,7 +291,7 @@ export function GoogleCalendarSettings() {
                     Configure OAuth Consent Screen
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-xs text-muted-foreground pb-3">
+                <AccordionContent className="text-xs text-card-foreground pb-3">
                   <ol className="space-y-1.5 list-decimal list-inside ml-1">
                     <li>Go to <strong>"APIs & Services"</strong> → <strong>"OAuth consent screen"</strong></li>
                     <li>Select <strong>"External"</strong> user type and click <strong>"Create"</strong></li>
@@ -323,7 +323,7 @@ export function GoogleCalendarSettings() {
                     Create OAuth Credentials
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-xs text-muted-foreground pb-3">
+                <AccordionContent className="text-xs text-card-foreground pb-3">
                   <ol className="space-y-1.5 list-decimal list-inside ml-1">
                     <li>Go to <strong>"APIs & Services"</strong> → <strong>"Credentials"</strong></li>
                     <li>Click <strong>"+ Create Credentials"</strong> at the top</li>
@@ -341,14 +341,14 @@ export function GoogleCalendarSettings() {
                     Add Redirect URI
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-xs text-muted-foreground pb-3">
+                <AccordionContent className="text-xs text-card-foreground pb-3">
                   <ol className="space-y-1.5 list-decimal list-inside ml-1">
                     <li>In the OAuth client creation screen, scroll to <strong>"Authorized redirect URIs"</strong></li>
                     <li>Click <strong>"+ Add URI"</strong></li>
                     <li>Paste this exact URI:</li>
                   </ol>
                   <div className="mt-2 flex items-center gap-2">
-                    <code className="flex-1 bg-muted px-2 py-1.5 rounded text-[10px] break-all">
+                    <code className="flex-1 bg-white text-slate-800 px-2 py-1.5 rounded text-[10px] break-all">
                       {redirectUri}
                     </code>
                     <Button 
@@ -374,7 +374,7 @@ export function GoogleCalendarSettings() {
                     Connect Your Calendar
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-xs text-muted-foreground pb-3">
+                <AccordionContent className="text-xs text-card-foreground pb-3">
                   <ol className="space-y-1.5 list-decimal list-inside ml-1">
                     <li>Click the <strong>"Connect Google Calendar"</strong> button below</li>
                     <li>Sign in with the <strong>same email</strong> you added as a test user</li>
