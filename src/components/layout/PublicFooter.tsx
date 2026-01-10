@@ -14,7 +14,7 @@ export function PublicFooter() {
                 <span className="font-semibold">Aura Intercept</span>
                 <span className="text-xs text-white/70 flex items-center gap-1">
                   <Zap className="w-3 h-3" />
-                  Infrastructure of Intent
+                  Smart Agents, Automated Service
                 </span>
               </div>
             </div>
