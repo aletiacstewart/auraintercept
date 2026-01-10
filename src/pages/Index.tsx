@@ -5,298 +5,306 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { 
-  Bot, Building2, Zap, Shield, MessageSquare, Play, 
-  Calendar, Phone, Users, TrendingUp, Clock, MapPin,
-  FileText, DollarSign, Package, Award, Megaphone, 
-  Gift, RotateCcw, Sun, BarChart3, Target, CheckCircle2,
-  ArrowRight, Sparkles, Wrench, Home, Flame, Droplet,
-  ChevronRight, Star, Navigation, Truck,
-  Search, UserPlus, Globe, Headphones, Bell, Mail, 
-  Smartphone, Video, Mic, Brain, Layers, Lock, Send,
-  Key, Fence, PanelTop, Wind, DoorOpen, Bug, TreeDeciduous,
-  Waves, TreePine, Trash2, Refrigerator, Hammer, PaintBucket,
-  Grid3X3, Sparkle, Car, HardHat, Wifi, Camera
-} from 'lucide-react';
+import { Bot, Building2, Zap, Shield, MessageSquare, Play, Calendar, Phone, Users, TrendingUp, Clock, MapPin, FileText, DollarSign, Package, Award, Megaphone, Gift, RotateCcw, Sun, BarChart3, Target, CheckCircle2, ArrowRight, Sparkles, Wrench, Home, Flame, Droplet, ChevronRight, Star, Navigation, Truck, Search, UserPlus, Globe, Headphones, Bell, Mail, Smartphone, Video, Mic, Brain, Layers, Lock, Send, Key, Fence, PanelTop, Wind, DoorOpen, Bug, TreeDeciduous, Waves, TreePine, Trash2, Refrigerator, Hammer, PaintBucket, Grid3X3, Sparkle, Car, HardHat, Wifi, Camera } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import heroVideo from '@/assets/aura-intercept-hero.mp4';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
-
-const agentCategories = [
-  {
-    id: 'customer',
-    name: 'Customer Portal',
-    icon: Users,
-    color: 'from-cyan-500 to-blue-500',
-    agents: [
-      { name: 'AI Receptionist', description: 'AI-powered inquiry routing to the right department instantly', icon: Target },
-      { name: 'Scheduling Agent', description: 'Natural language appointment scheduling with calendar sync', icon: Calendar },
-      { name: 'Follow-up Agent', description: 'Automated reminders via email, SMS, and voice calls', icon: Bell },
-      { name: 'Review Agent', description: 'Collects feedback and manages multi-platform reviews', icon: Star },
-    ]
-  },
-  {
-    id: 'field',
-    name: 'Field Operations',
-    icon: MapPin,
-    color: 'from-green-500 to-emerald-500',
-    agents: [
-      { name: 'Dispatch Agent', description: 'Smart job assignment based on skills and location', icon: Users },
-      { name: 'Route Agent', description: 'Real-time route optimization for maximum efficiency', icon: Navigation },
-      { name: 'ETA Agent', description: 'Accurate arrival time predictions with customer notifications', icon: Clock },
-      { name: 'Check-in Agent', description: 'Job status tracking with photo documentation', icon: CheckCircle2 },
-    ]
-  },
-  {
-    id: 'business',
-    name: 'Business Management',
-    icon: Building2,
-    color: 'from-purple-500 to-violet-500',
-    agents: [
-      { name: 'Quoting Agent', description: 'Instant quote generation with service pricing lookup', icon: FileText },
-      { name: 'Invoice Agent', description: 'Automated invoicing with payment tracking', icon: DollarSign },
-      { name: 'Admin Agent', description: 'Business administration and company management tasks', icon: Building2 },
-    ]
-  }
-];
-
-const agentConsoles = [
-  {
-    name: 'Customer Portal Console',
-    description: 'Complete customer engagement hub for appointment scheduling, follow-ups, and review collection.',
-    icon: Calendar,
-    gradient: 'from-cyan-500 to-blue-500',
-    iconBg: 'bg-cyan-500/10',
-    iconColor: 'text-cyan-500',
-    features: [
-      '24/7 natural language booking',
-      'Multi-service appointment scheduling',
-      'Automated email & SMS reminders',
-      'Customer review & Feedback',
-      'Quote request handling',
-      'Review request automation'
-    ]
-  },
-  {
-    name: 'Field Operations Console',
-    description: 'Technician-focused mobile console for job management, navigation, and customer communication.',
-    icon: Truck,
-    gradient: 'from-green-500 to-emerald-500',
-    iconBg: 'bg-green-500/10',
-    iconColor: 'text-green-500',
-    features: [
-      'One-tap job acceptance',
-      'Real-time GPS navigation',
-      'ETA updates with notifications',
-      'Before/after photo capture',
-      'Job status tracking',
-      'Dispatch communication'
-    ]
-  },
-  {
-    name: 'Business Management Console',
-    description: 'Financial operations center for quotes, invoices, and business administration.',
-    icon: DollarSign,
-    gradient: 'from-purple-500 to-violet-500',
-    iconBg: 'bg-purple-500/10',
-    iconColor: 'text-purple-500',
-    features: [
-      'AI-assisted quote generation',
-      'Automated invoice creation',
-      'Payment status tracking',
-      'Price lookup assistant',
-      'Dashboard & Analytics',
-      'Employee management'
-    ]
-  }
-];
-
-const platformFeatures = [
-  {
-    icon: MessageSquare,
-    title: 'Multi-Channel AI',
-    description: 'Voice calls, SMS, email, and web chat - customers connect on their preferred channel.'
-  },
-  {
-    icon: Globe,
-    title: 'Customer Portal',
-    description: 'Self-service portal where customers book, track appointments, and chat with AI agents.'
-  },
-  {
-    icon: Building2,
-    title: 'White-Label Ready',
-    description: 'Custom logos, colors, and branding. Your company, your AI agents.'
-  },
-  {
-    icon: Layers,
-    title: 'Multi-Tenant Platform',
-    description: 'Serve unlimited companies with isolated data and custom configurations.'
-  },
-  {
-    icon: Smartphone,
-    title: 'Mobile-First Design',
-    description: 'Technician consoles optimized for field work on any device.'
-  },
-  {
-    icon: Brain,
-    title: 'AI Powered Ops',
-    description: 'Intelligent agent handoffs with context preservation across conversations.'
-  },
-  {
-    icon: Bell,
-    title: 'Smart Reminders',
-    description: 'Email, SMS, and voice reminders reduce no-shows by up to 40%.'
-  },
-  {
-    icon: Lock,
-    title: 'Enterprise Security',
-    description: 'Row-level security and role-based access protect sensitive data.'
-  }
-];
-
-const communicationChannels = [
-  {
-    icon: Mic,
-    title: 'Voice AI',
-    description: 'Natural voice conversations with AI agents for phone-based customer service.',
-    color: 'from-pink-500 to-rose-500'
-  },
-  {
-    icon: MessageSquare,
-    title: 'SMS/Text',
-    description: 'Two-way text messaging for appointment reminders and quick updates.',
-    color: 'from-green-500 to-emerald-500'
-  },
-  {
-    icon: Mail,
-    title: 'Email',
-    description: 'Automated email campaigns, confirmations, and digest reports.',
-    color: 'from-blue-500 to-cyan-500'
-  },
-  {
-    icon: Headphones,
-    title: 'Web Chat',
-    description: 'Embeddable chat widget for website visitor engagement.',
-    color: 'from-purple-500 to-violet-500'
-  }
-];
-
-const industryCategories = [
-  {
-    category: 'Essential Trades',
-    emoji: '⚡',
-    subtitle: 'High-Urgency',
-    industries: [
-      { name: 'HVAC', icon: Flame, description: 'Heating, Ventilation, & AC' },
-      { name: 'Plumbing', icon: Droplet, description: 'Emergency & Installations' },
-      { name: 'Electrical', icon: Zap, description: 'Residential & Commercial' },
-      { name: 'Restoration', icon: Wind, description: 'Water, Fire, & Mold' },
-    ]
-  },
-  {
-    category: 'Exterior & Structural',
-    emoji: '🏠',
-    subtitle: 'Services',
-    industries: [
-      { name: 'Roofing', icon: Home, description: 'Repair & Storm Damage' },
-      { name: 'Doors & Access', icon: DoorOpen, description: 'Garage, Windows, & Entries' },
-      { name: 'Fencing & Decking', icon: Fence, description: 'Perimeter Solutions' },
-      { name: 'Solar Energy', icon: Sun, description: 'Panels & Maintenance' },
-    ]
-  },
-  {
-    category: 'Property & Estate',
-    emoji: '🌿',
-    subtitle: 'Maintenance',
-    industries: [
-      { name: 'Pest Control', icon: Bug, description: 'Residential & Commercial' },
-      { name: 'Landscape & Trees', icon: TreeDeciduous, description: 'Design, Trimming, & Removal' },
-      { name: 'Pool & Spa', icon: Waves, description: 'Chemistry & Equipment' },
-      { name: 'Septic & Sewer', icon: Trash2, description: 'Waste & Line Maintenance' },
-    ]
-  },
-  {
-    category: 'Specialized Home',
-    emoji: '🛠',
-    subtitle: 'Services',
-    industries: [
-      { name: 'Appliance Repair', icon: Refrigerator, description: 'Kitchen & Laundry' },
-      { name: 'Handyman & Cleaning', icon: Hammer, description: 'Repair & Janitorial' },
-      { name: 'Painting', icon: PaintBucket, description: 'Interior & Exterior' },
-      { name: 'Flooring & Tile', icon: Grid3X3, description: 'Hardwood & Stone' },
-    ]
-  },
-  {
-    category: 'Mobile & Commercial',
-    emoji: '🚗',
-    subtitle: 'Services',
-    industries: [
-      { name: 'Auto Care', icon: Car, description: 'Detailing & Repair' },
-      { name: 'Facility Mgmt', icon: HardHat, description: 'B2B Maintenance' },
-      { name: 'IT Field Services', icon: Wifi, description: 'Network & Hardware' },
-      { name: 'Security Systems', icon: Camera, description: 'Cameras & Alarms' },
-    ]
-  },
-];
-
-const howItWorks = [
-  {
-    step: 1,
-    title: 'Sign Up & Configure',
-    description: 'Create your company profile with custom branding, services, and business hours.',
-    icon: Building2
-  },
-  {
-    step: 2,
-    title: 'Activate AI Agents',
-    description: 'Enable 11 specialized AI agents and configure your knowledge base for your business.',
-    icon: Bot
-  },
-  {
-    step: 3,
-    title: 'Connect Customers',
-    description: 'Share your customer portal link or embed the chat widget on your website.',
+const agentCategories = [{
+  id: 'customer',
+  name: 'Customer Portal',
+  icon: Users,
+  color: 'from-cyan-500 to-blue-500',
+  agents: [{
+    name: 'AI Receptionist',
+    description: 'AI-powered inquiry routing to the right department instantly',
+    icon: Target
+  }, {
+    name: 'Scheduling Agent',
+    description: 'Natural language appointment scheduling with calendar sync',
+    icon: Calendar
+  }, {
+    name: 'Follow-up Agent',
+    description: 'Automated reminders via email, SMS, and voice calls',
+    icon: Bell
+  }, {
+    name: 'Review Agent',
+    description: 'Collects feedback and manages multi-platform reviews',
+    icon: Star
+  }]
+}, {
+  id: 'field',
+  name: 'Field Operations',
+  icon: MapPin,
+  color: 'from-green-500 to-emerald-500',
+  agents: [{
+    name: 'Dispatch Agent',
+    description: 'Smart job assignment based on skills and location',
     icon: Users
-  },
-  {
-    step: 4,
-    title: 'Automate & Scale',
-    description: 'AI handles bookings, field ops, and billing 24/7 while you focus on growth.',
-    icon: Zap
-  }
-];
-
-const heroStats = [
-  { value: '11', label: 'AI Agents' },
-  { value: '24/7', label: 'Automation' },
-  { value: '3', label: 'Agent Consoles' },
-  { value: '40%', label: 'Less No-Shows' },
-];
-
-const subtitles = [
-  'Booking & Scheduling',
-  'Field Operations',
-  'Billing & Invoicing',
-  'Customer Portal',
-  'Business Management',
-];
-
+  }, {
+    name: 'Route Agent',
+    description: 'Real-time route optimization for maximum efficiency',
+    icon: Navigation
+  }, {
+    name: 'ETA Agent',
+    description: 'Accurate arrival time predictions with customer notifications',
+    icon: Clock
+  }, {
+    name: 'Check-in Agent',
+    description: 'Job status tracking with photo documentation',
+    icon: CheckCircle2
+  }]
+}, {
+  id: 'business',
+  name: 'Business Management',
+  icon: Building2,
+  color: 'from-purple-500 to-violet-500',
+  agents: [{
+    name: 'Quoting Agent',
+    description: 'Instant quote generation with service pricing lookup',
+    icon: FileText
+  }, {
+    name: 'Invoice Agent',
+    description: 'Automated invoicing with payment tracking',
+    icon: DollarSign
+  }, {
+    name: 'Admin Agent',
+    description: 'Business administration and company management tasks',
+    icon: Building2
+  }]
+}];
+const agentConsoles = [{
+  name: 'Customer Portal Console',
+  description: 'Complete customer engagement hub for appointment scheduling, follow-ups, and review collection.',
+  icon: Calendar,
+  gradient: 'from-cyan-500 to-blue-500',
+  iconBg: 'bg-cyan-500/10',
+  iconColor: 'text-cyan-500',
+  features: ['24/7 natural language booking', 'Multi-service appointment scheduling', 'Automated email & SMS reminders', 'Customer review & Feedback', 'Quote request handling', 'Review request automation']
+}, {
+  name: 'Field Operations Console',
+  description: 'Technician-focused mobile console for job management, navigation, and customer communication.',
+  icon: Truck,
+  gradient: 'from-green-500 to-emerald-500',
+  iconBg: 'bg-green-500/10',
+  iconColor: 'text-green-500',
+  features: ['One-tap job acceptance', 'Real-time GPS navigation', 'ETA updates with notifications', 'Before/after photo capture', 'Job status tracking', 'Dispatch communication']
+}, {
+  name: 'Business Management Console',
+  description: 'Financial operations center for quotes, invoices, and business administration.',
+  icon: DollarSign,
+  gradient: 'from-purple-500 to-violet-500',
+  iconBg: 'bg-purple-500/10',
+  iconColor: 'text-purple-500',
+  features: ['AI-assisted quote generation', 'Automated invoice creation', 'Payment status tracking', 'Price lookup assistant', 'Dashboard & Analytics', 'Employee management']
+}];
+const platformFeatures = [{
+  icon: MessageSquare,
+  title: 'Multi-Channel AI',
+  description: 'Voice calls, SMS, email, and web chat - customers connect on their preferred channel.'
+}, {
+  icon: Globe,
+  title: 'Customer Portal',
+  description: 'Self-service portal where customers book, track appointments, and chat with AI agents.'
+}, {
+  icon: Building2,
+  title: 'White-Label Ready',
+  description: 'Custom logos, colors, and branding. Your company, your AI agents.'
+}, {
+  icon: Layers,
+  title: 'Multi-Tenant Platform',
+  description: 'Serve unlimited companies with isolated data and custom configurations.'
+}, {
+  icon: Smartphone,
+  title: 'Mobile-First Design',
+  description: 'Technician consoles optimized for field work on any device.'
+}, {
+  icon: Brain,
+  title: 'AI Powered Ops',
+  description: 'Intelligent agent handoffs with context preservation across conversations.'
+}, {
+  icon: Bell,
+  title: 'Smart Reminders',
+  description: 'Email, SMS, and voice reminders reduce no-shows by up to 40%.'
+}, {
+  icon: Lock,
+  title: 'Enterprise Security',
+  description: 'Row-level security and role-based access protect sensitive data.'
+}];
+const communicationChannels = [{
+  icon: Mic,
+  title: 'Voice AI',
+  description: 'Natural voice conversations with AI agents for phone-based customer service.',
+  color: 'from-pink-500 to-rose-500'
+}, {
+  icon: MessageSquare,
+  title: 'SMS/Text',
+  description: 'Two-way text messaging for appointment reminders and quick updates.',
+  color: 'from-green-500 to-emerald-500'
+}, {
+  icon: Mail,
+  title: 'Email',
+  description: 'Automated email campaigns, confirmations, and digest reports.',
+  color: 'from-blue-500 to-cyan-500'
+}, {
+  icon: Headphones,
+  title: 'Web Chat',
+  description: 'Embeddable chat widget for website visitor engagement.',
+  color: 'from-purple-500 to-violet-500'
+}];
+const industryCategories = [{
+  category: 'Essential Trades',
+  emoji: '⚡',
+  subtitle: 'High-Urgency',
+  industries: [{
+    name: 'HVAC',
+    icon: Flame,
+    description: 'Heating, Ventilation, & AC'
+  }, {
+    name: 'Plumbing',
+    icon: Droplet,
+    description: 'Emergency & Installations'
+  }, {
+    name: 'Electrical',
+    icon: Zap,
+    description: 'Residential & Commercial'
+  }, {
+    name: 'Restoration',
+    icon: Wind,
+    description: 'Water, Fire, & Mold'
+  }]
+}, {
+  category: 'Exterior & Structural',
+  emoji: '🏠',
+  subtitle: 'Services',
+  industries: [{
+    name: 'Roofing',
+    icon: Home,
+    description: 'Repair & Storm Damage'
+  }, {
+    name: 'Doors & Access',
+    icon: DoorOpen,
+    description: 'Garage, Windows, & Entries'
+  }, {
+    name: 'Fencing & Decking',
+    icon: Fence,
+    description: 'Perimeter Solutions'
+  }, {
+    name: 'Solar Energy',
+    icon: Sun,
+    description: 'Panels & Maintenance'
+  }]
+}, {
+  category: 'Property & Estate',
+  emoji: '🌿',
+  subtitle: 'Maintenance',
+  industries: [{
+    name: 'Pest Control',
+    icon: Bug,
+    description: 'Residential & Commercial'
+  }, {
+    name: 'Landscape & Trees',
+    icon: TreeDeciduous,
+    description: 'Design, Trimming, & Removal'
+  }, {
+    name: 'Pool & Spa',
+    icon: Waves,
+    description: 'Chemistry & Equipment'
+  }, {
+    name: 'Septic & Sewer',
+    icon: Trash2,
+    description: 'Waste & Line Maintenance'
+  }]
+}, {
+  category: 'Specialized Home',
+  emoji: '🛠',
+  subtitle: 'Services',
+  industries: [{
+    name: 'Appliance Repair',
+    icon: Refrigerator,
+    description: 'Kitchen & Laundry'
+  }, {
+    name: 'Handyman & Cleaning',
+    icon: Hammer,
+    description: 'Repair & Janitorial'
+  }, {
+    name: 'Painting',
+    icon: PaintBucket,
+    description: 'Interior & Exterior'
+  }, {
+    name: 'Flooring & Tile',
+    icon: Grid3X3,
+    description: 'Hardwood & Stone'
+  }]
+}, {
+  category: 'Mobile & Commercial',
+  emoji: '🚗',
+  subtitle: 'Services',
+  industries: [{
+    name: 'Auto Care',
+    icon: Car,
+    description: 'Detailing & Repair'
+  }, {
+    name: 'Facility Mgmt',
+    icon: HardHat,
+    description: 'B2B Maintenance'
+  }, {
+    name: 'IT Field Services',
+    icon: Wifi,
+    description: 'Network & Hardware'
+  }, {
+    name: 'Security Systems',
+    icon: Camera,
+    description: 'Cameras & Alarms'
+  }]
+}];
+const howItWorks = [{
+  step: 1,
+  title: 'Sign Up & Configure',
+  description: 'Create your company profile with custom branding, services, and business hours.',
+  icon: Building2
+}, {
+  step: 2,
+  title: 'Activate AI Agents',
+  description: 'Enable 11 specialized AI agents and configure your knowledge base for your business.',
+  icon: Bot
+}, {
+  step: 3,
+  title: 'Connect Customers',
+  description: 'Share your customer portal link or embed the chat widget on your website.',
+  icon: Users
+}, {
+  step: 4,
+  title: 'Automate & Scale',
+  description: 'AI handles bookings, field ops, and billing 24/7 while you focus on growth.',
+  icon: Zap
+}];
+const heroStats = [{
+  value: '11',
+  label: 'AI Agents'
+}, {
+  value: '24/7',
+  label: 'Automation'
+}, {
+  value: '3',
+  label: 'Agent Consoles'
+}, {
+  value: '40%',
+  label: 'Less No-Shows'
+}];
+const subtitles = ['Booking & Scheduling', 'Field Operations', 'Billing & Invoicing', 'Customer Portal', 'Business Management'];
 export default function Index() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('customer');
   const [currentSubtitle, setCurrentSubtitle] = useState(0);
-
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSubtitle((prev) => (prev + 1) % subtitles.length);
+      setCurrentSubtitle(prev => (prev + 1) % subtitles.length);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <PublicHeader showHomeLink={false} />
 
       {/* Hero Section */}
@@ -314,14 +322,7 @@ export default function Index() {
 
             {/* Hero Video */}
             <div className="max-w-md mx-auto mb-6 animate-fade-in">
-              <video 
-                src={heroVideo} 
-                autoPlay 
-                loop 
-                muted 
-                playsInline
-                className="w-full h-auto rounded-2xl"
-              />
+              <video src={heroVideo} autoPlay loop muted playsInline className="w-full h-auto rounded-2xl" />
             </div>
 
             <div className="h-8 mb-6 animate-fade-in">
@@ -330,16 +331,10 @@ export default function Index() {
               </p>
             </div>
             
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in">
-              Aura Intercept provides intelligent AI agents that automatically handle your customer service and scheduling, ensuring your trade business never misses a lead or a loyal client.
-            </p>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in">"Aura Intercept provides intelligent AI agents that automatically handle your customer service and scheduling, ensuring your trade business never misses a lead or a loyal client, giving you the freedom to focus on the work in the field while we master the work in the office."   </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in">
-              <Button 
-                size="lg" 
-                className="gradient-primary shadow-glow text-lg px-8 py-6 w-full sm:w-auto"
-                onClick={() => navigate('/auth?mode=company')}
-              >
+              <Button size="lg" className="gradient-primary shadow-glow text-lg px-8 py-6 w-full sm:w-auto" onClick={() => navigate('/auth?mode=company')}>
                 <Building2 className="w-5 h-5 mr-2" />
                 Start Free Trial
               </Button>
@@ -362,8 +357,7 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-4 gap-6">
-            {howItWorks.map((item, index) => (
-              <div key={item.step} className="relative">
+            {howItWorks.map((item, index) => <div key={item.step} className="relative">
                 <Card className="h-full hover:shadow-lg transition-all duration-300 hover:border-primary/50">
                   <CardContent className="p-6 text-center">
                     <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-glow">
@@ -374,13 +368,10 @@ export default function Index() {
                     <p className="text-sm text-card-muted">{item.description}</p>
                   </CardContent>
                 </Card>
-                {index < howItWorks.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
+                {index < howItWorks.length - 1 && <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
                     <ChevronRight className="w-6 h-6 text-muted-foreground/50" />
-                  </div>
-                )}
-              </div>
-            ))}
+                  </div>}
+              </div>)}
           </div>
         </div>
       </section>
@@ -399,27 +390,17 @@ export default function Index() {
 
           <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
             <TabsList className="flex flex-wrap justify-center gap-2 mb-8 h-auto bg-transparent">
-              {agentCategories.map((category) => (
-                <TabsTrigger 
-                  key={category.id} 
-                  value={category.id}
-                  className="data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground px-4 py-2"
-                >
+              {agentCategories.map(category => <TabsTrigger key={category.id} value={category.id} className="data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground px-4 py-2">
                   <category.icon className="w-4 h-4 mr-2" />
                   {category.name}
-                </TabsTrigger>
-              ))}
+                </TabsTrigger>)}
             </TabsList>
 
-            {agentCategories.map((category) => (
-              <TabsContent key={category.id} value={category.id}>
+            {agentCategories.map(category => <TabsContent key={category.id} value={category.id}>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {category.agents.map((agent, index) => (
-                    <Card 
-                      key={agent.name} 
-                      className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 animate-fade-in"
-                      style={{ animationDelay: `${index * 50}ms` }}
-                    >
+                  {category.agents.map((agent, index) => <Card key={agent.name} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 animate-fade-in" style={{
+                animationDelay: `${index * 50}ms`
+              }}>
                       <CardContent className="p-5">
                         <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center mb-3`}>
                           <agent.icon className="w-5 h-5 text-white" />
@@ -427,11 +408,9 @@ export default function Index() {
                         <h4 className="font-semibold mb-1">{agent.name}</h4>
                         <p className="text-sm text-card-muted">{agent.description}</p>
                       </CardContent>
-                    </Card>
-                  ))}
+                    </Card>)}
                 </div>
-              </TabsContent>
-            ))}
+              </TabsContent>)}
           </Tabs>
         </div>
       </section>
@@ -448,11 +427,7 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {agentConsoles.map((console, index) => (
-              <Card 
-                key={console.name}
-                className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 overflow-hidden group"
-              >
+            {agentConsoles.map((console, index) => <Card key={console.name} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 overflow-hidden group">
                 <div className={`h-2 bg-gradient-to-r ${console.gradient}`} />
                 <CardContent className="p-6">
                   <p className="text-xs text-white/80 font-medium tracking-wide mb-1">AI Aura Intercept</p>
@@ -465,16 +440,13 @@ export default function Index() {
                     {console.description}
                   </p>
                   <ul className="space-y-2 text-sm">
-                    {console.features.slice(0, 4).map((feature, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
+                    {console.features.slice(0, 4).map((feature, idx) => <li key={idx} className="flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
                         <span className="text-white">{feature}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -491,11 +463,7 @@ export default function Index() {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {communicationChannels.map((channel, index) => (
-              <Card 
-                key={channel.title}
-                className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 text-center"
-              >
+            {communicationChannels.map((channel, index) => <Card key={channel.title} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 text-center">
                 <CardContent className="p-6">
                   <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${channel.color} flex items-center justify-center mx-auto mb-4`}>
                     <channel.icon className="w-7 h-7 text-white" />
@@ -503,8 +471,7 @@ export default function Index() {
                   <h3 className="font-semibold text-lg mb-2">{channel.title}</h3>
                   <p className="text-sm text-card-muted">{channel.description}</p>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -521,12 +488,9 @@ export default function Index() {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {platformFeatures.map((feature, index) => (
-              <Card 
-                key={feature.title}
-                className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 animate-fade-in"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
+            {platformFeatures.map((feature, index) => <Card key={feature.title} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 animate-fade-in" style={{
+            animationDelay: `${index * 50}ms`
+          }}>
                 <CardContent className="p-6">
                   <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-4">
                     <feature.icon className="w-6 h-6 text-primary-foreground" />
@@ -534,8 +498,7 @@ export default function Index() {
                   <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
                   <p className="text-sm text-card-muted">{feature.description}</p>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -552,8 +515,7 @@ export default function Index() {
           </div>
 
           <div className="space-y-8">
-            {industryCategories.map((cat, catIndex) => (
-              <div key={cat.category}>
+            {industryCategories.map((cat, catIndex) => <div key={cat.category}>
                 <div className="flex items-center gap-2 mb-4">
                   <span className="text-xl">{cat.emoji}</span>
                   <h3 className="text-lg font-semibold">
@@ -561,11 +523,7 @@ export default function Index() {
                   </h3>
                 </div>
                 <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {cat.industries.map((industry, index) => (
-                    <Card 
-                      key={industry.name}
-                      className="hover:shadow-md transition-all duration-300 hover:border-primary/50 text-center bg-card/80"
-                    >
+                  {cat.industries.map((industry, index) => <Card key={industry.name} className="hover:shadow-md transition-all duration-300 hover:border-primary/50 text-center bg-card/80">
                       <CardContent className="p-3">
                         <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center mx-auto mb-2">
                           <industry.icon className="w-5 h-5 text-primary-foreground" />
@@ -573,19 +531,13 @@ export default function Index() {
                         <h4 className="font-medium text-xs mb-0.5">{industry.name}</h4>
                         <p className="text-[10px] text-card-muted leading-tight hidden sm:block">{industry.description}</p>
                       </CardContent>
-                    </Card>
-                  ))}
+                    </Card>)}
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
 
           <div className="text-center mt-12">
-            <Button 
-              size="lg" 
-              className="gradient-primary shadow-glow text-lg px-8 py-6"
-              onClick={() => navigate('/auth?mode=company')}
-            >
+            <Button size="lg" className="gradient-primary shadow-glow text-lg px-8 py-6" onClick={() => navigate('/auth?mode=company')}>
               <Building2 className="w-5 h-5 mr-2" />
               Start Your Free Trial
             </Button>
@@ -648,12 +600,7 @@ export default function Index() {
             </div>
 
             <div className="pt-4 text-center">
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="text-lg px-8 py-6"
-                onClick={() => navigate('/customer-auth')}
-              >
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6" onClick={() => navigate('/customer-auth')}>
                 <Users className="w-5 h-5 mr-2" />
                 Access Customer Portal
               </Button>
@@ -723,11 +670,7 @@ export default function Index() {
                   </div>
                 </div>
 
-                <Button 
-                  size="lg" 
-                  className="w-full gradient-primary shadow-glow text-lg py-6"
-                  onClick={() => navigate('/auth?mode=company')}
-                >
+                <Button size="lg" className="w-full gradient-primary shadow-glow text-lg py-6" onClick={() => navigate('/auth?mode=company')}>
                   <Zap className="w-5 h-5 mr-2" />
                   Start 14-Day Free Trial
                 </Button>
@@ -749,6 +692,5 @@ export default function Index() {
       
       {/* Floating Chat Widget */}
       <FloatingChatWidget />
-    </div>
-  );
+    </div>;
 }
