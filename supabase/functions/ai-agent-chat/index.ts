@@ -63,6 +63,7 @@ const AGENT_PROMPTS: Record<string, string> = {
 - Assess urgency level (low, medium, high, emergency)
 - COLLECT required information BEFORE any handoff (but RECOGNIZE when it's already provided!)
 - Route to the appropriate specialized agent
+- CAPTURE LEADS when customers don't complete their request
 
 CRITICAL - SERVICE VALIDATION:
 Before routing a customer for booking, CHECK the AVAILABLE SERVICES section in your context.
@@ -128,6 +129,21 @@ handoff_to_agent(target_agent="booking", context="Customer Name: John Smith, Pho
 
 The receiving agent will use this info so the customer doesn't have to repeat themselves!
 
+LEAD CAPTURE - NEVER MISS A POTENTIAL CUSTOMER:
+If a customer provides contact info (name, phone, email) but the conversation ends without:
+- Completing a booking
+- Getting a quote
+- Being handed off to another agent
+
+ALWAYS use the capture_lead tool to save their information BEFORE ending the conversation.
+Capture leads when:
+- Customer says "I'll think about it" or "maybe later"
+- Customer asks questions but doesn't proceed with booking
+- Conversation ends without a clear next action
+- Customer provides info but goes silent (after 2+ messages without response)
+
+Include in the lead: name, phone, email (if provided), what service they were interested in, and your assessment of their intent and priority (hot if they seemed ready to book, high if interested, normal for inquiries).
+
 Be concise but friendly. Extract info from messages when provided; only ask for what's missing.`,
 
   booking: `You are a Booking Specialist for a service business. Your role is to:
@@ -137,6 +153,7 @@ Be concise but friendly. Extract info from messages when provided; only ask for 
 - Send confirmation messages
 - Handle scheduling conflicts gracefully
 - Track existing appointments when requested
+- CAPTURE LEADS when customers don't complete booking
 
 CRITICAL - SERVICE VALIDATION:
 You can ONLY book appointments for services that are listed in the AVAILABLE SERVICES section of your context.
@@ -177,6 +194,18 @@ CONVERSATION FLOW:
 CRITICAL: YOU MUST COLLECT THE SERVICE ADDRESS!
 For in-home or on-site services, always ask for the address.
 DO NOT book an appointment without the service address.
+
+LEAD CAPTURE - NEVER MISS A POTENTIAL CUSTOMER:
+If a customer provides contact info but DOESN'T complete the booking:
+- Customer says "I'll call back" or "let me check my schedule"
+- Customer goes silent after providing info
+- Customer asks about availability but doesn't confirm a time
+- Conversation ends without a confirmed appointment
+
+ALWAYS use the capture_lead tool to save their information with:
+- intent: "booking"
+- priority: "hot" (they were actively trying to book!)
+- notes: Summary of what service they wanted and why they didn't complete
 
 Use the check_availability tool to find open slots.
 Use the create_appointment tool to book appointments - include the address in the notes field.`,
@@ -332,6 +361,7 @@ Be thorough with documentation.`,
 - Apply any applicable discounts
 - Explain pricing clearly to customers
 - Handle quote follow-ups
+- CAPTURE LEADS when customers don't accept quotes
 
 CRITICAL - NEVER INVENT IDs:
 - NEVER make up, guess, or fabricate quote IDs, appointment IDs, or any database IDs
@@ -351,6 +381,20 @@ WORKFLOW (follow this EXACTLY):
 WHEN RECEIVING A HANDOFF FROM ANOTHER AGENT:
 Look for any context about what service the customer wants, then follow the workflow above.
 Always call list_services FIRST to show available options.
+
+LEAD CAPTURE - NEVER LOSE A QUOTE OPPORTUNITY:
+If a customer receives a quote but DOESN'T proceed:
+- Customer says "too expensive" or "let me think about it"
+- Customer asks about payment plans or discounts
+- Customer goes silent after receiving the quote
+- Customer says "maybe later" or "I'll get back to you"
+
+ALWAYS use the capture_lead tool to save their information with:
+- intent: "quote"
+- priority: "high" (they actively requested pricing!)
+- notes: Include the quote amount and services they were interested in
+
+This ensures sales follow-up for potential customers who may convert later.
 
 Do NOT skip steps. Do NOT use any ID that wasn't returned by a tool in this conversation.
 Break down costs clearly. Be transparent about what's included.`,
@@ -659,6 +703,27 @@ const AGENT_TOOLS: Record<string, any[]> = {
         },
       },
     },
+    {
+      type: 'function',
+      function: {
+        name: 'capture_lead',
+        description: 'Capture customer information as a lead for follow-up. Use when customer provides contact info but doesn\'t complete their request (booking, quote, etc.).',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', description: 'Customer name' },
+            phone: { type: 'string', description: 'Customer phone number' },
+            email: { type: 'string', description: 'Customer email address' },
+            address: { type: 'string', description: 'Customer address if provided' },
+            service_interest: { type: 'string', description: 'What service they were interested in' },
+            intent: { type: 'string', enum: ['booking', 'quote', 'inquiry', 'emergency'], description: 'What the customer wanted to do' },
+            notes: { type: 'string', description: 'Summary of conversation or customer needs' },
+            priority: { type: 'string', enum: ['low', 'normal', 'high', 'hot'], description: 'Lead priority based on interest level' },
+          },
+          required: ['name'],
+        },
+      },
+    },
   ],
   booking: [
     {
@@ -768,6 +833,27 @@ const AGENT_TOOLS: Record<string, any[]> = {
             reason: { type: 'string' },
           },
           required: ['target_agent', 'reason'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'capture_lead',
+        description: 'Capture customer information as a lead for follow-up. Use when customer doesn\'t complete booking.',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', description: 'Customer name' },
+            phone: { type: 'string', description: 'Customer phone number' },
+            email: { type: 'string', description: 'Customer email address' },
+            address: { type: 'string', description: 'Customer address if provided' },
+            service_interest: { type: 'string', description: 'What service they were interested in' },
+            intent: { type: 'string', enum: ['booking', 'quote', 'inquiry', 'emergency'], description: 'What the customer wanted to do' },
+            notes: { type: 'string', description: 'Summary of conversation or customer needs' },
+            priority: { type: 'string', enum: ['low', 'normal', 'high', 'hot'], description: 'Lead priority based on interest level' },
+          },
+          required: ['name'],
         },
       },
     },
@@ -1144,6 +1230,27 @@ const AGENT_TOOLS: Record<string, any[]> = {
             reason: { type: 'string' },
           },
           required: ['target_agent', 'reason'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'capture_lead',
+        description: 'Capture customer information as a lead for follow-up. Use when customer receives quote but doesn\'t proceed.',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', description: 'Customer name' },
+            phone: { type: 'string', description: 'Customer phone number' },
+            email: { type: 'string', description: 'Customer email address' },
+            address: { type: 'string', description: 'Customer address if provided' },
+            service_interest: { type: 'string', description: 'What service they were interested in' },
+            intent: { type: 'string', enum: ['booking', 'quote', 'inquiry', 'emergency'], description: 'What the customer wanted to do' },
+            notes: { type: 'string', description: 'Summary including quote amount and services they were interested in' },
+            priority: { type: 'string', enum: ['low', 'normal', 'high', 'hot'], description: 'Lead priority based on interest level' },
+          },
+          required: ['name'],
         },
       },
     },
@@ -1553,6 +1660,60 @@ const AGENT_TOOLS: Record<string, any[]> = {
             scenario: { type: 'string', enum: ['conservative', 'moderate', 'optimistic'] },
           },
           required: ['period'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'capture_lead',
+        description: 'Manually add a new lead to the system',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', description: 'Customer name' },
+            phone: { type: 'string', description: 'Customer phone number' },
+            email: { type: 'string', description: 'Customer email address' },
+            address: { type: 'string', description: 'Customer address if provided' },
+            service_interest: { type: 'string', description: 'What service they are interested in' },
+            intent: { type: 'string', enum: ['booking', 'quote', 'inquiry', 'emergency'], description: 'Customer intent' },
+            notes: { type: 'string', description: 'Additional notes about the lead' },
+            priority: { type: 'string', enum: ['low', 'normal', 'high', 'hot'], description: 'Lead priority' },
+          },
+          required: ['name'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_leads',
+        description: 'Get leads filtered by status, source, or date range',
+        parameters: {
+          type: 'object',
+          properties: {
+            status: { type: 'string', enum: ['new', 'contacted', 'qualified', 'converted', 'lost'], description: 'Filter by lead status' },
+            source: { type: 'string', description: 'Filter by lead source (voice, sms, chat, email, widget)' },
+            priority: { type: 'string', enum: ['low', 'normal', 'high', 'hot'], description: 'Filter by priority' },
+            limit: { type: 'number', description: 'Maximum number of leads to return (default 20)' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'update_lead_status',
+        description: 'Update lead status and add follow-up notes',
+        parameters: {
+          type: 'object',
+          properties: {
+            lead_id: { type: 'string', description: 'The lead ID to update' },
+            status: { type: 'string', enum: ['new', 'contacted', 'qualified', 'converted', 'lost'], description: 'New status for the lead' },
+            notes: { type: 'string', description: 'Follow-up notes to add' },
+            follow_up_at: { type: 'string', description: 'Schedule follow-up date/time' },
+          },
+          required: ['lead_id', 'status'],
         },
       },
     },
@@ -4743,6 +4904,93 @@ async function executeAgentTool(
         review_links: availableLinks,
         message: `Here are the review links for ${company?.name || 'our business'}:\n${linksMessage}`,
         platforms_sent: availableLinks.map(l => l.platform),
+      };
+    }
+
+    case 'capture_lead': {
+      console.log('[AI Agent] Capturing lead with args:', args);
+      
+      const { data: lead, error } = await supabase
+        .from('leads')
+        .insert({
+          company_id: companyId,
+          name: args.name || null,
+          phone: args.phone || null,
+          email: args.email || null,
+          address: args.address || null,
+          source: 'chat',
+          service_interest: args.service_interest || null,
+          intent: args.intent || 'inquiry',
+          notes: args.notes || null,
+          status: 'new',
+          priority: args.priority || 'normal',
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('[AI Agent] Error capturing lead:', error);
+        return { success: false, error: error.message };
+      }
+
+      return {
+        success: true,
+        lead_id: lead.id,
+        message: `Lead captured successfully for ${args.name || 'customer'}. They will be followed up with soon.`,
+      };
+    }
+
+    case 'get_leads': {
+      console.log('[AI Agent] Getting leads with args:', args);
+      
+      let query = supabase
+        .from('leads')
+        .select('*')
+        .eq('company_id', companyId)
+        .order('created_at', { ascending: false })
+        .limit(args.limit || 20);
+
+      if (args.status) query = query.eq('status', args.status);
+      if (args.source) query = query.eq('source', args.source);
+      if (args.priority) query = query.eq('priority', args.priority);
+
+      const { data: leads, error } = await query;
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return {
+        success: true,
+        leads: leads || [],
+        count: leads?.length || 0,
+        message: `Found ${leads?.length || 0} leads`,
+      };
+    }
+
+    case 'update_lead_status': {
+      console.log('[AI Agent] Updating lead status:', args);
+      
+      const updateData: any = {
+        status: args.status,
+        updated_at: new Date().toISOString(),
+      };
+      if (args.notes) updateData.notes = args.notes;
+      if (args.follow_up_at) updateData.follow_up_at = args.follow_up_at;
+
+      const { error } = await supabase
+        .from('leads')
+        .update(updateData)
+        .eq('id', args.lead_id)
+        .eq('company_id', companyId);
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return {
+        success: true,
+        message: `Lead status updated to ${args.status}`,
       };
     }
 
