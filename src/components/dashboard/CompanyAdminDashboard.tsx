@@ -282,13 +282,13 @@ export function CompanyAdminDashboard() {
                 <Button
                   key={action.label}
                   variant="outline"
-                  className="h-auto py-4 flex flex-col items-center gap-2 hover:border-primary"
+                  className="h-auto py-4 px-2 flex flex-col items-center gap-2 hover:border-primary whitespace-normal"
                   onClick={() => navigate(action.href)}
                 >
-                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${action.gradient} flex items-center justify-center`}>
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${action.gradient} flex items-center justify-center shrink-0`}>
                     <action.icon className="w-5 h-5 text-primary-foreground" />
                   </div>
-                  <span className="font-medium text-xs">{action.label}</span>
+                  <span className="font-medium text-xs text-center leading-tight">{action.label}</span>
                 </Button>
               ))}
             </div>
