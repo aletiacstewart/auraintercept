@@ -182,13 +182,13 @@ export function CompanyAdminDashboard() {
               <div className="flex items-center gap-4 flex-wrap">
                 <h1 className="text-3xl font-bold tracking-tight">{company?.name}</h1>
                 {company?.registration_code && (
-                  <div className="flex items-center gap-2 bg-primary/10 border border-primary/30 rounded-lg px-3 py-1.5">
+                  <div className="flex items-center gap-2 bg-slate-700/80 border border-slate-600 rounded-lg px-3 py-1.5">
                     <span className="text-xs text-white/70">Registration Code:</span>
                     <code className="text-sm font-mono font-bold text-primary">{company.registration_code}</code>
                     <Button 
                       variant="ghost" 
                       size="icon" 
-                      className="h-6 w-6"
+                      className="h-6 w-6 text-white/70 hover:text-white"
                       onClick={() => {
                         navigator.clipboard.writeText(company.registration_code || '');
                         // Show a toast or visual feedback
