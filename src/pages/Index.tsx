@@ -487,9 +487,7 @@ export default function Index() {
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Industries</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">AI Automation for Field Service Industries</h2>
-            <p className="text-foreground max-w-2xl mx-auto">
-              "In the fast-paced world of home and commercial services, responsiveness is the key to growth. Aura Intercept brings intelligent automation to the trades, providing a white-label AI workforce that intercepts every inquiry and books it directly into your calendar. Our platform is engineered for onsite service providers who need to eliminate manual office tasks and reduce no-shows without losing the personal touch. From landscaping to restoration, we empower service-based businesses to automate their workflow and focus on the work that matters."
-            </p>
+            <p className="text-foreground max-w-2xl mx-auto">In the fast-paced world of home and commercial services, responsiveness is the key to growth. Aura Intercept brings intelligent automation to the trades, providing a white-label AI workforce that intercepts every inquiry and books it directly into your calendar. Our platform is engineered for onsite service providers who need to eliminate manual office tasks and reduce no-shows without losing the personal touch. From landscaping to restoration, we empower service-based businesses to automate their workflow and focus on the work that matters.</p>
           </div>
 
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 justify-items-center max-w-4xl mx-auto">
@@ -520,13 +518,8 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">For Customers</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Self-Service Customer Portal
-            </h2>
-            <p className="text-lg text-foreground max-w-2xl mx-auto">
-              Get 24/7 access to book appointments, get quotes, track service status, 
-              and chat with AI agents - all in one convenient place.
-            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">24/7 Customer Portal: Your Office on Aura Autopilot</h2>
+            <p className="text-lg text-foreground max-w-2xl mx-auto">Aura Intercept provides a professional, white-labeled Customer Portal. Give your customers the modern convenience of online appointment booking with real-time calendar sync, instant AI-Aura Powered quotes, and live technician tracking. By providing a Aura Intercept AI Center for service status and AI chat support, you reduce administrative overhead and improve customer retention, ensuring your trade business operates at peak efficiency even while you’re off the clock.</p>
           </div>
 
           <div className="max-w-2xl mx-auto space-y-4">
