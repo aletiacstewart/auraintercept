@@ -2,8 +2,9 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { AppointmentCalendar } from '@/components/employee/AppointmentCalendar';
 import { TechnicianJobQueue } from '@/components/employee/TechnicianJobQueue';
 import { CompletedJobsHistory } from '@/components/employee/CompletedJobsHistory';
+import { CompanyJobQueue } from '@/components/company/CompanyJobQueue';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, ClipboardList, History } from 'lucide-react';
+import { Calendar, ClipboardList, History, Briefcase } from 'lucide-react';
 
 export default function EmployeeAppointments() {
   return (
@@ -30,6 +31,10 @@ export default function EmployeeAppointments() {
               <History className="h-4 w-4" />
               History
             </TabsTrigger>
+            <TabsTrigger value="all-jobs" className="flex items-center gap-2">
+              <Briefcase className="h-4 w-4" />
+              All Jobs
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="calendar" className="mt-4">
             <AppointmentCalendar />
@@ -39,6 +44,9 @@ export default function EmployeeAppointments() {
           </TabsContent>
           <TabsContent value="history" className="mt-4">
             <CompletedJobsHistory />
+          </TabsContent>
+          <TabsContent value="all-jobs" className="mt-4">
+            <CompanyJobQueue />
           </TabsContent>
         </Tabs>
       </div>
