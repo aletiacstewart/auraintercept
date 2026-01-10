@@ -8,7 +8,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
 import { TrialBanner } from '@/components/dashboard/TrialBanner';
-import { CompanyJobQueue } from '@/components/company/CompanyJobQueue';
 
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { PDFDownloadLink } from '@react-pdf/renderer';
@@ -345,10 +344,6 @@ export function CompanyAdminDashboard() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Company Job Queue */}
-      <CompanyJobQueue />
-
 
       {/* Onboarding Checklist */}
       <OnboardingChecklist />
