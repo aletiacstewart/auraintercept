@@ -15,47 +15,47 @@ export function PublicFooter() {
               <img src={logo} alt="Aura Intercept" className="w-8 h-8" />
               <div className="flex flex-col">
                 <span className="font-semibold">Aura Intercept</span>
-                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <span className="text-xs text-white/70 flex items-center gap-1">
                   <Zap className="w-3 h-3" />
                   Infrastructure of Intent
                 </span>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-white/70">
               20+ AI agents automating appointment-based businesses worldwide.
             </p>
           </div>
           
           <div>
             <h4 className="font-semibold mb-4">Product</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-foreground transition-colors">Start Trial</button></li>
-              <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-foreground transition-colors">Company Subscription</button></li>
-              <li><button onClick={() => navigate('/customer-auth')} className="hover:text-foreground transition-colors">Customer Portal</button></li>
+            <ul className="space-y-2 text-sm text-white/70">
+              <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-white transition-colors">Start Trial</button></li>
+              <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-white transition-colors">Company Subscription</button></li>
+              <li><button onClick={() => navigate('/customer-auth')} className="hover:text-white transition-colors">Customer Portal</button></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-semibold mb-4">Company</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground transition-colors">About</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Blog</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Careers</a></li>
+            <ul className="space-y-2 text-sm text-white/70">
+              <li><a href="#" className="hover:text-white transition-colors">About</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-semibold mb-4">Legal</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Contact</a></li>
+            <ul className="space-y-2 text-sm text-white/70">
+              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
             </ul>
           </div>
         </div>
         
         <div className="border-t border-border/50 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="text-sm text-muted-foreground">© 2025 Aura Intercept. All rights reserved.</span>
+          <span className="text-sm text-white/70">© 2025 Aura Intercept. All rights reserved.</span>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="sm" className="text-white hover:text-white/80" onClick={() => navigate('/')}>
               Home
