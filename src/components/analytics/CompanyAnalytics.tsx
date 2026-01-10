@@ -311,28 +311,28 @@ export function CompanyAnalytics({ companyId }: CompanyAnalyticsProps) {
                 <CardDescription>Overall distribution</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/80 border border-white/10">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Completed</span>
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span className="text-sm text-white">Completed</span>
                   </div>
-                  <span className="font-medium">{stats?.completedAppointments ?? 0}</span>
+                  <span className="font-medium text-white">{stats?.completedAppointments ?? 0}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/80 border border-white/10">
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Scheduled</span>
+                    <span className="text-sm text-white">Scheduled</span>
                   </div>
-                  <span className="font-medium">
+                  <span className="font-medium text-white">
                     {(stats?.totalAppointments ?? 0) - (stats?.completedAppointments ?? 0)}
                   </span>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>Completion Rate</span>
-                    <span className="font-medium">{stats?.appointmentCompletionRate ?? 0}%</span>
+                    <span className="text-white">Completion Rate</span>
+                    <span className="font-medium text-white">{stats?.appointmentCompletionRate ?? 0}%</span>
                   </div>
-                  <div className="h-2 rounded-full bg-muted overflow-hidden">
+                  <div className="h-2 rounded-full bg-slate-600 overflow-hidden">
                     <div 
                       className="h-full bg-gradient-to-r from-primary to-secondary transition-all" 
                       style={{ width: `${stats?.appointmentCompletionRate ?? 0}%` }} 
@@ -422,12 +422,12 @@ export function CompanyAnalytics({ companyId }: CompanyAnalyticsProps) {
                 )}
                 <div className="mt-4 space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span>Total Minutes</span>
-                    <span className="font-medium">{stats?.totalCallMinutes ?? 0}</span>
+                    <span className="text-white">Total Minutes</span>
+                    <span className="font-medium text-white">{stats?.totalCallMinutes ?? 0}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span>Success Rate</span>
-                    <span className="font-medium">{stats?.callCompletionRate ?? 0}%</span>
+                    <span className="text-white">Success Rate</span>
+                    <span className="font-medium text-white">{stats?.callCompletionRate ?? 0}%</span>
                   </div>
                 </div>
               </CardContent>
@@ -446,17 +446,17 @@ export function CompanyAnalytics({ companyId }: CompanyAnalyticsProps) {
                 <CardDescription>Your company financial metrics</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                  <span className="text-sm">Total Revenue</span>
-                  <span className="font-medium text-green-500">${(stats?.totalRevenue ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/80 border border-white/10">
+                  <span className="text-sm text-white">Total Revenue</span>
+                  <span className="font-medium text-green-400">${(stats?.totalRevenue ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                  <span className="text-sm">Outstanding Invoices</span>
-                  <span className="font-medium text-amber-500">${(stats?.outstandingAmount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/80 border border-white/10">
+                  <span className="text-sm text-white">Outstanding Invoices</span>
+                  <span className="font-medium text-amber-400">${(stats?.outstandingAmount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                  <span className="text-sm">Collection Rate</span>
-                  <span className="font-medium">{stats?.collectionRate ?? 0}%</span>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/80 border border-white/10">
+                  <span className="text-sm text-white">Collection Rate</span>
+                  <span className="font-medium text-white">{stats?.collectionRate ?? 0}%</span>
                 </div>
               </CardContent>
             </Card>
@@ -468,10 +468,10 @@ export function CompanyAnalytics({ companyId }: CompanyAnalyticsProps) {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>Collection Rate</span>
-                    <span className="font-medium">{stats?.collectionRate ?? 0}%</span>
+                    <span className="text-white">Collection Rate</span>
+                    <span className="font-medium text-white">{stats?.collectionRate ?? 0}%</span>
                   </div>
-                  <div className="h-3 rounded-full bg-muted overflow-hidden">
+                  <div className="h-3 rounded-full bg-slate-600 overflow-hidden">
                     <div 
                       className="h-full bg-gradient-to-r from-green-500 to-green-400 transition-all" 
                       style={{ width: `${stats?.collectionRate ?? 0}%` }} 
@@ -479,13 +479,13 @@ export function CompanyAnalytics({ companyId }: CompanyAnalyticsProps) {
                   </div>
                 </div>
                 <div className="pt-4 space-y-3">
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-green-500/10">
-                    <span className="text-sm text-green-500">Collected</span>
-                    <span className="font-medium text-green-500">${(stats?.totalRevenue ?? 0).toLocaleString()}</span>
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-green-500/20 border border-green-500/30">
+                    <span className="text-sm text-green-400">Collected</span>
+                    <span className="font-medium text-green-400">${(stats?.totalRevenue ?? 0).toLocaleString()}</span>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-amber-500/10">
-                    <span className="text-sm text-amber-500">Pending</span>
-                    <span className="font-medium text-amber-500">${(stats?.outstandingAmount ?? 0).toLocaleString()}</span>
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-amber-500/20 border border-amber-500/30">
+                    <span className="text-sm text-amber-400">Pending</span>
+                    <span className="font-medium text-amber-400">${(stats?.outstandingAmount ?? 0).toLocaleString()}</span>
                   </div>
                 </div>
               </CardContent>
@@ -504,17 +504,17 @@ export function CompanyAnalytics({ companyId }: CompanyAnalyticsProps) {
                 <CardDescription>Quote performance</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                  <span className="text-sm">Total Quotes</span>
-                  <span className="font-medium">{stats?.totalQuotes ?? 0}</span>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/80 border border-white/10">
+                  <span className="text-sm text-white">Total Quotes</span>
+                  <span className="font-medium text-white">{stats?.totalQuotes ?? 0}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                  <span className="text-sm">Conversion Rate</span>
-                  <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/80 border border-white/10">
+                  <span className="text-sm text-white">Conversion Rate</span>
+                  <span className="font-medium text-white">{stats?.quoteConversionRate ?? 0}%</span>
                 </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                  <span className="text-sm">Average Quote Value</span>
-                  <span className="font-medium">${(stats?.avgQuoteValue ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/80 border border-white/10">
+                  <span className="text-sm text-white">Average Quote Value</span>
+                  <span className="font-medium text-white">${(stats?.avgQuoteValue ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
               </CardContent>
             </Card>
@@ -524,19 +524,19 @@ export function CompanyAnalytics({ companyId }: CompanyAnalyticsProps) {
                 <CardDescription>Conversion progress</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/80 border border-white/10">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Accepted</span>
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span className="text-sm text-white">Accepted</span>
                   </div>
-                  <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
+                  <span className="font-medium text-white">{stats?.quoteConversionRate ?? 0}%</span>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>Conversion Rate</span>
-                    <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
+                    <span className="text-white">Conversion Rate</span>
+                    <span className="font-medium text-white">{stats?.quoteConversionRate ?? 0}%</span>
                   </div>
-                  <div className="h-2 rounded-full bg-muted overflow-hidden">
+                  <div className="h-2 rounded-full bg-slate-600 overflow-hidden">
                     <div 
                       className="h-full bg-gradient-to-r from-primary to-secondary transition-all" 
                       style={{ width: `${stats?.quoteConversionRate ?? 0}%` }} 
