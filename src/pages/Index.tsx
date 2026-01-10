@@ -224,10 +224,9 @@ const industryCategories = [
     subtitle: 'Services',
     industries: [
       { name: 'Appliance Repair', icon: Refrigerator, description: 'Kitchen & Laundry' },
-      { name: 'Handyman', icon: Hammer, description: 'Repair & Carpentry' },
+      { name: 'Handyman & Cleaning', icon: Hammer, description: 'Repair & Janitorial' },
       { name: 'Painting', icon: PaintBucket, description: 'Interior & Exterior' },
       { name: 'Flooring & Tile', icon: Grid3X3, description: 'Hardwood & Stone' },
-      { name: 'Cleaning', icon: Sparkle, description: 'Carpet & Janitorial' },
     ]
   },
   {
