@@ -203,39 +203,39 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
   const renderTeamOverview = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-4 rounded-lg bg-background border">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+        <div className="p-4 rounded-lg bg-white border">
+          <div className="flex items-center gap-2 text-slate-600 mb-1">
             <Calendar className="h-4 w-4" />
             <span className="text-sm">Appointments</span>
           </div>
-          <p className="text-2xl font-bold">{currentMetrics?.totalAppointments || 0}</p>
+          <p className="text-2xl font-bold text-slate-800">{currentMetrics?.totalAppointments || 0}</p>
           {compareRange === 'previous' && renderTrend(appointmentChange)}
         </div>
 
-        <div className="p-4 rounded-lg bg-background border">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+        <div className="p-4 rounded-lg bg-white border">
+          <div className="flex items-center gap-2 text-slate-600 mb-1">
             <CheckCircle className="h-4 w-4" />
             <span className="text-sm">Completed Jobs</span>
           </div>
-          <p className="text-2xl font-bold">{currentMetrics?.totalJobs || 0}</p>
+          <p className="text-2xl font-bold text-slate-800">{currentMetrics?.totalJobs || 0}</p>
           {compareRange === 'previous' && renderTrend(jobChange)}
         </div>
 
-        <div className="p-4 rounded-lg bg-background border">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+        <div className="p-4 rounded-lg bg-white border">
+          <div className="flex items-center gap-2 text-slate-600 mb-1">
             <TrendingUp className="h-4 w-4" />
             <span className="text-sm">Revenue</span>
           </div>
-          <p className="text-2xl font-bold">${(currentMetrics?.totalRevenue || 0).toLocaleString()}</p>
+          <p className="text-2xl font-bold text-slate-800">${(currentMetrics?.totalRevenue || 0).toLocaleString()}</p>
           {compareRange === 'previous' && renderTrend(revenueChange)}
         </div>
 
-        <div className="p-4 rounded-lg bg-background border">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+        <div className="p-4 rounded-lg bg-white border">
+          <div className="flex items-center gap-2 text-slate-600 mb-1">
             <Users className="h-4 w-4" />
             <span className="text-sm">Completion Rate</span>
           </div>
-          <p className="text-2xl font-bold">{(currentMetrics?.completionRate || 0).toFixed(1)}%</p>
+          <p className="text-2xl font-bold text-slate-800">{(currentMetrics?.completionRate || 0).toFixed(1)}%</p>
         </div>
       </div>
     </div>
@@ -425,7 +425,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
     <Card className="border-cyan-200 bg-cyan-50/50">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
             <BarChart3 className="h-5 w-5 text-cyan-600" />
             Performance Report
           </CardTitle>
@@ -437,12 +437,12 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
       <CardContent className="space-y-4">
         {/* Report Type Selector */}
         <div className="space-y-2">
-          <Label>Report View</Label>
+          <Label className="text-slate-700">Report View</Label>
           <Select value={reportView} onValueChange={(v) => setReportView(v as ReportView)}>
-            <SelectTrigger className="bg-background">
+            <SelectTrigger className="bg-white text-slate-900">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-background z-50">
+            <SelectContent className="bg-white z-50">
               <SelectItem value="team">Team Overview</SelectItem>
               <SelectItem value="top_performers">Top Performers</SelectItem>
               <SelectItem value="goals">Goal Progress</SelectItem>
@@ -455,15 +455,15 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="flex items-center gap-1">
+            <Label className="flex items-center gap-1 text-slate-700">
               <Calendar className="h-3 w-3" />
               Date Range
             </Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="bg-background">
+              <SelectTrigger className="bg-white text-slate-900">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-background z-50">
+              <SelectContent className="bg-white z-50">
                 <SelectItem value="7">Last 7 days</SelectItem>
                 <SelectItem value="30">Last 30 days</SelectItem>
                 <SelectItem value="90">Last 90 days</SelectItem>
@@ -472,12 +472,12 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Compare To</Label>
+            <Label className="text-slate-700">Compare To</Label>
             <Select value={compareRange} onValueChange={setCompareRange}>
-              <SelectTrigger className="bg-background">
+              <SelectTrigger className="bg-white text-slate-900">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-background z-50">
+              <SelectContent className="bg-white z-50">
                 <SelectItem value="previous">Previous period</SelectItem>
                 <SelectItem value="none">No comparison</SelectItem>
               </SelectContent>
@@ -487,15 +487,15 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
 
         {/* Department Filter */}
         <div className="space-y-2">
-          <Label className="flex items-center gap-1">
+          <Label className="flex items-center gap-1 text-slate-700">
             <Users className="h-3 w-3" />
             Department / Team
           </Label>
           <Select value={department} onValueChange={setDepartment}>
-            <SelectTrigger className="bg-background">
+            <SelectTrigger className="bg-white text-slate-900">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-background z-50">
+            <SelectContent className="bg-white z-50">
               <SelectItem value="all">All Teams</SelectItem>
               <SelectItem value="technicians">Technicians</SelectItem>
               <SelectItem value="dispatch">Dispatch</SelectItem>

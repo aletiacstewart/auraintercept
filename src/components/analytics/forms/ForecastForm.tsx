@@ -74,34 +74,34 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
 
   const renderDemandForecast = () => (
     <div className="space-y-4">
-      <div className="p-4 rounded-lg bg-background border">
+      <div className="p-4 rounded-lg bg-white border">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-blue-500" />
-            <span className="font-medium">Demand Forecast</span>
+            <span className="font-medium text-slate-800">Demand Forecast</span>
           </div>
           <Badge variant="secondary" className="text-xs">Next {forecastDays} days</Badge>
         </div>
         <p className="text-3xl font-bold text-blue-600">{demandForecast}</p>
-        <p className="text-sm text-muted-foreground">Expected appointments</p>
+        <p className="text-sm text-slate-600">Expected appointments</p>
         
         <div className="mt-4 space-y-2">
           <div className="flex justify-between text-sm">
-            <span>Confidence Level</span>
-            <span className="text-muted-foreground">75%</span>
+            <span className="text-slate-700">Confidence Level</span>
+            <span className="text-slate-600">75%</span>
           </div>
           <Progress value={75} className="h-2" />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 rounded-lg bg-background border">
-          <p className="text-xs text-muted-foreground">Daily Average</p>
-          <p className="text-xl font-bold">{(historicalData?.avgDailyAppointments || 0).toFixed(1)}</p>
+        <div className="p-3 rounded-lg bg-white border">
+          <p className="text-xs text-slate-600">Daily Average</p>
+          <p className="text-xl font-bold text-slate-800">{(historicalData?.avgDailyAppointments || 0).toFixed(1)}</p>
         </div>
-        <div className="p-3 rounded-lg bg-background border">
-          <p className="text-xs text-muted-foreground">Peak Day Expected</p>
-          <p className="text-xl font-bold">{Math.round((historicalData?.avgDailyAppointments || 0) * 1.4)}</p>
+        <div className="p-3 rounded-lg bg-white border">
+          <p className="text-xs text-slate-600">Peak Day Expected</p>
+          <p className="text-xl font-bold text-slate-800">{Math.round((historicalData?.avgDailyAppointments || 0) * 1.4)}</p>
         </div>
       </div>
 
@@ -212,7 +212,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
     <Card className="border-indigo-200 bg-indigo-50/50">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
             <Target className="h-5 w-5 text-indigo-600" />
             Forecast Report
           </CardTitle>
@@ -225,9 +225,9 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label>Forecast Type</Label>
+            <Label className="text-slate-700">Forecast Type</Label>
             <Select value={forecastType} onValueChange={(v) => setForecastType(v as ForecastType)}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -238,9 +238,9 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Time Period</Label>
+            <Label className="text-slate-700">Time Period</Label>
             <Select value={forecastPeriod} onValueChange={setForecastPeriod}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
