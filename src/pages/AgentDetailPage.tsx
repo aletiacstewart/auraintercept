@@ -426,7 +426,8 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'include_seasonality', label: 'Include Seasonality', type: 'switch', defaultValue: true },
       { key: 'update_frequency', label: 'Update Frequency', type: 'select', options: [
         { value: 'daily', label: 'Daily' },
-        { value: 'weekly', label: 'Weekly' }
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'monthly', label: 'Monthly' }
       ]}
     ]
   },
