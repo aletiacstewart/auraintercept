@@ -13,7 +13,7 @@ export default function NewLeadPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">No company associated with your account.</p>
+          <p className="text-white/70">No company associated with your account.</p>
         </div>
       </DashboardLayout>
     );
@@ -23,12 +23,12 @@ export default function NewLeadPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <UserPlus className="w-5 h-5 text-primary" />
+          <div className="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center">
+            <UserPlus className="w-5 h-5 text-secondary" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">New Lead</h1>
-            <p className="text-muted-foreground">Capture a new lead for your business</p>
+            <h1 className="text-3xl font-bold text-white tracking-[0.05em]">New Lead</h1>
+            <p className="text-white/70">Capture a new lead for your business</p>
           </div>
         </div>
 
