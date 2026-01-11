@@ -249,21 +249,21 @@ export function MissedCallSettings() {
                 <MessageSquare className="h-4 w-4" />
                 How it works
               </h4>
-              <ul className="text-sm text-muted-foreground space-y-2">
+              <ul className="text-sm text-slate-700 space-y-2">
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-foreground">1.</span>
+                  <span className="font-semibold text-slate-900">1.</span>
                   Customer calls your business phone number
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-foreground">2.</span>
+                  <span className="font-semibold text-slate-900">2.</span>
                   If the call is missed (no answer, busy, or failed), Twilio triggers the missed call handler
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-foreground">3.</span>
+                  <span className="font-semibold text-slate-900">3.</span>
                   Based on your settings, the system either sends an SMS, initiates an AI callback, or both
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-foreground">4.</span>
+                  <span className="font-semibold text-slate-900">4.</span>
                   AI callbacks use your ElevenLabs voice to greet the customer and help them book an appointment
                 </li>
               </ul>
