@@ -585,7 +585,7 @@ export default function AgentDetailPage() {
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {agentDef.capabilities.map((cap) => (
-                <Badge key={cap} variant="outline" className="py-1 px-3">
+                <Badge key={cap} variant="outline" className="py-1 px-3 text-white border-white/30">
                   {cap}
                 </Badge>
               ))}
