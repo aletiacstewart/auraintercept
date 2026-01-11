@@ -138,8 +138,16 @@ export default function Help() {
   const { userRole } = useAuth();
   const isPlatformAdmin = userRole === 'platform_admin';
   const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Available console types based on role
+  const availableConsoleTypes: ConsoleType[] = isPlatformAdmin 
+    ? ['customer', 'fieldops', 'businessops', 'marketing']
+    : ['customer', 'fieldops', 'businessops'];
+  
   const consoleParam = searchParams.get('console') as ConsoleType | null;
-  const consoleType: ConsoleType = consoleParam && Object.keys(consoleInfo).includes(consoleParam) ? consoleParam : 'customer';
+  const consoleType: ConsoleType = consoleParam && availableConsoleTypes.includes(consoleParam) 
+    ? consoleParam 
+    : 'customer';
   
   const mainTabParam = searchParams.get('tab') as MainTabType | null;
   const [mainTab, setMainTab] = useState<MainTabType>(mainTabParam || 'ai-agents');
@@ -155,16 +163,28 @@ export default function Help() {
     setSearchParams(newParams);
   };
 
-  // Dynamically add platform admin features for businessops
+  // Dynamically adjust console content based on role
   const currentConsole = useMemo(() => {
     const baseConsole = consoleInfo[consoleType];
-    if (consoleType === 'businessops' && isPlatformAdmin) {
-      return {
-        ...baseConsole,
-        features: [...baseConsole.features, ...(baseConsole.platformAdminFeatures || [])],
-        useCases: [...baseConsole.useCases, ...(baseConsole.platformAdminUseCases || [])]
-      };
+    
+    if (consoleType === 'businessops') {
+      if (isPlatformAdmin) {
+        // Platform admin sees all agents including Inventory and Warranty
+        return {
+          ...baseConsole,
+          agents: [...baseConsole.agents, 'Inventory Agent', 'Warranty Agent'],
+          features: [...baseConsole.features, ...(baseConsole.platformAdminFeatures || [])],
+          useCases: [...baseConsole.useCases, ...(baseConsole.platformAdminUseCases || [])]
+        };
+      } else {
+        // Company admin/employee sees limited description without Inventory/Warranty
+        return {
+          ...baseConsole,
+          description: 'Powered by 7 specialized AI agents: Admin (Phase 1), Insights (Phase 2), Performance (Phase 3), Quoting (Phase 4), Invoice (Phase 5), Revenue (Phase 6), and Forecast (Phase 7).'
+        };
+      }
     }
+    
     return baseConsole;
   }, [consoleType, isPlatformAdmin]);
   
@@ -215,10 +235,12 @@ export default function Help() {
                   <Briefcase className="h-4 w-4 mr-2" />
                   Business Operations
                 </TabsTrigger>
-                <TabsTrigger value="marketing">
-                  <Megaphone className="h-4 w-4 mr-2" />
-                  Marketing & Sales
-                </TabsTrigger>
+                {isPlatformAdmin && (
+                  <TabsTrigger value="marketing">
+                    <Megaphone className="h-4 w-4 mr-2" />
+                    Marketing & Sales
+                  </TabsTrigger>
+                )}
               </TabsList>
             </Tabs>
 
