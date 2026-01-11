@@ -133,9 +133,21 @@
   }
 
   /* Brand headings */
-  h1, h2, h3, .font-brand {
+  h1, h2 {
     font-family: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
+  }
+  
+  /* Secondary headings - tighter spacing */
+  h3 {
+    font-family: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.02em;
+  }
+  
+  /* Explicit brand class - hero titles */
+  .font-brand {
+    font-family: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.05em;
   }
 }
 
