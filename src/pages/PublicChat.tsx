@@ -297,31 +297,33 @@ export default function PublicChat() {
         </div>
       </header>
 
-      {/* Navigation Tabs */}
+      {/* Navigation Tabs - hidden in embed mode */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col max-w-2xl mx-auto w-full">
-        <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-auto p-0">
-          <TabsTrigger 
-            value="chat" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3"
-          >
-            <MessageSquare className="h-4 w-4 mr-1.5" />
-            Chat
-          </TabsTrigger>
-          <TabsTrigger 
-            value="services"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3"
-          >
-            <Sparkles className="h-4 w-4 mr-1.5" />
-            Services
-          </TabsTrigger>
-          <TabsTrigger 
-            value="hours"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3"
-          >
-            <Clock className="h-4 w-4 mr-1.5" />
-            Hours
-          </TabsTrigger>
-        </TabsList>
+        {!isEmbedMode && (
+          <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-auto p-0">
+            <TabsTrigger 
+              value="chat" 
+              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3"
+            >
+              <MessageSquare className="h-4 w-4 mr-1.5" />
+              Chat
+            </TabsTrigger>
+            <TabsTrigger 
+              value="services"
+              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3"
+            >
+              <Sparkles className="h-4 w-4 mr-1.5" />
+              Services
+            </TabsTrigger>
+            <TabsTrigger 
+              value="hours"
+              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3"
+            >
+              <Clock className="h-4 w-4 mr-1.5" />
+              Hours
+            </TabsTrigger>
+          </TabsList>
+        )}
 
         {/* Chat Tab */}
         <TabsContent value="chat" className="flex-1 flex flex-col m-0 p-0 overflow-hidden">
