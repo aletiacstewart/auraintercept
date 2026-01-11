@@ -116,6 +116,9 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   
   const [input, setInput] = useState('');
   const [activeTab, setActiveTab] = useState('chat');
+  const [activeFormType, setActiveFormType] = useState<
+    'schedule' | 'emergency' | 'quote' | 'hours' | 'services' | 'track' | 'billing' | 'feedback' | 'review' | null
+  >(null);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showQuoteForm, setShowQuoteForm] = useState(false);
@@ -272,74 +275,73 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     await sendMessage(message);
   };
 
-  const handleQuickAction = async (action: string, actionId?: string) => {
-    if (actionId === 'feedback') {
-      setShowFeedbackForm(true);
-      setShowReviewForm(false);
-      setShowQuoteForm(false);
-      setShowTrackForm(false);
-      setShowBillingForm(false);
-      setActiveTab('chat');
-      return;
-    }
-    if (actionId === 'review') {
-      setShowReviewForm(true);
-      setShowFeedbackForm(false);
-      setShowQuoteForm(false);
-      setShowTrackForm(false);
-      setShowBillingForm(false);
-      setActiveTab('chat');
-      return;
-    }
-    if (actionId === 'quote') {
-      setShowQuoteForm(true);
-      setShowFeedbackForm(false);
-      setShowReviewForm(false);
-      setShowTrackForm(false);
-      setShowBillingForm(false);
-      setActiveTab('chat');
-      return;
-    }
-    if (actionId === 'track') {
-      setShowTrackForm(true);
-      setShowFeedbackForm(false);
-      setShowReviewForm(false);
-      setShowQuoteForm(false);
-      setShowBillingForm(false);
-      setActiveTab('chat');
-      return;
-    }
-    if (actionId === 'billing') {
-      setShowBillingForm(true);
-      setShowFeedbackForm(false);
-      setShowReviewForm(false);
-      setShowQuoteForm(false);
-      setShowTrackForm(false);
-      setActiveTab('chat');
-      return;
-    }
+  const hideAllForms = () => {
     setShowFeedbackForm(false);
     setShowReviewForm(false);
     setShowQuoteForm(false);
     setShowTrackForm(false);
     setShowBillingForm(false);
+    setActiveFormType(null);
+  };
+
+  const handleQuickAction = async (action: string, actionId?: string) => {
+    if (actionId === 'feedback') {
+      hideAllForms();
+      setShowFeedbackForm(true);
+      setActiveFormType('feedback');
+      setActiveTab('chat');
+      return;
+    }
+    if (actionId === 'review') {
+      hideAllForms();
+      setShowReviewForm(true);
+      setActiveFormType('review');
+      setActiveTab('chat');
+      return;
+    }
+    if (actionId === 'quote') {
+      hideAllForms();
+      setShowQuoteForm(true);
+      setActiveFormType('quote');
+      setActiveTab('chat');
+      return;
+    }
+    if (actionId === 'track') {
+      hideAllForms();
+      setShowTrackForm(true);
+      setActiveFormType('track');
+      setActiveTab('chat');
+      return;
+    }
+    if (actionId === 'billing') {
+      hideAllForms();
+      setShowBillingForm(true);
+      setActiveFormType('billing');
+      setActiveTab('chat');
+      return;
+    }
+    hideAllForms();
     // Handle tab-switching actions that should send message to AI instead
     if (actionId === 'schedule') {
       // Send message to AI for booking flow instead of switching tabs
+      setActiveFormType('schedule');
       setActiveTab('chat');
       await sendMessage("I'd like to request an appointment");
       return;
     }
     if (actionId === 'hours') {
+      setActiveFormType('hours');
       setActiveTab('hours');
       return;
     }
     if (actionId === 'services') {
+      setActiveFormType('services');
       setActiveTab('services');
       return;
     }
     if (actionId === 'emergency') {
       // Send emergency message to AI
+      setActiveFormType('emergency');
       setActiveTab('chat');
       await sendMessage("I have an urgent emergency situation that needs immediate attention");
       return;
@@ -350,11 +352,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
   const handleHome = () => {
     clearMessages();
-    setShowFeedbackForm(false);
-    setShowReviewForm(false);
-    setShowQuoteForm(false);
-    setShowTrackForm(false);
-    setShowBillingForm(false);
+    hideAllForms();
     setSelectedInvoice(null);
     setActiveTab('chat');
   };
@@ -468,6 +466,23 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   const agentInfo = getAgentStyle(currentAgent);
   const isShowingForm = showFeedbackForm || showReviewForm || showQuoteForm || showTrackForm || showBillingForm;
 
+  // Get active label based on form type or action - show agent label during chat, or context label for forms/actions
+  const getActiveLabel = () => {
+    if (activeFormType === 'schedule') return 'Booking';
+    if (activeFormType === 'emergency') return 'Emergency';
+    if (activeFormType === 'quote') return 'Quote Request';
+    if (activeFormType === 'hours') return 'Hours';
+    if (activeFormType === 'services') return 'Services';
+    if (activeFormType === 'track') return 'Tracking';
+    if (activeFormType === 'billing') return 'Billing';
+    if (activeFormType === 'feedback') return 'Feedback';
+    if (activeFormType === 'review') return 'Review';
+    if (messages.length > 0) return agentInfo.label; // Show agent label during chat
+    return agentInfo.label;
+  };
+  
+  const activeLabel = getActiveLabel();
+
   // Show company selector if allowed and no company is selected
   const showCompanySelector = allowCompanySelection && !companyId;
 
@@ -499,7 +514,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       <GlassHeader
         companyName={company?.name || 'AI Assistant'}
         logoUrl={company?.logo_url}
-        agentLabel={agentInfo.label}
+        agentLabel={activeLabel}
         agentColor={agentInfo.color}
         agentBgColor={agentInfo.bgColor}
         showPhone={!!twilioPhone}
