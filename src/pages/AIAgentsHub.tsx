@@ -34,7 +34,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const CATEGORY_INFO: Record<string, { label: string; icon: React.ElementType; color: string }> = {
-  customer_engagement: { label: 'Customer Engagement', icon: Users, color: 'text-blue-500' },
+  customer_engagement: { label: 'Customer Portal', icon: Users, color: 'text-blue-500' },
   field_operations: { label: 'Field Operations', icon: Truck, color: 'text-green-500' },
   business_operations: { label: 'Business Operations', icon: Briefcase, color: 'text-purple-500' },
   marketing_sales: { label: 'Marketing & Sales', icon: Megaphone, color: 'text-orange-500' },
