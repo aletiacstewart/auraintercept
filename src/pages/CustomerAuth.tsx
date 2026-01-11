@@ -12,6 +12,7 @@ import { Users, Building2, ArrowRight } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
+import { TermsAgreementCheckbox } from '@/components/auth/TermsAgreementCheckbox';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 
@@ -29,6 +30,7 @@ export default function CustomerAuth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [termsAgreed, setTermsAgreed] = useState(false);
 
   // Check if already logged in as customer
   useEffect(() => {
@@ -103,6 +105,7 @@ export default function CustomerAuth() {
       emailSchema.parse(email);
       passwordSchema.parse(password);
       if (!fullName.trim()) throw new Error('Full name is required');
+      if (!termsAgreed) throw new Error('You must agree to the Terms of Service and Privacy Policy');
     } catch (err) {
       const message = err instanceof z.ZodError ? err.errors[0].message : (err as Error).message;
       toast({ title: 'Validation Error', description: message, variant: 'destructive' });
@@ -256,7 +259,11 @@ export default function CustomerAuth() {
                     />
                     <PasswordStrengthIndicator password={password} />
                   </div>
-                  <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
+                  <TermsAgreementCheckbox 
+                    checked={termsAgreed} 
+                    onCheckedChange={setTermsAgreed} 
+                  />
+                  <Button type="submit" className="w-full gradient-primary" disabled={isLoading || !termsAgreed}>
                     {isLoading ? 'Creating account...' : 'Create Account'}
                   </Button>
                   <p className="text-xs text-center text-muted-foreground mt-2">

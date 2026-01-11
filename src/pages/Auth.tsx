@@ -12,6 +12,7 @@ import { Bot, Building2, Users, Shield, Check, Crown, Zap, MessageSquare, Phone,
 import logo from '@/assets/aura-intercept-logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
+import { TermsAgreementCheckbox } from '@/components/auth/TermsAgreementCheckbox';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 
@@ -46,6 +47,7 @@ export default function Auth() {
   const [fullName, setFullName] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [registrationCode, setRegistrationCode] = useState('');
+  const [termsAgreed, setTermsAgreed] = useState(false);
 
   // Sync activeTab with URL params and mode - runs on mount and when params change
   useEffect(() => {
@@ -117,6 +119,7 @@ export default function Auth() {
       emailSchema.parse(email);
       passwordSchema.parse(password);
       if (!fullName.trim()) throw new Error('Full name is required');
+      if (!termsAgreed) throw new Error('You must agree to the Terms of Service and Privacy Policy');
     } catch (err) {
       const message = err instanceof z.ZodError ? err.errors[0].message : (err as Error).message;
       toast({ title: 'Validation Error', description: message, variant: 'destructive' });
@@ -199,6 +202,7 @@ export default function Auth() {
       passwordSchema.parse(password);
       if (!fullName.trim()) throw new Error('Full name is required');
       if (!companyName.trim()) throw new Error('Company name is required');
+      if (!termsAgreed) throw new Error('You must agree to the Terms of Service and Privacy Policy');
     } catch (err) {
       const message = err instanceof z.ZodError ? err.errors[0].message : (err as Error).message;
       toast({ title: 'Validation Error', description: message, variant: 'destructive' });
@@ -297,6 +301,7 @@ export default function Auth() {
       passwordSchema.parse(password);
       if (!fullName.trim()) throw new Error('Full name is required');
       if (!registrationCode.trim()) throw new Error('Registration code is required');
+      if (!termsAgreed) throw new Error('You must agree to the Terms of Service and Privacy Policy');
     } catch (err) {
       const message = err instanceof z.ZodError ? err.errors[0].message : (err as Error).message;
       toast({ title: 'Validation Error', description: message, variant: 'destructive' });
@@ -370,6 +375,7 @@ export default function Auth() {
       emailSchema.parse(email);
       passwordSchema.parse(password);
       if (!fullName.trim()) throw new Error('Full name is required');
+      if (!termsAgreed) throw new Error('You must agree to the Terms of Service and Privacy Policy');
     } catch (err) {
       const message = err instanceof z.ZodError ? err.errors[0].message : (err as Error).message;
       toast({ title: 'Validation Error', description: message, variant: 'destructive' });
@@ -732,7 +738,11 @@ export default function Auth() {
                           />
                           <PasswordStrengthIndicator password={password} />
                         </div>
-                        <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
+                        <TermsAgreementCheckbox 
+                          checked={termsAgreed} 
+                          onCheckedChange={setTermsAgreed} 
+                        />
+                        <Button type="submit" className="w-full gradient-primary" disabled={isLoading || !termsAgreed}>
                           {isLoading ? 'Creating account...' : mode === 'company' ? 'Start Free Trial' : 'Create Account'}
                         </Button>
                         {mode === 'company' && (
