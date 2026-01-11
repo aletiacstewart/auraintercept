@@ -362,8 +362,8 @@ export function ReportsDashboard() {
                         <div className="flex items-center gap-3">
                           {getReportIcon(report.type)}
                           <div>
-                            <h3 className="font-semibold capitalize">{report.type} Digest</h3>
-                            <p className="text-sm text-muted-foreground">{report.scheduleDescription}</p>
+                            <h3 className="font-semibold capitalize text-card-foreground">{report.type} Digest</h3>
+                            <p className="text-sm text-card-foreground/70">{report.scheduleDescription}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -396,11 +396,11 @@ export function ReportsDashboard() {
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div className="flex items-center gap-2 text-muted-foreground">
+                        <div className="flex items-center gap-2 text-card-foreground/70">
                           <Mail className="h-4 w-4" />
                           <span>{report.email || 'No recipient set'}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
+                        <div className="flex items-center gap-2 text-card-foreground/70">
                           <Clock className="h-4 w-4" />
                           <span>
                             {report.lastSentAt 
@@ -409,7 +409,7 @@ export function ReportsDashboard() {
                             }
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
+                        <div className="flex items-center gap-2 text-card-foreground/70">
                           <Calendar className="h-4 w-4" />
                           <span>
                             {report.nextScheduled && report.enabled
@@ -421,9 +421,9 @@ export function ReportsDashboard() {
                       </div>
 
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs text-muted-foreground">Includes:</span>
+                        <span className="text-xs text-card-foreground/70">Includes:</span>
                         {getIncludedMetrics(report).map(metric => (
-                          <Badge key={metric} variant="outline" className="text-xs">
+                          <Badge key={metric} variant="outline" className="text-xs text-card-foreground border-card-foreground/30">
                             {metric}
                           </Badge>
                         ))}
