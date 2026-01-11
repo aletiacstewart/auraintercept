@@ -53,21 +53,28 @@ const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType;
   fieldops: {
     title: 'Field Operations',
     icon: Truck,
-    description: 'Optimize field technician workflows, route planning, job management, and real-time status updates.',
+    description: 'Powered by 4 specialized AI agents (Dispatch, Route, ETA, Check-in) for complete field service management.',
     features: [
-      'Get directions and navigation to job sites',
-      'Update job status (en route, arrived, completed)',
-      'View daily job queue and schedule',
-      'Upload before/after photos for documentation',
-      'Log parts used and job notes',
-      'Access customer and job details on the go'
+      'Accept assigned jobs and notify customers automatically',
+      'Get turn-by-turn directions to customer locations',
+      'Mark en route status with automatic customer notifications',
+      'Update and communicate real-time ETA to customers',
+      'Arrive & Start job with one-tap status updates',
+      'Complete jobs and trigger follow-up workflows',
+      'Generate quotes and invoices directly from the field',
+      'Contact dispatch with one tap for support',
+      'View job queue with customer details and service info'
     ],
     useCases: [
-      '"Navigate to my next job"',
-      '"Mark this job as completed"',
-      '"What jobs do I have today?"',
-      '"Log parts used: 2 filters and 1 thermostat"',
-      '"Show me the customer details for this appointment"'
+      '"Accept Job" - Accept your next assigned job and notify the customer',
+      '"Get Directions" - Open navigation to the customer address',
+      '"Mark En Route" - Update status and notify customer you\'re on the way',
+      '"Update ETA" - Send an updated arrival time to the customer',
+      '"Arrive & Start" - Mark arrival and begin the job in one action',
+      '"Complete Job" - Finish the job and trigger completion notifications',
+      '"Generate Quote" - Create a quote for additional services',
+      '"Generate Invoice" - Bill the customer for completed work',
+      '"Contact Dispatch" - Call dispatch directly for support'
     ]
   },
   businessops: {
