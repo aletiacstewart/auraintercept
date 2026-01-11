@@ -152,6 +152,13 @@
 }
 
 @layer utilities {
+  /* Form label utilities for proper contrast on light/dark backgrounds */
+  .form-label-dark {
+    @apply text-slate-700;
+  }
+  .form-label-light {
+    @apply text-card-foreground/70;
+  }
   /* Guide cards: dark card surface that still reads well on light pages */
   .guide-card {
     background: hsl(var(--card));

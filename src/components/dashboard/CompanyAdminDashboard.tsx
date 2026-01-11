@@ -177,14 +177,14 @@ export function CompanyAdminDashboard() {
       icon: MessageSquare, 
       description: 'This month',
       gradient: 'from-blue-500 to-blue-600',
-      href: '/dashboard/communication-logs'
+      href: '/dashboard/messages'
     },
   ];
 
   const quickActions = [
     { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', gradient: 'from-primary to-primary/80' },
     { label: 'Analytics', icon: TrendingUp, href: '/dashboard/analytics', gradient: 'from-cyan-500 to-blue-500' },
-    { label: 'Communication Logs', icon: MessageSquare, href: '/dashboard/communication-logs', gradient: 'from-green-500 to-emerald-500' },
+    { label: 'Communication Logs', icon: MessageSquare, href: '/dashboard/messages', gradient: 'from-green-500 to-emerald-500' },
     { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', gradient: 'from-purple-500 to-violet-500' },
     { label: 'Calculators', icon: DollarSign, href: '/dashboard/calculators', gradient: 'from-amber-500 to-orange-500' },
     { label: 'Integrations Overview', icon: Puzzle, href: '/dashboard/integrations', gradient: 'from-slate-600 to-slate-700' },
