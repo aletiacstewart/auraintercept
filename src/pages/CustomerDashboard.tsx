@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -22,9 +22,14 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
-  Star
+  Star,
+  Settings,
+  MessageSquare,
+  Loader2
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { CommunicationPreferencesCheckboxes, CommunicationPreferences } from '@/components/customer/CommunicationPreferencesCheckboxes';
+import { toast } from 'sonner';
 
 interface CustomerProfile {
   id: string;
@@ -116,6 +121,107 @@ const StatusBadge = ({ status }: { status: string }) => {
     </Badge>
   );
 };
+
+// Customer Preferences Tab Component
+function CustomerPreferencesTab({ 
+  profile, 
+  token 
+}: { 
+  profile: CustomerProfile; 
+  token: string;
+}) {
+  const queryClient = useQueryClient();
+  const [preferences, setPreferences] = useState<CommunicationPreferences>({
+    smsOptIn: !profile.sms_opt_out,
+    emailOptIn: !profile.email_opt_out,
+    callOptIn: !profile.call_opt_out,
+  });
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const handlePreferencesChange = (newPrefs: CommunicationPreferences) => {
+    setPreferences(newPrefs);
+    setHasChanges(
+      newPrefs.smsOptIn !== !profile.sms_opt_out ||
+      newPrefs.emailOptIn !== !profile.email_opt_out ||
+      newPrefs.callOptIn !== !profile.call_opt_out
+    );
+  };
+
+  const updateMutation = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke('customer-portal', {
+        body: { 
+          action: 'update-preferences', 
+          token,
+          preferences: {
+            sms_opt_out: !preferences.smsOptIn,
+            email_opt_out: !preferences.emailOptIn,
+            call_opt_out: !preferences.callOptIn,
+          }
+        }
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success('Preferences updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['customer-dashboard', token] });
+      setHasChanges(false);
+    },
+    onError: () => {
+      toast.error('Failed to update preferences');
+    },
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Settings className="w-5 h-5" />
+          Communication Preferences
+        </CardTitle>
+        <CardDescription>
+          Manage how you receive notifications and reminders from us
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <CommunicationPreferencesCheckboxes
+          preferences={preferences}
+          onChange={handlePreferencesChange}
+          disabled={updateMutation.isPending}
+        />
+
+        <div className="flex items-center gap-3 pt-4 border-t">
+          <Button
+            onClick={() => updateMutation.mutate()}
+            disabled={!hasChanges || updateMutation.isPending}
+          >
+            {updateMutation.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              'Save Preferences'
+            )}
+          </Button>
+          {hasChanges && (
+            <span className="text-sm text-muted-foreground">You have unsaved changes</span>
+          )}
+        </div>
+
+        <Alert>
+          <Shield className="w-4 h-4" />
+          <AlertTitle>Your Privacy</AlertTitle>
+          <AlertDescription className="text-sm">
+            We respect your communication preferences. You can change these settings at any time. 
+            Opting out will not affect important service-related communications about your active appointments.
+          </AlertDescription>
+        </Alert>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function CustomerDashboard() {
   const [searchParams] = useSearchParams();
@@ -305,7 +411,7 @@ export default function CustomerDashboard() {
 
           {/* Tabs for detailed views */}
           <Tabs defaultValue="appointments" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="appointments" className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
                 <span className="hidden sm:inline">Appointments</span>
@@ -321,6 +427,10 @@ export default function CustomerDashboard() {
               <TabsTrigger value="referrals" className="flex items-center gap-2">
                 <Gift className="w-4 h-4" />
                 <span className="hidden sm:inline">Referrals</span>
+              </TabsTrigger>
+              <TabsTrigger value="preferences" className="flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                <span className="hidden sm:inline">Preferences</span>
               </TabsTrigger>
             </TabsList>
 
@@ -485,6 +595,14 @@ export default function CustomerDashboard() {
                   )}
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* Preferences Tab */}
+            <TabsContent value="preferences">
+              <CustomerPreferencesTab 
+                profile={profile} 
+                token={token!}
+              />
             </TabsContent>
           </Tabs>
         </main>
