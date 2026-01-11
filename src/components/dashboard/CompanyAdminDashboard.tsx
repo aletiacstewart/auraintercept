@@ -119,42 +119,48 @@ export function CompanyAdminDashboard() {
       value: stats?.employees ?? 0, 
       icon: Users, 
       description: 'Team members',
-      gradient: 'from-primary to-primary/80'
+      gradient: 'from-primary to-primary/80',
+      href: '/dashboard/employees'
     },
     { 
       title: 'Customers', 
       value: stats?.customers ?? 0, 
       icon: UserCircle, 
       description: 'Total customers',
-      gradient: 'from-cyan-500 to-cyan-600'
+      gradient: 'from-cyan-500 to-cyan-600',
+      href: '/dashboard/customers'
     },
     { 
       title: 'Leads', 
       value: stats?.leads ?? 0, 
       icon: Target, 
       description: `${stats?.newLeads ?? 0} new`,
-      gradient: 'from-orange-500 to-orange-600'
+      gradient: 'from-orange-500 to-orange-600',
+      href: '/dashboard/leads'
     },
     {
       title: 'Appointments', 
       value: stats?.appointments ?? 0, 
       icon: Calendar, 
       description: 'Total scheduled',
-      gradient: 'from-secondary to-secondary/80'
+      gradient: 'from-secondary to-secondary/80',
+      href: '/dashboard/appointments'
     },
     { 
       title: 'Open Quotes', 
       value: stats?.openQuotes ?? 0, 
       icon: FileText, 
       description: `$${(stats?.openQuotesTotal ?? 0).toLocaleString()} total`,
-      gradient: 'from-accent to-accent/80'
+      gradient: 'from-accent to-accent/80',
+      href: '/dashboard/quotes'
     },
     { 
       title: 'Outstanding', 
       value: stats?.outstandingInvoices ?? 0, 
       icon: Receipt, 
       description: `$${(stats?.outstandingTotal ?? 0).toLocaleString()} unpaid`,
-      gradient: 'from-primary to-secondary'
+      gradient: 'from-primary to-secondary',
+      href: '/dashboard/invoices'
     },
     { 
       title: 'Revenue (Month)', 
@@ -162,14 +168,16 @@ export function CompanyAdminDashboard() {
       icon: DollarSign, 
       description: format(new Date(), 'MMMM yyyy'),
       gradient: 'from-green-500 to-green-600',
-      isString: true
+      isString: true,
+      href: '/dashboard/analytics'
     },
     { 
       title: 'Messages', 
       value: stats?.messagesCount ?? 0, 
       icon: MessageSquare, 
       description: 'This month',
-      gradient: 'from-blue-500 to-blue-600'
+      gradient: 'from-blue-500 to-blue-600',
+      href: '/dashboard/communication-logs'
     },
   ];
 
@@ -268,7 +276,11 @@ export function CompanyAdminDashboard() {
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
-          <Card key={stat.title} className="relative overflow-hidden border-border/50">
+          <Card 
+            key={stat.title} 
+            className="relative overflow-hidden border-border/50 cursor-pointer hover:bg-slate-700/70 transition-colors"
+            onClick={() => navigate(stat.href)}
+          >
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-white">
                 {stat.title}
