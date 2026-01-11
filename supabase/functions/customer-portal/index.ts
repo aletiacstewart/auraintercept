@@ -16,6 +16,8 @@ interface PortalRequest {
   };
 }
 
+type LegacyAction = 'get' | 'cancel' | 'reschedule' | 'get-appointments' | 'get-invoices';
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -38,7 +40,7 @@ Deno.serve(async (req) => {
     console.log(`Customer portal action: ${action} for token: ${token}`);
 
     // Handle dashboard actions that use customer_profiles token
-    if (action === 'get-dashboard' || action === 'get-profile') {
+    if (action === 'get-dashboard' || action === 'get-profile' || action === 'update-preferences') {
       // Try to find customer profile by portal token
       const { data: profile, error: profileError } = await supabase
         .from('customer_profiles')
@@ -51,6 +53,105 @@ Deno.serve(async (req) => {
         return new Response(
           JSON.stringify({ error: 'Failed to fetch profile' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // For update-preferences with profile token
+      if (action === 'update-preferences' && profile) {
+        if (!preferences) {
+          return new Response(
+            JSON.stringify({ error: 'Preferences are required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        const updateData: Record<string, boolean> = {};
+        const subscriptionEvents: { channel: string; action: string }[] = [];
+
+        if (typeof preferences.sms_opt_out === 'boolean') {
+          updateData.sms_opt_out = preferences.sms_opt_out;
+          if (preferences.sms_opt_out !== profile.sms_opt_out) {
+            subscriptionEvents.push({
+              channel: 'sms',
+              action: preferences.sms_opt_out ? 'unsubscribe' : 'subscribe'
+            });
+          }
+        }
+        if (typeof preferences.email_opt_out === 'boolean') {
+          updateData.email_opt_out = preferences.email_opt_out;
+          if (preferences.email_opt_out !== profile.email_opt_out) {
+            subscriptionEvents.push({
+              channel: 'email',
+              action: preferences.email_opt_out ? 'unsubscribe' : 'subscribe'
+            });
+          }
+        }
+        if (typeof preferences.call_opt_out === 'boolean') {
+          updateData.call_opt_out = preferences.call_opt_out;
+          if (preferences.call_opt_out !== profile.call_opt_out) {
+            subscriptionEvents.push({
+              channel: 'call',
+              action: preferences.call_opt_out ? 'unsubscribe' : 'subscribe'
+            });
+          }
+        }
+
+        if (Object.keys(updateData).length === 0) {
+          return new Response(
+            JSON.stringify({ error: 'No valid preferences provided' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        // Update customer profile preferences
+        const { error: prefError } = await supabase
+          .from('customer_profiles')
+          .update(updateData)
+          .eq('id', profile.id);
+
+        if (prefError) {
+          console.error('Preferences update error:', prefError);
+          return new Response(
+            JSON.stringify({ error: 'Failed to update preferences' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        // Also update future appointments for this customer
+        await supabase
+          .from('appointments')
+          .update(updateData)
+          .eq('company_id', profile.company_id)
+          .eq('customer_email', profile.email)
+          .gte('datetime', new Date().toISOString());
+
+        // Log subscription events for analytics
+        if (subscriptionEvents.length > 0) {
+          const eventsToInsert = subscriptionEvents.map(event => ({
+            company_id: profile.company_id,
+            channel: event.channel,
+            action: event.action,
+            source: 'customer_portal',
+            customer_email: profile.email,
+            customer_phone: profile.phone
+          }));
+
+          const { error: eventError } = await supabase
+            .from('subscription_events')
+            .insert(eventsToInsert);
+
+          if (eventError) {
+            console.error('Failed to log subscription events:', eventError);
+          } else {
+            console.log(`Logged ${subscriptionEvents.length} subscription events`);
+          }
+        }
+
+        console.log(`Updated preferences for customer profile ${profile.id}:`, updateData);
+
+        return new Response(
+          JSON.stringify({ success: true, message: 'Preferences updated successfully' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -128,7 +229,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    switch (action) {
+    switch (action as LegacyAction) {
       case 'get':
         return new Response(
           JSON.stringify({ success: true, appointment }),
@@ -237,105 +338,6 @@ Deno.serve(async (req) => {
 
         return new Response(
           JSON.stringify({ success: true, message: 'Appointment rescheduled successfully' }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-
-      case 'update-preferences':
-        if (!preferences) {
-          return new Response(
-            JSON.stringify({ error: 'Preferences are required' }),
-            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-
-        const updateData: Record<string, boolean> = {};
-        const subscriptionEvents: { channel: string; action: string }[] = [];
-
-        if (typeof preferences.sms_opt_out === 'boolean') {
-          updateData.sms_opt_out = preferences.sms_opt_out;
-          // Track if preference changed
-          if (preferences.sms_opt_out !== appointment.sms_opt_out) {
-            subscriptionEvents.push({
-              channel: 'sms',
-              action: preferences.sms_opt_out ? 'unsubscribe' : 'subscribe'
-            });
-          }
-        }
-        if (typeof preferences.email_opt_out === 'boolean') {
-          updateData.email_opt_out = preferences.email_opt_out;
-          if (preferences.email_opt_out !== appointment.email_opt_out) {
-            subscriptionEvents.push({
-              channel: 'email',
-              action: preferences.email_opt_out ? 'unsubscribe' : 'subscribe'
-            });
-          }
-        }
-        if (typeof preferences.call_opt_out === 'boolean') {
-          updateData.call_opt_out = preferences.call_opt_out;
-          if (preferences.call_opt_out !== appointment.call_opt_out) {
-            subscriptionEvents.push({
-              channel: 'call',
-              action: preferences.call_opt_out ? 'unsubscribe' : 'subscribe'
-            });
-          }
-        }
-
-        if (Object.keys(updateData).length === 0) {
-          return new Response(
-            JSON.stringify({ error: 'No valid preferences provided' }),
-            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-
-        const { error: prefError } = await supabase
-          .from('appointments')
-          .update(updateData)
-          .eq('id', appointment.id);
-
-        if (prefError) {
-          console.error('Preferences update error:', prefError);
-          return new Response(
-            JSON.stringify({ error: 'Failed to update preferences' }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-
-        // Also update customer profile preferences if exists
-        if (appointment.customer_email) {
-          await supabase
-            .from('customer_profiles')
-            .update(updateData)
-            .eq('company_id', appointment.company_id)
-            .eq('email', appointment.customer_email);
-        }
-
-        // Log subscription events for analytics
-        if (subscriptionEvents.length > 0) {
-          const eventsToInsert = subscriptionEvents.map(event => ({
-            company_id: appointment.company_id,
-            appointment_id: appointment.id,
-            channel: event.channel,
-            action: event.action,
-            source: 'customer_portal',
-            customer_email: appointment.customer_email,
-            customer_phone: appointment.customer_phone
-          }));
-
-          const { error: eventError } = await supabase
-            .from('subscription_events')
-            .insert(eventsToInsert);
-
-          if (eventError) {
-            console.error('Failed to log subscription events:', eventError);
-          } else {
-            console.log(`Logged ${subscriptionEvents.length} subscription events`);
-          }
-        }
-
-        console.log(`Updated preferences for appointment ${appointment.id}:`, updateData);
-
-        return new Response(
-          JSON.stringify({ success: true, message: 'Preferences updated successfully' }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
 

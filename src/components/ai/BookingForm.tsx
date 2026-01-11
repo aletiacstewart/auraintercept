@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { CalendarIcon, Clock, User, Phone, MapPin, Loader2, Send } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { CommunicationPreferencesCheckboxes, CommunicationPreferences } from '@/components/customer/CommunicationPreferencesCheckboxes';
 
 interface Service {
   id: string;
@@ -33,6 +34,9 @@ export interface BookingData {
   customerPhone: string;
   customerAddress: string;
   notes?: string;
+  smsOptIn: boolean;
+  emailOptIn: boolean;
+  callOptIn: boolean;
 }
 
 // Generate time slots from 8 AM to 6 PM
@@ -59,6 +63,11 @@ export const BookingForm: React.FC<BookingFormProps> = ({
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
   const [notes, setNotes] = useState('');
+  const [communicationPrefs, setCommunicationPrefs] = useState<CommunicationPreferences>({
+    smsOptIn: true,
+    emailOptIn: true,
+    callOptIn: true,
+  });
 
   const handleServiceToggle = (serviceId: string) => {
     setSelectedServices(prev => 
@@ -82,6 +91,9 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       customerPhone,
       customerAddress,
       notes: notes.trim() || undefined,
+      smsOptIn: communicationPrefs.smsOptIn,
+      emailOptIn: communicationPrefs.emailOptIn,
+      callOptIn: communicationPrefs.callOptIn,
     });
   };
 
@@ -235,6 +247,13 @@ export const BookingForm: React.FC<BookingFormProps> = ({
               className="resize-none text-xs"
             />
           </div>
+
+          {/* Communication Preferences */}
+          <CommunicationPreferencesCheckboxes
+            preferences={communicationPrefs}
+            onChange={setCommunicationPrefs}
+            compact
+          />
 
           {/* Submit Button */}
           <Button 
