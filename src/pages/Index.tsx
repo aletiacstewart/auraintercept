@@ -408,7 +408,7 @@ export default function Index() {
       <section className="bg-muted/30 py-20">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">Agent Consoles</Badge>
+            <Badge variant="secondary" className="mb-4">Aura Agent Consoles</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">3 Powerful Intercept Control Centers</h2>
             <p className="text-foreground max-w-2xl mx-auto">
               Purpose-built consoles give your team full control over AI agent operations with intuitive interfaces.
