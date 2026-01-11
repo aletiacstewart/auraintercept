@@ -286,6 +286,7 @@ export function ReviewRequestSettings() {
                 }
                 rows={4}
                 placeholder="Enter SMS template..."
+                className="bg-white text-slate-900"
               />
               <p className="text-xs text-card-foreground/70">
                 SMS messages are limited to 160 characters. Longer messages may be split.
@@ -322,6 +323,7 @@ export function ReviewRequestSettings() {
                     }
                     rows={12}
                     placeholder="Enter email template..."
+                    className="bg-white text-slate-900"
                   />
                 </div>
               </div>
