@@ -139,7 +139,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Dispatch Agent',
     description: 'Assigns jobs to field workers based on skills, location, and availability.',
     category: 'field_operations',
-    phase: 2,
+    phase: 1,
     icon: Truck,
     color: 'text-green-500',
     capabilities: [
@@ -187,7 +187,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'ETA Agent',
     description: 'Tracks technician location and provides accurate arrival time predictions.',
     category: 'field_operations',
-    phase: 2,
+    phase: 3,
     icon: Truck,
     color: 'text-green-500',
     capabilities: [
@@ -207,7 +207,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Check-in Agent',
     description: 'Manages job site arrivals, departures, and work verification.',
     category: 'field_operations',
-    phase: 2,
+    phase: 4,
     icon: Truck,
     color: 'text-green-500',
     capabilities: [
@@ -227,7 +227,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Quoting Agent',
     description: 'Generates accurate service quotes based on job requirements and pricing rules.',
     category: 'business_operations',
-    phase: 3,
+    phase: 4,
     icon: Briefcase,
     color: 'text-purple-500',
     capabilities: [
@@ -251,7 +251,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Invoice Agent',
     description: 'Handles invoicing, payment processing, and collection follow-ups.',
     category: 'business_operations',
-    phase: 3,
+    phase: 5,
     icon: Briefcase,
     color: 'text-purple-500',
     capabilities: [
@@ -276,7 +276,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Inventory Agent',
     description: 'Tracks parts and supplies, manages stock levels, and handles reordering.',
     category: 'business_operations',
-    phase: 3,
+    phase: 8,
     icon: Briefcase,
     color: 'text-purple-500',
     capabilities: [
@@ -296,7 +296,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Warranty Agent',
     description: 'Manages warranty claims, tracks coverage, and handles claim processing.',
     category: 'business_operations',
-    phase: 3,
+    phase: 9,
     icon: Briefcase,
     color: 'text-purple-500',
     capabilities: [
@@ -316,7 +316,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Admin Agent',
     description: 'Handles administrative tasks, user management, and company configuration.',
     category: 'business_operations',
-    phase: 3,
+    phase: 1,
     icon: Briefcase,
     color: 'text-purple-500',
     capabilities: [
@@ -336,7 +336,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Campaign Agent',
     description: 'Unified marketing agent handling promotions, referrals, win-back, and seasonal campaigns.',
     category: 'marketing_sales',
-    phase: 4,
+    phase: 1,
     icon: Megaphone,
     color: 'text-orange-500',
     capabilities: [
@@ -387,7 +387,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Insights Agent',
     description: 'Analyzes business data and provides actionable recommendations.',
     category: 'business_operations',
-    phase: 5,
+    phase: 2,
     icon: BarChart3,
     color: 'text-cyan-500',
     capabilities: [
@@ -411,7 +411,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Forecast Agent',
     description: 'Predicts demand, revenue, and resource needs based on historical data.',
     category: 'business_operations',
-    phase: 5,
+    phase: 7,
     icon: BarChart3,
     color: 'text-cyan-500',
     capabilities: [
@@ -435,7 +435,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Revenue Agent',
     description: 'Tracks revenue streams, analyzes profitability, and identifies growth opportunities.',
     category: 'business_operations',
-    phase: 5,
+    phase: 6,
     icon: BarChart3,
     color: 'text-cyan-500',
     capabilities: [
@@ -462,7 +462,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Performance Agent',
     description: 'Tracks team and individual performance metrics, identifies improvement opportunities.',
     category: 'business_operations',
-    phase: 5,
+    phase: 3,
     icon: BarChart3,
     color: 'text-cyan-500',
     capabilities: [
