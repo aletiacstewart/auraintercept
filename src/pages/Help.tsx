@@ -22,24 +22,25 @@ import {
   HeadphonesIcon,
   Truck,
   Briefcase,
-  Megaphone,
-  BarChart3
+  Megaphone
 } from 'lucide-react';
 
-type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics';
+type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing';
 type MainTabType = 'ai-agents' | 'company-employee' | 'faq';
 
-const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType; description: string; features: string[]; useCases: string[]; platformAdminFeatures?: string[]; platformAdminUseCases?: string[] }> = {
+const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType; description: string; agents: string[]; features: string[]; useCases: string[]; platformAdminFeatures?: string[]; platformAdminUseCases?: string[] }> = {
   customer: {
     title: 'Customer Portal',
     icon: HeadphonesIcon,
-    description: 'Handle customer inquiries, book appointments, provide quotes, and deliver exceptional customer service.',
+    description: 'Powered by 4 specialized AI agents: Receptionist (Phase 1), Scheduling (Phase 2), Follow-up (Phase 3), and Review (Phase 4).',
+    agents: ['Receptionist Agent', 'Scheduling Agent', 'Follow-up Agent', 'Review Agent'],
     features: [
+      'Intelligent triage and routing of customer inquiries',
       'Book and manage appointments with smart scheduling',
       'Provide instant quotes for services',
       'Answer customer questions using your knowledge base',
       'Track existing appointments and send reminders',
-      'Collect customer feedback and reviews',
+      'Collect customer feedback and request reviews',
       'Voice and SMS support via Twilio integration'
     ],
     useCases: [
@@ -53,7 +54,8 @@ const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType;
   fieldops: {
     title: 'Field Operations',
     icon: Truck,
-    description: 'Powered by 4 specialized AI agents (Dispatch, Route, ETA, Check-in) for complete field service management.',
+    description: 'Powered by 4 specialized AI agents: Dispatch (Phase 1), Route (Phase 2), ETA (Phase 3), and Check-in (Phase 4).',
+    agents: ['Dispatch Agent', 'Route Agent', 'ETA Agent', 'Check-in Agent'],
     features: [
       'Accept assigned jobs and notify customers automatically',
       'Get turn-by-turn directions to customer locations',
@@ -78,19 +80,26 @@ const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType;
     ]
   },
   businessops: {
-    title: 'Business & Accounting',
+    title: 'Business Operations',
     icon: Briefcase,
-    description: 'Manage invoices, quotes, and day-to-day business administration.',
+    description: 'Powered by 9 specialized AI agents: Admin (Phase 1), Insights (Phase 2), Performance (Phase 3), Quoting (Phase 4), Invoice (Phase 5), Revenue (Phase 6), Forecast (Phase 7), Inventory (Phase 8), and Warranty (Phase 9).',
+    agents: ['Admin Agent', 'Insights Agent', 'Performance Agent', 'Quoting Agent', 'Invoice Agent', 'Revenue Agent', 'Forecast Agent'],
     features: [
       'Create and send invoices to customers',
       'Generate detailed quotes for services',
       'Look up pricing for parts and services',
-      'Process billing and payment tracking'
+      'Process billing and payment tracking',
+      'View KPI dashboards and metrics',
+      'Analyze revenue trends and forecasts',
+      'Generate performance reports',
+      'Get customer behavior insights'
     ],
     useCases: [
       '"Create an invoice for John Smith\'s repair"',
       '"Generate a quote for a new HVAC installation"',
-      '"Look up the price for a compressor replacement"'
+      '"Look up the price for a compressor replacement"',
+      '"Show me this month\'s revenue"',
+      '"Generate a performance report for last quarter"'
     ],
     // Platform admin only features
     platformAdminFeatures: [
@@ -105,7 +114,8 @@ const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType;
   marketing: {
     title: 'Marketing & Sales',
     icon: Megaphone,
-    description: 'Create campaigns, manage leads, generate promo codes, and drive customer acquisition and retention.',
+    description: 'Powered by the Campaign Agent (Phase 1) for creating and managing marketing campaigns.',
+    agents: ['Campaign Agent'],
     features: [
       'Create targeted marketing campaigns',
       'Segment customers for personalized outreach',
@@ -120,26 +130,6 @@ const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType;
       '"Find customers who haven\'t booked in 6 months"',
       '"Set up a referral reward program"',
       '"Create a summer AC tune-up promotion"'
-    ]
-  },
-  analytics: {
-    title: 'Analytics & Optimization',
-    icon: BarChart3,
-    description: 'Access performance reports, revenue analysis, customer insights, and business intelligence.',
-    features: [
-      'View KPI dashboards and metrics',
-      'Analyze revenue trends and forecasts',
-      'Generate performance reports',
-      'Get customer behavior insights',
-      'Export data for external analysis',
-      'Track technician performance metrics'
-    ],
-    useCases: [
-      '"Show me this month\'s revenue"',
-      '"What\'s our customer satisfaction score?"',
-      '"Generate a performance report for last quarter"',
-      '"Which services are most profitable?"',
-      '"Forecast next month\'s appointment volume"'
     ]
   }
 };
@@ -223,15 +213,11 @@ export default function Help() {
                 </TabsTrigger>
                 <TabsTrigger value="businessops">
                   <Briefcase className="h-4 w-4 mr-2" />
-                  Business & Accounting
+                  Business Operations
                 </TabsTrigger>
                 <TabsTrigger value="marketing">
                   <Megaphone className="h-4 w-4 mr-2" />
                   Marketing & Sales
-                </TabsTrigger>
-                <TabsTrigger value="analytics">
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  Analytics & Optimization
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -244,17 +230,32 @@ export default function Help() {
                     <ConsoleIcon className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <CardTitle>{currentConsole.title} AI Agent</CardTitle>
+                    <CardTitle>{currentConsole.title}</CardTitle>
                     <CardDescription className="text-card-foreground/70">{currentConsole.description}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Agents */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <Bot className="w-5 h-5 text-primary" />
+                    AI Agents in this Console
+                  </h3>
+                  <div className="flex flex-wrap gap-2 ml-7">
+                    {currentConsole.agents.map((agent, index) => (
+                      <Badge key={index} variant="secondary" className="text-sm">
+                        {agent}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Features */}
                 <div>
                   <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                     <CheckCircle2 className="w-5 h-5 text-green-500" />
-                    What This Agent Can Do
+                    What This Console Can Do
                   </h3>
                   <ul className="space-y-2 ml-7">
                     {currentConsole.features.map((feature, index) => (
