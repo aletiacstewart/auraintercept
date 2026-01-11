@@ -42,28 +42,6 @@ const agentCategories = [{
     icon: Clock
   }]
 }, {
-  id: 'customer',
-  name: 'Customer Portal',
-  icon: Users,
-  color: 'from-cyan-500 to-blue-500',
-  agents: [{
-    name: 'Triage Agent',
-    description: 'AI-powered inquiry routing to the right department instantly',
-    icon: Target
-  }, {
-    name: 'Scheduling Agent',
-    description: 'Natural language appointment scheduling with calendar sync',
-    icon: Calendar
-  }, {
-    name: 'Follow-up Agent',
-    description: 'Automated reminders via email, SMS, and voice calls',
-    icon: Bell
-  }, {
-    name: 'Review Agent',
-    description: 'Collects feedback and manages multi-platform reviews',
-    icon: Star
-  }]
-}, {
   id: 'field',
   name: 'Field Operations',
   icon: MapPin,
@@ -84,6 +62,28 @@ const agentCategories = [{
     name: 'Check-in Agent',
     description: 'Job status tracking with photo documentation',
     icon: CheckCircle2
+  }]
+}, {
+  id: 'customer',
+  name: 'Customer Portal',
+  icon: Users,
+  color: 'from-cyan-500 to-blue-500',
+  agents: [{
+    name: 'Triage Agent',
+    description: 'AI-powered inquiry routing to the right department instantly',
+    icon: Target
+  }, {
+    name: 'Scheduling Agent',
+    description: 'Natural language appointment scheduling with calendar sync',
+    icon: Calendar
+  }, {
+    name: 'Follow-up Agent',
+    description: 'Automated reminders via email, SMS, and voice calls',
+    icon: Bell
+  }, {
+    name: 'Review Agent',
+    description: 'Collects feedback and manages multi-platform reviews',
+    icon: Star
   }]
 }];
 const agentConsoles = [{
