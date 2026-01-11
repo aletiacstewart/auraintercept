@@ -3,6 +3,7 @@ import { AuditProgress } from "./AuditProgress";
 import { AuditQuestion } from "./AuditQuestion";
 import { AuditResults } from "./AuditResults";
 import { QUESTIONS, type Scores, type ScoreCategory } from "./types";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export function AgentOpportunityAudit() {
@@ -38,7 +39,7 @@ export function AgentOpportunityAudit() {
   };
 
   const calculateScores = (): Scores => {
-    const scores: Scores = { FDA: 0, SA: 0, RA: 0, KOA: 0 };
+    const scores: Scores = { FDA: 0, SA: 0, RA: 0, KOA: 0, FOA: 0, CA: 0, FUA: 0, BIA: 0 };
 
     QUESTIONS.forEach(question => {
       const selectedOption = answers[question.id];
@@ -65,6 +66,9 @@ export function AgentOpportunityAudit() {
     );
   }
 
+  const currentQuestion = QUESTIONS[currentStep];
+  const currentSection = currentQuestion.section;
+
   return (
     <div className="min-h-[calc(100vh-200px)] flex flex-col items-center justify-center py-8 px-4">
       <div className="w-full max-w-2xl space-y-8">
@@ -78,6 +82,15 @@ export function AgentOpportunityAudit() {
           </p>
         </div>
 
+        {/* Section Badge */}
+        {currentSection && (
+          <div className="flex justify-center">
+            <Badge variant="secondary" className="px-4 py-1.5 text-sm">
+              {currentSection}
+            </Badge>
+          </div>
+        )}
+
         {/* Progress */}
         <AuditProgress currentStep={currentStep} totalSteps={QUESTIONS.length} />
 
@@ -89,8 +102,8 @@ export function AgentOpportunityAudit() {
           )}
         >
           <AuditQuestion
-            question={QUESTIONS[currentStep]}
-            selectedOption={answers[QUESTIONS[currentStep].id] || null}
+            question={currentQuestion}
+            selectedOption={answers[currentQuestion.id] || null}
             onSelect={handleSelect}
             onNext={handleNext}
             onBack={handleBack}
