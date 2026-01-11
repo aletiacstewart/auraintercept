@@ -101,38 +101,38 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
   const renderSummary = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-4 rounded-lg bg-background border">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+        <div className="p-4 rounded-lg bg-white border">
+          <div className="flex items-center gap-2 text-slate-600 mb-1">
             <Calendar className="h-4 w-4" />
             <span className="text-sm">Appointments</span>
           </div>
-          <p className="text-2xl font-bold">{metrics?.totalAppointments || 0}</p>
-          <p className="text-xs text-muted-foreground">{metrics?.completedAppointments || 0} completed</p>
+          <p className="text-2xl font-bold text-slate-800">{metrics?.totalAppointments || 0}</p>
+          <p className="text-xs text-slate-500">{metrics?.completedAppointments || 0} completed</p>
         </div>
 
-        <div className="p-4 rounded-lg bg-background border">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+        <div className="p-4 rounded-lg bg-white border">
+          <div className="flex items-center gap-2 text-slate-600 mb-1">
             <TrendingUp className="h-4 w-4" />
             <span className="text-sm">Revenue</span>
           </div>
           <p className="text-2xl font-bold text-green-600">${(metrics?.totalRevenue || 0).toLocaleString()}</p>
         </div>
 
-        <div className="p-4 rounded-lg bg-background border">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+        <div className="p-4 rounded-lg bg-white border">
+          <div className="flex items-center gap-2 text-slate-600 mb-1">
             <CheckCircle className="h-4 w-4" />
             <span className="text-sm">Completion Rate</span>
           </div>
-          <p className="text-2xl font-bold">{(metrics?.completionRate || 0).toFixed(0)}%</p>
+          <p className="text-2xl font-bold text-slate-800">{(metrics?.completionRate || 0).toFixed(0)}%</p>
         </div>
 
-        <div className="p-4 rounded-lg bg-background border">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+        <div className="p-4 rounded-lg bg-white border">
+          <div className="flex items-center gap-2 text-slate-600 mb-1">
             <BarChart3 className="h-4 w-4" />
             <span className="text-sm">Avg Rating</span>
           </div>
-          <p className="text-2xl font-bold">{(metrics?.avgRating || 0).toFixed(1)} ⭐</p>
-          <p className="text-xs text-muted-foreground">{metrics?.feedbackCount || 0} reviews</p>
+          <p className="text-2xl font-bold text-slate-800">{(metrics?.avgRating || 0).toFixed(1)} ⭐</p>
+          <p className="text-xs text-slate-500">{metrics?.feedbackCount || 0} reviews</p>
         </div>
       </div>
     </div>
@@ -246,7 +246,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
     <Card className="border-purple-200 bg-purple-50/50">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
             <Lightbulb className="h-5 w-5 text-purple-600" />
             Business Insights
           </CardTitle>
@@ -259,9 +259,9 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label>Date Range</Label>
+            <Label className="text-slate-700">Date Range</Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -273,9 +273,9 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>View</Label>
+            <Label className="text-slate-700">View</Label>
             <Select value={insightView} onValueChange={(v) => setInsightView(v as InsightView)}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

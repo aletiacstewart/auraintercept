@@ -105,7 +105,7 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
     <Card className="border-green-200 bg-green-50/50">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
             <DollarSign className="h-5 w-5 text-green-600" />
             Revenue Analysis
           </CardTitle>
@@ -118,12 +118,12 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="flex items-center gap-1">
+            <Label className="flex items-center gap-1 text-slate-700">
               <Calendar className="h-3 w-3" />
               Date Range
             </Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -135,9 +135,9 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Group By</Label>
+            <Label className="text-slate-700">Group By</Label>
             <Select value={groupBy} onValueChange={setGroupBy}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -158,8 +158,8 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
         ) : (
           <>
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-4 rounded-lg bg-background border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <div className="p-4 rounded-lg bg-white border">
+                <div className="flex items-center gap-2 text-slate-600 mb-1">
                   <TrendingUp className="h-4 w-4" />
                   <span className="text-sm">Total Revenue</span>
                 </div>
@@ -168,8 +168,8 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg bg-background border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <div className="p-4 rounded-lg bg-white border">
+                <div className="flex items-center gap-2 text-slate-600 mb-1">
                   <CreditCard className="h-4 w-4" />
                   <span className="text-sm">Pending</span>
                 </div>
@@ -178,20 +178,20 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg bg-background border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <div className="p-4 rounded-lg bg-white border">
+                <div className="flex items-center gap-2 text-slate-600 mb-1">
                   <Receipt className="h-4 w-4" />
                   <span className="text-sm">Invoices Paid</span>
                 </div>
-                <p className="text-2xl font-bold">{revenueData?.invoiceCount || 0}</p>
+                <p className="text-2xl font-bold text-slate-800">{revenueData?.invoiceCount || 0}</p>
               </div>
 
-              <div className="p-4 rounded-lg bg-background border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <div className="p-4 rounded-lg bg-white border">
+                <div className="flex items-center gap-2 text-slate-600 mb-1">
                   <DollarSign className="h-4 w-4" />
                   <span className="text-sm">Avg Invoice</span>
                 </div>
-                <p className="text-2xl font-bold">
+                <p className="text-2xl font-bold text-slate-800">
                   ${(revenueData?.avgInvoice || 0).toFixed(0)}
                 </p>
               </div>
