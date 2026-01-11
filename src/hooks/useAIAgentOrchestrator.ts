@@ -46,11 +46,11 @@ export interface AgentEvent {
 
 // Default agent definitions - 22 total agents
 const DEFAULT_AGENTS: AgentInfo[] = [
-  // Customer Portal (Phase 1) - 4 agents
+  // Customer Portal (Phases 1-4) - 4 agents
   { type: 'triage', name: 'AI Receptionist', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
-  { type: 'booking', name: 'Scheduling Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
-  { type: 'followup', name: 'Follow-up Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
-  { type: 'review', name: 'Review Agent', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
+  { type: 'booking', name: 'Scheduling Agent', category: 'customer_engagement', phase: 2, is_enabled: false, settings: {} },
+  { type: 'followup', name: 'Follow-up Agent', category: 'customer_engagement', phase: 3, is_enabled: false, settings: {} },
+  { type: 'review', name: 'Review Agent', category: 'customer_engagement', phase: 4, is_enabled: false, settings: {} },
   // Field Operations (Phase 2) - 4 agents
   { type: 'dispatch', name: 'Dispatch Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
   { type: 'route', name: 'Route Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
