@@ -384,15 +384,8 @@ export default function Index() {
             </p>
           </div>
 
-          <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
-            <TabsList className="flex flex-wrap justify-center gap-2 mb-8 h-auto bg-transparent">
-              {agentCategories.map(category => <TabsTrigger key={category.id} value={category.id} className="data-[state=active]:gradient-primary data-[state=active]:text-primary-foreground px-4 py-2">
-                  <category.icon className="w-4 h-4 mr-2" />
-                  {category.name}
-                </TabsTrigger>)}
-            </TabsList>
-
-            {agentCategories.map(category => <TabsContent key={category.id} value={category.id}>
+          <div className="space-y-8">
+            {agentCategories.map(category => <div key={category.id}>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {category.agents.map((agent, index) => <Card key={agent.name} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 animate-fade-in" style={{
                 animationDelay: `${index * 50}ms`
@@ -406,8 +399,8 @@ export default function Index() {
                       </CardContent>
                     </Card>)}
                 </div>
-              </TabsContent>)}
-          </Tabs>
+              </div>)}
+          </div>
         </div>
       </section>
 
