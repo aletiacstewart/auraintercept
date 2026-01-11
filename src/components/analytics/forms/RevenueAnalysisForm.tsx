@@ -102,14 +102,14 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
   });
 
   return (
-    <Card className="border-green-200 bg-green-50/50">
+    <Card className="border-white/10 bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-            <DollarSign className="h-5 w-5 text-green-600" />
+          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
+            <DollarSign className="h-5 w-5 text-secondary" />
             Revenue Analysis
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel}>
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground/70 hover:text-card-foreground">
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -118,12 +118,12 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-slate-700">
+            <Label className="flex items-center gap-1 text-card-foreground/70">
               <Calendar className="h-3 w-3" />
               Date Range
             </Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="bg-white text-slate-900">
+              <SelectTrigger className="bg-white text-slate-900 border-white/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -135,9 +135,9 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-slate-700">Group By</Label>
+            <Label className="text-card-foreground/70">Group By</Label>
             <Select value={groupBy} onValueChange={setGroupBy}>
-              <SelectTrigger className="bg-white text-slate-900">
+              <SelectTrigger className="bg-white text-slate-900 border-white/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

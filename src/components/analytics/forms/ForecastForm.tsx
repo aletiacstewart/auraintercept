@@ -209,14 +209,14 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
   );
 
   return (
-    <Card className="border-indigo-200 bg-indigo-50/50">
+    <Card className="border-white/10 bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-            <Target className="h-5 w-5 text-indigo-600" />
+          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
+            <Target className="h-5 w-5 text-secondary" />
             Forecast Report
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel}>
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground/70 hover:text-card-foreground">
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -225,9 +225,9 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="text-slate-700">Forecast Type</Label>
+            <Label className="text-card-foreground/70">Forecast Type</Label>
             <Select value={forecastType} onValueChange={(v) => setForecastType(v as ForecastType)}>
-              <SelectTrigger className="bg-white text-slate-900">
+              <SelectTrigger className="bg-white text-slate-900 border-white/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -238,9 +238,9 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-slate-700">Time Period</Label>
+            <Label className="text-card-foreground/70">Time Period</Label>
             <Select value={forecastPeriod} onValueChange={setForecastPeriod}>
-              <SelectTrigger className="bg-white text-slate-900">
+              <SelectTrigger className="bg-white text-slate-900 border-white/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
