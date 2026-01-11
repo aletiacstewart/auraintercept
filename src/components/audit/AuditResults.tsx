@@ -242,6 +242,17 @@ export function AuditResults({ scores, onRestart }: AuditResultsProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Legal Disclaimer */}
+      <div className="text-center px-4 pb-4">
+        <p className="text-xs text-muted-foreground/70 max-w-2xl mx-auto leading-relaxed">
+          <span className="font-medium">Disclaimer:</span> The scores, time savings estimates, and recommendations 
+          provided by this audit are projections based on typical industry benchmarks and your self-reported responses. 
+          These figures are for informational purposes only and do not constitute a guarantee of performance, revenue 
+          increase, or cost reduction. Actual results will depend on factors including but not limited to: quality of 
+          implementation, business operations, market conditions, and consistent usage of recommended solutions.
+        </p>
+      </div>
     </div>
   );
 }

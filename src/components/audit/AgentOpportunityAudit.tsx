@@ -80,6 +80,9 @@ export function AgentOpportunityAudit() {
           <p className="text-muted-foreground text-lg">
             Discover where AI can save you time and capture more revenue
           </p>
+          <p className="text-xs text-muted-foreground/70 mt-2">
+            Results are estimates only. Individual outcomes vary based on implementation and business factors.
+          </p>
         </div>
 
         {/* Section Badge */}
