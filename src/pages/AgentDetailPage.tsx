@@ -486,7 +486,7 @@ const AGENT_DEFINITIONS: Record<string, {
 };
 
 // Agents restricted to platform_admin only
-const PLATFORM_ADMIN_ONLY_AGENTS = ['inventory', 'warranty', 'quoting'];
+const PLATFORM_ADMIN_ONLY_AGENTS = ['inventory', 'warranty'];
 
 export default function AgentDetailPage() {
   const { agentId } = useParams<{ agentId: string }>();
