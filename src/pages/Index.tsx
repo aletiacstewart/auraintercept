@@ -5,19 +5,49 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { Bot, Building2, Zap, Shield, MessageSquare, Play, Calendar, Phone, Users, TrendingUp, Clock, MapPin, FileText, DollarSign, Package, Award, Megaphone, Gift, RotateCcw, Sun, BarChart3, Target, CheckCircle2, ArrowRight, Sparkles, Wrench, Home, Flame, Droplet, ChevronRight, Star, Navigation, Truck, Search, UserPlus, Globe, Headphones, Bell, Mail, Smartphone, Video, Mic, Brain, Layers, Lock, Send, Key, Fence, PanelTop, Wind, DoorOpen, Bug, TreeDeciduous, Waves, TreePine, Trash2, Refrigerator, Hammer, PaintBucket, Grid3X3, Sparkle, Car, HardHat, Wifi, Camera } from 'lucide-react';
+import { Bot, Building2, Zap, Shield, MessageSquare, Play, Calendar, Phone, Users, TrendingUp, Clock, MapPin, FileText, DollarSign, Package, Award, Megaphone, Gift, RotateCcw, Sun, BarChart3, Target, CheckCircle2, ArrowRight, Sparkles, Wrench, Home, Flame, Droplet, ChevronRight, Star, Navigation, Truck, Search, UserPlus, Globe, Headphones, Bell, Mail, Smartphone, Video, Mic, Brain, Layers, Lock, Send, Key, Fence, PanelTop, Wind, DoorOpen, Bug, TreeDeciduous, Waves, TreePine, Trash2, Refrigerator, Hammer, PaintBucket, Grid3X3, Sparkle, Car, HardHat, Wifi, Camera, Briefcase, HeadphonesIcon } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import heroVideo from '@/assets/aura-intercept-hero.mp4';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 const agentCategories = [{
+  id: 'business',
+  name: 'Business Management',
+  icon: Building2,
+  color: 'from-purple-500 to-violet-500',
+  agents: [{
+    name: 'Quoting Agent',
+    description: 'Instant quote generation with service pricing lookup',
+    icon: FileText
+  }, {
+    name: 'Invoice Agent',
+    description: 'Automated invoicing with payment tracking',
+    icon: DollarSign
+  }, {
+    name: 'Insights Agent',
+    description: 'Business intelligence with trends and anomaly detection',
+    icon: TrendingUp
+  }, {
+    name: 'Performance Agent',
+    description: 'Team metrics, goals tracking, and optimization',
+    icon: BarChart3
+  }, {
+    name: 'Revenue Agent',
+    description: 'Revenue analysis and financial forecasting',
+    icon: DollarSign
+  }, {
+    name: 'Forecast Agent',
+    description: 'Demand, staffing, and resource predictions',
+    icon: Clock
+  }]
+}, {
   id: 'customer',
   name: 'Customer Portal',
   icon: Users,
   color: 'from-cyan-500 to-blue-500',
   agents: [{
-    name: 'AI Receptionist',
+    name: 'Triage Agent',
     description: 'AI-powered inquiry routing to the right department instantly',
     icon: Target
   }, {
@@ -55,33 +85,23 @@ const agentCategories = [{
     description: 'Job status tracking with photo documentation',
     icon: CheckCircle2
   }]
-}, {
-  id: 'business',
-  name: 'Business Management',
-  icon: Building2,
-  color: 'from-purple-500 to-violet-500',
-  agents: [{
-    name: 'Quoting Agent',
-    description: 'Instant quote generation with service pricing lookup',
-    icon: FileText
-  }, {
-    name: 'Invoice Agent',
-    description: 'Automated invoicing with payment tracking',
-    icon: DollarSign
-  }, {
-    name: 'Admin Agent',
-    description: 'Business administration and company management tasks',
-    icon: Building2
-  }]
 }];
 const agentConsoles = [{
+  name: 'Business Management Console',
+  description: 'Complete operations center for quotes, invoices, analytics, and AI-powered business insights.',
+  icon: Briefcase,
+  gradient: 'from-purple-500 to-violet-500',
+  iconBg: 'bg-purple-500/10',
+  iconColor: 'text-purple-500',
+  features: ['AI-powered business insights', 'Performance & revenue reports', 'Demand forecasting', 'Quote & invoice automation', 'Lead management', 'Company analytics']
+}, {
   name: 'Customer Portal Console',
   description: 'Complete customer engagement hub for appointment scheduling, follow-ups, and review collection.',
-  icon: Calendar,
+  icon: HeadphonesIcon,
   gradient: 'from-cyan-500 to-blue-500',
   iconBg: 'bg-cyan-500/10',
   iconColor: 'text-cyan-500',
-  features: ['24/7 natural language booking', 'Multi-service appointment scheduling', 'Automated email & SMS reminders', 'Customer review & Feedback', 'Quote request handling', 'Review request automation']
+  features: ['24/7 natural language booking', 'Multi-service appointment scheduling', 'Automated email & SMS reminders', 'Customer feedback collection', 'Quote request handling', 'Embeddable website widget']
 }, {
   name: 'Field Operations Console',
   description: 'Technician-focused mobile console for job management, navigation, and customer communication.',
@@ -90,14 +110,6 @@ const agentConsoles = [{
   iconBg: 'bg-green-500/10',
   iconColor: 'text-green-500',
   features: ['One-tap job acceptance', 'Real-time GPS navigation', 'ETA updates with notifications', 'Before/after photo capture', 'Job status tracking', 'Dispatch communication']
-}, {
-  name: 'Business Management Console',
-  description: 'Financial operations center for quotes, invoices, and business administration.',
-  icon: DollarSign,
-  gradient: 'from-purple-500 to-violet-500',
-  iconBg: 'bg-purple-500/10',
-  iconColor: 'text-purple-500',
-  features: ['AI-assisted quote generation', 'Automated invoice creation', 'Appointment Management', 'Company Platform Analytics']
 }];
 const platformFeatures = [{
   icon: MessageSquare,
@@ -251,7 +263,7 @@ const howItWorks = [{
 }, {
   step: 2,
   title: 'Activate AI Agents',
-  description: 'Enable 10+ specialized AI agents and configure your knowledge base for your business.',
+  description: 'Enable 14 specialized AI agents and configure your knowledge base for your business.',
   icon: Bot
 }, {
   step: 3,
@@ -261,11 +273,11 @@ const howItWorks = [{
 }, {
   step: 4,
   title: 'Automate & Scale',
-  description: 'AI handles bookings, field ops, and billing 24/7 while you focus on growth.',
+  description: 'AI handles bookings, field ops, and business analytics 24/7 while you focus on growth.',
   icon: Zap
 }];
 const heroStats = [{
-  value: '11',
+  value: '14',
   label: 'AI Agents'
 }, {
   value: '24/7',
@@ -277,10 +289,10 @@ const heroStats = [{
   value: '40%',
   label: 'Less No-Shows'
 }];
-const subtitles = ['Booking & Scheduling', 'Field Operations', 'Billing & Invoicing', 'Customer Portal', 'Business Management'];
+const subtitles = ['Booking & Scheduling', 'Field Operations', 'Business Analytics', 'Customer Portal', 'AI-Powered Insights'];
 export default function Index() {
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState('customer');
+  const [activeCategory, setActiveCategory] = useState('business');
   const [currentSubtitle, setCurrentSubtitle] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -365,7 +377,7 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">AI Agents</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">10+ Specialized AI Agents</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">14 Specialized AI Agents</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Each agent is purpose-built to handle specific business functions, 
               working together seamlessly with intelligent handoffs and context preservation.
@@ -593,7 +605,7 @@ export default function Index() {
                 <div className="space-y-3 text-left mb-8">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">10+ Specialized AI Agents</span>
+                    <span className="text-white">14 Specialized AI Agents</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
