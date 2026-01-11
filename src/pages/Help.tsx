@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +29,7 @@ import {
 type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics';
 type MainTabType = 'ai-agents' | 'company-employee' | 'faq';
 
-const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType; description: string; features: string[]; useCases: string[] }> = {
+const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType; description: string; features: string[]; useCases: string[]; platformAdminFeatures?: string[]; platformAdminUseCases?: string[] }> = {
   customer: {
     title: 'Customer Portal',
     icon: HeadphonesIcon,
@@ -72,21 +73,26 @@ const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType;
   businessops: {
     title: 'Business & Accounting',
     icon: Briefcase,
-    description: 'Manage invoices, quotes, inventory, warranties, and day-to-day business administration.',
+    description: 'Manage invoices, quotes, and day-to-day business administration.',
     features: [
       'Create and send invoices to customers',
       'Generate detailed quotes for services',
-      'Track inventory levels and reorder alerts',
-      'Manage warranty claims and policies',
       'Look up pricing for parts and services',
       'Process billing and payment tracking'
     ],
     useCases: [
       '"Create an invoice for John Smith\'s repair"',
-      '"Check warranty status for order #12345"',
-      '"What\'s the current stock level for air filters?"',
       '"Generate a quote for a new HVAC installation"',
       '"Look up the price for a compressor replacement"'
+    ],
+    // Platform admin only features
+    platformAdminFeatures: [
+      'Track inventory levels and reorder alerts',
+      'Manage warranty claims and policies'
+    ],
+    platformAdminUseCases: [
+      '"Check warranty status for order #12345"',
+      '"What\'s the current stock level for air filters?"'
     ]
   },
   marketing: {
@@ -132,6 +138,8 @@ const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType;
 };
 
 export default function Help() {
+  const { userRole } = useAuth();
+  const isPlatformAdmin = userRole === 'platform_admin';
   const [searchParams, setSearchParams] = useSearchParams();
   const consoleParam = searchParams.get('console') as ConsoleType | null;
   const consoleType: ConsoleType = consoleParam && Object.keys(consoleInfo).includes(consoleParam) ? consoleParam : 'customer';
@@ -150,7 +158,19 @@ export default function Help() {
     setSearchParams(newParams);
   };
 
-  const currentConsole = consoleInfo[consoleType];
+  // Dynamically add platform admin features for businessops
+  const currentConsole = useMemo(() => {
+    const baseConsole = consoleInfo[consoleType];
+    if (consoleType === 'businessops' && isPlatformAdmin) {
+      return {
+        ...baseConsole,
+        features: [...baseConsole.features, ...(baseConsole.platformAdminFeatures || [])],
+        useCases: [...baseConsole.useCases, ...(baseConsole.platformAdminUseCases || [])]
+      };
+    }
+    return baseConsole;
+  }, [consoleType, isPlatformAdmin]);
+  
   const ConsoleIcon = currentConsole.icon;
 
   return (

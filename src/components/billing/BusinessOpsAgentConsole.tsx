@@ -38,7 +38,7 @@ const TABS = [
 ];
 
 // Quick actions for Business Operations
-const QUICK_ACTIONS = [
+const BASE_QUICK_ACTIONS = [
   { id: 'quote', label: 'Create Quote', icon: FileText, message: 'I need to create a new quote for a customer' },
   { id: 'invoice', label: 'Generate Invoice', icon: Receipt, message: 'I need to generate an invoice' },
   { id: 'lead', label: 'New Lead', icon: UserPlus, message: 'I need to add a new lead' },
@@ -46,6 +46,10 @@ const QUICK_ACTIONS = [
   { id: 'insights', label: 'Business Insights', icon: Lightbulb, message: 'Show me business insights and recommendations' },
   { id: 'revenue', label: 'Revenue Analysis', icon: DollarSign, message: 'Analyze revenue trends and profitability' },
   { id: 'forecast', label: 'Demand Forecast', icon: TrendingUp, message: 'Show demand forecast and projections' },
+];
+
+// Platform admin only quick actions
+const PLATFORM_ADMIN_QUICK_ACTIONS = [
   { id: 'inventory', label: 'Inventory Search', icon: Package, message: 'Search inventory items' },
   { id: 'warranty', label: 'Warranty Lookup', icon: Shield, message: 'Look up warranty status' },
 ];
@@ -55,8 +59,14 @@ interface BusinessOpsAgentConsoleProps {
 }
 
 export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = ({ companyId: propCompanyId }) => {
-  const { companyId: authCompanyId, user } = useAuth();
+  const { companyId: authCompanyId, user, userRole } = useAuth();
   const effectiveCompanyId = propCompanyId || authCompanyId;
+  const isPlatformAdmin = userRole === 'platform_admin';
+  
+  // Filter quick actions based on role
+  const QUICK_ACTIONS = isPlatformAdmin 
+    ? [...BASE_QUICK_ACTIONS, ...PLATFORM_ADMIN_QUICK_ACTIONS]
+    : BASE_QUICK_ACTIONS;
   
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
@@ -379,14 +389,14 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
                 />
               )}
               
-              {showInventoryForm && effectiveCompanyId && (
+              {isPlatformAdmin && showInventoryForm && effectiveCompanyId && (
                 <InventorySearchForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
                 />
               )}
               
-              {showWarrantyForm && effectiveCompanyId && (
+              {isPlatformAdmin && showWarrantyForm && effectiveCompanyId && (
                 <WarrantyLookupForm
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
