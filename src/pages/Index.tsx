@@ -376,7 +376,7 @@ export default function Index() {
       <section className="py-20">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">AI Agents</Badge>
+            <Badge variant="secondary" className="mb-4">Aura Agent Consoles</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">14 Specialized AI Agents</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Each agent is purpose-built to handle specific business functions, 
