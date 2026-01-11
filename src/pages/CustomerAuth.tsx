@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Users, Building2, ArrowRight } from 'lucide-react';
+import { Users, Building2, ArrowRight, Globe, CheckCircle } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
@@ -171,6 +171,33 @@ export default function CustomerAuth() {
           <div className="text-center">
             <h1 className="text-2xl font-bold tracking-tight">Customer Portal</h1>
             <p className="text-sm text-muted-foreground">Powered by Aura Intercept</p>
+          </div>
+        </div>
+
+        {/* Cross-Company Benefits Callout */}
+        <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+          <div className="flex items-start gap-3">
+            <div className="h-10 w-10 rounded-lg gradient-primary flex items-center justify-center shrink-0">
+              <Globe className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-sm text-primary">One Account, Unlimited Access</h3>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                Your account works with any service provider powered by Aura Intercept. 
+                Book, track, and manage all your appointments in one place.
+              </p>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <CheckCircle className="h-3 w-3 text-primary" /> Single sign-in
+                </span>
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <CheckCircle className="h-3 w-3 text-primary" /> All companies
+                </span>
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <CheckCircle className="h-3 w-3 text-primary" /> Unified history
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
