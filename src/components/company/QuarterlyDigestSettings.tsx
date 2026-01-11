@@ -235,10 +235,10 @@ export function QuarterlyDigestSettings() {
               <Mail className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <Label htmlFor="quarterly-digest-enabled" className="text-base font-medium">
+              <Label htmlFor="quarterly-digest-enabled" className="text-base font-medium text-card-foreground">
                 Enable Quarterly Report
               </Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-card-foreground/70">
                 Receive strategic quarterly analytics with YoY comparisons
               </p>
             </div>
@@ -252,9 +252,9 @@ export function QuarterlyDigestSettings() {
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="quarterly-digest-email">Recipient Email</Label>
+            <Label htmlFor="quarterly-digest-email" className="text-card-foreground">Recipient Email</Label>
             <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-muted-foreground" />
+              <Mail className="h-4 w-4 text-card-foreground/60" />
               <Input
                 id="quarterly-digest-email"
                 type="email"
@@ -268,7 +268,7 @@ export function QuarterlyDigestSettings() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="quarterly-digest-month">Month of Quarter</Label>
+              <Label htmlFor="quarterly-digest-month" className="text-card-foreground">Month of Quarter</Label>
               <Select value={month} onValueChange={setMonth} disabled={!enabled}>
                 <SelectTrigger id="quarterly-digest-month">
                   <SelectValue placeholder="Select month" />
@@ -283,7 +283,7 @@ export function QuarterlyDigestSettings() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="quarterly-digest-day">Day of Month</Label>
+              <Label htmlFor="quarterly-digest-day" className="text-card-foreground">Day of Month</Label>
               <Select value={day} onValueChange={setDay} disabled={!enabled}>
                 <SelectTrigger id="quarterly-digest-day">
                   <SelectValue placeholder="Select day" />
@@ -301,7 +301,7 @@ export function QuarterlyDigestSettings() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="quarterly-digest-time">Time</Label>
+              <Label htmlFor="quarterly-digest-time" className="text-card-foreground">Time</Label>
               <Input
                 id="quarterly-digest-time"
                 type="time"
@@ -329,7 +329,7 @@ export function QuarterlyDigestSettings() {
               </Select>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-card-foreground/70">
             Report will be sent on the {DAYS_OF_MONTH.find(d => d.value === day)?.label} of the {QUARTER_MONTHS.find(m => m.value === month)?.label.toLowerCase()} at {time}
           </p>
         </div>
@@ -345,7 +345,7 @@ export function QuarterlyDigestSettings() {
         />
 
         {company?.last_quarterly_digest_at && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-card-foreground/70">
             Last report sent: {new Date(company.last_quarterly_digest_at).toLocaleString()}
           </p>
         )}

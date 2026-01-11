@@ -101,24 +101,24 @@ export function CampaignSettings() {
           <h3 className="font-medium">Message Templates</h3>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Win-back Campaign Template</Label>
+              <Label className="text-card-foreground">Win-back Campaign Template</Label>
               <Textarea
                 value={settings.winbackTemplate}
                 onChange={(e) => setSettings(s => ({ ...s, winbackTemplate: e.target.value }))}
                 rows={3}
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-card-foreground/70">
                 Variables: {'{customer_name}'}, {'{discount}'}, {'{company_name}'}
               </p>
             </div>
             <div className="space-y-2">
-              <Label>Referral Reward Template</Label>
+              <Label className="text-card-foreground">Referral Reward Template</Label>
               <Textarea
                 value={settings.referralTemplate}
                 onChange={(e) => setSettings(s => ({ ...s, referralTemplate: e.target.value }))}
                 rows={3}
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-card-foreground/70">
                 Variables: {'{customer_name}'}, {'{discount}'}, {'{code}'}
               </p>
             </div>

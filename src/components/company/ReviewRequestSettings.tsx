@@ -161,7 +161,7 @@ export function ReviewRequestSettings() {
         <CardContent className="space-y-6">
           {/* Timing */}
           <div className="space-y-2">
-            <Label className="flex items-center gap-2">
+            <Label className="flex items-center gap-2 text-card-foreground">
               <Clock className="h-4 w-4" />
               Send review request after job completion
             </Label>
@@ -179,22 +179,22 @@ export function ReviewRequestSettings() {
                 }
                 className="w-24"
               />
-              <span className="text-sm text-muted-foreground">hours (0 = immediately)</span>
+              <span className="text-sm text-card-foreground/70">hours (0 = immediately)</span>
             </div>
           </div>
 
           {/* Review Platform URLs */}
           <div className="space-y-4">
-            <Label className="flex items-center gap-2">
+            <Label className="flex items-center gap-2 text-card-foreground">
               <ExternalLink className="h-4 w-4" />
               Review Platform Links
             </Label>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-card-foreground/70">
               Add direct links to your review pages. These will be included in review request emails.
             </p>
             <div className="grid gap-4">
               <div className="space-y-2">
-                <Label htmlFor="google-url" className="text-sm">Google Reviews URL</Label>
+                <Label htmlFor="google-url" className="text-sm text-card-foreground/80">Google Reviews URL</Label>
                 <Input
                   id="google-url"
                   placeholder="https://g.page/r/your-business/review"
@@ -205,7 +205,7 @@ export function ReviewRequestSettings() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="yelp-url" className="text-sm">Yelp Reviews URL</Label>
+                <Label htmlFor="yelp-url" className="text-sm text-card-foreground/80">Yelp Reviews URL</Label>
                 <Input
                   id="yelp-url"
                   placeholder="https://www.yelp.com/biz/your-business"
@@ -216,7 +216,7 @@ export function ReviewRequestSettings() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="facebook-url" className="text-sm">Facebook Reviews URL</Label>
+                <Label htmlFor="facebook-url" className="text-sm text-card-foreground/80">Facebook Reviews URL</Label>
                 <Input
                   id="facebook-url"
                   placeholder="https://www.facebook.com/your-business/reviews"
@@ -242,9 +242,9 @@ export function ReviewRequestSettings() {
         <CardContent>
           <div className="flex flex-wrap gap-2">
             {TEMPLATE_VARIABLES.map((item) => (
-              <Badge key={item.variable} variant="secondary" className="font-mono text-xs">
+              <Badge key={item.variable} variant="secondary" className="font-mono text-xs text-card-foreground border border-card-foreground/20">
                 {item.variable}
-                <span className="ml-1 font-normal text-muted-foreground">- {item.description}</span>
+                <span className="ml-1 font-normal text-card-foreground/70">- {item.description}</span>
               </Badge>
             ))}
           </div>
@@ -274,7 +274,7 @@ export function ReviewRequestSettings() {
 
             <TabsContent value="sms" className="space-y-4">
               <div className="flex justify-between items-center">
-                <Label>SMS Template</Label>
+                <Label className="text-card-foreground">SMS Template</Label>
                 <Button variant="ghost" size="sm" onClick={handleResetSMS}>
                   Reset to Default
                 </Button>
@@ -287,7 +287,7 @@ export function ReviewRequestSettings() {
                 rows={4}
                 placeholder="Enter SMS template..."
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-card-foreground/70">
                 SMS messages are limited to 160 characters. Longer messages may be split.
                 Current length: {(settings.review_sms_template || '').length} characters
               </p>
@@ -295,14 +295,14 @@ export function ReviewRequestSettings() {
 
             <TabsContent value="email" className="space-y-4">
               <div className="flex justify-between items-center">
-                <Label>Email Template</Label>
+                <Label className="text-card-foreground">Email Template</Label>
                 <Button variant="ghost" size="sm" onClick={handleResetEmail}>
                   Reset to Default
                 </Button>
               </div>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email-subject" className="text-sm">Subject Line</Label>
+                  <Label htmlFor="email-subject" className="text-sm text-card-foreground/80">Subject Line</Label>
                   <Input
                     id="email-subject"
                     value={settings.review_email_subject || ''}
@@ -313,7 +313,7 @@ export function ReviewRequestSettings() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email-body" className="text-sm">Email Body</Label>
+                  <Label htmlFor="email-body" className="text-sm text-card-foreground/80">Email Body</Label>
                   <Textarea
                     id="email-body"
                     value={settings.review_email_template || ''}

@@ -227,10 +227,10 @@ export function WeeklyDigestSettings() {
               <Mail className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <Label htmlFor="digest-enabled" className="text-base font-medium">
+              <Label htmlFor="digest-enabled" className="text-base font-medium text-card-foreground">
                 Enable Weekly Digest
               </Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-card-foreground/70">
                 Receive performance reports via email
               </p>
             </div>
@@ -244,9 +244,9 @@ export function WeeklyDigestSettings() {
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="digest-email">Recipient Email</Label>
+            <Label htmlFor="digest-email" className="text-card-foreground">Recipient Email</Label>
             <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-muted-foreground" />
+              <Mail className="h-4 w-4 text-card-foreground/60" />
               <Input
                 id="digest-email"
                 type="email"
@@ -260,7 +260,7 @@ export function WeeklyDigestSettings() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="digest-day">Day</Label>
+              <Label htmlFor="digest-day" className="text-card-foreground">Day</Label>
               <Select value={day} onValueChange={setDay} disabled={!enabled}>
                 <SelectTrigger id="digest-day">
                   <SelectValue placeholder="Select day" />
@@ -275,7 +275,7 @@ export function WeeklyDigestSettings() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="digest-time">Time</Label>
+              <Label htmlFor="digest-time" className="text-card-foreground">Time</Label>
               <Input
                 id="digest-time"
                 type="time"
@@ -303,7 +303,7 @@ export function WeeklyDigestSettings() {
               </Select>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-card-foreground/70">
             Digest will be sent every {DAYS_OF_WEEK.find(d => d.value === day)?.label} at {time} ({COMMON_TIMEZONES.find(tz => tz.value === timezone)?.label || timezone})
           </p>
         </div>
@@ -319,7 +319,7 @@ export function WeeklyDigestSettings() {
         />
 
         {company?.last_weekly_digest_at && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-card-foreground/70">
             Last digest sent: {new Date(company.last_weekly_digest_at).toLocaleString()}
           </p>
         )}

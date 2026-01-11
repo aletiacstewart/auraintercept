@@ -243,17 +243,17 @@ export function EmailTemplatesEditor() {
 
           {(Object.keys(TEMPLATE_INFO) as Array<keyof typeof TEMPLATE_INFO>).map((type) => (
             <TabsContent key={type} value={type} className="space-y-4 mt-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-sm text-card-foreground/70">
                 <Icon className={`w-4 h-4 ${info.color}`} />
                 {info.description}
                 {isCustomized(type) && (
-                  <Badge variant="outline" className="ml-2 text-white/70 border-white/30">Customized</Badge>
+                  <Badge variant="outline" className="ml-2 text-card-foreground/80 border-card-foreground/30">Customized</Badge>
                 )}
               </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="subject">Email Subject</Label>
+                  <Label htmlFor="subject" className="text-card-foreground">Email Subject</Label>
                   <Input
                     id="subject"
                     value={currentTemplate.subject}
@@ -263,7 +263,7 @@ export function EmailTemplatesEditor() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="heading">Email Heading</Label>
+                  <Label htmlFor="heading" className="text-card-foreground">Email Heading</Label>
                   <Input
                     id="heading"
                     value={currentTemplate.heading}
@@ -273,7 +273,7 @@ export function EmailTemplatesEditor() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="message">Email Message</Label>
+                  <Label htmlFor="message" className="text-card-foreground">Email Message</Label>
                   <Textarea
                     id="message"
                     value={currentTemplate.message}
@@ -285,8 +285,8 @@ export function EmailTemplatesEditor() {
 
                 <div className="flex items-center justify-between py-2">
                   <div className="space-y-0.5">
-                    <Label>Show Appointment Portal Link</Label>
-                    <p className="text-sm text-muted-foreground">
+                    <Label className="text-card-foreground">Show Appointment Portal Link</Label>
+                    <p className="text-sm text-card-foreground/70">
                       Include a button for customers to manage their appointment
                     </p>
                   </div>
@@ -298,14 +298,14 @@ export function EmailTemplatesEditor() {
               </div>
 
               {/* Placeholders */}
-              <div className="p-4 rounded-lg bg-muted/50">
-                <Label className="text-xs uppercase text-muted-foreground">Available Placeholders</Label>
+              <div className="p-4 rounded-lg bg-muted/30 border border-card-foreground/10">
+                <Label className="text-xs uppercase text-card-foreground/70">Available Placeholders</Label>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {PLACEHOLDERS.map((p) => (
                     <button
                       key={p.key}
                       type="button"
-                      className="text-xs px-2 py-1 rounded bg-background border hover:bg-muted transition-colors"
+                      className="text-xs px-2 py-1 rounded bg-card border border-card-foreground/20 text-card-foreground hover:bg-card-foreground/10 transition-colors"
                       onClick={() => {
                         navigator.clipboard.writeText(p.key);
                         toast.success(`Copied ${p.key}`);
