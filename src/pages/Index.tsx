@@ -95,14 +95,6 @@ const agentConsoles = [{
   iconColor: 'text-purple-500',
   features: ['AI-powered business insights', 'Performance & revenue reports', 'Demand forecasting', 'Quote & invoice automation', 'Lead management', 'Company analytics']
 }, {
-  name: 'Customer Portal Console',
-  description: 'Complete customer engagement hub for appointment scheduling, follow-ups, and review collection.',
-  icon: HeadphonesIcon,
-  gradient: 'from-cyan-500 to-blue-500',
-  iconBg: 'bg-cyan-500/10',
-  iconColor: 'text-cyan-500',
-  features: ['24/7 natural language booking', 'Multi-service appointment scheduling', 'Automated email & SMS reminders', 'Customer feedback collection', 'Quote request handling', 'Embeddable website widget']
-}, {
   name: 'Field Operations Console',
   description: 'Technician-focused mobile console for job management, navigation, and customer communication.',
   icon: Truck,
@@ -110,6 +102,14 @@ const agentConsoles = [{
   iconBg: 'bg-green-500/10',
   iconColor: 'text-green-500',
   features: ['One-tap job acceptance', 'Real-time GPS navigation', 'ETA updates with notifications', 'Onsite Invoice Generation', 'Job status tracking', 'Dispatch communication']
+}, {
+  name: 'Customer Portal Console',
+  description: 'Complete customer engagement hub for appointment scheduling, follow-ups, and review collection.',
+  icon: HeadphonesIcon,
+  gradient: 'from-cyan-500 to-blue-500',
+  iconBg: 'bg-cyan-500/10',
+  iconColor: 'text-cyan-500',
+  features: ['24/7 natural language booking', 'Multi-service appointment scheduling', 'Automated email & SMS reminders', 'Customer feedback collection', 'Quote request handling', 'Embeddable website widget']
 }];
 const platformFeatures = [{
   icon: MessageSquare,
