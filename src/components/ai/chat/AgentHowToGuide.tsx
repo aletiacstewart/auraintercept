@@ -781,7 +781,7 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-xs font-medium truncate">{guide.label}</h4>
-                    <p className="text-[10px] text-muted-foreground truncate">{guide.description}</p>
+                    <p className="text-[10px] text-card-foreground/70 truncate">{guide.description}</p>
                   </div>
                   {expandedGuide === guide.id ? (
                     <ChevronUp className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
