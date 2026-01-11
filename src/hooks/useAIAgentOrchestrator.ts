@@ -51,11 +51,11 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'booking', name: 'Scheduling Agent', category: 'customer_engagement', phase: 2, is_enabled: false, settings: {} },
   { type: 'followup', name: 'Follow-up Agent', category: 'customer_engagement', phase: 3, is_enabled: false, settings: {} },
   { type: 'review', name: 'Review Agent', category: 'customer_engagement', phase: 4, is_enabled: false, settings: {} },
-  // Field Operations (Phase 2) - 4 agents
-  { type: 'dispatch', name: 'Dispatch Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
+  // Field Operations (Phases 1-4) - 4 agents
+  { type: 'dispatch', name: 'Dispatch Agent', category: 'field_operations', phase: 1, is_enabled: false, settings: {} },
   { type: 'route', name: 'Route Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
-  { type: 'eta', name: 'ETA Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
-  { type: 'checkin', name: 'Check-in Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
+  { type: 'eta', name: 'ETA Agent', category: 'field_operations', phase: 3, is_enabled: false, settings: {} },
+  { type: 'checkin', name: 'Check-in Agent', category: 'field_operations', phase: 4, is_enabled: false, settings: {} },
   // Business Operations (Phase 3) - 5 agents
   { type: 'quoting', name: 'Quoting Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
   { type: 'invoice', name: 'Invoice Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
