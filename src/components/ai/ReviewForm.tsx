@@ -90,12 +90,12 @@ export const ReviewForm = ({ onSubmit, onCancel, isLoading, reviewLinks = [], in
           </Button>
         )}
         <Star className="h-4 w-4 text-yellow-500" />
-        <h3 className="font-semibold text-sm">Leave a Review</h3>
+        <h3 className="font-semibold text-sm text-slate-900">Leave a Review</h3>
       </div>
       
       {hasNoPlatformsConfigured ? (
-        <p className="text-xs text-muted-foreground text-center py-2">
-          No review platforms configured.
+        <p className="text-sm text-slate-600 text-center py-4">
+          No review platforms configured. Ask your company to set up Google, Facebook, or Yelp review links in Settings.
         </p>
       ) : (
         <div className="space-y-2">
@@ -118,7 +118,7 @@ export const ReviewForm = ({ onSubmit, onCancel, isLoading, reviewLinks = [], in
 
           {/* Platform Selection */}
           <div>
-            <label className="text-xs text-muted-foreground">Select where to review *</label>
+            <label className="text-xs text-slate-700">Select where to review *</label>
             <div className="space-y-1 mt-1">
               {availablePlatforms.map((platform) => (
                 <div
@@ -144,7 +144,7 @@ export const ReviewForm = ({ onSubmit, onCancel, isLoading, reviewLinks = [], in
 
           {/* Star Rating */}
           <div>
-            <label className="text-xs text-muted-foreground">How would you rate us?</label>
+            <label className="text-xs text-slate-700">How would you rate us?</label>
             <div className="flex gap-0.5 justify-center">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
