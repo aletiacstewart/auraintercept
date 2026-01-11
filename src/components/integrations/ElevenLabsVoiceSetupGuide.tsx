@@ -46,7 +46,7 @@ export function ElevenLabsVoiceSetupGuide() {
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground space-y-3">
               <ol className="list-decimal list-inside space-y-2">
-                <li>Go to <a href="https://elevenlabs.io" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">elevenlabs.io</a></li>
+                <li>Go to <a href="https://elevenlabs.io" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">elevenlabs.io</a></li>
                 <li>Click <strong>Sign Up</strong> in the top right</li>
                 <li>Create account with email or Google/GitHub</li>
                 <li>Verify your email address</li>
@@ -55,7 +55,7 @@ export function ElevenLabsVoiceSetupGuide() {
                 href="https://elevenlabs.io" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-secondary hover:underline"
               >
                 Create ElevenLabs Account <ExternalLink className="w-3 h-3" />
               </a>
@@ -74,7 +74,7 @@ export function ElevenLabsVoiceSetupGuide() {
               <ol className="list-decimal list-inside space-y-2">
                 <li>Click your profile icon (bottom left of sidebar)</li>
                 <li>Select <strong>Profile + API key</strong></li>
-                <li>Or go directly to <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Settings → API Keys</a></li>
+                <li>Or go directly to <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">Settings → API Keys</a></li>
                 <li>Click the <strong>eye icon</strong> to reveal your API key</li>
                 <li>Copy the key</li>
               </ol>
@@ -89,7 +89,7 @@ export function ElevenLabsVoiceSetupGuide() {
                 href="https://elevenlabs.io/app/settings/api-keys" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-secondary hover:underline"
               >
                 Get API Key <ExternalLink className="w-3 h-3" />
               </a>
@@ -106,7 +106,7 @@ export function ElevenLabsVoiceSetupGuide() {
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground space-y-3">
               <ol className="list-decimal list-inside space-y-2">
-                <li>Go to <a href="https://elevenlabs.io/voice-library" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Voice Library</a></li>
+                <li>Go to <a href="https://elevenlabs.io/voice-library" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">Voice Library</a></li>
                 <li>Browse thousands of voices or use pre-made ones</li>
                 <li>Click <strong>Add to VoiceLab</strong> on voices you like</li>
                 <li>Copy the <strong>Voice ID</strong> from VoiceLab</li>
@@ -147,7 +147,7 @@ export function ElevenLabsVoiceSetupGuide() {
                 href="https://elevenlabs.io/voice-library" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-secondary hover:underline"
               >
                 Browse Voice Library <ExternalLink className="w-3 h-3" />
               </a>
@@ -165,7 +165,7 @@ export function ElevenLabsVoiceSetupGuide() {
             <AccordionContent className="text-sm text-muted-foreground space-y-3">
               <p>For interactive voice agents that can handle conversations:</p>
               <ol className="list-decimal list-inside space-y-2">
-                <li>Go to <a href="https://elevenlabs.io/app/conversational-ai" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Conversational AI</a></li>
+                <li>Go to <a href="https://elevenlabs.io/app/conversational-ai" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">Conversational AI</a></li>
                 <li>Click <strong>Create Agent</strong></li>
                 <li>Configure your agent's voice, personality, and capabilities</li>
                 <li>Copy the <strong>Agent ID</strong> (starts with "agent_")</li>
@@ -180,7 +180,7 @@ export function ElevenLabsVoiceSetupGuide() {
                 href="https://elevenlabs.io/app/conversational-ai" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-secondary hover:underline"
               >
                 Create Agent <ExternalLink className="w-3 h-3" />
               </a>

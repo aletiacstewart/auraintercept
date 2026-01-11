@@ -258,7 +258,7 @@ export function GoogleCalendarSettings() {
                 </AccordionTrigger>
                 <AccordionContent className="text-xs text-card-foreground pb-3">
                   <ol className="space-y-1.5 list-decimal list-inside ml-1">
-                    <li>Go to <a href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">console.cloud.google.com</a></li>
+                    <li>Go to <a href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">console.cloud.google.com</a></li>
                     <li>Click the project dropdown at the top left (next to "Google Cloud")</li>
                     <li>Click <strong>"New Project"</strong> in the popup</li>
                     <li>Enter a project name (e.g., "Calendar Sync")</li>
