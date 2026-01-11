@@ -225,10 +225,10 @@ export function MonthlyDigestSettings() {
               <Mail className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <Label htmlFor="monthly-digest-enabled" className="text-base font-medium">
+              <Label htmlFor="monthly-digest-enabled" className="text-base font-medium text-card-foreground">
                 Enable Monthly Report
               </Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-card-foreground/70">
                 Receive comprehensive monthly analytics
               </p>
             </div>
@@ -242,9 +242,9 @@ export function MonthlyDigestSettings() {
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="monthly-digest-email">Recipient Email</Label>
+            <Label htmlFor="monthly-digest-email" className="text-card-foreground">Recipient Email</Label>
             <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-muted-foreground" />
+              <Mail className="h-4 w-4 text-card-foreground/60" />
               <Input
                 id="monthly-digest-email"
                 type="email"
@@ -258,7 +258,7 @@ export function MonthlyDigestSettings() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="monthly-digest-day">Day of Month</Label>
+              <Label htmlFor="monthly-digest-day" className="text-card-foreground">Day of Month</Label>
               <Select value={day} onValueChange={setDay} disabled={!enabled}>
                 <SelectTrigger id="monthly-digest-day">
                   <SelectValue placeholder="Select day" />
@@ -273,7 +273,7 @@ export function MonthlyDigestSettings() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="monthly-digest-time">Time</Label>
+              <Label htmlFor="monthly-digest-time" className="text-card-foreground">Time</Label>
               <Input
                 id="monthly-digest-time"
                 type="time"
@@ -301,7 +301,7 @@ export function MonthlyDigestSettings() {
               </Select>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-card-foreground/70">
             Report will be sent on the {DAYS_OF_MONTH.find(d => d.value === day)?.label} of each month at {time} ({COMMON_TIMEZONES.find(tz => tz.value === timezone)?.label || timezone})
           </p>
         </div>
@@ -317,7 +317,7 @@ export function MonthlyDigestSettings() {
         />
 
         {company?.last_monthly_digest_at && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-card-foreground/70">
             Last report sent: {new Date(company.last_monthly_digest_at).toLocaleString()}
           </p>
         )}

@@ -23,9 +23,9 @@ export function DigestMetricsSelector({
 }: DigestMetricsSelectorProps) {
   return (
     <div className="space-y-3">
-      <Label className="text-sm font-medium">Include in Report</Label>
+      <Label className="text-sm font-medium text-card-foreground">Include in Report</Label>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="flex items-center space-x-3 p-3 rounded-lg border bg-card">
+        <div className="flex items-center space-x-3 p-3 rounded-lg border border-card-foreground/20 bg-card">
           <Checkbox
             id="include-appointments"
             checked={includeAppointments}
@@ -33,13 +33,13 @@ export function DigestMetricsSelector({
             disabled={disabled}
           />
           <div className="flex items-center gap-2">
-            <CalendarDays className="h-4 w-4 text-muted-foreground" />
-            <Label htmlFor="include-appointments" className="text-sm font-normal cursor-pointer">
+            <CalendarDays className="h-4 w-4 text-card-foreground/60" />
+            <Label htmlFor="include-appointments" className="text-sm font-normal cursor-pointer text-card-foreground">
               Appointments
             </Label>
           </div>
         </div>
-        <div className="flex items-center space-x-3 p-3 rounded-lg border bg-card">
+        <div className="flex items-center space-x-3 p-3 rounded-lg border border-card-foreground/20 bg-card">
           <Checkbox
             id="include-reminders"
             checked={includeReminders}
@@ -47,13 +47,13 @@ export function DigestMetricsSelector({
             disabled={disabled}
           />
           <div className="flex items-center gap-2">
-            <Bell className="h-4 w-4 text-muted-foreground" />
-            <Label htmlFor="include-reminders" className="text-sm font-normal cursor-pointer">
+            <Bell className="h-4 w-4 text-card-foreground/60" />
+            <Label htmlFor="include-reminders" className="text-sm font-normal cursor-pointer text-card-foreground">
               Reminders
             </Label>
           </div>
         </div>
-        <div className="flex items-center space-x-3 p-3 rounded-lg border bg-card">
+        <div className="flex items-center space-x-3 p-3 rounded-lg border border-card-foreground/20 bg-card">
           <Checkbox
             id="include-subscriptions"
             checked={includeSubscriptions}
@@ -61,8 +61,8 @@ export function DigestMetricsSelector({
             disabled={disabled}
           />
           <div className="flex items-center gap-2">
-            <TrendingDown className="h-4 w-4 text-muted-foreground" />
-            <Label htmlFor="include-subscriptions" className="text-sm font-normal cursor-pointer">
+            <TrendingDown className="h-4 w-4 text-card-foreground/60" />
+            <Label htmlFor="include-subscriptions" className="text-sm font-normal cursor-pointer text-card-foreground">
               Subscriptions
             </Label>
           </div>

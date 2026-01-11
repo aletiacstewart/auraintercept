@@ -70,8 +70,8 @@ export function WarrantySettings() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <Label>Enable Expiration Alerts</Label>
-              <p className="text-sm text-muted-foreground">
+              <Label className="text-card-foreground">Enable Expiration Alerts</Label>
+              <p className="text-sm text-card-foreground/70">
                 Send email alerts before warranties expire
               </p>
             </div>
@@ -83,8 +83,8 @@ export function WarrantySettings() {
 
           <div className="flex items-center justify-between">
             <div>
-              <Label>Auto-Send Extension Offers</Label>
-              <p className="text-sm text-muted-foreground">
+              <Label className="text-card-foreground">Auto-Send Extension Offers</Label>
+              <p className="text-sm text-card-foreground/70">
                 Automatically send warranty extension offers before expiration
               </p>
             </div>
