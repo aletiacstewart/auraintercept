@@ -414,7 +414,7 @@ export function QuickStartWizard({
                   <div className="p-4 rounded-lg border bg-muted/30">
                     <h4 className="font-medium mb-2">Quick Setup Steps:</h4>
                     <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-2">
-                      <li>Create a free account at <a href="https://resend.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">resend.com</a></li>
+                      <li>Create a free account at <a href="https://resend.com" target="_blank" rel="noopener noreferrer" className="text-secondary underline">resend.com</a></li>
                       <li>Go to API Keys and create a new key</li>
                       <li>Copy the key (starts with <code className="bg-muted px-1 rounded">re_</code>)</li>
                       <li>Paste it in the Resend integration above</li>
@@ -473,7 +473,7 @@ export function QuickStartWizard({
                   <div className="p-4 rounded-lg border bg-muted/30">
                     <h4 className="font-medium mb-2">Quick Setup Steps:</h4>
                     <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-2">
-                      <li>Create account at <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer" className="text-primary underline">twilio.com</a> (free $15 credit)</li>
+                      <li>Create account at <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer" className="text-secondary underline">twilio.com</a> (free $15 credit)</li>
                       <li>Get your Account SID and Auth Token from Console</li>
                       <li>Purchase a phone number (~$1.15/mo)</li>
                       <li>Enter credentials in Twilio integration above</li>
@@ -560,7 +560,7 @@ export function QuickStartWizard({
                   <div className="p-4 rounded-lg border bg-muted/30">
                     <h4 className="font-medium mb-2">ElevenLabs Setup:</h4>
                     <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-2">
-                      <li>Create account at <a href="https://elevenlabs.io" target="_blank" rel="noopener noreferrer" className="text-primary underline">elevenlabs.io</a></li>
+                      <li>Create account at <a href="https://elevenlabs.io" target="_blank" rel="noopener noreferrer" className="text-secondary underline">elevenlabs.io</a></li>
                       <li>Go to Settings → API Keys</li>
                       <li>Generate and copy your API key</li>
                       <li>Enter it in ElevenLabs integration above</li>

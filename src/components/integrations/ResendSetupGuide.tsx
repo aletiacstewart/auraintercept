@@ -48,7 +48,7 @@ export function ResendSetupGuide() {
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground space-y-3">
               <ol className="list-decimal list-inside space-y-2">
-                <li>Go to <a href="https://resend.com/signup" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">resend.com/signup</a></li>
+                <li>Go to <a href="https://resend.com/signup" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">resend.com/signup</a></li>
                 <li>Sign up with your email or GitHub account</li>
                 <li>Verify your email address</li>
               </ol>
@@ -56,7 +56,7 @@ export function ResendSetupGuide() {
                 href="https://resend.com/signup" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-secondary hover:underline"
               >
                 Create Resend Account <ExternalLink className="w-3 h-3" />
               </a>
@@ -89,7 +89,7 @@ export function ResendSetupGuide() {
                 href="https://resend.com/domains" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-secondary hover:underline"
               >
                 <Globe className="w-3 h-3" /> Manage Domains <ExternalLink className="w-3 h-3" />
               </a>
@@ -124,7 +124,7 @@ export function ResendSetupGuide() {
                 href="https://resend.com/api-keys" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-secondary hover:underline"
               >
                 Get API Key <ExternalLink className="w-3 h-3" />
               </a>
@@ -166,7 +166,7 @@ export function ResendSetupGuide() {
                 href="https://resend.com/webhooks" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-secondary hover:underline"
               >
                 Configure Webhooks <ExternalLink className="w-3 h-3" />
               </a>

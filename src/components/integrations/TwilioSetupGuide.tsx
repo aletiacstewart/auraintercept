@@ -51,7 +51,7 @@ export function TwilioSetupGuide() {
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground space-y-3">
               <ol className="list-decimal list-inside space-y-2">
-                <li>Go to <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">twilio.com/try-twilio</a></li>
+                <li>Go to <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">twilio.com/try-twilio</a></li>
                 <li>Sign up for a free trial account</li>
                 <li>Verify your email and phone number</li>
                 <li>Complete the account setup wizard</li>
@@ -60,7 +60,7 @@ export function TwilioSetupGuide() {
                 href="https://www.twilio.com/try-twilio" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-secondary hover:underline"
               >
                 Create Twilio Account <ExternalLink className="w-3 h-3" />
               </a>
@@ -94,7 +94,7 @@ export function TwilioSetupGuide() {
                 href="https://console.twilio.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-secondary hover:underline"
               >
                 Open Twilio Console <ExternalLink className="w-3 h-3" />
               </a>
@@ -125,7 +125,7 @@ export function TwilioSetupGuide() {
                 href="https://console.twilio.com/us1/develop/phone-numbers/manage/search" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-secondary hover:underline"
               >
                 <CreditCard className="w-3 h-3" /> Buy Phone Number <ExternalLink className="w-3 h-3" />
               </a>
