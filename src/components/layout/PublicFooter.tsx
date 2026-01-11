@@ -42,7 +42,7 @@ export function PublicFooter() {
           <div>
             <h4 className="font-semibold mb-4 text-card-foreground">Legal</h4>
             <ul className="space-y-2 text-sm text-card-foreground/70">
-              <li><a href="#" className="hover:text-card-foreground transition-colors">Privacy Policy</a></li>
+              <li><a href="" className="hover:text-card-foreground transition-colors">Privacy Policy</a></li>
               <li><a href="#" className="hover:text-card-foreground transition-colors">Terms of Service</a></li>
               <li><a href="#" className="hover:text-card-foreground transition-colors">Contact</a></li>
             </ul>
