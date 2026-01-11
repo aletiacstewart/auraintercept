@@ -203,39 +203,39 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
   const renderTeamOverview = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-4 rounded-lg bg-white border">
-          <div className="flex items-center gap-2 text-slate-600 mb-1">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+          <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
             <Calendar className="h-4 w-4" />
             <span className="text-sm">Appointments</span>
           </div>
-          <p className="text-2xl font-bold text-slate-800">{currentMetrics?.totalAppointments || 0}</p>
+          <p className="text-2xl font-bold text-card-foreground">{currentMetrics?.totalAppointments || 0}</p>
           {compareRange === 'previous' && renderTrend(appointmentChange)}
         </div>
 
-        <div className="p-4 rounded-lg bg-white border">
-          <div className="flex items-center gap-2 text-slate-600 mb-1">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+          <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
             <CheckCircle className="h-4 w-4" />
             <span className="text-sm">Completed Jobs</span>
           </div>
-          <p className="text-2xl font-bold text-slate-800">{currentMetrics?.totalJobs || 0}</p>
+          <p className="text-2xl font-bold text-card-foreground">{currentMetrics?.totalJobs || 0}</p>
           {compareRange === 'previous' && renderTrend(jobChange)}
         </div>
 
-        <div className="p-4 rounded-lg bg-white border">
-          <div className="flex items-center gap-2 text-slate-600 mb-1">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+          <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
             <TrendingUp className="h-4 w-4" />
             <span className="text-sm">Revenue</span>
           </div>
-          <p className="text-2xl font-bold text-slate-800">${(currentMetrics?.totalRevenue || 0).toLocaleString()}</p>
+          <p className="text-2xl font-bold text-card-foreground">${(currentMetrics?.totalRevenue || 0).toLocaleString()}</p>
           {compareRange === 'previous' && renderTrend(revenueChange)}
         </div>
 
-        <div className="p-4 rounded-lg bg-white border">
-          <div className="flex items-center gap-2 text-slate-600 mb-1">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+          <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
             <Users className="h-4 w-4" />
             <span className="text-sm">Completion Rate</span>
           </div>
-          <p className="text-2xl font-bold text-slate-800">{(currentMetrics?.completionRate || 0).toFixed(1)}%</p>
+          <p className="text-2xl font-bold text-card-foreground">{(currentMetrics?.completionRate || 0).toFixed(1)}%</p>
         </div>
       </div>
     </div>
@@ -243,7 +243,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
 
   const renderTopPerformers = () => (
     <div className="space-y-3">
-      <h4 className="font-medium flex items-center gap-2">
+      <h4 className="font-medium flex items-center gap-2 text-card-foreground">
         <Award className="h-4 w-4 text-yellow-500" />
         Top Performers
       </h4>
@@ -280,7 +280,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
 
   const renderGoalProgress = () => (
     <div className="space-y-4">
-      <h4 className="font-medium flex items-center gap-2">
+      <h4 className="font-medium flex items-center gap-2 text-card-foreground">
         <Target className="h-4 w-4 text-cyan-500" />
         Goal Progress
       </h4>
@@ -338,7 +338,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
 
   const renderImprovementAreas = () => (
     <div className="space-y-4">
-      <h4 className="font-medium flex items-center gap-2">
+      <h4 className="font-medium flex items-center gap-2 text-card-foreground">
         <AlertTriangle className="h-4 w-4 text-amber-500" />
         Areas for Improvement
       </h4>
@@ -381,7 +381,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
 
   const renderIndividualMetrics = () => (
     <div className="space-y-4">
-      <h4 className="font-medium flex items-center gap-2">
+      <h4 className="font-medium flex items-center gap-2 text-card-foreground">
         <Users className="h-4 w-4 text-indigo-500" />
         Individual Performance
       </h4>
