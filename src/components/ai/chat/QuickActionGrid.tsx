@@ -63,8 +63,8 @@ export const QuickActionBar: React.FC<QuickActionBarProps> = ({
   onAction,
 }) => {
   return (
-    <div className="shrink-0 border-t border-slate-600/50 bg-slate-700/80 p-2">
-      <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1">
+    <div className="shrink-0 border-t border-slate-600/50 bg-slate-700/80 p-2 overflow-hidden">
+      <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {actions.map((action) => (
           <Button
             key={action.id}
