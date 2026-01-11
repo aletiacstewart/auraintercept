@@ -386,7 +386,7 @@ const AGENT_DEFINITIONS: Record<string, {
   insights: {
     name: 'Insights Agent',
     description: 'Analyzes business data and provides actionable recommendations.',
-    category: 'analytics',
+    category: 'business_operations',
     phase: 5,
     icon: BarChart3,
     color: 'text-cyan-500',
@@ -410,7 +410,7 @@ const AGENT_DEFINITIONS: Record<string, {
   forecast: {
     name: 'Forecast Agent',
     description: 'Predicts demand, revenue, and resource needs based on historical data.',
-    category: 'analytics',
+    category: 'business_operations',
     phase: 5,
     icon: BarChart3,
     color: 'text-cyan-500',
@@ -434,7 +434,7 @@ const AGENT_DEFINITIONS: Record<string, {
   revenue: {
     name: 'Revenue Agent',
     description: 'Tracks revenue streams, analyzes profitability, and identifies growth opportunities.',
-    category: 'analytics',
+    category: 'business_operations',
     phase: 5,
     icon: BarChart3,
     color: 'text-cyan-500',
@@ -461,7 +461,7 @@ const AGENT_DEFINITIONS: Record<string, {
   performance: {
     name: 'Performance Agent',
     description: 'Tracks team and individual performance metrics, identifies improvement opportunities.',
-    category: 'analytics',
+    category: 'business_operations',
     phase: 5,
     icon: BarChart3,
     color: 'text-cyan-500',
