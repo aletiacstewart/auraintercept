@@ -223,9 +223,9 @@ export function BatchAgentActivation({ agents, onActivatePhase, onActivateAll }:
                         <Badge variant="default" className="text-xs">Active</Badge>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground">{phase.description}</p>
+                    <p className="text-sm text-white/70">{phase.description}</p>
                   </div>
-                  <Badge variant="outline">
+                  <Badge variant="outline" className="text-white border-white/30">
                     {status.enabled}/{status.total} active
                   </Badge>
                 </div>
