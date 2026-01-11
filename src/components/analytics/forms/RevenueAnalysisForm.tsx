@@ -158,40 +158,40 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
         ) : (
           <>
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-4 rounded-lg bg-white border">
-                <div className="flex items-center gap-2 text-slate-600 mb-1">
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
                   <TrendingUp className="h-4 w-4" />
                   <span className="text-sm">Total Revenue</span>
                 </div>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-green-400">
                   ${(revenueData?.totalRevenue || 0).toLocaleString()}
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg bg-white border">
-                <div className="flex items-center gap-2 text-slate-600 mb-1">
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
                   <CreditCard className="h-4 w-4" />
                   <span className="text-sm">Pending</span>
                 </div>
-                <p className="text-2xl font-bold text-orange-600">
+                <p className="text-2xl font-bold text-orange-400">
                   ${(pendingData || 0).toLocaleString()}
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg bg-white border">
-                <div className="flex items-center gap-2 text-slate-600 mb-1">
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
                   <Receipt className="h-4 w-4" />
                   <span className="text-sm">Invoices Paid</span>
                 </div>
-                <p className="text-2xl font-bold text-slate-800">{revenueData?.invoiceCount || 0}</p>
+                <p className="text-2xl font-bold text-card-foreground">{revenueData?.invoiceCount || 0}</p>
               </div>
 
-              <div className="p-4 rounded-lg bg-white border">
-                <div className="flex items-center gap-2 text-slate-600 mb-1">
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
                   <DollarSign className="h-4 w-4" />
                   <span className="text-sm">Avg Invoice</span>
                 </div>
-                <p className="text-2xl font-bold text-slate-800">
+                <p className="text-2xl font-bold text-card-foreground">
                   ${(revenueData?.avgInvoice || 0).toFixed(0)}
                 </p>
               </div>
@@ -199,8 +199,8 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
 
             {/* Revenue by Service */}
             {revenueData?.serviceBreakdown && revenueData.serviceBreakdown.length > 0 && (
-              <div className="space-y-3 p-4 rounded-lg bg-background border">
-                <h4 className="font-medium text-sm">Top Revenue Sources</h4>
+              <div className="space-y-3 p-4 rounded-lg bg-white/5 border border-white/10">
+                <h4 className="font-medium text-sm text-card-foreground">Top Revenue Sources</h4>
                 <div className="space-y-3">
                   {revenueData.serviceBreakdown.map((item, idx) => (
                     <div key={idx} className="space-y-1">

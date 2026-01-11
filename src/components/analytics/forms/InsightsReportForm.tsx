@@ -101,38 +101,38 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
   const renderSummary = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-4 rounded-lg bg-white border">
-          <div className="flex items-center gap-2 text-slate-600 mb-1">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+          <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
             <Calendar className="h-4 w-4" />
             <span className="text-sm">Appointments</span>
           </div>
-          <p className="text-2xl font-bold text-slate-800">{metrics?.totalAppointments || 0}</p>
-          <p className="text-xs text-slate-500">{metrics?.completedAppointments || 0} completed</p>
+          <p className="text-2xl font-bold text-card-foreground">{metrics?.totalAppointments || 0}</p>
+          <p className="text-xs text-card-foreground/50">{metrics?.completedAppointments || 0} completed</p>
         </div>
 
-        <div className="p-4 rounded-lg bg-white border">
-          <div className="flex items-center gap-2 text-slate-600 mb-1">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+          <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
             <TrendingUp className="h-4 w-4" />
             <span className="text-sm">Revenue</span>
           </div>
-          <p className="text-2xl font-bold text-green-600">${(metrics?.totalRevenue || 0).toLocaleString()}</p>
+          <p className="text-2xl font-bold text-green-400">${(metrics?.totalRevenue || 0).toLocaleString()}</p>
         </div>
 
-        <div className="p-4 rounded-lg bg-white border">
-          <div className="flex items-center gap-2 text-slate-600 mb-1">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+          <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
             <CheckCircle className="h-4 w-4" />
             <span className="text-sm">Completion Rate</span>
           </div>
-          <p className="text-2xl font-bold text-slate-800">{(metrics?.completionRate || 0).toFixed(0)}%</p>
+          <p className="text-2xl font-bold text-card-foreground">{(metrics?.completionRate || 0).toFixed(0)}%</p>
         </div>
 
-        <div className="p-4 rounded-lg bg-white border">
-          <div className="flex items-center gap-2 text-slate-600 mb-1">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+          <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
             <BarChart3 className="h-4 w-4" />
             <span className="text-sm">Avg Rating</span>
           </div>
-          <p className="text-2xl font-bold text-slate-800">{(metrics?.avgRating || 0).toFixed(1)} ⭐</p>
-          <p className="text-xs text-slate-500">{metrics?.feedbackCount || 0} reviews</p>
+          <p className="text-2xl font-bold text-card-foreground">{(metrics?.avgRating || 0).toFixed(1)} ⭐</p>
+          <p className="text-xs text-card-foreground/50">{metrics?.feedbackCount || 0} reviews</p>
         </div>
       </div>
     </div>
@@ -140,28 +140,28 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
 
   const renderTrends = () => (
     <div className="space-y-4">
-      <h4 className="font-medium flex items-center gap-2">
+      <h4 className="font-medium flex items-center gap-2 text-card-foreground">
         <TrendingUp className="h-4 w-4 text-blue-500" />
         Key Trends
       </h4>
       <div className="space-y-3">
-        <div className="p-4 rounded-lg bg-background border">
-          <p className="font-medium">Appointment Volume</p>
-          <p className="text-sm text-muted-foreground mt-1">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+          <p className="font-medium text-card-foreground">Appointment Volume</p>
+          <p className="text-sm text-card-foreground/70 mt-1">
             {metrics?.totalAppointments || 0} appointments scheduled in the last {dateRange} days.
             {(metrics?.completionRate || 0) > 85 && ' Completion rate is above target.'}
           </p>
         </div>
-        <div className="p-4 rounded-lg bg-background border">
-          <p className="font-medium">Customer Satisfaction</p>
-          <p className="text-sm text-muted-foreground mt-1">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+          <p className="font-medium text-card-foreground">Customer Satisfaction</p>
+          <p className="text-sm text-card-foreground/70 mt-1">
             {metrics?.positiveCount || 0} positive vs {metrics?.negativeCount || 0} negative reviews.
             Average rating: {(metrics?.avgRating || 0).toFixed(1)} out of 5.
           </p>
         </div>
-        <div className="p-4 rounded-lg bg-background border">
-          <p className="font-medium">Revenue Performance</p>
-          <p className="text-sm text-muted-foreground mt-1">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+          <p className="font-medium text-card-foreground">Revenue Performance</p>
+          <p className="text-sm text-card-foreground/70 mt-1">
             Total revenue of ${(metrics?.totalRevenue || 0).toLocaleString()} generated from completed jobs.
           </p>
         </div>
@@ -171,7 +171,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
 
   const renderAnomalies = () => (
     <div className="space-y-4">
-      <h4 className="font-medium flex items-center gap-2">
+      <h4 className="font-medium flex items-center gap-2 text-card-foreground">
         <AlertTriangle className="h-4 w-4 text-amber-500" />
         Anomalies & Alerts
       </h4>
@@ -207,7 +207,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
 
   const renderRecommendations = () => (
     <div className="space-y-4">
-      <h4 className="font-medium flex items-center gap-2">
+      <h4 className="font-medium flex items-center gap-2 text-card-foreground">
         <Lightbulb className="h-4 w-4 text-yellow-500" />
         Recommendations
       </h4>
@@ -216,19 +216,19 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
           <div 
             key={idx} 
             className={`p-4 rounded-lg border ${
-              insight.type === 'positive' ? 'bg-green-50 border-green-200' :
-              insight.type === 'warning' ? 'bg-amber-50 border-amber-200' :
-              'bg-blue-50 border-blue-200'
+              insight.type === 'positive' ? 'bg-green-500/10 border-green-500/20' :
+              insight.type === 'warning' ? 'bg-amber-500/10 border-amber-500/20' :
+              'bg-blue-500/10 border-blue-500/20'
             }`}
           >
             <div className="flex items-start gap-2">
-              {insight.type === 'positive' ? <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" /> :
-               insight.type === 'warning' ? <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5" /> :
-               <Lightbulb className="h-4 w-4 text-blue-600 mt-0.5" />}
+              {insight.type === 'positive' ? <CheckCircle className="h-4 w-4 text-green-400 mt-0.5" /> :
+               insight.type === 'warning' ? <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5" /> :
+               <Lightbulb className="h-4 w-4 text-blue-400 mt-0.5" />}
               <p className={`text-sm ${
-                insight.type === 'positive' ? 'text-green-800' :
-                insight.type === 'warning' ? 'text-amber-800' :
-                'text-blue-800'
+                insight.type === 'positive' ? 'text-green-300' :
+                insight.type === 'warning' ? 'text-amber-300' :
+                'text-blue-300'
               }`}>
                 {insight.message}
               </p>
@@ -236,7 +236,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
           </div>
         ))}
         {(!metrics?.insights || metrics.insights.length === 0) && (
-          <p className="text-muted-foreground text-sm">No specific recommendations at this time.</p>
+          <p className="text-card-foreground/70 text-sm">No specific recommendations at this time.</p>
         )}
       </div>
     </div>
