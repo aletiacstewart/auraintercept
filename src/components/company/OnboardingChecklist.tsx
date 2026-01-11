@@ -256,7 +256,7 @@ export function OnboardingChecklist() {
         </div>
         <Progress value={progress} className="mt-4" />
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="space-y-1 pt-2">
         {CHECKLIST_ITEMS.map((item) => {
           const isItemComplete = onboardingData && item.checkComplete(onboardingData);
           const Icon = item.icon;
@@ -265,14 +265,14 @@ export function OnboardingChecklist() {
             <div
               key={item.id}
               className={cn(
-                'flex items-center gap-4 p-3 rounded-lg transition-colors cursor-pointer hover:bg-muted/50',
+                'flex items-center gap-3 p-2 rounded-lg transition-colors cursor-pointer hover:bg-muted/50',
                 isItemComplete ? 'bg-green-500/5' : 'bg-muted/30'
               )}
               onClick={() => !isItemComplete && navigate(item.href)}
             >
               <div
                 className={cn(
-                  'w-10 h-10 rounded-full flex items-center justify-center shrink-0',
+                  'w-7 h-7 rounded-full flex items-center justify-center shrink-0',
                   isItemComplete
                     ? 'bg-green-500 text-white'
                     : item.priority === 'required'
@@ -281,28 +281,26 @@ export function OnboardingChecklist() {
                 )}
               >
                 {isItemComplete ? (
-                  <Check className="w-5 h-5" />
+                  <Check className="w-3.5 h-3.5" />
                 ) : (
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-3.5 h-3.5" />
                 )}
               </div>
               <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                  <p className={cn('font-medium', isItemComplete && 'text-white/50 line-through')}>
+                <div className="flex items-center gap-2">
+                  <p className={cn('text-sm font-medium', isItemComplete && 'text-white/50 line-through')}>
                     {item.title}
                   </p>
                   {item.priority === 'required' && !isItemComplete && (
-                    <Badge variant="outline" className="text-xs shrink-0">
+                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0">
                       Required
                     </Badge>
                   )}
                 </div>
-                <p className="text-sm text-white/70 truncate">{item.description}</p>
+                <p className="text-xs text-white/70 truncate">{item.description}</p>
               </div>
               {!isItemComplete && (
-                <Button size="sm" variant="ghost" className="shrink-0">
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
+                <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
               )}
             </div>
           );
