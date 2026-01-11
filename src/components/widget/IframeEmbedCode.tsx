@@ -32,7 +32,7 @@ export const IframeEmbedCode = ({ companySlug }: IframeEmbedCodeProps) => {
     <div className="space-y-2">
       <Label>Iframe Embed (WordPress / Wix / Squarespace)</Label>
       <div className="relative">
-        <pre className="bg-muted p-4 rounded-lg text-xs overflow-x-auto font-mono whitespace-pre-wrap">
+        <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto font-mono whitespace-pre-wrap border border-slate-700">
           {iframeCode}
         </pre>
         <Button

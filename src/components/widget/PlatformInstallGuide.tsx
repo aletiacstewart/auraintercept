@@ -195,7 +195,7 @@ ${iframeCode}`,
           <div className="space-y-2">
             <h5 className="text-sm font-medium">Code to paste:</h5>
             <div className="relative">
-              <pre className="bg-background p-4 rounded-lg text-xs overflow-x-auto font-mono whitespace-pre-wrap border">
+              <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto font-mono whitespace-pre-wrap border border-slate-700">
                 {platformCode.code}
               </pre>
               <Button
@@ -236,7 +236,7 @@ ${iframeCode}`,
               <strong>Recommended:</strong> Works on all platforms. Displays as a floating chat window.
             </p>
             <div className="relative">
-              <pre className="bg-muted p-4 rounded-lg text-xs overflow-x-auto font-mono whitespace-pre-wrap">
+              <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto font-mono whitespace-pre-wrap border border-slate-700">
                 {getIframeCode()}
               </pre>
               <Button
@@ -255,7 +255,7 @@ ${iframeCode}`,
               <strong>Advanced:</strong> Creates a floating chat button with more customization options.
             </p>
             <div className="relative">
-              <pre className="bg-muted p-4 rounded-lg text-xs overflow-x-auto font-mono">
+              <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-x-auto font-mono border border-slate-700">
                 {getScriptCode()}
               </pre>
               <Button
@@ -274,7 +274,7 @@ ${iframeCode}`,
               <strong>Simple:</strong> Share as a direct link in emails, QR codes, or social media.
             </p>
             <div className="flex gap-2">
-              <div className="flex-1 bg-muted p-3 rounded-lg font-mono text-sm truncate">
+              <div className="flex-1 bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm truncate border border-slate-700">
                 {directLink}
               </div>
               <Button

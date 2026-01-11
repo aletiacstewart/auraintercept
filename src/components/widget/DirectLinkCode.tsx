@@ -26,7 +26,7 @@ export const DirectLinkCode = ({ companySlug }: DirectLinkCodeProps) => {
     <div className="space-y-2">
       <Label>Direct Link (QR Codes / Marketing)</Label>
       <div className="flex gap-2">
-        <div className="flex-1 bg-muted p-3 rounded-lg font-mono text-sm truncate">
+        <div className="flex-1 bg-slate-900 text-slate-100 p-3 rounded-lg font-mono text-sm truncate border border-slate-700">
           {directLink}
         </div>
         <Button
