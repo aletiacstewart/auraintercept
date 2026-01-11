@@ -22,29 +22,29 @@ export function PublicFooter() {
           </div>
           
           <div>
-            <h4 className="font-semibold mb-4">Product</h4>
-            <ul className="space-y-2 text-sm text-white/70">
-              <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-white transition-colors">Start Trial</button></li>
-              <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-white transition-colors">Company Subscription</button></li>
-              <li><button onClick={() => navigate('/customer-auth')} className="hover:text-white transition-colors">Customer Portal</button></li>
+            <h4 className="font-semibold mb-4 text-card-foreground">Product</h4>
+            <ul className="space-y-2 text-sm text-card-foreground/70">
+              <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-card-foreground transition-colors">Start Trial</button></li>
+              <li><button onClick={() => navigate('/auth?mode=company')} className="hover:text-card-foreground transition-colors">Company Subscription</button></li>
+              <li><button onClick={() => navigate('/customer-auth')} className="hover:text-card-foreground transition-colors">Customer Portal</button></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-semibold mb-4">Company</h4>
-            <ul className="space-y-2 text-sm text-white/70">
-              <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+            <h4 className="font-semibold mb-4 text-card-foreground">Company</h4>
+            <ul className="space-y-2 text-sm text-card-foreground/70">
+              <li><a href="#" className="hover:text-card-foreground transition-colors">About</a></li>
+              <li><a href="#" className="hover:text-card-foreground transition-colors">Blog</a></li>
+              <li><a href="#" className="hover:text-card-foreground transition-colors">Careers</a></li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
-            <ul className="space-y-2 text-sm text-white/70">
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+            <h4 className="font-semibold mb-4 text-card-foreground">Legal</h4>
+            <ul className="space-y-2 text-sm text-card-foreground/70">
+              <li><a href="#" className="hover:text-card-foreground transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-card-foreground transition-colors">Terms of Service</a></li>
+              <li><a href="#" className="hover:text-card-foreground transition-colors">Contact</a></li>
             </ul>
           </div>
         </div>
