@@ -17,14 +17,20 @@ interface ReviewFormProps {
   onCancel?: () => void;
   isLoading?: boolean;
   reviewLinks?: { platform: string; url: string }[];
+  initialData?: {
+    rating: number;
+    comment: string;
+    customerName: string;
+    customerPhone: string;
+  };
 }
 
-export const ReviewForm = ({ onSubmit, onCancel, isLoading, reviewLinks = [] }: ReviewFormProps) => {
-  const [rating, setRating] = useState<number>(0);
+export const ReviewForm = ({ onSubmit, onCancel, isLoading, reviewLinks = [], initialData }: ReviewFormProps) => {
+  const [rating, setRating] = useState<number>(initialData?.rating || 0);
   const [hoveredRating, setHoveredRating] = useState<number>(0);
-  const [comment, setComment] = useState('');
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
+  const [comment, setComment] = useState(initialData?.comment || '');
+  const [customerName, setCustomerName] = useState(initialData?.customerName || '');
+  const [customerPhone, setCustomerPhone] = useState(initialData?.customerPhone || '');
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
 
   const platformOptions = [

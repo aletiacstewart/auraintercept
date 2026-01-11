@@ -49,6 +49,7 @@ const CUSTOMER_ENGAGEMENT_AGENTS = [
 ];
 
 // Quick actions matching customer-facing widget/public chat features
+// Note: Review is hidden from customers - it's only shown after 4+ star feedback via auto-handoff
 const QUICK_ACTIONS = [
   { id: 'schedule', label: 'Book Appointment', icon: Calendar, message: "I'd like to request an appointment" },
   { id: 'emergency', label: 'Emergency', icon: AlertTriangle, message: "I have an urgent emergency situation", variant: 'destructive' as const },
@@ -58,7 +59,6 @@ const QUICK_ACTIONS = [
   { id: 'track', label: 'Track', icon: MapPin, message: "I want to track my appointment status" },
   { id: 'billing', label: 'Billing', icon: DollarSign, message: "I need to look up my billing information" },
   { id: 'feedback', label: 'Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
-  { id: 'review', label: 'Review', icon: ThumbsUp, message: "I'd like to leave a review for my recent service" },
 ];
 
 interface Service {
@@ -125,6 +125,13 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   const [showTrackForm, setShowTrackForm] = useState(false);
   const [showBillingForm, setShowBillingForm] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
+  // Pre-populated review data from high-rating feedback handoff
+  const [reviewPrePopData, setReviewPrePopData] = useState<{
+    rating: number;
+    comment: string;
+    customerName: string;
+    customerPhone: string;
+  } | null>(null);
   const [voiceTestMode, setVoiceTestMode] = useState(false);
   const [voiceMessages, setVoiceMessages] = useState<Array<{ role: 'user' | 'assistant'; text: string; id: string }>>([]);
   const voiceChatScrollRef = useRef<HTMLDivElement>(null);
@@ -368,10 +375,27 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
       serviceDate: feedback.serviceDate,
     });
     await sendMessage(feedbackMessage);
+    
+    // Auto-handoff to Review agent for 4+ star feedback
+    if (feedback.rating >= 4 && reviewLinks.length > 0) {
+      // Pre-populate review form with feedback data
+      setReviewPrePopData({
+        rating: feedback.rating,
+        comment: feedback.note,
+        customerName: feedback.customerName,
+        customerPhone: feedback.customerPhone,
+      });
+      // Small delay to let feedback message display, then show review form
+      setTimeout(() => {
+        setShowReviewForm(true);
+        setActiveFormType('review');
+      }, 500);
+    }
   };
 
   const handleReviewSubmit = async (review: { rating: number; comment: string; customerName: string; customerPhone: string; selectedPlatforms: string[] }) => {
     setShowReviewForm(false);
+    setReviewPrePopData(null);
     const reviewMessage = formatReviewMessage({
       rating: review.rating,
       comment: review.comment,
@@ -566,9 +590,14 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
               {showReviewForm && (
                 <ReviewForm
                   onSubmit={handleReviewSubmit}
-                  onCancel={handleHome}
+                  onCancel={() => {
+                    setShowReviewForm(false);
+                    setReviewPrePopData(null);
+                    handleHome();
+                  }}
                   isLoading={isLoading}
                   reviewLinks={reviewLinks}
+                  initialData={reviewPrePopData || undefined}
                 />
               )}
 
