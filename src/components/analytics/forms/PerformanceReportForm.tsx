@@ -422,14 +422,14 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
   );
 
   return (
-    <Card className="border-cyan-200 bg-cyan-50/50">
+    <Card className="border-white/10 bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-            <BarChart3 className="h-5 w-5 text-cyan-600" />
+          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
+            <BarChart3 className="h-5 w-5 text-secondary" />
             Performance Report
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel}>
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground/70 hover:text-card-foreground">
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -437,9 +437,9 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
       <CardContent className="space-y-4">
         {/* Report Type Selector */}
         <div className="space-y-2">
-          <Label className="text-slate-700">Report View</Label>
+          <Label className="text-card-foreground/70">Report View</Label>
           <Select value={reportView} onValueChange={(v) => setReportView(v as ReportView)}>
-            <SelectTrigger className="bg-white text-slate-900">
+            <SelectTrigger className="bg-white text-slate-900 border-white/20">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white z-50">
@@ -455,12 +455,12 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-slate-700">
+            <Label className="flex items-center gap-1 text-card-foreground/70">
               <Calendar className="h-3 w-3" />
               Date Range
             </Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="bg-white text-slate-900">
+              <SelectTrigger className="bg-white text-slate-900 border-white/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-white z-50">
@@ -472,9 +472,9 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-slate-700">Compare To</Label>
+            <Label className="text-card-foreground/70">Compare To</Label>
             <Select value={compareRange} onValueChange={setCompareRange}>
-              <SelectTrigger className="bg-white text-slate-900">
+              <SelectTrigger className="bg-white text-slate-900 border-white/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-white z-50">
@@ -487,12 +487,12 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
 
         {/* Department Filter */}
         <div className="space-y-2">
-          <Label className="flex items-center gap-1 text-slate-700">
+          <Label className="flex items-center gap-1 text-card-foreground/70">
             <Users className="h-3 w-3" />
             Department / Team
           </Label>
           <Select value={department} onValueChange={setDepartment}>
-            <SelectTrigger className="bg-white text-slate-900">
+            <SelectTrigger className="bg-white text-slate-900 border-white/20">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white z-50">

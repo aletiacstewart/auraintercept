@@ -243,14 +243,14 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
   );
 
   return (
-    <Card className="border-purple-200 bg-purple-50/50">
+    <Card className="border-white/10 bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-            <Lightbulb className="h-5 w-5 text-purple-600" />
+          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
+            <Lightbulb className="h-5 w-5 text-secondary" />
             Business Insights
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel}>
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground/70 hover:text-card-foreground">
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -259,9 +259,9 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="text-slate-700">Date Range</Label>
+            <Label className="text-card-foreground/70">Date Range</Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="bg-white text-slate-900">
+              <SelectTrigger className="bg-white text-slate-900 border-white/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -273,9 +273,9 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-slate-700">View</Label>
+            <Label className="text-card-foreground/70">View</Label>
             <Select value={insightView} onValueChange={(v) => setInsightView(v as InsightView)}>
-              <SelectTrigger className="bg-white text-slate-900">
+              <SelectTrigger className="bg-white text-slate-900 border-white/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

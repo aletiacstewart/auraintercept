@@ -1,8 +1,6 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { PerformanceReportForm } from '@/components/analytics/forms/PerformanceReportForm';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function PerformanceReportPage() {
@@ -21,22 +19,10 @@ export default function PerformanceReportPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center">
-            <TrendingUp className="w-5 h-5 text-secondary" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold text-white tracking-[0.05em]">Performance Report</h1>
-            <p className="text-white/70">View team and individual performance metrics</p>
-          </div>
-        </div>
-
-        <PerformanceReportForm 
-          companyId={companyId} 
-          onCancel={() => navigate('/dashboard/ai-consoles/business-management')}
-        />
-      </div>
+      <PerformanceReportForm 
+        companyId={companyId} 
+        onCancel={() => navigate('/dashboard/ai-consoles/business-management')}
+      />
     </DashboardLayout>
   );
 }
