@@ -70,7 +70,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Scheduling Agent',
     description: 'Handles appointment scheduling, rescheduling, and cancellations with intelligent slot management.',
     category: 'customer_engagement',
-    phase: 1,
+    phase: 2,
     icon: Users,
     color: 'text-blue-500',
     capabilities: [
@@ -92,7 +92,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Follow-up Agent',
     description: 'Manages post-service follow-ups, satisfaction checks, and feedback collection.',
     category: 'customer_engagement',
-    phase: 1,
+    phase: 3,
     icon: Users,
     color: 'text-blue-500',
     capabilities: [
@@ -109,10 +109,10 @@ const AGENT_DEFINITIONS: Record<string, {
     ]
   },
   review: {
-    name: 'Social Media Review Agent',
+    name: 'Review Agent',
     description: 'Collects and manages customer reviews, handles responses, and monitors reputation.',
     category: 'customer_engagement',
-    phase: 1,
+    phase: 4,
     icon: Users,
     color: 'text-blue-500',
     capabilities: [
