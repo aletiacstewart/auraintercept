@@ -119,7 +119,7 @@ export default function TechnicianDashboard() {
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground text-sm mt-0.5">Good {getGreeting()}! Here's your day</p>
+          <p className="text-white/70 text-sm mt-0.5">Good {getGreeting()}! Here's your day</p>
         </div>
 
         {/* Stats Grid - Compact for mobile */}
@@ -156,7 +156,7 @@ export default function TechnicianDashboard() {
                   <Badge className={cn("border-0 font-medium", currentStyles?.bg, currentStyles?.text)}>
                     {currentStyles?.label}
                   </Badge>
-                  {currentJob.estimated_arrival_minutes && currentJob.status === 'en_route' && (
+                {currentJob.estimated_arrival_minutes && currentJob.status === 'en_route' && (
                     <span className="text-xs text-accent">ETA: {currentJob.estimated_arrival_minutes} min</span>
                   )}
                 </div>
@@ -258,7 +258,7 @@ export default function TechnicianDashboard() {
                 <CheckCircle2 className="h-7 w-7 text-white/70" />
               </div>
               <p className="font-medium">No Active Jobs</p>
-              <p className="text-sm text-muted-foreground mt-1">You're all caught up!</p>
+              <p className="text-sm text-white/70 mt-1">You're all caught up!</p>
             </CardContent>
           </Card>
         )}
@@ -282,7 +282,7 @@ export default function TechnicianDashboard() {
         )}
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 overflow-hidden">
           <Button
             variant="outline"
             className="h-16 flex-col gap-2 border-border/50 hover:border-primary/50"

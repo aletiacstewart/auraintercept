@@ -113,7 +113,7 @@ export const FeedbackForm = ({ onSubmit, onCancel, isLoading, reviewLinks }: Fee
 
         {/* Star Rating */}
         <div>
-          <label className="text-xs text-muted-foreground">Rate your experience</label>
+          <label className="text-xs text-slate-600">Rate your experience</label>
           <div className="flex gap-0.5 justify-center">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -139,7 +139,7 @@ export const FeedbackForm = ({ onSubmit, onCancel, isLoading, reviewLinks }: Fee
 
         {/* Sentiment Buttons */}
         <div>
-          <label className="text-xs text-muted-foreground">How was your experience?</label>
+          <label className="text-xs text-slate-600">How was your experience?</label>
           <div className="grid grid-cols-3 gap-1 mt-1">
             {sentimentOptions.map((option) => (
               <button
@@ -180,7 +180,7 @@ export const FeedbackForm = ({ onSubmit, onCancel, isLoading, reviewLinks }: Fee
 
         {reviewLinks && reviewLinks.length > 0 && sentiment === 'positive' && (
           <div className="pt-1 border-t">
-            <p className="text-[10px] text-muted-foreground mb-1">Love our service? Share it!</p>
+            <p className="text-[10px] text-slate-500 mb-1">Love our service? Share it!</p>
             <div className="flex flex-wrap gap-1">
               {reviewLinks.map((link) => (
                 <Button

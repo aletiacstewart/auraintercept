@@ -343,7 +343,7 @@ export default function PublicChat() {
                   </p>
                   
                   {/* Quick Actions */}
-                  <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto">
+                  <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto overflow-hidden">
                     {QUICK_ACTIONS.filter(a => a.id !== 'emergency').map((action) => (
                       <Button 
                         key={action.id}
