@@ -152,7 +152,7 @@ const communicationChannels = [{
   gradientClass: 'from-[hsl(var(--channel-voice))] to-[hsl(348,83%,50%)]'
 }, {
   icon: MessageSquare,
-  title: 'Aura SMS/Text',
+  title: 'Aura SMS/Text AI',
   description: 'Two-way text messaging for appointment reminders and quick updates.',
   color: 'bg-channel-sms',
   gradientClass: 'from-[hsl(var(--channel-sms))] to-[hsl(142,71%,35%)]'
