@@ -109,7 +109,7 @@ const agentConsoles = [{
   gradient: 'from-green-500 to-emerald-500',
   iconBg: 'bg-green-500/10',
   iconColor: 'text-green-500',
-  features: ['One-tap job acceptance', 'Real-time GPS navigation', 'ETA updates with notifications', 'Before/after photo capture', 'Job status tracking', 'Dispatch communication']
+  features: ['One-tap job acceptance', 'Real-time GPS navigation', 'ETA updates with notifications', 'Onsite Invoice Generation', 'Job status tracking', 'Dispatch communication']
 }];
 const platformFeatures = [{
   icon: MessageSquare,
