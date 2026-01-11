@@ -13,10 +13,14 @@ import {
   RotateCcw,
   Sparkles,
   TrendingUp,
-  CheckCircle2
+  CheckCircle2,
+  Truck,
+  MessageSquare,
+  Star,
+  BarChart3
 } from "lucide-react";
-import type { Scores, ScoreCategory, AgentRecommendation } from "./types";
-import { AGENT_RECOMMENDATIONS, CATEGORY_LABELS } from "./types";
+import type { Scores, ScoreCategory } from "./types";
+import { AGENT_RECOMMENDATIONS, CATEGORY_LABELS, CATEGORY_MAX_SCORES } from "./types";
 import { cn } from "@/lib/utils";
 
 interface AuditResultsProps {
@@ -28,11 +32,15 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Headphones,
   Calendar,
   Users,
-  BookOpen
+  BookOpen,
+  Truck,
+  MessageSquare,
+  Star,
+  BarChart3
 };
 
 export function AuditResults({ scores, onRestart }: AuditResultsProps) {
-  const totalScore = scores.FDA + scores.SA + scores.RA + scores.KOA;
+  const totalScore = Object.values(scores).reduce((sum, val) => sum + val, 0);
   const hoursSaved = Math.round(totalScore * 0.5);
   
   // Find top priority agent
@@ -45,7 +53,8 @@ export function AuditResults({ scores, onRestart }: AuditResultsProps) {
   const topAgent = scoredAgents[0];
   const qualifiedAgents = scoredAgents.filter(a => a.meetsThreshold);
   
-  const maxPossibleScore = 105; // Max possible: 45 FDA + 20 SA + 35 RA + 25 KOA
+  // Calculate max possible score from all categories
+  const maxPossibleScore = Object.values(CATEGORY_MAX_SCORES).reduce((sum, val) => sum + val, 0);
   const overallPercentage = Math.round((totalScore / maxPossibleScore) * 100);
 
   return (
@@ -142,7 +151,7 @@ export function AuditResults({ scores, onRestart }: AuditResultsProps) {
         <CardContent className="space-y-6">
           {(Object.keys(scores) as ScoreCategory[]).map((category) => {
             const agent = AGENT_RECOMMENDATIONS.find(a => a.category === category);
-            const maxScore = category === 'FDA' ? 45 : category === 'RA' ? 35 : category === 'KOA' ? 25 : 20;
+            const maxScore = CATEGORY_MAX_SCORES[category];
             const percentage = Math.round((scores[category] / maxScore) * 100);
             const meetsThreshold = agent && scores[category] >= agent.threshold;
             
