@@ -384,8 +384,17 @@ export default function Index() {
             </p>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-10">
             {agentCategories.map(category => <div key={category.id}>
+                {/* Category Subtitle */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${category.color} flex items-center justify-center`}>
+                    <category.icon className="w-4 h-4 text-white" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">{category.name}</h3>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+                
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {category.agents.map((agent, index) => <Card key={agent.name} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 animate-fade-in" style={{
                 animationDelay: `${index * 50}ms`
