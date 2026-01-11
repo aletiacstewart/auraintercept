@@ -359,7 +359,7 @@ function AgentCard({
               <Icon className={`h-5 w-5 ${categoryInfo?.color || 'text-primary'}`} />
             </div>
             <div>
-              <CardTitle className="text-lg">{agent.name}</CardTitle>
+              <CardTitle className="text-lg tracking-wide">{agent.name}</CardTitle>
               <CardDescription className="text-xs text-white/70">
                 {PHASE_LABELS[agent.phase]}
               </CardDescription>
