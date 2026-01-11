@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2, User, X, LogIn, UserPlus } from 'lucide-react';
@@ -24,6 +25,7 @@ export function EmbedAuthPrompt({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [termsAgreed, setTermsAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -209,7 +211,41 @@ export function EmbedAuthPrompt({
           />
         </div>
 
-        <Button type="submit" className="w-full h-9" disabled={isLoading}>
+        {mode === 'signup' && (
+          <div className="flex items-start space-x-2">
+            <Checkbox 
+              id="embed-terms" 
+              checked={termsAgreed} 
+              onCheckedChange={(checked) => setTermsAgreed(checked === true)}
+              className="mt-0.5"
+            />
+            <label 
+              htmlFor="embed-terms" 
+              className="text-xs font-normal text-muted-foreground leading-relaxed cursor-pointer"
+            >
+              I agree to the{' '}
+              <a 
+                href="/terms-of-service" 
+                target="_blank"
+                className="text-primary hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Terms of Service
+              </a>
+              {' '}and{' '}
+              <a 
+                href="/privacy-policy" 
+                target="_blank"
+                className="text-primary hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Privacy Policy
+              </a>
+            </label>
+          </div>
+        )}
+
+        <Button type="submit" className="w-full h-9" disabled={isLoading || (mode === 'signup' && !termsAgreed)}>
           {isLoading ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
