@@ -34,6 +34,11 @@ import {
   BusinessManagementConsole,
   MarketingSalesConsole,
   AnalyticsConsole,
+  NewLeadPage,
+  PerformanceReportPage,
+  BusinessInsightsPage,
+  RevenueAnalysisPage,
+  DemandForecastPage,
 } from "./pages/ai-consoles";
 import AIAgentsHub from "./pages/AIAgentsHub";
 import AgentDetailPage from "./pages/AgentDetailPage";
@@ -120,6 +125,11 @@ const App = () => (
             <Route path="/dashboard/ai-consoles/business-management" element={<BusinessManagementConsole />} />
             <Route path="/dashboard/ai-consoles/marketing-sales" element={<MarketingSalesConsole />} />
             <Route path="/dashboard/ai-consoles/analytics" element={<AnalyticsConsole />} />
+            <Route path="/dashboard/ai-consoles/new-lead" element={<NewLeadPage />} />
+            <Route path="/dashboard/ai-consoles/performance-report" element={<PerformanceReportPage />} />
+            <Route path="/dashboard/ai-consoles/business-insights" element={<BusinessInsightsPage />} />
+            <Route path="/dashboard/ai-consoles/revenue-analysis" element={<RevenueAnalysisPage />} />
+            <Route path="/dashboard/ai-consoles/demand-forecast" element={<DemandForecastPage />} />
             <Route path="/dashboard/ai-agents" element={<AIAgentsHub />} />
             <Route path="/dashboard/ai-agents/:agentId" element={<AgentDetailPage />} />
             <Route path="/dashboard/widget" element={<Widget />} />
