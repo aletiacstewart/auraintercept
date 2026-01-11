@@ -158,7 +158,7 @@ const communicationChannels = [{
   gradientClass: 'from-[hsl(var(--channel-sms))] to-[hsl(142,71%,35%)]'
 }, {
   icon: Mail,
-  title: 'Aura Email',
+  title: 'Aura Email AI',
   description: 'Automated email campaigns, confirmations, and digest reports.',
   color: 'bg-channel-email',
   gradientClass: 'from-[hsl(var(--channel-email))] to-[hsl(199,89%,38%)]'
