@@ -30,6 +30,34 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
+    // Security: Validate company_id is a valid UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!company_id || !uuidRegex.test(company_id)) {
+      return new Response(JSON.stringify({ error: 'Invalid company_id format' }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Security: Verify the company exists before proceeding
+    const { data: company, error: companyError } = await supabase
+      .from('companies')
+      .select('id, name')
+      .eq('id', company_id)
+      .single();
+
+    if (companyError || !company) {
+      console.error('Invalid company_id attempted:', company_id);
+      return new Response(JSON.stringify({ error: 'Company not found' }), {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Log AI agent usage for audit trail
+    const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || 'unknown';
+    console.log(`AI Agent request: company=${company.name}, ip=${clientIP}, timestamp=${new Date().toISOString()}`);
+
     // Fetch knowledge base for RAG
     const knowledgeContext = await fetchKnowledgeBase(supabase, company_id);
     const systemPrompt = buildSystemPrompt(knowledgeContext);

@@ -15,12 +15,47 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
+    // Security: Get credentials from environment secrets instead of hardcoding
+    const adminEmail = Deno.env.get('PLATFORM_ADMIN_EMAIL');
+    const adminPassword = Deno.env.get('PLATFORM_ADMIN_PASSWORD');
+    
+    if (!adminEmail || !adminPassword) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Platform admin credentials not configured. Set PLATFORM_ADMIN_EMAIL and PLATFORM_ADMIN_PASSWORD secrets.'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Security: Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(adminEmail)) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Invalid admin email format'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Security: Validate password strength
+    if (adminPassword.length < 12) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Admin password must be at least 12 characters'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+    
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
       auth: { autoRefreshToken: false, persistSession: false }
     });
 
-    const adminEmail = 'aibotcompany.ai@gmail.com';
-    const adminPassword = 'aibotcompany*!';
     const companyName = 'Aura Intercept Platform';
     const companySlug = 'aura-intercept';
 
@@ -175,8 +210,8 @@ serve(async (req) => {
       success: true,
       message: 'Platform admin account created successfully',
       userId,
-      companyId: company.id,
-      email: adminEmail
+      companyId: company.id
+      // Note: Credentials are not returned for security
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
