@@ -40,7 +40,7 @@ export function PublicFooter() {
           <div>
             <h4 className="font-semibold mb-4">Legal</h4>
             <ul className="space-y-2 text-sm text-white/70">
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><button onClick={() => navigate('/privacy-policy')} className="hover:text-white transition-colors">Privacy Policy</button></li>
               <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
             </ul>

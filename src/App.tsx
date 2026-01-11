@@ -64,6 +64,7 @@ import FieldOperations from "./pages/FieldOperations";
 import BusinessOperations from "./pages/BusinessOperations";
 import FieldOpsInstall from "./pages/FieldOpsInstall";
 import OpportunityAudit from "./pages/OpportunityAudit";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
 
@@ -98,6 +99,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/audit" element={<OpportunityAudit />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
             <Route path="/customer-auth" element={<CustomerAuth />} />
             
