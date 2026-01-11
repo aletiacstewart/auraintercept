@@ -12,12 +12,14 @@ import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { BusinessQuoteForm, BusinessQuoteData } from './forms/BusinessQuoteForm';
 import { InvoiceForm, InvoiceFormData } from './forms/InvoiceForm';
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
+import { PerformanceReportForm } from '@/components/analytics/forms/PerformanceReportForm';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   FileText, 
   Receipt, 
   Briefcase,
-  UserPlus
+  UserPlus,
+  BarChart3
 } from 'lucide-react';
 
 // Tab configuration - just Home for this console
@@ -30,6 +32,7 @@ const QUICK_ACTIONS = [
   { id: 'quote', label: 'Create Quote', icon: FileText, message: 'I need to create a new quote for a customer' },
   { id: 'invoice', label: 'Generate Invoice', icon: Receipt, message: 'I need to generate an invoice' },
   { id: 'lead', label: 'New Lead', icon: UserPlus, message: 'I need to add a new lead' },
+  { id: 'performance', label: 'Performance Report', icon: BarChart3, message: 'Show me team performance insights' },
 ];
 
 interface BusinessOpsAgentConsoleProps {
@@ -44,12 +47,13 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [lastAgent, setLastAgent] = useState<string>('quoting');
-  const [activeFormType, setActiveFormType] = useState<'quote' | 'invoice' | 'lead' | null>(null);
+  const [activeFormType, setActiveFormType] = useState<'quote' | 'invoice' | 'lead' | 'performance' | null>(null);
   
   // Form visibility states
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
+  const [showPerformanceForm, setShowPerformanceForm] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -85,6 +89,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setShowQuoteForm(false);
     setShowInvoiceForm(false);
     setShowLeadForm(false);
+    setShowPerformanceForm(false);
     setActiveFormType(null);
   };
 
@@ -115,6 +120,12 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       hideAllForms();
       setShowLeadForm(true);
       setActiveFormType('lead');
+      return;
+    }
+    if (actionId === 'performance') {
+      hideAllForms();
+      setShowPerformanceForm(true);
+      setActiveFormType('performance');
       return;
     }
     
@@ -158,7 +169,13 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     await sendMessage(message);
   };
 
-  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm;
+  const handlePerformanceAnalyze = async (data: Record<string, unknown>) => {
+    hideAllForms();
+    const message = `Analyze this performance data and provide recommendations: ${JSON.stringify(data)}`;
+    await sendMessage(message);
+  };
+
+  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showPerformanceForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -167,6 +184,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     if (activeFormType === 'quote') return 'Quoting';
     if (activeFormType === 'invoice') return 'Invoicing';
     if (activeFormType === 'lead') return 'Lead Capture';
+    if (activeFormType === 'performance') return 'Performance';
     if (messages.length > 0) return agentStyle.label; // Show agent label during chat
     return 'Home';
   };
@@ -232,6 +250,15 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
                   onSuccess={handleLeadSuccess}
+                />
+              )}
+              
+              {showPerformanceForm && effectiveCompanyId && (
+                <PerformanceReportForm
+                  companyId={effectiveCompanyId}
+                  onCancel={handleHome}
+                  onAnalyze={handlePerformanceAnalyze}
+                  mode="ai"
                 />
               )}
 
