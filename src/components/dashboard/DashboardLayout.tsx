@@ -108,7 +108,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Business Consoles & Apps',
     items: [
-      { label: 'Business Management', icon: Briefcase, href: '/dashboard/ai-consoles/business-management', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'] },
+      { label: 'Business Management Ops', icon: Briefcase, href: '/dashboard/ai-consoles/business-management', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'] },
       { label: 'New Lead', icon: Users, href: '/dashboard/ai-consoles/new-lead', roles: ['platform_admin', 'company_admin'] },
       { label: 'Performance Report', icon: BarChart3, href: '/dashboard/ai-consoles/performance-report', roles: ['platform_admin', 'company_admin'] },
       { label: 'Business Insights', icon: Cpu, href: '/dashboard/ai-consoles/business-insights', roles: ['platform_admin', 'company_admin'] },

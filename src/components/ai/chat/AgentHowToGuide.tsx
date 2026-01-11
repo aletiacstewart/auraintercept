@@ -33,7 +33,8 @@ import {
   Download,
   Smartphone,
   Bell,
-  AlertCircle
+  AlertCircle,
+  Lightbulb
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -311,8 +312,8 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
   },
 ];
 
-// Business Operations Guides
-const BUSINESS_OPS_GUIDES: AgentGuide[] = [
+// Business Operations Guides - Base guides for all roles
+const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
   {
     id: 'quote',
     label: 'Create Quote',
@@ -340,8 +341,77 @@ const BUSINESS_OPS_GUIDES: AgentGuide[] = [
     tips: ['Convert quotes to invoices easily', 'Set up recurring invoices for regulars']
   },
   {
+    id: 'lead',
+    label: 'New Lead',
+    icon: UserPlus,
+    description: 'Add and track new sales leads',
+    steps: [
+      { step: 1, title: 'Enter Details', description: 'Add lead contact information' },
+      { step: 2, title: 'Set Source', description: 'Tag where the lead came from' },
+      { step: 3, title: 'Assign Follow-up', description: 'Schedule initial contact' },
+      { step: 4, title: 'Track Progress', description: 'Update lead status as they progress' },
+    ],
+    tips: ['Follow up within 24 hours', 'Log all interactions']
+  },
+  {
+    id: 'performance',
+    label: 'Performance Report',
+    icon: BarChart3,
+    description: 'Analyze team and business performance',
+    steps: [
+      { step: 1, title: 'Select Period', description: 'Choose date range for analysis' },
+      { step: 2, title: 'Choose Metrics', description: 'Select KPIs to include' },
+      { step: 3, title: 'Generate Report', description: 'Create comprehensive report' },
+      { step: 4, title: 'Review Insights', description: 'Analyze trends and patterns' },
+    ],
+    tips: ['Compare to previous periods', 'Set up weekly automated reports']
+  },
+  {
+    id: 'insights',
+    label: 'Business Insights',
+    icon: Lightbulb,
+    description: 'Get AI-powered business recommendations',
+    steps: [
+      { step: 1, title: 'Select Focus', description: 'Choose area to analyze' },
+      { step: 2, title: 'Set Parameters', description: 'Configure analysis settings' },
+      { step: 3, title: 'Generate Insights', description: 'AI analyzes your data' },
+      { step: 4, title: 'Review Recommendations', description: 'Act on actionable insights' },
+    ],
+    tips: ['Review insights weekly', 'Implement top recommendations first']
+  },
+  {
+    id: 'revenue',
+    label: 'Revenue Analysis',
+    icon: DollarSign,
+    description: 'Deep dive into revenue streams',
+    steps: [
+      { step: 1, title: 'View Breakdown', description: 'See revenue by service type' },
+      { step: 2, title: 'Analyze Trends', description: 'Track month-over-month growth' },
+      { step: 3, title: 'Identify Top Performers', description: 'Find highest revenue services' },
+      { step: 4, title: 'Spot Opportunities', description: 'Discover growth areas' },
+    ],
+    tips: ['Track recurring vs one-time revenue', 'Monitor seasonal patterns']
+  },
+  {
+    id: 'forecast',
+    label: 'Demand Forecast',
+    icon: TrendingUp,
+    description: 'Predict future business trends',
+    steps: [
+      { step: 1, title: 'Select Metric', description: 'Choose what to forecast' },
+      { step: 2, title: 'Set Timeframe', description: 'Define forecast period' },
+      { step: 3, title: 'View Predictions', description: 'See AI-generated forecasts' },
+      { step: 4, title: 'Plan Actions', description: 'Prepare for predicted trends' },
+    ],
+    tips: ['Consider seasonal factors', 'Update forecasts monthly']
+  },
+];
+
+// Platform admin only Business Ops guides
+const BUSINESS_OPS_ADMIN_GUIDES: AgentGuide[] = [
+  {
     id: 'inventory',
-    label: 'Check Inventory',
+    label: 'Inventory Search',
     icon: Package,
     description: 'View and manage inventory levels',
     steps: [
@@ -352,8 +422,8 @@ const BUSINESS_OPS_GUIDES: AgentGuide[] = [
     tips: ['Set minimum stock alerts', 'Track inventory usage per job']
   },
   {
-    id: 'warranty-check',
-    label: 'Warranty Check',
+    id: 'warranty',
+    label: 'Warranty Lookup',
     icon: Shield,
     description: 'Verify warranty status for products',
     steps: [
@@ -362,31 +432,6 @@ const BUSINESS_OPS_GUIDES: AgentGuide[] = [
       { step: 3, title: 'Check Claims', description: 'Review any previous claims' },
     ],
     tips: ['Keep warranty cards updated', 'Register products promptly']
-  },
-  {
-    id: 'warranty-claim',
-    label: 'File Warranty Claim',
-    icon: ClipboardList,
-    description: 'Submit warranty claims for defective items',
-    steps: [
-      { step: 1, title: 'Verify Coverage', description: 'Confirm product is under warranty' },
-      { step: 2, title: 'Document Issue', description: 'Describe the defect with photos' },
-      { step: 3, title: 'Submit Claim', description: 'File claim with manufacturer' },
-      { step: 4, title: 'Track Status', description: 'Monitor claim progress' },
-    ],
-    tips: ['Include clear photos of defects', 'Keep original receipts']
-  },
-  {
-    id: 'pricing',
-    label: 'Price Lookup',
-    icon: DollarSign,
-    description: 'Find service and product pricing',
-    steps: [
-      { step: 1, title: 'Search Service', description: 'Find service or product' },
-      { step: 2, title: 'View Pricing', description: 'See base price and options' },
-      { step: 3, title: 'Check Promotions', description: 'View active discounts' },
-    ],
-    tips: ['Check for seasonal pricing', 'Bundle services for discounts']
   },
 ];
 
@@ -661,12 +706,13 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
   },
 ];
 
-export type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics' | 'dispatch';
+export type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'businessops_admin' | 'marketing' | 'analytics' | 'dispatch';
 
 const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
   customer: CUSTOMER_ENGAGEMENT_GUIDES,
   fieldops: FIELD_OPS_GUIDES,
-  businessops: BUSINESS_OPS_GUIDES,
+  businessops: BUSINESS_OPS_BASE_GUIDES,
+  businessops_admin: [...BUSINESS_OPS_BASE_GUIDES, ...BUSINESS_OPS_ADMIN_GUIDES],
   marketing: MARKETING_SALES_GUIDES,
   analytics: ANALYTICS_GUIDES,
   dispatch: DISPATCH_FIELD_OPS_GUIDES,
@@ -675,7 +721,8 @@ const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
 const CONSOLE_TITLES: Record<ConsoleType, string> = {
   customer: 'How to use our AI agents',
   fieldops: 'How to use Technician-Field Ops Console and App',
-  businessops: 'How to use Business & Accounting AI',
+  businessops: 'How to use Business Management Console',
+  businessops_admin: 'How to use Business Management Console',
   marketing: 'How to use Marketing & Sales AI',
   analytics: 'How to use Analytics & Optimization AI',
   dispatch: 'How to use Dispatch-Field Ops Console',
