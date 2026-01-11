@@ -64,11 +64,11 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'admin', name: 'Admin Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
   // Marketing & Sales (Phase 4) - 1 unified campaign agent
   { type: 'campaign', name: 'Campaign Agent', category: 'marketing_sales', phase: 4, is_enabled: false, settings: {} },
-  // Analytics (Phase 5) - 4 agents
-  { type: 'insights', name: 'Business Insights Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },
-  { type: 'forecast', name: 'Forecast Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },
-  { type: 'revenue', name: 'Revenue Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },
-  { type: 'performance', name: 'Performance Agent', category: 'analytics', phase: 5, is_enabled: false, settings: {} },
+  // Analytics (Phase 5) - now part of Business Operations
+  { type: 'insights', name: 'Business Insights Agent', category: 'business_operations', phase: 5, is_enabled: false, settings: {} },
+  { type: 'forecast', name: 'Forecast Agent', category: 'business_operations', phase: 5, is_enabled: false, settings: {} },
+  { type: 'revenue', name: 'Revenue Agent', category: 'business_operations', phase: 5, is_enabled: false, settings: {} },
+  { type: 'performance', name: 'Performance Agent', category: 'business_operations', phase: 5, is_enabled: false, settings: {} },
 ];
 
 function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo[]> {
