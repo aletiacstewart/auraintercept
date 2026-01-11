@@ -11,14 +11,14 @@ export function PublicFooter() {
             <div className="flex items-center gap-2 mb-4">
               <img src={logo} alt="Aura Intercept" className="w-8 h-8" />
               <div className="flex flex-col">
-                <span className="font-semibold">Aura Intercept</span>
-                <span className="text-xs text-white/70 flex items-center gap-1">
+                <span className="font-semibold text-card-foreground">Aura Intercept</span>
+                <span className="text-xs text-card-foreground/70 flex items-center gap-1">
                   <Zap className="w-3 h-3" />
                   Smart Agents, Automated Service
                 </span>
               </div>
             </div>
-            <p className="text-sm text-white/70">AI agents automating appointment-based in Texas.</p>
+            <p className="text-sm text-card-foreground/70">AI agents automating appointment-based in Texas.</p>
           </div>
           
           <div>
