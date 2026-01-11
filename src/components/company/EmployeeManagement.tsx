@@ -449,7 +449,7 @@ export function EmployeeManagement() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {format(new Date(employee.created_at), 'MMM d, yyyy')}
+                        {employee.created_at ? format(new Date(employee.created_at), 'MMM d, yyyy') : '-'}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
@@ -587,10 +587,10 @@ export function EmployeeManagement() {
                     </TableCell>
                     <TableCell>{code.email || 'Any email'}</TableCell>
                     <TableCell>
-                      {format(new Date(code.created_at), 'MMM d, yyyy')}
+                      {code.created_at ? format(new Date(code.created_at), 'MMM d, yyyy') : '-'}
                     </TableCell>
                     <TableCell>
-                      {format(new Date(code.expires_at), 'MMM d, yyyy')}
+                      {code.expires_at ? format(new Date(code.expires_at), 'MMM d, yyyy') : '-'}
                     </TableCell>
                   </TableRow>
                 ))}
