@@ -164,7 +164,7 @@ const communicationChannels = [{
   gradientClass: 'from-[hsl(var(--channel-email))] to-[hsl(199,89%,38%)]'
 }, {
   icon: Headphones,
-  title: 'Aura AI Chat',
+  title: 'Aura Chat AI',
   description: 'Embeddable chat widget for website visitor engagement.',
   color: 'bg-channel-chat',
   gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(270,67%,48%)]'
