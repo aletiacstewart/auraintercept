@@ -177,26 +177,26 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
       </h4>
       <div className="space-y-3">
         {(metrics?.cancelledAppointments || 0) > (metrics?.totalAppointments || 1) * 0.1 ? (
-          <div className="p-4 rounded-lg bg-amber-50 border border-amber-200">
-            <p className="font-medium text-amber-800">Elevated Cancellation Rate</p>
-            <p className="text-sm text-amber-700 mt-1">
+          <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
+            <p className="font-medium text-amber-400">Elevated Cancellation Rate</p>
+            <p className="text-sm text-amber-300 mt-1">
               {metrics?.cancelledAppointments} cancellations ({((metrics?.cancelledAppointments || 0) / (metrics?.totalAppointments || 1) * 100).toFixed(0)}%).
               Consider reviewing booking confirmation process.
             </p>
           </div>
         ) : null}
         {(metrics?.negativeCount || 0) > 2 ? (
-          <div className="p-4 rounded-lg bg-red-50 border border-red-200">
-            <p className="font-medium text-red-800">Negative Feedback Spike</p>
-            <p className="text-sm text-red-700 mt-1">
+          <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+            <p className="font-medium text-red-400">Negative Feedback Spike</p>
+            <p className="text-sm text-red-300 mt-1">
               {metrics?.negativeCount} negative reviews received. Review recent service quality.
             </p>
           </div>
         ) : null}
         {!(metrics?.cancelledAppointments || 0) && !(metrics?.negativeCount || 0) ? (
-          <div className="p-4 rounded-lg bg-green-50 border border-green-200">
-            <p className="font-medium text-green-800">No Anomalies Detected</p>
-            <p className="text-sm text-green-700 mt-1">
+          <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+            <p className="font-medium text-green-400">No Anomalies Detected</p>
+            <p className="text-sm text-green-300 mt-1">
               All metrics are within normal ranges. Great work!
             </p>
           </div>

@@ -197,11 +197,11 @@ export function AudioPlayer({ url, duration, title = 'Call Recording' }: AudioPl
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <h4 className="font-medium flex items-center gap-2">
+        <h4 className="font-medium flex items-center gap-2 text-card-foreground">
           <Volume2 className="w-4 h-4 text-primary" />
           {title}
           {audioDuration > 0 && (
-            <span className="text-xs text-muted-foreground font-normal">
+            <span className="text-xs text-card-foreground/50 font-normal">
               ({formatTime(audioDuration)})
             </span>
           )}
@@ -287,7 +287,7 @@ export function AudioPlayer({ url, duration, title = 'Call Recording' }: AudioPl
                   disabled={isLoading}
                 />
                 
-                <div className="flex justify-between text-xs text-muted-foreground">
+                <div className="flex justify-between text-xs text-card-foreground/50">
                   <span className="font-mono">{formatTime(currentTime)}</span>
                   <span className="font-mono">-{formatTime(audioDuration - currentTime)}</span>
                 </div>
@@ -342,7 +342,7 @@ export function AudioPlayer({ url, duration, title = 'Call Recording' }: AudioPl
             </div>
 
             {/* Keyboard shortcuts hint */}
-            <p className="text-xs text-muted-foreground text-center">
+            <p className="text-xs text-card-foreground/50 text-center">
               Space: Play/Pause · ← →: Skip 5s
             </p>
           </div>

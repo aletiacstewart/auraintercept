@@ -96,7 +96,7 @@ export function AddToCalendarButton({
         <DropdownMenuItem onClick={handleDownload}>
           <Calendar className="h-4 w-4 mr-2" />
           Download .ics file
-          <span className="ml-auto text-xs text-muted-foreground">All apps</span>
+          <span className="ml-auto text-xs text-card-foreground/50">All apps</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleGoogleCalendar}>
           <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
