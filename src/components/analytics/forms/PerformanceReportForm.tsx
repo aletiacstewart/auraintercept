@@ -250,30 +250,30 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
       {currentMetrics?.topPerformers?.length ? (
         <div className="space-y-2">
           {currentMetrics.topPerformers.map((performer, index) => (
-            <div key={performer.id} className="flex items-center justify-between p-3 rounded-lg bg-background border">
+            <div key={performer.id} className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
               <div className="flex items-center gap-3">
                 <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  index === 0 ? 'bg-yellow-100 text-yellow-700' :
-                  index === 1 ? 'bg-gray-100 text-gray-700' :
-                  index === 2 ? 'bg-orange-100 text-orange-700' :
-                  'bg-muted text-muted-foreground'
+                  index === 0 ? 'bg-yellow-500/20 text-yellow-400' :
+                  index === 1 ? 'bg-gray-500/20 text-gray-300' :
+                  index === 2 ? 'bg-orange-500/20 text-orange-400' :
+                  'bg-white/10 text-card-foreground/70'
                 }`}>
                   {index + 1}
                 </span>
                 <div>
-                  <p className="font-medium">{performer.name || 'Unknown'}</p>
-                  <p className="text-xs text-muted-foreground">Team Member</p>
+                  <p className="font-medium text-card-foreground">{performer.name || 'Unknown'}</p>
+                  <p className="text-xs text-card-foreground/50">Team Member</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-semibold">{performer.completed} completed</p>
-                <p className="text-xs text-muted-foreground">{performer.completionRate.toFixed(0)}% rate</p>
+                <p className="font-semibold text-card-foreground">{performer.completed} completed</p>
+                <p className="text-xs text-card-foreground/50">{performer.completionRate.toFixed(0)}% rate</p>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">No performance data available for this period.</p>
+        <p className="text-card-foreground/70 text-sm">No performance data available for this period.</p>
       )}
     </div>
   );
@@ -285,50 +285,50 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
         Goal Progress
       </h4>
       <div className="space-y-3">
-        <div className="p-4 rounded-lg bg-background border">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium">Monthly Revenue Target</span>
-            <span className="text-sm text-muted-foreground">$10,000</span>
+            <span className="text-sm font-medium text-card-foreground">Monthly Revenue Target</span>
+            <span className="text-sm text-card-foreground/70">$10,000</span>
           </div>
-          <div className="w-full bg-muted rounded-full h-2">
+          <div className="w-full bg-white/10 rounded-full h-2">
             <div 
               className="bg-cyan-500 h-2 rounded-full transition-all" 
               style={{ width: `${Math.min(((currentMetrics?.totalRevenue || 0) / 10000) * 100, 100)}%` }}
             />
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-card-foreground/50 mt-1">
             ${currentMetrics?.totalRevenue?.toLocaleString() || 0} of $10,000 ({Math.round(((currentMetrics?.totalRevenue || 0) / 10000) * 100)}%)
           </p>
         </div>
 
-        <div className="p-4 rounded-lg bg-background border">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium">Completion Rate Target</span>
-            <span className="text-sm text-muted-foreground">95%</span>
+            <span className="text-sm font-medium text-card-foreground">Completion Rate Target</span>
+            <span className="text-sm text-card-foreground/70">95%</span>
           </div>
-          <div className="w-full bg-muted rounded-full h-2">
+          <div className="w-full bg-white/10 rounded-full h-2">
             <div 
               className={`h-2 rounded-full transition-all ${(currentMetrics?.completionRate || 0) >= 95 ? 'bg-green-500' : 'bg-yellow-500'}`}
               style={{ width: `${Math.min(currentMetrics?.completionRate || 0, 100)}%` }}
             />
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-card-foreground/50 mt-1">
             {(currentMetrics?.completionRate || 0).toFixed(1)}% of 95% target
           </p>
         </div>
 
-        <div className="p-4 rounded-lg bg-background border">
+        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium">Jobs Completed Target</span>
-            <span className="text-sm text-muted-foreground">50 jobs</span>
+            <span className="text-sm font-medium text-card-foreground">Jobs Completed Target</span>
+            <span className="text-sm text-card-foreground/70">50 jobs</span>
           </div>
-          <div className="w-full bg-muted rounded-full h-2">
+          <div className="w-full bg-white/10 rounded-full h-2">
             <div 
               className="bg-purple-500 h-2 rounded-full transition-all" 
               style={{ width: `${Math.min(((currentMetrics?.totalJobs || 0) / 50) * 100, 100)}%` }}
             />
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-card-foreground/50 mt-1">
             {currentMetrics?.totalJobs || 0} of 50 jobs ({Math.round(((currentMetrics?.totalJobs || 0) / 50) * 100)}%)
           </p>
         </div>
@@ -344,33 +344,33 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
       </h4>
       <div className="space-y-3">
         {(currentMetrics?.completionRate || 0) < 90 && (
-          <div className="p-4 rounded-lg bg-amber-50 border border-amber-200">
-            <p className="font-medium text-amber-800">Low Completion Rate</p>
-            <p className="text-sm text-amber-700 mt-1">
+          <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
+            <p className="font-medium text-amber-400">Low Completion Rate</p>
+            <p className="text-sm text-amber-300 mt-1">
               Completion rate is at {(currentMetrics?.completionRate || 0).toFixed(1)}%. Consider reviewing scheduling processes and technician capacity.
             </p>
           </div>
         )}
         {(currentMetrics?.totalAppointments || 0) < 20 && (
-          <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
-            <p className="font-medium text-blue-800">Low Appointment Volume</p>
-            <p className="text-sm text-blue-700 mt-1">
+          <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+            <p className="font-medium text-blue-400">Low Appointment Volume</p>
+            <p className="text-sm text-blue-300 mt-1">
               Only {currentMetrics?.totalAppointments || 0} appointments in this period. Consider marketing efforts to increase bookings.
             </p>
           </div>
         )}
         {revenueChange < 0 && (
-          <div className="p-4 rounded-lg bg-red-50 border border-red-200">
-            <p className="font-medium text-red-800">Revenue Decline</p>
-            <p className="text-sm text-red-700 mt-1">
+          <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+            <p className="font-medium text-red-400">Revenue Decline</p>
+            <p className="text-sm text-red-300 mt-1">
               Revenue is down {Math.abs(revenueChange).toFixed(1)}% compared to the previous period. Review pricing and service mix.
             </p>
           </div>
         )}
         {(currentMetrics?.completionRate || 0) >= 90 && (currentMetrics?.totalAppointments || 0) >= 20 && revenueChange >= 0 && (
-          <div className="p-4 rounded-lg bg-green-50 border border-green-200">
-            <p className="font-medium text-green-800">Great Performance!</p>
-            <p className="text-sm text-green-700 mt-1">
+          <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+            <p className="font-medium text-green-400">Great Performance!</p>
+            <p className="text-sm text-green-300 mt-1">
               All key metrics are on track. Keep up the excellent work!
             </p>
           </div>
@@ -388,11 +388,11 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
       {currentMetrics?.employeeStats?.length ? (
         <div className="space-y-2 max-h-64 overflow-y-auto">
           {currentMetrics.employeeStats.map((emp) => (
-            <div key={emp.id} className="p-3 rounded-lg bg-background border">
+            <div key={emp.id} className="p-3 rounded-lg bg-white/5 border border-white/10">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="font-medium">{emp.name || 'Unknown'}</p>
-                  <p className="text-xs text-muted-foreground">Team Member</p>
+                  <p className="font-medium text-card-foreground">{emp.name || 'Unknown'}</p>
+                  <p className="text-xs text-card-foreground/50">Team Member</p>
                 </div>
                 <Badge variant={emp.completionRate >= 90 ? 'default' : emp.completionRate >= 70 ? 'secondary' : 'destructive'}>
                   {emp.completionRate.toFixed(0)}%
@@ -400,23 +400,23 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
               </div>
               <div className="grid grid-cols-3 gap-2 mt-2 text-xs">
                 <div>
-                  <p className="text-muted-foreground">Appointments</p>
-                  <p className="font-medium">{emp.appointments}</p>
+                  <p className="text-card-foreground/50">Appointments</p>
+                  <p className="font-medium text-card-foreground">{emp.appointments}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Completed</p>
-                  <p className="font-medium">{emp.completed}</p>
+                  <p className="text-card-foreground/50">Completed</p>
+                  <p className="font-medium text-card-foreground">{emp.completed}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Jobs</p>
-                  <p className="font-medium">{emp.jobs}</p>
+                  <p className="text-card-foreground/50">Jobs</p>
+                  <p className="font-medium text-card-foreground">{emp.jobs}</p>
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">No employee data available.</p>
+        <p className="text-card-foreground/70 text-sm">No employee data available.</p>
       )}
     </div>
   );

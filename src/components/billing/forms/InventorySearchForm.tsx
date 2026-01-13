@@ -118,13 +118,13 @@ export function InventorySearchForm({ companyId, onCancel, onSelectItem }: Inven
         </div>
 
         {/* Results */}
-        <div className="border rounded-lg max-h-80 overflow-y-auto">
+        <div className="border border-white/10 rounded-lg max-h-80 overflow-y-auto">
           {isLoading ? (
-            <div className="p-4 text-center text-sm text-muted-foreground">Loading...</div>
+            <div className="p-4 text-center text-sm text-card-foreground/70">Loading...</div>
           ) : inventoryItems.length === 0 ? (
-            <div className="p-4 text-center text-sm text-muted-foreground">No items found</div>
+            <div className="p-4 text-center text-sm text-card-foreground/70">No items found</div>
           ) : (
-            <div className="divide-y">
+            <div className="divide-y divide-white/10">
               {inventoryItems.map((item) => {
                 const stockStatus = getStockStatus(item);
                 return (
@@ -132,17 +132,17 @@ export function InventorySearchForm({ companyId, onCancel, onSelectItem }: Inven
                     key={item.id}
                     type="button"
                     onClick={() => onSelectItem?.(item)}
-                    className="w-full text-left p-3 hover:bg-muted/50 transition-colors"
+                    className="w-full text-left p-3 hover:bg-white/5 transition-colors"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm truncate">{item.name}</span>
+                          <span className="font-medium text-sm truncate text-card-foreground">{item.name}</span>
                           {item.sku && (
-                            <span className="text-xs text-muted-foreground">#{item.sku}</span>
+                            <span className="text-xs text-card-foreground/50">#{item.sku}</span>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2 mt-1 text-xs text-card-foreground/50">
                           {item.category && <span>{item.category}</span>}
                           {item.supplier && <span>• {item.supplier}</span>}
                         </div>
@@ -157,7 +157,7 @@ export function InventorySearchForm({ companyId, onCancel, onSelectItem }: Inven
                           {item.quantity} qty
                         </Badge>
                         {item.unit_cost && (
-                          <span className="text-xs text-muted-foreground">${item.unit_cost.toFixed(2)}</span>
+                          <span className="text-xs text-card-foreground/50">${item.unit_cost.toFixed(2)}</span>
                         )}
                       </div>
                     </div>
@@ -168,7 +168,7 @@ export function InventorySearchForm({ companyId, onCancel, onSelectItem }: Inven
           )}
         </div>
 
-        <div className="text-xs text-muted-foreground text-center">
+        <div className="text-xs text-card-foreground/50 text-center">
           {inventoryItems.length} items found
         </div>
       </div>

@@ -113,14 +113,14 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
   });
 
   return (
-    <Card className="border-blue-200 bg-blue-50/50">
+    <Card className="border-white/10 bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Users className="h-5 w-5 text-blue-600" />
+          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
+            <Users className="h-5 w-5 text-secondary" />
             Customer Insights
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel}>
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground/70 hover:text-card-foreground">
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -128,7 +128,7 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
       <CardContent className="space-y-4">
         {/* Filters */}
         <div className="space-y-2">
-          <Label className="flex items-center gap-1">
+          <Label className="flex items-center gap-1 text-card-foreground/70">
             <Calendar className="h-3 w-3" />
             Analysis Period
           </Label>
@@ -149,51 +149,51 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
         {isLoading ? (
           <div className="grid grid-cols-2 gap-3">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-background animate-pulse h-20" />
+              <div key={i} className="p-4 rounded-lg bg-white/5 animate-pulse h-20" />
             ))}
           </div>
         ) : (
           <>
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-4 rounded-lg bg-background border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
                   <Users className="h-4 w-4" />
                   <span className="text-sm">Total Customers</span>
                 </div>
-                <p className="text-2xl font-bold">{insights?.totalCustomers || 0}</p>
+                <p className="text-2xl font-bold text-card-foreground">{insights?.totalCustomers || 0}</p>
               </div>
 
-              <div className="p-4 rounded-lg bg-background border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <UserPlus className="h-4 w-4 text-green-600" />
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
+                  <UserPlus className="h-4 w-4 text-green-400" />
                   <span className="text-sm">New Customers</span>
                 </div>
-                <p className="text-2xl font-bold text-green-600">{insights?.newCustomers || 0}</p>
+                <p className="text-2xl font-bold text-green-400">{insights?.newCustomers || 0}</p>
               </div>
 
-              <div className="p-4 rounded-lg bg-background border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <TrendingUp className="h-4 w-4 text-blue-600" />
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
+                  <TrendingUp className="h-4 w-4 text-blue-400" />
                   <span className="text-sm">Returning</span>
                 </div>
-                <p className="text-2xl font-bold text-blue-600">{insights?.returningCustomers || 0}</p>
+                <p className="text-2xl font-bold text-blue-400">{insights?.returningCustomers || 0}</p>
               </div>
 
-              <div className="p-4 rounded-lg bg-background border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <UserMinus className="h-4 w-4 text-orange-600" />
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
+                  <UserMinus className="h-4 w-4 text-orange-400" />
                   <span className="text-sm">Inactive</span>
                 </div>
-                <p className="text-2xl font-bold text-orange-600">{insights?.inactiveCustomers || 0}</p>
+                <p className="text-2xl font-bold text-orange-400">{insights?.inactiveCustomers || 0}</p>
               </div>
             </div>
 
             {/* Retention & Satisfaction */}
-            <div className="space-y-3 p-4 rounded-lg bg-background border">
-              <h4 className="font-medium text-sm">Customer Health</h4>
+            <div className="space-y-3 p-4 rounded-lg bg-white/5 border border-white/10">
+              <h4 className="font-medium text-sm text-card-foreground">Customer Health</h4>
               
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center justify-between text-sm text-card-foreground">
                   <span>Retention Rate</span>
                   <span className="font-medium">{(insights?.retentionRate || 0).toFixed(1)}%</span>
                 </div>
@@ -201,7 +201,7 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center justify-between text-sm text-card-foreground">
                   <span className="flex items-center gap-1">
                     <Star className="h-4 w-4 text-yellow-500" />
                     Satisfaction Rate
@@ -211,9 +211,9 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
                 <Progress value={insights?.satisfactionRate || 0} className="h-2" />
               </div>
 
-              <div className="flex items-center justify-between text-sm pt-2 border-t">
+              <div className="flex items-center justify-between text-sm pt-2 border-t border-white/10 text-card-foreground">
                 <span>Average Rating</span>
-                <Badge variant="outline" className="flex items-center gap-1">
+                <Badge variant="outline" className="flex items-center gap-1 border-white/20">
                   <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
                   {(insights?.avgRating || 0).toFixed(1)} / 5
                 </Badge>
