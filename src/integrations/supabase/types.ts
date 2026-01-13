@@ -2284,9 +2284,116 @@ export type Database = {
           },
         ]
       }
+      lead_activities: {
+        Row: {
+          activity_type: string
+          company_id: string
+          created_at: string | null
+          description: string | null
+          id: string
+          lead_id: string
+          metadata: Json | null
+          performed_by: string | null
+        }
+        Insert: {
+          activity_type: string
+          company_id: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          lead_id: string
+          metadata?: Json | null
+          performed_by?: string | null
+        }
+        Update: {
+          activity_type?: string
+          company_id?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          lead_id?: string
+          metadata?: Json | null
+          performed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_activities_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_activities_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_follow_ups: {
+        Row: {
+          company_id: string
+          completed_at: string | null
+          created_at: string | null
+          follow_up_type: string
+          id: string
+          lead_id: string
+          message_template: string | null
+          scheduled_at: string
+          status: string | null
+        }
+        Insert: {
+          company_id: string
+          completed_at?: string | null
+          created_at?: string | null
+          follow_up_type: string
+          id?: string
+          lead_id: string
+          message_template?: string | null
+          scheduled_at: string
+          status?: string | null
+        }
+        Update: {
+          company_id?: string
+          completed_at?: string | null
+          created_at?: string | null
+          follow_up_type?: string
+          id?: string
+          lead_id?: string
+          message_template?: string | null
+          scheduled_at?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_follow_ups_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_follow_ups_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           address: string | null
+          auto_follow_up_enabled: boolean | null
           channel: string | null
           company_id: string
           conversation_id: string | null
@@ -2297,10 +2404,13 @@ export type Database = {
           follow_up_at: string | null
           id: string
           intent: string | null
+          last_activity_at: string | null
           name: string | null
           notes: string | null
           phone: string | null
           priority: string | null
+          score: number | null
+          score_factors: Json | null
           service_interest: string | null
           source: string
           status: string | null
@@ -2308,6 +2418,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          auto_follow_up_enabled?: boolean | null
           channel?: string | null
           company_id: string
           conversation_id?: string | null
@@ -2318,10 +2429,13 @@ export type Database = {
           follow_up_at?: string | null
           id?: string
           intent?: string | null
+          last_activity_at?: string | null
           name?: string | null
           notes?: string | null
           phone?: string | null
           priority?: string | null
+          score?: number | null
+          score_factors?: Json | null
           service_interest?: string | null
           source: string
           status?: string | null
@@ -2329,6 +2443,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          auto_follow_up_enabled?: boolean | null
           channel?: string | null
           company_id?: string
           conversation_id?: string | null
@@ -2339,10 +2454,13 @@ export type Database = {
           follow_up_at?: string | null
           id?: string
           intent?: string | null
+          last_activity_at?: string | null
           name?: string | null
           notes?: string | null
           phone?: string | null
           priority?: string | null
+          score?: number | null
+          score_factors?: Json | null
           service_interest?: string | null
           source?: string
           status?: string | null

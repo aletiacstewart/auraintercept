@@ -140,3 +140,6 @@ verify_jwt = false
 
 [functions.create-platform-admin]
 verify_jwt = false
+
+[functions.lead-follow-up-reminders]
+verify_jwt = false
