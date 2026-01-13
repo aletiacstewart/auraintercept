@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { 
@@ -24,8 +25,8 @@ import {
   CheckCircle,
   XCircle,
   Flame,
-  ArrowUpRight,
 } from 'lucide-react';
+import { LeadScoreBadge, LeadActivityTimeline, LeadFollowUpManager, LeadAnalyticsSection } from '@/components/leads';
 
 interface Lead {
   id: string;
@@ -39,6 +40,8 @@ interface Lead {
   notes: string | null;
   status: string;
   priority: string;
+  score: number | null;
+  score_factors: Record<string, number> | null;
   created_at: string;
   follow_up_at: string | null;
 }
@@ -143,6 +146,9 @@ export default function Leads() {
             <p className="text-white/70">Manage and follow up on potential customers</p>
           </div>
         </div>
+
+        {/* Analytics Section */}
+        <LeadAnalyticsSection />
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -262,6 +268,11 @@ export default function Leads() {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
                                 <span className="font-medium truncate">{lead.name || 'Unknown'}</span>
+                                <LeadScoreBadge 
+                                  score={lead.score || 0} 
+                                  scoreFactors={lead.score_factors || undefined}
+                                  size="sm"
+                                />
                                 {lead.priority === 'hot' && <Flame className="h-4 w-4 text-red-500" />}
                                 <Badge variant="outline" className={priorityConfig.color}>
                                   {priorityConfig.label}
@@ -306,86 +317,117 @@ export default function Leads() {
                           <DialogTitle>Lead Details</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <label className="text-sm text-white/70">Name</label>
-                              <p className="font-medium">{lead.name || '-'}</p>
-                            </div>
-                            <div>
-                              <label className="text-sm text-white/70">Phone</label>
-                              <p className="font-medium">{lead.phone || '-'}</p>
-                            </div>
-                            <div>
-                              <label className="text-sm text-white/70">Email</label>
-                              <p className="font-medium">{lead.email || '-'}</p>
-                            </div>
-                            <div>
-                              <label className="text-sm text-white/70">Source</label>
-                              <p className="font-medium capitalize">{lead.source}</p>
-                            </div>
-                          </div>
-                          {lead.service_interest && (
-                            <div>
-                              <label className="text-sm text-white/70">Service Interest</label>
-                              <p className="font-medium">{lead.service_interest}</p>
-                            </div>
-                          )}
-                          {lead.notes && (
-                            <div>
-                              <label className="text-sm text-white/70">Notes</label>
-                              <p className="text-sm bg-muted p-2 rounded">{lead.notes}</p>
-                            </div>
-                          )}
-                          <div>
-                            <label className="text-sm text-white/70 mb-2 block">Update Status</label>
-                            <Select value={newStatus} onValueChange={setNewStatus}>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="new">New</SelectItem>
-                                <SelectItem value="contacted">Contacted</SelectItem>
-                                <SelectItem value="qualified">Qualified</SelectItem>
-                                <SelectItem value="converted">Converted</SelectItem>
-                                <SelectItem value="lost">Lost</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <label className="text-sm text-white/70 mb-2 block">Follow-up Notes</label>
-                            <Textarea
-                              placeholder="Add notes about this lead..."
-                              value={followUpNotes}
-                              onChange={(e) => setFollowUpNotes(e.target.value)}
-                            />
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              className="flex-1"
-                              onClick={() => updateStatusMutation.mutate({
-                                leadId: lead.id,
-                                status: newStatus,
-                                notes: followUpNotes || undefined,
-                              })}
-                              disabled={updateStatusMutation.isPending}
-                            >
-                              Update Lead
-                            </Button>
-                            {lead.phone && (
-                              <Button variant="outline" asChild>
-                                <a href={`tel:${lead.phone}`}>
-                                  <Phone className="h-4 w-4" />
-                                </a>
-                              </Button>
-                            )}
-                            {lead.email && (
-                              <Button variant="outline" asChild>
-                                <a href={`mailto:${lead.email}`}>
-                                  <Mail className="h-4 w-4" />
-                                </a>
-                              </Button>
-                            )}
-                          </div>
+                          <Tabs defaultValue="details">
+                            <TabsList className="grid w-full grid-cols-3">
+                              <TabsTrigger value="details">Details</TabsTrigger>
+                              <TabsTrigger value="activity">Activity</TabsTrigger>
+                              <TabsTrigger value="followups">Follow-ups</TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="details" className="space-y-4 mt-4">
+                              <div className="flex items-center gap-3 mb-4">
+                                <LeadScoreBadge 
+                                  score={lead.score || 0} 
+                                  scoreFactors={lead.score_factors || undefined}
+                                  size="lg"
+                                />
+                                <div>
+                                  <p className="text-sm text-muted-foreground">Lead Score</p>
+                                  <p className="font-medium">{lead.score || 0}/100</p>
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <label className="text-sm text-white/70">Name</label>
+                                  <p className="font-medium">{lead.name || '-'}</p>
+                                </div>
+                                <div>
+                                  <label className="text-sm text-white/70">Phone</label>
+                                  <p className="font-medium">{lead.phone || '-'}</p>
+                                </div>
+                                <div>
+                                  <label className="text-sm text-white/70">Email</label>
+                                  <p className="font-medium">{lead.email || '-'}</p>
+                                </div>
+                                <div>
+                                  <label className="text-sm text-white/70">Source</label>
+                                  <p className="font-medium capitalize">{lead.source}</p>
+                                </div>
+                              </div>
+                              {lead.service_interest && (
+                                <div>
+                                  <label className="text-sm text-white/70">Service Interest</label>
+                                  <p className="font-medium">{lead.service_interest}</p>
+                                </div>
+                              )}
+                              {lead.notes && (
+                                <div>
+                                  <label className="text-sm text-white/70">Notes</label>
+                                  <p className="text-sm bg-muted p-2 rounded">{lead.notes}</p>
+                                </div>
+                              )}
+                              <div>
+                                <label className="text-sm text-white/70 mb-2 block">Update Status</label>
+                                <Select value={newStatus} onValueChange={setNewStatus}>
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="new">New</SelectItem>
+                                    <SelectItem value="contacted">Contacted</SelectItem>
+                                    <SelectItem value="qualified">Qualified</SelectItem>
+                                    <SelectItem value="converted">Converted</SelectItem>
+                                    <SelectItem value="lost">Lost</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div>
+                                <label className="text-sm text-white/70 mb-2 block">Follow-up Notes</label>
+                                <Textarea
+                                  placeholder="Add notes about this lead..."
+                                  value={followUpNotes}
+                                  onChange={(e) => setFollowUpNotes(e.target.value)}
+                                />
+                              </div>
+                              <div className="flex gap-2">
+                                <Button
+                                  className="flex-1"
+                                  onClick={() => updateStatusMutation.mutate({
+                                    leadId: lead.id,
+                                    status: newStatus,
+                                    notes: followUpNotes || undefined,
+                                  })}
+                                  disabled={updateStatusMutation.isPending}
+                                >
+                                  Update Lead
+                                </Button>
+                                {lead.phone && (
+                                  <Button variant="outline" asChild>
+                                    <a href={`tel:${lead.phone}`}>
+                                      <Phone className="h-4 w-4" />
+                                    </a>
+                                  </Button>
+                                )}
+                                {lead.email && (
+                                  <Button variant="outline" asChild>
+                                    <a href={`mailto:${lead.email}`}>
+                                      <Mail className="h-4 w-4" />
+                                    </a>
+                                  </Button>
+                                )}
+                              </div>
+                            </TabsContent>
+                            <TabsContent value="activity" className="mt-4">
+                              <LeadActivityTimeline leadId={lead.id} maxHeight="400px" />
+                            </TabsContent>
+                            <TabsContent value="followups" className="mt-4">
+                              <LeadFollowUpManager 
+                                leadId={lead.id}
+                                leadName={lead.name}
+                                leadPhone={lead.phone}
+                                leadEmail={lead.email}
+                              />
+                            </TabsContent>
+                          </Tabs>
                         </div>
                       </DialogContent>
                     </Dialog>
