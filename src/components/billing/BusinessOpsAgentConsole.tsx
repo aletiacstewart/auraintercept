@@ -13,6 +13,7 @@ import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { BusinessQuoteForm, BusinessQuoteData } from './forms/BusinessQuoteForm';
 import { InvoiceForm, InvoiceFormData } from './forms/InvoiceForm';
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
+import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   FileText, 
@@ -56,13 +57,14 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [lastAgent, setLastAgent] = useState<string>('quoting');
   const [activeFormType, setActiveFormType] = useState<
-    'quote' | 'invoice' | 'lead' | null
+    'quote' | 'invoice' | 'lead' | 'inventory' | null
   >(null);
   
   // Form visibility states
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
+  const [showInventoryManager, setShowInventoryManager] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -98,6 +100,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setShowQuoteForm(false);
     setShowInvoiceForm(false);
     setShowLeadForm(false);
+    setShowInventoryManager(false);
     setActiveFormType(null);
   };
 
@@ -135,7 +138,9 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       return;
     }
     if (actionId === 'inventory') {
-      navigate('/dashboard/inventory');
+      hideAllForms();
+      setShowInventoryManager(true);
+      setActiveFormType('inventory');
       return;
     }
     if (actionId === 'warranties') {
@@ -183,7 +188,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     await sendMessage(message);
   };
 
-  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm;
+  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showInventoryManager;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -192,6 +197,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     if (activeFormType === 'quote') return 'Quoting';
     if (activeFormType === 'invoice') return 'Invoicing';
     if (activeFormType === 'lead') return 'Lead Capture';
+    if (activeFormType === 'inventory') return 'Inventory';
     if (messages.length > 0) return agentStyle.label; // Show agent label during chat
     return 'Home';
   };
@@ -258,6 +264,12 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
                   onCancel={handleHome}
                   onSuccess={handleLeadSuccess}
                 />
+              )}
+
+              {showInventoryManager && (
+                <div className="bg-muted/50 rounded-lg border border-border p-4">
+                  <InventoryManager />
+                </div>
               )}
 
               {/* Chat Messages */}
