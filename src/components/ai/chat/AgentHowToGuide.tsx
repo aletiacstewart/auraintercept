@@ -439,80 +439,80 @@ const BUSINESS_OPS_ADMIN_GUIDES: AgentGuide[] = [
 const MARKETING_SALES_GUIDES: AgentGuide[] = [
   {
     id: 'campaign',
-    label: 'Create Campaign',
-    icon: Megaphone,
-    description: 'Launch marketing campaigns',
-    steps: [
-      { step: 1, title: 'Define Goals', description: 'Set campaign objectives and KPIs' },
-      { step: 2, title: 'Select Audience', description: 'Choose target customer segments' },
-      { step: 3, title: 'Create Content', description: 'Design email and SMS messages' },
-      { step: 4, title: 'Schedule & Launch', description: 'Set timing and activate campaign' },
-    ],
-    tips: ['A/B test subject lines', 'Segment for better engagement']
-  },
-  {
-    id: 'promo',
-    label: 'Generate Promo Code',
+    label: 'Promotional / Promo Code',
     icon: Tag,
-    description: 'Create promotional discount codes',
+    description: 'Create promotional campaigns with discount codes',
     steps: [
-      { step: 1, title: 'Set Discount', description: 'Choose percentage or fixed amount' },
-      { step: 2, title: 'Define Rules', description: 'Set usage limits and expiration' },
-      { step: 3, title: 'Generate Code', description: 'Create unique promo code' },
-      { step: 4, title: 'Distribute', description: 'Share via campaigns or direct' },
+      { step: 1, title: 'Select Campaign Type', description: 'Choose Promotional / Promo Code from campaign types' },
+      { step: 2, title: 'Set Discount', description: 'Configure percentage or fixed amount discount' },
+      { step: 3, title: 'Define Rules', description: 'Set usage limits, expiration, and eligibility' },
+      { step: 4, title: 'Launch Campaign', description: 'Distribute via email, SMS, or direct share' },
     ],
-    tips: ['Track code usage', 'Create seasonal promotions']
+    tips: ['Track code usage for ROI', 'Create seasonal promotions for better engagement']
   },
   {
     id: 'referral',
     label: 'Referral Program',
     icon: Gift,
-    description: 'Set up and manage referral rewards',
+    description: 'Set up and manage customer referral rewards',
     steps: [
       { step: 1, title: 'Configure Rewards', description: 'Set referrer and referee incentives' },
-      { step: 2, title: 'Generate Links', description: 'Create unique referral links' },
-      { step: 3, title: 'Track Referrals', description: 'Monitor conversions and rewards' },
-      { step: 4, title: 'Issue Rewards', description: 'Fulfill referral bonuses' },
+      { step: 2, title: 'Generate Links', description: 'Create unique referral codes and links' },
+      { step: 3, title: 'Track Referrals', description: 'Monitor conversions and pending rewards' },
+      { step: 4, title: 'Issue Rewards', description: 'Fulfill referral bonuses automatically or manually' },
     ],
-    tips: ['Promote to satisfied customers', 'Offer compelling rewards']
+    tips: ['Promote to satisfied customers after completed jobs', 'Offer compelling rewards that drive action']
   },
   {
     id: 'winback',
     label: 'Win-Back Campaign',
     icon: TrendingUp,
-    description: 'Re-engage inactive customers',
+    description: 'Re-engage inactive and lapsed customers',
     steps: [
-      { step: 1, title: 'Identify Lapsed', description: 'Find customers inactive 90+ days' },
-      { step: 2, title: 'Create Offer', description: 'Design compelling comeback offer' },
+      { step: 1, title: 'Identify Lapsed', description: 'Find customers inactive for 90+ days' },
+      { step: 2, title: 'Create Offer', description: 'Design compelling comeback incentive' },
       { step: 3, title: 'Send Campaign', description: 'Reach out via email and SMS' },
-      { step: 4, title: 'Track Returns', description: 'Monitor re-engagement success' },
+      { step: 4, title: 'Track Returns', description: 'Monitor re-engagement and conversion success' },
     ],
-    tips: ['Personalize messaging', 'Offer limited-time incentives']
+    tips: ['Personalize messaging based on past services', 'Offer limited-time incentives to create urgency']
   },
   {
-    id: 'lead',
-    label: 'New Lead',
-    icon: UserPlus,
-    description: 'Add and manage sales leads',
+    id: 'seasonal',
+    label: 'Seasonal Campaign',
+    icon: Calendar,
+    description: 'Launch time-based seasonal promotions',
     steps: [
-      { step: 1, title: 'Enter Details', description: 'Add lead contact information' },
-      { step: 2, title: 'Set Source', description: 'Tag where lead came from' },
-      { step: 3, title: 'Assign Follow-up', description: 'Schedule initial contact' },
-      { step: 4, title: 'Track Progress', description: 'Update lead status as they progress' },
+      { step: 1, title: 'Select Season/Event', description: 'Choose holiday, season, or special event' },
+      { step: 2, title: 'Create Themed Offer', description: 'Design seasonal discount or bundle' },
+      { step: 3, title: 'Set Campaign Window', description: 'Define start and end dates for the promotion' },
+      { step: 4, title: 'Schedule Launch', description: 'Automate campaign to go live at the right time' },
     ],
-    tips: ['Follow up within 24 hours', 'Log all interactions']
+    tips: ['Plan campaigns 2-3 weeks ahead of season', 'Use themed messaging and visuals for impact']
+  },
+  {
+    id: 'loyalty',
+    label: 'Loyalty Program',
+    icon: Star,
+    description: 'Reward repeat customers with loyalty benefits',
+    steps: [
+      { step: 1, title: 'Define Tiers', description: 'Create loyalty levels based on spend or visits' },
+      { step: 2, title: 'Set Rewards', description: 'Configure benefits for each loyalty tier' },
+      { step: 3, title: 'Enroll Customers', description: 'Add eligible customers to the program' },
+      { step: 4, title: 'Track & Reward', description: 'Monitor points earned and rewards redeemed' },
+    ],
+    tips: ['Communicate tier progress to motivate customers', 'Offer exclusive perks for top-tier members']
   },
   {
     id: 'customers',
     label: 'Customer Segments',
     icon: Users,
-    description: 'View and manage customer groups',
+    description: 'View and manage customer target groups',
     steps: [
-      { step: 1, title: 'View Segments', description: 'See predefined customer groups' },
-      { step: 2, title: 'Create Custom', description: 'Build segments based on criteria' },
-      { step: 3, title: 'Target Campaigns', description: 'Use segments for marketing' },
+      { step: 1, title: 'View Segments', description: 'See predefined customer groups and filters' },
+      { step: 2, title: 'Create Custom', description: 'Build segments based on behavior criteria' },
+      { step: 3, title: 'Target Campaigns', description: 'Use segments for precise campaign targeting' },
     ],
-    tips: ['Update segments regularly', 'Combine criteria for precision']
+    tips: ['Update segments regularly as customer data changes', 'Combine criteria for precision targeting']
   },
 ];
 
