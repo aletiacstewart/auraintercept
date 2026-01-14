@@ -1,13 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone, Package, Shield, Target, UserCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone, Package, Shield, Target, UserCircle, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { startOfMonth, endOfMonth, subDays } from 'date-fns';
 import { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface CompanyStats {
   id: string;
@@ -25,6 +26,7 @@ interface CompanyStats {
 
 export function PlatformAdminDashboard() {
   const [showAllCompanies, setShowAllCompanies] = useState(false);
+  const navigate = useNavigate();
 
   const { data: stats, isLoading } = useQuery({
     queryKey: ['platform-stats'],
@@ -430,9 +432,12 @@ export function PlatformAdminDashboard() {
                   </TableHeader>
                   <TableBody>
                     {(showAllCompanies ? companyBreakdown : companyBreakdown?.slice(0, 5))?.map((company) => (
-                      <TableRow key={company.id} className="border-slate-700 hover:bg-slate-700/30">
+                      <TableRow key={company.id} className="border-slate-700 hover:bg-slate-700/30 cursor-pointer" onClick={() => navigate(`/dashboard/analytics?company=${company.id}`)}>
                         <TableCell className="font-medium text-white">
-                          {company.name}
+                          <div className="flex items-center gap-2 group">
+                            {company.name}
+                            <ExternalLink className="w-3.5 h-3.5 text-white/40 group-hover:text-primary transition-colors" />
+                          </div>
                         </TableCell>
                         <TableCell className="text-center">
                           <Badge variant="outline" className="bg-secondary/20 text-secondary border-secondary/30">
