@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield } from 'lucide-react';
+import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield, Megaphone } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
@@ -40,7 +40,7 @@ export function CompanyAdminDashboard() {
       const monthStart = startOfMonth(now).toISOString();
       const monthEnd = endOfMonth(now).toISOString();
 
-      const [employees, customers, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs, leads, inventory, warranties] = await Promise.all([
+      const [employees, customers, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs, leads, inventory, warranties, campaigns] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('customer_profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('appointments').select('id, status').eq('company_id', companyId),
@@ -52,6 +52,7 @@ export function CompanyAdminDashboard() {
         supabase.from('leads').select('id, status').eq('company_id', companyId),
         supabase.from('inventory_items').select('id, quantity, min_quantity').eq('company_id', companyId),
         supabase.from('warranty_policies').select('id').eq('company_id', companyId),
+        supabase.from('marketing_campaigns').select('id, status').eq('company_id', companyId),
       ]);
 
       // Calculate totals
@@ -102,6 +103,11 @@ export function CompanyAdminDashboard() {
       // Warranty policies count
       const warrantyCount = warranties.data?.length ?? 0;
 
+      // Marketing campaigns stats
+      const allCampaigns = campaigns.data ?? [];
+      const activeCampaigns = allCampaigns.filter(c => c.status === 'active').length;
+      const totalCampaigns = allCampaigns.length;
+
       return {
         employees: employees.count ?? 0,
         customers: customers.count ?? 0,
@@ -121,6 +127,8 @@ export function CompanyAdminDashboard() {
         inventoryCount,
         lowStockItems,
         warrantyCount,
+        activeCampaigns,
+        totalCampaigns,
       };
     },
     enabled: !!companyId,
@@ -210,6 +218,14 @@ export function CompanyAdminDashboard() {
       gradient: 'from-purple-500 to-purple-600',
       href: '/dashboard/warranties'
     },
+    { 
+      title: 'Campaigns', 
+      value: stats?.activeCampaigns ?? 0, 
+      icon: Megaphone, 
+      description: `${stats?.totalCampaigns ?? 0} total campaigns`,
+      gradient: 'from-pink-500 to-pink-600',
+      href: '/dashboard/campaigns'
+    },
   ];
 
   const quickActions = [
@@ -219,6 +235,7 @@ export function CompanyAdminDashboard() {
     { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', gradient: 'from-purple-500 to-violet-500' },
     { label: 'Inventory', icon: Package, href: '/dashboard/inventory', gradient: 'from-amber-500 to-orange-500' },
     { label: 'Warranties', icon: Shield, href: '/dashboard/warranties', gradient: 'from-purple-500 to-violet-500' },
+    { label: 'Campaigns', icon: Megaphone, href: '/dashboard/campaigns', gradient: 'from-pink-500 to-pink-600' },
     { label: 'Calculators', icon: DollarSign, href: '/dashboard/calculators', gradient: 'from-teal-500 to-teal-600' },
     { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', gradient: 'from-slate-600 to-slate-700' },
   ];
