@@ -39,7 +39,7 @@ export function CampaignSettings() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
-          <h3 className="font-medium">Default Promotional Discount</h3>
+          <h3 className="font-medium text-card-foreground">Default Promotional Discount</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label>Discount Type</Label>
@@ -68,7 +68,7 @@ export function CampaignSettings() {
         </div>
 
         <div className="space-y-4">
-          <h3 className="font-medium">Referral Rewards</h3>
+          <h3 className="font-medium text-card-foreground">Referral Rewards</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label>Reward Type</Label>
@@ -98,7 +98,7 @@ export function CampaignSettings() {
         </div>
 
         <div className="space-y-4">
-          <h3 className="font-medium">Message Templates</h3>
+          <h3 className="font-medium text-card-foreground">Message Templates</h3>
           <div className="space-y-4">
             <div className="space-y-2">
               <Label className="text-card-foreground">Win-back Campaign Template</Label>
