@@ -32,9 +32,23 @@ const CHART_COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(-
 
 interface CompanyAnalyticsProps {
   companyId: string;
+  showCompanyName?: boolean;
 }
 
-export function CompanyAnalytics({ companyId }: CompanyAnalyticsProps) {
+export function CompanyAnalytics({ companyId, showCompanyName = false }: CompanyAnalyticsProps) {
+  // Fetch company name if needed
+  const { data: company } = useQuery({
+    queryKey: ['company-name', companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('companies')
+        .select('name')
+        .eq('id', companyId)
+        .maybeSingle();
+      return data;
+    },
+    enabled: showCompanyName && !!companyId,
+  });
   // Fetch company-specific stats
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['company-analytics-stats', companyId],
@@ -231,9 +245,13 @@ export function CompanyAnalytics({ companyId }: CompanyAnalyticsProps) {
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Company Analytics</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {showCompanyName && company?.name ? `${company.name} Analytics` : 'Company Analytics'}
+        </h1>
         <p className="text-white/70 mt-1">
-          Performance metrics for your company
+          {showCompanyName && company?.name 
+            ? `Performance metrics for ${company.name}` 
+            : 'Performance metrics for your company'}
         </p>
       </div>
 
