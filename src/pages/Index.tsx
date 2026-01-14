@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Bot, Building2, Zap, Shield, MessageSquare, Play, Calendar, Phone, Users, TrendingUp, Clock, MapPin, FileText, DollarSign, Package, Award, Megaphone, Gift, RotateCcw, Sun, BarChart3, Target, CheckCircle2, ArrowRight, Sparkles, Wrench, Home, Flame, Droplet, ChevronRight, Star, Navigation, Truck, Search, UserPlus, Globe, Headphones, Bell, Mail, Smartphone, Video, Mic, Brain, Layers, Lock, Send, Key, Fence, PanelTop, Wind, DoorOpen, Bug, TreeDeciduous, Waves, TreePine, Trash2, Refrigerator, Hammer, PaintBucket, Grid3X3, Sparkle, Car, HardHat, Wifi, Camera, Briefcase, HeadphonesIcon } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
-import heroVideo from '@/assets/aura-intercept-hero.mp4';
+// Hero video served from public folder for better browser compatibility
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
@@ -348,7 +348,7 @@ export default function Index() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Column - Video */}
             <div className="animate-fade-in order-2 lg:order-1">
-              <video src={heroVideo} autoPlay loop muted playsInline className="w-full h-auto rounded-2xl shadow-2xl" />
+              <video src="/videos/hero-demo.mp4" autoPlay loop muted playsInline className="w-full h-auto rounded-2xl shadow-2xl" />
             </div>
 
             {/* Right Column - Content */}
