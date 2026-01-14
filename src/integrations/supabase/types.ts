@@ -4248,6 +4248,46 @@ export type Database = {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
       }
+      get_appointment_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          call_opt_out: boolean
+          company_id: string
+          created_at: string
+          crm_activity_id: string | null
+          crm_deal_id: string | null
+          crm_provider: string | null
+          customer_address: string | null
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          customer_token: string | null
+          customer_user_id: string | null
+          datetime: string
+          deal_stage: string | null
+          deal_value: number | null
+          duration_minutes: number
+          email_opt_out: boolean
+          employee_id: string | null
+          id: string
+          last_synced_at: string | null
+          notes: string | null
+          reminder_1h_sent: boolean | null
+          reminder_1h_sent_at: string | null
+          reminder_24h_sent: boolean | null
+          reminder_24h_sent_at: string | null
+          service_type: string
+          sms_opt_out: boolean
+          status: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "appointments"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
