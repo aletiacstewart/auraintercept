@@ -420,17 +420,17 @@ export function InvoiceForm({
             onClick={onCancel}
             className="h-7 w-7 p-0 rounded-full hover:bg-muted"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4 text-foreground" />
           </Button>
         )}
         <Receipt className="h-5 w-5 text-primary" />
-        <h3 className="font-semibold text-slate-900">{mode === 'direct' ? 'Create Invoice' : 'Generate Invoice'}</h3>
+        <h3 className="font-semibold text-foreground">{mode === 'direct' ? 'Create Invoice' : 'Generate Invoice'}</h3>
       </div>
 
       {/* Selected Jobs Display */}
       {selectedJobs.length > 0 && (
         <div className="space-y-1">
-          <Label className="text-xs font-medium text-slate-700">Selected Jobs ({selectedJobs.length})</Label>
+          <Label className="text-xs font-medium text-foreground/70">Selected Jobs ({selectedJobs.length})</Label>
           <div className="flex flex-wrap gap-1">
             {selectedJobs.map(job => (
               <div 
@@ -453,8 +453,8 @@ export function InvoiceForm({
 
       {/* Job/Customer Search */}
       <div className="space-y-2">
-        <Label className="text-sm font-medium flex items-center gap-2 text-slate-700">
-          <Search className="h-4 w-4" />
+        <Label className="text-sm font-medium flex items-center gap-2 text-foreground">
+          <Search className="h-4 w-4 text-foreground" />
           Search Completed Jobs
         </Label>
         <Input
@@ -547,7 +547,7 @@ export function InvoiceForm({
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <Label className="text-sm font-medium text-slate-700">Services / Line Items</Label>
+            <Label className="text-sm font-medium text-foreground">Services / Line Items</Label>
             <div className="flex gap-1">
               {services.length > 0 && (
                 <Select onValueChange={addServiceLineItem}>
@@ -592,7 +592,7 @@ export function InvoiceForm({
                   value={item.unit_price}
                   onChange={e => updateLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
                 />
-                <div className="col-span-1 text-right text-xs font-medium text-slate-700">${(item.quantity * item.unit_price).toFixed(0)}</div>
+                <div className="col-span-1 text-right text-xs font-medium text-foreground">${(item.quantity * item.unit_price).toFixed(0)}</div>
                 <Button
                   type="button"
                   variant="ghost"
@@ -607,14 +607,14 @@ export function InvoiceForm({
             ))}
           </div>
           <div className="border-t pt-2 mt-2 space-y-1 text-right text-sm">
-            <div className="font-bold text-slate-900">Total: ${subtotal.toFixed(2)}</div>
+            <div className="font-bold text-foreground">Total: ${subtotal.toFixed(2)}</div>
           </div>
         </div>
 
         {mode === 'direct' && (
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
-              <Label className="text-xs text-slate-700">Tax Rate (%)</Label>
+              <Label className="text-xs text-foreground/70">Tax Rate (%)</Label>
               <Input 
                 type="number" 
                 step="0.01" 
@@ -624,7 +624,7 @@ export function InvoiceForm({
               />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs text-slate-700">Due in (days)</Label>
+              <Label className="text-xs text-foreground/70">Due in (days)</Label>
               <Input 
                 type="number" 
                 value={dueDays} 
@@ -636,10 +636,10 @@ export function InvoiceForm({
         )}
 
         {mode === 'direct' && taxRate > 0 && (
-          <div className="text-right text-sm text-slate-600">
+          <div className="text-right text-sm text-foreground/70">
             <div>Subtotal: ${subtotal.toFixed(2)}</div>
             <div>Tax ({taxRate}%): ${taxAmount.toFixed(2)}</div>
-            <div className="font-bold text-slate-900">Total: ${total.toFixed(2)}</div>
+            <div className="font-bold text-foreground">Total: ${total.toFixed(2)}</div>
           </div>
         )}
 
@@ -653,17 +653,17 @@ export function InvoiceForm({
 
         {mode === 'ai' && (
           <div className="border rounded-lg p-3 space-y-2 bg-muted/30">
-            <Label className="text-sm font-medium text-slate-700">Send Invoice Via</Label>
+            <Label className="text-sm font-medium text-foreground">Send Invoice Via</Label>
             <div className="flex items-center gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
                 <Switch checked={sendEmail} onCheckedChange={setSendEmail} />
-                <Mail className="h-4 w-4 text-slate-500" />
-                <span className="text-sm text-slate-700">Email</span>
+                <Mail className="h-4 w-4 text-foreground/60" />
+                <span className="text-sm text-foreground">Email</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <Switch checked={sendSms} onCheckedChange={setSendSms} />
-                <MessageSquare className="h-4 w-4 text-slate-500" />
-                <span className="text-sm text-slate-700">SMS</span>
+                <MessageSquare className="h-4 w-4 text-foreground/60" />
+                <span className="text-sm text-foreground">SMS</span>
               </label>
             </div>
           </div>

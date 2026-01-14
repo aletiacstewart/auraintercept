@@ -226,11 +226,11 @@ export function BusinessQuoteForm({
             onClick={onCancel}
             className="h-7 w-7 p-0 rounded-full hover:bg-muted"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4 text-foreground" />
           </Button>
         )}
         <FileText className="h-5 w-5 text-primary" />
-        <h3 className="font-semibold">Create Quote</h3>
+        <h3 className="font-semibold text-foreground">Create Quote</h3>
       </div>
 
       <div className="space-y-3">
@@ -269,8 +269,8 @@ export function BusinessQuoteForm({
 
         {mode === 'ai' && (
           <div>
-            <Label className="text-sm font-medium">Services *</Label>
-            <div className="mt-1 space-y-1 max-h-32 overflow-y-auto border rounded-lg p-2">
+            <Label className="text-sm font-medium text-foreground">Services *</Label>
+            <div className="mt-1 space-y-1 max-h-32 overflow-y-auto border rounded-lg p-2 bg-background">
               {services.length > 0 ? (
                 services.map((service) => (
                   <label key={service.id} className="flex items-center space-x-2 p-1.5 rounded hover:bg-muted/50 cursor-pointer">
@@ -278,14 +278,14 @@ export function BusinessQuoteForm({
                       checked={selectedServices.includes(service.id)}
                       onCheckedChange={() => handleServiceToggle(service.id)}
                     />
-                    <span className="text-sm flex-1">{service.name}</span>
+                    <span className="text-sm flex-1 text-foreground">{service.name}</span>
                     {service.price && (
-                      <span className="text-xs text-muted-foreground">${service.price}</span>
+                      <span className="text-xs text-foreground/60">${service.price}</span>
                     )}
                   </label>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-2">No services available</p>
+                <p className="text-sm text-foreground/60 text-center py-2">No services available</p>
               )}
             </div>
           </div>
@@ -295,7 +295,7 @@ export function BusinessQuoteForm({
           <>
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <Label className="text-xs">Tax Rate (%)</Label>
+                <Label className="text-xs text-foreground/70">Tax Rate (%)</Label>
                 <Input 
                   type="number" 
                   step="0.01" 
@@ -305,7 +305,7 @@ export function BusinessQuoteForm({
                 />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">Valid Days</Label>
+                <Label className="text-xs text-foreground/70">Valid Days</Label>
                 <Input 
                   type="number" 
                   value={validDays} 
@@ -317,7 +317,7 @@ export function BusinessQuoteForm({
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <Label className="text-sm font-medium">Line Items</Label>
+                <Label className="text-sm font-medium text-foreground">Line Items</Label>
                 <Button type="button" variant="outline" size="sm" onClick={addLineItem} className="h-7">
                   <Plus className="w-3 h-3 mr-1" /> Add
                 </Button>
@@ -346,7 +346,7 @@ export function BusinessQuoteForm({
                       value={item.unit_price}
                       onChange={e => updateLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
                     />
-                    <div className="col-span-1 text-right text-xs">${(item.quantity * item.unit_price).toFixed(0)}</div>
+                    <div className="col-span-1 text-right text-xs text-foreground">${(item.quantity * item.unit_price).toFixed(0)}</div>
                     <Button
                       type="button"
                       variant="ghost"
@@ -360,9 +360,9 @@ export function BusinessQuoteForm({
                   </div>
                 ))}
               </div>
-              <div className="border-t pt-2 mt-2 space-y-1 text-right text-sm">
+              <div className="border-t pt-2 mt-2 space-y-1 text-right text-sm text-foreground">
                 <div>Subtotal: ${subtotal.toFixed(2)}</div>
-                <div className="text-muted-foreground text-xs">Tax ({taxRate}%): ${taxAmount.toFixed(2)}</div>
+                <div className="text-foreground/60 text-xs">Tax ({taxRate}%): ${taxAmount.toFixed(2)}</div>
                 <div className="font-bold">Total: ${total.toFixed(2)}</div>
               </div>
             </div>
@@ -379,17 +379,17 @@ export function BusinessQuoteForm({
 
         {mode === 'ai' && (
           <div className="border rounded-lg p-3 space-y-2 bg-muted/30">
-            <Label className="text-sm font-medium">Send Quote Via</Label>
+            <Label className="text-sm font-medium text-foreground">Send Quote Via</Label>
             <div className="flex items-center gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
                 <Switch checked={sendEmail} onCheckedChange={setSendEmail} />
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">Email</span>
+                <Mail className="h-4 w-4 text-foreground/60" />
+                <span className="text-sm text-foreground">Email</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <Switch checked={sendSms} onCheckedChange={setSendSms} />
-                <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">SMS</span>
+                <MessageSquare className="h-4 w-4 text-foreground/60" />
+                <span className="text-sm text-foreground">SMS</span>
               </label>
             </div>
           </div>

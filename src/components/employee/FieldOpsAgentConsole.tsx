@@ -817,7 +817,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Quote Form Panel */}
       {selectorMode === 'quote' && effectiveCompanyId && (
-        <div className="shrink-0 border-b bg-emerald-50 dark:bg-emerald-950/30 max-h-[60%] overflow-auto">
+        <div className="shrink-0 border-b console-surface max-h-[60%] overflow-auto">
           <BusinessQuoteForm
             companyId={effectiveCompanyId}
             onSubmit={handleQuoteSubmit}
@@ -830,7 +830,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Invoice Form Panel */}
       {selectorMode === 'invoice' && effectiveCompanyId && (
-        <div className="shrink-0 border-b bg-emerald-50 dark:bg-emerald-950/30 max-h-[60%] overflow-auto">
+        <div className="shrink-0 border-b console-surface max-h-[60%] overflow-auto">
           <InvoiceForm
             companyId={effectiveCompanyId}
             onSubmit={handleInvoiceSubmit}
@@ -843,15 +843,15 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
 
       {/* Job Selector Panel */}
       {selectorMode && selectorConfig && selectorMode !== 'quote' && selectorMode !== 'invoice' && (
-        <div className="shrink-0 border-b bg-blue-50 dark:bg-blue-950/30 p-4">
+        <div className="shrink-0 border-b console-surface p-4">
           <div className="flex items-center justify-between mb-3">
-            <div className="text-sm font-medium flex items-center gap-2">
+            <div className="text-sm font-medium flex items-center gap-2 text-foreground">
               <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                 <selectorConfig.icon className="h-3.5 w-3.5 text-white" />
               </div>
               <span>{selectorConfig.title}</span>
             </div>
-            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-blue-100 dark:hover:bg-blue-900/50" onClick={() => {
+            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-muted" onClick={() => {
               setSelectorMode(null);
               setSelectedJobForEta(null);
               setEtaMinutes('');
@@ -865,7 +865,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
             <div className="mb-3 p-2.5 rounded-lg border bg-background">
               <div className="flex items-center gap-2 mb-2">
                 <div className={cn('w-2 h-2 rounded-full shrink-0', getStatusColor(selectedJobForEta.status))} />
-                <span className="font-medium text-sm">{selectedJobForEta.appointments?.customer_name}</span>
+                <span className="font-medium text-sm text-foreground">{selectedJobForEta.appointments?.customer_name}</span>
                 <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
                   {selectedJobForEta.status.replace('_', ' ')}
                 </Badge>
@@ -897,7 +897,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
                   )}
                 </Button>
               </div>
-              <p className="text-[10px] text-muted-foreground mt-1">
+              <p className="text-[10px] text-foreground/60 mt-1">
                 Customer will be notified via SMS & email
               </p>
             </div>
@@ -905,10 +905,10 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
           
           {jobsLoading ? (
             <div className="flex items-center justify-center py-4">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              <Loader2 className="h-5 w-5 animate-spin text-foreground/60" />
             </div>
           ) : filteredJobs.length === 0 ? (
-            <div className="text-center py-4 text-sm text-muted-foreground">
+            <div className="text-center py-4 text-sm text-foreground/60">
               {selectorConfig.emptyMessage}
             </div>
           ) : (
