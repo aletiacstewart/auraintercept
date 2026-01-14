@@ -30,6 +30,11 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
     notes: '',
     sendWelcomeEmail: true,
     sendWelcomeSms: false,
+    // UTM/Attribution fields for CRM compatibility
+    campaignSource: '',
+    utmSource: '',
+    utmMedium: '',
+    utmCampaign: '',
   });
 
   // Create lead as a potential appointment/customer
@@ -214,6 +219,37 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
               onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
               rows={2}
             />
+          </div>
+
+          {/* UTM/Attribution Fields - CRM Compatibility */}
+          <div className="space-y-2 border-t border-border pt-3">
+            <Label className="text-foreground/70 text-xs">Attribution (CRM Sync)</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <Input
+                className="bg-white text-slate-900 border-border placeholder:text-slate-400 h-8 text-xs"
+                placeholder="Campaign Source"
+                value={formData.campaignSource}
+                onChange={(e) => setFormData(prev => ({ ...prev, campaignSource: e.target.value }))}
+              />
+              <Input
+                className="bg-white text-slate-900 border-border placeholder:text-slate-400 h-8 text-xs"
+                placeholder="UTM Source"
+                value={formData.utmSource}
+                onChange={(e) => setFormData(prev => ({ ...prev, utmSource: e.target.value }))}
+              />
+              <Input
+                className="bg-white text-slate-900 border-border placeholder:text-slate-400 h-8 text-xs"
+                placeholder="UTM Medium"
+                value={formData.utmMedium}
+                onChange={(e) => setFormData(prev => ({ ...prev, utmMedium: e.target.value }))}
+              />
+              <Input
+                className="bg-white text-slate-900 border-border placeholder:text-slate-400 h-8 text-xs"
+                placeholder="UTM Campaign"
+                value={formData.utmCampaign}
+                onChange={(e) => setFormData(prev => ({ ...prev, utmCampaign: e.target.value }))}
+              />
+            </div>
           </div>
 
           {/* Welcome Message Options */}

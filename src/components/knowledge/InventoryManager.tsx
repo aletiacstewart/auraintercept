@@ -28,6 +28,12 @@ interface InventoryItem {
   category: string | null;
   is_active: boolean;
   created_at: string;
+  // CRM compatibility fields
+  external_sku: string | null;
+  barcode: string | null;
+  manufacturer_part_number: string | null;
+  crm_product_id: string | null;
+  last_synced_at: string | null;
 }
 
 export function InventoryManager() {
@@ -47,6 +53,10 @@ export function InventoryManager() {
     unit_cost: 0,
     supplier: '',
     category: '',
+    // CRM compatibility fields
+    external_sku: '',
+    barcode: '',
+    manufacturer_part_number: '',
   });
 
   const { data: items = [], isLoading } = useQuery({
@@ -88,6 +98,10 @@ export function InventoryManager() {
         unit_cost: data.unit_cost || null,
         supplier: data.supplier || null,
         category: data.category || null,
+        // CRM compatibility fields
+        external_sku: data.external_sku || null,
+        barcode: data.barcode || null,
+        manufacturer_part_number: data.manufacturer_part_number || null,
       });
       if (error) throw error;
     },
@@ -111,6 +125,10 @@ export function InventoryManager() {
         unit_cost: data.unit_cost || null,
         supplier: data.supplier || null,
         category: data.category || null,
+        // CRM compatibility fields
+        external_sku: data.external_sku || null,
+        barcode: data.barcode || null,
+        manufacturer_part_number: data.manufacturer_part_number || null,
       }).eq('id', id);
       if (error) throw error;
     },
@@ -147,6 +165,9 @@ export function InventoryManager() {
       unit_cost: 0,
       supplier: '',
       category: '',
+      external_sku: '',
+      barcode: '',
+      manufacturer_part_number: '',
     });
   };
 
@@ -161,6 +182,9 @@ export function InventoryManager() {
       unit_cost: item.unit_cost || 0,
       supplier: item.supplier || '',
       category: item.category || '',
+      external_sku: item.external_sku || '',
+      barcode: item.barcode || '',
+      manufacturer_part_number: item.manufacturer_part_number || '',
     });
   };
 
@@ -216,6 +240,37 @@ export function InventoryManager() {
         <div className="space-y-2">
           <Label>Category</Label>
           <Input value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} />
+        </div>
+      </div>
+      
+      {/* CRM Compatibility Fields */}
+      <div className="border-t border-border pt-4 mt-2">
+        <Label className="text-sm text-muted-foreground mb-3 block">CRM & Product Catalog Fields</Label>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label>External SKU</Label>
+            <Input 
+              placeholder="Supplier/MFG SKU" 
+              value={formData.external_sku} 
+              onChange={e => setFormData({ ...formData, external_sku: e.target.value })} 
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Barcode / UPC</Label>
+            <Input 
+              placeholder="UPC or barcode" 
+              value={formData.barcode} 
+              onChange={e => setFormData({ ...formData, barcode: e.target.value })} 
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Manufacturer Part #</Label>
+            <Input 
+              placeholder="MPN" 
+              value={formData.manufacturer_part_number} 
+              onChange={e => setFormData({ ...formData, manufacturer_part_number: e.target.value })} 
+            />
+          </div>
         </div>
       </div>
     </div>

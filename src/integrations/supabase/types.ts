@@ -249,6 +249,9 @@ export type Database = {
           call_opt_out: boolean
           company_id: string
           created_at: string
+          crm_activity_id: string | null
+          crm_deal_id: string | null
+          crm_provider: string | null
           customer_address: string | null
           customer_email: string | null
           customer_name: string
@@ -256,10 +259,13 @@ export type Database = {
           customer_token: string | null
           customer_user_id: string | null
           datetime: string
+          deal_stage: string | null
+          deal_value: number | null
           duration_minutes: number
           email_opt_out: boolean
           employee_id: string | null
           id: string
+          last_synced_at: string | null
           notes: string | null
           reminder_1h_sent: boolean | null
           reminder_1h_sent_at: string | null
@@ -274,6 +280,9 @@ export type Database = {
           call_opt_out?: boolean
           company_id: string
           created_at?: string
+          crm_activity_id?: string | null
+          crm_deal_id?: string | null
+          crm_provider?: string | null
           customer_address?: string | null
           customer_email?: string | null
           customer_name: string
@@ -281,10 +290,13 @@ export type Database = {
           customer_token?: string | null
           customer_user_id?: string | null
           datetime: string
+          deal_stage?: string | null
+          deal_value?: number | null
           duration_minutes?: number
           email_opt_out?: boolean
           employee_id?: string | null
           id?: string
+          last_synced_at?: string | null
           notes?: string | null
           reminder_1h_sent?: boolean | null
           reminder_1h_sent_at?: string | null
@@ -299,6 +311,9 @@ export type Database = {
           call_opt_out?: boolean
           company_id?: string
           created_at?: string
+          crm_activity_id?: string | null
+          crm_deal_id?: string | null
+          crm_provider?: string | null
           customer_address?: string | null
           customer_email?: string | null
           customer_name?: string
@@ -306,10 +321,13 @@ export type Database = {
           customer_token?: string | null
           customer_user_id?: string | null
           datetime?: string
+          deal_stage?: string | null
+          deal_value?: number | null
           duration_minutes?: number
           email_opt_out?: boolean
           employee_id?: string | null
           id?: string
+          last_synced_at?: string | null
           notes?: string | null
           reminder_1h_sent?: boolean | null
           reminder_1h_sent_at?: string | null
@@ -1180,6 +1198,70 @@ export type Database = {
           },
         ]
       }
+      crm_field_mappings: {
+        Row: {
+          company_id: string
+          connection_id: string | null
+          created_at: string | null
+          crm_field: string
+          direction: string | null
+          entity_type: string
+          id: string
+          is_active: boolean | null
+          local_field: string
+          transform_function: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_id: string
+          connection_id?: string | null
+          created_at?: string | null
+          crm_field: string
+          direction?: string | null
+          entity_type: string
+          id?: string
+          is_active?: boolean | null
+          local_field: string
+          transform_function?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: string
+          connection_id?: string | null
+          created_at?: string | null
+          crm_field?: string
+          direction?: string | null
+          entity_type?: string
+          id?: string
+          is_active?: boolean | null
+          local_field?: string
+          transform_function?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_field_mappings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_field_mappings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_field_mappings_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "crm_connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_sync_logs: {
         Row: {
           company_id: string
@@ -1582,6 +1664,120 @@ export type Database = {
             columns: ["technician_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          call_opt_in: boolean | null
+          city: string | null
+          company_id: string
+          country: string | null
+          created_at: string | null
+          crm_account_id: string | null
+          crm_contact_id: string | null
+          crm_provider: string | null
+          custom_fields: Json | null
+          customer_since: string | null
+          email: string | null
+          email_opt_in: boolean | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          last_synced_at: string | null
+          lead_source: string | null
+          lifecycle_stage: string | null
+          mobile_phone: string | null
+          notes: string | null
+          phone: string | null
+          postal_code: string | null
+          preferred_contact_method: string | null
+          sms_opt_in: boolean | null
+          state: string | null
+          sync_status: string | null
+          tags: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          call_opt_in?: boolean | null
+          city?: string | null
+          company_id: string
+          country?: string | null
+          created_at?: string | null
+          crm_account_id?: string | null
+          crm_contact_id?: string | null
+          crm_provider?: string | null
+          custom_fields?: Json | null
+          customer_since?: string | null
+          email?: string | null
+          email_opt_in?: boolean | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          last_synced_at?: string | null
+          lead_source?: string | null
+          lifecycle_stage?: string | null
+          mobile_phone?: string | null
+          notes?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          preferred_contact_method?: string | null
+          sms_opt_in?: boolean | null
+          state?: string | null
+          sync_status?: string | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          call_opt_in?: boolean | null
+          city?: string | null
+          company_id?: string
+          country?: string | null
+          created_at?: string | null
+          crm_account_id?: string | null
+          crm_contact_id?: string | null
+          crm_provider?: string | null
+          custom_fields?: Json | null
+          customer_since?: string | null
+          email?: string | null
+          email_opt_in?: boolean | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          last_synced_at?: string | null
+          lead_source?: string | null
+          lifecycle_stage?: string | null
+          mobile_phone?: string | null
+          notes?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          preferred_contact_method?: string | null
+          sms_opt_in?: boolean | null
+          state?: string | null
+          sync_status?: string | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customers_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
             referencedColumns: ["id"]
           },
         ]
@@ -2057,12 +2253,17 @@ export type Database = {
       }
       inventory_items: {
         Row: {
+          barcode: string | null
           category: string | null
           company_id: string
           created_at: string
+          crm_product_id: string | null
           description: string | null
+          external_sku: string | null
           id: string
           is_active: boolean
+          last_synced_at: string | null
+          manufacturer_part_number: string | null
           min_quantity: number
           name: string
           quantity: number
@@ -2072,12 +2273,17 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          barcode?: string | null
           category?: string | null
           company_id: string
           created_at?: string
+          crm_product_id?: string | null
           description?: string | null
+          external_sku?: string | null
           id?: string
           is_active?: boolean
+          last_synced_at?: string | null
+          manufacturer_part_number?: string | null
           min_quantity?: number
           name: string
           quantity?: number
@@ -2087,12 +2293,17 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          barcode?: string | null
           category?: string | null
           company_id?: string
           created_at?: string
+          crm_product_id?: string | null
           description?: string | null
+          external_sku?: string | null
           id?: string
           is_active?: boolean
+          last_synced_at?: string | null
+          manufacturer_part_number?: string | null
           min_quantity?: number
           name?: string
           quantity?: number
@@ -2604,17 +2815,22 @@ export type Database = {
         Row: {
           address: string | null
           auto_follow_up_enabled: boolean | null
+          campaign_source: string | null
           channel: string | null
           company_id: string
           conversation_id: string | null
           converted_to_appointment_id: string | null
           converted_to_customer_id: string | null
           created_at: string | null
+          crm_contact_id: string | null
+          crm_lead_id: string | null
+          crm_provider: string | null
           email: string | null
           follow_up_at: string | null
           id: string
           intent: string | null
           last_activity_at: string | null
+          last_synced_at: string | null
           name: string | null
           notes: string | null
           phone: string | null
@@ -2624,22 +2840,31 @@ export type Database = {
           service_interest: string | null
           source: string
           status: string | null
+          sync_status: string | null
           updated_at: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
         }
         Insert: {
           address?: string | null
           auto_follow_up_enabled?: boolean | null
+          campaign_source?: string | null
           channel?: string | null
           company_id: string
           conversation_id?: string | null
           converted_to_appointment_id?: string | null
           converted_to_customer_id?: string | null
           created_at?: string | null
+          crm_contact_id?: string | null
+          crm_lead_id?: string | null
+          crm_provider?: string | null
           email?: string | null
           follow_up_at?: string | null
           id?: string
           intent?: string | null
           last_activity_at?: string | null
+          last_synced_at?: string | null
           name?: string | null
           notes?: string | null
           phone?: string | null
@@ -2649,22 +2874,31 @@ export type Database = {
           service_interest?: string | null
           source: string
           status?: string | null
+          sync_status?: string | null
           updated_at?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
         }
         Update: {
           address?: string | null
           auto_follow_up_enabled?: boolean | null
+          campaign_source?: string | null
           channel?: string | null
           company_id?: string
           conversation_id?: string | null
           converted_to_appointment_id?: string | null
           converted_to_customer_id?: string | null
           created_at?: string | null
+          crm_contact_id?: string | null
+          crm_lead_id?: string | null
+          crm_provider?: string | null
           email?: string | null
           follow_up_at?: string | null
           id?: string
           intent?: string | null
           last_activity_at?: string | null
+          last_synced_at?: string | null
           name?: string | null
           notes?: string | null
           phone?: string | null
@@ -2674,7 +2908,11 @@ export type Database = {
           service_interest?: string | null
           source?: string
           status?: string | null
+          sync_status?: string | null
           updated_at?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
         }
         Relationships: [
           {
@@ -3168,12 +3406,14 @@ export type Database = {
           category: string | null
           company_id: string
           created_at: string
+          crm_product_id: string | null
           description: string | null
           duration_minutes: number | null
           flat_fee: number | null
           hourly_rate: number | null
           id: string
           is_active: boolean
+          last_synced_at: string | null
           name: string
           parts_cost: number | null
           price: number | null
@@ -3181,18 +3421,21 @@ export type Database = {
           service_type: string | null
           service_type_other: string | null
           sort_order: number | null
+          sync_to_crm: boolean | null
           updated_at: string
         }
         Insert: {
           category?: string | null
           company_id: string
           created_at?: string
+          crm_product_id?: string | null
           description?: string | null
           duration_minutes?: number | null
           flat_fee?: number | null
           hourly_rate?: number | null
           id?: string
           is_active?: boolean
+          last_synced_at?: string | null
           name: string
           parts_cost?: number | null
           price?: number | null
@@ -3200,18 +3443,21 @@ export type Database = {
           service_type?: string | null
           service_type_other?: string | null
           sort_order?: number | null
+          sync_to_crm?: boolean | null
           updated_at?: string
         }
         Update: {
           category?: string | null
           company_id?: string
           created_at?: string
+          crm_product_id?: string | null
           description?: string | null
           duration_minutes?: number | null
           flat_fee?: number | null
           hourly_rate?: number | null
           id?: string
           is_active?: boolean
+          last_synced_at?: string | null
           name?: string
           parts_cost?: number | null
           price?: number | null
@@ -3219,6 +3465,7 @@ export type Database = {
           service_type?: string | null
           service_type_other?: string | null
           sort_order?: number | null
+          sync_to_crm?: boolean | null
           updated_at?: string
         }
         Relationships: [
@@ -3801,6 +4048,8 @@ export type Database = {
           coverage_details: string | null
           coverage_type: string | null
           created_at: string
+          crm_asset_id: string | null
+          crm_case_id: string | null
           customer_address: string | null
           customer_email: string | null
           customer_name: string
@@ -3810,6 +4059,7 @@ export type Database = {
           id: string
           installation_date: string | null
           is_active: boolean
+          last_synced_at: string | null
           purchase_date: string | null
           serial_number: string | null
           updated_at: string
@@ -3822,6 +4072,8 @@ export type Database = {
           coverage_details?: string | null
           coverage_type?: string | null
           created_at?: string
+          crm_asset_id?: string | null
+          crm_case_id?: string | null
           customer_address?: string | null
           customer_email?: string | null
           customer_name: string
@@ -3831,6 +4083,7 @@ export type Database = {
           id?: string
           installation_date?: string | null
           is_active?: boolean
+          last_synced_at?: string | null
           purchase_date?: string | null
           serial_number?: string | null
           updated_at?: string
@@ -3843,6 +4096,8 @@ export type Database = {
           coverage_details?: string | null
           coverage_type?: string | null
           created_at?: string
+          crm_asset_id?: string | null
+          crm_case_id?: string | null
           customer_address?: string | null
           customer_email?: string | null
           customer_name?: string
@@ -3852,6 +4107,7 @@ export type Database = {
           id?: string
           installation_date?: string | null
           is_active?: boolean
+          last_synced_at?: string | null
           purchase_date?: string | null
           serial_number?: string | null
           updated_at?: string
