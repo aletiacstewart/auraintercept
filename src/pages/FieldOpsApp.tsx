@@ -1,28 +1,38 @@
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { FieldOpsAgentConsole } from '@/components/employee/FieldOpsAgentConsole';
 import { Button } from '@/components/ui/button';
-import { LogOut, LayoutDashboard, Bot } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { LogOut, LayoutDashboard, Bot, Loader2, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useQuery } from '@tanstack/react-query';
+import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
+import { z } from 'zod';
+
+const loginSchema = z.object({
+  email: z.string().trim().email('Please enter a valid email address'),
+  password: z.string().min(1, 'Password is required'),
+});
 
 /**
  * Standalone Field Ops App - Lightweight PWA for technicians
  * This is the installable mobile app that provides quick access to the
  * Field Operations AI Console without the full dashboard navigation.
+ * Includes embedded login form for seamless authentication.
  */
 export default function FieldOpsApp() {
-  const { user, companyId, userRole, loading } = useAuth();
+  const { user, companyId, loading } = useAuth();
   const navigate = useNavigate();
-
-  // Redirect to auth if not logged in
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth?mode=employee&tab=login&redirect=/field-ops-app');
-    }
-  }, [user, loading, navigate]);
+  
+  // Login form state
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Fetch company branding
   const { data: company } = useQuery({
@@ -39,11 +49,48 @@ export default function FieldOpsApp() {
     enabled: !!companyId,
   });
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoggingIn(true);
+
+    try {
+      // Validate inputs
+      const result = loginSchema.safeParse({ email, password });
+      if (!result.success) {
+        toast.error(result.error.errors[0].message);
+        setIsLoggingIn(false);
+        return;
+      }
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      if (error) {
+        if (error.message.includes('Invalid login credentials')) {
+          toast.error('Invalid email or password');
+        } else {
+          toast.error(error.message);
+        }
+        setIsLoggingIn(false);
+        return;
+      }
+
+      toast.success('Signed in successfully');
+      // Auth state change will automatically update the UI
+    } catch (error) {
+      toast.error('An unexpected error occurred');
+      setIsLoggingIn(false);
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
       toast.success('Signed out successfully');
-      navigate('/auth?mode=employee');
+      setEmail('');
+      setPassword('');
     } catch (error) {
       toast.error('Failed to sign out');
     }
@@ -53,6 +100,7 @@ export default function FieldOpsApp() {
     window.open('/technician', '_blank');
   };
 
+  // Loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -64,10 +112,105 @@ export default function FieldOpsApp() {
     );
   }
 
+  // Not authenticated - show embedded login form
   if (!user) {
-    return null; // Will redirect via useEffect
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 flex flex-col items-center justify-center p-4">
+        {/* Branding */}
+        <div className="flex flex-col items-center gap-3 mb-6">
+          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <Bot className="h-8 w-8 text-primary" />
+          </div>
+          <div className="text-center">
+            <h1 className="text-xl font-bold text-foreground">Field Ops AI</h1>
+            <p className="text-sm text-muted-foreground">Technician Console</p>
+          </div>
+        </div>
+
+        {/* Login Card */}
+        <Card className="w-full max-w-sm border-border/50 shadow-lg">
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="text-lg">Employee Sign In</CardTitle>
+            <CardDescription>
+              Sign in to access the AI console for field operations
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  className="bg-white text-slate-900 placeholder:text-slate-400"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    autoComplete="current-password"
+                    className="bg-white text-slate-900 placeholder:text-slate-400 pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <ForgotPasswordDialog />
+              </div>
+
+              <Button 
+                type="submit" 
+                className="w-full"
+                disabled={isLoggingIn}
+              >
+                {isLoggingIn ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Help text */}
+        <p className="mt-6 text-xs text-muted-foreground text-center max-w-xs">
+          Having trouble signing in? Contact your company administrator for assistance.
+        </p>
+      </div>
+    );
   }
 
+  // Authenticated - show Field Ops Console
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Minimal Header */}
