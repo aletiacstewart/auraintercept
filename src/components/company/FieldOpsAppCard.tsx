@@ -50,7 +50,8 @@ export function FieldOpsAppCard() {
 
   // Add version param to bust cache on new builds
   const buildVersion = import.meta.env.VITE_BUILD_TIME || Date.now().toString(36);
-  const installUrl = `${baseUrl}/auth?mode=employee&tab=login&source=qr&v=${buildVersion}`;
+  // Point to the standalone Field Ops App (lightweight AI Console PWA)
+  const installUrl = `${baseUrl}/field-ops-app?source=qr&v=${buildVersion}`;
 
   const handleCopyLink = async () => {
     try {
@@ -71,7 +72,7 @@ export function FieldOpsAppCard() {
               Field Ops App
             </CardTitle>
             <CardDescription className="mt-1 text-white/80">
-              Install the mobile app on your technicians' devices
+              Quick-access AI Console for field technicians
             </CardDescription>
           </div>
           <Badge variant="outline" className="bg-teal-500/10 text-teal-600 border-teal-500/30">
@@ -126,7 +127,7 @@ export function FieldOpsAppCard() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={() => window.open('/technician', '_blank')}
+                onClick={() => window.open('/field-ops-app', '_blank')}
                 className="gap-1.5"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
