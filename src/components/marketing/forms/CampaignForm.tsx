@@ -274,19 +274,11 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
     }
   };
 
-  const getCampaignTypeColor = () => {
-    switch (formData.campaignType) {
-      case 'referral': return 'border-pink-200 bg-pink-50/50';
-      case 'winback': return 'border-purple-200 bg-purple-50/50';
-      default: return 'border-orange-200 bg-orange-50/50';
-    }
-  };
-
   return (
-    <Card className={`${getCampaignTypeColor()} text-foreground`}>
+    <Card className="border-border bg-background shadow-sm text-foreground">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-lg flex items-center gap-2 text-foreground">
             {getCampaignTypeIcon()}
             Create Campaign
           </CardTitle>
@@ -296,15 +288,15 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
         </div>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-muted/50 rounded-lg">
           {/* Campaign Type Selection */}
           <div className="space-y-2">
-            <Label>Campaign Type</Label>
+            <Label className="text-foreground/70">Campaign Type</Label>
             <Select
               value={formData.campaignType}
               onValueChange={(value) => setFormData(prev => ({ ...prev, campaignType: value }))}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -346,19 +338,19 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           {formData.campaignType === 'referral' && (
             <>
               {/* Referral Code Generator */}
-              <div className="space-y-3 p-3 rounded-lg border border-pink-200 bg-pink-50/50">
-                <h4 className="font-medium text-sm flex items-center gap-2">
+              <div className="space-y-3 p-3 rounded-lg border border-border bg-background">
+                <h4 className="font-medium text-sm flex items-center gap-2 text-foreground">
                   <Gift className="h-4 w-4 text-pink-600" />
                   Referral Code for Customer Sharing
                 </h4>
                 <div className="space-y-2">
-                  <Label>Referral Code</Label>
+                  <Label className="text-foreground/70">Referral Code</Label>
                   <div className="flex gap-2">
                     <Input
                       placeholder="Click generate to create a code"
                       value={formData.referralCode}
                       onChange={(e) => setFormData(prev => ({ ...prev, referralCode: e.target.value.toUpperCase() }))}
-                      className="font-mono text-lg tracking-wider"
+                      className="font-mono text-lg tracking-wider bg-white text-slate-900 border-border placeholder:text-slate-400"
                     />
                     <Button
                       type="button"
@@ -386,63 +378,69 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                 </div>
               </div>
 
-              <div className="space-y-3 p-3 rounded-lg border bg-background">
-                <h4 className="font-medium text-sm">Referrer (Existing Customer)</h4>
+              <div className="space-y-3 p-3 rounded-lg border border-border bg-background">
+                <h4 className="font-medium text-sm text-foreground">Referrer (Existing Customer)</h4>
                 <div className="space-y-2">
-                  <Label>Name *</Label>
+                  <Label className="text-foreground/70">Name *</Label>
                   <Input
                     placeholder="John Smith"
                     value={formData.referrerName}
                     onChange={(e) => setFormData(prev => ({ ...prev, referrerName: e.target.value }))}
+                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-2">
-                    <Label>Email</Label>
+                    <Label className="text-foreground/70">Email</Label>
                     <Input
                       type="email"
                       placeholder="john@email.com"
                       value={formData.referrerEmail}
                       onChange={(e) => setFormData(prev => ({ ...prev, referrerEmail: e.target.value }))}
+                      className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Phone</Label>
+                    <Label className="text-foreground/70">Phone</Label>
                     <Input
                       placeholder="(555) 123-4567"
                       value={formData.referrerPhone}
                       onChange={(e) => setFormData(prev => ({ ...prev, referrerPhone: e.target.value }))}
+                      className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-3 p-3 rounded-lg border bg-background">
-                <h4 className="font-medium text-sm">Referred (New Customer - Optional)</h4>
+              <div className="space-y-3 p-3 rounded-lg border border-border bg-background">
+                <h4 className="font-medium text-sm text-foreground">Referred (New Customer - Optional)</h4>
                 <div className="space-y-2">
-                  <Label>Name</Label>
+                  <Label className="text-foreground/70">Name</Label>
                   <Input
                     placeholder="Jane Doe"
                     value={formData.referredName}
                     onChange={(e) => setFormData(prev => ({ ...prev, referredName: e.target.value }))}
+                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-2">
-                    <Label>Email</Label>
+                    <Label className="text-foreground/70">Email</Label>
                     <Input
                       type="email"
                       placeholder="jane@email.com"
                       value={formData.referredEmail}
                       onChange={(e) => setFormData(prev => ({ ...prev, referredEmail: e.target.value }))}
+                      className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Phone</Label>
+                    <Label className="text-foreground/70">Phone</Label>
                     <Input
                       placeholder="(555) 987-6543"
                       value={formData.referredPhone}
                       onChange={(e) => setFormData(prev => ({ ...prev, referredPhone: e.target.value }))}
+                      className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                     />
                   </div>
                 </div>
@@ -450,12 +448,12 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label>Reward Type</Label>
+                  <Label className="text-foreground/70">Reward Type</Label>
                   <Select
                     value={formData.rewardType}
                     onValueChange={(value) => setFormData(prev => ({ ...prev, rewardType: value }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white text-slate-900 border-border">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -466,12 +464,13 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Reward Value</Label>
+                  <Label className="text-foreground/70">Reward Value</Label>
                   <Input
                     type="number"
                     placeholder="10"
                     value={formData.rewardValue}
                     onChange={(e) => setFormData(prev => ({ ...prev, rewardValue: e.target.value }))}
+                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                   />
                 </div>
               </div>
@@ -482,17 +481,18 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           {formData.campaignType === 'winback' && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="name">Campaign Name</Label>
+                <Label htmlFor="name" className="text-foreground/70">Campaign Name</Label>
                 <Input
                   id="name"
                   placeholder="e.g., Q1 Win-Back Campaign"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="flex items-center gap-1">
+                <Label className="flex items-center gap-1 text-foreground/70">
                   <Calendar className="h-3 w-3" />
                   Inactive Period
                 </Label>
@@ -500,7 +500,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                   value={formData.inactivePeriod}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, inactivePeriod: value }))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white text-slate-900 border-border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -523,22 +523,23 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           {formData.campaignType !== 'referral' && formData.campaignType !== 'winback' && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="name">Campaign Name *</Label>
+                <Label htmlFor="name" className="text-foreground/70">Campaign Name *</Label>
                 <Input
                   id="name"
                   placeholder="e.g., Summer Sale 2024"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Target Segment</Label>
+                <Label className="text-foreground/70">Target Segment</Label>
                 <Select
                   value={formData.targetSegment}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, targetSegment: value }))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white text-slate-900 border-border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -555,24 +556,25 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
 
           {/* Promo Details (for promotional, winback, seasonal, loyalty) */}
           {formData.campaignType !== 'referral' && (
-            <div className="space-y-3 p-3 rounded-lg border bg-background">
-              <h4 className="font-medium text-sm">Promo Details</h4>
+            <div className="space-y-3 p-3 rounded-lg border border-border bg-background">
+              <h4 className="font-medium text-sm text-foreground">Promo Details</h4>
               <div className="grid grid-cols-3 gap-2">
                 <div className="space-y-2">
-                  <Label>Promo Code</Label>
+                  <Label className="text-foreground/70">Promo Code</Label>
                   <Input
                     placeholder="SUMMER20"
                     value={formData.promoCode}
                     onChange={(e) => setFormData(prev => ({ ...prev, promoCode: e.target.value.toUpperCase() }))}
+                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Discount Type</Label>
+                  <Label className="text-foreground/70">Discount Type</Label>
                   <Select
                     value={formData.discountType}
                     onValueChange={(value) => setFormData(prev => ({ ...prev, discountType: value }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white text-slate-900 border-border">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -582,12 +584,13 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Discount Value</Label>
+                  <Label className="text-foreground/70">Discount Value</Label>
                   <Input
                     type="number"
                     placeholder={formData.discountType === 'percent' ? '20' : '50'}
                     value={formData.discountValue}
                     onChange={(e) => setFormData(prev => ({ ...prev, discountValue: e.target.value }))}
+                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                   />
                 </div>
               </div>
@@ -601,7 +604,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           {formData.campaignType !== 'referral' && (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label className="flex items-center gap-1">
+                <Label className="flex items-center gap-1 text-foreground/70">
                   <Calendar className="h-3 w-3" />
                   Start Date
                 </Label>
@@ -609,10 +612,11 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                   type="date"
                   value={formData.startDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                  className="bg-white text-slate-900 border-border"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="flex items-center gap-1">
+                <Label className="flex items-center gap-1 text-foreground/70">
                   <Calendar className="h-3 w-3" />
                   End Date
                 </Label>
@@ -620,6 +624,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                   type="date"
                   value={formData.endDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
+                  className="bg-white text-slate-900 border-border"
                 />
               </div>
             </div>
@@ -628,7 +633,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           {/* Channels (not for referral) */}
           {formData.campaignType !== 'referral' && (
             <div className="space-y-2">
-              <Label>Channels</Label>
+              <Label className="text-foreground/70">Channels</Label>
               <div className="flex gap-4">
                 <div className="flex items-center gap-2">
                   <Checkbox
@@ -660,7 +665,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           {formData.channels.includes('email') && formData.campaignType !== 'referral' && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label>Email Subject</Label>
+                <Label className="text-foreground/70">Email Subject</Label>
                 <Button
                   type="button"
                   variant="ghost"
@@ -681,6 +686,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                 placeholder="Don't miss our special offer!"
                 value={formData.emailSubject}
                 onChange={(e) => setFormData(prev => ({ ...prev, emailSubject: e.target.value }))}
+                className="bg-white text-slate-900 border-border placeholder:text-slate-400"
               />
             </div>
           )}
@@ -689,7 +695,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           {formData.campaignType !== 'referral' && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label>Message Template</Label>
+                <Label className="text-foreground/70">Message Template</Label>
                 <Button
                   type="button"
                   variant="ghost"
@@ -711,6 +717,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
                 value={formData.messageTemplate}
                 onChange={(e) => setFormData(prev => ({ ...prev, messageTemplate: e.target.value }))}
                 rows={3}
+                className="bg-white text-slate-900 border-border placeholder:text-slate-400"
               />
               <p className="text-xs text-muted-foreground">
                 Variables: {'{customer_name}'}, {'{promo_code}'}, {'{discount}'}
