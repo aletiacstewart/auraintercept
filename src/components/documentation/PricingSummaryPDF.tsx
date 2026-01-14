@@ -341,7 +341,7 @@ const SUBSCRIPTION_TIERS = {
     bestFor: 'Small service companies getting started with AI automation',
   },
   professional: {
-    name: 'Professional',
+    name: 'Aura Multi-Track (Business)',
     monthlyPrice: 1750,
     annualPrice: 17500,
     annualSavings: 3500,
@@ -638,11 +638,11 @@ const PricingSummaryPDF = () => (
     {/* Professional Tier Details */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Professional Tier</Text>
+      <Text style={styles.sectionTitle}>Aura Multi-Track Tier</Text>
 
       <View style={styles.pricingCardHighlight}>
         <Text style={{ fontSize: 9, color: colors.accent, fontWeight: 700, marginBottom: 4 }}>MOST POPULAR</Text>
-        <Text style={styles.pricingTierName}>Professional Plan</Text>
+        <Text style={styles.pricingTierName}>Aura Multi-Track (Business)</Text>
         <Text style={styles.pricingPrice}>$1,750/month</Text>
         <Text style={styles.pricingAnnual}>or $17,500/year (billed annually)</Text>
         <Text style={styles.pricingSavings}>Save $3,500 with annual billing</Text>
