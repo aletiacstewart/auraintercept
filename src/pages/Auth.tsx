@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Bot, Building2, Users, Shield, Check, Crown, Zap, MessageSquare, Phone, Mail, Mic, UserCircle } from 'lucide-react';
+import { Bot, Building2, Users, Shield, Check, Crown, Zap, MessageSquare, Phone, Mail, Mic, UserCircle, DollarSign, FileText } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
@@ -757,6 +757,41 @@ export default function Auth() {
               </Card>
             </div>
           </div>
+
+          {/* Billing/Onboarding Notices - Only show for company mode */}
+          {mode === 'company' && (
+            <div className="mt-8 grid md:grid-cols-3 gap-4">
+              <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 flex flex-col items-center text-center">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mb-3">
+                  <Users className="w-5 h-5 text-primary" />
+                </div>
+                <h4 className="font-semibold text-primary text-sm mb-2">Concierge Onboarding</h4>
+                <p className="text-xs text-foreground">
+                  Aura Intercept will configure all 3rd party integrations on your behalf for a one-time setup fee of <span className="font-bold">$500</span>.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 flex flex-col items-center text-center">
+                <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center mb-3">
+                  <DollarSign className="w-5 h-5 text-amber-500" />
+                </div>
+                <h4 className="font-semibold text-amber-500 text-sm mb-2">Billing Requirement</h4>
+                <p className="text-xs text-foreground">
+                  A valid credit card must be on file for your Aura Intercept subscription and all connected 3rd party accounts.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex flex-col items-center text-center">
+                <div className="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center mb-3">
+                  <FileText className="w-5 h-5 text-cyan-500" />
+                </div>
+                <h4 className="font-semibold text-cyan-500 text-sm mb-2">Invoice Payments</h4>
+                <p className="text-xs text-foreground">
+                  Connect your own Stripe account to process customer payments. We don't handle payments on your behalf.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <PublicFooter />
