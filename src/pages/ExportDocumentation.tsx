@@ -31,8 +31,8 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <p className="font-medium text-foreground">Document includes:</p>
+              <div className="space-y-2 text-sm text-card-foreground/70">
+                <p className="font-medium text-card-foreground">Document includes:</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>Executive Summary</li>
                   <li>Development Timeline (6 phases)</li>
@@ -114,8 +114,8 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                       <span className="text-xs font-medium text-primary">{section.page}</span>
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{section.title}</p>
-                      <p className="text-xs text-muted-foreground">{section.desc}</p>
+                      <p className="font-medium text-sm text-card-foreground">{section.title}</p>
+                      <p className="text-xs text-card-foreground/70">{section.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -129,9 +129,9 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
             <div className="flex items-center gap-3">
               <CheckCircle className="h-5 w-5 text-green-500" />
               <div>
-                <p className="font-medium">Professional Formatting</p>
-                <p className="text-sm text-muted-foreground">
-                  The PDF is professionally formatted with consistent branding, page numbers, 
+                <p className="font-medium text-card-foreground">Professional Formatting</p>
+                <p className="text-sm text-card-foreground/70">
+                  The PDF is professionally formatted with consistent branding, page numbers,
                   headers, and a table of contents for easy navigation.
                 </p>
               </div>
