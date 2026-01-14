@@ -7,6 +7,119 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 };
 
+// Rate limiting configuration
+const RATE_LIMITS = {
+  chat: { requests: 20, windowSeconds: 60 },    // 20 requests per minute
+  book: { requests: 5, windowSeconds: 300 },    // 5 bookings per 5 minutes
+  config: { requests: 30, windowSeconds: 60 },  // 30 requests per minute
+};
+
+// In-memory rate limit store (per-instance, resets on cold start)
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(identifier: string, action: string): { allowed: boolean; retryAfter?: number } {
+  const config = RATE_LIMITS[action as keyof typeof RATE_LIMITS] || RATE_LIMITS.config;
+  const key = `${identifier}:${action}`;
+  const now = Date.now();
+  
+  const record = rateLimitStore.get(key);
+  
+  if (!record || now > record.resetAt) {
+    rateLimitStore.set(key, { count: 1, resetAt: now + config.windowSeconds * 1000 });
+    return { allowed: true };
+  }
+  
+  if (record.count >= config.requests) {
+    const retryAfter = Math.ceil((record.resetAt - now) / 1000);
+    return { allowed: false, retryAfter };
+  }
+  
+  record.count++;
+  return { allowed: true };
+}
+
+// Input validation functions
+function validateEmail(email: string | null | undefined): { valid: boolean; error?: string } {
+  if (!email || email === '') return { valid: true }; // Optional field
+  if (email.length > 254) return { valid: false, error: 'Email too long (max 254 characters)' };
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) return { valid: false, error: 'Invalid email format' };
+  return { valid: true };
+}
+
+function validatePhone(phone: string | null | undefined): { valid: boolean; error?: string } {
+  if (!phone || phone === '') return { valid: true }; // Optional field
+  if (phone.length > 20) return { valid: false, error: 'Phone number too long (max 20 characters)' };
+  const phoneRegex = /^[\d\s\-\+\(\)]{7,20}$/;
+  if (!phoneRegex.test(phone)) return { valid: false, error: 'Invalid phone format' };
+  return { valid: true };
+}
+
+function sanitizeString(input: string | null | undefined, maxLength: number): string {
+  if (!input) return '';
+  return input.slice(0, maxLength).trim();
+}
+
+function validateBookingInput(args: any): { valid: boolean; errors: string[]; sanitized: any } {
+  const errors: string[] = [];
+  
+  // Validate required fields
+  if (!args.customer_name || args.customer_name.trim() === '') {
+    errors.push('Customer name is required');
+  }
+  if (!args.customer_phone || args.customer_phone.trim() === '') {
+    errors.push('Customer phone is required');
+  }
+  if (!args.service_type || args.service_type.trim() === '') {
+    errors.push('Service type is required');
+  }
+  if (!args.preferred_datetime) {
+    errors.push('Preferred date/time is required');
+  }
+  
+  // Validate formats
+  const emailCheck = validateEmail(args.customer_email);
+  if (!emailCheck.valid) errors.push(emailCheck.error!);
+  
+  const phoneCheck = validatePhone(args.customer_phone);
+  if (!phoneCheck.valid) errors.push(phoneCheck.error!);
+  
+  // Validate datetime format
+  if (args.preferred_datetime) {
+    const date = new Date(args.preferred_datetime);
+    if (isNaN(date.getTime())) {
+      errors.push('Invalid date/time format');
+    } else if (date < new Date()) {
+      errors.push('Appointment date must be in the future');
+    }
+  }
+  
+  // Sanitize inputs
+  const sanitized = {
+    customer_name: sanitizeString(args.customer_name, 100),
+    customer_phone: sanitizeString(args.customer_phone, 20),
+    customer_email: args.customer_email ? sanitizeString(args.customer_email, 254) : null,
+    customer_address: args.customer_address ? sanitizeString(args.customer_address, 500) : null,
+    service_type: sanitizeString(args.service_type, 100),
+    preferred_datetime: args.preferred_datetime,
+    notes: args.notes ? sanitizeString(args.notes, 2000) : null,
+    is_emergency: Boolean(args.is_emergency),
+  };
+  
+  return { valid: errors.length === 0, errors, sanitized };
+}
+
+function getClientIP(req: Request): string {
+  // Try various headers for client IP
+  const forwarded = req.headers.get('x-forwarded-for');
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+  const realIP = req.headers.get('x-real-ip');
+  if (realIP) return realIP;
+  return 'unknown';
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -21,11 +134,30 @@ serve(async (req) => {
     const url = new URL(req.url);
     const action = url.searchParams.get('action');
     const companySlug = url.searchParams.get('company');
+    const clientIP = getClientIP(req);
 
     if (!companySlug) {
       return new Response(JSON.stringify({ error: 'Company slug required' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Rate limiting check
+    const rateLimitAction = action === 'book' ? 'book' : action === 'chat' ? 'chat' : 'config';
+    const rateCheck = checkRateLimit(clientIP, rateLimitAction);
+    if (!rateCheck.allowed) {
+      console.log(`Rate limit exceeded for ${clientIP} on action ${rateLimitAction}`);
+      return new Response(JSON.stringify({ 
+        error: 'Too many requests. Please try again later.',
+        retryAfter: rateCheck.retryAfter 
+      }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json',
+          'Retry-After': String(rateCheck.retryAfter || 60)
+        },
       });
     }
 
@@ -96,6 +228,22 @@ serve(async (req) => {
     // Chat action with multi-agent support
     if (action === 'chat' && req.method === 'POST') {
       const { messages, session_id, customer_user_id } = await req.json();
+
+      // Validate messages array
+      if (!Array.isArray(messages) || messages.length === 0) {
+        return new Response(JSON.stringify({ error: 'Messages array is required' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Limit message count to prevent abuse
+      if (messages.length > 50) {
+        return new Response(JSON.stringify({ error: 'Too many messages in conversation' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
 
       // Build comprehensive knowledge base context
       const [servicesRes, faqsRes, hoursRes, docsRes, employeesRes] = await Promise.all([
@@ -400,46 +548,66 @@ GUIDELINES:
           let result = '';
           
           if (funcName === 'book_appointment') {
-            // Execute booking
-            const { data: service } = await supabase
-              .from('services')
-              .select('*')
-              .eq('company_id', company.id)
-              .ilike('name', `%${args.service_type || ''}%`)
-              .maybeSingle();
-
-            const { data: appointment, error: bookError } = await supabase
-              .from('appointments')
-              .insert({
-                company_id: company.id,
-                customer_name: args.customer_name || 'Customer',
-                customer_phone: args.customer_phone || '',
-                customer_email: args.customer_email || null,
-                customer_address: args.customer_address || null,
-                service_type: args.service_type || 'General',
-                datetime: args.preferred_datetime || new Date().toISOString(),
-                duration_minutes: service?.duration_minutes || 60,
-                notes: args.notes || null,
-                status: args.is_emergency ? 'emergency' : 'pending',
-                customer_user_id: customer_user_id || null,
-              })
-              .select()
-              .single();
-
-            if (bookError) {
-              console.error('Booking error:', bookError);
-              result = JSON.stringify({ success: false, error: 'Failed to book appointment' });
+            // Validate booking input
+            const validation = validateBookingInput(args);
+            if (!validation.valid) {
+              result = JSON.stringify({ 
+                success: false, 
+                error: 'Invalid booking data', 
+                details: validation.errors 
+              });
             } else {
-              // Create job assignment for emergency
-              if (args.is_emergency && appointment) {
-                await supabase.from('job_assignments').insert({
-                  company_id: company.id,
-                  appointment_id: appointment.id,
-                  customer_address: args.customer_address || null,
-                  status: 'pending_acceptance',
+              // Additional rate limit check for bookings
+              const bookingRateCheck = checkRateLimit(clientIP, 'book');
+              if (!bookingRateCheck.allowed) {
+                result = JSON.stringify({ 
+                  success: false, 
+                  error: 'Too many booking attempts. Please try again later.' 
                 });
+              } else {
+                // Execute booking with sanitized data
+                const { data: service } = await supabase
+                  .from('services')
+                  .select('*')
+                  .eq('company_id', company.id)
+                  .ilike('name', `%${validation.sanitized.service_type}%`)
+                  .maybeSingle();
+
+                const { data: appointment, error: bookError } = await supabase
+                  .from('appointments')
+                  .insert({
+                    company_id: company.id,
+                    customer_name: validation.sanitized.customer_name,
+                    customer_phone: validation.sanitized.customer_phone,
+                    customer_email: validation.sanitized.customer_email,
+                    customer_address: validation.sanitized.customer_address,
+                    service_type: validation.sanitized.service_type,
+                    datetime: validation.sanitized.preferred_datetime,
+                    duration_minutes: service?.duration_minutes || 60,
+                    notes: validation.sanitized.notes,
+                    status: validation.sanitized.is_emergency ? 'emergency' : 'pending',
+                    customer_user_id: customer_user_id || null,
+                  })
+                  .select()
+                  .single();
+
+                if (bookError) {
+                  console.error('Booking error:', bookError);
+                  result = JSON.stringify({ success: false, error: 'Failed to book appointment' });
+                } else {
+                  // Create job assignment for emergency
+                  if (validation.sanitized.is_emergency && appointment) {
+                    await supabase.from('job_assignments').insert({
+                      company_id: company.id,
+                      appointment_id: appointment.id,
+                      customer_address: validation.sanitized.customer_address,
+                      status: 'pending_acceptance',
+                    });
+                  }
+                  console.log(`Appointment booked: ${appointment.id} for ${validation.sanitized.customer_name}`);
+                  result = JSON.stringify({ success: true, appointment_id: appointment.id, message: 'Appointment booked successfully' });
+                }
               }
-              result = JSON.stringify({ success: true, appointment_id: appointment.id, message: 'Appointment booked successfully' });
             }
           } else if (funcName === 'check_availability') {
             // Return available slots based on business hours
@@ -565,30 +733,42 @@ GUIDELINES:
       });
     }
 
-    // Book appointment action
+    // Book appointment action (direct API)
     if (action === 'book' && req.method === 'POST') {
       const booking = await req.json();
+
+      // Validate booking input
+      const validation = validateBookingInput(booking);
+      if (!validation.valid) {
+        return new Response(JSON.stringify({ 
+          error: 'Invalid booking data', 
+          details: validation.errors 
+        }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
 
       // Find matching service
       const { data: service } = await supabase
         .from('services')
         .select('*')
         .eq('company_id', company.id)
-        .ilike('name', `%${booking.service_type}%`)
+        .ilike('name', `%${validation.sanitized.service_type}%`)
         .single();
 
       const { data: appointment, error: bookError } = await supabase
         .from('appointments')
         .insert({
           company_id: company.id,
-          customer_name: booking.customer_name,
-          customer_phone: booking.customer_phone,
-          customer_email: booking.customer_email,
-          service_type: booking.service_type,
-          datetime: booking.preferred_datetime,
+          customer_name: validation.sanitized.customer_name,
+          customer_phone: validation.sanitized.customer_phone,
+          customer_email: validation.sanitized.customer_email,
+          service_type: validation.sanitized.service_type,
+          datetime: validation.sanitized.preferred_datetime,
           duration_minutes: service?.duration_minutes || 60,
-          notes: booking.notes,
-          status: booking.is_emergency ? 'emergency' : 'pending',
+          notes: validation.sanitized.notes,
+          status: validation.sanitized.is_emergency ? 'emergency' : 'pending',
         })
         .select()
         .single();
@@ -601,6 +781,7 @@ GUIDELINES:
         });
       }
 
+      console.log(`Direct booking created: ${appointment.id}`);
       return new Response(JSON.stringify({ success: true, appointment }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
