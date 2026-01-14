@@ -345,33 +345,37 @@ export default function Index() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 tech-grid opacity-30" />
         <div className="container max-w-7xl mx-auto px-6 py-20 relative">
-          <div className="text-center max-w-4xl mx-auto">
-            
-            <h1 className="text-5xl sm:text-6xl md:text-7xl tracking-wide mb-4 animate-fade-in">
-              <span className="font-brand text-[#214ebb]">Aura Intercept</span>
-              <span className="block text-xl sm:text-2xl md:text-3xl mt-2 font-normal font-sans text-foreground">
-                Where Service Companies Meet AI Efficiency
-              </span>
-            </h1>
-
-            {/* Hero Video */}
-            <div className="max-w-md mx-auto mb-6 animate-fade-in">
-              <video src={heroVideo} autoPlay loop muted playsInline className="w-full h-auto rounded-2xl" />
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Column - Video */}
+            <div className="animate-fade-in order-2 lg:order-1">
+              <video src={heroVideo} autoPlay loop muted playsInline className="w-full h-auto rounded-2xl shadow-2xl" />
             </div>
 
-            <div className="h-8 mb-6 animate-fade-in">
-              <p className="text-xl text-primary font-medium transition-all duration-500">
-                {subtitles[currentSubtitle]}
+            {/* Right Column - Content */}
+            <div className="text-center lg:text-left order-1 lg:order-2">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl tracking-wide mb-4 animate-fade-in">
+                <span className="font-brand text-[#214ebb]">Aura Intercept</span>
+                <span className="block text-lg sm:text-xl md:text-2xl mt-2 font-normal font-sans text-foreground">
+                  Where Service Companies Meet AI Efficiency
+                </span>
+              </h1>
+
+              <div className="h-8 mb-6 animate-fade-in">
+                <p className="text-xl text-primary font-medium transition-all duration-500">
+                  {subtitles[currentSubtitle]}
+                </p>
+              </div>
+              
+              <p className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8 animate-fade-in">
+                "Aura Intercept provides intelligent AI agents that automatically handle your customer service and scheduling, ensuring your trade business never misses a lead or a loyal client, giving you the freedom to focus on the work in the field while we master the work in the office."
               </p>
-            </div>
-            
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in">"Aura Intercept provides intelligent AI agents that automatically handle your customer service and scheduling, ensuring your trade business never misses a lead or a loyal client, giving you the freedom to focus on the work in the field while we master the work in the office."   </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in">
-              <Button size="lg" className="gradient-primary shadow-glow text-lg px-8 py-6 w-full sm:w-auto" onClick={() => navigate('/auth?mode=company')}>
-                <Building2 className="w-5 h-5 mr-2" />
-                Start Free Trial
-              </Button>
+              <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 animate-fade-in">
+                <Button size="lg" className="gradient-primary shadow-glow text-lg px-8 py-6 w-full sm:w-auto" onClick={() => navigate('/auth?mode=company')}>
+                  <Building2 className="w-5 h-5 mr-2" />
+                  Start Free Trial
+                </Button>
+              </div>
             </div>
           </div>
         </div>
