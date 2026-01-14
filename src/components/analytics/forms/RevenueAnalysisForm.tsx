@@ -102,14 +102,14 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
   });
 
   return (
-    <Card className="border-white/10 bg-card">
+    <Card className="border-border bg-background">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
-            <DollarSign className="h-5 w-5 text-secondary" />
+          <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+            <DollarSign className="h-5 w-5 text-primary" />
             Revenue Analysis
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground/70 hover:text-card-foreground">
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-foreground/70 hover:text-foreground">
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -118,12 +118,12 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-card-foreground/70">
+            <Label className="flex items-center gap-1 text-foreground/70">
               <Calendar className="h-3 w-3" />
               Date Range
             </Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="bg-white text-slate-900 border-white/20">
+              <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -135,9 +135,9 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-card-foreground/70">Group By</Label>
+            <Label className="text-foreground/70">Group By</Label>
             <Select value={groupBy} onValueChange={setGroupBy}>
-              <SelectTrigger className="bg-white text-slate-900 border-white/20">
+              <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -158,40 +158,40 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
         ) : (
           <>
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-                <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
+              <div className="p-4 rounded-lg bg-muted/50 border border-border">
+                <div className="flex items-center gap-2 text-foreground/70 mb-1">
                   <TrendingUp className="h-4 w-4" />
                   <span className="text-sm">Total Revenue</span>
                 </div>
-                <p className="text-2xl font-bold text-green-400">
+                <p className="text-2xl font-bold text-green-600">
                   ${(revenueData?.totalRevenue || 0).toLocaleString()}
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-                <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
+              <div className="p-4 rounded-lg bg-muted/50 border border-border">
+                <div className="flex items-center gap-2 text-foreground/70 mb-1">
                   <CreditCard className="h-4 w-4" />
                   <span className="text-sm">Pending</span>
                 </div>
-                <p className="text-2xl font-bold text-orange-400">
+                <p className="text-2xl font-bold text-orange-600">
                   ${(pendingData || 0).toLocaleString()}
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-                <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
+              <div className="p-4 rounded-lg bg-muted/50 border border-border">
+                <div className="flex items-center gap-2 text-foreground/70 mb-1">
                   <Receipt className="h-4 w-4" />
                   <span className="text-sm">Invoices Paid</span>
                 </div>
-                <p className="text-2xl font-bold text-card-foreground">{revenueData?.invoiceCount || 0}</p>
+                <p className="text-2xl font-bold text-foreground">{revenueData?.invoiceCount || 0}</p>
               </div>
 
-              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-                <div className="flex items-center gap-2 text-card-foreground/70 mb-1">
+              <div className="p-4 rounded-lg bg-muted/50 border border-border">
+                <div className="flex items-center gap-2 text-foreground/70 mb-1">
                   <DollarSign className="h-4 w-4" />
                   <span className="text-sm">Avg Invoice</span>
                 </div>
-                <p className="text-2xl font-bold text-card-foreground">
+                <p className="text-2xl font-bold text-foreground">
                   ${(revenueData?.avgInvoice || 0).toFixed(0)}
                 </p>
               </div>
@@ -199,12 +199,12 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
 
             {/* Revenue by Service */}
             {revenueData?.serviceBreakdown && revenueData.serviceBreakdown.length > 0 && (
-              <div className="space-y-3 p-4 rounded-lg bg-white/5 border border-white/10">
-                <h4 className="font-medium text-sm text-card-foreground">Top Revenue Sources</h4>
+              <div className="space-y-3 p-4 rounded-lg bg-muted/50 border border-border">
+                <h4 className="font-medium text-sm text-foreground">Top Revenue Sources</h4>
                 <div className="space-y-3">
                   {revenueData.serviceBreakdown.map((item, idx) => (
                     <div key={idx} className="space-y-1">
-                      <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center justify-between text-sm text-foreground">
                         <span className="truncate max-w-[60%]">{item.service}</span>
                         <span className="font-medium">${item.revenue.toLocaleString()}</span>
                       </div>
