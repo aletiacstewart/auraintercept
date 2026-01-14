@@ -79,6 +79,10 @@ interface Service {
   parts_cost: number | null;
   sort_order: number | null;
   category: string | null;
+  // CRM compatibility fields
+  crm_product_id: string | null;
+  sync_to_crm: boolean;
+  last_synced_at: string | null;
 }
 
 type ServiceType = 'in_person' | 'virtual' | 'other';
@@ -293,6 +297,8 @@ export function ServicesManager() {
     hourly_rate: '',
     parts_cost: '',
     category: '',
+    // CRM compatibility fields
+    sync_to_crm: false,
   });
 
   const { data: services, isLoading } = useQuery({
@@ -416,6 +422,8 @@ export function ServicesManager() {
         hourly_rate: data.hourly_rate ? parseFloat(data.hourly_rate) : null,
         parts_cost: data.parts_cost ? parseFloat(data.parts_cost) : null,
         category: data.category || null,
+        // CRM compatibility field
+        sync_to_crm: data.sync_to_crm,
       };
 
       if (editingService) {
@@ -725,6 +733,7 @@ export function ServicesManager() {
         hourly_rate: service.hourly_rate?.toString() || '',
         parts_cost: service.parts_cost?.toString() || '',
         category: service.category || '',
+        sync_to_crm: service.sync_to_crm || false,
       });
     } else {
       setEditingService(null);
@@ -741,6 +750,7 @@ export function ServicesManager() {
         hourly_rate: '',
         parts_cost: '',
         category: '',
+        sync_to_crm: false,
       });
     }
     setDialogOpen(true);
@@ -1315,6 +1325,21 @@ export function ServicesManager() {
                 onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, is_active: checked }))}
               />
               <Label>Active</Label>
+            </div>
+
+            {/* CRM Sync Option */}
+            <div className="border-t pt-4 mt-2">
+              <Label className="text-sm text-muted-foreground mb-3 block">CRM Integration</Label>
+              <div className="flex items-center gap-3">
+                <Switch
+                  checked={formData.sync_to_crm}
+                  onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, sync_to_crm: checked }))}
+                />
+                <div>
+                  <Label>Sync to CRM as Product</Label>
+                  <p className="text-xs text-muted-foreground">When enabled, this service will sync to your connected CRM</p>
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-3 pt-4">
