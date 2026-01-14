@@ -50,16 +50,14 @@ export default function CustomerCompanyPortal() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('chat');
 
-  // Fetch company details using public view for basic info
+  // Fetch company details using secure RPC function for public info
   const { data: company, isLoading: companyLoading } = useQuery({
     queryKey: ['company-public', companySlug],
     queryFn: async () => {
       if (!companySlug) return null;
-      // Use the public view which only exposes safe fields
+      // Use the secure RPC function which only returns non-sensitive fields
       const { data, error } = await supabase
-        .from('companies_public')
-        .select('id, name, slug, logo_url, primary_color, secondary_color')
-        .eq('slug', companySlug)
+        .rpc('get_company_public_info', { p_slug: companySlug })
         .single();
 
       if (error) throw error;
