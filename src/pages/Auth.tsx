@@ -48,6 +48,7 @@ export default function Auth() {
   const [companyName, setCompanyName] = useState('');
   const [registrationCode, setRegistrationCode] = useState('');
   const [termsAgreed, setTermsAgreed] = useState(false);
+  const [selectedTier, setSelectedTier] = useState<'starter' | 'professional' | 'enterprise' | null>(null);
 
   // Sync activeTab with URL params and mode - runs on mount and when params change
   useEffect(() => {
@@ -524,18 +525,32 @@ export default function Auth() {
                 {/* 3 Tier Cards */}
                 <div className="space-y-3">
                   {/* Starter */}
-                  <div className="p-4 rounded-lg border border-border/50 bg-card hover:border-primary/30 transition-colors">
+                  <div 
+                    onClick={() => setSelectedTier(selectedTier === 'starter' ? null : 'starter')}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedTier === 'starter' 
+                        ? 'border-primary bg-primary/10 ring-2 ring-primary/20' 
+                        : 'border-border/50 bg-card hover:border-primary/30'
+                    }`}
+                  >
                     <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <h3 className="font-semibold text-sm text-card-foreground">Starter</h3>
-                        <p className="text-xs text-card-foreground/70">Small service companies</p>
+                      <div className="flex items-center gap-2">
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === 'starter' ? 'border-primary bg-primary' : 'border-muted-foreground/50'
+                        }`}>
+                          {selectedTier === 'starter' && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-sm text-card-foreground">Starter</h3>
+                          <p className="text-xs text-card-foreground/70">Small service companies</p>
+                        </div>
                       </div>
                       <div className="text-right">
                         <span className="text-lg font-bold text-card-foreground">$1,000</span>
                         <span className="text-xs text-card-foreground/70">/mo</span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-1 text-xs text-card-foreground/70">
+                    <div className="grid grid-cols-2 gap-1 text-xs text-card-foreground/70 ml-6">
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
                         <span>2 AI Agents</span>
@@ -556,21 +571,35 @@ export default function Auth() {
                   </div>
 
                   {/* Professional - Highlighted */}
-                  <div className="p-4 rounded-lg border-2 border-primary/50 bg-primary/5 relative">
+                  <div 
+                    onClick={() => setSelectedTier(selectedTier === 'professional' ? null : 'professional')}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all relative ${
+                      selectedTier === 'professional' 
+                        ? 'border-primary bg-primary/10 ring-2 ring-primary/20' 
+                        : 'border-primary/50 bg-primary/5 hover:border-primary'
+                    }`}
+                  >
                     <div className="absolute -top-2 left-4">
                       <span className="text-[10px] px-2 py-0.5 rounded-full gradient-primary text-primary-foreground font-medium">Most Popular</span>
                     </div>
                     <div className="flex items-start justify-between mb-2 mt-1">
-                      <div>
-                        <h3 className="font-semibold text-sm text-foreground">Professional</h3>
-                        <p className="text-xs text-muted-foreground">Growing companies with technicians</p>
+                      <div className="flex items-center gap-2">
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === 'professional' ? 'border-primary bg-primary' : 'border-primary/50'
+                        }`}>
+                          {selectedTier === 'professional' && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-sm text-foreground">Professional</h3>
+                          <p className="text-xs text-muted-foreground">Growing companies with technicians</p>
+                        </div>
                       </div>
                       <div className="text-right">
                         <span className="text-lg font-bold text-primary">$1,750</span>
                         <span className="text-xs text-muted-foreground">/mo</span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
+                    <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground ml-6">
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
                         <span>7 AI Agents</span>
@@ -591,18 +620,32 @@ export default function Auth() {
                   </div>
 
                   {/* Enterprise */}
-                  <div className="p-4 rounded-lg border border-border/50 bg-card hover:border-primary/30 transition-colors">
+                  <div 
+                    onClick={() => setSelectedTier(selectedTier === 'enterprise' ? null : 'enterprise')}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedTier === 'enterprise' 
+                        ? 'border-primary bg-primary/10 ring-2 ring-primary/20' 
+                        : 'border-border/50 bg-card hover:border-primary/30'
+                    }`}
+                  >
                     <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <h3 className="font-semibold text-sm text-card-foreground">Enterprise</h3>
-                        <p className="text-xs text-card-foreground/70">Full AI automation suite</p>
+                      <div className="flex items-center gap-2">
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === 'enterprise' ? 'border-primary bg-primary' : 'border-muted-foreground/50'
+                        }`}>
+                          {selectedTier === 'enterprise' && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-sm text-card-foreground">Enterprise</h3>
+                          <p className="text-xs text-card-foreground/70">Full AI automation suite</p>
+                        </div>
                       </div>
                       <div className="text-right">
                         <span className="text-lg font-bold text-card-foreground">$2,250</span>
                         <span className="text-xs text-card-foreground/70">/mo</span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-1 text-xs text-card-foreground/70">
+                    <div className="grid grid-cols-2 gap-1 text-xs text-card-foreground/70 ml-6">
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
                         <span>18 AI Agents</span>
@@ -622,6 +665,17 @@ export default function Auth() {
                     </div>
                   </div>
                 </div>
+
+                {/* Selection Info */}
+                {selectedTier && (
+                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/30">
+                    <p className="text-xs text-center text-foreground">
+                      <span className="font-medium">Selected: {selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)}</span>
+                      <br />
+                      <span className="text-muted-foreground">Complete signup to subscribe immediately</span>
+                    </p>
+                  </div>
+                )}
 
                 {/* Annual Savings Note */}
                 <p className="text-xs text-center text-green-500">
@@ -819,11 +873,15 @@ export default function Auth() {
                           onCheckedChange={setTermsAgreed} 
                         />
                         <Button type="submit" className="w-full gradient-primary" disabled={isLoading || !termsAgreed}>
-                          {isLoading ? 'Creating account...' : mode === 'company' ? 'Start Free Trial' : 'Create Account'}
+                          {isLoading ? 'Creating account...' : mode === 'company' 
+                            ? (selectedTier ? `Subscribe to ${selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)}` : 'Start Free Trial')
+                            : 'Create Account'}
                         </Button>
                         {mode === 'company' && (
                           <p className="text-xs text-center text-muted-foreground mt-2">
-                            30 days free • No credit card required • Cancel anytime
+                            {selectedTier 
+                              ? 'You will be redirected to Stripe to complete payment'
+                              : '30 days free • No credit card required • Cancel anytime'}
                           </p>
                         )}
                       </form>
