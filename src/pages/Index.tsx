@@ -539,18 +539,18 @@ export default function Index() {
             <p className="text-muted-foreground max-w-2xl mx-auto">Transform your service business software into a 24/7 revenue engine. Our Aura Intercept AI Center offers a multi-channel AI safety net that captures every customer inquiry through intelligent ai chat agents and voice agents. Manage your mobile workforce with ease using our technician consoles and provide your clients with a self-service appointment tracking portal. By automating smart reminders and office workflows, Aura Intercept eliminates manual tasks, and allows your team to focus on delivering expert onsite service.</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {platformFeatures.map((feature, index) => (
               <div 
                 key={feature.title}
-                className="rounded-xl p-6 transition-all duration-300 hover:opacity-90 animate-fade-in"
+                className="rounded-lg p-4 transition-all duration-300 hover:opacity-90 animate-fade-in"
                 style={{ backgroundColor: '#2a3d4e', animationDelay: `${index * 50}ms` }}
               >
-                <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-4">
-                  <feature.icon className="w-6 h-6 text-primary-foreground" />
+                <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center mb-3">
+                  <feature.icon className="w-5 h-5 text-primary-foreground" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2 text-white">{feature.title}</h3>
-                <p className="text-sm text-white/70">{feature.description}</p>
+                <h3 className="font-semibold text-sm mb-1 text-white">{feature.title}</h3>
+                <p className="text-xs text-white/70 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
