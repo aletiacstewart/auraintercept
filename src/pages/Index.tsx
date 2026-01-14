@@ -422,15 +422,19 @@ export default function Index() {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {communicationChannels.map((channel, index) => <Card key={channel.title} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 text-center">
-                <CardContent className="p-6">
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${channel.gradientClass} flex items-center justify-center mx-auto mb-4`}>
-                    <channel.icon className="w-7 h-7 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">{channel.title}</h3>
-                  <p className="text-sm text-card-muted">{channel.description}</p>
-                </CardContent>
-              </Card>)}
+            {communicationChannels.map((channel, index) => (
+              <div 
+                key={channel.title}
+                className="rounded-xl p-6 transition-all duration-300 hover:opacity-90 text-center"
+                style={{ backgroundColor: '#2a3d4e' }}
+              >
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${channel.gradientClass} flex items-center justify-center mx-auto mb-4`}>
+                  <channel.icon className="w-7 h-7 text-white" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2 text-white">{channel.title}</h3>
+                <p className="text-sm text-white/70">{channel.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -447,26 +451,34 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {agentConsoles.map((console, index) => <Card key={console.name} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 overflow-hidden group">
+            {agentConsoles.map((console, index) => (
+              <div 
+                key={console.name}
+                className="rounded-xl overflow-hidden transition-all duration-300 hover:opacity-90"
+                style={{ backgroundColor: '#2a3d4e' }}
+              >
                 <div className={`h-2 bg-gradient-to-r ${console.gradient}`} />
-                <CardContent className="p-6">
+                <div className="p-6">
                   <p className="text-xs text-white/80 font-medium tracking-wide mb-1">AI Aura Intercept</p>
                   <p className="text-[10px] text-white/60 mb-3">The All-in-One AI Command Center for Service Pros</p>
                   <div className={`w-12 h-12 rounded-xl ${console.iconBg} flex items-center justify-center mb-4`}>
                     <console.icon className={`w-6 h-6 ${console.iconColor}`} />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">{console.name}</h3>
-                  <p className="text-card-muted text-sm mb-4">
+                  <h3 className="text-xl font-semibold mb-2 text-white">{console.name}</h3>
+                  <p className="text-white/70 text-sm mb-4">
                     {console.description}
                   </p>
                   <ul className="space-y-2 text-sm">
-                    {console.features.slice(0, 4).map((feature, idx) => <li key={idx} className="flex items-center gap-2">
+                    {console.features.slice(0, 4).map((feature, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span className="text-white">{feature}</span>
-                      </li>)}
+                        <span className="text-white/80">{feature}</span>
+                      </li>
+                    ))}
                   </ul>
-                </CardContent>
-              </Card>)}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -495,17 +507,19 @@ export default function Index() {
                 </div>
                 
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {category.agents.map((agent, index) => <Card key={agent.name} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 animate-fade-in" style={{
-                animationDelay: `${index * 50}ms`
-              }}>
-                      <CardContent className="p-5">
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center mb-3`}>
-                          <agent.icon className="w-5 h-5 text-white" />
-                        </div>
-                        <h4 className="font-semibold mb-1">{agent.name}</h4>
-                        <p className="text-sm text-card-muted">{agent.description}</p>
-                      </CardContent>
-                    </Card>)}
+                  {category.agents.map((agent, index) => (
+                    <div 
+                      key={agent.name}
+                      className="rounded-xl p-5 transition-all duration-300 hover:opacity-90 animate-fade-in"
+                      style={{ backgroundColor: '#2a3d4e', animationDelay: `${index * 50}ms` }}
+                    >
+                      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center mb-3`}>
+                        <agent.icon className="w-5 h-5 text-white" />
+                      </div>
+                      <h4 className="font-semibold mb-1 text-white">{agent.name}</h4>
+                      <p className="text-sm text-white/70">{agent.description}</p>
+                    </div>
+                  ))}
                 </div>
               </div>)}
           </div>
