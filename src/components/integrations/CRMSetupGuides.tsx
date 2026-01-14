@@ -103,7 +103,7 @@ export function CRMSetupGuides() {
       </Card>
 
       {/* Salesforce Setup Guide */}
-      <Card className="border-blue-500/20 bg-blue-500/5">
+      <Card className="guide-card guide-card-crm">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Cloud className="w-5 h-5 text-blue-500" />
@@ -182,7 +182,7 @@ export function CRMSetupGuides() {
       </Card>
 
       {/* Zoho CRM Setup Guide */}
-      <Card className="border-red-500/20 bg-red-500/5">
+      <Card className="guide-card guide-card-crm">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-red-500" />
@@ -260,7 +260,7 @@ export function CRMSetupGuides() {
       </Card>
 
       {/* Pipedrive Setup Guide */}
-      <Card className="border-green-500/20 bg-green-500/5">
+      <Card className="guide-card guide-card-crm">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Target className="w-5 h-5 text-green-500" />
@@ -342,7 +342,7 @@ export function CRMSetupGuides() {
       </Card>
 
       {/* Custom Webhook Setup Guide */}
-      <Card className="border-purple-500/20 bg-purple-500/5">
+      <Card className="guide-card guide-card-crm">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Link2 className="w-5 h-5 text-purple-500" />
