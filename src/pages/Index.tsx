@@ -642,77 +642,146 @@ export default function Index() {
       <section className="py-20">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">Simple Pricing</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">One Plan. Everything Included.</h2>
+            <Badge variant="secondary" className="mb-4">Subscription Plans</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Choose Your Plan</h2>
             <p className="text-foreground max-w-2xl mx-auto">
-              No hidden fees. No feature restrictions. Full access to all AI agents and consoles.
+              Start with our free trial and upgrade anytime. All plans include core AI automation.
             </p>
           </div>
 
-          <div className="max-w-lg mx-auto">
-            <Card className="relative overflow-hidden border-primary/50 shadow-glow">
-              <div className="absolute top-0 left-0 right-0 h-1 gradient-primary" />
-              <CardContent className="p-8 text-center">
-                <Badge className="mb-4 gradient-primary border-0">Most Popular</Badge>
-                <h3 className="text-2xl font-bold mb-2">Enterprise</h3>
-                <div className="flex items-baseline justify-center gap-1 mb-6">
-                  <span className="text-5xl font-bold gradient-text">$250</span>
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {/* Starter Plan */}
+            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold mb-2">Starter</h3>
+                <div className="flex items-baseline gap-1 mb-4">
+                  <span className="text-4xl font-bold">$99</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
+                <p className="text-sm text-muted-foreground mb-6">Perfect for small businesses getting started with AI automation.</p>
                 
-                <div className="space-y-3 text-left mb-8">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">18 Specialized AI Agents</span>
+                <div className="space-y-2 text-left mb-6">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">8 Core AI Agents</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">5 AI Agent Consoles</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Customer Portal Console</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">24/7 Automated Booking & Scheduling</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Email & SMS Reminders</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">Voice, SMS & Email Reminders</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">3 Employee Accounts</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">Field Operations Management</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">Quoting & Invoicing System</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">Custom Widget for Your Website</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">10 Employee Accounts Included</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">White-Label Branding</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Basic Analytics</span>
                   </div>
                 </div>
 
-                <Button size="lg" className="w-full gradient-primary shadow-glow text-lg py-6" onClick={() => navigate('/auth?mode=company')}>
-                  <Zap className="w-5 h-5 mr-2" />
-                  Start 14-Day Free Trial
+                <Button variant="outline" size="lg" className="w-full" onClick={() => navigate('/auth?mode=company')}>
+                  Start Free Trial
                 </Button>
-                <p className="text-sm text-white mt-4">
-                  No credit card required • Cancel anytime
-                </p>
               </CardContent>
             </Card>
 
-            <div className="mt-8 text-center">
-              <p className="text-sm text-foreground mb-2">Additional employees beyond 10:</p>
-              <p className="font-medium">$10/month per employee</p>
-            </div>
+            {/* Professional Plan */}
+            <Card className="relative overflow-hidden border-primary/50 shadow-glow">
+              <div className="absolute top-0 left-0 right-0 h-1 gradient-primary" />
+              <CardContent className="p-6">
+                <Badge className="mb-2 gradient-primary border-0">Most Popular</Badge>
+                <h3 className="text-xl font-bold mb-2">Professional</h3>
+                <div className="flex items-baseline gap-1 mb-4">
+                  <span className="text-4xl font-bold gradient-text">$175</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+                <p className="text-sm text-muted-foreground mb-6">For growing businesses needing field ops and advanced features.</p>
+                
+                <div className="space-y-2 text-left mb-6">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">14 AI Agents</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">3 AI Consoles</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Voice, SMS & Email Channels</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Field Operations Management</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">5 Employee Accounts</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Quoting & Invoicing</span>
+                  </div>
+                </div>
+
+                <Button size="lg" className="w-full gradient-primary shadow-glow" onClick={() => navigate('/auth?mode=company')}>
+                  <Zap className="w-4 h-4 mr-2" />
+                  Start Free Trial
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Enterprise Plan */}
+            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold mb-2">Enterprise</h3>
+                <div className="flex items-baseline gap-1 mb-4">
+                  <span className="text-4xl font-bold">$250</span>
+                  <span className="text-muted-foreground">/month</span>
+                </div>
+                <p className="text-sm text-muted-foreground mb-6">Full platform access with all agents, consoles, and white-label branding.</p>
+                
+                <div className="space-y-2 text-left mb-6">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">All 18 AI Agents</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">All 5 AI Consoles</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">All Communication Channels</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">10 Employee Accounts</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">White-Label Branding</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Priority Support</span>
+                  </div>
+                </div>
+
+                <Button variant="outline" size="lg" className="w-full" onClick={() => navigate('/auth?mode=company')}>
+                  Start Free Trial
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-sm text-muted-foreground mb-2">All plans include 14-day free trial • No credit card required</p>
+            <p className="text-sm text-foreground">Additional employees: <span className="font-medium">$10/month per employee</span></p>
           </div>
         </div>
       </section>
