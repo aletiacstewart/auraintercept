@@ -3,14 +3,40 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
-// CalDAV requires specific headers
+// CalDAV requires specific headers - READ-ONLY mode
 const caldavHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'OPTIONS, PROPFIND, GET, PUT, DELETE, REPORT',
+  'Access-Control-Allow-Methods': 'OPTIONS, PROPFIND, GET, REPORT',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, depth, if-match, if-none-match',
   'DAV': '1, 2, calendar-access',
-  'Allow': 'OPTIONS, PROPFIND, GET, PUT, DELETE, REPORT',
+  'Allow': 'OPTIONS, PROPFIND, GET, REPORT',
 };
+
+// Rate limiting configuration
+const RATE_LIMIT = {
+  requests: 60,
+  windowSeconds: 3600,
+};
+
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(token: string): { allowed: boolean; retryAfter?: number } {
+  const now = Date.now();
+  const record = rateLimitStore.get(token);
+  
+  if (!record || now > record.resetAt) {
+    rateLimitStore.set(token, { count: 1, resetAt: now + RATE_LIMIT.windowSeconds * 1000 });
+    return { allowed: true };
+  }
+  
+  if (record.count >= RATE_LIMIT.requests) {
+    const retryAfter = Math.ceil((record.resetAt - now) / 1000);
+    return { allowed: false, retryAfter };
+  }
+  
+  record.count++;
+  return { allowed: true };
+}
 
 Deno.serve(async (req) => {
   const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
@@ -22,6 +48,22 @@ Deno.serve(async (req) => {
   // Handle CORS/OPTIONS
   if (method === 'OPTIONS') {
     return new Response(null, { status: 200, headers: caldavHeaders });
+  }
+
+  // SECURITY: Reject write operations (PUT, DELETE) - CalDAV is read-only
+  // Write operations must be performed through authenticated admin APIs
+  if (method === 'PUT' || method === 'DELETE') {
+    console.log(`Rejected ${method} request - CalDAV is read-only`);
+    return new Response(
+      'Write operations are not permitted via CalDAV. Please use the admin interface to modify appointments.', 
+      { 
+        status: 403, 
+        headers: { 
+          ...caldavHeaders, 
+          'Content-Type': 'text/plain' 
+        } 
+      }
+    );
   }
 
   try {
@@ -39,6 +81,25 @@ Deno.serve(async (req) => {
       return new Response('Unauthorized', { 
         status: 401, 
         headers: { ...caldavHeaders, 'WWW-Authenticate': 'Basic realm="CalDAV"' } 
+      });
+    }
+
+    // Validate token format (UUID)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(token)) {
+      return new Response('Invalid token format', { status: 400, headers: caldavHeaders });
+    }
+
+    // Rate limiting check
+    const rateCheck = checkRateLimit(token);
+    if (!rateCheck.allowed) {
+      console.log(`Rate limit exceeded for CalDAV token`);
+      return new Response('Too many requests', { 
+        status: 429, 
+        headers: { 
+          ...caldavHeaders, 
+          'Retry-After': String(rateCheck.retryAfter || 3600)
+        } 
       });
     }
 
@@ -73,19 +134,13 @@ Deno.serve(async (req) => {
       return new Response('Invalid token', { status: 401, headers: caldavHeaders });
     }
 
-    // Handle different CalDAV methods
+    // Handle read-only CalDAV methods
     switch (method) {
       case 'PROPFIND':
         return handlePropfind(req, companyId, employeeId);
       
       case 'GET':
         return handleGet(supabase, companyId, employeeId, relevantPath);
-      
-      case 'PUT':
-        return handlePut(supabase, req, companyId, employeeId, relevantPath);
-      
-      case 'DELETE':
-        return handleDelete(supabase, companyId, relevantPath);
       
       case 'REPORT':
         return handleReport(supabase, req, companyId, employeeId);
@@ -103,7 +158,7 @@ Deno.serve(async (req) => {
 async function handlePropfind(req: Request, companyId: string, employeeId: string | null): Promise<Response> {
   const depth = req.headers.get('Depth') || '1';
   
-  // Return calendar properties
+  // Return calendar properties - indicate read-only access
   const response = `<?xml version="1.0" encoding="utf-8"?>
 <D:multistatus xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav" xmlns:CS="http://calendarserver.org/ns/">
   <D:response>
@@ -114,11 +169,14 @@ async function handlePropfind(req: Request, companyId: string, employeeId: strin
           <D:collection/>
           <C:calendar/>
         </D:resourcetype>
-        <D:displayname>Appointments</D:displayname>
+        <D:displayname>Appointments (Read-Only)</D:displayname>
         <C:supported-calendar-component-set>
           <C:comp name="VEVENT"/>
         </C:supported-calendar-component-set>
         <CS:getctag>${Date.now()}</CS:getctag>
+        <D:current-user-privilege-set>
+          <D:privilege><D:read/></D:privilege>
+        </D:current-user-privilege-set>
       </D:prop>
       <D:status>HTTP/1.1 200 OK</D:status>
     </D:propstat>
@@ -182,6 +240,12 @@ async function getCalendar(supabase: any, companyId: string, employeeId: string 
 }
 
 async function getEvent(supabase: any, companyId: string, eventUid: string): Promise<Response> {
+  // Validate eventUid format (UUID)
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(eventUid)) {
+    return new Response('Invalid event ID', { status: 400, headers: caldavHeaders });
+  }
+
   const { data: appointment, error } = await supabase
     .from('appointments')
     .select('*, companies(name)')
@@ -200,139 +264,6 @@ async function getEvent(supabase: any, companyId: string, eventUid: string): Pro
     status: 200,
     headers: { ...caldavHeaders, 'Content-Type': 'text/calendar; charset=utf-8' },
   });
-}
-
-async function handlePut(
-  supabase: any, 
-  req: Request, 
-  companyId: string, 
-  employeeId: string | null,
-  pathParts: string[]
-): Promise<Response> {
-  try {
-    const icsData = await req.text();
-    const event = parseICS(icsData);
-
-    if (!event) {
-      return new Response('Invalid ICS data', { status: 400, headers: caldavHeaders });
-    }
-
-    // Check if event exists (update) or is new (create)
-    const eventUid = pathParts[1]?.replace('.ics', '') || event.uid;
-
-    // Check for existing mapping
-    const { data: existingMapping } = await supabase
-      .from('calendar_event_mappings')
-      .select('appointment_id')
-      .eq('caldav_uid', eventUid)
-      .eq('company_id', companyId)
-      .single();
-
-    if (existingMapping) {
-      // Update existing appointment
-      const { error } = await supabase
-        .from('appointments')
-        .update({
-          datetime: event.startDate,
-          duration_minutes: event.durationMinutes || 60,
-          customer_name: event.summary || 'Appointment',
-          notes: event.description,
-          customer_address: event.location,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', existingMapping.appointment_id);
-
-      if (error) {
-        console.error('Error updating appointment:', error);
-        return new Response('Error updating event', { status: 500, headers: caldavHeaders });
-      }
-
-      // Update mapping
-      await supabase
-        .from('calendar_event_mappings')
-        .update({
-          caldav_etag: Date.now().toString(),
-          sync_source: 'caldav',
-          last_synced_at: new Date().toISOString(),
-        })
-        .eq('caldav_uid', eventUid);
-
-      console.log('Updated appointment from CalDAV:', existingMapping.appointment_id);
-    } else {
-      // Create new appointment from CalDAV event
-      const { data: newAppointment, error } = await supabase
-        .from('appointments')
-        .insert({
-          company_id: companyId,
-          employee_id: employeeId,
-          datetime: event.startDate,
-          duration_minutes: event.durationMinutes || 60,
-          customer_name: event.summary || 'New Appointment',
-          customer_address: event.location,
-          notes: event.description,
-          service_type: 'General',
-          status: 'scheduled',
-        })
-        .select()
-        .single();
-
-      if (error || !newAppointment) {
-        console.error('Error creating appointment:', error);
-        return new Response('Error creating event', { status: 500, headers: caldavHeaders });
-      }
-
-      // Create mapping
-      await supabase
-        .from('calendar_event_mappings')
-        .insert({
-          appointment_id: newAppointment.id,
-          company_id: companyId,
-          google_event_id: '',
-          caldav_uid: eventUid,
-          caldav_etag: Date.now().toString(),
-          sync_source: 'caldav',
-        });
-
-      console.log('Created appointment from CalDAV:', newAppointment.id);
-    }
-
-    return new Response('', { 
-      status: 201, 
-      headers: { ...caldavHeaders, 'ETag': `"${Date.now()}"` } 
-    });
-
-  } catch (error) {
-    console.error('PUT error:', error);
-    return new Response('Error processing event', { status: 500, headers: caldavHeaders });
-  }
-}
-
-async function handleDelete(supabase: any, companyId: string, pathParts: string[]): Promise<Response> {
-  const eventUid = pathParts[1]?.replace('.ics', '');
-
-  if (!eventUid) {
-    return new Response('Event UID required', { status: 400, headers: caldavHeaders });
-  }
-
-  // Find the appointment by CalDAV UID
-  const { data: mapping } = await supabase
-    .from('calendar_event_mappings')
-    .select('appointment_id')
-    .eq('caldav_uid', eventUid)
-    .eq('company_id', companyId)
-    .single();
-
-  if (mapping) {
-    // Cancel the appointment (don't actually delete)
-    await supabase
-      .from('appointments')
-      .update({ status: 'cancelled', updated_at: new Date().toISOString() })
-      .eq('id', mapping.appointment_id);
-
-    console.log('Cancelled appointment from CalDAV:', mapping.appointment_id);
-  }
-
-  return new Response('', { status: 204, headers: caldavHeaders });
 }
 
 async function handleReport(
@@ -354,7 +285,7 @@ VERSION:2.0
 PRODID:-//Platform//CalDAV//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:${companyName} Appointments
+X-WR-CALNAME:${companyName} Appointments (Read-Only)
 ${events}
 END:VCALENDAR`;
 }
@@ -400,63 +331,4 @@ LOCATION:${escapeICS(appointment.customer_address || '')}
 STATUS:${appointment.status === 'cancelled' ? 'CANCELLED' : 'CONFIRMED'}
 ORGANIZER:CN=${escapeICS(companyName)}
 END:VEVENT`;
-}
-
-function parseICS(icsData: string): any | null {
-  try {
-    const lines = icsData.split(/\r?\n/);
-    const event: any = {};
-
-    for (const line of lines) {
-      if (line.startsWith('UID:')) {
-        event.uid = line.substring(4);
-      } else if (line.startsWith('DTSTART')) {
-        const value = line.split(':')[1];
-        event.startDate = parseICSDate(value);
-      } else if (line.startsWith('DTEND')) {
-        const value = line.split(':')[1];
-        event.endDate = parseICSDate(value);
-      } else if (line.startsWith('SUMMARY:')) {
-        event.summary = unescapeICS(line.substring(8));
-      } else if (line.startsWith('DESCRIPTION:')) {
-        event.description = unescapeICS(line.substring(12));
-      } else if (line.startsWith('LOCATION:')) {
-        event.location = unescapeICS(line.substring(9));
-      }
-    }
-
-    if (event.startDate && event.endDate) {
-      event.durationMinutes = Math.round(
-        (new Date(event.endDate).getTime() - new Date(event.startDate).getTime()) / 60000
-      );
-    }
-
-    return event.startDate ? event : null;
-  } catch (error) {
-    console.error('Error parsing ICS:', error);
-    return null;
-  }
-}
-
-function parseICSDate(value: string): string {
-  // Handle both YYYYMMDDTHHMMSSZ and YYYYMMDDTHHMMSS formats
-  const cleaned = value.replace('Z', '');
-  if (cleaned.length >= 15) {
-    const year = cleaned.substring(0, 4);
-    const month = cleaned.substring(4, 6);
-    const day = cleaned.substring(6, 8);
-    const hour = cleaned.substring(9, 11);
-    const minute = cleaned.substring(11, 13);
-    const second = cleaned.substring(13, 15);
-    return `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
-  }
-  return new Date().toISOString();
-}
-
-function unescapeICS(str: string): string {
-  return str
-    .replace(/\\n/g, '\n')
-    .replace(/\\,/g, ',')
-    .replace(/\\;/g, ';')
-    .replace(/\\\\/g, '\\');
 }
