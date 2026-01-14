@@ -773,7 +773,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
               <p className="text-lg font-semibold mt-1 text-white">{getTodayHours()}</p>
             </div>
 
-            <h4 className="font-medium mb-3">Weekly Schedule</h4>
+            <h4 className="font-medium mb-3 text-foreground">Weekly Schedule</h4>
             <div className="space-y-2">
               {DAYS.map((day, index) => {
                 const hours = businessHours?.find(h => h.day_of_week === index);
@@ -783,16 +783,16 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                   <div
                     key={day}
                     className={cn(
-                      "flex justify-between p-3 rounded-xl transition-all animate-fade-in",
-                      isToday ? "glass-panel neon-border" : "glass-panel"
+                      "flex justify-between p-3 rounded-xl transition-all animate-fade-in border bg-white",
+                      isToday ? "border-primary/50 shadow-sm" : "border-border"
                     )}
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
-                    <span className={cn("font-medium", isToday && "text-primary")}>
+                    <span className={cn("font-medium text-foreground", isToday && "text-primary")}>
                       {day}
                       {isToday && <Badge variant="outline" className="ml-2 text-xs">Today</Badge>}
                     </span>
-                    <span className="text-muted-foreground">
+                    <span className="text-primary">
                       {!hours || hours.is_closed
                         ? 'Closed'
                         : `${formatTime(hours.open_time)} - ${formatTime(hours.close_time)}`}
