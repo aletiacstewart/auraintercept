@@ -99,16 +99,17 @@ export function PublicAppUrlSettings() {
           <Globe className="h-5 w-5" />
           Public App URL
         </CardTitle>
-        <CardDescription>
-          Set the public URL for technician install QR codes. This should be your published/deployed app URL.
+      <CardDescription>
+          Set the public URL for app install QR codes. This should be your published/deployed app URL.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <Alert>
           <Info className="h-4 w-4" />
           <AlertDescription>
-            When you publish your app, copy the published URL here. The technician install QR code will use this URL 
-            so technicians can install the app without needing a Lovable account.
+            When you publish your app, copy the published URL here. The install QR codes for the 
+            <strong> Technician Field Ops App</strong>, <strong>Dispatch-Field Ops App</strong>, and <strong>Bus.Mgt Ops App</strong> will 
+            use this URL so users can install the apps without needing a Lovable account.
           </AlertDescription>
         </Alert>
 
