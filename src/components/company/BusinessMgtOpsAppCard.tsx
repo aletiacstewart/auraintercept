@@ -190,7 +190,8 @@ export function BusinessMgtOpsAppCard() {
                   <li className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">3</span>
                     <span className="flex items-center gap-1 text-card-foreground">
-                      Scroll down and tap <Plus className="h-4 w-4 inline text-card-foreground" /> "Add to Home Screen"
+                      Scroll down and tap <Plus className="h-4 w-4 inline text-card-foreground" />
+                      <span className="font-medium">Add to Home Screen</span>
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
@@ -222,16 +223,19 @@ export function BusinessMgtOpsAppCard() {
                   <li className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">2</span>
                     <span className="flex items-center gap-1 text-card-foreground">
-                      Tap the <MoreVertical className="h-4 w-4 inline text-card-foreground" /> menu button
+                      Tap the <MoreVertical className="h-4 w-4 inline text-card-foreground" />
+                      <span className="font-medium">menu</span> button
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">3</span>
-                    <span className="text-card-foreground">Tap "Install app" or "Add to Home screen"</span>
+                    <span className="text-card-foreground">
+                      Tap <span className="font-medium">Install app</span> or <span className="font-medium">Add to Home screen</span>
+                    </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">4</span>
-                    <span className="text-card-foreground">Tap "Install" to confirm</span>
+                    <span className="text-card-foreground">Tap <span className="font-medium">Install</span> to confirm</span>
                   </li>
                 </ol>
               </CardContent>
