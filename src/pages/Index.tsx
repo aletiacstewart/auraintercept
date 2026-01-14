@@ -735,7 +735,8 @@ export default function Index() {
           </div>
 
           <div className="mt-8 text-center">
-            <p className="text-sm text-muted-foreground mb-2">All plans include 14-day free trial • No credit card required</p>
+            <p className="text-sm text-muted-foreground mb-2">30-day free trial • No credit card required</p>
+            <p className="text-xs text-muted-foreground/80 mb-2">All we ask is your honest feedback on features and that you report any issues you find.</p>
             <p className="text-sm text-foreground">Additional employees (Starter/Professional): <span className="font-medium">$25/month per employee (max 5 extra)</span></p>
           </div>
 
