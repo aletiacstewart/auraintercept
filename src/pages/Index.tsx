@@ -760,7 +760,7 @@ export default function Index() {
                   <span className="font-semibold text-sm text-white">Google Calendar</span>
                 </div>
                 <p className="text-xs text-white/70 mb-2">Calendar Sync</p>
-                <p className="text-xs text-white/90">Free</p>
+                <p className="text-xs text-white/90 font-medium">Free - Unlimited</p>
                 <p className="text-xs text-muted-foreground mt-1">Optional for: All Tiers</p>
               </div>
 
@@ -770,7 +770,8 @@ export default function Index() {
                   <span className="font-semibold text-sm text-white">Resend</span>
                 </div>
                 <p className="text-xs text-white/70 mb-2">Email Notifications</p>
-                <p className="text-xs text-white/90">Free up to 3k/mo • $35+/mo for higher volume</p>
+                <p className="text-xs text-white/90 font-medium">Free: 3,000 emails/mo</p>
+                <p className="text-xs text-white/70">Then $20/mo for 50k emails ($0.0004/email over)</p>
                 <p className="text-xs text-muted-foreground mt-1">Required for: All Tiers</p>
               </div>
 
@@ -780,7 +781,8 @@ export default function Index() {
                   <span className="font-semibold text-sm text-white">ElevenLabs</span>
                 </div>
                 <p className="text-xs text-white/70 mb-2">AI Voice Synthesis</p>
-                <p className="text-xs text-white/90">Free 10k chars • $5-99+/mo based on usage</p>
+                <p className="text-xs text-white/90 font-medium">Free: 10,000 chars/mo</p>
+                <p className="text-xs text-white/70">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
                 <p className="text-xs text-muted-foreground mt-1">Required for: Voice Features</p>
               </div>
 
@@ -790,7 +792,8 @@ export default function Index() {
                   <span className="font-semibold text-sm text-white">Twilio</span>
                 </div>
                 <p className="text-xs text-white/70 mb-2">SMS & Voice Calls</p>
-                <p className="text-xs text-white/90">$1.15/number + ~$0.01/SMS + $0.01/min calls</p>
+                <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
+                <p className="text-xs text-white/70">$1.15/number • $0.0079/SMS • $0.014/min calls</p>
                 <p className="text-xs text-muted-foreground mt-1">Required for: SMS & Call Features</p>
               </div>
 
@@ -800,7 +803,8 @@ export default function Index() {
                   <span className="font-semibold text-sm text-white">Stripe (Your Account)</span>
                 </div>
                 <p className="text-xs text-white/70 mb-2">Invoice Payments</p>
-                <p className="text-xs text-white/90">2.9% + $0.30/transaction</p>
+                <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
+                <p className="text-xs text-white/70">2.9% + $0.30 per successful transaction</p>
                 <p className="text-xs text-muted-foreground mt-1">Required for: Invoice Payments</p>
               </div>
             </div>
