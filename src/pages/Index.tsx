@@ -410,8 +410,33 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Agent Consoles Preview */}
+      {/* Communication Channels */}
       <section className="py-20">
+        <div className="container max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <Badge variant="secondary" className="mb-4">Multi-Channel</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Connect Everywhere Your Customers Are</h2>
+            <p className="text-foreground max-w-2xl mx-auto">
+              In the service industry, the first company to respond wins the job. Our Aura Intercept AI platform ensures your business is always first, synchronizing Aura Voice, SMS, Email, and Ai Chat into a single, proactive workforce. Unlike basic chatbots, our intelligent AI agents maintain full context across every channel—meaning a customer can start a request via text and finish it over the phone without ever repeating a detail. It's a 24/7 automated dispatch solution that captures leads, handles bookings, and keeps your brand responsive while your team is in the field.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {communicationChannels.map((channel, index) => <Card key={channel.title} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 text-center">
+                <CardContent className="p-6">
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${channel.gradientClass} flex items-center justify-center mx-auto mb-4`}>
+                    <channel.icon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">{channel.title}</h3>
+                  <p className="text-sm text-card-muted">{channel.description}</p>
+                </CardContent>
+              </Card>)}
+          </div>
+        </div>
+      </section>
+
+      {/* Agent Consoles Preview */}
+      <section className="bg-muted/30 py-20">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Aura Agent Consoles</Badge>
@@ -447,7 +472,7 @@ export default function Index() {
       </section>
 
       {/* AI Agents Showcase */}
-      <section className="bg-muted/30 py-20">
+      <section className="py-20">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Aura AI Agents</Badge>
@@ -483,31 +508,6 @@ export default function Index() {
                     </Card>)}
                 </div>
               </div>)}
-          </div>
-        </div>
-      </section>
-
-      {/* Communication Channels */}
-      <section className="py-20">
-        <div className="container max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">Multi-Channel</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Connect Everywhere Your Customers Are</h2>
-            <p className="text-foreground max-w-2xl mx-auto">
-              In the service industry, the first company to respond wins the job. Our Aura Intercept AI platform ensures your business is always first, synchronizing Aura Voice, SMS, Email, and Ai Chat into a single, proactive workforce. Unlike basic chatbots, our intelligent AI agents maintain full context across every channel—meaning a customer can start a request via text and finish it over the phone without ever repeating a detail. It’s a 24/7 automated dispatch solution that captures leads, handles bookings, and keeps your brand responsive while your team is in the field.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {communicationChannels.map((channel, index) => <Card key={channel.title} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 text-center">
-                <CardContent className="p-6">
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${channel.gradientClass} flex items-center justify-center mx-auto mb-4`}>
-                    <channel.icon className="w-7 h-7 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">{channel.title}</h3>
-                  <p className="text-sm text-card-muted">{channel.description}</p>
-                </CardContent>
-              </Card>)}
           </div>
         </div>
       </section>
