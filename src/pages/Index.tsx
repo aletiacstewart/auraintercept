@@ -410,8 +410,44 @@ export default function Index() {
         </div>
       </section>
 
-      {/* AI Agents Showcase */}
+      {/* Agent Consoles Preview */}
       <section className="py-20">
+        <div className="container max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <Badge variant="secondary" className="mb-4">Aura Agent Consoles</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">5 Powerful Intercept Control Centers</h2>
+            <p className="text-foreground max-w-2xl mx-auto">
+              Purpose-built consoles give your team full control over AI agent operations with intuitive interfaces.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {agentConsoles.map((console, index) => <Card key={console.name} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 overflow-hidden group">
+                <div className={`h-2 bg-gradient-to-r ${console.gradient}`} />
+                <CardContent className="p-6">
+                  <p className="text-xs text-white/80 font-medium tracking-wide mb-1">AI Aura Intercept</p>
+                  <p className="text-[10px] text-white/60 mb-3">The All-in-One AI Command Center for Service Pros</p>
+                  <div className={`w-12 h-12 rounded-xl ${console.iconBg} flex items-center justify-center mb-4`}>
+                    <console.icon className={`w-6 h-6 ${console.iconColor}`} />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">{console.name}</h3>
+                  <p className="text-card-muted text-sm mb-4">
+                    {console.description}
+                  </p>
+                  <ul className="space-y-2 text-sm">
+                    {console.features.slice(0, 4).map((feature, idx) => <li key={idx} className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span className="text-white">{feature}</span>
+                      </li>)}
+                  </ul>
+                </CardContent>
+              </Card>)}
+          </div>
+        </div>
+      </section>
+
+      {/* AI Agents Showcase */}
+      <section className="bg-muted/30 py-20">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Aura AI Agents</Badge>
@@ -447,42 +483,6 @@ export default function Index() {
                     </Card>)}
                 </div>
               </div>)}
-          </div>
-        </div>
-      </section>
-
-      {/* Agent Consoles Preview */}
-      <section className="bg-muted/30 py-20">
-        <div className="container max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">Aura Agent Consoles</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">5 Powerful Intercept Control Centers</h2>
-            <p className="text-foreground max-w-2xl mx-auto">
-              Purpose-built consoles give your team full control over AI agent operations with intuitive interfaces.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {agentConsoles.map((console, index) => <Card key={console.name} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 overflow-hidden group">
-                <div className={`h-2 bg-gradient-to-r ${console.gradient}`} />
-                <CardContent className="p-6">
-                  <p className="text-xs text-white/80 font-medium tracking-wide mb-1">AI Aura Intercept</p>
-                  <p className="text-[10px] text-white/60 mb-3">The All-in-One AI Command Center for Service Pros</p>
-                  <div className={`w-12 h-12 rounded-xl ${console.iconBg} flex items-center justify-center mb-4`}>
-                    <console.icon className={`w-6 h-6 ${console.iconColor}`} />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">{console.name}</h3>
-                  <p className="text-card-muted text-sm mb-4">
-                    {console.description}
-                  </p>
-                  <ul className="space-y-2 text-sm">
-                    {console.features.slice(0, 4).map((feature, idx) => <li key={idx} className="flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span className="text-white">{feature}</span>
-                      </li>)}
-                  </ul>
-                </CardContent>
-              </Card>)}
           </div>
         </div>
       </section>
