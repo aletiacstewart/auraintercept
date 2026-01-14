@@ -65,18 +65,18 @@ export default function CalendarIntegration() {
 
         {/* Tabs */}
         <Tabs defaultValue="ics" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 text-white">
-            <TabsTrigger value="ics" className="flex items-center gap-2 text-white">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="ics" className="flex items-center gap-2 text-foreground/70 data-[state=active]:text-foreground">
               <Rss className="w-4 h-4" />
               <span className="hidden sm:inline">ICS Feeds</span>
               <span className="sm:hidden">ICS</span>
             </TabsTrigger>
-            <TabsTrigger value="caldav" className="flex items-center gap-2 text-white">
+            <TabsTrigger value="caldav" className="flex items-center gap-2 text-foreground/70 data-[state=active]:text-foreground">
               <Server className="w-4 h-4" />
               <span className="hidden sm:inline">CalDAV</span>
               <span className="sm:hidden">CalDAV</span>
             </TabsTrigger>
-            <TabsTrigger value="google" className="flex items-center gap-2 text-white">
+            <TabsTrigger value="google" className="flex items-center gap-2 text-foreground/70 data-[state=active]:text-foreground">
               <Zap className="w-4 h-4" />
               <span className="hidden sm:inline">Google</span>
               <span className="sm:hidden">Google</span>
@@ -87,14 +87,14 @@ export default function CalendarIntegration() {
           <TabsContent value="ics" className="space-y-4">
             <div className="rounded-lg border bg-card p-4">
               <h3 className="font-medium mb-1">ICS Calendar Feeds</h3>
-              <p className="text-sm text-card-foreground mb-4">
+              <p className="text-sm text-muted-foreground mb-4">
                 Simple subscription URLs that work with any calendar app. 
                 One-way sync - your calendar will automatically show appointments.
               </p>
               <div className="flex flex-wrap gap-2">
                 <span className="px-2 py-1 bg-green-500/10 text-green-600 text-xs rounded-full">Free</span>
-                <span className="px-2 py-1 bg-slate-600/50 text-white/80 text-xs rounded-full">Works Everywhere</span>
-                <span className="px-2 py-1 bg-slate-600/50 text-white/80 text-xs rounded-full">No Setup Required</span>
+                <span className="px-2 py-1 bg-muted text-foreground/80 text-xs rounded-full">Works Everywhere</span>
+                <span className="px-2 py-1 bg-muted text-foreground/80 text-xs rounded-full">No Setup Required</span>
               </div>
             </div>
             <CalendarSubscription type="company" />
@@ -104,14 +104,14 @@ export default function CalendarIntegration() {
           <TabsContent value="caldav" className="space-y-4">
             <div className="rounded-lg border bg-card p-4">
               <h3 className="font-medium mb-1">CalDAV Two-Way Sync</h3>
-              <p className="text-sm text-card-foreground mb-4">
+              <p className="text-sm text-muted-foreground mb-4">
                 Full two-way sync with CalDAV-compatible apps. 
                 Changes you make in your calendar app sync back to the platform.
               </p>
               <div className="flex flex-wrap gap-2">
                 <span className="px-2 py-1 bg-green-500/10 text-green-600 text-xs rounded-full">Free</span>
                 <span className="px-2 py-1 bg-blue-500/10 text-blue-600 text-xs rounded-full">Two-Way Sync</span>
-                <span className="px-2 py-1 bg-slate-600/50 text-white/80 text-xs rounded-full">Apple/Android/Thunderbird</span>
+                <span className="px-2 py-1 bg-muted text-foreground/80 text-xs rounded-full">Apple/Android/Thunderbird</span>
               </div>
             </div>
             <CalDAVSubscription type="company" />
@@ -121,7 +121,7 @@ export default function CalendarIntegration() {
           <TabsContent value="google" className="space-y-4">
             <div className="rounded-lg border bg-card p-4">
               <h3 className="font-medium mb-1">Google Calendar Integration</h3>
-              <p className="text-sm text-card-foreground mb-4">
+              <p className="text-sm text-muted-foreground mb-4">
                 Native Google Calendar integration with instant two-way sync. 
                 Requires Google Cloud OAuth setup.
               </p>

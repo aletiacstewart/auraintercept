@@ -25,7 +25,7 @@ export function TwilioSetupGuide() {
   const VOICE_WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=incoming';
   const MISSED_CALL_WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/missed-call-handler';
   const STATUS_CALLBACK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=status';
-  const SMS_WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-handler?action=sms';
+  const SMS_WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/sms-handler';
 
   return (
     <Card className="guide-card guide-card-voice">
@@ -220,12 +220,12 @@ export function TwilioSetupGuide() {
                   </Button>
                 </div>
                 <code className="text-xs break-all block">{SMS_WEBHOOK_URL}</code>
-                <p className="text-xs text-muted-foreground">Set to HTTP POST - Handles incoming SMS messages</p>
+                <p className="text-xs text-muted-foreground">Set to HTTP POST - Routes incoming SMS to AI Agent for intelligent responses (e.g. when customers reply HELP)</p>
               </div>
 
               <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
                 <p className="text-amber-600 dark:text-amber-400 text-xs">
-                  <strong>💡 Important:</strong> All webhooks must be set to HTTP POST. The "Primary Handler Fails" webhook enables AI callbacks when calls are missed.
+                  <strong>💡 Important:</strong> All webhooks must be set to HTTP POST. The SMS webhook enables AI-powered responses when customers reply to messages (like "HELP").
                 </p>
               </div>
             </AccordionContent>
