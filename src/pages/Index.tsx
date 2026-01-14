@@ -348,7 +348,7 @@ export default function Index() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Column - Video */}
             <div className="animate-fade-in order-2 lg:order-1">
-              <video src="/videos/hero-demo.mp4" autoPlay loop muted playsInline className="w-full h-auto rounded-2xl shadow-2xl" />
+              <video src="/videos/aura-intercept-hero.mp4" autoPlay loop muted playsInline className="w-full h-auto rounded-2xl shadow-2xl" />
             </div>
 
             {/* Right Column - Content */}
