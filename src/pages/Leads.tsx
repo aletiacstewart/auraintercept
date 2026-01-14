@@ -25,8 +25,10 @@ import {
   CheckCircle,
   XCircle,
   Flame,
+  Plus,
 } from 'lucide-react';
 import { LeadScoreBadge, LeadActivityTimeline, LeadFollowUpManager, LeadAnalyticsSection } from '@/components/leads';
+import { LeadForm } from '@/components/marketing/forms/LeadForm';
 
 interface Lead {
   id: string;
@@ -78,6 +80,7 @@ export default function Leads() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [newStatus, setNewStatus] = useState<string>('');
   const [followUpNotes, setFollowUpNotes] = useState('');
+  const [isAddLeadOpen, setIsAddLeadOpen] = useState(false);
 
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ['leads', companyId, statusFilter, priorityFilter],
@@ -145,6 +148,26 @@ export default function Leads() {
             <h1 className="text-3xl font-bold">Leads</h1>
             <p className="text-white/70">Manage and follow up on potential customers</p>
           </div>
+          <Dialog open={isAddLeadOpen} onOpenChange={setIsAddLeadOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                New Lead
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-0">
+              {companyId && (
+                <LeadForm
+                  companyId={companyId}
+                  onCancel={() => setIsAddLeadOpen(false)}
+                  onSuccess={() => {
+                    setIsAddLeadOpen(false);
+                    queryClient.invalidateQueries({ queryKey: ['leads'] });
+                  }}
+                />
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Analytics Section */}
