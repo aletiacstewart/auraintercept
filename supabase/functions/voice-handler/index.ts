@@ -10,11 +10,35 @@ interface ConversationState {
   companyId: string;
   messages: Array<{ role: string; content: string }>;
   customerPhone: string;
+  createdAt: number; // Timestamp for TTL cleanup
 }
 
-// In-memory conversation state (for demo - in production use Redis/DB)
+// In-memory conversation state with TTL management
 const conversations = new Map<string, ConversationState>();
+const CONVERSATION_TTL_MS = 30 * 60 * 1000; // 30 minutes TTL
+const CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // Clean up every 5 minutes
+let lastCleanup = Date.now();
 
+// Clean up expired conversations to prevent memory leaks
+function cleanupExpiredConversations(): void {
+  const now = Date.now();
+  // Only run cleanup periodically to avoid performance impact
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return;
+  
+  lastCleanup = now;
+  let cleaned = 0;
+  
+  for (const [callSid, state] of conversations.entries()) {
+    if (now - state.createdAt > CONVERSATION_TTL_MS) {
+      conversations.delete(callSid);
+      cleaned++;
+    }
+  }
+  
+  if (cleaned > 0) {
+    console.log(`Cleaned up ${cleaned} expired conversation(s). Active: ${conversations.size}`);
+  }
+}
 serve(async (req) => {
   // Handle CORS
   if (req.method === 'OPTIONS') {
@@ -78,11 +102,13 @@ serve(async (req) => {
           answered_at: new Date().toISOString(),
         });
 
-      // Initialize conversation state
+      // Initialize conversation state with TTL tracking
+      cleanupExpiredConversations(); // Run cleanup on new conversations
       conversations.set(callSid, {
         companyId: integration.company_id,
         messages: [],
         customerPhone: callerPhone,
+        createdAt: Date.now(),
       });
 
       const greeting = `Hello! Thank you for calling ${company?.name || 'us'}. How can I help you today?`;
@@ -234,11 +260,13 @@ serve(async (req) => {
       const context = JSON.parse(decodeURIComponent(contextParam));
       console.log(`Outbound call ${callSid} for ${context.purpose}:`, context);
 
-      // Initialize conversation state for potential follow-up
+      // Initialize conversation state for potential follow-up with TTL tracking
+      cleanupExpiredConversations();
       conversations.set(callSid, {
         companyId: context.companyId,
         messages: [{ role: 'system', content: `This is an outbound ${context.purpose} call to ${context.customerName}.` }],
         customerPhone: context.customerPhone,
+        createdAt: Date.now(),
       });
 
       // Get ElevenLabs config

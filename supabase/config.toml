@@ -146,3 +146,15 @@ verify_jwt = false
 
 [functions.sms-handler]
 verify_jwt = false
+
+[functions.customer-register]
+verify_jwt = false
+
+[functions.landing-chat]
+verify_jwt = false
+
+[functions.delete-users]
+verify_jwt = true
+
+[functions.create-demo-accounts]
+verify_jwt = true
