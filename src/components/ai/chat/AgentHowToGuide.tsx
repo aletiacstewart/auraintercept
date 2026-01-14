@@ -769,7 +769,7 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
               <Card
                 key={guide.id}
                 className={cn(
-                  'p-2 cursor-pointer transition-all duration-200',
+                  'p-2 cursor-pointer transition-all duration-200 bg-white text-foreground',
                   'hover:border-primary/50 hover:shadow-sm',
                   expandedGuide === guide.id && 'border-primary/50 bg-primary/5'
                 )}
@@ -780,8 +780,8 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
                     <guide.icon className="h-3.5 w-3.5 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-medium truncate">{guide.label}</h4>
-                    <p className="text-[10px] text-card-foreground/70 truncate">{guide.description}</p>
+                    <h4 className="text-xs font-medium text-foreground truncate">{guide.label}</h4>
+                    <p className="text-[10px] text-muted-foreground truncate">{guide.description}</p>
                   </div>
                   {expandedGuide === guide.id ? (
                     <ChevronUp className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
@@ -799,7 +799,7 @@ export const AgentHowToGuide: React.FC<AgentHowToGuideProps> = ({
                             {step.step}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-[11px] font-medium">{step.title}</p>
+                            <p className="text-[11px] font-medium text-foreground">{step.title}</p>
                             <p className="text-[10px] text-muted-foreground">{step.description}</p>
                           </div>
                         </div>
