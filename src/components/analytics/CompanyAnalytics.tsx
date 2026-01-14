@@ -248,7 +248,7 @@ export function CompanyAnalytics({ companyId, showCompanyName = false }: Company
         <h1 className="text-3xl font-bold tracking-tight">
           {showCompanyName && company?.name ? `${company.name} Analytics` : 'Company Analytics'}
         </h1>
-        <p className="text-white/70 mt-1">
+        <p className="text-muted-foreground mt-1">
           {showCompanyName && company?.name 
             ? `Performance metrics for ${company.name}` 
             : 'Performance metrics for your company'}
