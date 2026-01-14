@@ -120,6 +120,7 @@ const navGroups: NavGroup[] = [
       { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
       { label: 'Dispatch-Field Ops', icon: Map, href: '/dashboard/field-operations', roles: ['platform_admin', 'company_admin'] },
       { label: 'Tech-Field Ops App Install', icon: Smartphone, href: '/dashboard/field-ops-install', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Dispatch-Field Ops App Install', icon: Smartphone, href: '/dashboard/dispatch-field-ops-install', roles: ['platform_admin', 'company_admin'] },
     ],
   },
   {
