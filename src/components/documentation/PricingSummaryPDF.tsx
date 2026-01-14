@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
 // Subscription tier data
 const SUBSCRIPTION_TIERS = {
   starter: {
-    name: 'Starter',
+    name: 'Aura Single-Point (Solo-Focus)',
     monthlyPrice: 1000,
     annualPrice: 10000,
     annualSavings: 2000,
@@ -586,10 +586,10 @@ const PricingSummaryPDF = () => (
     {/* Starter Tier Details */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Starter Tier</Text>
+      <Text style={styles.sectionTitle}>Aura Single-Point Tier</Text>
 
       <View style={styles.pricingCard}>
-        <Text style={styles.pricingTierName}>Starter Plan</Text>
+        <Text style={styles.pricingTierName}>Aura Single-Point (Solo-Focus)</Text>
         <Text style={styles.pricingPrice}>$1,000/month</Text>
         <Text style={styles.pricingAnnual}>or $10,000/year (billed annually)</Text>
         <Text style={styles.pricingSavings}>Save $2,000 with annual billing</Text>

@@ -100,7 +100,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <p className="font-medium text-card-foreground">Document includes:</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>Executive Pricing Summary</li>
-                  <li>Three-Tier Comparison (Starter, Professional, Enterprise)</li>
+                  <li>Three-Tier Comparison (Single-Point, Professional, Enterprise)</li>
                   <li>Detailed Tier Breakdowns</li>
                   <li>Annual Discount Savings (16%)</li>
                   <li>3rd Party Integration Costs</li>

@@ -673,7 +673,7 @@ export default function Auth() {
                           {selectedTier === 'starter' && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-sm text-card-foreground">Starter</h3>
+                          <h3 className="font-semibold text-sm text-card-foreground">Aura Single-Point (Solo-Focus)</h3>
                           <p className="text-xs text-card-foreground/70">Small service companies</p>
                         </div>
                       </div>
