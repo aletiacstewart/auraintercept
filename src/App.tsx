@@ -50,6 +50,7 @@ import Analytics from "./pages/Analytics";
 import CustomerPortal from "./pages/CustomerPortal";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import Subscription from "./pages/Subscription";
+import SubscriptionAnalytics from "./pages/SubscriptionAnalytics";
 import PublicChat from "./pages/PublicChat";
 import Inventory from "./pages/Inventory";
 import Quotes from "./pages/Quotes";
@@ -154,6 +155,7 @@ const App = () => (
             <Route path="/dashboard/sms-logs" element={<SMSLogs />} />
             <Route path="/dashboard/analytics" element={<Analytics />} />
             <Route path="/dashboard/subscription" element={<Subscription />} />
+            <Route path="/dashboard/subscription-analytics" element={<SubscriptionAnalytics />} />
             <Route path="/dashboard/inventory" element={<Inventory />} />
             <Route path="/dashboard/quotes" element={<Quotes />} />
             <Route path="/dashboard/invoices" element={<Invoices />} />
