@@ -4319,6 +4319,22 @@ export type Database = {
           slug: string
         }[]
       }
+      get_company_warranty_policies: {
+        Args: { p_company_id: string }
+        Returns: {
+          coverage_details: string
+          coverage_type: string
+          description: string
+          duration_months: number
+          duration_text: string
+          exclusions: string
+          id: string
+          labor_covered: boolean
+          name: string
+          parts_covered: boolean
+          terms_conditions: string
+        }[]
+      }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
