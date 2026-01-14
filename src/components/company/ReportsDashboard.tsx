@@ -199,7 +199,7 @@ export function ReportsDashboard() {
     if (error) {
       toast.error('Failed to update report status');
     } else {
-      toast.success(`${reportType.charAt(0).toUpperCase() + reportType.slice(1)} digest ${enabled ? 'enabled' : 'disabled'}`);
+      toast.success(`${reportType.charAt(0).toUpperCase() + reportType.slice(1)} report ${enabled ? 'enabled' : 'disabled'}`);
       fetchReportConfigs();
     }
     setToggling(null);
@@ -264,7 +264,7 @@ export function ReportsDashboard() {
 
       if (error) throw error;
       if (data?.success) {
-        toast.success(`Test ${reportType} digest sent to ${email}`);
+        toast.success(`Test ${reportType} report sent to ${email}`);
       } else if (data?.error) {
         toast.error(`Failed to send: ${data.error}`);
       }
@@ -327,13 +327,13 @@ export function ReportsDashboard() {
   }
 
   return (
-    <Tabs defaultValue="digests" className="space-y-6">
+    <Tabs defaultValue="scheduled" className="space-y-6">
       <TabsList>
-        <TabsTrigger value="digests">Scheduled Digests</TabsTrigger>
+        <TabsTrigger value="scheduled">Scheduled Reports</TabsTrigger>
         <TabsTrigger value="financial">Financial Reports</TabsTrigger>
       </TabsList>
       
-      <TabsContent value="digests">
+      <TabsContent value="scheduled">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -362,7 +362,7 @@ export function ReportsDashboard() {
                         <div className="flex items-center gap-3">
                           {getReportIcon(report.type)}
                           <div>
-                            <h3 className="font-semibold capitalize text-card-foreground">{report.type} Digest</h3>
+                            <h3 className="font-semibold capitalize text-card-foreground">{report.type} Report</h3>
                             <p className="text-sm text-card-foreground/70">{report.scheduleDescription}</p>
                           </div>
                         </div>
