@@ -92,7 +92,6 @@ const navGroups: NavGroup[] = [
   {
     label: 'Analytics & Reports',
     items: [
-      { label: 'Analytics & Optimization', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'] },
       { label: 'Performance Report', icon: BarChart3, href: '/dashboard/ai-consoles/performance-report', roles: ['platform_admin', 'company_admin'] },
       { label: 'Business Insights', icon: Cpu, href: '/dashboard/ai-consoles/business-insights', roles: ['platform_admin', 'company_admin'] },
       { label: 'Revenue Analysis', icon: CreditCard, href: '/dashboard/ai-consoles/revenue-analysis', roles: ['platform_admin', 'company_admin'] },
@@ -103,6 +102,7 @@ const navGroups: NavGroup[] = [
     label: 'Business Consoles & Apps',
     items: [
       { label: 'Business Management Ops', icon: Briefcase, href: '/dashboard/ai-consoles/business-management', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'] },
+      { label: 'Analytics & Optimization', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'] },
       { label: 'New Lead', icon: Users, href: '/dashboard/ai-consoles/new-lead', roles: ['platform_admin', 'company_admin'] },
       { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'] },
       { label: 'Quotes', icon: FileText, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'] },
