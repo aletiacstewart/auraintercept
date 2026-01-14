@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone, Package, Shield, Target, UserCircle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { startOfMonth, endOfMonth } from 'date-fns';
+import { startOfMonth, endOfMonth, subDays } from 'date-fns';
 
 
 export function PlatformAdminDashboard() {
@@ -14,7 +14,9 @@ export function PlatformAdminDashboard() {
       const monthStart = startOfMonth(now).toISOString();
       const monthEnd = endOfMonth(now).toISOString();
 
-      const [companies, profiles, appointments, allQuotes, invoices, campaigns, customers, leads, inventory, warranties] = await Promise.all([
+      const weekAgo = subDays(now, 7).toISOString();
+
+      const [companies, profiles, appointments, allQuotes, invoices, campaigns, customers, leads, inventory, warranties, recentCompanies, integrations, agentEvents] = await Promise.all([
         supabase.from('companies').select('id', { count: 'exact', head: true }),
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('appointments').select('id, status'),
@@ -25,6 +27,9 @@ export function PlatformAdminDashboard() {
         supabase.from('leads').select('id, status'),
         supabase.from('inventory_items').select('id, quantity, min_quantity'),
         supabase.from('warranty_policies').select('id', { count: 'exact', head: true }),
+        supabase.from('companies').select('id', { count: 'exact', head: true }).gte('created_at', weekAgo),
+        supabase.from('tenant_integrations').select('id, twilio_account_sid, elevenlabs_api_key, resend_api_key'),
+        supabase.from('ai_agent_events').select('id', { count: 'exact', head: true }).gte('created_at', weekAgo),
       ]);
 
       // Calculate platform revenue
@@ -66,6 +71,14 @@ export function PlatformAdminDashboard() {
         ? Math.round((convertedLeads / allLeads.length) * 100) 
         : 0;
 
+      // Calculate platform activity metrics
+      const recentSignups = recentCompanies.count ?? 0;
+      const integrationsData = integrations.data ?? [];
+      const activeIntegrations = integrationsData.filter(i => 
+        i.twilio_account_sid || i.elevenlabs_api_key || i.resend_api_key
+      ).length;
+      const recentAgentEvents = agentEvents.count ?? 0;
+
       return {
         companies: companies.count ?? 0,
         users: profiles.count ?? 0,
@@ -83,6 +96,9 @@ export function PlatformAdminDashboard() {
         leadConversionRate,
         quoteConversionRate,
         appointmentCompletionRate,
+        recentSignups,
+        activeIntegrations,
+        recentAgentEvents,
       };
     },
   });
@@ -228,17 +244,21 @@ export function PlatformAdminDashboard() {
               <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 border border-slate-600/50">
                 <span className="text-sm text-white">System Status</span>
                 <span className="text-sm font-medium text-green-400 flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-green-400" />
+                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                   Operational
                 </span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 border border-slate-600/50">
-                <span className="text-sm text-white">API Endpoints</span>
-                <span className="text-sm font-medium text-green-400">All Active</span>
+                <span className="text-sm text-white">New Signups (7 days)</span>
+                <span className="text-sm font-medium text-cyan-400">{stats?.recentSignups ?? 0} companies</span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 border border-slate-600/50">
-                <span className="text-sm text-white">Edge Functions</span>
-                <span className="text-sm font-medium text-green-400">Running</span>
+                <span className="text-sm text-white">Active Integrations</span>
+                <span className="text-sm font-medium text-purple-400">{stats?.activeIntegrations ?? 0} configured</span>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 border border-slate-600/50">
+                <span className="text-sm text-white">AI Agent Events (7 days)</span>
+                <span className="text-sm font-medium text-amber-400">{stats?.recentAgentEvents ?? 0} events</span>
               </div>
             </div>
           </CardContent>
