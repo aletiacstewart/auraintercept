@@ -319,7 +319,7 @@ const AIAgent = () => {
                           : consoleType === 'marketing'
                             ? 'Marketing & Sales Console'
                             : consoleType === 'analytics'
-                              ? 'Analytics & Optimization Console'
+                              ? 'Analytics & Reports Ops Console'
                               : 'Customer Portal Console'}
                     </h2>
                     {canManageSettings && (

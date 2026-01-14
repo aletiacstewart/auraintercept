@@ -819,7 +819,7 @@ const PlatformDocumentPDF = () => (
       </View>
       
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>Analytics & Optimization Console</Text>
+        <Text style={styles.agentName}>Analytics & Reports Ops Console</Text>
         <Text style={styles.agentDescription}>
           Business intelligence dashboard. Real-time KPIs, revenue forecasting, performance 
           metrics, and trend analysis. AI-powered insights and recommendations for optimization.
