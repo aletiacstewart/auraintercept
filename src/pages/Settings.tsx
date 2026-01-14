@@ -1,8 +1,6 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { BrandingSettings } from '@/components/company/BrandingSettings';
 import { ReminderSettings } from '@/components/company/ReminderSettings';
-import { ReminderHistoryLog } from '@/components/company/ReminderHistoryLog';
-import { ReminderAnalytics } from '@/components/company/ReminderAnalytics';
 import { CustomerPreferencesManager } from '@/components/company/CustomerPreferencesManager';
 import { DefaultPreferencesSettings } from '@/components/company/DefaultPreferencesSettings';
 import { SubscriptionAnalytics } from '@/components/company/SubscriptionAnalytics';
@@ -40,11 +38,9 @@ export default function Settings() {
               <TabsTrigger value="reminders">Reminders</TabsTrigger>
               <TabsTrigger value="missed-calls">Missed Calls</TabsTrigger>
               <TabsTrigger value="default-prefs">Default Prefs</TabsTrigger>
-              <TabsTrigger value="reminder-analytics">Reminder Stats</TabsTrigger>
-              <TabsTrigger value="reports">Reports & Digests</TabsTrigger>
+              <TabsTrigger value="reports">Reports</TabsTrigger>
               <TabsTrigger value="alerts">Alerts</TabsTrigger>
               <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
-              <TabsTrigger value="reminder-history">History</TabsTrigger>
               <TabsTrigger value="customer-prefs">Customer Prefs</TabsTrigger>
               <TabsTrigger value="emails">Email Templates</TabsTrigger>
               <TabsTrigger value="sms">SMS Templates</TabsTrigger>
@@ -67,9 +63,6 @@ export default function Settings() {
             <TabsContent value="default-prefs">
               <DefaultPreferencesSettings />
             </TabsContent>
-            <TabsContent value="reminder-analytics">
-              <ReminderAnalytics />
-            </TabsContent>
             <TabsContent value="reports">
               <ReportsDashboard />
             </TabsContent>
@@ -78,9 +71,6 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="subscriptions">
               <SubscriptionAnalytics />
-            </TabsContent>
-            <TabsContent value="reminder-history">
-              <ReminderHistoryLog />
             </TabsContent>
             <TabsContent value="customer-prefs">
               <CustomerPreferencesManager />

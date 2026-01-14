@@ -17,6 +17,7 @@ import { InsightsReportForm } from './forms/InsightsReportForm';
 import { TrendForecastForm } from './forms/TrendForecastForm';
 import { KpiDashboardForm } from './forms/KpiDashboardForm';
 import { ExportReportForm } from './forms/ExportReportForm';
+import { ReminderInsightsForm } from './forms/ReminderInsightsForm';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   BarChart3, 
@@ -25,7 +26,8 @@ import {
   DollarSign,
   Target,
   Download,
-  ShieldAlert
+  ShieldAlert,
+  Bell
 } from 'lucide-react';
 
 // Tab configuration
@@ -41,6 +43,7 @@ const QUICK_ACTIONS = [
   { id: 'insights', label: 'Business Insights', icon: Target, message: 'Show me business insights' },
   { id: 'forecast', label: 'Revenue Forecast', icon: TrendingUp, message: 'Show me revenue forecasts' },
   { id: 'kpi', label: 'KPI Dashboard', icon: Target, message: 'Show KPI dashboard' },
+  { id: 'reminders', label: 'Reminder Insights', icon: Bell, message: 'Show me reminder analytics' },
   { id: 'export', label: 'Export Report', icon: Download, message: 'I need to export a report' },
 ];
 
@@ -70,6 +73,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   const [showForecastForm, setShowForecastForm] = useState(false);
   const [showKpiForm, setShowKpiForm] = useState(false);
   const [showExportForm, setShowExportForm] = useState(false);
+  const [showRemindersForm, setShowRemindersForm] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -109,6 +113,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     setShowForecastForm(false);
     setShowKpiForm(false);
     setShowExportForm(false);
+    setShowRemindersForm(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -152,6 +157,11 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       setShowKpiForm(true);
       return;
     }
+    if (actionId === 'reminders') {
+      hideAllForms();
+      setShowRemindersForm(true);
+      return;
+    }
     if (actionId === 'export') {
       hideAllForms();
       setShowExportForm(true);
@@ -181,6 +191,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       insights: `Analyze these business insights: ${dataStr}. What key trends and recommendations can you identify?`,
       forecast: `Based on this forecast data: ${dataStr}. What should we prepare for and what actions should we take?`,
       kpi: `Review these KPIs: ${dataStr}. Which ones need immediate attention and what steps can improve them?`,
+      reminders: `Analyze this reminder performance data: ${dataStr}. What recommendations do you have to improve delivery rates and customer engagement?`,
       export: `I just exported a ${data.type} report with ${data.count} records. What analysis would be most valuable from this data?`,
     };
     if (messages[formType]) {
@@ -188,7 +199,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     }
   };
 
-  const isShowingForm = showPerformanceForm || showRevenueForm || showCustomersForm || showInsightsForm || showForecastForm || showKpiForm || showExportForm;
+  const isShowingForm = showPerformanceForm || showRevenueForm || showCustomersForm || showInsightsForm || showForecastForm || showKpiForm || showExportForm || showRemindersForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -200,6 +211,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     if (showInsightsForm) return 'Insights';
     if (showForecastForm) return 'Forecast';
     if (showKpiForm) return 'KPI';
+    if (showRemindersForm) return 'Reminders';
     if (showExportForm) return 'Export';
     if (messages.length > 0) return agentStyle.label; // Show agent label during chat
     return 'Home';
@@ -306,6 +318,14 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
                   onAnalyze={(data) => handleAnalyze('kpi', data)}
+                />
+              )}
+              
+              {showRemindersForm && effectiveCompanyId && (
+                <ReminderInsightsForm
+                  companyId={effectiveCompanyId}
+                  onCancel={handleHome}
+                  onAnalyze={(data) => handleAnalyze('reminders', data)}
                 />
               )}
               
