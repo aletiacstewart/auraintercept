@@ -509,82 +509,132 @@ export default function Auth() {
           <div className={`grid gap-8 ${mode === 'company' ? 'md:grid-cols-2' : 'max-w-md mx-auto'}`}>
             {/* Left Column - What's Included (only for company mode) */}
             {mode === 'company' && (
-              <Card className="border-border/50 shadow-md h-fit">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg flex items-center gap-2">
+              <div className="space-y-4 h-fit">
+                {/* Header */}
+                <div className="text-center md:text-left">
+                  <h2 className="text-lg font-bold flex items-center gap-2 justify-center md:justify-start">
                     <Zap className="w-5 h-5 text-primary" />
-                    What's Included
-                  </CardTitle>
-                  <p className="text-sm text-card-foreground/80 mt-2">
-                    <span className="font-medium text-card-foreground">For Businesses:</span> This platform subscription is designed for small to large companies — not individual employees.
+                    Choose Your Plan
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Start with a 30-day free trial. No credit card required.
                   </p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Trial Info */}
-                  <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-                    <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                      <Crown className="w-4 h-4 text-amber-500" />
-                      30-Day Free Trial
-                    </h4>
-                    <p className="text-xs text-card-foreground/80 mb-3">
-                      Full access to all features during your trial. No credit card required.
-                    </p>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="flex items-center gap-1.5">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>18 AI agents</span>
+                </div>
+
+                {/* 3 Tier Cards */}
+                <div className="space-y-3">
+                  {/* Starter */}
+                  <div className="p-4 rounded-lg border border-border/50 bg-card hover:border-primary/30 transition-colors">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h3 className="font-semibold text-sm">Starter</h3>
+                        <p className="text-xs text-muted-foreground">Small service companies</p>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>5 AI consoles</span>
+                      <div className="text-right">
+                        <span className="text-lg font-bold">$1,000</span>
+                        <span className="text-xs text-muted-foreground">/mo</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
+                    </div>
+                    <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>Automated lead capture</span>
+                        <span>2 AI Agents</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>Chat widget</span>
+                        <span>1 Console</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>5 Employees</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>Email Reminders</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* After Trial */}
-                  <div className="p-4 rounded-lg muted-box-card">
-                    <h4 className="font-semibold text-sm mb-2 text-card-foreground">After Trial: $250/month</h4>
-                    <div className="space-y-2 text-xs text-card-foreground/80">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-3 h-3 text-card-foreground/70" />
-                        <span>10 employees free, +$10/mo each additional</span>
+                  {/* Professional - Highlighted */}
+                  <div className="p-4 rounded-lg border-2 border-primary/50 bg-primary/5 relative">
+                    <div className="absolute -top-2 left-4">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full gradient-primary text-primary-foreground font-medium">Most Popular</span>
+                    </div>
+                    <div className="flex items-start justify-between mb-2 mt-1">
+                      <div>
+                        <h3 className="font-semibold text-sm">Professional</h3>
+                        <p className="text-xs text-muted-foreground">Growing companies with technicians</p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Mail className="w-3 h-3 text-card-foreground/70" />
-                        <span>Email reminders included</span>
+                      <div className="text-right">
+                        <span className="text-lg font-bold text-primary">$1,750</span>
+                        <span className="text-xs text-muted-foreground">/mo</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <MessageSquare className="w-3 h-3 text-card-foreground/70" />
-                        <span>SMS reminders (usage-based)</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>7 AI Agents</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Mic className="w-3 h-3 text-card-foreground/70" />
-                        <span>AI Voice calls (usage-based)</span>
+                      <div className="flex items-center gap-1">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>2 Consoles</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>10 Employees</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>Email + SMS</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Upgrade Note */}
-                  <p className="text-xs text-center text-card-foreground/70">
-                    Upgrade anytime from your dashboard under Subscription
-                  </p>
-
-                  {/* Customer Info */}
-                  <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                    <p className="text-xs text-center text-card-foreground/80">
-                      <span className="font-medium text-card-foreground">Customers get free accounts</span> to engage with registered companies — book appointments, chat with AI agents, and more!
-                    </p>
+                  {/* Enterprise */}
+                  <div className="p-4 rounded-lg border border-border/50 bg-card hover:border-primary/30 transition-colors">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h3 className="font-semibold text-sm">Enterprise</h3>
+                        <p className="text-xs text-muted-foreground">Full AI automation suite</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-lg font-bold">$2,250</span>
+                        <span className="text-xs text-muted-foreground">/mo</span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>18 AI Agents</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>5 Consoles</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>Unlimited Employees</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Check className="w-3 h-3 text-green-500" />
+                        <span>All Channels</span>
+                      </div>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+
+                {/* Annual Savings Note */}
+                <p className="text-xs text-center text-green-500">
+                  Save 16% with annual billing
+                </p>
+
+                {/* Customer Info */}
+                <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <p className="text-xs text-center text-card-foreground/80">
+                    <span className="font-medium text-card-foreground">Customers get free accounts</span> to engage with registered companies — book appointments, chat with AI agents, and more!
+                  </p>
+                </div>
+              </div>
             )}
 
             {/* Right Column - Auth Card */}
