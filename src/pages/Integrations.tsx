@@ -318,18 +318,15 @@ export default function Integrations() {
           const percentage = Math.round((connectedCount / statuses.length) * 100);
           
           return (
-            <Card className={cn(
-              "border-border/50",
-              percentage === 100 && "border-green-500/30 bg-green-500/5"
-            )}>
+            <Card className="guide-card guide-card-primary">
               <CardContent className="py-4">
                 <div className="flex items-center gap-6">
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium">Setup Progress</span>
+                      <span className="text-sm font-medium text-card-foreground">Setup Progress</span>
                       <span className={cn(
                         "text-sm font-bold",
-                        percentage === 100 ? "text-green-600" : "text-primary"
+                        percentage === 100 ? "text-green-400" : "text-primary"
                       )}>
                         {percentage}%
                       </span>
@@ -343,7 +340,7 @@ export default function Integrations() {
                         className={cn(
                           "flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium transition-colors",
                           status.connected 
-                            ? "bg-green-500/10 text-green-600" 
+                            ? "bg-green-500/20 text-green-400" 
                             : "bg-slate-600/50 text-white/70"
                         )}
                       >
@@ -363,21 +360,18 @@ export default function Integrations() {
         <div className={cn("grid gap-4", userRole === 'platform_admin' ? "md:grid-cols-2" : "md:grid-cols-1")}>
           {/* CRM Setup Progress - Platform Admin Only */}
           {userRole === 'platform_admin' && (
-            <Card className={cn(
-              "border-border/50",
-              crmConnection && "border-green-500/30 bg-green-500/5"
-            )}>
+            <Card className="guide-card guide-card-crm">
               <CardContent className="py-4">
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm font-medium">CRM Integration</span>
+                        <Users className="w-4 h-4 text-card-foreground/70" />
+                        <span className="text-sm font-medium text-card-foreground">CRM Integration</span>
                       </div>
                       <span className={cn(
                         "text-sm font-bold",
-                        crmConnection ? "text-green-600" : "text-muted-foreground"
+                        crmConnection ? "text-green-400" : "text-card-foreground/50"
                       )}>
                         {crmConnection ? '100%' : '0%'}
                       </span>
@@ -386,7 +380,7 @@ export default function Integrations() {
                   </div>
                   <div className="flex items-center gap-2">
                     {crmConnection ? (
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-500/10 text-green-600">
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400">
                         <Users className="w-3 h-3" />
                         {CRM_PROVIDER_NAMES[crmConnection.provider] || crmConnection.provider}
                         <Check className="w-3 h-3" />
@@ -405,21 +399,18 @@ export default function Integrations() {
           )}
 
           {/* Calendar Setup Progress */}
-          <Card className={cn(
-            "border-border/50",
-            calendarConnection && "border-green-500/30 bg-green-500/5"
-          )}>
+          <Card className="guide-card guide-card-calendar">
             <CardContent className="py-4">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">Calendar Sync</span>
+                      <Calendar className="w-4 h-4 text-card-foreground/70" />
+                      <span className="text-sm font-medium text-card-foreground">Calendar Sync</span>
                     </div>
                     <span className={cn(
                       "text-sm font-bold",
-                      calendarConnection ? "text-green-600" : "text-muted-foreground"
+                      calendarConnection ? "text-green-400" : "text-card-foreground/50"
                     )}>
                       {calendarConnection ? '100%' : '0%'}
                     </span>
@@ -428,7 +419,7 @@ export default function Integrations() {
                 </div>
                 <div className="flex items-center gap-2">
                   {calendarConnection ? (
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-500/10 text-green-600">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400">
                       <Calendar className="w-3 h-3" />
                       Google Calendar
                       <Check className="w-3 h-3" />
