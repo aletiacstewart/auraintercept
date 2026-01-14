@@ -37,7 +37,7 @@ const QUICK_ACTIONS = [
   { id: 'performance', label: 'Performance Report', icon: BarChart3, message: 'I need a performance report' },
   { id: 'revenue', label: 'Revenue Analysis', icon: DollarSign, message: 'Show me revenue analysis' },
   { id: 'customers', label: 'Customer Insights', icon: Users, message: 'I need customer insights' },
-  { id: 'forecast', label: 'Trend Forecast', icon: TrendingUp, message: 'Show me trend forecasts' },
+  { id: 'forecast', label: 'Revenue Forecast', icon: TrendingUp, message: 'Show me revenue forecasts' },
   { id: 'kpi', label: 'KPI Dashboard', icon: Target, message: 'Show KPI dashboard' },
   { id: 'export', label: 'Export Report', icon: Download, message: 'I need to export a report' },
 ];
