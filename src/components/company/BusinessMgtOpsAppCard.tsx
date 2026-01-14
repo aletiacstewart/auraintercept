@@ -166,8 +166,8 @@ export function BusinessMgtOpsAppCard() {
             {/* iOS Instructions */}
             <Card className={platform === 'ios' ? 'ring-2 ring-primary' : ''}>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Apple className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-card-foreground">
+                  <Apple className="h-5 w-5 text-card-foreground" />
                   iPhone / iPad
                   {platform === 'ios' && (
                     <Badge variant="secondary" className="ml-2">Your Device</Badge>
@@ -179,23 +179,23 @@ export function BusinessMgtOpsAppCard() {
                 <ol className="space-y-3 text-sm">
                   <li className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">1</span>
-                    <span className="text-foreground">Open this page in <strong>Safari</strong> (required for iOS)</span>
+                    <span className="text-card-foreground">Open this page in <strong>Safari</strong> (required for iOS)</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">2</span>
-                    <span className="flex items-center gap-1 text-foreground">
-                      Tap the <Share className="h-4 w-4 inline" /> Share button
+                    <span className="flex items-center gap-1 text-card-foreground">
+                      Tap the <Share className="h-4 w-4 inline text-card-foreground" /> Share button
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">3</span>
-                    <span className="flex items-center gap-1 text-foreground">
-                      Scroll down and tap <Plus className="h-4 w-4 inline" /> "Add to Home Screen"
+                    <span className="flex items-center gap-1 text-card-foreground">
+                      Scroll down and tap <Plus className="h-4 w-4 inline text-card-foreground" /> "Add to Home Screen"
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">4</span>
-                    <span className="text-foreground">Tap "Add" to confirm</span>
+                    <span className="text-card-foreground">Tap "Add" to confirm</span>
                   </li>
                 </ol>
               </CardContent>
@@ -204,8 +204,8 @@ export function BusinessMgtOpsAppCard() {
             {/* Android Instructions */}
             <Card className={platform === 'android' ? 'ring-2 ring-primary' : ''}>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Chrome className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-card-foreground">
+                  <Chrome className="h-5 w-5 text-card-foreground" />
                   Android
                   {platform === 'android' && (
                     <Badge variant="secondary" className="ml-2">Your Device</Badge>
@@ -217,21 +217,21 @@ export function BusinessMgtOpsAppCard() {
                 <ol className="space-y-3 text-sm">
                   <li className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">1</span>
-                    <span className="text-foreground">Open this page in <strong>Chrome</strong></span>
+                    <span className="text-card-foreground">Open this page in <strong>Chrome</strong></span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">2</span>
-                    <span className="flex items-center gap-1 text-foreground">
-                      Tap the <MoreVertical className="h-4 w-4 inline" /> menu button
+                    <span className="flex items-center gap-1 text-card-foreground">
+                      Tap the <MoreVertical className="h-4 w-4 inline text-card-foreground" /> menu button
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">3</span>
-                    <span className="text-foreground">Tap "Install app" or "Add to Home screen"</span>
+                    <span className="text-card-foreground">Tap "Install app" or "Add to Home screen"</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">4</span>
-                    <span className="text-foreground">Tap "Install" to confirm</span>
+                    <span className="text-card-foreground">Tap "Install" to confirm</span>
                   </li>
                 </ol>
               </CardContent>
@@ -242,7 +242,7 @@ export function BusinessMgtOpsAppCard() {
           {platform === 'desktop' && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-foreground">Scan to Install on Mobile</CardTitle>
+                <CardTitle className="text-card-foreground">Scan to Install on Mobile</CardTitle>
                 <CardDescription>
                   Scan this QR code with your phone's camera to open the install page
                 </CardDescription>
@@ -311,7 +311,7 @@ export function BusinessMgtOpsAppCard() {
       {/* Features */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-foreground">App Features</CardTitle>
+          <CardTitle className="text-card-foreground">App Features</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -320,8 +320,8 @@ export function BusinessMgtOpsAppCard() {
                 <Smartphone className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <h4 className="font-medium text-foreground">Native Feel</h4>
-                <p className="text-sm text-muted-foreground">
+                <h4 className="font-medium text-card-foreground">Native Feel</h4>
+                <p className="text-sm text-white/70">
                   Works like a real app with full-screen experience
                 </p>
               </div>
@@ -331,8 +331,8 @@ export function BusinessMgtOpsAppCard() {
                 <Briefcase className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <h4 className="font-medium text-foreground">Dual Console</h4>
-                <p className="text-sm text-muted-foreground">
+                <h4 className="font-medium text-card-foreground">Dual Console</h4>
+                <p className="text-sm text-white/70">
                   Access both Business Ops and Analytics in one app
                 </p>
               </div>
@@ -342,8 +342,8 @@ export function BusinessMgtOpsAppCard() {
                 <Download className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <h4 className="font-medium text-foreground">Quick Access</h4>
-                <p className="text-sm text-muted-foreground">
+                <h4 className="font-medium text-card-foreground">Quick Access</h4>
+                <p className="text-sm text-white/70">
                   Launch from your home screen instantly
                 </p>
               </div>
