@@ -12,34 +12,26 @@ import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 const agentCategories = [{
-  id: 'business',
-  name: 'Business Management',
-  icon: Building2,
-  color: 'from-purple-500 to-violet-500',
+  id: 'customer',
+  name: 'Customer Portal',
+  icon: Users,
+  color: 'from-cyan-500 to-blue-500',
   agents: [{
-    name: 'Quoting Agent',
-    description: 'Instant quote generation with service pricing lookup',
-    icon: FileText
+    name: 'AI Receptionist',
+    description: 'First point of contact that classifies intent and routes to specialized agents',
+    icon: Target
   }, {
-    name: 'Invoice Agent',
-    description: 'Automated invoicing with payment tracking',
-    icon: DollarSign
+    name: 'Scheduling Agent',
+    description: 'Natural language appointment scheduling with calendar sync',
+    icon: Calendar
   }, {
-    name: 'Insights Agent',
-    description: 'Business intelligence with trends and anomaly detection',
-    icon: TrendingUp
+    name: 'Follow-up Agent',
+    description: 'Automated reminders via email, SMS, and voice calls',
+    icon: Bell
   }, {
-    name: 'Performance Agent',
-    description: 'Team metrics, goals tracking, and optimization',
-    icon: BarChart3
-  }, {
-    name: 'Revenue Agent',
-    description: 'Revenue analysis and financial forecasting',
-    icon: DollarSign
-  }, {
-    name: 'Forecast Agent',
-    description: 'Demand, staffing, and resource predictions',
-    icon: Clock
+    name: 'Review Agent',
+    description: 'Collects feedback and manages multi-platform reviews',
+    icon: Star
   }]
 }, {
   id: 'field',
@@ -64,45 +56,59 @@ const agentCategories = [{
     icon: CheckCircle2
   }]
 }, {
-  id: 'customer',
-  name: 'Customer Portal',
-  icon: Users,
-  color: 'from-cyan-500 to-blue-500',
+  id: 'business',
+  name: 'Business Operations',
+  icon: Building2,
+  color: 'from-purple-500 to-violet-500',
   agents: [{
-    name: 'Triage Agent',
-    description: 'AI-powered inquiry routing to the right department instantly',
-    icon: Target
+    name: 'Admin Agent',
+    description: 'User management, company settings, and access control',
+    icon: Lock
   }, {
-    name: 'Scheduling Agent',
-    description: 'Natural language appointment scheduling with calendar sync',
-    icon: Calendar
+    name: 'Insights Agent',
+    description: 'Business intelligence with trends and anomaly detection',
+    icon: TrendingUp
   }, {
-    name: 'Follow-up Agent',
-    description: 'Automated reminders via email, SMS, and voice calls',
-    icon: Bell
+    name: 'Performance Agent',
+    description: 'Team metrics, goals tracking, and optimization',
+    icon: BarChart3
   }, {
-    name: 'Review Agent',
-    description: 'Collects feedback and manages multi-platform reviews',
-    icon: Star
+    name: 'Quoting Agent',
+    description: 'Dynamic pricing and instant quote generation',
+    icon: FileText
+  }, {
+    name: 'Invoice Agent',
+    description: 'Automated invoicing with payment tracking',
+    icon: DollarSign
+  }, {
+    name: 'Revenue Agent',
+    description: 'Revenue analysis and financial forecasting',
+    icon: DollarSign
+  }, {
+    name: 'Forecast Agent',
+    description: 'Demand, staffing, and resource predictions',
+    icon: Clock
+  }, {
+    name: 'Inventory Agent',
+    description: 'Stock tracking, low stock alerts, and auto-reorder',
+    icon: Package
+  }, {
+    name: 'Warranty Agent',
+    description: 'Coverage verification and claim processing',
+    icon: Award
+  }]
+}, {
+  id: 'marketing',
+  name: 'Marketing & Sales',
+  icon: Megaphone,
+  color: 'from-orange-500 to-amber-500',
+  agents: [{
+    name: 'Campaign Agent',
+    description: 'Unified marketing for promotions, referrals, win-back, and seasonal campaigns',
+    icon: Megaphone
   }]
 }];
 const agentConsoles = [{
-  name: 'Business Management Console',
-  description: 'Complete operations center for quotes, invoices, analytics, and AI-powered business insights.',
-  icon: Briefcase,
-  gradient: 'from-purple-500 to-violet-500',
-  iconBg: 'bg-purple-500/10',
-  iconColor: 'text-purple-500',
-  features: ['AI-powered business insights', 'Performance & revenue reports', 'Demand forecasting', 'Quote & invoice automation', 'Lead management', 'Company analytics']
-}, {
-  name: 'Field Operations Console',
-  description: 'Technician-focused mobile console for job management, navigation, and customer communication.',
-  icon: Truck,
-  gradient: 'from-green-500 to-emerald-500',
-  iconBg: 'bg-green-500/10',
-  iconColor: 'text-green-500',
-  features: ['One-tap job acceptance', 'Real-time GPS navigation', 'ETA updates with notifications', 'Onsite Invoice Generation', 'Job status tracking', 'Dispatch communication']
-}, {
   name: 'Customer Portal Console',
   description: 'Complete customer engagement hub for appointment scheduling, follow-ups, and review collection.',
   icon: HeadphonesIcon,
@@ -110,6 +116,38 @@ const agentConsoles = [{
   iconBg: 'bg-cyan-500/10',
   iconColor: 'text-cyan-500',
   features: ['24/7 natural language booking', 'Multi-service appointment scheduling', 'Automated email & SMS reminders', 'Customer feedback collection', 'Quote request handling', 'Embeddable website widget']
+}, {
+  name: 'Field Operations Console',
+  description: 'Technician-focused mobile console for job management, navigation, and customer communication.',
+  icon: Truck,
+  gradient: 'from-green-500 to-emerald-500',
+  iconBg: 'bg-green-500/10',
+  iconColor: 'text-green-500',
+  features: ['One-tap job acceptance', 'Real-time GPS navigation', 'ETA updates with notifications', 'Onsite invoice generation', 'Job status tracking', 'Dispatch communication']
+}, {
+  name: 'Business Management Console',
+  description: 'Complete operations center for quotes, invoices, inventory, warranties, and AI-powered business insights.',
+  icon: Briefcase,
+  gradient: 'from-purple-500 to-violet-500',
+  iconBg: 'bg-purple-500/10',
+  iconColor: 'text-purple-500',
+  features: ['AI-powered business insights', 'Performance & revenue reports', 'Demand forecasting', 'Quote & invoice automation', 'Lead & inventory management', 'Warranty tracking']
+}, {
+  name: 'Marketing & Sales Console',
+  description: 'Campaign management for promotions, referrals, win-back strategies, and customer segments.',
+  icon: Megaphone,
+  gradient: 'from-orange-500 to-amber-500',
+  iconBg: 'bg-orange-500/10',
+  iconColor: 'text-orange-500',
+  features: ['Promotional campaigns', 'Referral program management', 'Win-back & re-engagement', 'Seasonal outreach', 'Audience segmentation', 'A/B testing']
+}, {
+  name: 'Analytics & Reports Console',
+  description: 'High-level reporting, KPI tracking, revenue forecasting, and performance analytics.',
+  icon: BarChart3,
+  gradient: 'from-indigo-500 to-blue-500',
+  iconBg: 'bg-indigo-500/10',
+  iconColor: 'text-indigo-500',
+  features: ['KPI dashboard', 'Customer insights', 'Revenue analysis', 'Trend forecasting', 'Performance reports', 'Reminder analytics']
 }];
 const platformFeatures = [{
   icon: MessageSquare,
@@ -263,7 +301,7 @@ const howItWorks = [{
 }, {
   step: 2,
   title: 'Activate AI Agents',
-  description: 'Enable 14 specialized AI agents and configure your knowledge base for your business.',
+  description: 'Enable 18 specialized AI agents and configure your knowledge base for your business.',
   icon: Bot
 }, {
   step: 3,
@@ -277,13 +315,13 @@ const howItWorks = [{
   icon: Zap
 }];
 const heroStats = [{
-  value: '14',
+  value: '18',
   label: 'AI Agents'
 }, {
   value: '24/7',
   label: 'Automation'
 }, {
-  value: '3',
+  value: '5',
   label: 'Agent Consoles'
 }, {
   value: '40%',
@@ -376,8 +414,8 @@ export default function Index() {
       <section className="py-20">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">Aura Agent Consoles</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">14 Specialized AI Agents</h2>
+            <Badge variant="secondary" className="mb-4">Aura AI Agents</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">18 Specialized AI Agents</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Each agent is purpose-built to handle specific business functions, 
               working together seamlessly with intelligent handoffs and context preservation.
@@ -418,7 +456,7 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Aura Agent Consoles</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">3 Powerful Intercept Control Centers</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">5 Powerful Intercept Control Centers</h2>
             <p className="text-foreground max-w-2xl mx-auto">
               Purpose-built consoles give your team full control over AI agent operations with intuitive interfaces.
             </p>
@@ -607,11 +645,11 @@ export default function Index() {
                 <div className="space-y-3 text-left mb-8">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">14 Specialized AI Agents</span>
+                    <span className="text-white">18 Specialized AI Agents</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-white">3 AI Agent Consoles</span>
+                    <span className="text-white">5 AI Agent Consoles</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
