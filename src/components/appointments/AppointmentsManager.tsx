@@ -50,19 +50,19 @@ export const AppointmentsManager: React.FC<AppointmentsManagerProps> = ({ onClos
 
       <Tabs defaultValue="calendar" className="w-full">
         <TabsList className="bg-muted">
-          <TabsTrigger value="calendar" className="flex items-center gap-2 text-xs">
+          <TabsTrigger value="calendar" className="flex items-center gap-2 text-xs text-foreground/70 data-[state=active]:text-foreground">
             <Calendar className="h-3.5 w-3.5" />
             Calendar
           </TabsTrigger>
-          <TabsTrigger value="jobs" className="flex items-center gap-2 text-xs">
+          <TabsTrigger value="jobs" className="flex items-center gap-2 text-xs text-foreground/70 data-[state=active]:text-foreground">
             <ClipboardList className="h-3.5 w-3.5" />
             Job Queue
           </TabsTrigger>
-          <TabsTrigger value="history" className="flex items-center gap-2 text-xs">
+          <TabsTrigger value="history" className="flex items-center gap-2 text-xs text-foreground/70 data-[state=active]:text-foreground">
             <History className="h-3.5 w-3.5" />
             History
           </TabsTrigger>
-          <TabsTrigger value="all-jobs" className="flex items-center gap-2 text-xs">
+          <TabsTrigger value="all-jobs" className="flex items-center gap-2 text-xs text-foreground/70 data-[state=active]:text-foreground">
             <Briefcase className="h-3.5 w-3.5" />
             All Jobs
           </TabsTrigger>
