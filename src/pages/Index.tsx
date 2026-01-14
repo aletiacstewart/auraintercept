@@ -401,7 +401,7 @@ export default function Index() {
                     <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-glow">
                       <item.icon className="w-7 h-7 text-primary-foreground" />
                     </div>
-                    <div className="text-sm font-medium text-primary mb-2">Step {item.step}</div>
+                    <div className="text-sm font-medium text-white mb-2">Step {item.step}</div>
                     <h3 className="text-lg font-semibold mb-2 text-secondary">{item.title}</h3>
                     <p className="text-sm text-card-muted">{item.description}</p>
                   </CardContent>
