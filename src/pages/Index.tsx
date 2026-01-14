@@ -645,7 +645,7 @@ export default function Index() {
             <Badge variant="secondary" className="mb-4">Subscription Plans</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Choose Your Plan</h2>
             <p className="text-foreground max-w-2xl mx-auto">
-              Start with our free trial and upgrade anytime. All plans include core AI automation.
+              Scale your AI automation as your business grows. Save 16% with annual billing.
             </p>
           </div>
 
@@ -654,16 +654,17 @@ export default function Index() {
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30">
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-2">Starter</h3>
-                <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-bold">$99</span>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-4xl font-bold">$1,000</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
-                <p className="text-sm text-muted-foreground mb-6">Perfect for small businesses getting started with AI automation.</p>
+                <p className="text-xs text-green-500 mb-4">$10,000/year (Save $2,000)</p>
+                <p className="text-sm text-muted-foreground mb-6">Perfect for small service companies getting started with AI automation.</p>
                 
                 <div className="space-y-2 text-left mb-6">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">8 Core AI Agents</span>
+                    <span className="text-sm">2 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
@@ -671,15 +672,15 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">Email & SMS Reminders</span>
+                    <span className="text-sm">500 Appointments/month</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">3 Employee Accounts</span>
+                    <span className="text-sm">Email Reminders</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">Basic Analytics</span>
+                    <span className="text-sm">5 Employee Accounts</span>
                   </div>
                 </div>
 
@@ -695,24 +696,29 @@ export default function Index() {
               <CardContent className="p-6">
                 <Badge className="mb-2 gradient-primary border-0">Most Popular</Badge>
                 <h3 className="text-xl font-bold mb-2">Professional</h3>
-                <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-bold gradient-text">$175</span>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-4xl font-bold gradient-text">$1,750</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
-                <p className="text-sm text-muted-foreground mb-6">For growing businesses needing field ops and advanced features.</p>
+                <p className="text-xs text-green-500 mb-4">$17,500/year (Save $3,500)</p>
+                <p className="text-sm text-muted-foreground mb-6">For growing companies with field technicians needing dispatch automation.</p>
                 
                 <div className="space-y-2 text-left mb-6">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">14 AI Agents</span>
+                    <span className="text-sm">7 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">3 AI Consoles</span>
+                    <span className="text-sm">2 AI Consoles</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">Voice, SMS & Email Channels</span>
+                    <span className="text-sm">2,000 Appointments/month</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Email + SMS Reminders</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
@@ -720,11 +726,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">5 Employee Accounts</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">Quoting & Invoicing</span>
+                    <span className="text-sm">10 Employee Accounts</span>
                   </div>
                 </div>
 
@@ -739,11 +741,12 @@ export default function Index() {
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30">
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-2">Enterprise</h3>
-                <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-bold">$250</span>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-4xl font-bold">$2,250</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
-                <p className="text-sm text-muted-foreground mb-6">Full platform access with all agents, consoles, and white-label branding.</p>
+                <p className="text-xs text-green-500 mb-4">$22,500/year (Save $4,500)</p>
+                <p className="text-sm text-muted-foreground mb-6">Full platform access with all agents, consoles, and voice capabilities.</p>
                 
                 <div className="space-y-2 text-left mb-6">
                   <div className="flex items-center gap-2">
@@ -752,23 +755,23 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">All 5 AI Consoles</span>
+                    <span className="text-sm">All 5 Control Centers</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">All Communication Channels</span>
+                    <span className="text-sm">Unlimited Appointments</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">10 Employee Accounts</span>
+                    <span className="text-sm">Email + SMS + Voice</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Unlimited Employees</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                     <span className="text-sm">White-Label Branding</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">Priority Support</span>
                   </div>
                 </div>
 
@@ -781,7 +784,7 @@ export default function Index() {
 
           <div className="mt-8 text-center">
             <p className="text-sm text-muted-foreground mb-2">All plans include 14-day free trial • No credit card required</p>
-            <p className="text-sm text-foreground">Additional employees: <span className="font-medium">$10/month per employee</span></p>
+            <p className="text-sm text-foreground">Additional employees (Starter/Professional): <span className="font-medium">$25/month per employee (max 5 extra)</span></p>
           </div>
         </div>
       </section>
