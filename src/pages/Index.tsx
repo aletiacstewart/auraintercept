@@ -139,7 +139,7 @@ const agentConsoles = [{
   gradient: 'from-orange-500 to-amber-500',
   iconBg: 'bg-orange-500/10',
   iconColor: 'text-orange-500',
-  features: ['Promotional campaigns', 'Referral program management', 'Win-back & re-engagement', 'Seasonal outreach', 'Audience segmentation', 'A/B testing']
+  features: ['Promotional campaigns', 'Referral program management', 'Win-back & re-engagement', 'Seasonal outreach', 'Automated lead capture', 'A/B testing']
 }, {
   name: 'Analytics & Reports Console',
   description: 'High-level reporting, KPI tracking, revenue forecasting, and performance analytics.',
@@ -158,9 +158,9 @@ const platformFeatures = [{
   title: 'Customer Portal',
   description: 'Self-service portal where customers book, track appointments, and chat with AI agents.'
 }, {
-  icon: Building2,
-  title: 'White-Label Ready',
-  description: 'Custom logos, colors, and branding. Your company, your AI agents.'
+  icon: Target,
+  title: 'Lead Capture',
+  description: 'Automatically capture and score leads from AI agent interactions with smart follow-up automation.'
 }, {
   icon: Layers,
   title: 'Multi-Tenant Platform',

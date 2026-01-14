@@ -532,15 +532,15 @@ export default function Auth() {
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="flex items-center gap-1.5">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>Unlimited appointments</span>
+                        <span>18 AI agents</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>10 free employee accounts</span>
+                        <span>5 AI consoles</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>All AI agents</span>
+                        <span>Automated lead capture</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Check className="w-3 h-3 text-green-500" />
@@ -554,6 +554,10 @@ export default function Auth() {
                     <h4 className="font-semibold text-sm mb-2 text-card-foreground">After Trial: $250/month</h4>
                     <div className="space-y-2 text-xs text-card-foreground/80">
                       <div className="flex items-center gap-2">
+                        <Users className="w-3 h-3 text-card-foreground/70" />
+                        <span>10 employees free, +$10/mo each additional</span>
+                      </div>
+                      <div className="flex items-center gap-2">
                         <Mail className="w-3 h-3 text-card-foreground/70" />
                         <span>Email reminders included</span>
                       </div>
@@ -564,10 +568,6 @@ export default function Auth() {
                       <div className="flex items-center gap-2">
                         <Mic className="w-3 h-3 text-card-foreground/70" />
                         <span>AI Voice calls (usage-based)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Users className="w-3 h-3 text-card-foreground/70" />
-                        <span>10 employees free, +$10/mo each additional</span>
                       </div>
                     </div>
                   </div>
