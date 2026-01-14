@@ -527,15 +527,15 @@ export default function Auth() {
                   <div className="p-4 rounded-lg border border-border/50 bg-card hover:border-primary/30 transition-colors">
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <h3 className="font-semibold text-sm">Starter</h3>
-                        <p className="text-xs text-muted-foreground">Small service companies</p>
+                        <h3 className="font-semibold text-sm text-card-foreground">Starter</h3>
+                        <p className="text-xs text-card-foreground/70">Small service companies</p>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-bold">$1,000</span>
-                        <span className="text-xs text-muted-foreground">/mo</span>
+                        <span className="text-lg font-bold text-card-foreground">$1,000</span>
+                        <span className="text-xs text-card-foreground/70">/mo</span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
+                    <div className="grid grid-cols-2 gap-1 text-xs text-card-foreground/70">
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
                         <span>2 AI Agents</span>
@@ -562,7 +562,7 @@ export default function Auth() {
                     </div>
                     <div className="flex items-start justify-between mb-2 mt-1">
                       <div>
-                        <h3 className="font-semibold text-sm">Professional</h3>
+                        <h3 className="font-semibold text-sm text-foreground">Professional</h3>
                         <p className="text-xs text-muted-foreground">Growing companies with technicians</p>
                       </div>
                       <div className="text-right">
@@ -594,15 +594,15 @@ export default function Auth() {
                   <div className="p-4 rounded-lg border border-border/50 bg-card hover:border-primary/30 transition-colors">
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <h3 className="font-semibold text-sm">Enterprise</h3>
-                        <p className="text-xs text-muted-foreground">Full AI automation suite</p>
+                        <h3 className="font-semibold text-sm text-card-foreground">Enterprise</h3>
+                        <p className="text-xs text-card-foreground/70">Full AI automation suite</p>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-bold">$2,250</span>
-                        <span className="text-xs text-muted-foreground">/mo</span>
+                        <span className="text-lg font-bold text-card-foreground">$2,250</span>
+                        <span className="text-xs text-card-foreground/70">/mo</span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
+                    <div className="grid grid-cols-2 gap-1 text-xs text-card-foreground/70">
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
                         <span>18 AI Agents</span>
