@@ -143,3 +143,6 @@ verify_jwt = false
 
 [functions.lead-follow-up-reminders]
 verify_jwt = false
+
+[functions.sms-handler]
+verify_jwt = false
