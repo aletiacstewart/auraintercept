@@ -60,7 +60,7 @@ export function WarrantyPolicyForm({ companyId, policy, onSuccess, onCancel }: W
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="name">Policy Name *</Label>
+        <Label htmlFor="name" className="text-card-foreground">Policy Name *</Label>
         <Input
           id="name"
           value={formData.name}
@@ -71,7 +71,7 @@ export function WarrantyPolicyForm({ companyId, policy, onSuccess, onCancel }: W
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description" className="text-card-foreground">Description</Label>
         <Textarea
           id="description"
           value={formData.description}
@@ -83,7 +83,7 @@ export function WarrantyPolicyForm({ companyId, policy, onSuccess, onCancel }: W
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="coverage_type">Coverage Type</Label>
+          <Label htmlFor="coverage_type" className="text-card-foreground">Coverage Type</Label>
           <Select
             value={formData.coverage_type}
             onValueChange={(value) => setFormData({ ...formData, coverage_type: value })}
@@ -102,19 +102,19 @@ export function WarrantyPolicyForm({ companyId, policy, onSuccess, onCancel }: W
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="duration_text">Duration</Label>
+          <Label htmlFor="duration_text" className="text-card-foreground">Duration</Label>
           <Input
             id="duration_text"
             value={formData.duration_text}
             onChange={(e) => setFormData({ ...formData, duration_text: e.target.value })}
             placeholder="e.g., 5-10 years, 1 year, 90 days"
           />
-          <p className="text-xs text-muted-foreground">e.g., "5-10 years", "1 year", "90 days"</p>
+          <p className="text-xs text-card-foreground/70">e.g., "5-10 years", "1 year", "90 days"</p>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="coverage_details">Coverage Details</Label>
+        <Label htmlFor="coverage_details" className="text-card-foreground">Coverage Details</Label>
         <Textarea
           id="coverage_details"
           value={formData.coverage_details}
@@ -125,7 +125,7 @@ export function WarrantyPolicyForm({ companyId, policy, onSuccess, onCancel }: W
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="exclusions">Exclusions</Label>
+        <Label htmlFor="exclusions" className="text-card-foreground">Exclusions</Label>
         <Textarea
           id="exclusions"
           value={formData.exclusions}
@@ -136,7 +136,7 @@ export function WarrantyPolicyForm({ companyId, policy, onSuccess, onCancel }: W
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="terms_conditions">Terms & Conditions</Label>
+        <Label htmlFor="terms_conditions" className="text-card-foreground">Terms & Conditions</Label>
         <Textarea
           id="terms_conditions"
           value={formData.terms_conditions}
@@ -153,7 +153,7 @@ export function WarrantyPolicyForm({ companyId, policy, onSuccess, onCancel }: W
             checked={formData.labor_covered}
             onCheckedChange={(checked) => setFormData({ ...formData, labor_covered: checked })}
           />
-          <Label htmlFor="labor_covered">Labor Covered</Label>
+          <Label htmlFor="labor_covered" className="text-card-foreground">Labor Covered</Label>
         </div>
 
         <div className="flex items-center gap-2">
@@ -162,7 +162,7 @@ export function WarrantyPolicyForm({ companyId, policy, onSuccess, onCancel }: W
             checked={formData.parts_covered}
             onCheckedChange={(checked) => setFormData({ ...formData, parts_covered: checked })}
           />
-          <Label htmlFor="parts_covered">Parts Covered</Label>
+          <Label htmlFor="parts_covered" className="text-card-foreground">Parts Covered</Label>
         </div>
 
         <div className="flex items-center gap-2">
@@ -171,7 +171,7 @@ export function WarrantyPolicyForm({ companyId, policy, onSuccess, onCancel }: W
             checked={formData.is_active}
             onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
           />
-          <Label htmlFor="is_active">Active</Label>
+          <Label htmlFor="is_active" className="text-card-foreground">Active</Label>
         </div>
       </div>
 
