@@ -299,12 +299,12 @@ export const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
           {/* Assign Technician */}
           <div className="space-y-2">
             <Label className="text-foreground/70">Assign Technician (optional)</Label>
-            <Select value={assignedTechnician} onValueChange={setAssignedTechnician}>
+            <Select value={assignedTechnician} onValueChange={(val) => setAssignedTechnician(val === 'unassigned' ? '' : val)}>
               <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue placeholder="Unassigned" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Unassigned</SelectItem>
+                <SelectItem value="unassigned">Unassigned</SelectItem>
                 {technicians.map((tech) => (
                   <SelectItem key={tech.id} value={tech.id}>
                     {tech.full_name}
