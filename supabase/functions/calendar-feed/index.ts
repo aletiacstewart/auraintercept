@@ -5,6 +5,33 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Rate limiting configuration
+const RATE_LIMIT = {
+  requests: 60,      // Max requests per window
+  windowSeconds: 3600, // 1 hour window
+};
+
+// In-memory rate limit store (per-instance, resets on cold start)
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(token: string): { allowed: boolean; retryAfter?: number } {
+  const now = Date.now();
+  const record = rateLimitStore.get(token);
+  
+  if (!record || now > record.resetAt) {
+    rateLimitStore.set(token, { count: 1, resetAt: now + RATE_LIMIT.windowSeconds * 1000 });
+    return { allowed: true };
+  }
+  
+  if (record.count >= RATE_LIMIT.requests) {
+    const retryAfter = Math.ceil((record.resetAt - now) / 1000);
+    return { allowed: false, retryAfter };
+  }
+  
+  record.count++;
+  return { allowed: true };
+}
+
 // Format date to ICS format (YYYYMMDDTHHMMSSZ)
 function formatDateToICS(date: Date): string {
   return date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
@@ -123,13 +150,46 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Validate token format (UUID)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(token)) {
+      return new Response(JSON.stringify({ error: "Invalid token format" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Rate limiting check
+    const rateCheck = checkRateLimit(token);
+    if (!rateCheck.allowed) {
+      console.log(`Rate limit exceeded for calendar feed token`);
+      return new Response(JSON.stringify({ 
+        error: "Too many requests. Please try again later." 
+      }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "Retry-After": String(rateCheck.retryAfter || 3600)
+        },
+      });
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Handle single appointment download for customers
     if (type === "appointment" && appointmentId) {
-      console.log("Fetching single appointment for customer download:", appointmentId);
+      // Validate appointmentId format
+      if (!uuidRegex.test(appointmentId)) {
+        return new Response(JSON.stringify({ error: "Invalid appointment ID" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      console.log("Fetching single appointment for customer download");
       
       const { data: appointment, error: aptError } = await supabase
         .from("appointments")
@@ -139,7 +199,7 @@ Deno.serve(async (req) => {
         .single();
 
       if (aptError || !appointment) {
-        console.error("Appointment not found or invalid token:", aptError);
+        console.error("Appointment not found or invalid token");
         return new Response(JSON.stringify({ error: "Appointment not found" }), {
           status: 404,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -153,7 +213,7 @@ Deno.serve(async (req) => {
         headers: {
           ...corsHeaders,
           "Content-Type": "text/calendar; charset=utf-8",
-          "Content-Disposition": `attachment; filename="appointment-${appointmentId}.ics"`,
+          "Content-Disposition": `attachment; filename="appointment.ics"`,
         },
       });
     }
@@ -169,7 +229,7 @@ Deno.serve(async (req) => {
         .single();
 
       if (profileError || !profile) {
-        console.error("Invalid employee token:", profileError);
+        console.error("Invalid employee token");
         return new Response(JSON.stringify({ error: "Invalid token" }), {
           status: 401,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -240,7 +300,7 @@ Deno.serve(async (req) => {
         .single();
 
       if (companyError || !company) {
-        console.error("Invalid company token:", companyError);
+        console.error("Invalid company token");
         return new Response(JSON.stringify({ error: "Invalid token" }), {
           status: 401,
           headers: { ...corsHeaders, "Content-Type": "application/json" },

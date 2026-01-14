@@ -168,9 +168,10 @@ serve(async (req) => {
       .eq('slug', companySlug)
       .single();
 
+    // SECURITY: Return generic error to prevent company slug enumeration
     if (companyError || !company) {
-      return new Response(JSON.stringify({ error: 'Company not found' }), {
-        status: 404,
+      return new Response(JSON.stringify({ error: 'Invalid request' }), {
+        status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }

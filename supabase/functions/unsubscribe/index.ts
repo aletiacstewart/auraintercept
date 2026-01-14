@@ -10,6 +10,19 @@ interface UnsubscribeRequest {
   channel: 'sms' | 'email' | 'call' | 'all';
 }
 
+// HTML escape function to prevent XSS attacks
+function escapeHtml(str: string): string {
+  if (!str) return '';
+  const htmlEntities: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  };
+  return str.replace(/[&<>"']/g, (char) => htmlEntities[char] || char);
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -42,7 +55,16 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`Processing unsubscribe request for token ${token}, channel: ${channel}`);
+    // Validate token format (UUID)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(token)) {
+      return new Response(
+        generateHtmlResponse('Error', 'Invalid request. Please contact us for assistance.', false),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
+      );
+    }
+
+    console.log(`Processing unsubscribe request for token, channel: ${channel}`);
 
     // Find appointment by customer token
     const { data: appointment, error: fetchError } = await supabase
@@ -120,21 +142,29 @@ Deno.serve(async (req) => {
       console.log(`Logged ${eventsToInsert.length} unsubscribe events from email link`);
     }
 
-    const companyName = (appointment.companies as any)?.name || 'Our Business';
+    // Escape company name to prevent XSS - only use safe, escaped values in HTML
+    const rawCompanyName = (appointment.companies as any)?.name || 'Our Business';
+    const safeCompanyName = escapeHtml(rawCompanyName);
     const channelName = channel === 'all' ? 'all reminder' : channel.toUpperCase();
     
-    console.log(`Successfully unsubscribed ${appointment.customer_name} from ${channel} reminders`);
+    console.log(`Successfully unsubscribed customer from ${channel} reminders`);
 
     // Return success HTML page for GET requests, JSON for POST
     if (req.method === 'GET') {
       return new Response(
         generateHtmlResponse(
           'Unsubscribed Successfully',
-          `You have been unsubscribed from ${channelName} reminders for your appointment with ${companyName}.`,
+          `You have been unsubscribed from ${escapeHtml(channelName)} reminders for your appointment with ${safeCompanyName}.`,
           true,
           token
         ),
-        { headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
+        { 
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'text/html',
+            'Content-Security-Policy': "default-src 'self'; style-src 'unsafe-inline'; script-src 'none'"
+          } 
+        }
       );
     }
 
@@ -149,68 +179,68 @@ Deno.serve(async (req) => {
 
   } catch (error: unknown) {
     console.error('Unsubscribe error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'An error occurred';
     return new Response(
-      generateHtmlResponse('Error', errorMessage, false),
+      generateHtmlResponse('Error', 'An error occurred. Please try again later.', false),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
     );
   }
 });
 
 function generateHtmlResponse(title: string, message: string, success: boolean, token?: string): string {
-  const portalLink = token ? `https://zwlcwtgjvesbevheknbk.lovable.app/appointment?token=${token}` : '';
+  // All dynamic content is already escaped before being passed to this function
+  // Title is static, message contains pre-escaped content
+  const safeTitle = escapeHtml(title);
+  const portalLink = token ? `https://zwlcwtgjvesbevheknbk.lovable.app/appointment?token=${encodeURIComponent(token)}` : '';
   
-  return `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${title}</title>
-        <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 20px;
-            text-align: center;
-          }
-          .icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-          }
-          .success { color: #10b981; }
-          .error { color: #ef4444; }
-          h1 {
-            margin-bottom: 16px;
-            font-size: 24px;
-          }
-          p {
-            color: #6b7280;
-            margin-bottom: 24px;
-          }
-          .btn {
-            display: inline-block;
-            background: #0ea5e9;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-          }
-          .btn:hover {
-            background: #0284c7;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="icon ${success ? 'success' : 'error'}">${success ? '✓' : '✕'}</div>
-        <h1>${title}</h1>
-        <p>${message}</p>
-        ${portalLink ? `<a href="${portalLink}" class="btn">Manage Preferences</a>` : ''}
-      </body>
-    </html>
-  `;
+  return `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${safeTitle}</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 20px;
+        text-align: center;
+      }
+      .icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+      }
+      .success { color: #10b981; }
+      .error { color: #ef4444; }
+      h1 {
+        margin-bottom: 16px;
+        font-size: 24px;
+      }
+      p {
+        color: #6b7280;
+        margin-bottom: 24px;
+      }
+      .btn {
+        display: inline-block;
+        background: #0ea5e9;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .btn:hover {
+        background: #0284c7;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="icon ${success ? 'success' : 'error'}">${success ? '✓' : '✕'}</div>
+    <h1>${safeTitle}</h1>
+    <p>${message}</p>
+    ${portalLink ? `<a href="${portalLink}" class="btn">Manage Preferences</a>` : ''}
+  </body>
+</html>`;
 }
