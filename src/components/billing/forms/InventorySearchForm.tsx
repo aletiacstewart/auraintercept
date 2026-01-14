@@ -76,7 +76,7 @@ export function InventorySearchForm({ companyId, onCancel, onSelectItem }: Inven
   };
 
   return (
-    <div className="space-y-3 p-3">
+    <div className="space-y-3 p-4 bg-muted/50 rounded-lg">
       <div className="flex items-center gap-2 mb-3">
         {onCancel && (
           <Button
@@ -90,22 +90,22 @@ export function InventorySearchForm({ companyId, onCancel, onSelectItem }: Inven
           </Button>
         )}
         <Package className="h-5 w-5 text-primary" />
-        <h3 className="font-semibold">Inventory Search</h3>
+        <h3 className="font-semibold text-foreground">Inventory Search</h3>
       </div>
 
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-2">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/50" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name or SKU..."
-              className="pl-9 h-9 text-sm"
+              className="pl-9 h-9 text-sm bg-white text-slate-900 border-border placeholder:text-slate-400"
             />
           </div>
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="h-9 text-sm">
+            <SelectTrigger className="h-9 text-sm bg-white text-slate-900 border-border">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
@@ -118,13 +118,13 @@ export function InventorySearchForm({ companyId, onCancel, onSelectItem }: Inven
         </div>
 
         {/* Results */}
-        <div className="border border-white/10 rounded-lg max-h-80 overflow-y-auto">
+        <div className="border border-border rounded-lg max-h-80 overflow-y-auto bg-white">
           {isLoading ? (
-            <div className="p-4 text-center text-sm text-card-foreground/70">Loading...</div>
+            <div className="p-4 text-center text-sm text-foreground/70">Loading...</div>
           ) : inventoryItems.length === 0 ? (
-            <div className="p-4 text-center text-sm text-card-foreground/70">No items found</div>
+            <div className="p-4 text-center text-sm text-foreground/70">No items found</div>
           ) : (
-            <div className="divide-y divide-white/10">
+            <div className="divide-y divide-border">
               {inventoryItems.map((item) => {
                 const stockStatus = getStockStatus(item);
                 return (
@@ -132,17 +132,17 @@ export function InventorySearchForm({ companyId, onCancel, onSelectItem }: Inven
                     key={item.id}
                     type="button"
                     onClick={() => onSelectItem?.(item)}
-                    className="w-full text-left p-3 hover:bg-white/5 transition-colors"
+                    className="w-full text-left p-3 hover:bg-muted/50 transition-colors"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm truncate text-card-foreground">{item.name}</span>
+                          <span className="font-medium text-sm truncate text-foreground">{item.name}</span>
                           {item.sku && (
-                            <span className="text-xs text-card-foreground/50">#{item.sku}</span>
+                            <span className="text-xs text-foreground/50">#{item.sku}</span>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-card-foreground/50">
+                        <div className="flex items-center gap-2 mt-1 text-xs text-foreground/50">
                           {item.category && <span>{item.category}</span>}
                           {item.supplier && <span>• {item.supplier}</span>}
                         </div>
@@ -157,7 +157,7 @@ export function InventorySearchForm({ companyId, onCancel, onSelectItem }: Inven
                           {item.quantity} qty
                         </Badge>
                         {item.unit_cost && (
-                          <span className="text-xs text-card-foreground/50">${item.unit_cost.toFixed(2)}</span>
+                          <span className="text-xs text-foreground/50">${item.unit_cost.toFixed(2)}</span>
                         )}
                       </div>
                     </div>
@@ -168,7 +168,7 @@ export function InventorySearchForm({ companyId, onCancel, onSelectItem }: Inven
           )}
         </div>
 
-        <div className="text-xs text-card-foreground/50 text-center">
+        <div className="text-xs text-foreground/50 text-center">
           {inventoryItems.length} items found
         </div>
       </div>

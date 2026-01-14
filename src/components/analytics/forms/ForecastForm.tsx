@@ -74,39 +74,39 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
 
   const renderDemandForecast = () => (
     <div className="space-y-4">
-      <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+      <div className="p-4 rounded-lg bg-white border border-border">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-blue-500" />
-            <span className="font-medium text-card-foreground">Demand Forecast</span>
+            <span className="font-medium text-foreground">Demand Forecast</span>
           </div>
           <Badge variant="secondary" className="text-xs">Next {forecastDays} days</Badge>
         </div>
-        <p className="text-3xl font-bold text-blue-400">{demandForecast}</p>
-        <p className="text-sm text-card-foreground/70">Expected appointments</p>
+        <p className="text-3xl font-bold text-blue-600">{demandForecast}</p>
+        <p className="text-sm text-foreground/70">Expected appointments</p>
         
         <div className="mt-4 space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-card-foreground/70">Confidence Level</span>
-            <span className="text-card-foreground/70">75%</span>
+            <span className="text-foreground/70">Confidence Level</span>
+            <span className="text-foreground/70">75%</span>
           </div>
           <Progress value={75} className="h-2" />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-          <p className="text-xs text-card-foreground/70">Daily Average</p>
-          <p className="text-xl font-bold text-card-foreground">{(historicalData?.avgDailyAppointments || 0).toFixed(1)}</p>
+        <div className="p-3 rounded-lg bg-white border border-border">
+          <p className="text-xs text-foreground/70">Daily Average</p>
+          <p className="text-xl font-bold text-foreground">{(historicalData?.avgDailyAppointments || 0).toFixed(1)}</p>
         </div>
-        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-          <p className="text-xs text-card-foreground/70">Peak Day Expected</p>
-          <p className="text-xl font-bold text-card-foreground">{Math.round((historicalData?.avgDailyAppointments || 0) * 1.4)}</p>
+        <div className="p-3 rounded-lg bg-white border border-border">
+          <p className="text-xs text-foreground/70">Peak Day Expected</p>
+          <p className="text-xl font-bold text-foreground">{Math.round((historicalData?.avgDailyAppointments || 0) * 1.4)}</p>
         </div>
       </div>
 
-      <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
-        <p className="text-sm text-blue-300">
+      <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
+        <p className="text-sm text-blue-800">
           <strong>Forecast Insight:</strong> Based on the last 30 days, expect approximately {demandForecast} appointments. 
           Consider having {staffingNeed} technicians available during peak hours.
         </p>
@@ -116,39 +116,39 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
 
   const renderRevenueForecast = () => (
     <div className="space-y-4">
-      <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+      <div className="p-4 rounded-lg bg-white border border-border">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <DollarSign className="h-5 w-5 text-green-500" />
-            <span className="font-medium text-card-foreground">Revenue Forecast</span>
+            <span className="font-medium text-foreground">Revenue Forecast</span>
           </div>
           <Badge variant="secondary" className="text-xs">Next {forecastDays} days</Badge>
         </div>
-        <p className="text-3xl font-bold text-green-400">${revenueForecast.toLocaleString()}</p>
-        <p className="text-sm text-card-foreground/70">Projected revenue</p>
+        <p className="text-3xl font-bold text-green-600">${revenueForecast.toLocaleString()}</p>
+        <p className="text-sm text-foreground/70">Projected revenue</p>
         
         <div className="mt-4 space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-card-foreground/70">Confidence Level</span>
-            <span className="text-card-foreground/70">70%</span>
+            <span className="text-foreground/70">Confidence Level</span>
+            <span className="text-foreground/70">70%</span>
           </div>
           <Progress value={70} className="h-2" />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-          <p className="text-xs text-card-foreground/70">Daily Average</p>
-          <p className="text-xl font-bold text-card-foreground">${(historicalData?.avgDailyRevenue || 0).toFixed(0)}</p>
+        <div className="p-3 rounded-lg bg-white border border-border">
+          <p className="text-xs text-foreground/70">Daily Average</p>
+          <p className="text-xl font-bold text-foreground">${(historicalData?.avgDailyRevenue || 0).toFixed(0)}</p>
         </div>
-        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-          <p className="text-xs text-card-foreground/70">Last 30 Days</p>
-          <p className="text-xl font-bold text-card-foreground">${(historicalData?.historicalRevenue || 0).toLocaleString()}</p>
+        <div className="p-3 rounded-lg bg-white border border-border">
+          <p className="text-xs text-foreground/70">Last 30 Days</p>
+          <p className="text-xl font-bold text-foreground">${(historicalData?.historicalRevenue || 0).toLocaleString()}</p>
         </div>
       </div>
 
-      <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
-        <p className="text-sm text-green-300">
+      <div className="p-4 rounded-lg bg-green-50 border border-green-200">
+        <p className="text-sm text-green-800">
           <strong>Revenue Insight:</strong> Maintaining current booking rates should generate approximately ${revenueForecast.toLocaleString()} 
           over the next {forecastDays} days.
         </p>
@@ -158,19 +158,19 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
 
   const renderStaffingForecast = () => (
     <div className="space-y-4">
-      <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+      <div className="p-4 rounded-lg bg-white border border-border">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-purple-500" />
-            <span className="font-medium text-card-foreground">Staffing Forecast</span>
+            <span className="font-medium text-foreground">Staffing Forecast</span>
           </div>
           <Badge variant="secondary" className="text-xs">Next {forecastDays} days</Badge>
         </div>
-        <p className="text-3xl font-bold text-purple-400">{staffingNeed}</p>
-        <p className="text-sm text-card-foreground/70">Recommended staff</p>
+        <p className="text-3xl font-bold text-purple-600">{staffingNeed}</p>
+        <p className="text-sm text-foreground/70">Recommended staff</p>
         
         <div className="mt-4 flex items-center gap-2">
-          <span className="text-sm text-card-foreground/70">Current team:</span>
+          <span className="text-sm text-foreground/70">Current team:</span>
           <Badge>{historicalData?.totalEmployees || 0} employees</Badge>
           {staffingNeed > (historicalData?.totalEmployees || 0) ? (
             <Badge variant="destructive" className="gap-1">
@@ -178,7 +178,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
               Need {staffingNeed - (historicalData?.totalEmployees || 0)} more
             </Badge>
           ) : (
-            <Badge variant="secondary" className="gap-1 bg-green-500/20 text-green-300">
+            <Badge variant="secondary" className="gap-1 bg-green-100 text-green-700">
               Sufficient capacity
             </Badge>
           )}
@@ -186,18 +186,18 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-          <p className="text-xs text-card-foreground/70">Jobs per Employee</p>
-          <p className="text-xl font-bold text-card-foreground">{Math.round(demandForecast / (historicalData?.totalEmployees || 1))}</p>
+        <div className="p-3 rounded-lg bg-white border border-border">
+          <p className="text-xs text-foreground/70">Jobs per Employee</p>
+          <p className="text-xl font-bold text-foreground">{Math.round(demandForecast / (historicalData?.totalEmployees || 1))}</p>
         </div>
-        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-          <p className="text-xs text-card-foreground/70">Utilization Rate</p>
-          <p className="text-xl font-bold text-card-foreground">{Math.min(100, Math.round((demandForecast / ((historicalData?.totalEmployees || 1) * forecastDays * 5)) * 100))}%</p>
+        <div className="p-3 rounded-lg bg-white border border-border">
+          <p className="text-xs text-foreground/70">Utilization Rate</p>
+          <p className="text-xl font-bold text-foreground">{Math.min(100, Math.round((demandForecast / ((historicalData?.totalEmployees || 1) * forecastDays * 5)) * 100))}%</p>
         </div>
       </div>
 
-      <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
-        <p className="text-sm text-purple-300">
+      <div className="p-4 rounded-lg bg-purple-50 border border-purple-200">
+        <p className="text-sm text-purple-800">
           <strong>Staffing Insight:</strong> With {demandForecast} expected appointments over {forecastDays} days, 
           {staffingNeed <= (historicalData?.totalEmployees || 0) 
             ? ` your current team of ${historicalData?.totalEmployees} should handle the workload well.`
@@ -209,25 +209,25 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
   );
 
   return (
-    <Card className="border-white/10 bg-card">
+    <Card className="border-border bg-background shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
-            <Target className="h-5 w-5 text-secondary" />
+          <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+            <Target className="h-5 w-5 text-primary" />
             Forecast Report
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground/70 hover:text-card-foreground">
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-foreground/70 hover:text-foreground">
             <X className="h-4 w-4" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 bg-muted/50 rounded-b-lg">
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="text-card-foreground/70">Forecast Type</Label>
+            <Label className="text-foreground/70">Forecast Type</Label>
             <Select value={forecastType} onValueChange={(v) => setForecastType(v as ForecastType)}>
-              <SelectTrigger className="bg-white text-slate-900 border-white/20">
+              <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -238,9 +238,9 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-card-foreground/70">Time Period</Label>
+            <Label className="text-foreground/70">Time Period</Label>
             <Select value={forecastPeriod} onValueChange={setForecastPeriod}>
-              <SelectTrigger className="bg-white text-slate-900 border-white/20">
+              <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

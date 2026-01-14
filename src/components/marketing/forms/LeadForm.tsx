@@ -106,25 +106,25 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
   };
 
   return (
-    <Card className="border-white/10 bg-card">
+<Card className="border-border bg-background shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
-            <UserPlus className="h-5 w-5 text-secondary" />
+          <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+            <UserPlus className="h-5 w-5 text-primary" />
             Add New Lead
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground/70 hover:text-card-foreground">
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-foreground/70 hover:text-foreground">
             <X className="h-4 w-4" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="bg-muted/50 rounded-b-lg">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name */}
           <div className="space-y-2">
-            <Label className="text-card-foreground/70">Name *</Label>
+            <Label className="text-foreground/70">Name *</Label>
             <Input
-              className="bg-white text-slate-900 border-white/20"
+              className="bg-white text-slate-900 border-border placeholder:text-slate-400"
               placeholder="John Smith"
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
@@ -134,25 +134,25 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
           {/* Contact Info */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label className="flex items-center gap-1 text-card-foreground/70">
+              <Label className="flex items-center gap-1 text-foreground/70">
                 <Mail className="h-3 w-3" />
                 Email
               </Label>
               <Input
                 type="email"
-                className="bg-white text-slate-900 border-white/20"
+                className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                 placeholder="john@email.com"
                 value={formData.email}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label className="flex items-center gap-1 text-card-foreground/70">
+              <Label className="flex items-center gap-1 text-foreground/70">
                 <Phone className="h-3 w-3" />
                 Phone
               </Label>
               <Input
-                className="bg-white text-slate-900 border-white/20"
+                className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                 placeholder="(555) 123-4567"
                 value={formData.phone}
                 onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
@@ -162,9 +162,9 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
 
           {/* Address */}
           <div className="space-y-2">
-            <Label className="text-card-foreground/70">Address</Label>
+            <Label className="text-foreground/70">Address</Label>
             <Input
-              className="bg-white text-slate-900 border-white/20"
+              className="bg-white text-slate-900 border-border placeholder:text-slate-400"
               placeholder="123 Main St, City, State"
               value={formData.address}
               onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
@@ -174,12 +174,12 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
           {/* Source & Interest */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label className="text-card-foreground/70">Lead Source</Label>
+              <Label className="text-foreground/70">Lead Source</Label>
               <Select
                 value={formData.source}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, source: value }))}
               >
-                <SelectTrigger className="bg-white text-slate-900 border-white/20">
+                <SelectTrigger className="bg-white text-slate-900 border-border">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -194,9 +194,9 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-card-foreground/70">Service Interest</Label>
+              <Label className="text-foreground/70">Service Interest</Label>
               <Input
-                className="bg-white text-slate-900 border-white/20"
+                className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                 placeholder="e.g., HVAC repair"
                 value={formData.serviceInterest}
                 onChange={(e) => setFormData(prev => ({ ...prev, serviceInterest: e.target.value }))}
@@ -206,9 +206,9 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
 
           {/* Notes */}
           <div className="space-y-2">
-            <Label className="text-card-foreground/70">Notes</Label>
+            <Label className="text-foreground/70">Notes</Label>
             <Textarea
-              className="bg-white text-slate-900 border-white/20"
+              className="bg-white text-slate-900 border-border placeholder:text-slate-400"
               placeholder="Any additional details about this lead..."
               value={formData.notes}
               onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
@@ -218,7 +218,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
 
           {/* Welcome Message Options */}
           <div className="space-y-2">
-            <Label className="text-card-foreground/70">Send Welcome Message</Label>
+            <Label className="text-foreground/70">Send Welcome Message</Label>
             <div className="flex gap-4">
               <div className="flex items-center gap-2">
                 <Checkbox
@@ -227,7 +227,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
                   onCheckedChange={(checked) => setFormData(prev => ({ ...prev, sendWelcomeEmail: !!checked }))}
                   disabled={!formData.email}
                 />
-                <Label htmlFor="welcome-email" className="flex items-center gap-1 text-sm cursor-pointer text-card-foreground/70">
+                <Label htmlFor="welcome-email" className="flex items-center gap-1 text-sm cursor-pointer text-foreground/70">
                   <Mail className="h-4 w-4" />
                   Email
                 </Label>
@@ -239,7 +239,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
                   onCheckedChange={(checked) => setFormData(prev => ({ ...prev, sendWelcomeSms: !!checked }))}
                   disabled={!formData.phone}
                 />
-                <Label htmlFor="welcome-sms" className="flex items-center gap-1 text-sm cursor-pointer text-card-foreground/70">
+                <Label htmlFor="welcome-sms" className="flex items-center gap-1 text-sm cursor-pointer text-foreground/70">
                   <MessageSquare className="h-4 w-4" />
                   SMS
                 </Label>

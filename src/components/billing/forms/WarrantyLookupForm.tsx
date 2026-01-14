@@ -142,7 +142,7 @@ export function WarrantyLookupForm({ companyId, onCancel }: WarrantyLookupFormPr
   );
 
   return (
-    <div className="space-y-3 p-3">
+    <div className="space-y-3 p-4 bg-muted/50 rounded-lg">
       <div className="flex items-center gap-2 mb-3">
         {onCancel && (
           <Button
@@ -156,13 +156,13 @@ export function WarrantyLookupForm({ companyId, onCancel }: WarrantyLookupFormPr
           </Button>
         )}
         <Shield className="h-5 w-5 text-primary" />
-        <h3 className="font-semibold">Warranty Lookup</h3>
+        <h3 className="font-semibold text-foreground">Warranty Lookup</h3>
       </div>
 
       {/* Search Section */}
       {!selectedWarranty && (
         <div className="space-y-2">
-          <Label className="text-sm font-medium flex items-center gap-2">
+          <Label className="text-sm font-medium flex items-center gap-2 text-foreground/70">
             <Search className="h-4 w-4" />
             Search Customer or Job
           </Label>
@@ -170,25 +170,25 @@ export function WarrantyLookupForm({ companyId, onCancel }: WarrantyLookupFormPr
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by name, phone, or email..."
-            className="h-9 text-sm"
+            className="h-9 text-sm bg-white text-slate-900 border-border placeholder:text-slate-400"
           />
           {searchQuery.length >= 2 && appointments.length > 0 && (
-            <div className="border rounded-lg max-h-48 overflow-y-auto">
+            <div className="border border-border rounded-lg max-h-48 overflow-y-auto bg-white">
               {appointments.map((apt) => (
                 <button
                   key={apt.id}
                   type="button"
                   onClick={() => handleSelectAppointment(apt.id)}
-                  className="w-full text-left p-2 hover:bg-muted/50 border-b last:border-b-0 text-sm transition-colors"
+                  className="w-full text-left p-2 hover:bg-muted/50 border-b border-border last:border-b-0 text-sm transition-colors"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <User className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="font-medium">{apt.customer_name}</span>
+                      <User className="h-3.5 w-3.5 text-foreground/50" />
+                      <span className="font-medium text-foreground">{apt.customer_name}</span>
                     </div>
                     <span className="text-xs text-green-600">completed</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                  <div className="flex items-center gap-2 text-xs text-foreground/50 mt-1">
                     <Calendar className="h-3 w-3" />
                     {format(new Date(apt.datetime), 'MMM d, yyyy')} - {apt.service_type}
                   </div>
@@ -196,9 +196,9 @@ export function WarrantyLookupForm({ companyId, onCancel }: WarrantyLookupFormPr
               ))}
             </div>
           )}
-          {searchingJobs && <p className="text-xs text-muted-foreground">Searching...</p>}
+          {searchingJobs && <p className="text-xs text-foreground/50">Searching...</p>}
           {searchQuery.length >= 2 && !searchingJobs && appointments.length === 0 && (
-            <p className="text-xs text-muted-foreground text-center py-2">No completed jobs found</p>
+            <p className="text-xs text-foreground/50 text-center py-2">No completed jobs found</p>
           )}
         </div>
       )}
@@ -220,11 +220,11 @@ export function WarrantyLookupForm({ companyId, onCancel }: WarrantyLookupFormPr
           </Button>
 
           {/* Warranty Status Card */}
-          <div className="border rounded-lg p-4 space-y-3 bg-card">
+          <div className="border border-border rounded-lg p-4 space-y-3 bg-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Warranty Status</span>
+                <span className="font-semibold text-foreground">Warranty Status</span>
               </div>
               <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedWarranty.status)}`}>
                 {getStatusIcon(selectedWarranty.status)}
@@ -234,23 +234,23 @@ export function WarrantyLookupForm({ companyId, onCancel }: WarrantyLookupFormPr
 
             <div className="grid gap-2 text-sm">
               <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium">{selectedWarranty.customerName}</span>
+                <User className="h-4 w-4 text-foreground/50" />
+                <span className="font-medium text-foreground">{selectedWarranty.customerName}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Package className="h-4 w-4 text-muted-foreground" />
-                <span>{selectedWarranty.serviceType}</span>
+                <Package className="h-4 w-4 text-foreground/50" />
+                <span className="text-foreground">{selectedWarranty.serviceType}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span>Service Date: {format(new Date(selectedWarranty.completedDate), 'MMM d, yyyy')}</span>
+                <Calendar className="h-4 w-4 text-foreground/50" />
+                <span className="text-foreground">Service Date: {format(new Date(selectedWarranty.completedDate), 'MMM d, yyyy')}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <span>
+                <Clock className="h-4 w-4 text-foreground/50" />
+                <span className="text-foreground">
                   Expires: {format(new Date(selectedWarranty.warrantyExpiresDate), 'MMM d, yyyy')}
                   {!selectedWarranty.isExpired && (
-                    <span className="text-muted-foreground ml-1">
+                    <span className="text-foreground/50 ml-1">
                       ({selectedWarranty.daysRemaining} days remaining)
                     </span>
                   )}
@@ -259,16 +259,16 @@ export function WarrantyLookupForm({ companyId, onCancel }: WarrantyLookupFormPr
             </div>
 
             {selectedWarranty.customerPhone && (
-              <p className="text-xs text-muted-foreground">Phone: {selectedWarranty.customerPhone}</p>
+              <p className="text-xs text-foreground/50">Phone: {selectedWarranty.customerPhone}</p>
             )}
             {selectedWarranty.customerEmail && (
-              <p className="text-xs text-muted-foreground">Email: {selectedWarranty.customerEmail}</p>
+              <p className="text-xs text-foreground/50">Email: {selectedWarranty.customerEmail}</p>
             )}
           </div>
 
           {/* Send Options */}
-          <div className="border rounded-lg p-3 space-y-2 bg-muted/30">
-            <Label className="text-sm font-medium">Send Warranty Info Via</Label>
+          <div className="border border-border rounded-lg p-3 space-y-2 bg-white">
+            <Label className="text-sm font-medium text-foreground">Send Warranty Info Via</Label>
             <div className="flex items-center gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
                 <Switch 
@@ -276,10 +276,10 @@ export function WarrantyLookupForm({ companyId, onCancel }: WarrantyLookupFormPr
                   onCheckedChange={setSendEmail}
                   disabled={!selectedWarranty.customerEmail}
                 />
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">Email</span>
+                <Mail className="h-4 w-4 text-foreground/50" />
+                <span className="text-sm text-foreground">Email</span>
                 {!selectedWarranty.customerEmail && (
-                  <span className="text-xs text-muted-foreground">(no email)</span>
+                  <span className="text-xs text-foreground/50">(no email)</span>
                 )}
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
@@ -288,10 +288,10 @@ export function WarrantyLookupForm({ companyId, onCancel }: WarrantyLookupFormPr
                   onCheckedChange={setSendSms}
                   disabled={!selectedWarranty.customerPhone}
                 />
-                <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">SMS</span>
+                <MessageSquare className="h-4 w-4 text-foreground/50" />
+                <span className="text-sm text-foreground">SMS</span>
                 {!selectedWarranty.customerPhone && (
-                  <span className="text-xs text-muted-foreground">(no phone)</span>
+                  <span className="text-xs text-foreground/50">(no phone)</span>
                 )}
               </label>
             </div>
