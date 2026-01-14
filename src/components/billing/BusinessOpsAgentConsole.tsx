@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,10 +13,6 @@ import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { BusinessQuoteForm, BusinessQuoteData } from './forms/BusinessQuoteForm';
 import { InvoiceForm, InvoiceFormData } from './forms/InvoiceForm';
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
-import { PerformanceReportForm } from '@/components/analytics/forms/PerformanceReportForm';
-import { InsightsReportForm } from '@/components/analytics/forms/InsightsReportForm';
-import { RevenueAnalysisForm } from '@/components/analytics/forms/RevenueAnalysisForm';
-import { ForecastForm } from '@/components/analytics/forms/ForecastForm';
 import { InventorySearchForm } from '@/components/billing/forms/InventorySearchForm';
 import { WarrantyLookupForm } from '@/components/billing/forms/WarrantyLookupForm';
 import { getAgentStyle } from '@/lib/agentStyles';
@@ -24,12 +21,9 @@ import {
   Receipt, 
   Briefcase,
   UserPlus,
-  BarChart3,
-  Lightbulb,
-  DollarSign,
-  TrendingUp,
   Package,
-  Shield
+  Shield,
+  Calendar
 } from 'lucide-react';
 
 // Tab configuration - just Home for this console
@@ -42,10 +36,7 @@ const BASE_QUICK_ACTIONS = [
   { id: 'quote', label: 'Create Quote', icon: FileText, message: 'I need to create a new quote for a customer' },
   { id: 'invoice', label: 'Generate Invoice', icon: Receipt, message: 'I need to generate an invoice' },
   { id: 'lead', label: 'New Lead', icon: UserPlus, message: 'I need to add a new lead' },
-  { id: 'performance', label: 'Performance Report', icon: BarChart3, message: 'Show me team performance insights' },
-  { id: 'insights', label: 'Business Insights', icon: Lightbulb, message: 'Show me business insights and recommendations' },
-  { id: 'revenue', label: 'Revenue Analysis', icon: DollarSign, message: 'Analyze revenue trends and profitability' },
-  { id: 'forecast', label: 'Demand Forecast', icon: TrendingUp, message: 'Show demand forecast and projections' },
+  { id: 'appointments', label: 'Appointments', icon: Calendar, message: 'I need to manage appointments' },
 ];
 
 // Platform admin only quick actions
@@ -60,6 +51,7 @@ interface BusinessOpsAgentConsoleProps {
 
 export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = ({ companyId: propCompanyId }) => {
   const { companyId: authCompanyId, user, userRole } = useAuth();
+  const navigate = useNavigate();
   const effectiveCompanyId = propCompanyId || authCompanyId;
   const isPlatformAdmin = userRole === 'platform_admin';
   
@@ -73,17 +65,13 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [lastAgent, setLastAgent] = useState<string>('quoting');
   const [activeFormType, setActiveFormType] = useState<
-    'quote' | 'invoice' | 'lead' | 'performance' | 'insights' | 'revenue' | 'forecast' | 'inventory' | 'warranty' | null
+    'quote' | 'invoice' | 'lead' | 'inventory' | 'warranty' | null
   >(null);
   
   // Form visibility states
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
-  const [showPerformanceForm, setShowPerformanceForm] = useState(false);
-  const [showInsightsForm, setShowInsightsForm] = useState(false);
-  const [showRevenueForm, setShowRevenueForm] = useState(false);
-  const [showForecastForm, setShowForecastForm] = useState(false);
   const [showInventoryForm, setShowInventoryForm] = useState(false);
   const [showWarrantyForm, setShowWarrantyForm] = useState(false);
 
@@ -121,10 +109,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setShowQuoteForm(false);
     setShowInvoiceForm(false);
     setShowLeadForm(false);
-    setShowPerformanceForm(false);
-    setShowInsightsForm(false);
-    setShowRevenueForm(false);
-    setShowForecastForm(false);
     setShowInventoryForm(false);
     setShowWarrantyForm(false);
     setActiveFormType(null);
@@ -159,28 +143,8 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       setActiveFormType('lead');
       return;
     }
-    if (actionId === 'performance') {
-      hideAllForms();
-      setShowPerformanceForm(true);
-      setActiveFormType('performance');
-      return;
-    }
-    if (actionId === 'insights') {
-      hideAllForms();
-      setShowInsightsForm(true);
-      setActiveFormType('insights');
-      return;
-    }
-    if (actionId === 'revenue') {
-      hideAllForms();
-      setShowRevenueForm(true);
-      setActiveFormType('revenue');
-      return;
-    }
-    if (actionId === 'forecast') {
-      hideAllForms();
-      setShowForecastForm(true);
-      setActiveFormType('forecast');
+    if (actionId === 'appointments') {
+      navigate('/dashboard/appointments');
       return;
     }
     if (actionId === 'inventory') {
@@ -236,44 +200,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     await sendMessage(message);
   };
 
-  const handlePerformanceAnalyze = async (data: Record<string, unknown>) => {
-    hideAllForms();
-    const message = `Analyze this performance data and provide recommendations: ${JSON.stringify(data)}`;
-    await sendMessage(message);
-  };
-
-  const handleInsightsAnalyze = async (data: Record<string, unknown>) => {
-    hideAllForms();
-    const message = `Generate business insights report with this configuration: ${JSON.stringify(data)}`;
-    await sendMessage(message);
-  };
-
-  const handleRevenueAnalyze = async (data: Record<string, unknown>) => {
-    hideAllForms();
-    const message = `Analyze revenue data with these parameters: ${JSON.stringify(data)}`;
-    await sendMessage(message);
-  };
-
-  const handleForecastAnalyze = async (data: Record<string, unknown>) => {
-    hideAllForms();
-    const message = `Generate demand forecast with this configuration: ${JSON.stringify(data)}`;
-    await sendMessage(message);
-  };
-
-  const handleInventorySearch = async (data: Record<string, unknown>) => {
-    hideAllForms();
-    const message = `Search inventory with these criteria: ${JSON.stringify(data)}`;
-    await sendMessage(message);
-  };
-
-  const handleWarrantyLookup = async (data: Record<string, unknown>) => {
-    hideAllForms();
-    const message = `Look up warranty information: ${JSON.stringify(data)}`;
-    await sendMessage(message);
-  };
-
-  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showPerformanceForm || 
-    showInsightsForm || showRevenueForm || showForecastForm || showInventoryForm || showWarrantyForm;
+  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showInventoryForm || showWarrantyForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -282,10 +209,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     if (activeFormType === 'quote') return 'Quoting';
     if (activeFormType === 'invoice') return 'Invoicing';
     if (activeFormType === 'lead') return 'Lead Capture';
-    if (activeFormType === 'performance') return 'Performance';
-    if (activeFormType === 'insights') return 'Insights';
-    if (activeFormType === 'revenue') return 'Revenue';
-    if (activeFormType === 'forecast') return 'Forecast';
     if (activeFormType === 'inventory') return 'Inventory';
     if (activeFormType === 'warranty') return 'Warranty';
     if (messages.length > 0) return agentStyle.label; // Show agent label during chat
@@ -356,38 +279,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
                 />
               )}
               
-              {showPerformanceForm && effectiveCompanyId && (
-                <PerformanceReportForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                  onAnalyze={handlePerformanceAnalyze}
-                  mode="ai"
-                />
-              )}
-              
-              {showInsightsForm && effectiveCompanyId && (
-                <InsightsReportForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                  onAnalyze={handleInsightsAnalyze}
-                />
-              )}
-              
-              {showRevenueForm && effectiveCompanyId && (
-                <RevenueAnalysisForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                  onAnalyze={handleRevenueAnalyze}
-                />
-              )}
-              
-              {showForecastForm && effectiveCompanyId && (
-                <ForecastForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                  onAnalyze={handleForecastAnalyze}
-                />
-              )}
               
               {isPlatformAdmin && showInventoryForm && effectiveCompanyId && (
                 <InventorySearchForm
