@@ -585,58 +585,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* === CUSTOMER SECTION === */}
-      
-      {/* Customer Portal Section */}
-      <section className="bg-muted/30 py-20">
-        <div className="container max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">For Customers</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">24/7 Customer Portal: Your Office on Aura Autopilot</h2>
-            <p className="text-lg text-foreground max-w-2xl mx-auto">Aura Intercept provides a professional, Customer Portal that can be embedded in to your website for that personal touch. Give your customers the modern convenience of online appointment booking with real-time calendar sync, instant AI-Aura Powered quotes, and live technician tracking. By providing a Aura Intercept AI Center for service status and AI chat support, you reduce administrative overhead and improve customer retention, ensuring your trade business operates at peak efficiency even while you’re off the clock.</p>
-          </div>
 
-          <div className="max-w-2xl mx-auto space-y-4">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
-                <Calendar className="w-5 h-5 text-cyan-500" />
-              </div>
-              <div>
-                <h4 className="font-semibold mb-1">Easy Appointment Booking</h4>
-                <p className="text-sm text-foreground">Select from available services and time slots with real-time calendar sync.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
-                <FileText className="w-5 h-5 text-purple-500" />
-              </div>
-              <div>
-                <h4 className="font-semibold mb-1">Instant Quote Requests</h4>
-                <p className="text-sm text-foreground">Get AI-powered quotes based on your service needs.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
-                <Search className="w-5 h-5 text-green-500" />
-              </div>
-              <div>
-                <h4 className="font-semibold mb-1">Appointment Tracking</h4>
-                <p className="text-sm text-foreground">Real-time status updates with technician ETA and job completion notifications.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center flex-shrink-0">
-                <Headphones className="w-5 h-5 text-orange-500" />
-              </div>
-              <div>
-                <h4 className="font-semibold mb-1">AI Chat Support</h4>
-                <p className="text-sm text-foreground">Natural language conversations with AI agents for instant answers.</p>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
 
       {/* Pricing Section */}
       <section className="py-20">

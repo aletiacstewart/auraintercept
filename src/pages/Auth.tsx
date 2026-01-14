@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Bot, Building2, Users, Shield, Check, Crown, Zap, MessageSquare, Phone, Mail, Mic, UserCircle, DollarSign, FileText } from 'lucide-react';
+import { Bot, Building2, Users, Shield, Check, Crown, Zap, MessageSquare, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
@@ -507,7 +507,70 @@ export default function Auth() {
           </div>
 
           {/* Two Column Layout */}
-          <div className={`grid gap-8 ${mode === 'company' ? 'md:grid-cols-2' : 'max-w-md mx-auto'}`}>
+          <div className={`grid gap-8 ${mode === 'company' || mode === 'customer' ? 'md:grid-cols-2' : 'max-w-md mx-auto'}`}>
+            {/* Left Column - Customer Portal Info (only for customer mode) */}
+            {mode === 'customer' && (
+              <div className="space-y-4 h-fit">
+                {/* Header */}
+                <div className="text-center md:text-left">
+                  <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary mb-3">For Customers</span>
+                  <h2 className="text-lg font-bold mb-2">24/7 Customer Portal</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Your one account works with all Aura Intercept companies. Book appointments, get quotes, and chat with AI agents anytime.
+                  </p>
+                </div>
+
+                {/* Feature List */}
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border/50">
+                    <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center flex-shrink-0">
+                      <Calendar className="w-4 h-4 text-cyan-500" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm text-card-foreground">Easy Appointment Booking</h4>
+                      <p className="text-xs text-card-foreground/70">Select from available services and time slots with real-time calendar sync.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border/50">
+                    <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                      <FileText className="w-4 h-4 text-purple-500" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm text-card-foreground">Instant Quote Requests</h4>
+                      <p className="text-xs text-card-foreground/70">Get AI-powered quotes based on your service needs.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border/50">
+                    <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                      <Search className="w-4 h-4 text-green-500" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm text-card-foreground">Appointment Tracking</h4>
+                      <p className="text-xs text-card-foreground/70">Real-time status updates with technician ETA and job completion notifications.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border/50">
+                    <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center flex-shrink-0">
+                      <Headphones className="w-4 h-4 text-orange-500" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm text-card-foreground">AI Chat Support</h4>
+                      <p className="text-xs text-card-foreground/70">Natural language conversations with AI agents for instant answers.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Free Account Note */}
+                <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <p className="text-xs text-center text-foreground">
+                    <span className="font-medium text-green-600">Customer accounts are always free</span> — one account works with all registered companies!
+                  </p>
+                </div>
+              </div>
+            )}
             {/* Left Column - What's Included (only for company mode) */}
             {mode === 'company' && (
               <div className="space-y-4 h-fit">
