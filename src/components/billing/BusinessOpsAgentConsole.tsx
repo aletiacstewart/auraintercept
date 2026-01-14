@@ -10,11 +10,11 @@ import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
-import { BusinessQuoteForm, BusinessQuoteData } from './forms/BusinessQuoteForm';
-import { InvoiceForm, InvoiceFormData } from './forms/InvoiceForm';
-import { LeadForm } from '@/components/marketing/forms/LeadForm';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { AppointmentsManager } from '@/components/appointments/AppointmentsManager';
+import { QuotesManager } from '@/components/quotes/QuotesManager';
+import { InvoicesManager } from '@/components/invoices/InvoicesManager';
+import { LeadsManager } from '@/components/leads';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   FileText, 
@@ -166,42 +166,15 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setLastAgent('quoting');
   };
 
-  // Form submission handlers
-  const handleQuoteSubmit = async (data: BusinessQuoteData) => {
-    hideAllForms();
-    const channels = [];
-    if (data.sendEmail) channels.push('email');
-    if (data.sendSms) channels.push('SMS');
-    
-    const message = `Create a quote for ${data.customerName}. Phone: ${data.customerPhone}${data.customerEmail ? `, Email: ${data.customerEmail}` : ''}${data.customerAddress ? `, Address: ${data.customerAddress}` : ''}. Services requested: ${data.selectedServices.length} services selected.${data.issueDescription ? ` Notes: ${data.issueDescription}` : ''} Send via: ${channels.join(' and ')}.`;
-    await sendMessage(message);
-  };
-
-  const handleInvoiceSubmit = async (data: InvoiceFormData) => {
-    hideAllForms();
-    const channels = [];
-    if (data.sendEmail) channels.push('email');
-    if (data.sendSms) channels.push('SMS');
-    
-    const message = `Generate invoice for ${data.customerName}. Amount: $${data.amount}${data.serviceType ? `, Service: ${data.serviceType}` : ''}${data.customerPhone ? `, Phone: ${data.customerPhone}` : ''}${data.customerEmail ? `, Email: ${data.customerEmail}` : ''}${data.notes ? `. Notes: ${data.notes}` : ''}. Send via: ${channels.join(' and ')}.`;
-    await sendMessage(message);
-  };
-
-  const handleLeadSuccess = async (data: { name: string; source: string }) => {
-    hideAllForms();
-    const message = `I just added a new lead: ${data.name} from ${data.source}. What's the best follow-up approach for this type of lead?`;
-    await sendMessage(message);
-  };
-
   const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showInventoryManager || showAppointmentsManager;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
   // Get active label based on form type - show "Home" when no form is active
   const getActiveLabel = () => {
-    if (activeFormType === 'quote') return 'Quoting';
-    if (activeFormType === 'invoice') return 'Invoicing';
-    if (activeFormType === 'lead') return 'Lead Capture';
+    if (activeFormType === 'quote') return 'Quotes';
+    if (activeFormType === 'invoice') return 'Invoices';
+    if (activeFormType === 'lead') return 'Leads';
     if (activeFormType === 'inventory') return 'Inventory';
     if (activeFormType === 'appointments') return 'Appointments';
     if (messages.length > 0) return agentStyle.label; // Show agent label during chat
@@ -245,31 +218,23 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
             />
           ) : (
             <div className="space-y-4">
-              {/* Forms */}
-              {showQuoteForm && effectiveCompanyId && (
-                <BusinessQuoteForm
-                  companyId={effectiveCompanyId}
-                  onSubmit={handleQuoteSubmit}
-                  onCancel={handleHome}
-                  isLoading={isLoading}
-                />
+              {/* Embedded Managers */}
+              {showQuoteForm && (
+                <div className="bg-muted/50 rounded-lg border border-border p-4">
+                  <QuotesManager onClose={handleHome} />
+                </div>
               )}
               
-              {showInvoiceForm && effectiveCompanyId && (
-                <InvoiceForm
-                  companyId={effectiveCompanyId}
-                  onSubmit={handleInvoiceSubmit}
-                  onCancel={handleHome}
-                  isLoading={isLoading}
-                />
+              {showInvoiceForm && (
+                <div className="bg-muted/50 rounded-lg border border-border p-4">
+                  <InvoicesManager onClose={handleHome} />
+                </div>
               )}
               
-              {showLeadForm && effectiveCompanyId && (
-                <LeadForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                  onSuccess={handleLeadSuccess}
-                />
+              {showLeadForm && (
+                <div className="bg-muted/50 rounded-lg border border-border p-4">
+                  <LeadsManager onClose={handleHome} />
+                </div>
               )}
 
               {showInventoryManager && (
