@@ -645,7 +645,8 @@ export default function Index() {
               <div className="absolute top-0 left-0 right-0 h-1 gradient-primary" />
               <CardContent className="p-6">
                 <Badge className="mb-2 gradient-primary border-0">Most Popular</Badge>
-                <h3 className="text-xl font-bold mb-2">Professional</h3>
+                <h3 className="text-xl font-bold mb-2">Aura Multi-Track</h3>
+                <p className="text-xs text-muted-foreground mb-1">(Business)</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-4xl font-bold gradient-text">$1,750</span>
                   <span className="text-muted-foreground">/month</span>

@@ -722,7 +722,7 @@ export default function Auth() {
                           {selectedTier === 'professional' && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-sm text-foreground">Professional</h3>
+                          <h3 className="font-semibold text-sm text-foreground">Aura Multi-Track (Business)</h3>
                           <p className="text-xs text-muted-foreground">Growing companies with technicians</p>
                         </div>
                       </div>
