@@ -120,14 +120,14 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
   };
 
   return (
-    <Card className="border-teal-200 bg-teal-50/50">
+    <Card className="border-border bg-background">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-teal-600" />
+          <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+            <TrendingUp className="h-5 w-5 text-primary" />
             Trend Forecast
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel}>
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-foreground/70 hover:text-foreground">
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -136,7 +136,7 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label>Metric</Label>
+            <Label className="text-foreground/70">Metric</Label>
             <Select value={metric} onValueChange={setMetric}>
               <SelectTrigger>
                 <SelectValue />
@@ -149,7 +149,7 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Forecast Period</Label>
+            <Label className="text-foreground/70">Forecast Period</Label>
             <Select value={forecastDays} onValueChange={setForecastDays}>
               <SelectTrigger>
                 <SelectValue />
@@ -173,22 +173,22 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
         ) : (
           <>
             {/* Historical Trend */}
-            <div className="p-4 rounded-lg bg-background border space-y-3">
-              <h4 className="font-medium text-sm">Historical Trend (90 days)</h4>
+            <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
+              <h4 className="font-medium text-sm text-foreground">Historical Trend (90 days)</h4>
               <div className="flex items-center justify-between gap-2">
                 <div className="text-center flex-1">
-                  <p className="text-xs text-muted-foreground">60-90 days ago</p>
-                  <p className="font-semibold">{formatValue(trendData?.olderPeriod || 0)}</p>
+                  <p className="text-xs text-foreground/60">60-90 days ago</p>
+                  <p className="font-semibold text-foreground">{formatValue(trendData?.olderPeriod || 0)}</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                <ArrowRight className="h-4 w-4 text-foreground/40" />
                 <div className="text-center flex-1">
-                  <p className="text-xs text-muted-foreground">30-60 days ago</p>
-                  <p className="font-semibold">{formatValue(trendData?.previousPeriod || 0)}</p>
+                  <p className="text-xs text-foreground/60">30-60 days ago</p>
+                  <p className="font-semibold text-foreground">{formatValue(trendData?.previousPeriod || 0)}</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                <ArrowRight className="h-4 w-4 text-foreground/40" />
                 <div className="text-center flex-1">
-                  <p className="text-xs text-muted-foreground">Last 30 days</p>
-                  <p className="font-semibold">{formatValue(trendData?.currentPeriod || 0)}</p>
+                  <p className="text-xs text-foreground/60">Last 30 days</p>
+                  <p className="font-semibold text-foreground">{formatValue(trendData?.currentPeriod || 0)}</p>
                 </div>
               </div>
               <div className="flex items-center justify-center gap-2 pt-2">
@@ -209,17 +209,17 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
             </div>
 
             {/* Projection */}
-            <div className="p-4 rounded-lg bg-background border">
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Projected {metricLabels[metric as keyof typeof metricLabels]}</p>
-                  <p className="text-xs text-muted-foreground">Next {forecastDays} days</p>
+                  <p className="text-sm text-foreground/70">Projected {metricLabels[metric as keyof typeof metricLabels]}</p>
+                  <p className="text-xs text-foreground/60">Next {forecastDays} days</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-teal-600">
+                  <p className="text-2xl font-bold text-primary">
                     {formatValue(Math.round(trendData?.projectedValue || 0))}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-foreground/60">
                     Based on {(trendData?.avgGrowth || 0).toFixed(1)}% avg trend
                   </p>
                 </div>
@@ -242,12 +242,12 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
             </Button>
 
             {aiForecast && (
-              <div className="p-4 rounded-lg bg-background border">
+              <div className="p-4 rounded-lg bg-muted/50 border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <Sparkles className="h-4 w-4 text-primary" />
-                  <span className="font-medium text-sm">AI Analysis</span>
+                  <span className="font-medium text-sm text-foreground">AI Analysis</span>
                 </div>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{aiForecast}</p>
+                <p className="text-sm text-foreground/70 whitespace-pre-wrap">{aiForecast}</p>
               </div>
             )}
           </>
