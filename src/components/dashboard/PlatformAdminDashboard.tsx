@@ -14,11 +14,11 @@ export function PlatformAdminDashboard() {
       const monthStart = startOfMonth(now).toISOString();
       const monthEnd = endOfMonth(now).toISOString();
 
-      const [companies, profiles, appointments, quotes, invoices, campaigns, customers, leads, inventory, warranties] = await Promise.all([
+      const [companies, profiles, appointments, allQuotes, invoices, campaigns, customers, leads, inventory, warranties] = await Promise.all([
         supabase.from('companies').select('id', { count: 'exact', head: true }),
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
-        supabase.from('appointments').select('id', { count: 'exact', head: true }),
-        supabase.from('quotes').select('id, status', { count: 'exact' }).in('status', ['draft', 'sent']),
+        supabase.from('appointments').select('id, status'),
+        supabase.from('quotes').select('id, status'),
         supabase.from('invoices').select('total, status, paid_at'),
         supabase.from('marketing_campaigns').select('id, status').eq('status', 'active'),
         supabase.from('customer_profiles').select('id', { count: 'exact', head: true }),
@@ -34,7 +34,22 @@ export function PlatformAdminDashboard() {
         .filter(i => i.paid_at && new Date(i.paid_at) >= new Date(monthStart) && new Date(i.paid_at) <= new Date(monthEnd))
         .reduce((sum, i) => sum + (i.total || 0), 0);
 
-      const pendingQuotes = (quotes.data ?? []).filter(q => q.status === 'sent').length;
+      // Calculate quote stats
+      const quotesData = allQuotes.data ?? [];
+      const pendingQuotes = quotesData.filter(q => q.status === 'sent').length;
+      const acceptedQuotes = quotesData.filter(q => q.status === 'accepted').length;
+      const totalQuotesForConversion = quotesData.filter(q => q.status !== 'draft').length;
+      const quoteConversionRate = totalQuotesForConversion > 0 
+        ? Math.round((acceptedQuotes / totalQuotesForConversion) * 100) 
+        : 0;
+
+      // Calculate appointment stats
+      const appointmentsData = appointments.data ?? [];
+      const completedAppointments = appointmentsData.filter(a => a.status === 'completed').length;
+      const totalAppointmentsForCompletion = appointmentsData.filter(a => a.status !== 'scheduled').length;
+      const appointmentCompletionRate = totalAppointmentsForCompletion > 0 
+        ? Math.round((completedAppointments / totalAppointmentsForCompletion) * 100) 
+        : 0;
 
       // Calculate inventory stats
       const allInventory = inventory.data ?? [];
@@ -46,6 +61,10 @@ export function PlatformAdminDashboard() {
       // Calculate leads stats
       const allLeads = leads.data ?? [];
       const newLeads = allLeads.filter(l => l.status === 'new').length;
+      const convertedLeads = allLeads.filter(l => l.status === 'converted' || l.status === 'won').length;
+      const leadConversionRate = allLeads.length > 0 
+        ? Math.round((convertedLeads / allLeads.length) * 100) 
+        : 0;
 
       return {
         companies: companies.count ?? 0,
@@ -53,7 +72,7 @@ export function PlatformAdminDashboard() {
         customers: customers.count ?? 0,
         leads: allLeads.length,
         newLeads,
-        appointments: appointments.count ?? 0,
+        appointments: appointmentsData.length,
         pendingQuotes,
         totalRevenue,
         monthlyRevenue,
@@ -61,6 +80,9 @@ export function PlatformAdminDashboard() {
         inventoryCount,
         lowStockItems,
         warranties: warranties.count ?? 0,
+        leadConversionRate,
+        quoteConversionRate,
+        appointmentCompletionRate,
       };
     },
   });
@@ -238,25 +260,34 @@ export function PlatformAdminDashboard() {
                   <span className="font-medium">{stats?.companies ?? 0}</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-600">
-                  <div className="h-full rounded-full gradient-primary" style={{ width: '60%' }} />
+                  <div className="h-full rounded-full gradient-primary transition-all" style={{ width: `${Math.min((stats?.companies ?? 0) * 10, 100)}%` }} />
                 </div>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span>User Engagement</span>
-                  <span className="font-medium">78%</span>
+                  <span>Lead Conversion</span>
+                  <span className="font-medium">{stats?.leadConversionRate ?? 0}%</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-600">
-                  <div className="h-full rounded-full bg-secondary" style={{ width: '78%' }} />
+                  <div className="h-full rounded-full bg-green-500 transition-all" style={{ width: `${stats?.leadConversionRate ?? 0}%` }} />
                 </div>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span>AI Response Rate</span>
-                  <span className="font-medium">94%</span>
+                  <span>Quote Conversion</span>
+                  <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-600">
-                  <div className="h-full rounded-full bg-accent" style={{ width: '94%' }} />
+                  <div className="h-full rounded-full bg-secondary transition-all" style={{ width: `${stats?.quoteConversionRate ?? 0}%` }} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span>Appointment Completion</span>
+                  <span className="font-medium">{stats?.appointmentCompletionRate ?? 0}%</span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-slate-600">
+                  <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${stats?.appointmentCompletionRate ?? 0}%` }} />
                 </div>
               </div>
             </div>
