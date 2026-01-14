@@ -15,9 +15,14 @@ import {
   DollarSign,
   ArrowRight,
   Sparkles,
-  UserPlus
+  UserPlus,
+  Calendar,
+  Shield,
+  Megaphone,
+  CreditCard,
+  XCircle
 } from 'lucide-react';
-import { format, isPast, parseISO, subDays } from 'date-fns';
+import { format, isPast, parseISO, subDays, addDays } from 'date-fns';
 
 interface FinancialPulseDashboardProps {
   companyId: string;
@@ -28,7 +33,7 @@ interface FinancialPulseDashboardProps {
 
 export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: FinancialPulseDashboardProps) {
   const navigate = useNavigate();
-  const isPlatformAdmin = userRole === 'platform_admin';
+  
   // Fetch all quotes
   const { data: quotes = [] } = useQuery({
     queryKey: ['all-quotes', companyId],
@@ -68,7 +73,6 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
         .select('*')
         .eq('company_id', companyId)
         .eq('is_active', true);
-      // Filter for low stock items
       return (data || []).filter(item => item.quantity <= item.min_quantity);
     },
     enabled: !!companyId,
@@ -87,6 +91,72 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
         .order('created_at', { ascending: false })
         .limit(10);
       return data || [];
+    },
+    enabled: !!companyId,
+  });
+
+  // Fetch upcoming appointments (next 7 days)
+  const { data: upcomingAppointments = [] } = useQuery({
+    queryKey: ['upcoming-appointments', companyId],
+    queryFn: async () => {
+      const now = new Date().toISOString();
+      const sevenDaysFromNow = addDays(new Date(), 7).toISOString();
+      const { data } = await supabase
+        .from('appointments')
+        .select('id, customer_name, datetime, service_type, status')
+        .eq('company_id', companyId)
+        .gte('datetime', now)
+        .lte('datetime', sevenDaysFromNow)
+        .in('status', ['scheduled', 'confirmed'])
+        .order('datetime', { ascending: true })
+        .limit(5);
+      return data || [];
+    },
+    enabled: !!companyId,
+  });
+
+  // Fetch active warranties count
+  const { data: activeWarranties = 0 } = useQuery({
+    queryKey: ['active-warranties-count', companyId],
+    queryFn: async () => {
+      const now = new Date().toISOString();
+      const { count } = await supabase
+        .from('warranty_records')
+        .select('id', { count: 'exact', head: true })
+        .eq('company_id', companyId)
+        .gte('expiration_date', now);
+      return count || 0;
+    },
+    enabled: !!companyId,
+  });
+
+  // Fetch active campaigns count
+  const { data: campaignStats } = useQuery({
+    queryKey: ['campaign-stats', companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('marketing_campaigns')
+        .select('id, status')
+        .eq('company_id', companyId);
+      const campaigns = data || [];
+      return {
+        active: campaigns.filter(c => c.status === 'active').length,
+        total: campaigns.length,
+      };
+    },
+    enabled: !!companyId,
+  });
+
+  // Check if Stripe is connected for this company
+  const { data: stripeConnected } = useQuery({
+    queryKey: ['stripe-connection', companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('companies')
+        .select('stripe_customer_id')
+        .eq('id', companyId)
+        .maybeSingle();
+      return !!data?.stripe_customer_id;
     },
     enabled: !!companyId,
   });
@@ -111,7 +181,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
         </div>
       </div>
 
-      {/* Summary Stats */}
+      {/* Summary Stats - Row 1 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card 
           className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
@@ -161,32 +231,92 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           </CardContent>
         </Card>
 
-        {isPlatformAdmin && (
-          <Card className={`bg-slate-800 border-white/10 transition-colors cursor-pointer hover:border-accent/40`} onClick={() => onNavigate('inventory')}>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <Package className="h-5 w-5 text-white" />
-                {inventoryAlerts.length > 0 && (
-                  <AlertTriangle className="h-4 w-4 text-destructive animate-pulse" />
-                )}
-              </div>
-              <p className="text-2xl font-bold mt-2 text-accent">{inventoryAlerts.length}</p>
-              <p className="text-xs text-white/70">Low Stock Alerts</p>
-            </CardContent>
-          </Card>
-        )}
+        <Card 
+          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          onClick={() => navigate('/dashboard/inventory')}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <Package className="h-5 w-5 text-white" />
+              {inventoryAlerts.length > 0 && (
+                <AlertTriangle className="h-4 w-4 text-destructive animate-pulse" />
+              )}
+            </div>
+            <p className="text-2xl font-bold mt-2 text-accent">{inventoryAlerts.length}</p>
+            <p className="text-xs text-white/70">Low Stock Alerts</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Summary Stats - Row 2 */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card 
+          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          onClick={() => navigate('/dashboard/appointments')}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <Calendar className="h-5 w-5 text-white" />
+              <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30">
+                7d
+              </Badge>
+            </div>
+            <p className="text-2xl font-bold mt-2 text-accent">{upcomingAppointments.length}</p>
+            <p className="text-xs text-white/70">Upcoming Appts</p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          onClick={() => navigate('/dashboard/warranties')}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <Shield className="h-5 w-5 text-white" />
+            </div>
+            <p className="text-2xl font-bold mt-2 text-accent">{activeWarranties}</p>
+            <p className="text-xs text-white/70">Active Warranties</p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          onClick={() => navigate('/dashboard/campaigns')}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <Megaphone className="h-5 w-5 text-white" />
+              <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30">
+                {campaignStats?.total || 0}
+              </Badge>
+            </div>
+            <p className="text-2xl font-bold mt-2 text-accent">{campaignStats?.active || 0}</p>
+            <p className="text-xs text-white/70">Active Campaigns</p>
+          </CardContent>
+        </Card>
 
         <Card className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" onClick={() => onNavigate('payments')}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <DollarSign className="h-5 w-5 text-white" />
-              <TrendingUp className="h-4 w-4 text-green-400" />
+              {stripeConnected ? (
+                <CreditCard className="h-5 w-5 text-white" />
+              ) : (
+                <DollarSign className="h-5 w-5 text-white" />
+              )}
+              {stripeConnected ? (
+                <TrendingUp className="h-4 w-4 text-green-400" />
+              ) : (
+                <XCircle className="h-4 w-4 text-amber-400" />
+              )}
             </div>
-            <p className="text-2xl font-bold mt-2 text-accent">Active</p>
+            <p className={`text-2xl font-bold mt-2 ${stripeConnected ? 'text-green-400' : 'text-amber-400'}`}>
+              {stripeConnected ? 'Connected' : 'Setup'}
+            </p>
             <p className="text-xs text-white/70">Payment Gateway</p>
           </CardContent>
         </Card>
       </div>
+
 
       {/* Content Grid */}
       <div className="grid md:grid-cols-2 gap-6">
@@ -296,7 +426,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
         </Card>
       </div>
 
-      {isPlatformAdmin && inventoryAlerts.length > 0 && (
+      {inventoryAlerts.length > 0 && (
         <Card className="bg-slate-800 border-white/10">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
@@ -304,7 +434,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                 <AlertTriangle className="h-4 w-4" />
                 Inventory Alerts
               </CardTitle>
-              <Button variant="ghost" size="sm" onClick={() => onNavigate('inventory')} className="text-accent hover:text-accent hover:bg-accent/10">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard/inventory')} className="text-accent hover:text-accent hover:bg-accent/10">
                 Manage <ArrowRight className="h-3 w-3 ml-1" />
               </Button>
             </div>
@@ -321,6 +451,44 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                   +{inventoryAlerts.length - 6} more
                 </Badge>
               )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Upcoming Appointments */}
+      {upcomingAppointments.length > 0 && (
+        <Card className="bg-slate-800 border-white/10">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
+                <Calendar className="h-4 w-4 text-accent" />
+                Upcoming Appointments (7 days)
+              </CardTitle>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard/appointments')} className="text-accent hover:text-accent hover:bg-accent/10">
+                View All <ArrowRight className="h-3 w-3 ml-1" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {upcomingAppointments.map(appt => (
+                <div 
+                  key={appt.id} 
+                  className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-colors border border-white/5 cursor-pointer"
+                  onClick={() => navigate(`/dashboard/appointments?id=${appt.id}`)}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate text-white">{appt.customer_name}</p>
+                    <p className="text-xs text-white/60">{appt.service_type}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30 text-xs">
+                      {format(new Date(appt.datetime), 'MMM d, h:mm a')}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
