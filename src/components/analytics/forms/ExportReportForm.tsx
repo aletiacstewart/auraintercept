@@ -168,24 +168,24 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
   };
 
   return (
-    <Card className="border-purple-200 bg-purple-50/50">
+    <Card className="border-border bg-background shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Download className="h-5 w-5 text-purple-600" />
+          <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+            <Download className="h-5 w-5 text-primary" />
             Export Report
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel}>
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-foreground/70 hover:text-foreground">
             <X className="h-4 w-4" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 bg-muted/50 rounded-b-lg">
         {/* Report Type */}
         <div className="space-y-2">
-          <Label>Report Type</Label>
+          <Label className="text-foreground/70">Report Type</Label>
           <Select value={reportType} onValueChange={setReportType}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white text-slate-900 border-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -200,12 +200,12 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
         {/* Date Range */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="flex items-center gap-1">
+            <Label className="flex items-center gap-1 text-foreground/70">
               <Calendar className="h-3 w-3" />
               Date Range
             </Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -217,12 +217,12 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="flex items-center gap-1">
+            <Label className="flex items-center gap-1 text-foreground/70">
               <FileSpreadsheet className="h-3 w-3" />
               Format
             </Label>
             <Select value={exportFormat} onValueChange={setExportFormat}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -234,8 +234,8 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
         </div>
 
         {/* Include Fields */}
-        <div className="space-y-3 p-3 rounded-lg bg-background border">
-          <h4 className="font-medium text-sm">Include Fields</h4>
+        <div className="space-y-3 p-3 rounded-lg bg-white border border-border">
+          <h4 className="font-medium text-sm text-foreground">Include Fields</h4>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center gap-2">
               <Checkbox
@@ -243,7 +243,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
                 checked={includeFields.customerInfo}
                 onCheckedChange={(checked) => setIncludeFields(prev => ({ ...prev, customerInfo: !!checked }))}
               />
-              <Label htmlFor="customerInfo" className="text-sm cursor-pointer">Customer Info</Label>
+              <Label htmlFor="customerInfo" className="text-sm cursor-pointer text-foreground/70">Customer Info</Label>
             </div>
             <div className="flex items-center gap-2">
               <Checkbox
@@ -251,7 +251,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
                 checked={includeFields.serviceDetails}
                 onCheckedChange={(checked) => setIncludeFields(prev => ({ ...prev, serviceDetails: !!checked }))}
               />
-              <Label htmlFor="serviceDetails" className="text-sm cursor-pointer">Service Details</Label>
+              <Label htmlFor="serviceDetails" className="text-sm cursor-pointer text-foreground/70">Service Details</Label>
             </div>
             <div className="flex items-center gap-2">
               <Checkbox
@@ -259,7 +259,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
                 checked={includeFields.financials}
                 onCheckedChange={(checked) => setIncludeFields(prev => ({ ...prev, financials: !!checked }))}
               />
-              <Label htmlFor="financials" className="text-sm cursor-pointer">Financials</Label>
+              <Label htmlFor="financials" className="text-sm cursor-pointer text-foreground/70">Financials</Label>
             </div>
             <div className="flex items-center gap-2">
               <Checkbox
@@ -267,16 +267,16 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
                 checked={includeFields.status}
                 onCheckedChange={(checked) => setIncludeFields(prev => ({ ...prev, status: !!checked }))}
               />
-              <Label htmlFor="status" className="text-sm cursor-pointer">Status</Label>
+              <Label htmlFor="status" className="text-sm cursor-pointer text-foreground/70">Status</Label>
             </div>
           </div>
         </div>
 
         {/* Preview */}
-        <div className="p-3 rounded-lg bg-background border flex items-center justify-between">
+        <div className="p-3 rounded-lg bg-white border border-border flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium">Records to Export</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm font-medium text-foreground">Records to Export</p>
+            <p className="text-xs text-foreground/50">
               {format(startDate, 'MMM d')} - {format(endDate, 'MMM d, yyyy')}
             </p>
           </div>
@@ -291,7 +291,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
 
         {/* Email Option */}
         <div className="space-y-2">
-          <Label className="flex items-center gap-1">
+          <Label className="flex items-center gap-1 text-foreground/70">
             <Mail className="h-3 w-3" />
             Email Report To (optional)
           </Label>
@@ -300,6 +300,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
             placeholder="email@example.com"
             value={emailTo}
             onChange={(e) => setEmailTo(e.target.value)}
+            className="bg-white text-slate-900 border-border placeholder:text-slate-400"
           />
         </div>
 
