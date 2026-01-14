@@ -111,17 +111,12 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
   };
 
   return (
-<Card className="border-border bg-background shadow-sm">
+<Card className="border-0 bg-background shadow-none">
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-foreground">
-            <UserPlus className="h-5 w-5 text-primary" />
-            Add New Lead
-          </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-foreground/70 hover:text-foreground">
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+        <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+          <UserPlus className="h-5 w-5 text-primary" />
+          Add New Lead
+        </CardTitle>
       </CardHeader>
       <CardContent className="bg-muted/50 rounded-b-lg">
         <form onSubmit={handleSubmit} className="space-y-4">
