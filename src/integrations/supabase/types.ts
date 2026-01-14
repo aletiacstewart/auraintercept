@@ -4244,6 +4244,7 @@ export type Database = {
       }
     }
     Functions: {
+      can_view_company: { Args: { _company_id: string }; Returns: boolean }
       customer_has_company_access: {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
@@ -4287,6 +4288,36 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      get_company_public_info: {
+        Args: { p_slug: string }
+        Returns: {
+          id: string
+          logo_url: string
+          name: string
+          primary_color: string
+          public_app_url: string
+          secondary_color: string
+          service_area_cities: string[]
+          service_area_zip_codes: string[]
+          service_categories: string[]
+          slug: string
+        }[]
+      }
+      get_company_public_info_by_id: {
+        Args: { p_id: string }
+        Returns: {
+          id: string
+          logo_url: string
+          name: string
+          primary_color: string
+          public_app_url: string
+          secondary_color: string
+          service_area_cities: string[]
+          service_area_zip_codes: string[]
+          service_categories: string[]
+          slug: string
+        }[]
       }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
