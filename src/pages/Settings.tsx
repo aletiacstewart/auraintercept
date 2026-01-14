@@ -3,7 +3,6 @@ import { BrandingSettings } from '@/components/company/BrandingSettings';
 import { ReminderSettings } from '@/components/company/ReminderSettings';
 import { CustomerPreferencesManager } from '@/components/company/CustomerPreferencesManager';
 import { DefaultPreferencesSettings } from '@/components/company/DefaultPreferencesSettings';
-import { SubscriptionAnalytics } from '@/components/company/SubscriptionAnalytics';
 import { AlertsSettings } from '@/components/company/AlertsSettings';
 import { ReportsDashboard } from '@/components/company/ReportsDashboard';
 import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor';
@@ -40,7 +39,6 @@ export default function Settings() {
               <TabsTrigger value="default-prefs">Default Prefs</TabsTrigger>
               <TabsTrigger value="reports">Reports</TabsTrigger>
               <TabsTrigger value="alerts">Alerts</TabsTrigger>
-              <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
               <TabsTrigger value="customer-prefs">Customer Prefs</TabsTrigger>
               <TabsTrigger value="emails">Email Templates</TabsTrigger>
               <TabsTrigger value="sms">SMS Templates</TabsTrigger>
@@ -68,9 +66,6 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="alerts">
               <AlertsSettings />
-            </TabsContent>
-            <TabsContent value="subscriptions">
-              <SubscriptionAnalytics />
             </TabsContent>
             <TabsContent value="customer-prefs">
               <CustomerPreferencesManager />
