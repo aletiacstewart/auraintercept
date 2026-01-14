@@ -183,24 +183,33 @@ export function PlatformAnalytics() {
 
       const companyData = await Promise.all(
         companies.map(async (company) => {
-          const [appointments, calls, users] = await Promise.all([
+          const [appointments, calls, users, invoices] = await Promise.all([
             supabase.from('appointments').select('id', { count: 'exact', head: true }).eq('company_id', company.id),
             supabase.from('call_logs').select('id', { count: 'exact', head: true }).eq('company_id', company.id),
             supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('company_id', company.id),
+            supabase.from('invoices').select('total, status').eq('company_id', company.id),
           ]);
+
+          const paidInvoices = (invoices.data ?? []).filter(i => i.status === 'paid');
+          const revenue = paidInvoices.reduce((sum, i) => sum + (i.total || 0), 0);
 
           return {
             name: company.name,
             appointments: appointments.count ?? 0,
             calls: calls.count ?? 0,
             users: users.count ?? 0,
+            revenue,
           };
         })
       );
 
-      return companyData.sort((a, b) => b.appointments - a.appointments).slice(0, 10);
+      return companyData;
     },
   });
+
+  // Sorted company stats for different views
+  const companiesByAppointments = companyStats?.slice().sort((a, b) => b.appointments - a.appointments).slice(0, 10);
+  const companiesByRevenue = companyStats?.slice().sort((a, b) => b.revenue - a.revenue).slice(0, 5);
 
   // Call status distribution
   const { data: callStatusData } = useQuery({
@@ -493,15 +502,15 @@ export function PlatformAnalytics() {
               <CardContent>
                 {companyLoading ? (
                   <Skeleton className="h-[200px]" />
-                ) : companyStats && companyStats.length > 0 ? (
+                ) : companiesByRevenue && companiesByRevenue.length > 0 ? (
                   <div className="space-y-3">
-                    {companyStats.slice(0, 5).map((company, idx) => (
+                    {companiesByRevenue.map((company, idx) => (
                       <div key={company.name} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-muted-foreground">#{idx + 1}</span>
                           <span className="text-sm font-medium truncate max-w-[120px]">{company.name}</span>
                         </div>
-                        <span className="text-sm">{company.appointments} appts</span>
+                        <span className="text-sm text-green-400 font-medium">${company.revenue.toLocaleString()}</span>
                       </div>
                     ))}
                   </div>
@@ -582,9 +591,9 @@ export function PlatformAnalytics() {
             <CardContent>
               {companyLoading ? (
                 <Skeleton className="h-[400px]" />
-              ) : companyStats && companyStats.length > 0 ? (
+              ) : companiesByAppointments && companiesByAppointments.length > 0 ? (
                 <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={companyStats} layout="vertical">
+                  <BarChart data={companiesByAppointments} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                     <XAxis type="number" className="text-xs" />
                     <YAxis dataKey="name" type="category" width={150} className="text-xs" />
