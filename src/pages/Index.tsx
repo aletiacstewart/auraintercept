@@ -592,7 +592,7 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Subscription Plans</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Choose Your Plan</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Choose Your Command Level</h2>
             <p className="text-foreground max-w-2xl mx-auto">
               Scale your AI automation as your business grows. Save 16% with annual billing.
             </p>
