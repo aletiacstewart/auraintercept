@@ -848,11 +848,26 @@ export default function Index() {
               </div>
             </div>
 
-            <div className="mt-6 p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
-              <p className="text-sm text-center">
-                <span className="font-semibold text-amber-500">Important:</span>{' '}
-                <span className="text-foreground">You connect your own Stripe account to process customer invoice payments. Aura Intercept does not handle payments on your behalf.</span>
-              </p>
+            <div className="mt-6 space-y-4">
+              <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
+                <p className="text-sm text-center">
+                  <span className="font-semibold text-primary">Concierge Onboarding:</span>{' '}
+                  <span className="text-foreground">Aura Intercept will configure all 3rd party integrations on your behalf for a one-time setup fee of <span className="font-bold">$500</span>.</span>
+                </p>
+              </div>
+
+              <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                <p className="text-sm text-center">
+                  <span className="font-semibold text-amber-500">Billing Requirement:</span>{' '}
+                  <span className="text-foreground">A valid credit card must be on file for both your Aura Intercept subscription and all connected 3rd party accounts to enable automated billing.</span>
+                </p>
+              </div>
+
+              <div className="p-4 rounded-lg bg-muted/50 border border-border">
+                <p className="text-sm text-center text-muted-foreground">
+                  You connect your own Stripe account to process customer invoice payments. Aura Intercept does not handle payments on your behalf.
+                </p>
+              </div>
             </div>
           </div>
         </div>
