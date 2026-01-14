@@ -507,7 +507,76 @@ export default function Auth() {
           </div>
 
           {/* Two Column Layout */}
-          <div className={`grid gap-8 ${mode === 'company' || mode === 'customer' ? 'md:grid-cols-2' : 'max-w-md mx-auto'}`}>
+          <div className={`grid gap-8 ${mode === 'company' || mode === 'customer' || mode === 'employee' ? 'md:grid-cols-2' : 'max-w-md mx-auto'}`}>
+            {/* Left Column - Employee Portal Info (only for employee mode) */}
+            {mode === 'employee' && (
+              <div className="space-y-4 h-fit">
+                {/* Header */}
+                <div className="text-center md:text-left">
+                  <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-blue-500/10 text-blue-600 mb-3">For Employees</span>
+                  <h2 className="text-lg font-bold mb-2">Employee Portal Access</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Access your job queue, manage appointments, and coordinate with dispatch through your company's AI-powered platform.
+                  </p>
+                </div>
+
+                {/* Registration Code Requirement */}
+                <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                      <Shield className="w-5 h-5 text-amber-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm text-foreground mb-1">Registration Code Required</h4>
+                      <p className="text-xs text-muted-foreground">
+                        To sign up, you'll need the <span className="font-medium text-foreground">8-character Registration Code</span> provided by your employer. This code links your account to your company.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Feature List */}
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border/50">
+                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                      <Calendar className="w-4 h-4 text-blue-500" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm text-card-foreground">Job Queue & Calendar</h4>
+                      <p className="text-xs text-card-foreground/70">View assigned jobs, manage your schedule, and sync with your calendar.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border/50">
+                    <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                      <Users className="w-4 h-4 text-green-500" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm text-card-foreground">Customer Information</h4>
+                      <p className="text-xs text-card-foreground/70">Access customer details, service history, and job notes.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-card border border-border/50">
+                    <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                      <Bot className="w-4 h-4 text-purple-500" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm text-card-foreground">AI Field Ops Assistant</h4>
+                      <p className="text-xs text-card-foreground/70">Get AI-powered support for job details, inventory, and warranty lookups.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Where to get code */}
+                <div className="p-3 rounded-lg bg-muted/50 border border-border/50">
+                  <p className="text-xs text-center text-muted-foreground">
+                    <span className="font-medium text-foreground">Don't have a code?</span> Contact your company administrator — the Registration Code is displayed on their dashboard.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Left Column - Customer Portal Info (only for customer mode) */}
             {mode === 'customer' && (
               <div className="space-y-4 h-fit">
