@@ -602,7 +602,8 @@ export default function Index() {
             {/* Starter Plan */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">Starter</h3>
+                <h3 className="text-xl font-bold mb-2">Aura Single-Point</h3>
+                <p className="text-xs text-muted-foreground mb-1">(Solo-Focus)</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-4xl font-bold">$1,000</span>
                   <span className="text-muted-foreground">/month</span>
