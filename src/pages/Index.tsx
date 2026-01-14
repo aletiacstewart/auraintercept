@@ -761,7 +761,7 @@ export default function Index() {
                 </div>
                 <p className="text-xs text-white/70 mb-2">Calendar Sync</p>
                 <p className="text-xs text-white/90 font-medium">Free - Unlimited</p>
-                <p className="text-xs text-muted-foreground mt-1">Optional for: All Tiers</p>
+                <p className="text-xs text-muted-foreground mt-1">Optional: Single-Point, Multi-Track, Command</p>
               </div>
 
               <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
@@ -772,7 +772,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">Email Notifications</p>
                 <p className="text-xs text-white/90 font-medium">Free: 3,000 emails/mo</p>
                 <p className="text-xs text-white/70">Then $20/mo for 50k emails ($0.0004/email over)</p>
-                <p className="text-xs text-muted-foreground mt-1">Required for: All Tiers</p>
+                <p className="text-xs text-muted-foreground mt-1">Required: Single-Point, Multi-Track, Command</p>
               </div>
 
               <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
@@ -783,7 +783,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">AI Voice Synthesis</p>
                 <p className="text-xs text-white/90 font-medium">Free: 10,000 chars/mo</p>
                 <p className="text-xs text-white/70">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
-                <p className="text-xs text-muted-foreground mt-1">Required for: Voice Features</p>
+                <p className="text-xs text-muted-foreground mt-1">Required: Multi-Track, Command (Voice Features)</p>
               </div>
 
               <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
@@ -794,7 +794,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">SMS & Voice Calls</p>
                 <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-xs text-white/70">$1.15/number • $0.0079/SMS • $0.014/min calls</p>
-                <p className="text-xs text-muted-foreground mt-1">Required for: SMS & Call Features</p>
+                <p className="text-xs text-muted-foreground mt-1">Required: Multi-Track, Command (SMS & Calls)</p>
               </div>
 
               <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
@@ -805,7 +805,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">Invoice Payments</p>
                 <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-xs text-white/70">2.9% + $0.30 per successful transaction</p>
-                <p className="text-xs text-muted-foreground mt-1">Required for: Invoice Payments</p>
+                <p className="text-xs text-muted-foreground mt-1">Required: Multi-Track, Command (Invoicing)</p>
               </div>
             </div>
 
