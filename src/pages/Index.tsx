@@ -522,17 +522,19 @@ export default function Index() {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {platformFeatures.map((feature, index) => <Card key={feature.title} className="hover:shadow-lg transition-all duration-300 hover:border-primary/50 animate-fade-in" style={{
-            animationDelay: `${index * 50}ms`
-          }}>
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-4">
-                    <feature.icon className="w-6 h-6 text-primary-foreground" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
-                  <p className="text-sm text-card-muted">{feature.description}</p>
-                </CardContent>
-              </Card>)}
+            {platformFeatures.map((feature, index) => (
+              <div 
+                key={feature.title}
+                className="rounded-xl p-6 transition-all duration-300 hover:opacity-90 animate-fade-in"
+                style={{ backgroundColor: '#2a3d4e', animationDelay: `${index * 50}ms` }}
+              >
+                <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center mb-4">
+                  <feature.icon className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2 text-white">{feature.title}</h3>
+                <p className="text-sm text-white/70">{feature.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
