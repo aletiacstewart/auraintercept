@@ -49,7 +49,7 @@ export function TwilioSetupGuide() {
                 Create Twilio Account
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+            <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <ol className="list-decimal list-inside space-y-2">
                 <li>Go to <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">twilio.com/try-twilio</a></li>
                 <li>Sign up for a free trial account</li>
@@ -75,20 +75,20 @@ export function TwilioSetupGuide() {
                 Get API Credentials
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+            <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <p>Find your credentials in the Twilio Console:</p>
               <div className="bg-muted p-4 rounded-lg space-y-3">
                 <div className="flex items-center gap-2">
                   <Shield className="w-4 h-4 text-red-500" />
                   <span className="font-medium text-foreground">Account SID</span>
                 </div>
-                <p className="text-xs">Found on your Console Dashboard. Starts with "AC"</p>
+                <p className="text-xs text-foreground/70">Found on your Console Dashboard. Starts with "AC"</p>
                 
                 <div className="flex items-center gap-2 mt-3">
                   <Shield className="w-4 h-4 text-red-500" />
                   <span className="font-medium text-foreground">Auth Token</span>
                 </div>
-                <p className="text-xs">Click "Show" next to Auth Token on Dashboard. Keep this secret!</p>
+                <p className="text-xs text-foreground/70">Click "Show" next to Auth Token on Dashboard. Keep this secret!</p>
               </div>
               <a 
                 href="https://console.twilio.com" 
@@ -109,11 +109,11 @@ export function TwilioSetupGuide() {
                 Purchase a Phone Number
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+            <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <ol className="list-decimal list-inside space-y-2">
-                <li>In Console, go to <strong>Phone Numbers → Manage → Buy a Number</strong></li>
+                <li>In Console, go to <strong className="text-foreground">Phone Numbers → Manage → Buy a Number</strong></li>
                 <li>Search for a number in your desired area code</li>
-                <li>Ensure the number has <Badge variant="outline" className="mx-1">Voice</Badge> and <Badge variant="outline" className="mx-1">SMS</Badge> capabilities</li>
+                <li>Ensure the number has <Badge variant="outline" className="mx-1 text-foreground">Voice</Badge> and <Badge variant="outline" className="mx-1 text-foreground">SMS</Badge> capabilities</li>
                 <li>Purchase the number (~$1.15/month)</li>
               </ol>
               <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
@@ -140,7 +140,7 @@ export function TwilioSetupGuide() {
                 Configure Webhooks (Required for AI Features)
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+            <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <p>To enable AI voice handling and missed call callbacks, configure these webhook URLs on your Twilio phone number:</p>
               
               {/* Voice Webhook */}
@@ -159,8 +159,8 @@ export function TwilioSetupGuide() {
                     {copiedItems['voice-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                   </Button>
                 </div>
-                <code className="text-xs break-all block">{VOICE_WEBHOOK_URL}</code>
-                <p className="text-xs text-muted-foreground">Set to HTTP POST - Handles incoming calls with AI</p>
+                <code className="text-xs break-all block text-foreground/70">{VOICE_WEBHOOK_URL}</code>
+                <p className="text-xs text-foreground/70">Set to HTTP POST - Handles incoming calls with AI</p>
               </div>
 
               {/* Primary Handler Fails (Missed Call) */}
@@ -179,8 +179,8 @@ export function TwilioSetupGuide() {
                     {copiedItems['missed-call-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                   </Button>
                 </div>
-                <code className="text-xs break-all block">{MISSED_CALL_WEBHOOK_URL}</code>
-                <p className="text-xs text-muted-foreground">Set to HTTP POST - Triggers AI callback or SMS for missed calls</p>
+                <code className="text-xs break-all block text-foreground/70">{MISSED_CALL_WEBHOOK_URL}</code>
+                <p className="text-xs text-foreground/70">Set to HTTP POST - Triggers AI callback or SMS for missed calls</p>
               </div>
 
               {/* Status Callback */}
@@ -199,8 +199,8 @@ export function TwilioSetupGuide() {
                     {copiedItems['status-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                   </Button>
                 </div>
-                <code className="text-xs break-all block">{STATUS_CALLBACK_URL}</code>
-                <p className="text-xs text-muted-foreground">Set to HTTP POST - Tracks call completion status</p>
+                <code className="text-xs break-all block text-foreground/70">{STATUS_CALLBACK_URL}</code>
+                <p className="text-xs text-foreground/70">Set to HTTP POST - Tracks call completion status</p>
               </div>
 
               {/* SMS Webhook */}
@@ -219,8 +219,8 @@ export function TwilioSetupGuide() {
                     {copiedItems['sms-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                   </Button>
                 </div>
-                <code className="text-xs break-all block">{SMS_WEBHOOK_URL}</code>
-                <p className="text-xs text-muted-foreground">Set to HTTP POST - Routes incoming SMS to AI Agent for intelligent responses (e.g. when customers reply HELP)</p>
+                <code className="text-xs break-all block text-foreground/70">{SMS_WEBHOOK_URL}</code>
+                <p className="text-xs text-foreground/70">Set to HTTP POST - Routes incoming SMS to AI Agent for intelligent responses (e.g. when customers reply HELP)</p>
               </div>
 
               <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
@@ -239,15 +239,15 @@ export function TwilioSetupGuide() {
                 Configure AI Missed Call Callbacks
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+            <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <p>Enable automatic AI-powered callbacks when customer calls are missed:</p>
               <ol className="list-decimal list-inside space-y-2">
-                <li>Go to <strong>Settings → Missed Calls</strong> in your dashboard</li>
+                <li>Go to <strong className="text-foreground">Settings → Missed Calls</strong> in your dashboard</li>
                 <li>Choose your preferred action:
                   <ul className="list-disc list-inside ml-4 mt-1 space-y-1">
-                    <li><strong>SMS Only</strong> - Send a follow-up text message</li>
-                    <li><strong>AI Callback Only</strong> - Initiate an AI-powered return call</li>
-                    <li><strong>Callback then SMS</strong> - Try AI callback first, SMS if it fails</li>
+                    <li><strong className="text-foreground">SMS Only</strong> - Send a follow-up text message</li>
+                    <li><strong className="text-foreground">AI Callback Only</strong> - Initiate an AI-powered return call</li>
+                    <li><strong className="text-foreground">Callback then SMS</strong> - Try AI callback first, SMS if it fails</li>
                   </ul>
                 </li>
                 <li>Set the callback delay (how long to wait before calling back)</li>
@@ -269,25 +269,25 @@ export function TwilioSetupGuide() {
                 Pricing Overview
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+            <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <div className="bg-muted p-4 rounded-lg space-y-2">
                 <div className="flex justify-between">
-                  <span>Phone Number</span>
-                  <span className="font-medium">~$1.15/month</span>
+                  <span className="text-foreground/80">Phone Number</span>
+                  <span className="font-medium text-foreground">~$1.15/month</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Outbound SMS</span>
-                  <span className="font-medium">~$0.0079/message</span>
+                  <span className="text-foreground/80">Outbound SMS</span>
+                  <span className="font-medium text-foreground">~$0.0079/message</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Outbound Voice</span>
-                  <span className="font-medium">~$0.014/minute</span>
+                  <span className="text-foreground/80">Outbound Voice</span>
+                  <span className="font-medium text-foreground">~$0.014/minute</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Inbound Voice</span>
-                  <span className="font-medium">~$0.0085/minute</span>
+                  <span className="text-foreground/80">Inbound Voice</span>
+                  <span className="font-medium text-foreground">~$0.0085/minute</span>
                 </div>
-                <p className="text-xs text-muted-foreground pt-2 border-t">
+                <p className="text-xs text-foreground/70 pt-2 border-t">
                   Prices vary by country. Free trial includes ~$15 credit.
                 </p>
               </div>
