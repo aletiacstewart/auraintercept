@@ -1,12 +1,31 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone, Package, Shield, Target, UserCircle } from 'lucide-react';
+import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone, Package, Shield, Target, UserCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { startOfMonth, endOfMonth, subDays } from 'date-fns';
+import { useState } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
+interface CompanyStats {
+  id: string;
+  name: string;
+  users: number;
+  customers: number;
+  appointments: number;
+  leads: number;
+  quotes: number;
+  invoices: number;
+  revenue: number;
+  inventory: number;
+  campaigns: number;
+}
 
 export function PlatformAdminDashboard() {
+  const [showAllCompanies, setShowAllCompanies] = useState(false);
+
   const { data: stats, isLoading } = useQuery({
     queryKey: ['platform-stats'],
     queryFn: async () => {
@@ -100,6 +119,64 @@ export function PlatformAdminDashboard() {
         activeIntegrations,
         recentAgentEvents,
       };
+    },
+  });
+
+  // Fetch per-company breakdown
+  const { data: companyBreakdown, isLoading: isLoadingBreakdown } = useQuery({
+    queryKey: ['company-breakdown'],
+    queryFn: async () => {
+      // Get all companies
+      const { data: companiesData } = await supabase
+        .from('companies')
+        .select('id, name')
+        .order('name');
+
+      if (!companiesData) return [];
+
+      // Fetch all related data in parallel
+      const [profiles, customers, appointments, leads, quotes, invoices, inventory, campaigns] = await Promise.all([
+        supabase.from('profiles').select('id, company_id'),
+        supabase.from('customer_profiles').select('id, company_id'),
+        supabase.from('appointments').select('id, company_id'),
+        supabase.from('leads').select('id, company_id'),
+        supabase.from('quotes').select('id, company_id'),
+        supabase.from('invoices').select('id, company_id, total, status'),
+        supabase.from('inventory_items').select('id, company_id'),
+        supabase.from('marketing_campaigns').select('id, company_id'),
+      ]);
+
+      // Build per-company stats
+      const companyStats: CompanyStats[] = companiesData.map(company => {
+        const companyProfiles = (profiles.data ?? []).filter(p => p.company_id === company.id);
+        const companyCustomers = (customers.data ?? []).filter(c => c.company_id === company.id);
+        const companyAppointments = (appointments.data ?? []).filter(a => a.company_id === company.id);
+        const companyLeads = (leads.data ?? []).filter(l => l.company_id === company.id);
+        const companyQuotes = (quotes.data ?? []).filter(q => q.company_id === company.id);
+        const companyInvoices = (invoices.data ?? []).filter(i => i.company_id === company.id);
+        const companyInventory = (inventory.data ?? []).filter(i => i.company_id === company.id);
+        const companyCampaigns = (campaigns.data ?? []).filter(c => c.company_id === company.id);
+        
+        const paidInvoices = companyInvoices.filter(i => i.status === 'paid');
+        const revenue = paidInvoices.reduce((sum, i) => sum + (i.total || 0), 0);
+
+        return {
+          id: company.id,
+          name: company.name,
+          users: companyProfiles.length,
+          customers: companyCustomers.length,
+          appointments: companyAppointments.length,
+          leads: companyLeads.length,
+          quotes: companyQuotes.length,
+          invoices: companyInvoices.length,
+          revenue,
+          inventory: companyInventory.length,
+          campaigns: companyCampaigns.length,
+        };
+      });
+
+      // Sort by revenue descending
+      return companyStats.sort((a, b) => b.revenue - a.revenue);
     },
   });
 
@@ -315,6 +392,124 @@ export function PlatformAdminDashboard() {
         </Card>
       </div>
 
+      {/* Company Breakdown */}
+      <Card className="border-border/50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-primary" />
+            Company Breakdown
+          </CardTitle>
+          <CardDescription className="text-white/70">
+            Per-company metrics and performance
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoadingBreakdown ? (
+            <div className="space-y-2">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full" />
+              ))}
+            </div>
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-slate-600">
+                      <TableHead className="text-white/70">Company</TableHead>
+                      <TableHead className="text-white/70 text-center">Users</TableHead>
+                      <TableHead className="text-white/70 text-center">Customers</TableHead>
+                      <TableHead className="text-white/70 text-center">Leads</TableHead>
+                      <TableHead className="text-white/70 text-center">Appointments</TableHead>
+                      <TableHead className="text-white/70 text-center">Quotes</TableHead>
+                      <TableHead className="text-white/70 text-center">Invoices</TableHead>
+                      <TableHead className="text-white/70 text-center">Revenue</TableHead>
+                      <TableHead className="text-white/70 text-center">Inventory</TableHead>
+                      <TableHead className="text-white/70 text-center">Campaigns</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {(showAllCompanies ? companyBreakdown : companyBreakdown?.slice(0, 5))?.map((company) => (
+                      <TableRow key={company.id} className="border-slate-700 hover:bg-slate-700/30">
+                        <TableCell className="font-medium text-white">
+                          {company.name}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant="outline" className="bg-secondary/20 text-secondary border-secondary/30">
+                            {company.users}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant="outline" className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
+                            {company.customers}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant="outline" className="bg-orange-500/20 text-orange-400 border-orange-500/30">
+                            {company.leads}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30">
+                            {company.appointments}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant="outline" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+                            {company.quotes}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant="outline" className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                            {company.invoices}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className="text-green-400 font-medium">
+                            ${company.revenue.toLocaleString()}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant="outline" className="bg-amber-500/20 text-amber-400 border-amber-500/30">
+                            {company.inventory}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant="outline" className="bg-pink-500/20 text-pink-400 border-pink-500/30">
+                            {company.campaigns}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              {(companyBreakdown?.length ?? 0) > 5 && (
+                <div className="mt-4 flex justify-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAllCompanies(!showAllCompanies)}
+                    className="gap-2"
+                  >
+                    {showAllCompanies ? (
+                      <>
+                        <ChevronUp className="w-4 h-4" />
+                        Show Less
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="w-4 h-4" />
+                        Show All {companyBreakdown?.length} Companies
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
