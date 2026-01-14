@@ -510,7 +510,7 @@ export function PlatformAnalytics() {
                           <span className="text-xs font-medium text-muted-foreground">#{idx + 1}</span>
                           <span className="text-sm font-medium truncate max-w-[120px]">{company.name}</span>
                         </div>
-                        <span className="text-sm text-green-400 font-medium">${company.revenue.toLocaleString()}</span>
+                        <span className="text-sm text-green-400 font-medium">${(company.revenue ?? 0).toLocaleString()}</span>
                       </div>
                     ))}
                   </div>
