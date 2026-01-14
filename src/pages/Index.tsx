@@ -593,8 +593,8 @@ export default function Index() {
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Subscription Plans</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Choose Your Command Level</h2>
-            <p className="text-foreground max-w-2xl mx-auto">
-              Scale your AI automation as your business grows. Save 16% with annual billing.
+            <p className="text-foreground max-w-3xl mx-auto">
+              Pick the right level of automation for your team and link your existing accounts. We've partnered with the best in the business to provide reliable voice, SMS, and payment processing directly through your personal dashboard.
             </p>
             <Link to="/audit" className="text-sm text-primary font-medium mt-3 inline-block hover:underline">
               We offer a free audit to help determine which plans best fit your business needs →
