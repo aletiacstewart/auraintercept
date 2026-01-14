@@ -65,7 +65,9 @@ import ExportDocumentation from "./pages/ExportDocumentation";
 import FieldOperations from "./pages/FieldOperations";
 import BusinessOperations from "./pages/BusinessOperations";
 import FieldOpsInstall from "./pages/FieldOpsInstall";
+import DispatchFieldOpsInstall from "./pages/DispatchFieldOpsInstall";
 import FieldOpsApp from "./pages/FieldOpsApp";
+import DispatchFieldOpsApp from "./pages/DispatchFieldOpsApp";
 import OpportunityAudit from "./pages/OpportunityAudit";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -104,6 +106,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/audit" element={<OpportunityAudit />} />
             <Route path="/field-ops-app" element={<FieldOpsApp />} />
+            <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
@@ -162,6 +165,7 @@ const App = () => (
             <Route path="/dashboard/field-operations" element={<FieldOperations />} />
             <Route path="/dashboard/business-operations" element={<BusinessOperations />} />
             <Route path="/dashboard/field-ops-install" element={<FieldOpsInstall />} />
+            <Route path="/dashboard/dispatch-field-ops-install" element={<DispatchFieldOpsInstall />} />
             <Route path="/dashboard/integrations/embed" element={<IntegrationDocs />} />
             <Route path="/dashboard/guides" element={<PlatformGuides />} />
             
