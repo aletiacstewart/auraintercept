@@ -13,8 +13,6 @@ import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { BusinessQuoteForm, BusinessQuoteData } from './forms/BusinessQuoteForm';
 import { InvoiceForm, InvoiceFormData } from './forms/InvoiceForm';
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
-import { InventorySearchForm } from '@/components/billing/forms/InventorySearchForm';
-import { WarrantyLookupForm } from '@/components/billing/forms/WarrantyLookupForm';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   FileText, 
@@ -37,12 +35,8 @@ const BASE_QUICK_ACTIONS = [
   { id: 'invoice', label: 'Generate Invoice', icon: Receipt, message: 'I need to generate an invoice' },
   { id: 'lead', label: 'New Lead', icon: UserPlus, message: 'I need to add a new lead' },
   { id: 'appointments', label: 'Appointments', icon: Calendar, message: 'I need to manage appointments' },
-];
-
-// Platform admin only quick actions
-const PLATFORM_ADMIN_QUICK_ACTIONS = [
-  { id: 'inventory', label: 'Inventory Search', icon: Package, message: 'Search inventory items' },
-  { id: 'warranty', label: 'Warranty Lookup', icon: Shield, message: 'Look up warranty status' },
+  { id: 'inventory', label: 'Inventory', icon: Package, message: 'Manage inventory items' },
+  { id: 'warranties', label: 'Warranties', icon: Shield, message: 'Manage warranties' },
 ];
 
 interface BusinessOpsAgentConsoleProps {
@@ -55,25 +49,20 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const effectiveCompanyId = propCompanyId || authCompanyId;
   const isPlatformAdmin = userRole === 'platform_admin';
   
-  // Filter quick actions based on role
-  const QUICK_ACTIONS = isPlatformAdmin 
-    ? [...BASE_QUICK_ACTIONS, ...PLATFORM_ADMIN_QUICK_ACTIONS]
-    : BASE_QUICK_ACTIONS;
+  const QUICK_ACTIONS = BASE_QUICK_ACTIONS;
   
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [lastAgent, setLastAgent] = useState<string>('quoting');
   const [activeFormType, setActiveFormType] = useState<
-    'quote' | 'invoice' | 'lead' | 'inventory' | 'warranty' | null
+    'quote' | 'invoice' | 'lead' | null
   >(null);
   
   // Form visibility states
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
-  const [showInventoryForm, setShowInventoryForm] = useState(false);
-  const [showWarrantyForm, setShowWarrantyForm] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -109,8 +98,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setShowQuoteForm(false);
     setShowInvoiceForm(false);
     setShowLeadForm(false);
-    setShowInventoryForm(false);
-    setShowWarrantyForm(false);
     setActiveFormType(null);
   };
 
@@ -148,15 +135,11 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       return;
     }
     if (actionId === 'inventory') {
-      hideAllForms();
-      setShowInventoryForm(true);
-      setActiveFormType('inventory');
+      navigate('/dashboard/inventory');
       return;
     }
-    if (actionId === 'warranty') {
-      hideAllForms();
-      setShowWarrantyForm(true);
-      setActiveFormType('warranty');
+    if (actionId === 'warranties') {
+      navigate('/dashboard/warranties');
       return;
     }
     
@@ -200,7 +183,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     await sendMessage(message);
   };
 
-  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showInventoryForm || showWarrantyForm;
+  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -209,8 +192,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     if (activeFormType === 'quote') return 'Quoting';
     if (activeFormType === 'invoice') return 'Invoicing';
     if (activeFormType === 'lead') return 'Lead Capture';
-    if (activeFormType === 'inventory') return 'Inventory';
-    if (activeFormType === 'warranty') return 'Warranty';
     if (messages.length > 0) return agentStyle.label; // Show agent label during chat
     return 'Home';
   };
@@ -276,21 +257,6 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
                   onSuccess={handleLeadSuccess}
-                />
-              )}
-              
-              
-              {isPlatformAdmin && showInventoryForm && effectiveCompanyId && (
-                <InventorySearchForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                />
-              )}
-              
-              {isPlatformAdmin && showWarrantyForm && effectiveCompanyId && (
-                <WarrantyLookupForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
                 />
               )}
 
