@@ -383,6 +383,46 @@ export function AppointmentCalendar() {
     );
   };
 
+  // Group appointments by date for inline display
+  const appointmentsByDate = appointments?.reduce((acc, apt) => {
+    const dateKey = format(new Date(apt.datetime), 'yyyy-MM-dd');
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push(apt);
+    return acc;
+  }, {} as Record<string, Appointment[]>) ?? {};
+
+  // Custom day content renderer
+  const renderDayContent = (day: Date) => {
+    const dateKey = format(day, 'yyyy-MM-dd');
+    const dayAppointments = appointmentsByDate[dateKey] || [];
+    
+    if (dayAppointments.length === 0) {
+      return <span>{day.getDate()}</span>;
+    }
+
+    return (
+      <div className="flex flex-col items-center w-full">
+        <span className="font-medium">{day.getDate()}</span>
+        <div className="flex flex-col gap-0.5 w-full mt-0.5 max-h-[40px] overflow-hidden">
+          {dayAppointments.slice(0, 2).map((apt, idx) => (
+            <div 
+              key={apt.id} 
+              className="text-[8px] leading-tight bg-accent/30 rounded px-0.5 truncate w-full text-center"
+              title={`${format(new Date(apt.datetime), 'h:mm a')} - ${apt.service_type}${apt.job_employee_name ? ` (${apt.job_employee_name})` : ''}`}
+            >
+              {format(new Date(apt.datetime), 'h:mma').toLowerCase()}
+            </div>
+          ))}
+          {dayAppointments.length > 2 && (
+            <div className="text-[7px] text-muted-foreground text-center">
+              +{dayAppointments.length - 2} more
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="grid gap-6 md:grid-cols-2">
       {/* Calendar */}
@@ -404,14 +444,20 @@ export function AppointmentCalendar() {
             month={month}
             onMonthChange={setMonth}
             className={cn("p-0 pointer-events-auto")}
+            classNames={{
+              cell: "h-auto w-12 text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+              day: cn("h-auto min-h-[50px] w-12 p-1 font-normal aria-selected:opacity-100 flex flex-col items-center justify-start hover:bg-accent/50 rounded-md"),
+              head_cell: "text-muted-foreground rounded-md w-12 font-normal text-[0.8rem]",
+            }}
+            components={{
+              DayContent: ({ date }) => renderDayContent(date),
+            }}
             modifiers={{
               hasAppointment: datesWithAppointments,
             }}
             modifiersStyles={{
               hasAppointment: {
                 fontWeight: 'bold',
-                textDecoration: 'underline',
-                textUnderlineOffset: '4px',
               },
             }}
           />
