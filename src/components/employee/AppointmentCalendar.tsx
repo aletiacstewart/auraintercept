@@ -67,6 +67,25 @@ export function AppointmentCalendar() {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
 
+  // Check if Google Calendar is connected for this company
+  const { data: googleCalendarConnection } = useQuery({
+    queryKey: ['google-calendar-connection', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data, error } = await supabase
+        .from('google_calendar_connections')
+        .select('sync_enabled, calendar_id')
+        .eq('company_id', companyId)
+        .eq('sync_enabled', true)
+        .maybeSingle();
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
+    },
+    enabled: !!companyId && isAdmin,
+  });
+
+  const hasGoogleCalendar = !!googleCalendarConnection?.sync_enabled;
+
   // Cancel appointment mutation
   const cancelMutation = useMutation({
     mutationFn: async (appointmentId: string) => {
@@ -476,7 +495,7 @@ export function AppointmentCalendar() {
                 {selectedDayAppointments.length} appointment{selectedDayAppointments.length !== 1 ? 's' : ''} scheduled
               </CardDescription>
             </div>
-            {isAdmin && (
+            {isAdmin && hasGoogleCalendar && (
               <div className="flex flex-col gap-2">
                 {/* Sync Status Summary */}
                 {appointments && appointments.length > 0 && (
@@ -498,35 +517,35 @@ export function AppointmentCalendar() {
                   </div>
                 )}
                 <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => importMutation.mutate()}
-                  disabled={importMutation.isPending}
-                >
-                  {importMutation.isPending ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Download className="w-4 h-4 mr-2" />
-                  )}
-                  Import from Google
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => bulkSyncMutation.mutate()}
-                  disabled={bulkSyncMutation.isPending}
-                >
-                  {bulkSyncMutation.isPending ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                  )}
-                  Sync All to Calendar
-                </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => importMutation.mutate()}
+                    disabled={importMutation.isPending}
+                  >
+                    {importMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Download className="w-4 h-4 mr-2" />
+                    )}
+                    Import from Google
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => bulkSyncMutation.mutate()}
+                    disabled={bulkSyncMutation.isPending}
+                  >
+                    {bulkSyncMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                    )}
+                    Sync to Google
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
           </div>
         </CardHeader>
         <CardContent>
