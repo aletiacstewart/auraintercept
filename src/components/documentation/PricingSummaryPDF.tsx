@@ -354,7 +354,7 @@ const SUBSCRIPTION_TIERS = {
     bestFor: 'Growing companies with field technicians needing dispatch automation',
   },
   enterprise: {
-    name: 'Enterprise',
+    name: 'Aura Command (Enterprise)',
     monthlyPrice: 2250,
     annualPrice: 22500,
     annualSavings: 4500,
@@ -687,10 +687,10 @@ const PricingSummaryPDF = () => (
     {/* Enterprise Tier Details */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Enterprise Tier</Text>
+      <Text style={styles.sectionTitle}>Aura Command Tier</Text>
 
       <View style={styles.pricingCard}>
-        <Text style={styles.pricingTierName}>Enterprise Plan</Text>
+        <Text style={styles.pricingTierName}>Aura Command (Enterprise)</Text>
         <Text style={styles.pricingPrice}>$2,250/month</Text>
         <Text style={styles.pricingAnnual}>or $22,500/year (billed annually)</Text>
         <Text style={styles.pricingSavings}>Save $4,500 with annual billing</Text>
