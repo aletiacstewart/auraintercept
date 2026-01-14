@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -596,6 +596,9 @@ export default function Index() {
             <p className="text-foreground max-w-2xl mx-auto">
               Scale your AI automation as your business grows. Save 16% with annual billing.
             </p>
+            <Link to="/audit" className="text-sm text-primary font-medium mt-3 inline-block hover:underline">
+              We offer a free audit to help determine which plans best fit your business needs →
+            </Link>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -746,9 +749,6 @@ export default function Index() {
               <h3 className="text-xl font-bold mb-2">3rd Party Integration Costs</h3>
               <p className="text-sm text-muted-foreground">
                 Our platform integrates with industry-leading providers. You'll need your own accounts with these services.
-              </p>
-              <p className="text-sm text-primary font-medium mt-2">
-                We offer a free audit to help determine which plans best fit your business needs.
               </p>
             </div>
 
