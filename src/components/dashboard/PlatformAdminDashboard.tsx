@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone } from 'lucide-react';
+import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone, Package, Shield, Target, UserCircle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { startOfMonth, endOfMonth } from 'date-fns';
 
@@ -14,13 +14,17 @@ export function PlatformAdminDashboard() {
       const monthStart = startOfMonth(now).toISOString();
       const monthEnd = endOfMonth(now).toISOString();
 
-      const [companies, profiles, appointments, quotes, invoices, campaigns] = await Promise.all([
+      const [companies, profiles, appointments, quotes, invoices, campaigns, customers, leads, inventory, warranties] = await Promise.all([
         supabase.from('companies').select('id', { count: 'exact', head: true }),
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('appointments').select('id', { count: 'exact', head: true }),
         supabase.from('quotes').select('id, status', { count: 'exact' }).in('status', ['draft', 'sent']),
         supabase.from('invoices').select('total, status, paid_at'),
         supabase.from('marketing_campaigns').select('id, status').eq('status', 'active'),
+        supabase.from('customer_profiles').select('id', { count: 'exact', head: true }),
+        supabase.from('leads').select('id, status'),
+        supabase.from('inventory_items').select('id, quantity, min_quantity'),
+        supabase.from('warranty_policies').select('id', { count: 'exact', head: true }),
       ]);
 
       // Calculate platform revenue
@@ -32,14 +36,31 @@ export function PlatformAdminDashboard() {
 
       const pendingQuotes = (quotes.data ?? []).filter(q => q.status === 'sent').length;
 
+      // Calculate inventory stats
+      const allInventory = inventory.data ?? [];
+      const inventoryCount = allInventory.length;
+      const lowStockItems = allInventory.filter(item => 
+        item.quantity !== null && item.min_quantity !== null && item.quantity <= item.min_quantity
+      ).length;
+
+      // Calculate leads stats
+      const allLeads = leads.data ?? [];
+      const newLeads = allLeads.filter(l => l.status === 'new').length;
+
       return {
         companies: companies.count ?? 0,
         users: profiles.count ?? 0,
+        customers: customers.count ?? 0,
+        leads: allLeads.length,
+        newLeads,
         appointments: appointments.count ?? 0,
         pendingQuotes,
         totalRevenue,
         monthlyRevenue,
         activeCampaigns: campaigns.data?.length ?? 0,
+        inventoryCount,
+        lowStockItems,
+        warranties: warranties.count ?? 0,
       };
     },
   });
@@ -58,6 +79,20 @@ export function PlatformAdminDashboard() {
       icon: Users, 
       description: 'Admins and employees',
       gradient: 'from-secondary to-secondary/80'
+    },
+    { 
+      title: 'Customers', 
+      value: stats?.customers ?? 0, 
+      icon: UserCircle, 
+      description: 'Across all companies',
+      gradient: 'from-cyan-500 to-cyan-600'
+    },
+    { 
+      title: 'Leads', 
+      value: stats?.leads ?? 0, 
+      icon: Target, 
+      description: `${stats?.newLeads ?? 0} new leads`,
+      gradient: 'from-orange-500 to-orange-600'
     },
     { 
       title: 'Appointments', 
@@ -97,11 +132,25 @@ export function PlatformAdminDashboard() {
       gradient: 'from-yellow-500 to-yellow-600'
     },
     { 
+      title: 'Inventory', 
+      value: stats?.inventoryCount ?? 0, 
+      icon: Package, 
+      description: stats?.lowStockItems ? `${stats.lowStockItems} low stock` : 'Items tracked',
+      gradient: 'from-amber-500 to-amber-600'
+    },
+    { 
+      title: 'Warranties', 
+      value: stats?.warranties ?? 0, 
+      icon: Shield, 
+      description: 'Active policies',
+      gradient: 'from-purple-500 to-purple-600'
+    },
+    { 
       title: 'Active Campaigns', 
       value: stats?.activeCampaigns ?? 0, 
       icon: Megaphone, 
       description: 'Marketing campaigns running',
-      gradient: 'from-purple-500 to-purple-600'
+      gradient: 'from-pink-500 to-pink-600'
     },
   ];
 
