@@ -321,18 +321,19 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
           <TabsContent value="create" className="space-y-4">
             {/* Segment Name */}
             <div className="space-y-2">
-              <Label htmlFor="segmentName">Segment Name</Label>
+              <Label htmlFor="segmentName" className="text-foreground/70">Segment Name</Label>
               <Input
                 id="segmentName"
                 placeholder="e.g., High Value Customers"
                 value={segmentName}
                 onChange={(e) => setSegmentName(e.target.value)}
+                className="bg-white text-slate-900 border-border placeholder:text-slate-400"
               />
             </div>
 
             {/* Criteria Section */}
-            <div className="space-y-4 p-4 bg-muted/50 rounded-lg">
-              <h4 className="font-medium text-sm flex items-center gap-2">
+            <div className="space-y-4 p-4 bg-muted/50 rounded-lg border border-border">
+              <h4 className="font-medium text-sm flex items-center gap-2 text-foreground">
                 <Filter className="h-4 w-4" />
                 Segment Criteria
               </h4>
@@ -340,12 +341,12 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
               {/* Last Service */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-sm flex items-center gap-1">
+                  <Label className="text-sm flex items-center gap-1 text-foreground/70">
                     <Calendar className="h-3.5 w-3.5" />
                     Last Service Within
                   </Label>
                   <Select value={lastServiceDays} onValueChange={setLastServiceDays}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white text-slate-900 border-border">
                       <SelectValue placeholder="Select period" />
                     </SelectTrigger>
                     <SelectContent>
@@ -359,12 +360,12 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm flex items-center gap-1">
+                  <Label className="text-sm flex items-center gap-1 text-foreground/70">
                     <Filter className="h-3.5 w-3.5" />
                     Customer Status
                   </Label>
                   <Select value={customerStatus} onValueChange={setCustomerStatus}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white text-slate-900 border-border">
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -379,7 +380,7 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
               {/* Spend Range */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-sm flex items-center gap-1">
+                  <Label className="text-sm flex items-center gap-1 text-foreground/70">
                     <DollarSign className="h-3.5 w-3.5" />
                     Min Total Spend
                   </Label>
@@ -388,10 +389,11 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
                     placeholder="0"
                     value={minSpend}
                     onChange={(e) => setMinSpend(e.target.value)}
+                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm flex items-center gap-1">
+                  <Label className="text-sm flex items-center gap-1 text-foreground/70">
                     <DollarSign className="h-3.5 w-3.5" />
                     Max Total Spend
                   </Label>
@@ -400,6 +402,7 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
                     placeholder="No limit"
                     value={maxSpend}
                     onChange={(e) => setMaxSpend(e.target.value)}
+                    className="bg-white text-slate-900 border-border placeholder:text-slate-400"
                   />
                 </div>
               </div>
@@ -407,7 +410,7 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
               {/* Service Types */}
               {services && services.length > 0 && (
                 <div className="space-y-2">
-                  <Label className="text-sm">Service Types</Label>
+                  <Label className="text-sm text-foreground/70">Service Types</Label>
                   <div className="flex flex-wrap gap-2">
                     {services.map((service) => (
                       <Badge
