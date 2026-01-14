@@ -40,6 +40,7 @@ import {
   RevenueAnalysisPage,
   DemandForecastPage,
   CustomerInsightsPage,
+  KpiDashboardPage,
 } from "./pages/ai-consoles";
 import AIAgentsHub from "./pages/AIAgentsHub";
 import AgentDetailPage from "./pages/AgentDetailPage";
@@ -136,6 +137,7 @@ const App = () => (
             <Route path="/dashboard/ai-consoles/revenue-analysis" element={<RevenueAnalysisPage />} />
             <Route path="/dashboard/ai-consoles/demand-forecast" element={<DemandForecastPage />} />
             <Route path="/dashboard/ai-consoles/customer-insights" element={<CustomerInsightsPage />} />
+            <Route path="/dashboard/ai-consoles/kpi-dashboard" element={<KpiDashboardPage />} />
             <Route path="/dashboard/ai-agents" element={<AIAgentsHub />} />
             <Route path="/dashboard/ai-agents/:agentId" element={<AgentDetailPage />} />
             <Route path="/dashboard/widget" element={<Widget />} />

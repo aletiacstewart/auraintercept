@@ -97,6 +97,7 @@ const navGroups: NavGroup[] = [
       { label: 'Revenue Analysis', icon: CreditCard, href: '/dashboard/ai-consoles/revenue-analysis', roles: ['platform_admin', 'company_admin'] },
       { label: 'Revenue Forecast', icon: Clock, href: '/dashboard/ai-consoles/demand-forecast', roles: ['platform_admin', 'company_admin'] },
       { label: 'Customer Insights', icon: Users, href: '/dashboard/ai-consoles/customer-insights', roles: ['platform_admin', 'company_admin'] },
+      { label: 'KPI Dashboard', icon: BarChart3, href: '/dashboard/ai-consoles/kpi-dashboard', roles: ['platform_admin', 'company_admin'] },
     ],
   },
   {
