@@ -46,7 +46,7 @@ export default function BusinessMgtOpsInstall() {
         {/* Web Backup Access */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
+            <CardTitle className="flex items-center gap-2">
               <Monitor className="h-5 w-5" />
               Web Backup Access
             </CardTitle>
