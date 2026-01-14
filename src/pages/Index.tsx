@@ -753,36 +753,7 @@ export default function Index() {
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Phone className="w-4 h-4 text-green-400" />
-                  <span className="font-semibold text-sm text-white">Twilio</span>
-                </div>
-                <p className="text-xs text-white/70 mb-2">SMS & Voice Calls</p>
-                <p className="text-xs text-white/90">$1.15/number + ~$30-100/mo usage</p>
-                <p className="text-xs text-muted-foreground mt-1">Required for: Professional & Enterprise</p>
-              </div>
-
-              <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Mic className="w-4 h-4 text-purple-400" />
-                  <span className="font-semibold text-sm text-white">ElevenLabs</span>
-                </div>
-                <p className="text-xs text-white/70 mb-2">AI Voice Synthesis</p>
-                <p className="text-xs text-white/90">$0-99+/month based on usage</p>
-                <p className="text-xs text-muted-foreground mt-1">Required for: Enterprise (Voice)</p>
-              </div>
-
-              <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Mail className="w-4 h-4 text-blue-400" />
-                  <span className="font-semibold text-sm text-white">Resend</span>
-                </div>
-                <p className="text-xs text-white/70 mb-2">Email Notifications</p>
-                <p className="text-xs text-white/90">$0-20+/month based on volume</p>
-                <p className="text-xs text-muted-foreground mt-1">Required for: All Tiers</p>
-              </div>
-
+              {/* Ordered from lowest to highest cost */}
               <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <Calendar className="w-4 h-4 text-cyan-400" />
@@ -795,12 +766,42 @@ export default function Index() {
 
               <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-2">
+                  <Mail className="w-4 h-4 text-blue-400" />
+                  <span className="font-semibold text-sm text-white">Resend</span>
+                </div>
+                <p className="text-xs text-white/70 mb-2">Email Notifications</p>
+                <p className="text-xs text-white/90">Free up to 3k/mo • $35+/mo for higher volume</p>
+                <p className="text-xs text-muted-foreground mt-1">Required for: All Tiers</p>
+              </div>
+
+              <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <Mic className="w-4 h-4 text-purple-400" />
+                  <span className="font-semibold text-sm text-white">ElevenLabs</span>
+                </div>
+                <p className="text-xs text-white/70 mb-2">AI Voice Synthesis</p>
+                <p className="text-xs text-white/90">Free 10k chars • $5-99+/mo based on usage</p>
+                <p className="text-xs text-muted-foreground mt-1">Required for: Voice Features</p>
+              </div>
+
+              <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <Phone className="w-4 h-4 text-green-400" />
+                  <span className="font-semibold text-sm text-white">Twilio</span>
+                </div>
+                <p className="text-xs text-white/70 mb-2">SMS & Voice Calls</p>
+                <p className="text-xs text-white/90">$1.15/number + ~$0.01/SMS + $0.01/min calls</p>
+                <p className="text-xs text-muted-foreground mt-1">Required for: SMS & Call Features</p>
+              </div>
+
+              <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-2">
                   <DollarSign className="w-4 h-4 text-amber-400" />
                   <span className="font-semibold text-sm text-white">Stripe (Your Account)</span>
                 </div>
                 <p className="text-xs text-white/70 mb-2">Invoice Payments</p>
                 <p className="text-xs text-white/90">2.9% + $0.30/transaction</p>
-                <p className="text-xs text-muted-foreground mt-1">Required for: All Tiers</p>
+                <p className="text-xs text-muted-foreground mt-1">Required for: Invoice Payments</p>
               </div>
             </div>
 
