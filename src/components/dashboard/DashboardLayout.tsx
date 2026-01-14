@@ -87,11 +87,16 @@ const navGroups: NavGroup[] = [
       { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'] },
       { label: 'Employees', icon: UserCheck, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'] },
       { label: 'Customers', icon: Users, href: '/dashboard/customers', roles: ['platform_admin', 'company_admin'] },
+    ],
+  },
+  {
+    label: 'Analytics & Reports',
+    items: [
+      { label: 'Analytics & Optimization', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'] },
       { label: 'Performance Report', icon: BarChart3, href: '/dashboard/ai-consoles/performance-report', roles: ['platform_admin', 'company_admin'] },
       { label: 'Business Insights', icon: Cpu, href: '/dashboard/ai-consoles/business-insights', roles: ['platform_admin', 'company_admin'] },
       { label: 'Revenue Analysis', icon: CreditCard, href: '/dashboard/ai-consoles/revenue-analysis', roles: ['platform_admin', 'company_admin'] },
       { label: 'Demand Forecast', icon: Clock, href: '/dashboard/ai-consoles/demand-forecast', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Analytics & Optimization', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'] },
     ],
   },
   {
@@ -105,7 +110,6 @@ const navGroups: NavGroup[] = [
       { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin'] },
       { label: 'Warranties', icon: FileCheck, href: '/dashboard/warranties', roles: ['platform_admin'] },
       { label: 'Marketing & Sales', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'] },
-      { label: 'Analytics', icon: BarChart3, href: '/dashboard/analytics', roles: ['platform_admin', 'company_admin'] },
     ],
   },
   {
