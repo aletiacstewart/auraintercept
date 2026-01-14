@@ -747,6 +747,9 @@ export default function Index() {
               <p className="text-sm text-muted-foreground">
                 Our platform integrates with industry-leading providers. You'll need your own accounts with these services.
               </p>
+              <p className="text-sm text-primary font-medium mt-2">
+                We offer a free audit to help determine which plans best fit your business needs.
+              </p>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
