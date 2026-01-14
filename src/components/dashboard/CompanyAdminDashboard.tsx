@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink, Target } from 'lucide-react';
+import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
@@ -40,7 +40,7 @@ export function CompanyAdminDashboard() {
       const monthStart = startOfMonth(now).toISOString();
       const monthEnd = endOfMonth(now).toISOString();
 
-      const [employees, customers, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs, leads] = await Promise.all([
+      const [employees, customers, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs, leads, inventory, warranties] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('customer_profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('appointments').select('id, status').eq('company_id', companyId),
@@ -50,6 +50,8 @@ export function CompanyAdminDashboard() {
         supabase.from('customer_feedback').select('rating').eq('company_id', companyId).not('rating', 'is', null),
         supabase.from('reminder_logs').select('id', { count: 'exact', head: true }).eq('company_id', companyId).gte('created_at', monthStart).lte('created_at', monthEnd),
         supabase.from('leads').select('id, status').eq('company_id', companyId),
+        supabase.from('inventory_items').select('id, quantity, min_quantity').eq('company_id', companyId),
+        supabase.from('warranty_policies').select('id').eq('company_id', companyId),
       ]);
 
       // Calculate totals
@@ -90,6 +92,16 @@ export function CompanyAdminDashboard() {
       // Messages count (reminder logs as proxy)
       const messagesCount = reminderLogs.count ?? 0;
 
+      // Calculate inventory stats
+      const allInventory = inventory.data ?? [];
+      const inventoryCount = allInventory.length;
+      const lowStockItems = allInventory.filter(item => 
+        item.quantity !== null && item.min_quantity !== null && item.quantity <= item.min_quantity
+      ).length;
+
+      // Warranty policies count
+      const warrantyCount = warranties.data?.length ?? 0;
+
       return {
         employees: employees.count ?? 0,
         customers: customers.count ?? 0,
@@ -106,6 +118,9 @@ export function CompanyAdminDashboard() {
         satisfactionRate,
         leadConversionRate,
         messagesCount,
+        inventoryCount,
+        lowStockItems,
+        warrantyCount,
       };
     },
     enabled: !!companyId,
@@ -179,6 +194,22 @@ export function CompanyAdminDashboard() {
       gradient: 'from-blue-500 to-blue-600',
       href: '/dashboard/messages'
     },
+    { 
+      title: 'Inventory', 
+      value: stats?.inventoryCount ?? 0, 
+      icon: Package, 
+      description: stats?.lowStockItems ? `${stats.lowStockItems} low stock` : 'Items tracked',
+      gradient: 'from-amber-500 to-amber-600',
+      href: '/dashboard/inventory'
+    },
+    { 
+      title: 'Warranties', 
+      value: stats?.warrantyCount ?? 0, 
+      icon: Shield, 
+      description: 'Active policies',
+      gradient: 'from-purple-500 to-purple-600',
+      href: '/dashboard/warranties'
+    },
   ];
 
   const quickActions = [
@@ -186,8 +217,10 @@ export function CompanyAdminDashboard() {
     { label: 'Analytics', icon: TrendingUp, href: '/dashboard/analytics', gradient: 'from-cyan-500 to-blue-500' },
     { label: 'Communication Logs', icon: MessageSquare, href: '/dashboard/messages', gradient: 'from-green-500 to-emerald-500' },
     { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', gradient: 'from-purple-500 to-violet-500' },
-    { label: 'Calculators', icon: DollarSign, href: '/dashboard/calculators', gradient: 'from-amber-500 to-orange-500' },
-    { label: 'Integrations Overview', icon: Puzzle, href: '/dashboard/integrations', gradient: 'from-slate-600 to-slate-700' },
+    { label: 'Inventory', icon: Package, href: '/dashboard/inventory', gradient: 'from-amber-500 to-orange-500' },
+    { label: 'Warranties', icon: Shield, href: '/dashboard/warranties', gradient: 'from-purple-500 to-violet-500' },
+    { label: 'Calculators', icon: DollarSign, href: '/dashboard/calculators', gradient: 'from-teal-500 to-teal-600' },
+    { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', gradient: 'from-slate-600 to-slate-700' },
   ];
 
   return (
