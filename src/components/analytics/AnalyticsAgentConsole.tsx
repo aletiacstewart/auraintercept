@@ -13,6 +13,7 @@ import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { PerformanceReportForm } from './forms/PerformanceReportForm';
 import { RevenueAnalysisForm } from './forms/RevenueAnalysisForm';
 import { CustomerInsightsForm } from './forms/CustomerInsightsForm';
+import { InsightsReportForm } from './forms/InsightsReportForm';
 import { TrendForecastForm } from './forms/TrendForecastForm';
 import { KpiDashboardForm } from './forms/KpiDashboardForm';
 import { ExportReportForm } from './forms/ExportReportForm';
@@ -37,6 +38,7 @@ const QUICK_ACTIONS = [
   { id: 'performance', label: 'Performance Report', icon: BarChart3, message: 'I need a performance report' },
   { id: 'revenue', label: 'Revenue Analysis', icon: DollarSign, message: 'Show me revenue analysis' },
   { id: 'customers', label: 'Customer Insights', icon: Users, message: 'I need customer insights' },
+  { id: 'insights', label: 'Business Insights', icon: Target, message: 'Show me business insights' },
   { id: 'forecast', label: 'Revenue Forecast', icon: TrendingUp, message: 'Show me revenue forecasts' },
   { id: 'kpi', label: 'KPI Dashboard', icon: Target, message: 'Show KPI dashboard' },
   { id: 'export', label: 'Export Report', icon: Download, message: 'I need to export a report' },
@@ -64,6 +66,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   const [showPerformanceForm, setShowPerformanceForm] = useState(false);
   const [showRevenueForm, setShowRevenueForm] = useState(false);
   const [showCustomersForm, setShowCustomersForm] = useState(false);
+  const [showInsightsForm, setShowInsightsForm] = useState(false);
   const [showForecastForm, setShowForecastForm] = useState(false);
   const [showKpiForm, setShowKpiForm] = useState(false);
   const [showExportForm, setShowExportForm] = useState(false);
@@ -102,6 +105,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     setShowPerformanceForm(false);
     setShowRevenueForm(false);
     setShowCustomersForm(false);
+    setShowInsightsForm(false);
     setShowForecastForm(false);
     setShowKpiForm(false);
     setShowExportForm(false);
@@ -131,6 +135,11 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     if (actionId === 'customers') {
       hideAllForms();
       setShowCustomersForm(true);
+      return;
+    }
+    if (actionId === 'insights') {
+      hideAllForms();
+      setShowInsightsForm(true);
       return;
     }
     if (actionId === 'forecast') {
@@ -169,6 +178,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       performance: `Analyze this performance data and provide insights: ${dataStr}. What recommendations do you have to improve these metrics?`,
       revenue: `Analyze this revenue data: ${dataStr}. What trends do you see and what opportunities exist to increase revenue?`,
       customers: `Analyze these customer insights: ${dataStr}. What customer segments should we focus on and how can we improve retention?`,
+      insights: `Analyze these business insights: ${dataStr}. What key trends and recommendations can you identify?`,
       forecast: `Based on this forecast data: ${dataStr}. What should we prepare for and what actions should we take?`,
       kpi: `Review these KPIs: ${dataStr}. Which ones need immediate attention and what steps can improve them?`,
       export: `I just exported a ${data.type} report with ${data.count} records. What analysis would be most valuable from this data?`,
@@ -178,7 +188,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     }
   };
 
-  const isShowingForm = showPerformanceForm || showRevenueForm || showCustomersForm || showForecastForm || showKpiForm || showExportForm;
+  const isShowingForm = showPerformanceForm || showRevenueForm || showCustomersForm || showInsightsForm || showForecastForm || showKpiForm || showExportForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -187,6 +197,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     if (showPerformanceForm) return 'Performance';
     if (showRevenueForm) return 'Revenue';
     if (showCustomersForm) return 'Customers';
+    if (showInsightsForm) return 'Insights';
     if (showForecastForm) return 'Forecast';
     if (showKpiForm) return 'KPI';
     if (showExportForm) return 'Export';
@@ -271,6 +282,14 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
                   onAnalyze={(data) => handleAnalyze('customers', data)}
+                />
+              )}
+              
+              {showInsightsForm && effectiveCompanyId && (
+                <InsightsReportForm
+                  companyId={effectiveCompanyId}
+                  onCancel={handleHome}
+                  onAnalyze={(data) => handleAnalyze('insights', data)}
                 />
               )}
               
