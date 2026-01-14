@@ -630,8 +630,34 @@ export default function Auth() {
 
                 {/* Customer Info */}
                 <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                  <p className="text-xs text-center text-card-foreground/80">
-                    <span className="font-medium text-card-foreground">Customers get free accounts</span> to engage with registered companies — book appointments, chat with AI agents, and more!
+                  <p className="text-xs text-center text-foreground">
+                    <span className="font-medium text-green-600">Customers get free accounts</span> to engage with registered companies — book appointments, chat with AI agents, and more!
+                  </p>
+                </div>
+
+                {/* 3rd Party Integrations */}
+                <div className="mt-4 p-4 rounded-lg bg-muted/50 border border-border/50">
+                  <h4 className="text-xs font-semibold text-foreground mb-3 text-center">3rd Party Integrations (Your Accounts)</h4>
+                  <div className="grid grid-cols-2 gap-2 text-[10px]">
+                    <div className="flex items-center gap-1.5">
+                      <Mail className="w-3 h-3 text-blue-500" />
+                      <span className="text-muted-foreground">Resend (Email)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Phone className="w-3 h-3 text-green-500" />
+                      <span className="text-muted-foreground">Twilio (SMS/Voice)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Mic className="w-3 h-3 text-purple-500" />
+                      <span className="text-muted-foreground">ElevenLabs (AI Voice)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <DollarSign className="w-3 h-3 text-amber-500" />
+                      <span className="text-muted-foreground">Stripe (Payments)</span>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground text-center mt-2">
+                    Usage-based billing through your own accounts
                   </p>
                 </div>
               </div>
