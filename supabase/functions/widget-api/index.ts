@@ -12,10 +12,14 @@ const RATE_LIMITS = {
   chat: { requests: 20, windowSeconds: 60 },    // 20 requests per minute
   book: { requests: 5, windowSeconds: 300 },    // 5 bookings per 5 minutes
   config: { requests: 30, windowSeconds: 60 },  // 30 requests per minute
+  slug: { requests: 10, windowSeconds: 60 },    // 10 slug lookups per minute (prevent enumeration)
 };
 
 // In-memory rate limit store (per-instance, resets on cold start)
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+// Track failed slug lookups for enumeration detection
+const failedSlugAttempts = new Map<string, { count: number; resetAt: number }>();
 
 function checkRateLimit(identifier: string, action: string): { allowed: boolean; retryAfter?: number } {
   const config = RATE_LIMITS[action as keyof typeof RATE_LIMITS] || RATE_LIMITS.config;
@@ -36,6 +40,55 @@ function checkRateLimit(identifier: string, action: string): { allowed: boolean;
   
   record.count++;
   return { allowed: true };
+}
+
+// Constant-time string comparison to prevent timing attacks
+function secureCompare(a: string, b: string): boolean {
+  if (a.length !== b.length) {
+    // Still do comparison to maintain constant time
+    let result = 0;
+    for (let i = 0; i < Math.max(a.length, b.length); i++) {
+      result |= (a.charCodeAt(i % a.length) || 0) ^ (b.charCodeAt(i % b.length) || 0);
+    }
+    return false;
+  }
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
+
+// Add artificial delay to normalize response times
+async function normalizeResponseTime(startTime: number, targetMs: number = 100): Promise<void> {
+  const elapsed = Date.now() - startTime;
+  if (elapsed < targetMs) {
+    await new Promise(resolve => setTimeout(resolve, targetMs - elapsed));
+  }
+}
+
+// Check for slug enumeration attempts
+function checkSlugEnumeration(clientIP: string): boolean {
+  const now = Date.now();
+  const record = failedSlugAttempts.get(clientIP);
+  
+  if (record && now < record.resetAt && record.count >= 5) {
+    // More than 5 failed attempts in the window - possible enumeration
+    console.warn(`Possible slug enumeration attempt from ${clientIP}`);
+    return true;
+  }
+  return false;
+}
+
+function recordFailedSlugAttempt(clientIP: string): void {
+  const now = Date.now();
+  const record = failedSlugAttempts.get(clientIP);
+  
+  if (!record || now > record.resetAt) {
+    failedSlugAttempts.set(clientIP, { count: 1, resetAt: now + 300000 }); // 5 min window
+  } else {
+    record.count++;
+  }
 }
 
 // Input validation functions
@@ -137,13 +190,33 @@ serve(async (req) => {
     const clientIP = getClientIP(req);
 
     if (!companySlug) {
-      return new Response(JSON.stringify({ error: 'Company slug required' }), {
+      await normalizeResponseTime(Date.now(), 100);
+      return new Response(JSON.stringify({ error: 'Invalid request' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Rate limiting check
+    // Check for slug enumeration attempts before any database query
+    if (checkSlugEnumeration(clientIP)) {
+      await normalizeResponseTime(Date.now(), 100);
+      return new Response(JSON.stringify({ error: 'Invalid request' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Rate limiting check - includes slug lookup rate limit
+    const slugRateCheck = checkRateLimit(clientIP, 'slug');
+    if (!slugRateCheck.allowed) {
+      console.log(`Slug rate limit exceeded for ${clientIP}`);
+      await normalizeResponseTime(Date.now(), 100);
+      return new Response(JSON.stringify({ error: 'Invalid request' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const rateLimitAction = action === 'book' ? 'book' : action === 'chat' ? 'chat' : 'config';
     const rateCheck = checkRateLimit(clientIP, rateLimitAction);
     if (!rateCheck.allowed) {
@@ -161,20 +234,26 @@ serve(async (req) => {
       });
     }
 
-    // Get company by slug
+    // Get company by slug with timing normalization
+    const queryStartTime = Date.now();
     const { data: company, error: companyError } = await supabase
       .from('companies')
       .select('*')
       .eq('slug', companySlug)
       .single();
 
-    // SECURITY: Return generic error to prevent company slug enumeration
+    // SECURITY: Normalize response time and return generic error to prevent enumeration
     if (companyError || !company) {
+      recordFailedSlugAttempt(clientIP);
+      await normalizeResponseTime(queryStartTime, 100);
       return new Response(JSON.stringify({ error: 'Invalid request' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    
+    // Also normalize successful responses to have similar timing
+    await normalizeResponseTime(queryStartTime, 100);
 
     // Get company config action
     if (action === 'config') {

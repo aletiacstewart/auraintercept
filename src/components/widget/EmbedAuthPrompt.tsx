@@ -139,36 +139,47 @@ export function EmbedAuthPrompt({
     e.preventDefault();
     if (!email || !password) return;
 
+    // Validate terms agreement
+    if (!termsAgreed) {
+      toast.error('You must agree to the Terms of Service and Privacy Policy');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: window.location.href,
-          data: {
-            full_name: name,
-          },
+      // Use secure edge function for registration with server-side validation
+      const { data: registerResult, error: registerError } = await supabase.functions.invoke('customer-register', {
+        body: {
+          email: email.trim().toLowerCase(),
+          password,
+          name: name.trim(),
+          companyId,
+          termsAgreed,
         },
       });
 
-      if (error) throw error;
+      if (registerError) {
+        throw new Error(registerError.message || 'Registration failed');
+      }
 
-      if (data.user) {
-        // Add customer role
-        await supabase.from('user_roles').insert({
-          user_id: data.user.id,
-          role: 'customer',
-        });
+      if (!registerResult?.success) {
+        throw new Error(registerResult?.error || 'Failed to create account');
+      }
 
-        // Create customer company association
-        await supabase.from('customer_company_associations').insert({
-          customer_user_id: data.user.id,
-          company_id: companyId,
-          last_interaction_at: new Date().toISOString(),
-        });
+      // Now sign in the user
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password,
+      });
 
-        onAuthenticated(data.user.id);
+      if (signInError) {
+        toast.success('Account created! Please sign in with your credentials.');
+        setMode('login');
+        return;
+      }
+
+      if (signInData.user) {
+        onAuthenticated(signInData.user.id);
         toast.success('Account created! You can now track all your appointments.');
       }
     } catch (error: any) {
