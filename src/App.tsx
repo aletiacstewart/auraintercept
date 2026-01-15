@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CustomerAuth from "./pages/CustomerAuth";
 import CustomerPortalHome from "./pages/CustomerPortalHome";
+import CustomerPortalInstall from "./pages/CustomerPortalInstall";
 import CustomerCompanyPortal from "./pages/CustomerCompanyPortal";
 
 import Dashboard from "./pages/Dashboard";
@@ -182,6 +183,7 @@ const App = () => (
               {/* Customer Portal Routes */}
               <Route path="/customer" element={<CustomerPortalHome />} />
               <Route path="/customer-portal" element={<CustomerPortalHome />} />
+              <Route path="/customer-portal-install" element={<CustomerPortalInstall />} />
               <Route path="/customer-portal/:companySlug" element={<CustomerCompanyPortal />} />
               
               {/* Legacy Customer Routes */}

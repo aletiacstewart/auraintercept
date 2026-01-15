@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2, User, X, LogIn, UserPlus, Globe, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { CustomerPortalInstallPrompt } from './CustomerPortalInstallPrompt';
 
 interface EmbedAuthPromptProps {
   companyId: string;
@@ -27,7 +28,8 @@ export function EmbedAuthPrompt({
   onDismiss,
   primaryColor = '#6366f1'
 }: EmbedAuthPromptProps) {
-  const [mode, setMode] = useState<'prompt' | 'login' | 'signup' | 'returning'>('prompt');
+  const [mode, setMode] = useState<'prompt' | 'login' | 'signup' | 'returning' | 'install-prompt'>('prompt');
+  const [signupEmail, setSignupEmail] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -179,7 +181,10 @@ export function EmbedAuthPrompt({
       }
 
       if (signInData.user) {
-        onAuthenticated(signInData.user.id);
+        // Store the email for the install prompt
+        setSignupEmail(email.trim().toLowerCase());
+        // Show install prompt instead of immediately completing
+        setMode('install-prompt');
         toast.success('Account created! You can now track all your appointments.');
       }
     } catch (error: any) {
@@ -193,6 +198,28 @@ export function EmbedAuthPrompt({
   // Show loading state while checking session
   if (checkingSession) {
     return null;
+  }
+
+  // Install prompt after signup
+  if (mode === 'install-prompt') {
+    const handleContinueAfterInstall = async () => {
+      // Get current user and complete authentication
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        onAuthenticated(user.id);
+      } else {
+        // Fallback to prompt mode if no user
+        setMode('prompt');
+      }
+    };
+
+    return (
+      <CustomerPortalInstallPrompt
+        onContinue={handleContinueAfterInstall}
+        userEmail={signupEmail}
+        primaryColor={primaryColor}
+      />
+    );
   }
 
   // Returning customer view
