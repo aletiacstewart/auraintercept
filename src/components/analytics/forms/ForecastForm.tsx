@@ -74,7 +74,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
 
   const renderDemandForecast = () => (
     <div className="space-y-4">
-      <div className="p-4 rounded-lg bg-white border border-border">
+      <div className="p-4 rounded-lg bg-muted/50 border border-border">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-blue-500" />
@@ -95,11 +95,11 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 rounded-lg bg-white border border-border">
+        <div className="p-3 rounded-lg bg-muted/50 border border-border">
           <p className="text-xs text-foreground/70">Daily Average</p>
           <p className="text-xl font-bold text-foreground">{(historicalData?.avgDailyAppointments || 0).toFixed(1)}</p>
         </div>
-        <div className="p-3 rounded-lg bg-white border border-border">
+        <div className="p-3 rounded-lg bg-muted/50 border border-border">
           <p className="text-xs text-foreground/70">Peak Day Expected</p>
           <p className="text-xl font-bold text-foreground">{Math.round((historicalData?.avgDailyAppointments || 0) * 1.4)}</p>
         </div>
@@ -116,7 +116,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
 
   const renderRevenueForecast = () => (
     <div className="space-y-4">
-      <div className="p-4 rounded-lg bg-white border border-border">
+      <div className="p-4 rounded-lg bg-muted/50 border border-border">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <DollarSign className="h-5 w-5 text-green-500" />
@@ -137,11 +137,11 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 rounded-lg bg-white border border-border">
+        <div className="p-3 rounded-lg bg-muted/50 border border-border">
           <p className="text-xs text-foreground/70">Daily Average</p>
           <p className="text-xl font-bold text-foreground">${(historicalData?.avgDailyRevenue || 0).toFixed(0)}</p>
         </div>
-        <div className="p-3 rounded-lg bg-white border border-border">
+        <div className="p-3 rounded-lg bg-muted/50 border border-border">
           <p className="text-xs text-foreground/70">Last 30 Days</p>
           <p className="text-xl font-bold text-foreground">${(historicalData?.historicalRevenue || 0).toLocaleString()}</p>
         </div>
@@ -158,7 +158,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
 
   const renderStaffingForecast = () => (
     <div className="space-y-4">
-      <div className="p-4 rounded-lg bg-white border border-border">
+      <div className="p-4 rounded-lg bg-muted/50 border border-border">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-purple-500" />
@@ -186,11 +186,11 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 rounded-lg bg-white border border-border">
+        <div className="p-3 rounded-lg bg-muted/50 border border-border">
           <p className="text-xs text-foreground/70">Jobs per Employee</p>
           <p className="text-xl font-bold text-foreground">{Math.round(demandForecast / (historicalData?.totalEmployees || 1))}</p>
         </div>
-        <div className="p-3 rounded-lg bg-white border border-border">
+        <div className="p-3 rounded-lg bg-muted/50 border border-border">
           <p className="text-xs text-foreground/70">Utilization Rate</p>
           <p className="text-xl font-bold text-foreground">{Math.min(100, Math.round((demandForecast / ((historicalData?.totalEmployees || 1) * forecastDays * 5)) * 100))}%</p>
         </div>
@@ -209,7 +209,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
   );
 
   return (
-    <Card className="border-border bg-background shadow-sm">
+    <Card className="border-border bg-card shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2 text-foreground">

@@ -422,7 +422,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
   );
 
   return (
-    <Card className="border-border bg-background">
+    <Card className="border-border bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2 text-foreground">
@@ -434,12 +434,12 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 bg-muted/50 rounded-b-lg">
         {/* Report Type Selector */}
         <div className="space-y-2">
           <Label className="text-foreground/70">Report View</Label>
           <Select value={reportView} onValueChange={(v) => setReportView(v as ReportView)}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white text-slate-900 border-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -460,7 +460,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
               Date Range
             </Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -474,7 +474,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
           <div className="space-y-2">
             <Label className="text-foreground/70">Compare To</Label>
             <Select value={compareRange} onValueChange={setCompareRange}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -492,7 +492,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
             Department / Team
           </Label>
           <Select value={department} onValueChange={setDepartment}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white text-slate-900 border-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

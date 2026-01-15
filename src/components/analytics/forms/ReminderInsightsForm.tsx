@@ -307,7 +307,7 @@ export function ReminderInsightsForm({ companyId, onCancel, onAnalyze }: Reminde
   const isLoading = loadingAnalytics || loadingHistory;
 
   return (
-    <Card className="bg-muted/50 border-border">
+    <Card className="bg-card border-border">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div>
@@ -336,7 +336,7 @@ export function ReminderInsightsForm({ companyId, onCancel, onAnalyze }: Reminde
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 bg-muted/50 rounded-b-lg">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="stats">Statistics</TabsTrigger>

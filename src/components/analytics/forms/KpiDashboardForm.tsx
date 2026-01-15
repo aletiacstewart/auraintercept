@@ -127,7 +127,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
   };
 
   return (
-    <Card className="border-border bg-background shadow-sm">
+    <Card className="border-border bg-card shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2 text-foreground">
@@ -162,13 +162,13 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-white animate-pulse h-20" />
+              <div key={i} className="p-4 rounded-lg bg-muted/50 animate-pulse h-20" />
             ))}
           </div>
         ) : (
           <div className="space-y-3">
             {/* Completion Rate */}
-            <div className="p-4 rounded-lg bg-white border border-border">
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4 text-foreground/70" />
@@ -183,7 +183,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
             </div>
 
             {/* Revenue */}
-            <div className="p-4 rounded-lg bg-white border border-border">
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4 text-foreground/70" />
@@ -198,7 +198,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
             </div>
 
             {/* Jobs Completed */}
-            <div className="p-4 rounded-lg bg-white border border-border">
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-foreground/70" />
@@ -213,7 +213,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
             </div>
 
             {/* Response Time */}
-            <div className="p-4 rounded-lg bg-white border border-border">
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-foreground/70" />
@@ -228,7 +228,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
             </div>
 
             {/* Customer Satisfaction */}
-            <div className="p-4 rounded-lg bg-white border border-border">
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-foreground/70" />

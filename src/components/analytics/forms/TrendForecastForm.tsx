@@ -120,7 +120,7 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
   };
 
   return (
-    <Card className="border-border bg-background">
+    <Card className="border-border bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2 text-foreground">
@@ -132,13 +132,13 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 bg-muted/50 rounded-b-lg">
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
             <Label className="text-foreground/70">Metric</Label>
             <Select value={metric} onValueChange={setMetric}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -151,7 +151,7 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
           <div className="space-y-2">
             <Label className="text-foreground/70">Forecast Period</Label>
             <Select value={forecastDays} onValueChange={setForecastDays}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white text-slate-900 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

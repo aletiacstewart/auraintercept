@@ -113,7 +113,7 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
   });
 
   return (
-    <Card className="border-border bg-background">
+    <Card className="border-border bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2 text-foreground">
@@ -125,7 +125,7 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 bg-muted/50 rounded-b-lg">
         {/* Filters */}
         <div className="space-y-2">
           <Label className="flex items-center gap-1 text-foreground/70">
@@ -133,7 +133,7 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
             Analysis Period
           </Label>
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white text-slate-900 border-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
