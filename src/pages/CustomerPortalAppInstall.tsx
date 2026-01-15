@@ -59,7 +59,7 @@ export default function CustomerPortalAppInstall() {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0 font-semibold">3</span>
-                    <span>One app gives access to all companies they interact with</span>
+                    <span>Gives customers access to the Customer Portal Mobile App</span>
                   </li>
                 </ul>
               </div>
