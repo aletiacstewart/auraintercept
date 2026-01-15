@@ -191,7 +191,7 @@ export default function CustomerPortalAppInstall() {
                 { step: 1, title: 'Sign Up', desc: 'Via embedded widget' },
                 { step: 2, title: 'See QR Code', desc: 'Post-signup prompt' },
                 { step: 3, title: 'Scan & Install', desc: 'Add to home screen' },
-                { step: 4, title: 'Access Portal', desc: 'All companies in one app' },
+                { step: 4, title: 'Access Portal', desc: 'for Customer Portal' },
               ].map((item, idx) => (
                 <div key={item.step} className="flex items-center gap-4 flex-1">
                   <div className="flex flex-col items-center text-center flex-1">
