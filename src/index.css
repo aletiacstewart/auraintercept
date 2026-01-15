@@ -135,7 +135,7 @@
   /* Brand headings - only h1/h2 use Bebas Neue for major section titles */
   h1, h2 {
     font-family: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.1em;
   }
   
   /* Card titles (h3, h4) use default Inter font for cleaner readability */
@@ -147,7 +147,7 @@
   /* Explicit brand class - hero titles */
   .font-brand {
     font-family: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.1em;
   }
 }
 
