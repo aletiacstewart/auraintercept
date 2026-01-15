@@ -244,6 +244,50 @@ export type Database = {
           },
         ]
       }
+      appointment_access_logs: {
+        Row: {
+          access_type: string
+          accessed_at: string
+          appointment_id: string | null
+          client_ip: string | null
+          customer_token: string | null
+          id: string
+          metadata: Json | null
+          success: boolean
+          user_agent: string | null
+        }
+        Insert: {
+          access_type: string
+          accessed_at?: string
+          appointment_id?: string | null
+          client_ip?: string | null
+          customer_token?: string | null
+          id?: string
+          metadata?: Json | null
+          success?: boolean
+          user_agent?: string | null
+        }
+        Update: {
+          access_type?: string
+          accessed_at?: string
+          appointment_id?: string | null
+          client_ip?: string | null
+          customer_token?: string | null
+          id?: string
+          metadata?: Json | null
+          success?: boolean
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointment_access_logs_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointments: {
         Row: {
           call_opt_out: boolean
@@ -4323,6 +4367,18 @@ export type Database = {
         Returns: boolean
       }
       is_customer: { Args: { _user_id: string }; Returns: boolean }
+      log_appointment_access: {
+        Args: {
+          p_access_type: string
+          p_appointment_id: string
+          p_client_ip?: string
+          p_customer_token: string
+          p_metadata?: Json
+          p_success?: boolean
+          p_user_agent?: string
+        }
+        Returns: undefined
+      }
       validate_registration_code: {
         Args: { p_code: string; p_company_id?: string }
         Returns: {
