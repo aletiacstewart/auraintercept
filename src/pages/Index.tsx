@@ -614,7 +614,7 @@ export default function Index() {
 
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {/* Starter Plan */}
-            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30">
+            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-2">Aura Single-Point</h3>
                 <p className="text-xs text-muted-foreground mb-1">(Solo-Focus)</p>
@@ -666,7 +666,7 @@ export default function Index() {
             </Card>
 
             {/* Professional Plan */}
-            <Card className="relative overflow-hidden border-primary/50 shadow-glow">
+            <Card className="relative overflow-hidden border-primary/50 shadow-glow dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 gradient-primary" />
               <CardContent className="p-6">
                 <Badge className="mb-2 gradient-primary border-0">Most Popular</Badge>
@@ -725,7 +725,7 @@ export default function Index() {
             </Card>
 
             {/* Enterprise Plan */}
-            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30">
+            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-2">Aura Command</h3>
                 <p className="text-xs text-muted-foreground mb-1">(Enterprise)</p>
