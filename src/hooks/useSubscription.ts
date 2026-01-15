@@ -4,8 +4,10 @@ import {
   TIER_AGENT_CONFIG,
   getRequiredTierForAgent,
   getRequiredTierForConsole,
+  getRequiredTierForFeature,
   tierIncludesAgent,
   tierIncludesConsole,
+  tierIncludesFeature,
   getAgentsForTier,
   getConsolesForTier,
   getAgentDependencies,
@@ -120,6 +122,18 @@ export const useSubscription = () => {
     return getUpgradeTierForAgent(subscriptionTier as ConfigTier, agentType) as SubscriptionTier | null;
   };
 
+  // Feature area access methods (for role permissions)
+  const canAccessFeatureArea = (featureField: string): boolean => {
+    // During trial, grant full access
+    if (inTrial) return true;
+    
+    return tierIncludesFeature(subscriptionTier as ConfigTier, featureField);
+  };
+
+  const getFeatureRequiredTier = (featureField: string): SubscriptionTier | null => {
+    return getRequiredTierForFeature(featureField) as SubscriptionTier | null;
+  };
+
   // Get all tiers for display
   const getAllTiers = (): { tier: SubscriptionTier; label: string; price: string; description: string }[] => {
     return (['single_point', 'multi_track', 'command'] as SubscriptionTier[]).map(tier => ({
@@ -150,5 +164,8 @@ export const useSubscription = () => {
     getTierInfo,
     getUpgradeTier,
     getAllTiers,
+    // Feature area access methods
+    canAccessFeatureArea,
+    getFeatureRequiredTier,
   };
 };

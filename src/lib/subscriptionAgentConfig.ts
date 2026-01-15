@@ -171,3 +171,52 @@ export const TIER_HIERARCHY: Record<SubscriptionTier, number> = {
 export function isTierAtLeast(currentTier: SubscriptionTier, requiredTier: SubscriptionTier): boolean {
   return TIER_HIERARCHY[currentTier] >= TIER_HIERARCHY[requiredTier];
 }
+
+// Feature area to tier mapping (for role permissions)
+export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
+  free: [],
+  single_point: [
+    'can_access_appointments',
+    'can_access_customers',
+    'can_access_quotes',
+  ],
+  multi_track: [
+    'can_access_appointments',
+    'can_access_customers',
+    'can_access_quotes',
+    'can_access_leads',
+    'can_access_invoices',
+    'can_access_field_ops',
+    'can_access_inventory',
+  ],
+  command: [
+    'can_access_appointments',
+    'can_access_customers',
+    'can_access_quotes',
+    'can_access_leads',
+    'can_access_invoices',
+    'can_access_field_ops',
+    'can_access_inventory',
+    'can_access_campaigns',
+    'can_access_analytics',
+    'can_access_warranties',
+  ],
+};
+
+// Get the minimum tier required for a specific feature area
+export function getRequiredTierForFeature(featureField: string): SubscriptionTier | null {
+  const tiers: SubscriptionTier[] = ['single_point', 'multi_track', 'command'];
+  
+  for (const tier of tiers) {
+    if (TIER_FEATURE_CONFIG[tier].includes(featureField)) {
+      return tier;
+    }
+  }
+  
+  return null; // Feature not found in any tier
+}
+
+// Check if a tier includes access to a specific feature area
+export function tierIncludesFeature(tier: SubscriptionTier, featureField: string): boolean {
+  return TIER_FEATURE_CONFIG[tier]?.includes(featureField) ?? false;
+}
