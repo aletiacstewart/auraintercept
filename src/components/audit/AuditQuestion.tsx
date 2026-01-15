@@ -51,11 +51,10 @@ export function AuditQuestion({
               <Label
                 htmlFor={`${question.id}-${index}`}
                 className={cn(
-                  "flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 bg-white",
-                  "hover:border-primary/50 hover:bg-slate-50",
+                  "flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200",
                   selectedOption === option.label
-                    ? "border-primary bg-primary/5"
-                    : "border-slate-200"
+                    ? "border-primary bg-white"
+                    : "border-white/20 bg-white/10 hover:border-white/40 hover:bg-white/15"
                 )}
               >
                 <div
@@ -63,14 +62,17 @@ export function AuditQuestion({
                     "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0",
                     selectedOption === option.label
                       ? "border-primary bg-primary"
-                      : "border-slate-400"
+                      : "border-white/50"
                   )}
                 >
                   {selectedOption === option.label && (
                     <div className="w-2 h-2 rounded-full bg-white" />
                   )}
                 </div>
-                <span className="text-sm sm:text-base text-slate-700">{option.label}</span>
+                <span className={cn(
+                  "text-sm sm:text-base",
+                  selectedOption === option.label ? "text-slate-700" : "text-white"
+                )}>{option.label}</span>
               </Label>
             </div>
           ))}
