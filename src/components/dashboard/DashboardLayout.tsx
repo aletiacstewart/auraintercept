@@ -134,7 +134,7 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'] },
       { label: 'Customer App', icon: Globe, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Customer Portal App Install', icon: Smartphone, href: '/customer-portal-install', roles: ['platform_admin', 'company_admin'], external: true },
+      { label: 'Customer Portal App Install', icon: Smartphone, href: '/dashboard/customer-portal-app-install', roles: ['platform_admin', 'company_admin'] },
     ],
   },
   {
