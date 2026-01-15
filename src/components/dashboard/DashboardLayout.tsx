@@ -47,10 +47,13 @@ import {
   Mic,
   Globe,
   Smartphone,
+  AlertTriangle,
+  Bug,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/aura-intercept-logo.png';
 import { differenceInDays, parseISO } from 'date-fns';
+import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
@@ -157,6 +160,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Platform Resources',
     items: [
+      { label: 'Platform Issues', icon: AlertTriangle, href: '/dashboard/platform-issues', roles: ['platform_admin'] },
       { label: 'Platform Guides', icon: FileText, href: '/dashboard/guides', roles: ['platform_admin'] },
       { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'] },
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'] },
@@ -392,6 +396,23 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <span className="text-xs font-medium text-white">{roleBadge.label}</span>
             </div>
           )}
+          
+          {/* Report Issue Button */}
+          <ReportIssueDialog
+            trigger={
+              <Button
+                variant="ghost"
+                className={cn(
+                  'w-full justify-start gap-3 text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent',
+                  collapsed && 'justify-center px-2'
+                )}
+              >
+                <Bug className="w-5 h-5 flex-shrink-0" />
+                {!collapsed && <span>Report Issue</span>}
+              </Button>
+            }
+          />
+          
           <Button
             variant="ghost"
             className={cn(
