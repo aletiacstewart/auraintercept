@@ -1038,7 +1038,8 @@ export default function Index() {
           <div className="mt-8 text-center">
             <p className="text-sm text-muted-foreground mb-2">30-day free trial • No credit card required</p>
             <p className="text-xs text-muted-foreground/80 mb-2">All we ask is your honest feedback on features and that you report any issues you find.</p>
-            <p className="text-sm text-foreground">Additional employees (Starter/Professional): <span className="font-medium">$25/month per 10 employees</span></p>
+            <p className="text-sm text-foreground mb-2">Additional employees (Starter/Professional): <span className="font-medium">$25/month per 10 employees</span></p>
+            <p className="text-sm text-foreground">One-Time Implementation Fee: <span className="font-medium">$499 - $999</span> <span className="text-muted-foreground">(based on plan)</span></p>
           </div>
 
           {/* 3rd Party Integrations */}
