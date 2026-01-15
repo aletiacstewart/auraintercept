@@ -1016,6 +1016,129 @@ export type Database = {
         }
         Relationships: []
       }
+      company_role_agent_access: {
+        Row: {
+          agent_type: string
+          company_id: string
+          created_at: string | null
+          id: string
+          is_enabled: boolean | null
+          job_type: Database["public"]["Enums"]["employee_job_type"]
+        }
+        Insert: {
+          agent_type: string
+          company_id: string
+          created_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          job_type: Database["public"]["Enums"]["employee_job_type"]
+        }
+        Update: {
+          agent_type?: string
+          company_id?: string
+          created_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          job_type?: Database["public"]["Enums"]["employee_job_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_role_agent_access_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_role_agent_access_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_role_permissions: {
+        Row: {
+          can_access_analytics: boolean | null
+          can_access_appointments: boolean | null
+          can_access_campaigns: boolean | null
+          can_access_customers: boolean | null
+          can_access_field_ops: boolean | null
+          can_access_inventory: boolean | null
+          can_access_invoices: boolean | null
+          can_access_leads: boolean | null
+          can_access_quotes: boolean | null
+          can_access_warranties: boolean | null
+          can_create: boolean | null
+          can_delete: boolean | null
+          can_edit: boolean | null
+          can_export: boolean | null
+          company_id: string
+          created_at: string | null
+          id: string
+          job_type: Database["public"]["Enums"]["employee_job_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          can_access_analytics?: boolean | null
+          can_access_appointments?: boolean | null
+          can_access_campaigns?: boolean | null
+          can_access_customers?: boolean | null
+          can_access_field_ops?: boolean | null
+          can_access_inventory?: boolean | null
+          can_access_invoices?: boolean | null
+          can_access_leads?: boolean | null
+          can_access_quotes?: boolean | null
+          can_access_warranties?: boolean | null
+          can_create?: boolean | null
+          can_delete?: boolean | null
+          can_edit?: boolean | null
+          can_export?: boolean | null
+          company_id: string
+          created_at?: string | null
+          id?: string
+          job_type: Database["public"]["Enums"]["employee_job_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          can_access_analytics?: boolean | null
+          can_access_appointments?: boolean | null
+          can_access_campaigns?: boolean | null
+          can_access_customers?: boolean | null
+          can_access_field_ops?: boolean | null
+          can_access_inventory?: boolean | null
+          can_access_invoices?: boolean | null
+          can_access_leads?: boolean | null
+          can_access_quotes?: boolean | null
+          can_access_warranties?: boolean | null
+          can_create?: boolean | null
+          can_delete?: boolean | null
+          can_edit?: boolean | null
+          can_export?: boolean | null
+          company_id?: string
+          created_at?: string | null
+          id?: string
+          job_type?: Database["public"]["Enums"]["employee_job_type"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_role_permissions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_role_permissions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cost_estimates: {
         Row: {
           appointments_count: number
@@ -4491,9 +4614,17 @@ export type Database = {
         }[]
       }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }
+      has_agent_access: {
+        Args: { _agent_type: string; _user_id: string }
+        Returns: boolean
+      }
       has_billing_access: { Args: { _user_id: string }; Returns: boolean }
       has_company_full_access: { Args: { _user_id: string }; Returns: boolean }
       has_dispatch_access: { Args: { _user_id: string }; Returns: boolean }
+      has_feature_access: {
+        Args: { _feature: string; _user_id: string }
+        Returns: boolean
+      }
       has_inventory_access: { Args: { _user_id: string }; Returns: boolean }
       has_job_type: {
         Args: { _job_type: string; _user_id: string }
