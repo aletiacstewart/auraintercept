@@ -26,11 +26,11 @@ export function AuditQuestion({
   isLast
 }: AuditQuestionProps) {
   return (
-    <Card className="border-slate-200 bg-white shadow-xl">
+    <Card className="border-primary/20 bg-card/80 backdrop-blur-sm shadow-xl">
       <CardHeader className="text-center pb-4">
-        <CardTitle className="text-xl sm:text-2xl font-brand uppercase text-slate-900">{question.question}</CardTitle>
+        <CardTitle className="text-xl sm:text-2xl font-brand uppercase text-white">{question.question}</CardTitle>
         {question.description && (
-          <CardDescription className="text-base text-slate-500">
+          <CardDescription className="text-base text-white/80">
             {question.description}
           </CardDescription>
         )}
