@@ -67,7 +67,7 @@ export default function CustomerPortalAppInstall() {
                 <h4 className="font-semibold text-sm text-white">Customer Benefits</h4>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { label: 'All companies in one app', icon: Building2 },
+                    { label: 'Customer Portal Mobile App Access', icon: Building2 },
                     { label: 'Track appointments', icon: Calendar },
                     { label: 'View quotes & invoices', icon: FileText },
                     { label: 'Get notifications', icon: Bell }
