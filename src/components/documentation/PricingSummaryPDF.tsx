@@ -337,7 +337,7 @@ const SUBSCRIPTION_TIERS = {
     appointments: 'Unlimited',
     reminders: 'Email only',
     employees: '5 included',
-    additionalEmployees: '$25/mo (max 5 extra)',
+    additionalEmployees: '$25/mo per 10 employees',
     bestFor: 'Small service companies getting started with AI automation',
   },
   professional: {
@@ -350,7 +350,7 @@ const SUBSCRIPTION_TIERS = {
     appointments: 'Unlimited',
     reminders: 'Email + SMS',
     employees: '10 included',
-    additionalEmployees: '$25/mo (max 5 extra)',
+    additionalEmployees: '$25/mo per 10 employees',
     bestFor: 'Growing companies with field technicians needing dispatch automation',
   },
   enterprise: {
@@ -518,7 +518,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.infoBox}>
         <Text style={styles.noticeTitle}>Additional Employee Pricing</Text>
         <Text style={styles.noticeText}>
-          Starter and Professional tiers can add up to 5 additional employee accounts at $25/month each. 
+          Starter and Professional tiers can add additional employee accounts at $25/month per 10 employees. 
           Enterprise tier includes unlimited employee accounts at no additional cost.
         </Text>
       </View>
@@ -555,7 +555,7 @@ const PricingSummaryPDF = () => (
           { category: 'Voice Reminders', starter: '—', pro: '—', enterprise: '✓' },
           { category: '', starter: '', pro: '', enterprise: '' },
           { category: 'Employee Accounts', starter: '5', pro: '10', enterprise: 'Unlimited' },
-          { category: 'Additional Employees', starter: '$25/mo (max 5)', pro: '$25/mo (max 5)', enterprise: 'Included' },
+          { category: 'Additional Employees', starter: '$25/mo per 10', pro: '$25/mo per 10', enterprise: 'Included' },
           { category: 'Widget Access', starter: '✓', pro: '✓', enterprise: '✓' },
           { category: '', starter: '', pro: '', enterprise: '' },
           { category: 'Customer Portal', starter: '✓', pro: '✓', enterprise: '✓' },
@@ -616,7 +616,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Unlimited appointments</FeatureItem>
         <FeatureItem>Email reminders only</FeatureItem>
         <FeatureItem>5 employee accounts included</FeatureItem>
-        <FeatureItem>Up to 5 additional employees at $25/month each</FeatureItem>
+        <FeatureItem>Additional employees at $25/month per 10</FeatureItem>
         <FeatureItem>Embeddable booking widget</FeatureItem>
       </View>
 
@@ -675,7 +675,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Unlimited appointments</FeatureItem>
         <FeatureItem>Email + SMS reminders</FeatureItem>
         <FeatureItem>10 employee accounts included</FeatureItem>
-        <FeatureItem>Up to 5 additional employees at $25/month each</FeatureItem>
+        <FeatureItem>Additional employees at $25/month per 10</FeatureItem>
       </View>
 
       <View style={styles.footer}>
