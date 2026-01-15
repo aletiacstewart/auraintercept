@@ -26,11 +26,11 @@ export function AuditQuestion({
   isLast
 }: AuditQuestionProps) {
   return (
-    <Card className="border-primary/20 bg-card/80 backdrop-blur-sm shadow-xl">
+    <Card className="border-slate-200 bg-white shadow-xl">
       <CardHeader className="text-center pb-4">
-        <CardTitle className="text-xl sm:text-2xl font-brand uppercase">{question.question}</CardTitle>
+        <CardTitle className="text-xl sm:text-2xl font-brand uppercase text-slate-900">{question.question}</CardTitle>
         {question.description && (
-          <CardDescription className="text-base">
+          <CardDescription className="text-base text-slate-500">
             {question.description}
           </CardDescription>
         )}
@@ -51,26 +51,26 @@ export function AuditQuestion({
               <Label
                 htmlFor={`${question.id}-${index}`}
                 className={cn(
-                  "flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200",
-                  "hover:border-primary/50 hover:bg-primary/5",
+                  "flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 bg-white",
+                  "hover:border-primary/50 hover:bg-slate-50",
                   selectedOption === option.label
-                    ? "border-primary bg-primary/10"
-                    : "border-border"
+                    ? "border-primary bg-primary/5"
+                    : "border-slate-200"
                 )}
               >
                 <div
                   className={cn(
-                    "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+                    "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0",
                     selectedOption === option.label
                       ? "border-primary bg-primary"
-                      : "border-muted-foreground"
+                      : "border-slate-400"
                   )}
                 >
                   {selectedOption === option.label && (
-                    <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                    <div className="w-2 h-2 rounded-full bg-white" />
                   )}
                 </div>
-                <span className="text-sm sm:text-base">{option.label}</span>
+                <span className="text-sm sm:text-base text-slate-700">{option.label}</span>
               </Label>
             </div>
           ))}
@@ -89,7 +89,7 @@ export function AuditQuestion({
           <Button
             onClick={onNext}
             disabled={!selectedOption}
-            className="gap-2 text-white disabled:opacity-100 disabled:text-white/70"
+            className="gap-2"
           >
             {isLast ? "See Results" : "Next"}
             <ArrowRight className="h-4 w-4" />
