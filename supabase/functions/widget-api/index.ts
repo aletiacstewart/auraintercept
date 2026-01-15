@@ -110,7 +110,15 @@ function validatePhone(phone: string | null | undefined): { valid: boolean; erro
 
 function sanitizeString(input: string | null | undefined, maxLength: number): string {
   if (!input) return '';
-  return input.slice(0, maxLength).trim();
+  // HTML entity encoding for XSS prevention
+  return input
+    .slice(0, maxLength)
+    .trim()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
 }
 
 function validateBookingInput(args: any): { valid: boolean; errors: string[]; sanitized: any } {
@@ -255,20 +263,13 @@ serve(async (req) => {
     // Also normalize successful responses to have similar timing
     await normalizeResponseTime(queryStartTime, 100);
 
-    // Get company config action
+    // Get company config action - using secure RPC functions
     if (action === 'config') {
       const { data: hours } = await supabase
-        .from('business_hours')
-        .select('*')
-        .eq('company_id', company.id)
-        .order('day_of_week');
+        .rpc('get_company_business_hours', { p_company_id: company.id });
 
       const { data: services } = await supabase
-        .from('services')
-        .select('id, name, duration_minutes, price, description, category')
-        .eq('company_id', company.id)
-        .eq('is_active', true)
-        .order('sort_order');
+        .rpc('get_company_services', { p_company_id: company.id });
 
       return new Response(JSON.stringify({
         company: {
@@ -325,11 +326,11 @@ serve(async (req) => {
         });
       }
 
-      // Build comprehensive knowledge base context
+      // Build comprehensive knowledge base context using secure RPC functions
       const [servicesRes, faqsRes, hoursRes, docsRes, employeesRes] = await Promise.all([
-        supabase.from('services').select('*').eq('company_id', company.id).eq('is_active', true),
-        supabase.from('faqs').select('*').eq('company_id', company.id).eq('is_active', true),
-        supabase.from('business_hours').select('*').eq('company_id', company.id),
+        supabase.rpc('get_company_services', { p_company_id: company.id }),
+        supabase.rpc('get_company_faqs', { p_company_id: company.id }),
+        supabase.rpc('get_company_business_hours', { p_company_id: company.id }),
         supabase.from('knowledge_documents').select('name, content_text').eq('company_id', company.id),
         supabase.from('profiles').select('id, full_name, availability_json').eq('company_id', company.id),
       ]);
@@ -339,15 +340,15 @@ serve(async (req) => {
       const currentDay = dayNames[today.getDay()];
       const currentTime = today.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
-      const hoursText = (hoursRes.data || []).map(h => 
+      const hoursText = (hoursRes.data || []).map((h: any) => 
         h.is_closed ? `${dayNames[h.day_of_week]}: Closed` : `${dayNames[h.day_of_week]}: ${h.open_time} - ${h.close_time}`
       ).join('\n');
 
-      const servicesText = (servicesRes.data || []).map(s => 
+      const servicesText = (servicesRes.data || []).map((s: any) => 
         `- ${s.name}: ${s.duration_minutes} mins, $${s.price || 'varies'}${s.description ? ` - ${s.description}` : ''}`
       ).join('\n');
 
-      const faqsText = (faqsRes.data || []).map(f => `Q: ${f.question}\nA: ${f.answer}`).join('\n\n');
+      const faqsText = (faqsRes.data || []).map((f: any) => `Q: ${f.question}\nA: ${f.answer}`).join('\n\n');
       const docsText = (docsRes.data || []).filter(d => d.content_text).map(d => d.content_text).join('\n\n');
 
       // Analyze user intent for routing

@@ -762,10 +762,11 @@ async function collectFeedback(supabase: any, companyId: string, knowledge: any,
 }
 
 async function fetchKnowledgeBase(supabase: any, companyId: string) {
+  // Use secure RPC functions for public data, direct queries only for internal/authenticated data
   const [servicesRes, faqsRes, hoursRes, docsRes, companyRes] = await Promise.all([
-    supabase.from('services').select('*').eq('company_id', companyId).eq('is_active', true),
-    supabase.from('faqs').select('*').eq('company_id', companyId).eq('is_active', true),
-    supabase.from('business_hours').select('*').eq('company_id', companyId),
+    supabase.rpc('get_company_services', { p_company_id: companyId }),
+    supabase.rpc('get_company_faqs', { p_company_id: companyId }),
+    supabase.rpc('get_company_business_hours', { p_company_id: companyId }),
     supabase.from('knowledge_documents').select('name, content_text').eq('company_id', companyId),
     supabase.from('companies').select('name, review_google_url, review_facebook_url, review_yelp_url').eq('id', companyId).single()
   ]);

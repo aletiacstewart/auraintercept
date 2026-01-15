@@ -71,11 +71,14 @@ export default function CustomerCompanyPortal() {
     enabled: !!companySlug,
   });
 
-  // Fetch company services
+  // Fetch company services using authenticated query (requires user to be logged in via RLS)
+  // For public access, use the widget-api endpoint instead
   const { data: services } = useQuery({
     queryKey: ['company-services', company?.id],
     queryFn: async () => {
       if (!company?.id) return [];
+      // The services query works with authenticated users via RLS
+      // For public users, the AI chat uses secure RPC functions
       const { data, error } = await supabase
         .from('services')
         .select('id, name, description, price, duration_minutes, category')
@@ -83,8 +86,11 @@ export default function CustomerCompanyPortal() {
         .eq('is_active', true)
         .order('sort_order');
 
-      if (error) throw error;
-      return data as Service[];
+      if (error) {
+        console.warn('Services fetch failed, may require authentication:', error);
+        return [];
+      }
+      return (data || []) as Service[];
     },
     enabled: !!company?.id,
   });

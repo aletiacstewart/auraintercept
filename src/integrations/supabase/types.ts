@@ -4249,46 +4249,25 @@ export type Database = {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
       }
-      get_appointment_by_token: {
-        Args: { p_token: string }
-        Returns: {
-          call_opt_out: boolean
-          company_id: string
-          created_at: string
-          crm_activity_id: string | null
-          crm_deal_id: string | null
-          crm_provider: string | null
-          customer_address: string | null
-          customer_email: string | null
-          customer_name: string
-          customer_phone: string | null
-          customer_token: string | null
-          customer_user_id: string | null
-          datetime: string
-          deal_stage: string | null
-          deal_value: number | null
-          duration_minutes: number
-          email_opt_out: boolean
-          employee_id: string | null
-          id: string
-          last_synced_at: string | null
-          notes: string | null
-          reminder_1h_sent: boolean | null
-          reminder_1h_sent_at: string | null
-          reminder_24h_sent: boolean | null
-          reminder_24h_sent_at: string | null
-          service_type: string
-          sms_opt_out: boolean
-          status: string
-          updated_at: string
-        }[]
-        SetofOptions: {
-          from: "*"
-          to: "appointments"
-          isOneToOne: false
-          isSetofReturn: true
-        }
-      }
+      get_appointment_by_token:
+        | {
+            Args: { p_token: string }
+            Returns: {
+              error: true
+            } & "Could not choose the best candidate function between: public.get_appointment_by_token(p_token => text), public.get_appointment_by_token(p_token => uuid). Try renaming the parameters or the function itself in the database so function overloading can be resolved"[]
+          }
+        | {
+            Args: { p_token: string }
+            Returns: {
+              error: true
+            } & "Could not choose the best candidate function between: public.get_appointment_by_token(p_token => text), public.get_appointment_by_token(p_token => uuid). Try renaming the parameters or the function itself in the database so function overloading can be resolved"[]
+            SetofOptions: {
+              from: "*"
+              to: "appointments"
+              isOneToOne: false
+              isSetofReturn: true
+            }
+          }
       get_company_public_info: {
         Args: { p_slug: string }
         Returns: {
@@ -4344,6 +4323,15 @@ export type Database = {
         Returns: boolean
       }
       is_customer: { Args: { _user_id: string }; Returns: boolean }
+      validate_registration_code: {
+        Args: { p_code: string; p_company_id?: string }
+        Returns: {
+          company_id: string
+          company_name: string
+          is_valid: boolean
+          job_role: string
+        }[]
+      }
     }
     Enums: {
       app_role: "platform_admin" | "company_admin" | "employee" | "customer"
