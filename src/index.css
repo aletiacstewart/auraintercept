@@ -160,6 +160,11 @@
   .text-description {
     @apply text-muted-foreground text-sm;
   }
+  
+  /* Dark card surface - forces muted text to be light/white for readability */
+  .dark-card-surface {
+    --muted-foreground: 0 0% 100% / 0.6;
+  }
 }
 
 @layer utilities {
