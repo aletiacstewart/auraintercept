@@ -130,7 +130,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
     <Card className="border-border bg-card shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
             <Target className="h-5 w-5 text-primary" />
             KPI Dashboard
           </CardTitle>

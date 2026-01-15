@@ -105,7 +105,7 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
     <Card className="border-border bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
             <DollarSign className="h-5 w-5 text-primary" />
             Revenue Analysis
           </CardTitle>
