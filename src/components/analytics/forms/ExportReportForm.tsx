@@ -168,7 +168,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
   };
 
   return (
-    <Card className="border-border bg-background shadow-sm">
+    <Card className="border-border bg-card shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2 text-foreground">
@@ -234,7 +234,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
         </div>
 
         {/* Include Fields */}
-        <div className="space-y-3 p-3 rounded-lg bg-white border border-border">
+        <div className="space-y-3 p-3 rounded-lg bg-muted/50 border border-border">
           <h4 className="font-medium text-sm text-foreground">Include Fields</h4>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center gap-2">
@@ -273,7 +273,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
         </div>
 
         {/* Preview */}
-        <div className="p-3 rounded-lg bg-white border border-border flex items-center justify-between">
+        <div className="p-3 rounded-lg bg-muted/50 border border-border flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-foreground">Records to Export</p>
             <p className="text-xs text-foreground/50">

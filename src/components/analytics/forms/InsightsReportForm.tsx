@@ -101,7 +101,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
   const renderSummary = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-4 rounded-lg bg-white border border-border">
+        <div className="p-4 rounded-lg bg-muted/50 border border-border">
           <div className="flex items-center gap-2 text-foreground/70 mb-1">
             <Calendar className="h-4 w-4" />
             <span className="text-sm">Appointments</span>
@@ -110,7 +110,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
           <p className="text-xs text-foreground/50">{metrics?.completedAppointments || 0} completed</p>
         </div>
 
-        <div className="p-4 rounded-lg bg-white border border-border">
+        <div className="p-4 rounded-lg bg-muted/50 border border-border">
           <div className="flex items-center gap-2 text-foreground/70 mb-1">
             <TrendingUp className="h-4 w-4" />
             <span className="text-sm">Revenue</span>
@@ -118,7 +118,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
           <p className="text-2xl font-bold text-green-600">${(metrics?.totalRevenue || 0).toLocaleString()}</p>
         </div>
 
-        <div className="p-4 rounded-lg bg-white border border-border">
+        <div className="p-4 rounded-lg bg-muted/50 border border-border">
           <div className="flex items-center gap-2 text-foreground/70 mb-1">
             <CheckCircle className="h-4 w-4" />
             <span className="text-sm">Completion Rate</span>
@@ -126,7 +126,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
           <p className="text-2xl font-bold text-foreground">{(metrics?.completionRate || 0).toFixed(0)}%</p>
         </div>
 
-        <div className="p-4 rounded-lg bg-white border border-border">
+        <div className="p-4 rounded-lg bg-muted/50 border border-border">
           <div className="flex items-center gap-2 text-foreground/70 mb-1">
             <BarChart3 className="h-4 w-4" />
             <span className="text-sm">Avg Rating</span>
@@ -145,21 +145,21 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
         Key Trends
       </h4>
       <div className="space-y-3">
-        <div className="p-4 rounded-lg bg-white border border-border">
+        <div className="p-4 rounded-lg bg-muted/50 border border-border">
           <p className="font-medium text-foreground">Appointment Volume</p>
           <p className="text-sm text-foreground/70 mt-1">
             {metrics?.totalAppointments || 0} appointments scheduled in the last {dateRange} days.
             {(metrics?.completionRate || 0) > 85 && ' Completion rate is above target.'}
           </p>
         </div>
-        <div className="p-4 rounded-lg bg-white border border-border">
+        <div className="p-4 rounded-lg bg-muted/50 border border-border">
           <p className="font-medium text-foreground">Customer Satisfaction</p>
           <p className="text-sm text-foreground/70 mt-1">
             {metrics?.positiveCount || 0} positive vs {metrics?.negativeCount || 0} negative reviews.
             Average rating: {(metrics?.avgRating || 0).toFixed(1)} out of 5.
           </p>
         </div>
-        <div className="p-4 rounded-lg bg-white border border-border">
+        <div className="p-4 rounded-lg bg-muted/50 border border-border">
           <p className="font-medium text-foreground">Revenue Performance</p>
           <p className="text-sm text-foreground/70 mt-1">
             Total revenue of ${(metrics?.totalRevenue || 0).toLocaleString()} generated from completed jobs.
@@ -243,7 +243,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
   );
 
   return (
-    <Card className="border-border bg-background shadow-sm">
+    <Card className="border-border bg-card shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2 text-foreground">
