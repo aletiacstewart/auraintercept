@@ -183,7 +183,7 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
 
             <TabsContent value="features" className="mt-0 max-h-[280px] overflow-y-auto space-y-2">
               <div className="space-y-1">
-                <p className="text-[10px] uppercase text-muted-foreground font-medium px-1">Feature Access</p>
+                <p className="text-[10px] uppercase text-card-foreground font-medium px-1">Feature Access</p>
                 <div className="grid gap-1">
                   {ALL_FEATURES.map((feature) => {
                     const field = feature.field as keyof FeaturePermissions;
