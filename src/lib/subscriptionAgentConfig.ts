@@ -30,7 +30,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     agents: [
       'triage', 'booking', 'followup', 'review',
       'dispatch', 'route', 'eta', 'checkin',
-      'quoting'
+      'quoting', 'invoice'
     ],
     consoles: ['customer_portal', 'field_operations'],
     label: 'Multi-Track',
