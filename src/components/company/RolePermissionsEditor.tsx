@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { RotateCcw, Bot, Shield, Loader2 } from 'lucide-react';
+import { RotateCcw, Bot, Shield, Loader2, HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   useRolePermissions,
@@ -96,20 +96,20 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
   }
 
   return (
-    <Card className="border-border/30 bg-muted/30">
-      <CardContent className="p-3">
-        {/* Compact Header */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">{jobLabel} Permissions</span>
-            {isCustomized && (
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-                Custom
-              </Badge>
-            )}
-          </div>
-          <TooltipProvider>
+    <TooltipProvider delayDuration={200}>
+      <Card className="border-border/30 bg-muted/30">
+        <CardContent className="p-3">
+          {/* Compact Header */}
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium">{jobLabel} Permissions</span>
+              {isCustomized && (
+                <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                  Custom
+                </Badge>
+              )}
+            </div>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -129,67 +129,41 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
               </TooltipTrigger>
               <TooltipContent>Reset to platform defaults</TooltipContent>
             </Tooltip>
-          </TooltipProvider>
-        </div>
+          </div>
 
-        <Tabs defaultValue="agents" className="w-full">
-          <TabsList className="h-8 w-full grid grid-cols-2 mb-2">
-            <TabsTrigger value="agents" className="text-xs h-7 gap-1">
-              <Bot className="h-3 w-3" />
-              AI Agents
-            </TabsTrigger>
-            <TabsTrigger value="features" className="text-xs h-7 gap-1">
-              <Shield className="h-3 w-3" />
-              Features
-            </TabsTrigger>
-          </TabsList>
+          <Tabs defaultValue="agents" className="w-full">
+            <TabsList className="h-8 w-full grid grid-cols-2 mb-2">
+              <TabsTrigger value="agents" className="text-xs h-7 gap-1">
+                <Bot className="h-3 w-3" />
+                AI Agents
+              </TabsTrigger>
+              <TabsTrigger value="features" className="text-xs h-7 gap-1">
+                <Shield className="h-3 w-3" />
+                Features
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="agents" className="mt-0 max-h-[280px] overflow-y-auto">
-            <div className="grid gap-1">
-              {ALL_AI_AGENTS.map((agent) => {
-                const isDefault = defaultAgents.includes(agent.id);
-                const isEnabled = localAgentAccess[agent.id] ?? isDefault;
-                
-                return (
-                  <div
-                    key={agent.id}
-                    className="flex items-center justify-between rounded border border-border/30 px-2.5 py-1.5 hover:bg-muted/50"
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-sm font-medium truncate">{agent.name}</span>
-                      {isDefault && (
-                        <Badge variant="secondary" className="text-[9px] px-1 py-0 shrink-0">
-                          Default
-                        </Badge>
-                      )}
-                    </div>
-                    <Switch
-                      checked={isEnabled}
-                      onCheckedChange={(checked) => handleAgentAccessChange(agent.id, checked)}
-                      className="scale-90"
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="features" className="mt-0 max-h-[280px] overflow-y-auto space-y-2">
-            <div className="space-y-1">
-              <p className="text-[10px] uppercase text-muted-foreground font-medium px-1">Feature Access</p>
+            <TabsContent value="agents" className="mt-0 max-h-[280px] overflow-y-auto">
               <div className="grid gap-1">
-                {ALL_FEATURES.map((feature) => {
-                  const field = feature.field as keyof FeaturePermissions;
-                  const isDefault = defaultPermissions[field] ?? false;
-                  const isEnabled = localPermissions[field];
+                {ALL_AI_AGENTS.map((agent) => {
+                  const isDefault = defaultAgents.includes(agent.id);
+                  const isEnabled = localAgentAccess[agent.id] ?? isDefault;
                   
                   return (
                     <div
-                      key={feature.id}
+                      key={agent.id}
                       className="flex items-center justify-between rounded border border-border/30 px-2.5 py-1.5 hover:bg-muted/50"
                     >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-sm font-medium truncate">{feature.name}</span>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="text-sm font-medium truncate">{agent.name}</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <HelpCircle className="h-3 w-3 text-muted-foreground shrink-0 cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-[200px]">
+                            {agent.description}
+                          </TooltipContent>
+                        </Tooltip>
                         {isDefault && (
                           <Badge variant="secondary" className="text-[9px] px-1 py-0 shrink-0">
                             Default
@@ -198,78 +172,130 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
                       </div>
                       <Switch
                         checked={isEnabled}
-                        onCheckedChange={(checked) => handlePermissionChange(field, checked)}
+                        onCheckedChange={(checked) => handleAgentAccessChange(agent.id, checked)}
                         className="scale-90"
                       />
                     </div>
                   );
                 })}
               </div>
-            </div>
+            </TabsContent>
 
-            <div className="space-y-1">
-              <p className="text-[10px] uppercase text-muted-foreground font-medium px-1">Actions</p>
-              <div className="grid grid-cols-2 gap-1">
-                {GRANULAR_PERMISSIONS.map((perm) => {
-                  const field = perm.field as keyof FeaturePermissions;
-                  const isDefault = defaultPermissions[field] ?? false;
-                  const isEnabled = localPermissions[field];
-                  
-                  return (
-                    <div
-                      key={perm.id}
-                      className="flex items-center justify-between rounded border border-border/30 px-2 py-1.5 hover:bg-muted/50"
-                    >
-                      <span className="text-xs font-medium">{perm.name}</span>
-                      <Switch
-                        checked={isEnabled}
-                        onCheckedChange={(checked) => handlePermissionChange(field, checked)}
-                        className="scale-75"
-                      />
-                    </div>
-                  );
-                })}
+            <TabsContent value="features" className="mt-0 max-h-[280px] overflow-y-auto space-y-2">
+              <div className="space-y-1">
+                <p className="text-[10px] uppercase text-muted-foreground font-medium px-1">Feature Access</p>
+                <div className="grid gap-1">
+                  {ALL_FEATURES.map((feature) => {
+                    const field = feature.field as keyof FeaturePermissions;
+                    const isDefault = defaultPermissions[field] ?? false;
+                    const isEnabled = localPermissions[field];
+                    
+                    return (
+                      <div
+                        key={feature.id}
+                        className="flex items-center justify-between rounded border border-border/30 px-2.5 py-1.5 hover:bg-muted/50"
+                      >
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="text-sm font-medium truncate">{feature.name}</span>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <HelpCircle className="h-3 w-3 text-muted-foreground shrink-0 cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="max-w-[200px]">
+                              {feature.description}
+                            </TooltipContent>
+                          </Tooltip>
+                          {isDefault && (
+                            <Badge variant="secondary" className="text-[9px] px-1 py-0 shrink-0">
+                              Default
+                            </Badge>
+                          )}
+                        </div>
+                        <Switch
+                          checked={isEnabled}
+                          onCheckedChange={(checked) => handlePermissionChange(field, checked)}
+                          className="scale-90"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          </TabsContent>
-        </Tabs>
 
-        {hasChanges && (
-          <>
-            <Separator className="my-2" />
-            <div className="flex justify-end gap-1.5">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 px-2 text-xs"
-                onClick={() => {
-                  const permissions = getPermissionsForRole(jobType);
-                  setLocalPermissions(permissions);
-                  const agentAccess = getAgentAccessForRole(jobType);
-                  const agentMap: Record<string, boolean> = {};
-                  ALL_AI_AGENTS.forEach(agent => {
-                    agentMap[agent.id] = agentAccess.includes(agent.id);
-                  });
-                  setLocalAgentAccess(agentMap);
-                  setHasChanges(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleSave} disabled={isUpdating} size="sm" className="h-7 px-3 text-xs">
-                {isUpdating ? (
-                  <>
-                    <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  'Save'
-                )}
-              </Button>
-            </div>
-          </>
-        )}
-      </CardContent>
-    </Card>
+              <div className="space-y-1">
+                <p className="text-[10px] uppercase text-muted-foreground font-medium px-1">Record Permissions</p>
+                <div className="grid grid-cols-2 gap-1">
+                  {GRANULAR_PERMISSIONS.map((perm) => {
+                    const field = perm.field as keyof FeaturePermissions;
+                    const isDefault = defaultPermissions[field] ?? false;
+                    const isEnabled = localPermissions[field];
+                    
+                    return (
+                      <div
+                        key={perm.id}
+                        className="flex items-center justify-between rounded border border-border/30 px-2 py-1.5 hover:bg-muted/50"
+                      >
+                        <div className="flex items-center gap-1">
+                          <span className="text-xs font-medium">{perm.name}</span>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <HelpCircle className="h-2.5 w-2.5 text-muted-foreground shrink-0 cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="max-w-[180px]">
+                              {perm.description}
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                        <Switch
+                          checked={isEnabled}
+                          onCheckedChange={(checked) => handlePermissionChange(field, checked)}
+                          className="scale-75"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          {hasChanges && (
+            <>
+              <Separator className="my-2" />
+              <div className="flex justify-end gap-1.5">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={() => {
+                    const permissions = getPermissionsForRole(jobType);
+                    setLocalPermissions(permissions);
+                    const agentAccess = getAgentAccessForRole(jobType);
+                    const agentMap: Record<string, boolean> = {};
+                    ALL_AI_AGENTS.forEach(agent => {
+                      agentMap[agent.id] = agentAccess.includes(agent.id);
+                    });
+                    setLocalAgentAccess(agentMap);
+                    setHasChanges(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleSave} disabled={isUpdating} size="sm" className="h-7 px-3 text-xs">
+                  {isUpdating ? (
+                    <>
+                      <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    'Save'
+                  )}
+                </Button>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+    </TooltipProvider>
   );
 }
