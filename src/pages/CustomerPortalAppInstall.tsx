@@ -55,7 +55,7 @@ export default function CustomerPortalAppInstall() {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0 font-semibold">2</span>
-                    <span>After signup, they're prompted to install the Customer Portal app</span>
+                    <span>After signup, they're prompted to install the Customer Portal App</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0 font-semibold">3</span>
