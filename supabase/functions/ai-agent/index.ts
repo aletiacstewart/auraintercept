@@ -12,12 +12,86 @@ interface Message {
   tool_call_id?: string;
 }
 
+// Rate limiting configuration
+const RATE_LIMITS = {
+  chat: { requests: 30, windowSeconds: 60 },  // 30 requests per minute per IP
+  company: { requests: 100, windowSeconds: 60 }, // 100 requests per minute per company
+};
+
+// In-memory rate limit store (per-instance, resets on cold start)
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(identifier: string, action: string): { allowed: boolean; retryAfter?: number } {
+  const config = RATE_LIMITS[action as keyof typeof RATE_LIMITS] || RATE_LIMITS.chat;
+  const key = `${identifier}:${action}`;
+  const now = Date.now();
+  
+  const record = rateLimitStore.get(key);
+  
+  if (!record || now > record.resetAt) {
+    rateLimitStore.set(key, { count: 1, resetAt: now + config.windowSeconds * 1000 });
+    return { allowed: true };
+  }
+  
+  if (record.count >= config.requests) {
+    const retryAfter = Math.ceil((record.resetAt - now) / 1000);
+    return { allowed: false, retryAfter };
+  }
+  
+  record.count++;
+  return { allowed: true };
+}
+
+function getClientIP(req: Request): string {
+  const forwarded = req.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  const realIP = req.headers.get('x-real-ip');
+  if (realIP) return realIP;
+  const cfIP = req.headers.get('cf-connecting-ip');
+  if (cfIP) return cfIP;
+  return 'unknown';
+}
+
+// Sanitize string input to prevent XSS
+function sanitizeString(input: string | null | undefined, maxLength: number): string {
+  if (!input) return '';
+  return input
+    .slice(0, maxLength)
+    .trim()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const startTime = Date.now();
+  const clientIP = getClientIP(req);
+  const requestId = crypto.randomUUID();
+
   try {
+    // Rate limit by IP
+    const ipRateCheck = checkRateLimit(clientIP, 'chat');
+    if (!ipRateCheck.allowed) {
+      console.warn(`Rate limit exceeded for IP ${clientIP}, request_id=${requestId}`);
+      return new Response(JSON.stringify({ 
+        error: 'Too many requests. Please try again later.',
+        retryAfter: ipRateCheck.retryAfter 
+      }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json',
+          'Retry-After': String(ipRateCheck.retryAfter || 60)
+        },
+      });
+    }
+
     const { messages, company_id, stream = true } = await req.json();
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -33,9 +107,27 @@ serve(async (req) => {
     // Security: Validate company_id is a valid UUID format
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     if (!company_id || !uuidRegex.test(company_id)) {
-      return new Response(JSON.stringify({ error: 'Invalid company_id format' }), {
+      console.warn(`Invalid company_id format attempted: ${company_id}, ip=${clientIP}, request_id=${requestId}`);
+      return new Response(JSON.stringify({ error: 'Invalid request' }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Rate limit by company
+    const companyRateCheck = checkRateLimit(company_id, 'company');
+    if (!companyRateCheck.allowed) {
+      console.warn(`Company rate limit exceeded for ${company_id}, ip=${clientIP}, request_id=${requestId}`);
+      return new Response(JSON.stringify({ 
+        error: 'Too many requests for this company. Please try again later.',
+        retryAfter: companyRateCheck.retryAfter 
+      }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json',
+          'Retry-After': String(companyRateCheck.retryAfter || 60)
+        },
       });
     }
 
@@ -47,16 +139,33 @@ serve(async (req) => {
       .single();
 
     if (companyError || !company) {
-      console.error('Invalid company_id attempted:', company_id);
-      return new Response(JSON.stringify({ error: 'Company not found' }), {
-        status: 404,
+      // Use generic error to prevent company enumeration
+      console.warn(`Invalid company_id attempted: ${company_id}, ip=${clientIP}, request_id=${requestId}`);
+      return new Response(JSON.stringify({ error: 'Invalid request' }), {
+        status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Log AI agent usage for audit trail
-    const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || 'unknown';
-    console.log(`AI Agent request: company=${company.name}, ip=${clientIP}, timestamp=${new Date().toISOString()}`);
+    // Validate messages array
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return new Response(JSON.stringify({ error: 'Messages array is required' }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Limit message count to prevent abuse
+    if (messages.length > 100) {
+      console.warn(`Message limit exceeded: ${messages.length} messages, company=${company.name}, ip=${clientIP}, request_id=${requestId}`);
+      return new Response(JSON.stringify({ error: 'Too many messages in conversation' }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Log AI agent usage for audit trail with request ID
+    console.log(`AI Agent request: request_id=${requestId}, company=${company.name}, ip=${clientIP}, messages=${messages.length}, timestamp=${new Date().toISOString()}`);
 
     // Fetch knowledge base for RAG
     const knowledgeContext = await fetchKnowledgeBase(supabase, company_id);

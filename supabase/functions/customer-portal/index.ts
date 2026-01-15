@@ -18,12 +18,105 @@ interface PortalRequest {
 
 type LegacyAction = 'get' | 'cancel' | 'reschedule' | 'get-appointments' | 'get-invoices';
 
+// Rate limiting configuration
+const RATE_LIMITS = {
+  portal: { requests: 30, windowSeconds: 60 },  // 30 requests per minute per IP
+  token: { requests: 10, windowSeconds: 60 },   // 10 requests per minute per token
+};
+
+// In-memory rate limit store
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(identifier: string, action: string): { allowed: boolean; retryAfter?: number } {
+  const config = RATE_LIMITS[action as keyof typeof RATE_LIMITS] || RATE_LIMITS.portal;
+  const key = `${identifier}:${action}`;
+  const now = Date.now();
+  
+  const record = rateLimitStore.get(key);
+  
+  if (!record || now > record.resetAt) {
+    rateLimitStore.set(key, { count: 1, resetAt: now + config.windowSeconds * 1000 });
+    return { allowed: true };
+  }
+  
+  if (record.count >= config.requests) {
+    const retryAfter = Math.ceil((record.resetAt - now) / 1000);
+    return { allowed: false, retryAfter };
+  }
+  
+  record.count++;
+  return { allowed: true };
+}
+
+function getClientIP(req: Request): string {
+  const forwarded = req.headers.get('x-forwarded-for');
+  if (forwarded) return forwarded.split(',')[0].trim();
+  const realIP = req.headers.get('x-real-ip');
+  if (realIP) return realIP;
+  const cfIP = req.headers.get('cf-connecting-ip');
+  if (cfIP) return cfIP;
+  return 'unknown';
+}
+
+// Validate UUID format
+function isValidUUID(str: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(str);
+}
+
+// Log appointment access for audit trail
+async function logAppointmentAccess(
+  supabase: any,
+  appointmentId: string | null,
+  token: string,
+  accessType: string,
+  clientIP: string,
+  userAgent: string | null,
+  success: boolean,
+  metadata?: Record<string, any>
+) {
+  try {
+    await supabase.rpc('log_appointment_access', {
+      p_appointment_id: appointmentId,
+      p_customer_token: token,
+      p_access_type: accessType,
+      p_client_ip: clientIP,
+      p_user_agent: userAgent,
+      p_success: success,
+      p_metadata: metadata ? JSON.stringify(metadata) : null
+    });
+  } catch (err) {
+    console.error('Failed to log appointment access:', err);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const clientIP = getClientIP(req);
+  const userAgent = req.headers.get('user-agent');
+  const requestId = crypto.randomUUID();
+
   try {
+    // Rate limit by IP
+    const ipRateCheck = checkRateLimit(clientIP, 'portal');
+    if (!ipRateCheck.allowed) {
+      console.warn(`Rate limit exceeded for IP ${clientIP}, request_id=${requestId}`);
+      return new Response(JSON.stringify({ 
+        error: 'Too many requests. Please try again later.',
+        retryAfter: ipRateCheck.retryAfter 
+      }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json',
+          'Retry-After': String(ipRateCheck.retryAfter || 60)
+        },
+      });
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
@@ -37,7 +130,33 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`Customer portal action: ${action} for token: ${token}`);
+    // Validate token format (must be valid UUID)
+    if (!isValidUUID(token)) {
+      console.warn(`Invalid token format attempted: ip=${clientIP}, request_id=${requestId}`);
+      return new Response(
+        JSON.stringify({ error: 'Invalid request' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Rate limit by token to prevent token enumeration
+    const tokenRateCheck = checkRateLimit(token, 'token');
+    if (!tokenRateCheck.allowed) {
+      console.warn(`Token rate limit exceeded: ip=${clientIP}, request_id=${requestId}`);
+      return new Response(JSON.stringify({ 
+        error: 'Too many requests. Please try again later.',
+        retryAfter: tokenRateCheck.retryAfter 
+      }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json',
+          'Retry-After': String(tokenRateCheck.retryAfter || 60)
+        },
+      });
+    }
+
+    console.log(`Customer portal action: ${action}, request_id=${requestId}, ip=${clientIP}`);
 
     // Handle dashboard actions that use customer_profiles token
     if (action === 'get-dashboard' || action === 'get-profile' || action === 'update-preferences') {
@@ -223,11 +342,16 @@ Deno.serve(async (req) => {
     }
 
     if (!appointment) {
+      // Log failed access attempt
+      await logAppointmentAccess(supabase, null, token, 'token_lookup', clientIP, userAgent, false, { reason: 'not_found' });
       return new Response(
         JSON.stringify({ error: 'Appointment not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Log successful token access
+    await logAppointmentAccess(supabase, appointment.id, token, action, clientIP, userAgent, true);
 
     switch (action as LegacyAction) {
       case 'get':
