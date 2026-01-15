@@ -1262,9 +1262,9 @@ const PlatformDocumentPDF = () => (
       
       <Text style={styles.subsectionTitle}>Additional Employee Pricing</Text>
       <Text style={styles.paragraph}>
-        The base subscription includes 10 employee accounts. Additional employees beyond 10 
-        are billed at $10/month per account. The system automatically adjusts the subscription 
-        fee when employee count exceeds 10.
+        The base subscription includes employee accounts based on your tier. Additional employees 
+        are billed at $25/month per 10 employees. The system automatically adjusts the subscription 
+        fee when employee count exceeds the included amount.
       </Text>
       
       <Text style={styles.subsectionTitle}>Usage-Based Costs (Pass-Through)</Text>

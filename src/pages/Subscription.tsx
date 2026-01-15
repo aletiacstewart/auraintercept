@@ -27,7 +27,7 @@ const ENTERPRISE_FEATURES = [
   'SMS reminders (usage-based)',
   'AI Voice calls (usage-based)',
   '10 employee accounts included',
-  'Additional employees: $10/mo each',
+  'Additional employees: $25/mo per 10',
   'Premium AI Agent with custom voice',
   'Embeddable chat widget',
   'Customized dashboard branding',
@@ -365,7 +365,7 @@ export default function Subscription() {
             <div>
               <h4 className="font-medium">How does employee pricing work?</h4>
               <p className="text-sm text-muted-foreground">
-                Your subscription includes 10 employee accounts for free. Each additional employee beyond 10 costs $10/month. You can add employees from your dashboard, and billing adjusts automatically.
+                Your subscription includes employee accounts based on your tier. Additional employees beyond the included amount cost $25/month per 10 employees. You can add employees from your dashboard, and billing adjusts automatically.
               </p>
             </div>
             <div>
