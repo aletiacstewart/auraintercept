@@ -4413,11 +4413,23 @@ export type Database = {
         }[]
       }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }
+      has_billing_access: { Args: { _user_id: string }; Returns: boolean }
+      has_dispatch_access: { Args: { _user_id: string }; Returns: boolean }
+      has_full_access: { Args: { _user_id: string }; Returns: boolean }
+      has_job_type: {
+        Args: { _job_type: string; _user_id: string }
+        Returns: boolean
+      }
+      has_marketing_access: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_assigned_to_job: {
+        Args: { _appointment_id: string; _user_id: string }
         Returns: boolean
       }
       is_customer: { Args: { _user_id: string }; Returns: boolean }
