@@ -74,6 +74,7 @@ import FieldOpsApp from "./pages/FieldOpsApp";
 import DispatchFieldOpsApp from "./pages/DispatchFieldOpsApp";
 import BusinessMgtOpsApp from "./pages/BusinessMgtOpsApp";
 import OpportunityAudit from "./pages/OpportunityAudit";
+import CustomerPortalAppInstall from "./pages/CustomerPortalAppInstall";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
@@ -176,8 +177,10 @@ const App = () => (
               <Route path="/dashboard/field-ops-install" element={<FieldOpsInstall />} />
               <Route path="/dashboard/dispatch-field-ops-install" element={<DispatchFieldOpsInstall />} />
               <Route path="/dashboard/business-mgt-ops-install" element={<BusinessMgtOpsInstall />} />
+              <Route path="/dashboard/customer-portal-app-install" element={<CustomerPortalAppInstall />} />
               <Route path="/dashboard/integrations/embed" element={<IntegrationDocs />} />
               <Route path="/dashboard/guides" element={<PlatformGuides />} />
+              <Route path="/dashboard/platform-issues" element={<PlatformIssues />} />
               <Route path="/dashboard/platform-issues" element={<PlatformIssues />} />
               
               {/* Customer Portal Routes */}
