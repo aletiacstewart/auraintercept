@@ -183,7 +183,7 @@ const platformFeatures = [{
 }, {
   icon: Bell,
   title: 'Smart Reminders',
-  description: 'Email, SMS, and voice reminders reduce no-shows by up to 40%.'
+  description: 'Email, SMS, and voice reminders help reduce no-shows and appointment issues.'
 }, {
   icon: Lock,
   title: 'Enterprise Security',
