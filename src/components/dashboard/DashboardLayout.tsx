@@ -63,6 +63,7 @@ interface NavItem {
   href: string;
   roles: UserRole[];
   requiredJobTypes?: string[];
+  external?: boolean;
 }
 
 interface NavGroup {
@@ -133,6 +134,7 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'] },
       { label: 'Customer App', icon: Globe, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Customer Portal App Install', icon: Smartphone, href: '/customer-portal-install', roles: ['platform_admin', 'company_admin'], external: true },
     ],
   },
   {
@@ -342,7 +344,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                           isActive && 'bg-sidebar-accent text-sidebar-foreground',
                           collapsed && 'justify-center px-2'
                         )}
-                        onClick={() => navigate(item.href)}
+                        onClick={() => {
+                          if (item.external) {
+                            window.open(item.href, '_blank');
+                          } else {
+                            navigate(item.href);
+                          }
+                        }}
                       >
                         <Icon className="w-5 h-5 flex-shrink-0" />
                         {!collapsed && <span className="truncate">{displayLabel}</span>}
