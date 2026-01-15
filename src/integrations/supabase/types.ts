@@ -4414,8 +4414,8 @@ export type Database = {
       }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }
       has_billing_access: { Args: { _user_id: string }; Returns: boolean }
+      has_company_full_access: { Args: { _user_id: string }; Returns: boolean }
       has_dispatch_access: { Args: { _user_id: string }; Returns: boolean }
-      has_full_access: { Args: { _user_id: string }; Returns: boolean }
       has_inventory_access: { Args: { _user_id: string }; Returns: boolean }
       has_job_type: {
         Args: { _job_type: string; _user_id: string }
