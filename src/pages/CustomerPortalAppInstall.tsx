@@ -41,7 +41,7 @@ export default function CustomerPortalAppInstall() {
               Customer Portal PWA
             </CardTitle>
             <CardDescription className="text-white/70">
-              Mobile app for customers to access all service providers
+              Mobile App for Customers Portal
             </CardDescription>
           </CardHeader>
           <CardContent>
