@@ -15,6 +15,7 @@ import { AppointmentsManager } from '@/components/appointments/AppointmentsManag
 import { QuotesManager } from '@/components/quotes/QuotesManager';
 import { InvoicesManager } from '@/components/invoices/InvoicesManager';
 import { LeadsManager } from '@/components/leads';
+import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   FileText, 
@@ -58,7 +59,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [lastAgent, setLastAgent] = useState<string>('quoting');
   const [activeFormType, setActiveFormType] = useState<
-    'quote' | 'invoice' | 'lead' | 'inventory' | 'appointments' | null
+    'quote' | 'invoice' | 'lead' | 'inventory' | 'appointments' | 'warranties' | null
   >(null);
   
   // Form visibility states
@@ -67,6 +68,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [showInventoryManager, setShowInventoryManager] = useState(false);
   const [showAppointmentsManager, setShowAppointmentsManager] = useState(false);
+  const [showWarrantiesManager, setShowWarrantiesManager] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -104,6 +106,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setShowLeadForm(false);
     setShowInventoryManager(false);
     setShowAppointmentsManager(false);
+    setShowWarrantiesManager(false);
     setActiveFormType(null);
   };
 
@@ -149,7 +152,9 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       return;
     }
     if (actionId === 'warranties') {
-      navigate('/dashboard/warranties');
+      hideAllForms();
+      setShowWarrantiesManager(true);
+      setActiveFormType('warranties');
       return;
     }
     
@@ -166,7 +171,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setLastAgent('quoting');
   };
 
-  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showInventoryManager || showAppointmentsManager;
+  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showInventoryManager || showAppointmentsManager || showWarrantiesManager;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -177,6 +182,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     if (activeFormType === 'lead') return 'Leads';
     if (activeFormType === 'inventory') return 'Inventory';
     if (activeFormType === 'appointments') return 'Appointments';
+    if (activeFormType === 'warranties') return 'Warranties';
     if (messages.length > 0) return agentStyle.label; // Show agent label during chat
     return 'Home';
   };
@@ -246,6 +252,12 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
               {showAppointmentsManager && (
                 <div className="bg-muted/50 rounded-lg border border-border p-4">
                   <AppointmentsManager onClose={handleHome} />
+                </div>
+              )}
+
+              {showWarrantiesManager && (
+                <div className="bg-muted/50 rounded-lg border border-border p-4">
+                  <WarrantiesManager />
                 </div>
               )}
 
