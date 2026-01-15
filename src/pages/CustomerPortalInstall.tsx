@@ -319,6 +319,14 @@ export default function CustomerPortalInstall() {
               <p className="text-xs text-center text-muted-foreground mt-4">
                 Don't have an account? Create one through any company's service widget.
               </p>
+              <p className="text-xs text-center mt-2">
+                <a 
+                  href="/auth?mode=customer" 
+                  className="text-primary hover:underline"
+                >
+                  Or sign up directly on Aura Intercept
+                </a>
+              </p>
             </CardContent>
           </Card>
         )}
