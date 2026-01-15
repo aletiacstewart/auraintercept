@@ -45,8 +45,8 @@ export const AGENT_STYLES: Record<string, AgentStyle> = {
 // Default style for unknown agents
 const DEFAULT_STYLE: AgentStyle = {
   label: 'AI Assistant',
-  color: 'text-gray-700',
-  bgColor: 'bg-gray-100',
+  color: 'text-foreground/70',
+  bgColor: 'bg-muted',
 };
 
 /**
@@ -58,8 +58,8 @@ export function getAgentStyle(agent: string | undefined | null): AgentStyle {
   if (!agent) return DEFAULT_STYLE;
   return AGENT_STYLES[agent.toLowerCase()] || { 
     label: agent.charAt(0).toUpperCase() + agent.slice(1), 
-    color: 'text-gray-700', 
-    bgColor: 'bg-gray-100' 
+    color: 'text-foreground/70', 
+    bgColor: 'bg-muted' 
   };
 }
 

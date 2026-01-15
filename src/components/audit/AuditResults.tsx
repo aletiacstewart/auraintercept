@@ -74,51 +74,51 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
                 {TIER_ICONS[recommendedTier]}
               </div>
             </div>
-            <Badge className="mx-auto mb-4 bg-white text-slate-700 border border-slate-200 shadow-sm">
+            <Badge className="mx-auto mb-4 bg-white text-foreground/70 border border-border shadow-sm">
               Your Recommended Plan
             </Badge>
-            <CardTitle className="text-3xl sm:text-4xl font-brand uppercase text-slate-900">
+            <CardTitle className="text-3xl sm:text-4xl font-brand uppercase tracking-wider text-foreground">
               {recommendation.label}
             </CardTitle>
             <p className="text-xl font-semibold text-primary mt-2">
               {recommendation.price}
             </p>
-            <p className="text-slate-600 mt-2 max-w-lg mx-auto">
+            <p className="text-muted-foreground mt-2 max-w-lg mx-auto">
               {recommendation.description}
             </p>
           </CardHeader>
           <CardContent className="relative">
             {/* Match Percentage Display */}
             <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-3 bg-white rounded-full px-6 py-3 shadow-md border border-slate-100">
+              <div className="inline-flex items-center gap-3 bg-white rounded-full px-6 py-3 shadow-md border border-border">
                 <TrendingUp className="h-5 w-5 text-primary" />
-                <span className="text-2xl font-bold text-slate-900">{tierPercentages[recommendedTier]}%</span>
-                <span className="text-slate-500">Fit Score</span>
+                <span className="text-2xl font-bold text-foreground">{tierPercentages[recommendedTier]}%</span>
+                <span className="text-muted-foreground">Fit Score</span>
               </div>
             </div>
 
             {/* Estimated Impact */}
             <div className="grid grid-cols-2 gap-4 max-w-md mx-auto mb-8">
-              <div className="text-center p-5 rounded-xl bg-white/80 border border-slate-100 shadow-sm">
+              <div className="text-center p-5 rounded-xl bg-white/80 border border-border shadow-sm">
                 <Clock className="h-6 w-6 mx-auto mb-2 text-primary" />
-                <p className="text-2xl font-bold text-slate-900">{estimatedHoursSaved}+</p>
-                <p className="text-sm text-slate-500">Hours saved/week</p>
+                <p className="text-2xl font-bold text-foreground">{estimatedHoursSaved}+</p>
+                <p className="text-sm text-muted-foreground">Hours saved/week</p>
               </div>
-              <div className="text-center p-5 rounded-xl bg-white/80 border border-slate-100 shadow-sm">
+              <div className="text-center p-5 rounded-xl bg-white/80 border border-border shadow-sm">
                 <Zap className="h-6 w-6 mx-auto mb-2 text-primary" />
-                <p className="text-2xl font-bold text-slate-900">{recommendation.agentCount}</p>
-                <p className="text-sm text-slate-500">AI Agents included</p>
+                <p className="text-2xl font-bold text-foreground">{recommendation.agentCount}</p>
+                <p className="text-sm text-muted-foreground">AI Agents included</p>
               </div>
             </div>
 
             {/* Key Features */}
-            <div className="bg-white rounded-xl p-6 mb-6 border border-slate-100 shadow-sm">
-              <h3 className="font-semibold mb-4 text-center text-slate-900">What's Included</h3>
+            <div className="bg-white rounded-xl p-6 mb-6 border border-border shadow-sm">
+              <h3 className="font-semibold mb-4 text-center text-foreground">What's Included</h3>
               <ul className="space-y-3">
                 {recommendation.keyFeatures.map((feature, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-sm text-slate-700">{feature}</span>
+                    <span className="text-sm text-foreground/70">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -127,9 +127,9 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
         </Card>
 
         {/* Tier Comparison */}
-        <Card className="mb-8 border border-slate-200 bg-white">
+        <Card className="mb-8 border border-border bg-white">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-center text-slate-900">
+            <CardTitle className="text-lg font-semibold text-center text-foreground">
               Your Fit Score by Tier
             </CardTitle>
           </CardHeader>
@@ -145,7 +145,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
                   className={`p-4 rounded-lg border-2 transition-all ${
                     isRecommended 
                       ? TIER_BG_COLORS[tier] 
-                      : 'border-slate-200 bg-slate-50'
+                      : 'border-border bg-muted/50'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-3">
@@ -153,12 +153,12 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
                       <div className={`p-2 rounded-lg ${
                         isRecommended 
                           ? `bg-gradient-to-br ${TIER_COLORS[tier]} text-white shadow-sm` 
-                          : 'bg-slate-100 text-slate-500'
+                          : 'bg-muted text-muted-foreground'
                       }`}>
                         {TIER_ICONS[tier]}
                       </div>
                       <div>
-                        <p className="font-semibold flex items-center gap-2 text-slate-900">
+                        <p className="font-semibold flex items-center gap-2 text-foreground">
                           {tierRec.label}
                           {isRecommended && (
                             <Badge variant="default" className="text-xs">
@@ -166,12 +166,12 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
                             </Badge>
                           )}
                         </p>
-                        <p className="text-sm text-slate-500">{tierRec.price}</p>
+                        <p className="text-sm text-muted-foreground">{tierRec.price}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-slate-900">{percentage}%</p>
-                      <p className="text-xs text-slate-500">fit</p>
+                      <p className="text-2xl font-bold text-foreground">{percentage}%</p>
+                      <p className="text-xs text-muted-foreground">fit</p>
                     </div>
                   </div>
                   <Progress 
@@ -222,7 +222,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
         </div>
 
         {/* Disclaimer */}
-        <p className="text-xs text-slate-500 text-center mt-8 max-w-lg mx-auto">
+        <p className="text-xs text-muted-foreground text-center mt-8 max-w-lg mx-auto">
           This audit provides general recommendations based on your responses. 
           Actual results may vary based on your specific business operations and implementation.
           All plans include a 30-day free trial.

@@ -55,7 +55,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: str
   in_progress: { label: 'In Progress', color: 'text-orange-600', bgColor: 'bg-orange-100', icon: Play },
   completed: { label: 'Completed', color: 'text-green-600', bgColor: 'bg-green-100', icon: CheckCircle },
   declined: { label: 'Declined', color: 'text-red-600', bgColor: 'bg-red-100', icon: XCircle },
-  cancelled: { label: 'Cancelled', color: 'text-gray-600', bgColor: 'bg-gray-100', icon: XCircle },
+  cancelled: { label: 'Cancelled', color: 'text-muted-foreground', bgColor: 'bg-muted', icon: XCircle },
 };
 
 const STATUS_ORDER = ['pending_acceptance', 'accepted', 'en_route', 'arrived', 'in_progress', 'completed'];

@@ -138,8 +138,8 @@
     letter-spacing: 0.1em;
   }
   
-  /* Card titles (h3, h4) use default Inter font for cleaner readability */
-  h3, h4 {
+  /* Card titles (h3, h4, h5) use default Inter font for cleaner readability */
+  h3, h4, h5 {
     font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
     letter-spacing: normal;
   }
@@ -148,6 +148,17 @@
   .font-brand {
     font-family: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
     letter-spacing: 0.1em;
+  }
+}
+
+@layer utilities {
+  /* Standardized text utilities for consistent typography */
+  .text-label {
+    @apply text-foreground/70 text-sm font-medium;
+  }
+  
+  .text-description {
+    @apply text-muted-foreground text-sm;
   }
 }
 

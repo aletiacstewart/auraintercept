@@ -92,7 +92,7 @@ const statusConfig: Record<IssueStatus, { icon: typeof Clock; label: string; col
   acknowledged: { icon: Eye, label: 'Acknowledged', color: 'text-blue-500' },
   in_progress: { icon: Clock, label: 'In Progress', color: 'text-yellow-500' },
   resolved: { icon: CheckCircle2, label: 'Resolved', color: 'text-green-500' },
-  wont_fix: { icon: XCircle, label: "Won't Fix", color: 'text-gray-500' },
+  wont_fix: { icon: XCircle, label: "Won't Fix", color: 'text-muted-foreground' },
 };
 
 export default function PlatformIssues() {

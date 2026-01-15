@@ -43,11 +43,11 @@ const STATUS_CONFIG = {
   contacted: { label: 'Contacted', color: 'bg-yellow-500' },
   qualified: { label: 'Qualified', color: 'bg-purple-500' },
   converted: { label: 'Converted', color: 'bg-green-500' },
-  lost: { label: 'Lost', color: 'bg-gray-500' },
+  lost: { label: 'Lost', color: 'bg-muted-foreground' },
 };
 
 const PRIORITY_CONFIG = {
-  low: { label: 'Low', color: 'text-gray-500' },
+  low: { label: 'Low', color: 'text-muted-foreground' },
   normal: { label: 'Normal', color: 'text-blue-500' },
   high: { label: 'High', color: 'text-orange-500' },
   hot: { label: 'Hot', color: 'text-red-500' },
