@@ -39,8 +39,8 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   <li>Executive Summary</li>
                   <li>Development Timeline (6 phases)</li>
                   <li>Project Complexity Score (87/100)</li>
-                  <li>Complete AI Agents Catalog (22+ agents)</li>
-                  <li>5 Agent Console Descriptions</li>
+                  <li>Complete AI Agents Catalog (18 agents)</li>
+                  <li>5 Control Center Descriptions</li>
                   <li>Platform Features Overview</li>
                   <li>Third-Party Integrations</li>
                   <li>Technical Architecture</li>
@@ -162,8 +162,8 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   { page: 3, title: 'Executive Summary', desc: 'Platform overview and value proposition' },
                   { page: 4, title: 'Development Timeline', desc: '6 phases with 30+ milestones' },
                   { page: 5, title: 'Complexity Score', desc: '87/100 enterprise-grade rating' },
-                  { page: '6-8', title: 'AI Agents Catalog', desc: '22+ agents across 5 categories' },
-                  { page: 9, title: 'Agent Consoles', desc: '5 specialized control centers' },
+                  { page: '6-8', title: 'AI Agents Catalog', desc: '18 agents across 5 categories' },
+                  { page: 9, title: 'Control Centers', desc: '5 specialized consoles' },
                   { page: 10, title: 'Platform Features', desc: '8 key platform capabilities' },
                   { page: 11, title: 'Integrations', desc: 'Third-party services and APIs' },
                   { page: 12, title: 'Technical Architecture', desc: 'Frontend, backend, and AI stack' },
@@ -196,10 +196,10 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   { page: 2, title: 'Table of Contents', desc: 'Document navigation' },
                   { page: 3, title: 'Executive Summary', desc: 'Pricing overview and quick comparison' },
                   { page: 4, title: 'Tier Comparison', desc: 'Full feature matrix by tier' },
-                  { page: 5, title: 'Starter Details', desc: '$1,000/mo tier breakdown' },
-                  { page: 6, title: 'Professional Details', desc: '$1,750/mo tier breakdown' },
-                  { page: 7, title: 'Enterprise Details', desc: '$2,250/mo tier breakdown' },
-                  { page: 8, title: 'Annual Savings', desc: '16% discount calculations' },
+                  { page: 5, title: 'Single-Point Details', desc: '$497/mo tier breakdown' },
+                  { page: 6, title: 'Multi-Track Details', desc: '$897/mo tier breakdown' },
+                  { page: 7, title: 'Command Details', desc: '$1,497/mo tier breakdown' },
+                  { page: 8, title: 'Annual Savings', desc: 'Discount calculations' },
                   { page: 9, title: '3rd Party Costs', desc: 'Integration pricing details' },
                   { page: 10, title: 'Billing Clarifications', desc: 'Company Stripe requirements' },
                   { page: 11, title: 'Cost Examples', desc: 'Total monthly cost scenarios' },

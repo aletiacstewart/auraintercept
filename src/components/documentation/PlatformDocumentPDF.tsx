@@ -437,13 +437,11 @@ const BulletPoint = ({ children }: { children: string }) => (
 );
 
 const agents = {
-  customerEngagement: [
-    { name: 'AI Receptionist', desc: 'AI-powered inquiry routing and classification' },
-    { name: 'Scheduling Agent', desc: 'Natural language appointment scheduling with availability checks' },
-    { name: 'Follow-up Agent', desc: 'Automated reminders via email, SMS, and voice calls' },
-    { name: 'Social Media Review Agent', desc: 'Feedback collection and review platform integration' },
-    { name: 'Support Agent', desc: 'Customer support and inquiry handling' },
-    { name: 'Portal Agent', desc: 'Customer self-service portal assistance' },
+  customerPortal: [
+    { name: 'AI Receptionist (Triage)', desc: 'First point of contact - greets customers and routes them to the right AI agent' },
+    { name: 'Scheduling Agent (Booking)', desc: 'Natural language appointment scheduling with availability checks and confirmations' },
+    { name: 'Follow-up Agent', desc: 'Automated reminders and confirmations via email, SMS, and voice calls' },
+    { name: 'Review Agent', desc: 'Customer feedback collection and review platform integration (Google, Yelp, Facebook)' },
   ],
   fieldOperations: [
     { name: 'Dispatch Agent', desc: 'Smart job assignment based on skills, location, and availability' },
@@ -451,26 +449,21 @@ const agents = {
     { name: 'ETA Agent', desc: 'Arrival time predictions with customer notifications' },
     { name: 'Check-in Agent', desc: 'Job status tracking with photo documentation' },
   ],
-  businessOperations: [
+  businessManagement: [
+    { name: 'Admin Agent', desc: 'Business administration and operations tasks' },
     { name: 'Quoting Agent', desc: 'Instant quote generation from service catalog' },
     { name: 'Invoice Agent', desc: 'Automated invoice creation and payment tracking' },
     { name: 'Inventory Agent', desc: 'Parts and inventory tracking with low-stock alerts' },
     { name: 'Warranty Agent', desc: 'Warranty registration, lookup, and claims processing' },
-    { name: 'Admin Agent', desc: 'Business administration and operations tasks' },
   ],
   marketingSales: [
-    { name: 'Marketing Agent', desc: 'Campaign orchestration and content generation' },
-    { name: 'Promo Agent', desc: 'Promotional campaigns and coupon management' },
-    { name: 'Referral Agent', desc: 'Customer referral program tracking and rewards' },
-    { name: 'Win-back Agent', desc: 'Re-engage inactive customers with targeted offers' },
-    { name: 'Seasonal Agent', desc: 'Holiday and seasonal campaign automation' },
-    { name: 'Lead Agent', desc: 'Lead capture and qualification' },
+    { name: 'Campaign Agent', desc: 'Unified marketing campaigns including promotional, referral, win-back, seasonal, and loyalty programs' },
   ],
   analytics: [
-    { name: 'Insights Agent', desc: 'Real-time dashboards and KPI monitoring' },
-    { name: 'Forecast Agent', desc: 'AI-powered demand and revenue predictions' },
-    { name: 'Revenue Agent', desc: 'Financial trend tracking and analysis' },
+    { name: 'Insights Agent', desc: 'Business data analysis and trend identification' },
     { name: 'Performance Agent', desc: 'Team and technician performance metrics' },
+    { name: 'Revenue Agent', desc: 'Financial trend tracking and analysis' },
+    { name: 'Forecast Agent', desc: 'AI-powered demand and revenue predictions' },
   ],
 };
 
@@ -482,12 +475,12 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.coverSubtitle}>Complete Automation for Appointment-Based Businesses</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>22+</Text>
+          <Text style={styles.coverStatNumber}>18</Text>
           <Text style={styles.coverStatLabel}>AI Agents</Text>
         </View>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>5</Text>
-          <Text style={styles.coverStatLabel}>Agent Consoles</Text>
+          <Text style={styles.coverStatLabel}>Control Centers</Text>
         </View>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>47+</Text>
@@ -539,8 +532,8 @@ const PlatformDocumentPDF = () => (
       
       <Text style={styles.subsectionTitle}>Platform Overview</Text>
       <Text style={styles.paragraph}>
-        Our AI-powered platform is a comprehensive solution designed specifically for appointment-based 
-        service businesses. It combines 22+ specialized AI agents with multi-channel communication 
+        Aura Intercept is a comprehensive AI-powered platform designed specifically for appointment-based 
+        service businesses. It combines 18 specialized AI agents with multi-channel communication 
         capabilities to automate customer engagement, field operations, business administration, 
         marketing, and analytics.
       </Text>
@@ -654,8 +647,8 @@ const PlatformDocumentPDF = () => (
         <View style={styles.metricCard}>
           <Text style={styles.metricCardTitle}>AI System Metrics</Text>
           {[
-            { label: 'Specialized Agents', value: '22+' },
-            { label: 'Agent Consoles', value: '5' },
+            { label: 'Specialized Agents', value: '18' },
+            { label: 'Control Centers', value: '5' },
             { label: 'Orchestration Flows', value: 'Multi-agent' },
             { label: 'Supported Channels', value: '4' },
           ].map((m, i) => (
@@ -707,13 +700,13 @@ const PlatformDocumentPDF = () => (
       <Header title="AI Agents Catalog" />
       <Text style={styles.sectionTitle}>AI Agents Catalog</Text>
       <Text style={styles.paragraph}>
-        The platform features 22+ specialized AI agents organized into 5 functional categories. 
+        The platform features 18 specialized AI agents organized into 5 functional categories. 
         Each agent is purpose-built for specific tasks and can seamlessly hand off to other agents 
         as needed through our intelligent orchestration system.
       </Text>
       
-      <Text style={styles.categoryHeader}>Customer Engagement (6 Agents)</Text>
-      {agents.customerEngagement.map((agent, i) => (
+      <Text style={styles.categoryHeader}>Customer Portal (4 Agents)</Text>
+      {agents.customerPortal.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>
           <Text style={styles.agentDescription}>{agent.desc}</Text>
@@ -733,15 +726,15 @@ const PlatformDocumentPDF = () => (
     <Page size="A4" style={styles.page}>
       <Header title="AI Agents Catalog" />
       
-      <Text style={styles.categoryHeader}>Business Operations (5 Agents)</Text>
-      {agents.businessOperations.map((agent, i) => (
+      <Text style={styles.categoryHeader}>Business Management (5 Agents)</Text>
+      {agents.businessManagement.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>
           <Text style={styles.agentDescription}>{agent.desc}</Text>
         </View>
       ))}
       
-      <Text style={styles.categoryHeader}>Marketing & Sales (6 Agents)</Text>
+      <Text style={styles.categoryHeader}>Marketing & Sales (1 Agent)</Text>
       {agents.marketingSales.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>
@@ -754,7 +747,7 @@ const PlatformDocumentPDF = () => (
     <Page size="A4" style={styles.page}>
       <Header title="AI Agents Catalog" />
       
-      <Text style={styles.categoryHeader}>Analytics & Optimization (4 Agents)</Text>
+      <Text style={styles.categoryHeader}>Analytics & Reports (4 Agents)</Text>
       {agents.analytics.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>
@@ -769,60 +762,62 @@ const PlatformDocumentPDF = () => (
         conversations while preserving full context. For example, a customer calling about a 
         broken AC might interact with:
       </Text>
-      <BulletPoint>AI Receptionist → classifies as urgent HVAC issue</BulletPoint>
+      <BulletPoint>AI Receptionist (Triage) → classifies as urgent HVAC issue</BulletPoint>
       <BulletPoint>Dispatch Agent → assigns nearest available technician</BulletPoint>
       <BulletPoint>ETA Agent → provides real-time arrival estimate</BulletPoint>
       <BulletPoint>Follow-up Agent → sends confirmation and reminder notifications</BulletPoint>
     </Page>
 
-    {/* Agent Consoles */}
+    {/* Control Centers */}
     <Page size="A4" style={styles.page}>
-      <Header title="Agent Consoles" />
-      <Text style={styles.sectionTitle}>Agent Consoles</Text>
+      <Header title="Control Centers" />
+      <Text style={styles.sectionTitle}>Control Centers (Consoles)</Text>
       <Text style={styles.paragraph}>
-        Five specialized consoles provide role-based access to AI agents and platform functionality:
+        Five specialized control centers provide role-based access to AI agents and platform functionality:
       </Text>
       
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>Customer Engagement Console</Text>
+        <Text style={styles.agentName}>Customer Portal Console</Text>
         <Text style={styles.agentDescription}>
-          Central hub for all customer-facing AI interactions. Includes booking, support, 
-          follow-up, and review management capabilities. Features quick actions for common 
-          tasks and real-time conversation monitoring.
+          Central hub for all customer-facing AI interactions. Quick actions include: Request Appointment, 
+          Emergency (Urgent), Get Quote, Business Hours, View Services, Track Appointment, and Leave Feedback.
+          Features real-time conversation monitoring with Triage, Booking, Follow-up, and Review agents.
         </Text>
       </View>
       
       <View style={styles.agentCard}>
         <Text style={styles.agentName}>Field Operations Console</Text>
         <Text style={styles.agentDescription}>
-          Technician and dispatch management center. Handles job assignment, route optimization, 
-          ETA tracking, and check-in/check-out workflows. Mobile-optimized for field use with 
-          photo documentation and parts tracking.
+          Technician and dispatch management center. Quick actions include: Accept Job, Get Directions, 
+          Mark En Route, Update ETA, Arrive & Start, Complete Job, Generate Quote, Generate Invoice, 
+          and Contact Dispatch. Mobile-optimized for field use with photo documentation.
         </Text>
       </View>
       
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>Business & Accounting Console</Text>
+        <Text style={styles.agentName}>Business Management Console</Text>
         <Text style={styles.agentDescription}>
-          Financial and administrative hub. Manages quotes, invoices, inventory, warranties, 
-          and business administration tasks. Integrates with payment processing and accounting.
+          Financial and administrative hub. Quick actions include: Create Quote, Generate Invoice, 
+          New Lead, Appointments, Inventory, and Warranties. Integrates with payment processing 
+          through company Stripe accounts.
         </Text>
       </View>
       
       <View style={styles.agentCard}>
         <Text style={styles.agentName}>Marketing & Sales Console</Text>
         <Text style={styles.agentDescription}>
-          Growth and retention center. Orchestrates marketing campaigns, promotional offers, 
-          referral programs, and customer win-back initiatives. AI-powered content generation 
-          and audience segmentation.
+          Growth and retention center. Quick actions include: Create Campaign and Customer Segments. 
+          Manages all campaign types: Promotional/Promo Code, Referral Program, Win-Back Campaign, 
+          Seasonal Campaign, and Loyalty Program.
         </Text>
       </View>
       
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>Analytics & Reports Ops Console</Text>
+        <Text style={styles.agentName}>Analytics & Reports Console</Text>
         <Text style={styles.agentDescription}>
-          Business intelligence dashboard. Real-time KPIs, revenue forecasting, performance 
-          metrics, and trend analysis. AI-powered insights and recommendations for optimization.
+          Business intelligence dashboard. Quick actions include: Performance Report, Revenue Analysis, 
+          Customer Insights, Business Insights, Revenue Forecast, KPI Dashboard, Reminder Insights, 
+          and Export Report. AI-powered insights and recommendations.
         </Text>
       </View>
     </Page>
@@ -1242,39 +1237,44 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.sectionTitle}>Pricing Model</Text>
       
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>Aura Single-Point - $500/month</Text>
+        <Text style={styles.agentName}>Single-Point - $497/month</Text>
         <Text style={styles.agentDescription}>
-          2 AI Agents, Customer Portal Console, Email reminders, 5 employee accounts.
-          Perfect for small service companies getting started with AI automation.
+          4 AI Agents (Triage, Booking, Follow-up, Review), Customer Portal Console, 
+          Email reminders, Unlimited appointments. Saves 10+ hours/week in lead intake.
         </Text>
       </View>
 
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>Aura Multi-Track - $850/month (Most Popular)</Text>
+        <Text style={styles.agentName}>Multi-Track - $897/month (Most Popular)</Text>
         <Text style={styles.agentDescription}>
-          7 AI Agents, 2 Consoles, Email + SMS reminders, 10 employee accounts.
-          For growing companies with field technicians needing dispatch automation.
+          10 AI Agents (All Single-Point + Dispatch, Route, ETA, Check-in, Quoting, Invoice), 
+          2 Consoles, Email + SMS reminders. Manages up to 5 Field Techs automatically.
         </Text>
       </View>
 
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>Aura Command - $1,200/month</Text>
+        <Text style={styles.agentName}>Command - $1,497/month</Text>
         <Text style={styles.agentDescription}>
           All 18 AI Agents, All 5 Control Centers, Email + SMS + Voice, Unlimited employees.
-          Full platform access with all agents, consoles, and voice capabilities.
+          Total Business Automation & Brand Control.
         </Text>
       </View>
       
-      <Text style={styles.subsectionTitle}>Annual Savings (16% Discount)</Text>
-      <BulletPoint>Single-Point: $5,000/year (Save $1,000)</BulletPoint>
-      <BulletPoint>Multi-Track: $8,500/year (Save $1,700)</BulletPoint>
-      <BulletPoint>Command: $12,000/year (Save $2,400)</BulletPoint>
+      <Text style={styles.subsectionTitle}>Annual Savings</Text>
+      <BulletPoint>Single-Point: $4,970/year (Save ~$1,000)</BulletPoint>
+      <BulletPoint>Multi-Track: $8,970/year (Save ~$1,800)</BulletPoint>
+      <BulletPoint>Command: $14,970/year (Save ~$3,000)</BulletPoint>
       
       <Text style={styles.subsectionTitle}>Additional Employee Pricing</Text>
       <Text style={styles.paragraph}>
-        The base subscription includes employee accounts based on your tier. Additional employees 
-        are billed at $25/month per 10 employees. The system automatically adjusts the subscription 
-        fee when employee count exceeds the included amount.
+        Additional employees beyond base allocation are billed at $25/month per 10 employees. 
+        Command tier includes unlimited employee accounts at no additional cost.
+      </Text>
+      
+      <Text style={styles.subsectionTitle}>One-Time Implementation Fee</Text>
+      <Text style={styles.paragraph}>
+        A one-time implementation fee of $499-$999 (based on plan) covers Aura Intercept setup 
+        and ensures client commitment. This fee can be waived for annual sign-ups.
       </Text>
       
       <Text style={styles.subsectionTitle}>Usage-Based Costs (Pass-Through)</Text>

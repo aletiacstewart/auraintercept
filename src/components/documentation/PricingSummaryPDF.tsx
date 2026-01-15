@@ -327,50 +327,50 @@ const styles = StyleSheet.create({
 
 // Subscription tier data
 const SUBSCRIPTION_TIERS = {
-  starter: {
-    name: 'Aura Single-Point (Solo-Focus)',
-    monthlyPrice: 500,
-    annualPrice: 5000,
-    annualSavings: 1000,
-    agents: ['AI Receptionist', 'Scheduling Agent'],
+  singlePoint: {
+    name: 'Single-Point',
+    monthlyPrice: 497,
+    annualPrice: 4970,
+    annualSavings: 994,
+    agents: ['AI Receptionist (Triage)', 'Scheduling Agent (Booking)', 'Follow-up Agent', 'Review Agent'],
     consoles: ['Customer Portal Console'],
     appointments: 'Unlimited',
     reminders: 'Email only',
-    employees: '5 included',
+    employees: 'Base allocation',
     additionalEmployees: '$25/mo per 10 employees',
-    bestFor: 'Small service companies getting started with AI automation',
+    bestFor: 'Small service companies getting started with AI automation. Saves 10+ hours/week in lead intake.',
   },
-  professional: {
-    name: 'Aura Multi-Track (Business)',
-    monthlyPrice: 850,
-    annualPrice: 8500,
-    annualSavings: 1700,
-    agents: ['AI Receptionist', 'Scheduling Agent', 'Dispatch Agent', 'Route Agent', 'ETA Agent', 'Check-in Agent', 'Quote Agent'],
+  multiTrack: {
+    name: 'Multi-Track',
+    monthlyPrice: 897,
+    annualPrice: 8970,
+    annualSavings: 1794,
+    agents: ['AI Receptionist (Triage)', 'Scheduling Agent (Booking)', 'Follow-up Agent', 'Review Agent', 'Dispatch Agent', 'Route Agent', 'ETA Agent', 'Check-in Agent', 'Quoting Agent', 'Invoice Agent'],
     consoles: ['Customer Portal Console', 'Field Operations Console'],
     appointments: 'Unlimited',
     reminders: 'Email + SMS',
-    employees: '10 included',
+    employees: 'Base allocation',
     additionalEmployees: '$25/mo per 10 employees',
-    bestFor: 'Growing companies with field technicians needing dispatch automation',
+    bestFor: 'Growing companies with field technicians needing dispatch automation. Manages up to 5 Field Techs automatically.',
   },
-  enterprise: {
-    name: 'Aura Command (Enterprise)',
-    monthlyPrice: 1200,
-    annualPrice: 12000,
-    annualSavings: 2400,
+  command: {
+    name: 'Command',
+    monthlyPrice: 1497,
+    annualPrice: 14970,
+    annualSavings: 2994,
     agents: 'All 18 AI Agents',
     consoles: 'All 5 Control Centers',
     appointments: 'Unlimited',
     reminders: 'Email + SMS + Voice',
     employees: 'Unlimited',
     additionalEmployees: 'N/A',
-    bestFor: 'Large service companies requiring full AI automation and voice capabilities',
+    bestFor: 'Large service companies requiring full AI automation, voice capabilities, and total brand control.',
   },
 };
 
 const THIRD_PARTY_INTEGRATIONS = [
-  { name: 'Twilio', purpose: 'SMS & Voice Calls', cost: '$1.15/number + ~$30-100/mo usage', required: 'Professional & Enterprise' },
-  { name: 'ElevenLabs', purpose: 'AI Voice Synthesis', cost: '$0-99+/month based on usage', required: 'Enterprise (Voice)' },
+  { name: 'Twilio', purpose: 'SMS & Voice Calls', cost: '$1.15/number + ~$30-100/mo usage', required: 'Multi-Track & Command' },
+  { name: 'ElevenLabs', purpose: 'AI Voice Synthesis', cost: '$0-99+/month based on usage', required: 'Command (Voice)' },
   { name: 'Resend', purpose: 'Email Notifications', cost: '$0-20+/month based on volume', required: 'All Tiers' },
   { name: 'Google Calendar', purpose: 'Calendar Sync', cost: 'Free', required: 'All Tiers (Optional)' },
   { name: 'Stripe (Company)', purpose: 'Invoice Payments', cost: '2.9% + $0.30/transaction', required: 'All Tiers' },
@@ -410,7 +410,7 @@ const PricingSummaryPDF = () => (
           <Text style={styles.coverStatLabel}>Pricing Tiers</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>18+</Text>
+          <Text style={styles.coverStatNumber}>18</Text>
           <Text style={styles.coverStatLabel}>AI Agents</Text>
         </View>
         <View style={styles.coverStat}>
@@ -418,8 +418,8 @@ const PricingSummaryPDF = () => (
           <Text style={styles.coverStatLabel}>Control Centers</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>16%</Text>
-          <Text style={styles.coverStatLabel}>Annual Savings</Text>
+          <Text style={styles.coverStatNumber}>$497</Text>
+          <Text style={styles.coverStatLabel}>Starting Price</Text>
         </View>
       </View>
       <View style={styles.footer}>
@@ -437,9 +437,9 @@ const PricingSummaryPDF = () => (
         {[
           { title: 'Executive Pricing Summary', page: '3' },
           { title: 'Tier Comparison Table', page: '4' },
-          { title: 'Starter Tier Details', page: '5' },
-          { title: 'Professional Tier Details', page: '6' },
-          { title: 'Enterprise Tier Details', page: '7' },
+          { title: 'Single-Point Tier Details', page: '5' },
+          { title: 'Multi-Track Tier Details', page: '6' },
+          { title: 'Command Tier Details', page: '7' },
           { title: 'Annual Discount Savings', page: '8' },
           { title: '3rd Party Integration Requirements', page: '9' },
           { title: 'Billing Clarifications', page: '10' },
@@ -471,22 +471,22 @@ const PricingSummaryPDF = () => (
 
       <View style={styles.summaryGrid}>
         <View style={styles.summaryCard}>
-          <Text style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>STARTER</Text>
-          <Text style={styles.summaryPrice}>$500</Text>
+          <Text style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>SINGLE-POINT</Text>
+          <Text style={styles.summaryPrice}>$497</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$5,000/year (Save $1,000)</Text>
+          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$4,970/year (Save ~$1,000)</Text>
         </View>
         <View style={[styles.summaryCard, { borderWidth: 2, borderColor: colors.accent }]}>
-          <Text style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: colors.accent }}>PROFESSIONAL</Text>
-          <Text style={styles.summaryPrice}>$850</Text>
+          <Text style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: colors.accent }}>MULTI-TRACK</Text>
+          <Text style={styles.summaryPrice}>$897</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$8,500/year (Save $1,700)</Text>
+          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$8,970/year (Save ~$1,800)</Text>
         </View>
         <View style={styles.summaryCard}>
-          <Text style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>ENTERPRISE</Text>
-          <Text style={styles.summaryPrice}>$1,200</Text>
+          <Text style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>COMMAND</Text>
+          <Text style={styles.summaryPrice}>$1,497</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$12,000/year (Save $2,400)</Text>
+          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$14,970/year (Save ~$3,000)</Text>
         </View>
       </View>
 
@@ -495,22 +495,22 @@ const PricingSummaryPDF = () => (
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Feature</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Starter</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Professional</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Enterprise</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Single-Point</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Multi-Track</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { feature: 'AI Agents', starter: '2', pro: '7', enterprise: '18+' },
-          { feature: 'Control Centers', starter: '1', pro: '2', enterprise: '5' },
-          { feature: 'Appointments/Month', starter: 'Unlimited', pro: 'Unlimited', enterprise: 'Unlimited' },
-          { feature: 'Reminder Channels', starter: 'Email', pro: 'Email + SMS', enterprise: 'Email + SMS + Voice' },
-          { feature: 'Employee Accounts', starter: '5', pro: '10', enterprise: 'Unlimited' },
+          { feature: 'AI Agents', singlePoint: '4', multiTrack: '10', command: '18' },
+          { feature: 'Control Centers', singlePoint: '1', multiTrack: '2', command: '5' },
+          { feature: 'Appointments/Month', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
+          { feature: 'Reminder Channels', singlePoint: 'Email', multiTrack: 'Email + SMS', command: 'Email + SMS + Voice' },
+          { feature: 'Employee Accounts', singlePoint: 'Base', multiTrack: 'Base', command: 'Unlimited' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.feature}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>{row.starter}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>{row.pro}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>{row.enterprise}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.singlePoint}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.multiTrack}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.command}</Text>
           </View>
         ))}
       </View>
@@ -518,8 +518,8 @@ const PricingSummaryPDF = () => (
       <View style={styles.infoBox}>
         <Text style={styles.noticeTitle}>Additional Employee Pricing</Text>
         <Text style={styles.noticeText}>
-          Starter and Professional tiers can add additional employee accounts at $25/month per 10 employees. 
-          Enterprise tier includes unlimited employee accounts at no additional cost.
+          Single-Point and Multi-Track tiers can add additional employee accounts at $25/month per 10 employees. 
+          Command tier includes unlimited employee accounts at no additional cost.
         </Text>
       </View>
 
@@ -537,40 +537,40 @@ const PricingSummaryPDF = () => (
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 2.5 }]}>Feature Category</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Starter</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Professional</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Enterprise</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Single-Point</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Multi-Track</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Command</Text>
         </View>
         {[
-          { category: 'Monthly Price', starter: '$500', pro: '$850', enterprise: '$1,200' },
-          { category: 'Annual Price', starter: '$5,000', pro: '$8,500', enterprise: '$12,000' },
-          { category: 'Annual Savings', starter: '$1,000', pro: '$1,700', enterprise: '$2,400' },
-          { category: '', starter: '', pro: '', enterprise: '' },
-          { category: 'AI Agents Included', starter: '2', pro: '7', enterprise: 'All 18+' },
-          { category: 'Control Centers', starter: '1', pro: '2', enterprise: 'All 5' },
-          { category: 'Appointments/Month', starter: 'Unlimited', pro: 'Unlimited', enterprise: 'Unlimited' },
-          { category: '', starter: '', pro: '', enterprise: '' },
-          { category: 'Email Reminders', starter: '✓', pro: '✓', enterprise: '✓' },
-          { category: 'SMS Reminders', starter: '—', pro: '✓', enterprise: '✓' },
-          { category: 'Voice Reminders', starter: '—', pro: '—', enterprise: '✓' },
-          { category: '', starter: '', pro: '', enterprise: '' },
-          { category: 'Employee Accounts', starter: '5', pro: '10', enterprise: 'Unlimited' },
-          { category: 'Additional Employees', starter: '$25/mo per 10', pro: '$25/mo per 10', enterprise: 'Included' },
-          { category: 'Widget Access', starter: '✓', pro: '✓', enterprise: '✓' },
-          { category: '', starter: '', pro: '', enterprise: '' },
-          { category: 'Customer Portal', starter: '✓', pro: '✓', enterprise: '✓' },
-          { category: 'Field Operations', starter: '—', pro: '✓', enterprise: '✓' },
-          { category: 'Business Operations', starter: '—', pro: '—', enterprise: '✓' },
-          { category: 'Marketing & Sales', starter: '—', pro: '—', enterprise: '✓' },
-          { category: 'Analytics Console', starter: '—', pro: '—', enterprise: '✓' },
+          { category: 'Monthly Price', singlePoint: '$497', multiTrack: '$897', command: '$1,497' },
+          { category: 'Annual Price', singlePoint: '$4,970', multiTrack: '$8,970', command: '$14,970' },
+          { category: 'Annual Savings', singlePoint: '~$1,000', multiTrack: '~$1,800', command: '~$3,000' },
+          { category: '', singlePoint: '', multiTrack: '', command: '' },
+          { category: 'AI Agents Included', singlePoint: '4', multiTrack: '10', command: 'All 18' },
+          { category: 'Control Centers', singlePoint: '1', multiTrack: '2', command: 'All 5' },
+          { category: 'Appointments/Month', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
+          { category: '', singlePoint: '', multiTrack: '', command: '' },
+          { category: 'Email Reminders', singlePoint: '✓', multiTrack: '✓', command: '✓' },
+          { category: 'SMS Reminders', singlePoint: '—', multiTrack: '✓', command: '✓' },
+          { category: 'Voice Reminders', singlePoint: '—', multiTrack: '—', command: '✓' },
+          { category: '', singlePoint: '', multiTrack: '', command: '' },
+          { category: 'Employee Accounts', singlePoint: 'Base', multiTrack: 'Base', command: 'Unlimited' },
+          { category: 'Additional Employees', singlePoint: '$25/mo per 10', multiTrack: '$25/mo per 10', command: 'Included' },
+          { category: 'Widget Access', singlePoint: '✓', multiTrack: '✓', command: '✓' },
+          { category: '', singlePoint: '', multiTrack: '', command: '' },
+          { category: 'Customer Portal', singlePoint: '✓', multiTrack: '✓', command: '✓' },
+          { category: 'Field Operations', singlePoint: '—', multiTrack: '✓', command: '✓' },
+          { category: 'Business Management', singlePoint: '—', multiTrack: '—', command: '✓' },
+          { category: 'Marketing & Sales', singlePoint: '—', multiTrack: '—', command: '✓' },
+          { category: 'Analytics Console', singlePoint: '—', multiTrack: '—', command: '✓' },
         ].map((row, i) => (
           <View key={i} style={row.category === '' ? { height: 8 } : (i % 2 === 0 ? styles.tableRow : styles.tableRowAlt)}>
             {row.category !== '' && (
               <>
                 <Text style={[styles.tableCellLeft, { flex: 2.5, fontWeight: row.category.includes('Price') || row.category.includes('Savings') ? 700 : 400 }]}>{row.category}</Text>
-                <Text style={[styles.tableCell, { flex: 1.5 }]}>{row.starter}</Text>
-                <Text style={[styles.tableCell, { flex: 1.5 }]}>{row.pro}</Text>
-                <Text style={[styles.tableCell, { flex: 1.5 }]}>{row.enterprise}</Text>
+                <Text style={[styles.tableCell, { flex: 1.5 }]}>{row.singlePoint}</Text>
+                <Text style={[styles.tableCell, { flex: 1.5 }]}>{row.multiTrack}</Text>
+                <Text style={[styles.tableCell, { flex: 1.5 }]}>{row.command}</Text>
               </>
             )}
           </View>
@@ -583,27 +583,29 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Starter Tier Details */}
+    {/* Single-Point Tier Details */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Aura Single-Point Tier</Text>
+      <Text style={styles.sectionTitle}>Single-Point Tier</Text>
 
       <View style={styles.pricingCard}>
-        <Text style={styles.pricingTierName}>Aura Single-Point (Solo-Focus)</Text>
-        <Text style={styles.pricingPrice}>$500/month</Text>
-        <Text style={styles.pricingAnnual}>or $5,000/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save $1,000 with annual billing</Text>
+        <Text style={styles.pricingTierName}>Single-Point</Text>
+        <Text style={styles.pricingPrice}>$497/month</Text>
+        <Text style={styles.pricingAnnual}>or $4,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$1,000 with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
-          {SUBSCRIPTION_TIERS.starter.bestFor}
+          {SUBSCRIPTION_TIERS.singlePoint.bestFor}
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>Included AI Agents (2)</Text>
+      <Text style={styles.subsectionTitle}>Included AI Agents (4)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>AI Receptionist - Intelligent inquiry routing and classification</FeatureItem>
-        <FeatureItem>Scheduling Agent - Natural language appointment booking with availability checks</FeatureItem>
+        <FeatureItem>AI Receptionist (Triage) - First point of contact, routes customers to right agent</FeatureItem>
+        <FeatureItem>Scheduling Agent (Booking) - Natural language appointment booking with availability checks</FeatureItem>
+        <FeatureItem>Follow-up Agent - Automated reminders and confirmations</FeatureItem>
+        <FeatureItem>Review Agent - Customer feedback collection for Google, Yelp, Facebook</FeatureItem>
       </View>
 
       <Text style={styles.subsectionTitle}>Control Centers (1)</Text>
@@ -611,22 +613,22 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Customer Portal Console - Self-service booking and appointment management</FeatureItem>
       </View>
 
-      <Text style={styles.subsectionTitle}>Platform Limits</Text>
+      <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>Unlimited appointments</FeatureItem>
         <FeatureItem>Email reminders only</FeatureItem>
-        <FeatureItem>5 employee accounts included</FeatureItem>
+        <FeatureItem>Base employee allocation</FeatureItem>
         <FeatureItem>Additional employees at $25/month per 10</FeatureItem>
         <FeatureItem>Embeddable booking widget</FeatureItem>
       </View>
 
-      <Text style={styles.subsectionTitle}>Key Features</Text>
+      <Text style={styles.subsectionTitle}>Key Benefits</Text>
       <View style={styles.featureList}>
         <FeatureItem>24/7 AI-powered chat for customer inquiries</FeatureItem>
         <FeatureItem>Automated appointment booking and confirmation</FeatureItem>
         <FeatureItem>Email-based appointment reminders</FeatureItem>
         <FeatureItem>Customer self-service portal</FeatureItem>
-        <FeatureItem>Basic reporting and analytics</FeatureItem>
+        <FeatureItem>Saves 10+ hours/week in lead intake</FeatureItem>
       </View>
 
       <View style={styles.footer}>
@@ -635,33 +637,36 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Professional Tier Details */}
+    {/* Multi-Track Tier Details */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Aura Multi-Track Tier</Text>
+      <Text style={styles.sectionTitle}>Multi-Track Tier</Text>
 
       <View style={styles.pricingCardHighlight}>
         <Text style={{ fontSize: 9, color: colors.accent, fontWeight: 700, marginBottom: 4 }}>MOST POPULAR</Text>
-        <Text style={styles.pricingTierName}>Aura Multi-Track (Business)</Text>
-        <Text style={styles.pricingPrice}>$850/month</Text>
-        <Text style={styles.pricingAnnual}>or $8,500/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save $1,700 with annual billing</Text>
+        <Text style={styles.pricingTierName}>Multi-Track</Text>
+        <Text style={styles.pricingPrice}>$897/month</Text>
+        <Text style={styles.pricingAnnual}>or $8,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$1,800 with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
-          {SUBSCRIPTION_TIERS.professional.bestFor}
+          {SUBSCRIPTION_TIERS.multiTrack.bestFor}
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>Included AI Agents (7)</Text>
+      <Text style={styles.subsectionTitle}>Included AI Agents (10)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>AI Receptionist - Intelligent inquiry routing and classification</FeatureItem>
-        <FeatureItem>Scheduling Agent - Natural language appointment booking</FeatureItem>
+        <FeatureItem>AI Receptionist (Triage) - First point of contact and routing</FeatureItem>
+        <FeatureItem>Scheduling Agent (Booking) - Natural language appointment booking</FeatureItem>
+        <FeatureItem>Follow-up Agent - Automated reminders and confirmations</FeatureItem>
+        <FeatureItem>Review Agent - Customer feedback collection</FeatureItem>
         <FeatureItem>Dispatch Agent - Smart job assignment based on skills and location</FeatureItem>
         <FeatureItem>Route Agent - Real-time route optimization for technicians</FeatureItem>
         <FeatureItem>ETA Agent - Arrival time predictions with customer notifications</FeatureItem>
         <FeatureItem>Check-in Agent - Job status tracking with photo documentation</FeatureItem>
-        <FeatureItem>Quote Agent - Instant quote generation from service catalog</FeatureItem>
+        <FeatureItem>Quoting Agent - Instant quote generation from service catalog</FeatureItem>
+        <FeatureItem>Invoice Agent - Automated invoice creation and payment tracking</FeatureItem>
       </View>
 
       <Text style={styles.subsectionTitle}>Control Centers (2)</Text>
@@ -670,12 +675,12 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Field Operations Console - Dispatch, routing, and technician management</FeatureItem>
       </View>
 
-      <Text style={styles.subsectionTitle}>Platform Limits</Text>
+      <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>Unlimited appointments</FeatureItem>
         <FeatureItem>Email + SMS reminders</FeatureItem>
-        <FeatureItem>10 employee accounts included</FeatureItem>
-        <FeatureItem>Additional employees at $25/month per 10</FeatureItem>
+        <FeatureItem>Base employee allocation</FeatureItem>
+        <FeatureItem>Manages up to 5 Field Techs automatically</FeatureItem>
       </View>
 
       <View style={styles.footer}>
@@ -684,39 +689,39 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Enterprise Tier Details */}
+    {/* Command Tier Details */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Aura Command Tier</Text>
+      <Text style={styles.sectionTitle}>Command Tier</Text>
 
       <View style={styles.pricingCard}>
-        <Text style={styles.pricingTierName}>Aura Command (Enterprise)</Text>
-        <Text style={styles.pricingPrice}>$1,200/month</Text>
-        <Text style={styles.pricingAnnual}>or $12,000/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save $2,400 with annual billing</Text>
+        <Text style={styles.pricingTierName}>Command</Text>
+        <Text style={styles.pricingPrice}>$1,497/month</Text>
+        <Text style={styles.pricingAnnual}>or $14,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$3,000 with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
-          {SUBSCRIPTION_TIERS.enterprise.bestFor}
+          {SUBSCRIPTION_TIERS.command.bestFor}
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>Included AI Agents (All 18+)</Text>
+      <Text style={styles.subsectionTitle}>Included AI Agents (All 18)</Text>
       <Text style={styles.paragraph}>
-        Full access to all AI agents including Customer Engagement (6), Field Operations (4), 
-        Business Operations (5), Marketing & Sales (6), and Analytics (4) agents.
+        Full access to all AI agents including Customer Portal (4), Field Operations (4), 
+        Business Management (5), Marketing & Sales (1), and Analytics & Reports (4) agents.
       </Text>
 
       <Text style={styles.subsectionTitle}>Control Centers (All 5)</Text>
       <View style={styles.featureList}>
         <FeatureItem>Customer Portal Console - Complete self-service experience</FeatureItem>
         <FeatureItem>Field Operations Console - Full dispatch and routing capabilities</FeatureItem>
-        <FeatureItem>Business Operations Console - Invoicing, inventory, and warranties</FeatureItem>
+        <FeatureItem>Business Management Console - Invoicing, inventory, and warranties</FeatureItem>
         <FeatureItem>Marketing & Sales Console - Campaigns, leads, and referrals</FeatureItem>
-        <FeatureItem>Analytics Console - KPIs, forecasting, and performance tracking</FeatureItem>
+        <FeatureItem>Analytics & Reports Console - KPIs, forecasting, and performance tracking</FeatureItem>
       </View>
 
-      <Text style={styles.subsectionTitle}>Platform Limits</Text>
+      <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>Unlimited appointments</FeatureItem>
         <FeatureItem>Email + SMS + Voice reminders</FeatureItem>
@@ -724,6 +729,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Priority support</FeatureItem>
         <FeatureItem>AI voice synthesis with ElevenLabs</FeatureItem>
         <FeatureItem>Advanced analytics and forecasting</FeatureItem>
+        <FeatureItem>Total Business Automation & Brand Control</FeatureItem>
       </View>
 
       <View style={styles.footer}>
@@ -753,9 +759,9 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>You Save</Text>
         </View>
         {[
-          { tier: 'Starter', monthly: '$1,000', yearlyPath: '$12,000', annual: '$10,000', savings: '$2,000' },
-          { tier: 'Professional', monthly: '$1,750', yearlyPath: '$21,000', annual: '$17,500', savings: '$3,500' },
-          { tier: 'Enterprise', monthly: '$2,250', yearlyPath: '$27,000', annual: '$22,500', savings: '$4,500' },
+          { tier: 'Single-Point', monthly: '$497', yearlyPath: '$5,964', annual: '$4,970', savings: '~$1,000' },
+          { tier: 'Multi-Track', monthly: '$897', yearlyPath: '$10,764', annual: '$8,970', savings: '~$1,800' },
+          { tier: 'Command', monthly: '$1,497', yearlyPath: '$17,964', annual: '$14,970', savings: '~$3,000' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 1.5, fontWeight: 600 }]}>{row.tier}</Text>
@@ -791,10 +797,10 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Total Savings</Text>
         </View>
         {[
-          { scenario: 'Starter (1 year)', monthly: '$12,000', annual: '$10,000', savings: '$2,000' },
-          { scenario: 'Professional (1 year)', monthly: '$21,000', annual: '$17,500', savings: '$3,500' },
-          { scenario: 'Enterprise (1 year)', monthly: '$27,000', annual: '$22,500', savings: '$4,500' },
-          { scenario: 'Enterprise (3 years)', monthly: '$81,000', annual: '$67,500', savings: '$13,500' },
+          { scenario: 'Single-Point (1 year)', monthly: '$5,964', annual: '$4,970', savings: '~$1,000' },
+          { scenario: 'Multi-Track (1 year)', monthly: '$10,764', annual: '$8,970', savings: '~$1,800' },
+          { scenario: 'Command (1 year)', monthly: '$17,964', annual: '$14,970', savings: '~$3,000' },
+          { scenario: 'Command (3 years)', monthly: '$53,892', annual: '$44,910', savings: '~$9,000' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 1.5, fontWeight: 600 }]}>{row.scenario}</Text>
@@ -999,11 +1005,11 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Total/Month</Text>
         </View>
         {[
-          { scenario: 'Starter (Email Only)', sub: '$1,000', third: '~$20', total: '~$1,020' },
-          { scenario: 'Professional (Light SMS)', sub: '$1,750', third: '~$80', total: '~$1,830' },
-          { scenario: 'Professional (Heavy SMS)', sub: '$1,750', third: '~$150', total: '~$1,900' },
-          { scenario: 'Enterprise (Light Voice)', sub: '$2,250', third: '~$150', total: '~$2,400' },
-          { scenario: 'Enterprise (Full Voice)', sub: '$2,250', third: '~$300', total: '~$2,550' },
+          { scenario: 'Single-Point (Email Only)', sub: '$497', third: '~$20', total: '~$517' },
+          { scenario: 'Multi-Track (Light SMS)', sub: '$897', third: '~$80', total: '~$977' },
+          { scenario: 'Multi-Track (Heavy SMS)', sub: '$897', third: '~$150', total: '~$1,047' },
+          { scenario: 'Command (Light Voice)', sub: '$1,497', third: '~$150', total: '~$1,647' },
+          { scenario: 'Command (Full Voice)', sub: '$1,497', third: '~$300', total: '~$1,797' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.scenario}</Text>
@@ -1024,9 +1030,9 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Annual Savings</Text>
         </View>
         {[
-          { tier: 'Starter + 3rd Party Est.', monthly: '~$12,240/year', annual: '~$10,240/year', savings: '~$2,000' },
-          { tier: 'Professional + 3rd Party Est.', monthly: '~$22,200/year', annual: '~$18,700/year', savings: '~$3,500' },
-          { tier: 'Enterprise + 3rd Party Est.', monthly: '~$30,600/year', annual: '~$26,100/year', savings: '~$4,500' },
+          { tier: 'Single-Point + 3rd Party Est.', monthly: '~$6,200/year', annual: '~$5,200/year', savings: '~$1,000' },
+          { tier: 'Multi-Track + 3rd Party Est.', monthly: '~$11,700/year', annual: '~$9,900/year', savings: '~$1,800' },
+          { tier: 'Command + 3rd Party Est.', monthly: '~$21,600/year', annual: '~$18,600/year', savings: '~$3,000' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.tier}</Text>
