@@ -1242,23 +1242,33 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.sectionTitle}>Pricing Model</Text>
       
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>Enterprise Tier - $250/month</Text>
+        <Text style={styles.agentName}>Aura Single-Point - $500/month</Text>
         <Text style={styles.agentDescription}>
-          Single all-inclusive tier with full access to all platform features, AI agents, 
-          and integrations. No feature restrictions or tier limitations.
+          2 AI Agents, Customer Portal Console, Email reminders, 5 employee accounts.
+          Perfect for small service companies getting started with AI automation.
+        </Text>
+      </View>
+
+      <View style={styles.agentCard}>
+        <Text style={styles.agentName}>Aura Multi-Track - $850/month (Most Popular)</Text>
+        <Text style={styles.agentDescription}>
+          7 AI Agents, 2 Consoles, Email + SMS reminders, 10 employee accounts.
+          For growing companies with field technicians needing dispatch automation.
+        </Text>
+      </View>
+
+      <View style={styles.agentCard}>
+        <Text style={styles.agentName}>Aura Command - $1,200/month</Text>
+        <Text style={styles.agentDescription}>
+          All 18 AI Agents, All 5 Control Centers, Email + SMS + Voice, Unlimited employees.
+          Full platform access with all agents, consoles, and voice capabilities.
         </Text>
       </View>
       
-      <Text style={styles.subsectionTitle}>What's Included</Text>
-      <BulletPoint>All 22+ AI agents across 5 consoles</BulletPoint>
-      <BulletPoint>All communication channels (voice, SMS, email, web chat)</BulletPoint>
-      <BulletPoint>Customer self-service portal</BulletPoint>
-      <BulletPoint>Technician mobile dashboard</BulletPoint>
-      <BulletPoint>Knowledge base management</BulletPoint>
-      <BulletPoint>Calendar sync (Google, CalDAV, ICS)</BulletPoint>
-      <BulletPoint>Analytics and reporting</BulletPoint>
-      <BulletPoint>White-label branding</BulletPoint>
-      <BulletPoint>10 employee accounts included</BulletPoint>
+      <Text style={styles.subsectionTitle}>Annual Savings (16% Discount)</Text>
+      <BulletPoint>Single-Point: $5,000/year (Save $1,000)</BulletPoint>
+      <BulletPoint>Multi-Track: $8,500/year (Save $1,700)</BulletPoint>
+      <BulletPoint>Command: $12,000/year (Save $2,400)</BulletPoint>
       
       <Text style={styles.subsectionTitle}>Additional Employee Pricing</Text>
       <Text style={styles.paragraph}>
