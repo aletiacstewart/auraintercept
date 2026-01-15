@@ -176,7 +176,7 @@ ${iframeCode}`,
                 <span className={`w-3 h-3 rounded-full ${PLATFORM_INFO[selectedPlatform].color}`} />
                 {PLATFORM_INFO[selectedPlatform].name} Installation
               </h4>
-              <p className="text-sm text-muted-foreground">{PLATFORM_INFO[selectedPlatform].description}</p>
+              <p className="text-sm text-slate-600">{PLATFORM_INFO[selectedPlatform].description}</p>
             </div>
             <Badge variant="secondary">{selectedPlatform === 'html' ? 'Universal' : 'Platform-specific'}</Badge>
           </div>
@@ -184,7 +184,7 @@ ${iframeCode}`,
           {/* Step-by-step instructions */}
           <div className="space-y-2">
             <h5 className="text-sm font-medium">Steps:</h5>
-            <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
+            <ol className="list-decimal list-inside space-y-1 text-sm text-slate-700">
               {platformCode.instructions.map((instruction, idx) => (
                 <li key={idx}>{instruction}</li>
               ))}
