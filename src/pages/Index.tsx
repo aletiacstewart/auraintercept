@@ -65,14 +65,6 @@ const agentCategories = [{
     description: 'User management, company settings, and access control',
     icon: Lock
   }, {
-    name: 'Insights Agent',
-    description: 'Business intelligence with trends and anomaly detection',
-    icon: TrendingUp
-  }, {
-    name: 'Performance Agent',
-    description: 'Team metrics, goals tracking, and optimization',
-    icon: BarChart3
-  }, {
     name: 'Quoting Agent',
     description: 'Dynamic pricing and instant quote generation',
     icon: FileText
@@ -80,14 +72,6 @@ const agentCategories = [{
     name: 'Invoice Agent',
     description: 'Automated invoicing with payment tracking',
     icon: DollarSign
-  }, {
-    name: 'Revenue Agent',
-    description: 'Revenue analysis and financial forecasting',
-    icon: DollarSign
-  }, {
-    name: 'Forecast Agent',
-    description: 'Demand, staffing, and resource predictions',
-    icon: Clock
   }, {
     name: 'Inventory Agent',
     description: 'Stock tracking, low stock alerts, and auto-reorder',
@@ -106,6 +90,28 @@ const agentCategories = [{
     name: 'Campaign Agent',
     description: 'Unified marketing for promotions, referrals, win-back, and seasonal campaigns',
     icon: Megaphone
+  }]
+}, {
+  id: 'analytics',
+  name: 'Analytics & Reports',
+  icon: BarChart3,
+  color: 'from-cyan-500 to-indigo-500',
+  agents: [{
+    name: 'Insights Agent',
+    description: 'Business intelligence with trends and anomaly detection',
+    icon: TrendingUp
+  }, {
+    name: 'Performance Agent',
+    description: 'Team metrics, goals tracking, and optimization',
+    icon: BarChart3
+  }, {
+    name: 'Revenue Agent',
+    description: 'Revenue analysis and financial forecasting',
+    icon: DollarSign
+  }, {
+    name: 'Forecast Agent',
+    description: 'Demand, staffing, and resource predictions',
+    icon: Clock
   }]
 }];
 const agentConsoles = [{
