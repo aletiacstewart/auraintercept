@@ -41,7 +41,7 @@ export default function CustomerPortalAppInstall() {
               Customer Portal PWA
             </CardTitle>
             <CardDescription className="text-white/70">
-              Mobile App for Customers Portal
+              Standalone Progressive Web App with install info, sign-in, and full AI Console access
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -85,7 +85,7 @@ export default function CustomerPortalAppInstall() {
                     onClick={() => window.open('/customer-portal-install', '_blank')}
                   >
                     <ExternalLink className="w-4 h-4" />
-                    View Install Page
+                    Open Customer Portal PWA
                   </Button>
                 </div>
               </div>
