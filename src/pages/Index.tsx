@@ -82,16 +82,6 @@ const agentCategories = [{
     icon: Award
   }]
 }, {
-  id: 'marketing',
-  name: 'Marketing & Sales',
-  icon: Megaphone,
-  color: 'from-orange-500 to-amber-500',
-  agents: [{
-    name: 'Campaign Agent',
-    description: 'Unified marketing for promotions, referrals, win-back, and seasonal campaigns',
-    icon: Megaphone
-  }]
-}, {
   id: 'analytics',
   name: 'Analytics & Reports',
   icon: BarChart3,
@@ -112,6 +102,16 @@ const agentCategories = [{
     name: 'Forecast Agent',
     description: 'Demand, staffing, and resource predictions',
     icon: Clock
+  }]
+}, {
+  id: 'marketing',
+  name: 'Marketing & Sales',
+  icon: Megaphone,
+  color: 'from-orange-500 to-amber-500',
+  agents: [{
+    name: 'Campaign Agent',
+    description: 'Unified marketing for promotions, referrals, win-back, and seasonal campaigns',
+    icon: Megaphone
   }]
 }];
 const agentConsoles = [{
