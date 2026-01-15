@@ -6,6 +6,44 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Rate limiting configuration
+const RATE_LIMITS = {
+  chat: { requests: 30, windowSeconds: 60 },
+  company_lookup: { requests: 10, windowSeconds: 60 },
+};
+
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(identifier: string, action: string): { allowed: boolean; retryAfter?: number } {
+  const config = RATE_LIMITS[action as keyof typeof RATE_LIMITS] || RATE_LIMITS.chat;
+  const key = `${identifier}:${action}`;
+  const now = Date.now();
+  
+  const record = rateLimitStore.get(key);
+  
+  if (!record || now > record.resetAt) {
+    rateLimitStore.set(key, { count: 1, resetAt: now + config.windowSeconds * 1000 });
+    return { allowed: true };
+  }
+  
+  if (record.count >= config.requests) {
+    return { allowed: false, retryAfter: Math.ceil((record.resetAt - now) / 1000) };
+  }
+  
+  record.count++;
+  return { allowed: true };
+}
+
+// Clean up old rate limit entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, record] of rateLimitStore.entries()) {
+    if (now > record.resetAt) {
+      rateLimitStore.delete(key);
+    }
+  }
+}, 60000); // Clean every minute
+
 // Helper function to generate date/time context for AI agents
 function getDateTimeContext(): string {
   const now = new Date();
@@ -1936,11 +1974,83 @@ serve(async (req) => {
 
     const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest } = await req.json();
     
+    // Get client IP for rate limiting and logging
+    const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
+                     req.headers.get('x-real-ip') || 
+                     'unknown';
+    const userAgent = req.headers.get('user-agent') || 'unknown';
+    
+    // Rate limit check to prevent enumeration attacks
+    const rateCheck = checkRateLimit(clientIP, 'chat');
+    if (!rateCheck.allowed) {
+      console.log(`[AI Agent Chat] Rate limit exceeded for IP: ${clientIP}`);
+      return new Response(JSON.stringify({ 
+        error: 'Too many requests. Please try again later.' 
+      }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'application/json', 
+          'Retry-After': String(rateCheck.retryAfter) 
+        },
+      });
+    }
+    
     // Internal agents that serve company admins, not customers
     const INTERNAL_AGENTS = ['insights', 'forecast', 'revenue', 'performance', 'analytics', 'admin', 'inventory', 'marketing'];
     const isInternalAgent = isInternalRequest || INTERNAL_AGENTS.includes(agentType);
 
-    console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}, isInternalAgent: ${isInternalAgent}`);
+    console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, IP: ${clientIP}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}, isInternalAgent: ${isInternalAgent}`);
+
+    // === CUSTOMER COMPANY ASSOCIATION VALIDATION ===
+    // For customer-facing requests (not internal admin agents), validate and manage company associations
+    if (userId && companyId && !isInternalAgent) {
+      const { data: association, error: assocError } = await supabase
+        .from('customer_company_associations')
+        .select('id')
+        .eq('customer_user_id', userId)
+        .eq('company_id', companyId)
+        .maybeSingle();
+
+      if (assocError) {
+        console.error(`[AI Agent Chat] Error checking association: ${assocError.message}`);
+      } else if (!association) {
+        // Create new association - first interaction with this company
+        const { error: insertError } = await supabase
+          .from('customer_company_associations')
+          .insert({
+            customer_user_id: userId,
+            company_id: companyId,
+            last_interaction_at: new Date().toISOString()
+          });
+        
+        if (insertError) {
+          console.error(`[AI Agent Chat] Error creating association: ${insertError.message}`);
+        } else {
+          console.log(`[AI Agent Chat] Created new customer association: ${userId} -> ${companyId}`);
+        }
+      } else {
+        // Update last interaction timestamp
+        await supabase
+          .from('customer_company_associations')
+          .update({ last_interaction_at: new Date().toISOString() })
+          .eq('id', association.id);
+      }
+      
+      // Log this access for security auditing
+      await supabase
+        .from('cross_company_access_logs')
+        .insert({
+          customer_user_id: userId,
+          attempted_company_id: companyId,
+          authorized_company_id: companyId,
+          access_type: 'chat',
+          ip_address: clientIP,
+          user_agent: userAgent,
+          was_authorized: true,
+          metadata: { agent_type: agentType }
+        });
+    }
 
     // Get agent config for any custom settings
     const { data: config } = await supabase

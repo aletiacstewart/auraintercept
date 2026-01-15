@@ -1505,6 +1505,74 @@ export type Database = {
           },
         ]
       }
+      cross_company_access_logs: {
+        Row: {
+          access_type: string
+          attempted_company_id: string | null
+          authorized_company_id: string | null
+          created_at: string
+          customer_user_id: string | null
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          user_agent: string | null
+          was_authorized: boolean
+        }
+        Insert: {
+          access_type?: string
+          attempted_company_id?: string | null
+          authorized_company_id?: string | null
+          created_at?: string
+          customer_user_id?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          was_authorized?: boolean
+        }
+        Update: {
+          access_type?: string
+          attempted_company_id?: string | null
+          authorized_company_id?: string | null
+          created_at?: string
+          customer_user_id?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+          was_authorized?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cross_company_access_logs_attempted_company_id_fkey"
+            columns: ["attempted_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cross_company_access_logs_attempted_company_id_fkey"
+            columns: ["attempted_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cross_company_access_logs_authorized_company_id_fkey"
+            columns: ["authorized_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cross_company_access_logs_authorized_company_id_fkey"
+            columns: ["authorized_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_company_associations: {
         Row: {
           company_id: string
