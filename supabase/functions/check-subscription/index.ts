@@ -12,9 +12,12 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
-// Map price IDs to tier names - only Enterprise at $250/month
+// Map price IDs to tier names
 const PRICE_TO_TIER: Record<string, string> = {
-  "price_1SelZTJ9fo9y8fGHf9Q9RtGr": "enterprise", // Enterprise Company Subscription - $250/month
+  "price_single_point": "single_point",     // Single-Point - $497/month
+  "price_multi_track": "multi_track",       // Multi-Track - $897/month
+  "price_command": "command",               // Command - $1,497/month
+  "price_1SelZTJ9fo9y8fGHf9Q9RtGr": "command", // Legacy Enterprise -> Command
 };
 
 serve(async (req) => {
@@ -48,7 +51,7 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    // Get user's company to check trial status
+    // Get user's company to check trial status and current tier
     const { data: profileData } = await supabaseClient
       .from('profiles')
       .select('company_id')
@@ -57,11 +60,12 @@ serve(async (req) => {
 
     let inTrial = false;
     let trialEndsAt = null;
+    let companySubscriptionTier = null;
 
     if (profileData?.company_id) {
       const { data: companyData } = await supabaseClient
         .from('companies')
-        .select('trial_ends_at')
+        .select('trial_ends_at, subscription_tier')
         .eq('id', profileData.company_id)
         .single();
 
@@ -72,14 +76,16 @@ serve(async (req) => {
         trialEndsAt = companyData.trial_ends_at;
         logStep("Trial status checked", { inTrial, trialEndsAt });
       }
+      
+      companySubscriptionTier = companyData?.subscription_tier;
     }
 
-    // If in trial, return full access
+    // If in trial, return full access (command tier)
     if (inTrial) {
-      logStep("User in active trial, granting enterprise access");
+      logStep("User in active trial, granting command access");
       return new Response(JSON.stringify({
         subscribed: true,
-        tier: "enterprise",
+        tier: "command",
         in_trial: true,
         trial_ends_at: trialEndsAt,
         subscription_end: trialEndsAt,
@@ -96,7 +102,7 @@ serve(async (req) => {
       logStep("No customer found, returning unsubscribed state");
       return new Response(JSON.stringify({ 
         subscribed: false,
-        tier: null,
+        tier: companySubscriptionTier || "free",
         in_trial: false,
         trial_ends_at: trialEndsAt,
         subscription_end: null,
@@ -116,7 +122,7 @@ serve(async (req) => {
     });
 
     const hasActiveSub = subscriptions.data.length > 0;
-    let tier = null;
+    let tier = companySubscriptionTier || "free";
     let subscriptionEnd = null;
     let priceId = null;
 
@@ -134,7 +140,21 @@ serve(async (req) => {
       
       // Get price ID and map to tier
       priceId = subscription.items?.data?.[0]?.price?.id;
-      tier = priceId ? (PRICE_TO_TIER[priceId] || null) : null;
+      tier = priceId ? (PRICE_TO_TIER[priceId] || companySubscriptionTier || "command") : (companySubscriptionTier || "command");
+      
+      // Update company's subscription_tier in database
+      if (profileData?.company_id && tier) {
+        const { error: updateError } = await supabaseClient
+          .from('companies')
+          .update({ subscription_tier: tier })
+          .eq('id', profileData.company_id);
+        
+        if (updateError) {
+          logStep("Failed to update company subscription tier", { error: updateError.message });
+        } else {
+          logStep("Updated company subscription tier", { tier });
+        }
+      }
       
       logStep("Active subscription found", { 
         subscriptionId: subscription.id, 

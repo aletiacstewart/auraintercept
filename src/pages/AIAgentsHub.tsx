@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useAIAgentOrchestrator, AgentInfo } from '@/hooks/useAIAgentOrchestrator';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
@@ -13,6 +14,7 @@ import { AgentWorkflowMonitor } from '@/components/ai/agents/AgentWorkflowMonito
 import { BatchAgentActivation } from '@/components/ai/agents/BatchAgentActivation';
 import { JobStatusMonitor } from '@/components/ai/agents/JobStatusMonitor';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Bot, 
   Users, 
@@ -27,11 +29,15 @@ import {
   Activity,
   Rocket,
   ClipboardList,
-  Lock
+  Lock,
+  Sparkles,
+  AlertCircle,
+  Info
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { hasFullAccess, canManageAIAgents } from '@/lib/accessControl';
 
 const CATEGORY_INFO: Record<string, { label: string; icon: React.ElementType; color: string }> = {
   customer_engagement: { label: 'Customer Portal', icon: Users, color: 'text-blue-500' },
@@ -62,12 +68,44 @@ const JOB_TYPE_TO_AGENTS: Record<string, string[]> = {
   analytics: ['insights', 'forecast'],
 };
 
+// Agent name mapping for display
+const AGENT_NAMES: Record<string, string> = {
+  triage: 'AI Receptionist',
+  booking: 'Scheduling Agent',
+  followup: 'Follow-up Agent',
+  review: 'Review Agent',
+  dispatch: 'Dispatch Agent',
+  route: 'Route Agent',
+  eta: 'ETA Agent',
+  checkin: 'Check-in Agent',
+  admin: 'Admin Agent',
+  quoting: 'Quoting Agent',
+  invoice: 'Invoice Agent',
+  inventory: 'Inventory Agent',
+  warranty: 'Warranty Agent',
+  campaign: 'Campaign Agent',
+  insights: 'Insights Agent',
+  performance: 'Performance Agent',
+  revenue: 'Revenue Agent',
+  forecast: 'Forecast Agent',
+};
+
 export default function AIAgentsHub() {
   const { agents, groupedAgents, loading, toggleAgent, companyId, refetch } = useAIAgentOrchestrator();
   const { userRole, user } = useAuth();
+  const { 
+    subscriptionTier, 
+    canAccessAgent, 
+    getAgentRequiredTier, 
+    getAgentDependencies, 
+    getTierInfo,
+    inTrial,
+    getAvailableAgents 
+  } = useSubscription();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>('agents');
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [autoActivationDone, setAutoActivationDone] = useState(false);
 
   // Fetch employee's job assignments
   const { data: userJobAssignments } = useQuery({
@@ -85,8 +123,40 @@ export default function AIAgentsHub() {
     enabled: !!user?.id && userRole === 'employee',
   });
 
-  // Employees can view but not manage agents
-  const canManageAgents = userRole === 'platform_admin' || userRole === 'company_admin';
+  // Employees with full access can view AI Agents Hub
+  const hasHubAccess = hasFullAccess(userRole, userJobAssignments || []);
+  
+  // Only platform_admin and company_admin can manage agents
+  const canManageAgents = canManageAIAgents(userRole);
+
+  // Auto-activate agents based on subscription tier
+  useEffect(() => {
+    if (!companyId || !canManageAgents || autoActivationDone || loading) return;
+    
+    const autoActivateAgents = async () => {
+      const availableAgents = getAvailableAgents();
+      const agentsToActivate = agents.filter(
+        agent => availableAgents.includes(agent.type) && !agent.is_enabled
+      );
+      
+      if (agentsToActivate.length > 0) {
+        for (const agent of agentsToActivate) {
+          await toggleAgent(agent.type, true);
+        }
+        toast.success(`${agentsToActivate.length} agents auto-activated for your ${getTierInfo(subscriptionTier).label} plan!`);
+        await refetch();
+      }
+      
+      setAutoActivationDone(true);
+    };
+    
+    // Only auto-activate on first load if subscription is active
+    if (subscriptionTier !== 'free' || inTrial) {
+      autoActivateAgents();
+    } else {
+      setAutoActivationDone(true);
+    }
+  }, [companyId, canManageAgents, loading, subscriptionTier, inTrial]);
 
   // Agents hidden from non-platform-admin roles
   const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty', 'campaign'];
@@ -153,13 +223,16 @@ export default function AIAgentsHub() {
   const handleActivateAll = async () => {
     if (!companyId) return;
     
+    // Only activate agents available in the subscription
+    const availableAgents = getAvailableAgents();
+    
     for (const agent of agents) {
-      if (!agent.is_enabled) {
+      if (!agent.is_enabled && availableAgents.includes(agent.type)) {
         await toggleAgent(agent.type, true);
       }
     }
     await refetch();
-    toast.success('All agents activated successfully!');
+    toast.success('All available agents activated successfully!');
   };
 
   if (loading) {
@@ -177,6 +250,10 @@ export default function AIAgentsHub() {
     );
   }
 
+  // Count available agents in subscription
+  const availableAgentTypes = getAvailableAgents();
+  const lockedAgentCount = accessibleAgents.filter(a => !availableAgentTypes.includes(a.type)).length;
+
   return (
     <DashboardLayout>
       <div className="space-y-6 p-6">
@@ -189,7 +266,7 @@ export default function AIAgentsHub() {
             </h1>
             <p className="text-white/70 mt-1">
               {canManageAgents 
-                ? '22 specialized AI agents powering your business automation'
+                ? '18 specialized AI agents powering your business automation'
                 : `${totalCount} AI agents available based on your job roles`}
             </p>
           </div>
@@ -204,6 +281,36 @@ export default function AIAgentsHub() {
             </Button>
           </div>
         </div>
+
+        {/* Subscription Tier Info Banner */}
+        {canManageAgents && (
+          <Alert className={subscriptionTier === 'free' ? 'border-amber-500/30 bg-amber-500/10' : 'border-primary/30 bg-primary/5'}>
+            <Info className="h-4 w-4" />
+            <AlertDescription className="flex items-center justify-between">
+              <span>
+                {inTrial ? (
+                  <>You're in trial mode with full access to all agents.</>
+                ) : (
+                  <>
+                    Your <strong>{getTierInfo(subscriptionTier).label}</strong> plan includes {availableAgentTypes.length} AI agents.
+                    {lockedAgentCount > 0 && ` ${lockedAgentCount} agents require an upgrade.`}
+                  </>
+                )}
+              </span>
+              {subscriptionTier !== 'command' && !inTrial && (
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={() => navigate('/dashboard/subscription')}
+                  className="ml-4"
+                >
+                  <Sparkles className="h-4 w-4 mr-1" />
+                  Upgrade Plan
+                </Button>
+              )}
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -267,15 +374,28 @@ export default function AIAgentsHub() {
 
               <TabsContent value={activeCategory} className="mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredAgents.map((agent) => (
-                    <AgentCard
-                      key={agent.type}
-                      agent={agent}
-                      onToggle={(enabled) => toggleAgent(agent.type, enabled)}
-                      onClick={() => handleAgentClick(agent.type)}
-                      canManage={canManageAgents}
-                    />
-                  ))}
+                  {filteredAgents.map((agent) => {
+                    const isAvailableInTier = canAccessAgent(agent.type);
+                    const requiredTier = getAgentRequiredTier(agent.type);
+                    const dependencies = getAgentDependencies(agent.type);
+                    const missingDependencies = dependencies.filter(
+                      dep => !agents.find(a => a.type === dep)?.is_enabled
+                    );
+                    
+                    return (
+                      <AgentCard
+                        key={agent.type}
+                        agent={agent}
+                        onToggle={(enabled) => toggleAgent(agent.type, enabled)}
+                        onClick={() => handleAgentClick(agent.type)}
+                        canManage={canManageAgents}
+                        isAvailableInTier={isAvailableInTier}
+                        requiredTier={requiredTier}
+                        missingDependencies={missingDependencies}
+                        getTierInfo={getTierInfo}
+                      />
+                    );
+                  })}
                 </div>
               </TabsContent>
             </Tabs>
@@ -337,22 +457,59 @@ export default function AIAgentsHub() {
   );
 }
 
+interface AgentCardProps {
+  agent: AgentInfo;
+  onToggle: (enabled: boolean) => void;
+  onClick: () => void;
+  canManage: boolean;
+  isAvailableInTier: boolean;
+  requiredTier: string | null;
+  missingDependencies: string[];
+  getTierInfo: (tier: string) => { label: string; price: string; description: string };
+}
+
 function AgentCard({ 
   agent, 
   onToggle, 
   onClick,
-  canManage = true
-}: { 
-  agent: AgentInfo; 
-  onToggle: (enabled: boolean) => void;
-  onClick: () => void;
-  canManage?: boolean;
-}) {
+  canManage,
+  isAvailableInTier,
+  requiredTier,
+  missingDependencies,
+  getTierInfo,
+}: AgentCardProps) {
   const categoryInfo = CATEGORY_INFO[agent.category];
   const Icon = categoryInfo?.icon || Bot;
+  const navigate = useNavigate();
+
+  const tierInfo = requiredTier ? getTierInfo(requiredTier) : null;
 
   return (
-    <Card className="hover:shadow-lg transition-all">
+    <Card className={`hover:shadow-lg transition-all relative ${!isAvailableInTier ? 'opacity-75' : ''}`}>
+      {/* Locked Overlay */}
+      {!isAvailableInTier && (
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-10 rounded-lg">
+          <div className="text-center p-4">
+            <Lock className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+            <p className="text-sm font-medium mb-1">Upgrade Required</p>
+            <p className="text-xs text-muted-foreground mb-3">
+              Upgrade to {tierInfo?.label || 'a higher plan'} to access
+            </p>
+            <Button 
+              size="sm" 
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate('/dashboard/subscription');
+              }}
+              className="gap-1"
+            >
+              <Sparkles className="h-3 w-3" />
+              Upgrade
+            </Button>
+          </div>
+        </div>
+      )}
+
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -366,7 +523,7 @@ function AgentCard({
               </CardDescription>
             </div>
           </div>
-          {canManage ? (
+          {canManage && isAvailableInTier ? (
             <Switch 
               checked={agent.is_enabled} 
               onCheckedChange={onToggle}
@@ -380,7 +537,7 @@ function AgentCard({
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Only admins can toggle agents</p>
+                <p>{!isAvailableInTier ? 'Upgrade required' : 'Only admins can toggle agents'}</p>
               </TooltipContent>
             </Tooltip>
           )}
@@ -388,7 +545,7 @@ function AgentCard({
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Badge variant={agent.is_enabled ? 'default' : 'secondary'}>
               {agent.is_enabled ? (
                 <>
@@ -401,6 +558,16 @@ function AgentCard({
             </Badge>
             <Badge variant="outline" className="text-white/70 border-white/30">{agent.category.replace('_', ' ')}</Badge>
           </div>
+
+          {/* Dependency Warning */}
+          {missingDependencies.length > 0 && isAvailableInTier && (
+            <div className="flex items-start gap-2 p-2 rounded bg-amber-500/10 border border-amber-500/20">
+              <AlertCircle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-amber-200">
+                Requires: {missingDependencies.map(dep => AGENT_NAMES[dep] || dep).join(', ')}
+              </p>
+            </div>
+          )}
           
           <div className="flex items-center justify-between pt-2">
             <Button 
@@ -408,11 +575,12 @@ function AgentCard({
               size="sm" 
               onClick={onClick}
               className="text-primary"
+              disabled={!isAvailableInTier}
             >
               Configure
               <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
-            {agent.is_enabled && (
+            {agent.is_enabled && isAvailableInTier && (
               <Button variant="outline" size="sm" onClick={onClick}>
                 <Play className="h-3 w-3 mr-1" />
                 Test
