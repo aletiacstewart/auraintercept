@@ -329,9 +329,9 @@ const styles = StyleSheet.create({
 const SUBSCRIPTION_TIERS = {
   starter: {
     name: 'Aura Single-Point (Solo-Focus)',
-    monthlyPrice: 1000,
-    annualPrice: 10000,
-    annualSavings: 2000,
+    monthlyPrice: 500,
+    annualPrice: 5000,
+    annualSavings: 1000,
     agents: ['AI Receptionist', 'Scheduling Agent'],
     consoles: ['Customer Portal Console'],
     appointments: 'Unlimited',
@@ -342,9 +342,9 @@ const SUBSCRIPTION_TIERS = {
   },
   professional: {
     name: 'Aura Multi-Track (Business)',
-    monthlyPrice: 1750,
-    annualPrice: 17500,
-    annualSavings: 3500,
+    monthlyPrice: 850,
+    annualPrice: 8500,
+    annualSavings: 1700,
     agents: ['AI Receptionist', 'Scheduling Agent', 'Dispatch Agent', 'Route Agent', 'ETA Agent', 'Check-in Agent', 'Quote Agent'],
     consoles: ['Customer Portal Console', 'Field Operations Console'],
     appointments: 'Unlimited',
@@ -355,9 +355,9 @@ const SUBSCRIPTION_TIERS = {
   },
   enterprise: {
     name: 'Aura Command (Enterprise)',
-    monthlyPrice: 2250,
-    annualPrice: 22500,
-    annualSavings: 4500,
+    monthlyPrice: 1200,
+    annualPrice: 12000,
+    annualSavings: 2400,
     agents: 'All 18 AI Agents',
     consoles: 'All 5 Control Centers',
     appointments: 'Unlimited',
@@ -472,21 +472,21 @@ const PricingSummaryPDF = () => (
       <View style={styles.summaryGrid}>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>STARTER</Text>
-          <Text style={styles.summaryPrice}>$1,000</Text>
+          <Text style={styles.summaryPrice}>$500</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$10,000/year (Save $2,000)</Text>
+          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$5,000/year (Save $1,000)</Text>
         </View>
         <View style={[styles.summaryCard, { borderWidth: 2, borderColor: colors.accent }]}>
           <Text style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: colors.accent }}>PROFESSIONAL</Text>
-          <Text style={styles.summaryPrice}>$1,750</Text>
+          <Text style={styles.summaryPrice}>$850</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$17,500/year (Save $3,500)</Text>
+          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$8,500/year (Save $1,700)</Text>
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>ENTERPRISE</Text>
-          <Text style={styles.summaryPrice}>$2,250</Text>
+          <Text style={styles.summaryPrice}>$1,200</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$22,500/year (Save $4,500)</Text>
+          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$12,000/year (Save $2,400)</Text>
         </View>
       </View>
 
@@ -542,9 +542,9 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Enterprise</Text>
         </View>
         {[
-          { category: 'Monthly Price', starter: '$1,000', pro: '$1,750', enterprise: '$2,250' },
-          { category: 'Annual Price', starter: '$10,000', pro: '$17,500', enterprise: '$22,500' },
-          { category: 'Annual Savings', starter: '$2,000', pro: '$3,500', enterprise: '$4,500' },
+          { category: 'Monthly Price', starter: '$500', pro: '$850', enterprise: '$1,200' },
+          { category: 'Annual Price', starter: '$5,000', pro: '$8,500', enterprise: '$12,000' },
+          { category: 'Annual Savings', starter: '$1,000', pro: '$1,700', enterprise: '$2,400' },
           { category: '', starter: '', pro: '', enterprise: '' },
           { category: 'AI Agents Included', starter: '2', pro: '7', enterprise: 'All 18+' },
           { category: 'Control Centers', starter: '1', pro: '2', enterprise: 'All 5' },
@@ -590,9 +590,9 @@ const PricingSummaryPDF = () => (
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTierName}>Aura Single-Point (Solo-Focus)</Text>
-        <Text style={styles.pricingPrice}>$1,000/month</Text>
-        <Text style={styles.pricingAnnual}>or $10,000/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save $2,000 with annual billing</Text>
+        <Text style={styles.pricingPrice}>$500/month</Text>
+        <Text style={styles.pricingAnnual}>or $5,000/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save $1,000 with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
@@ -643,9 +643,9 @@ const PricingSummaryPDF = () => (
       <View style={styles.pricingCardHighlight}>
         <Text style={{ fontSize: 9, color: colors.accent, fontWeight: 700, marginBottom: 4 }}>MOST POPULAR</Text>
         <Text style={styles.pricingTierName}>Aura Multi-Track (Business)</Text>
-        <Text style={styles.pricingPrice}>$1,750/month</Text>
-        <Text style={styles.pricingAnnual}>or $17,500/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save $3,500 with annual billing</Text>
+        <Text style={styles.pricingPrice}>$850/month</Text>
+        <Text style={styles.pricingAnnual}>or $8,500/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save $1,700 with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
@@ -691,9 +691,9 @@ const PricingSummaryPDF = () => (
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTierName}>Aura Command (Enterprise)</Text>
-        <Text style={styles.pricingPrice}>$2,250/month</Text>
-        <Text style={styles.pricingAnnual}>or $22,500/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save $4,500 with annual billing</Text>
+        <Text style={styles.pricingPrice}>$1,200/month</Text>
+        <Text style={styles.pricingAnnual}>or $12,000/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save $2,400 with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>

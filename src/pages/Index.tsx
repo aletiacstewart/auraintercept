@@ -619,10 +619,10 @@ export default function Index() {
                 <h3 className="text-xl font-bold mb-2">Aura Single-Point</h3>
                 <p className="text-xs text-muted-foreground mb-1">(Solo-Focus)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-bold">$1,000</span>
+                  <span className="text-4xl font-bold">$500</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
-                <p className="text-xs text-green-500 mb-4">$10,000/year (Save $2,000)</p>
+                <p className="text-xs text-green-500 mb-4">$5,000/year (Save $1,000)</p>
                 <p className="text-sm text-muted-foreground mb-6">Perfect for small service companies getting started with AI automation.</p>
                 
                 <div className="space-y-2 text-left mb-6">
@@ -669,10 +669,10 @@ export default function Index() {
                 <h3 className="text-xl font-bold mb-2">Aura Multi-Track</h3>
                 <p className="text-xs text-muted-foreground mb-1">(Business)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-bold gradient-text">$1,750</span>
+                  <span className="text-4xl font-bold gradient-text">$850</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
-                <p className="text-xs text-green-500 mb-4">$17,500/year (Save $3,500)</p>
+                <p className="text-xs text-green-500 mb-4">$8,500/year (Save $1,700)</p>
                 <p className="text-sm text-muted-foreground mb-6">For growing companies with field technicians needing dispatch automation.</p>
                 
                 <div className="space-y-2 text-left mb-6">
@@ -722,10 +722,10 @@ export default function Index() {
                 <h3 className="text-xl font-bold mb-2">Aura Command</h3>
                 <p className="text-xs text-muted-foreground mb-1">(Enterprise)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-bold">$2,250</span>
+                  <span className="text-4xl font-bold">$1,200</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
-                <p className="text-xs text-green-500 mb-4">$22,500/year (Save $4,500)</p>
+                <p className="text-xs text-green-500 mb-4">$12,000/year (Save $2,400)</p>
                 <p className="text-sm text-muted-foreground mb-6">Full platform access with all agents, consoles, and voice capabilities.</p>
                 
                 <div className="space-y-2 text-left mb-6">
@@ -781,15 +781,15 @@ export default function Index() {
                           <th className="text-left p-4 font-semibold min-w-[200px]">Feature</th>
                           <th className="text-center p-4 font-semibold min-w-[150px]">
                             <div>Aura Single-Point</div>
-                            <div className="text-xs font-normal text-muted-foreground">$1,000/mo</div>
+                            <div className="text-xs font-normal text-muted-foreground">$500/mo</div>
                           </th>
                           <th className="text-center p-4 font-semibold min-w-[150px] bg-primary/5 border-x border-primary/20">
                             <div className="text-primary">Aura Multi-Track</div>
-                            <div className="text-xs font-normal text-muted-foreground">$1,750/mo</div>
+                            <div className="text-xs font-normal text-muted-foreground">$850/mo</div>
                           </th>
                           <th className="text-center p-4 font-semibold min-w-[150px]">
                             <div>Aura Command</div>
-                            <div className="text-xs font-normal text-muted-foreground">$2,250/mo</div>
+                            <div className="text-xs font-normal text-muted-foreground">$1,200/mo</div>
                           </th>
                         </tr>
                       </thead>
@@ -999,21 +999,21 @@ export default function Index() {
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Monthly Price</td>
-                          <td className="p-3 text-center font-semibold">$1,000</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 font-semibold text-primary">$1,750</td>
-                          <td className="p-3 text-center font-semibold">$2,250</td>
+                          <td className="p-3 text-center font-semibold">$500</td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 font-semibold text-primary">$850</td>
+                          <td className="p-3 text-center font-semibold">$1,200</td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Annual Price</td>
-                          <td className="p-3 text-center text-xs">$10,000/year</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs">$17,500/year</td>
-                          <td className="p-3 text-center text-xs">$22,500/year</td>
+                          <td className="p-3 text-center text-xs">$5,000/year</td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs">$8,500/year</td>
+                          <td className="p-3 text-center text-xs">$12,000/year</td>
                         </tr>
                         <tr className="hover:bg-muted/20">
                           <td className="p-3">Annual Savings</td>
-                          <td className="p-3 text-center text-xs text-green-500">Save $2,000</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs text-green-500">Save $3,500</td>
-                          <td className="p-3 text-center text-xs text-green-500">Save $4,500</td>
+                          <td className="p-3 text-center text-xs text-green-500">Save $1,000</td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs text-green-500">Save $1,700</td>
+                          <td className="p-3 text-center text-xs text-green-500">Save $2,400</td>
                         </tr>
                       </tbody>
                     </table>
