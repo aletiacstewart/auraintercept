@@ -44,7 +44,7 @@ export interface AgentEvent {
   created_at: string;
 }
 
-// Default agent definitions - 22 total agents
+// Default agent definitions - 18 total agents across 5 categories
 const DEFAULT_AGENTS: AgentInfo[] = [
   // Customer Portal (Phases 1-4) - 4 agents
   { type: 'triage', name: 'AI Receptionist', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
@@ -56,18 +56,19 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'route', name: 'Route Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
   { type: 'eta', name: 'ETA Agent', category: 'field_operations', phase: 3, is_enabled: false, settings: {} },
   { type: 'checkin', name: 'Check-in Agent', category: 'field_operations', phase: 4, is_enabled: false, settings: {} },
-  // Business Operations (Phases 1-7) - 9 agents
+  // Business Operations (Phases 1-5) - 5 agents
   { type: 'admin', name: 'Admin Agent', category: 'business_operations', phase: 1, is_enabled: false, settings: {} },
-  { type: 'insights', name: 'Business Insights Agent', category: 'business_operations', phase: 2, is_enabled: false, settings: {} },
-  { type: 'performance', name: 'Performance Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
-  { type: 'quoting', name: 'Quoting Agent', category: 'business_operations', phase: 4, is_enabled: false, settings: {} },
-  { type: 'invoice', name: 'Invoice Agent', category: 'business_operations', phase: 5, is_enabled: false, settings: {} },
-  { type: 'revenue', name: 'Revenue Agent', category: 'business_operations', phase: 6, is_enabled: false, settings: {} },
-  { type: 'forecast', name: 'Forecast Agent', category: 'business_operations', phase: 7, is_enabled: false, settings: {} },
-  { type: 'inventory', name: 'Inventory Agent', category: 'business_operations', phase: 8, is_enabled: false, settings: {} },
-  { type: 'warranty', name: 'Warranty Agent', category: 'business_operations', phase: 9, is_enabled: false, settings: {} },
+  { type: 'quoting', name: 'Quoting Agent', category: 'business_operations', phase: 2, is_enabled: false, settings: {} },
+  { type: 'invoice', name: 'Invoice Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
+  { type: 'inventory', name: 'Inventory Agent', category: 'business_operations', phase: 4, is_enabled: false, settings: {} },
+  { type: 'warranty', name: 'Warranty Agent', category: 'business_operations', phase: 5, is_enabled: false, settings: {} },
   // Marketing & Sales (Phase 1) - 1 unified campaign agent
   { type: 'campaign', name: 'Campaign Agent', category: 'marketing_sales', phase: 1, is_enabled: false, settings: {} },
+  // Analytics & Reports (Phases 1-4) - 4 agents
+  { type: 'insights', name: 'Insights Agent', category: 'analytics_reports', phase: 1, is_enabled: false, settings: {} },
+  { type: 'performance', name: 'Performance Agent', category: 'analytics_reports', phase: 2, is_enabled: false, settings: {} },
+  { type: 'revenue', name: 'Revenue Agent', category: 'analytics_reports', phase: 3, is_enabled: false, settings: {} },
+  { type: 'forecast', name: 'Forecast Agent', category: 'analytics_reports', phase: 4, is_enabled: false, settings: {} },
 ];
 
 function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo[]> {
