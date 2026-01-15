@@ -1,306 +1,257 @@
-export type ScoreCategory = 'FDA' | 'SA' | 'RA' | 'KOA' | 'FOA' | 'CA' | 'FUA' | 'BIA';
+// Tier-based scoring for subscription plan recommendations
+export type TierType = 'SINGLE_POINT' | 'MULTI_TRACK' | 'COMMAND';
 
-export interface ScoreOption {
+export interface TierScores {
+  SINGLE_POINT: number;  // 0-100 contribution
+  MULTI_TRACK: number;   // 0-100 contribution
+  COMMAND: number;       // 0-100 contribution
+}
+
+export interface AuditOption {
   label: string;
-  scores: Partial<Record<ScoreCategory, number>>;
+  tierScores: TierScores;
 }
 
 export interface AuditQuestion {
   id: string;
   question: string;
   description?: string;
-  section?: string;
-  options: ScoreOption[];
+  section: string;
+  options: AuditOption[];
 }
 
-export interface Scores {
-  FDA: number;
-  SA: number;
-  RA: number;
-  KOA: number;
-  FOA: number;
-  CA: number;
-  FUA: number;
-  BIA: number;
+export interface TierRecommendation {
+  tier: TierType;
+  label: string;
+  price: string;
+  description: string;
+  keyFeatures: string[];
+  agentCount: number;
+  consoleCount: number;
 }
 
-export interface AgentRecommendation {
-  category: ScoreCategory;
-  name: string;
-  title: string;
-  why: string;
-  impact: string;
-  icon: string;
-  threshold: number;
-}
-
+// Questions aligned to subscription tiers and features
 export const QUESTIONS: AuditQuestion[] = [
-  // === FRONT DESK & LEAD CAPTURE ===
+  // Section 1: Lead Intake & Response
   {
-    id: 'after-hours',
-    section: 'Front Desk & Lead Capture',
-    question: 'How do you handle leads after 6 PM?',
-    description: 'Think about what happens when potential customers try to reach you outside business hours.',
+    id: 'lead_response_time',
+    question: 'How quickly do you typically respond to new leads?',
+    description: 'Response time significantly impacts conversion rates',
+    section: 'Lead Intake & Response',
     options: [
-      { label: "We don't - calls go unanswered", scores: { FDA: 20 } },
-      { label: 'Voicemail with next-day callback', scores: { FDA: 10 } },
-      { label: 'We have after-hours staff', scores: { FDA: 0 } },
-      { label: 'We use an answering service', scores: { FDA: 5 } }
-    ]
+      { label: 'Under 5 minutes - we have great coverage', tierScores: { SINGLE_POINT: 40, MULTI_TRACK: 30, COMMAND: 20 } },
+      { label: 'Same hour - could be faster', tierScores: { SINGLE_POINT: 70, MULTI_TRACK: 50, COMMAND: 40 } },
+      { label: 'Same day - we miss some opportunities', tierScores: { SINGLE_POINT: 85, MULTI_TRACK: 75, COMMAND: 60 } },
+      { label: 'Next day or longer - this is a problem', tierScores: { SINGLE_POINT: 95, MULTI_TRACK: 90, COMMAND: 85 } },
+    ],
   },
   {
-    id: 'response-time',
-    section: 'Front Desk & Lead Capture',
-    question: 'What is your average web lead response time?',
-    description: 'From when a lead submits a form to when they receive a response.',
+    id: 'after_hours_calls',
+    question: 'What happens when a lead calls outside business hours?',
+    description: 'After-hours leads are often high-intent buyers',
+    section: 'Lead Intake & Response',
     options: [
-      { label: 'Under 1 hour', scores: { FDA: 0 } },
-      { label: '1-4 hours', scores: { FDA: 15 } },
-      { label: 'Same business day', scores: { FDA: 20 } },
-      { label: 'Over 24 hours', scores: { FDA: 25 } }
-    ]
+      { label: 'We have 24/7 live coverage', tierScores: { SINGLE_POINT: 30, MULTI_TRACK: 25, COMMAND: 20 } },
+      { label: 'Voicemail - we call back next day', tierScores: { SINGLE_POINT: 65, MULTI_TRACK: 55, COMMAND: 45 } },
+      { label: 'Calls go unanswered, no follow-up', tierScores: { SINGLE_POINT: 80, MULTI_TRACK: 85, COMMAND: 75 } },
+      { label: 'We lose most after-hours leads', tierScores: { SINGLE_POINT: 85, MULTI_TRACK: 90, COMMAND: 95 } },
+    ],
   },
-
-  // === SCHEDULING & BOOKING ===
+  // Section 2: Scheduling & Booking
   {
-    id: 'booking-method',
+    id: 'booking_process',
+    question: 'How do customers book appointments with you?',
+    description: 'Booking friction directly impacts revenue',
     section: 'Scheduling & Booking',
-    question: 'How do customers book appointments?',
-    description: 'Consider the typical journey from first contact to confirmed appointment.',
     options: [
-      { label: 'Phone only - we play phone tag', scores: { SA: 20 } },
-      { label: 'Email back-and-forth', scores: { SA: 15 } },
-      { label: 'Basic online form (we call back)', scores: { SA: 10 } },
-      { label: 'Self-service online booking', scores: { SA: 0 } }
-    ]
-  },
-
-  // === FIELD OPERATIONS ===
-  {
-    id: 'technician-dispatch',
-    section: 'Field Operations',
-    question: 'How do you currently assign jobs to technicians?',
-    description: 'Consider your dispatch and routing process for field staff.',
-    options: [
-      { label: 'First available - no optimization', scores: { FOA: 25 } },
-      { label: 'Manually based on location', scores: { FOA: 15 } },
-      { label: 'We use basic dispatch software', scores: { FOA: 10 } },
-      { label: 'Smart routing with skills matching', scores: { FOA: 0 } }
-    ]
+      { label: 'Self-service online booking', tierScores: { SINGLE_POINT: 40, MULTI_TRACK: 35, COMMAND: 30 } },
+      { label: 'Call/email, we schedule manually', tierScores: { SINGLE_POINT: 75, MULTI_TRACK: 60, COMMAND: 50 } },
+      { label: 'Lots of back-and-forth to confirm', tierScores: { SINGLE_POINT: 80, MULTI_TRACK: 85, COMMAND: 70 } },
+      { label: 'Phone tag is a major issue', tierScores: { SINGLE_POINT: 85, MULTI_TRACK: 90, COMMAND: 95 } },
+    ],
   },
   {
-    id: 'customer-eta',
-    section: 'Field Operations',
-    question: 'How do you communicate arrival times to customers?',
-    description: 'Think about how customers know when to expect your team.',
+    id: 'appointment_reminders',
+    question: 'How do you remind customers about appointments?',
+    description: 'No-shows cost service businesses 5-10% of revenue',
+    section: 'Scheduling & Booking',
     options: [
-      { label: "We don't - they wait and wonder", scores: { FOA: 20 } },
-      { label: 'We call when leaving previous job', scores: { FOA: 10 } },
-      { label: 'Automated text when en route', scores: { FOA: 5 } },
-      { label: 'Real-time GPS tracking for customers', scores: { FOA: 0 } }
-    ]
+      { label: 'Automated multi-channel (email + SMS)', tierScores: { SINGLE_POINT: 35, MULTI_TRACK: 40, COMMAND: 35 } },
+      { label: 'Automated email only', tierScores: { SINGLE_POINT: 55, MULTI_TRACK: 70, COMMAND: 55 } },
+      { label: 'Manual calls/texts before appointments', tierScores: { SINGLE_POINT: 70, MULTI_TRACK: 85, COMMAND: 80 } },
+      { label: 'We don\'t send reminders consistently', tierScores: { SINGLE_POINT: 80, MULTI_TRACK: 90, COMMAND: 95 } },
+    ],
   },
-
-  // === COMMUNICATION CHANNELS ===
+  // Section 3: Team & Field Operations
   {
-    id: 'missed-calls',
+    id: 'team_size',
+    question: 'How many field technicians or employees do you have?',
+    description: 'Team size determines your operational complexity',
+    section: 'Team & Field Operations',
+    options: [
+      { label: '1-5 employees', tierScores: { SINGLE_POINT: 90, MULTI_TRACK: 50, COMMAND: 30 } },
+      { label: '6-10 employees', tierScores: { SINGLE_POINT: 60, MULTI_TRACK: 90, COMMAND: 60 } },
+      { label: '11-25 employees', tierScores: { SINGLE_POINT: 30, MULTI_TRACK: 85, COMMAND: 90 } },
+      { label: '25+ employees', tierScores: { SINGLE_POINT: 15, MULTI_TRACK: 60, COMMAND: 95 } },
+    ],
+  },
+  {
+    id: 'dispatch_routing',
+    question: 'How do you currently dispatch and route technicians?',
+    description: 'Efficient routing saves fuel and maximizes billable hours',
+    section: 'Team & Field Operations',
+    options: [
+      { label: 'Optimized software with real-time adjustments', tierScores: { SINGLE_POINT: 30, MULTI_TRACK: 40, COMMAND: 35 } },
+      { label: 'Basic scheduling tools, some optimization', tierScores: { SINGLE_POINT: 50, MULTI_TRACK: 75, COMMAND: 60 } },
+      { label: 'Manual assignment based on availability', tierScores: { SINGLE_POINT: 55, MULTI_TRACK: 90, COMMAND: 75 } },
+      { label: 'First-available, no route optimization', tierScores: { SINGLE_POINT: 60, MULTI_TRACK: 95, COMMAND: 90 } },
+    ],
+  },
+  {
+    id: 'customer_eta',
+    question: 'How do customers know when a technician will arrive?',
+    description: 'ETA transparency improves customer satisfaction by 40%',
+    section: 'Team & Field Operations',
+    options: [
+      { label: 'Real-time GPS tracking they can view', tierScores: { SINGLE_POINT: 30, MULTI_TRACK: 35, COMMAND: 30 } },
+      { label: 'Automated ETA texts when en route', tierScores: { SINGLE_POINT: 45, MULTI_TRACK: 55, COMMAND: 45 } },
+      { label: 'We call when leaving for the job', tierScores: { SINGLE_POINT: 55, MULTI_TRACK: 85, COMMAND: 70 } },
+      { label: 'They wait - no ETA communication', tierScores: { SINGLE_POINT: 65, MULTI_TRACK: 95, COMMAND: 85 } },
+    ],
+  },
+  // Section 4: Communication Preferences
+  {
+    id: 'comm_channels',
+    question: 'Which channels do your customers prefer for communication?',
+    description: 'Meeting customers where they are increases engagement',
     section: 'Communication Channels',
+    options: [
+      { label: 'Email works fine for most', tierScores: { SINGLE_POINT: 85, MULTI_TRACK: 50, COMMAND: 40 } },
+      { label: 'SMS/texting is increasingly preferred', tierScores: { SINGLE_POINT: 55, MULTI_TRACK: 90, COMMAND: 70 } },
+      { label: 'Phone calls are still essential', tierScores: { SINGLE_POINT: 50, MULTI_TRACK: 70, COMMAND: 95 } },
+      { label: 'We need all channels - it varies', tierScores: { SINGLE_POINT: 40, MULTI_TRACK: 75, COMMAND: 95 } },
+    ],
+  },
+  {
+    id: 'missed_calls',
     question: 'How many calls does your business miss per week?',
-    description: 'Estimate calls that go to voicemail or are abandoned.',
-    options: [
-      { label: '10+ calls missed weekly', scores: { CA: 25 } },
-      { label: '5-10 missed calls', scores: { CA: 15 } },
-      { label: '1-5 missed calls', scores: { CA: 10 } },
-      { label: 'We rarely miss calls', scores: { CA: 0 } }
-    ]
-  },
-  {
-    id: 'contact-channels',
+    description: 'Each missed call can cost $300-1000 in lost revenue',
     section: 'Communication Channels',
-    question: 'Which channels do customers use to reach you?',
-    description: 'Consider all the ways customers try to contact your business.',
     options: [
-      { label: 'Phone only', scores: { CA: 20 } },
-      { label: 'Phone + email', scores: { CA: 15 } },
-      { label: 'Phone, email, SMS', scores: { CA: 10 } },
-      { label: 'All channels including web chat', scores: { CA: 0 } }
-    ]
+      { label: 'Rarely miss calls (0-2/week)', tierScores: { SINGLE_POINT: 50, MULTI_TRACK: 40, COMMAND: 30 } },
+      { label: '3-5 missed calls per week', tierScores: { SINGLE_POINT: 75, MULTI_TRACK: 70, COMMAND: 60 } },
+      { label: '5-10 missed calls per week', tierScores: { SINGLE_POINT: 80, MULTI_TRACK: 90, COMMAND: 80 } },
+      { label: '10+ missed calls per week', tierScores: { SINGLE_POINT: 75, MULTI_TRACK: 85, COMMAND: 95 } },
+    ],
   },
-
-  // === FOLLOW-UP & REVIEWS ===
+  // Section 5: Customer Retention & Growth
   {
-    id: 'appointment-reminders',
-    section: 'Follow-up & Reviews',
-    question: 'How do you remind customers about upcoming appointments?',
-    description: 'Think about your process for reducing no-shows.',
+    id: 'review_collection',
+    question: 'How do you collect reviews after service?',
+    description: 'Reviews drive 15-20% of new customer acquisition',
+    section: 'Customer Retention & Growth',
     options: [
-      { label: "We don't send reminders", scores: { FUA: 25, SA: 10 } },
-      { label: 'Manual calls the day before', scores: { FUA: 15 } },
-      { label: 'Automated email only', scores: { FUA: 10 } },
-      { label: 'Multi-channel automated reminders', scores: { FUA: 0 } }
-    ]
+      { label: 'Automated multi-platform requests', tierScores: { SINGLE_POINT: 35, MULTI_TRACK: 40, COMMAND: 35 } },
+      { label: 'Occasional email request to some customers', tierScores: { SINGLE_POINT: 55, MULTI_TRACK: 70, COMMAND: 60 } },
+      { label: 'Sometimes ask verbally after service', tierScores: { SINGLE_POINT: 60, MULTI_TRACK: 75, COMMAND: 85 } },
+      { label: 'We don\'t actively collect reviews', tierScores: { SINGLE_POINT: 65, MULTI_TRACK: 80, COMMAND: 95 } },
+    ],
   },
   {
-    id: 'review-collection',
-    section: 'Follow-up & Reviews',
-    question: 'How do you collect customer reviews after service?',
-    description: 'Reviews are critical for local SEO and trust building.',
+    id: 'customer_reactivation',
+    question: 'How do you re-engage past customers?',
+    description: 'Reactivating existing customers costs 5x less than acquiring new',
+    section: 'Customer Retention & Growth',
     options: [
-      { label: "We don't actively collect reviews", scores: { FUA: 20 } },
-      { label: 'Sometimes ask verbally', scores: { FUA: 15 } },
-      { label: 'Email request after service', scores: { FUA: 10 } },
-      { label: 'Automated multi-platform review requests', scores: { FUA: 0 } }
-    ]
+      { label: 'Active campaigns with personalization', tierScores: { SINGLE_POINT: 35, MULTI_TRACK: 40, COMMAND: 35 } },
+      { label: 'Occasional promotions to our list', tierScores: { SINGLE_POINT: 50, MULTI_TRACK: 65, COMMAND: 60 } },
+      { label: 'We should but don\'t have time', tierScores: { SINGLE_POINT: 55, MULTI_TRACK: 75, COMMAND: 90 } },
+      { label: 'No reactivation strategy', tierScores: { SINGLE_POINT: 60, MULTI_TRACK: 80, COMMAND: 95 } },
+    ],
   },
-
-  // === CUSTOMER REACTIVATION ===
+  // Section 6: Business Intelligence & Scale
   {
-    id: 'dormant-database',
-    section: 'Customer Reactivation',
-    question: "How many past customers haven't been contacted in 6+ months?",
-    description: 'Estimate the size of your "dormant" customer database.',
+    id: 'performance_tracking',
+    question: 'How do you track business performance metrics?',
+    description: 'Data-driven decisions increase profitability by 20%',
+    section: 'Business Intelligence & Branding',
     options: [
-      { label: 'Over 2,000 customers', scores: { RA: 35 } },
-      { label: '500-2,000 customers', scores: { RA: 20 } },
-      { label: '100-500 customers', scores: { RA: 10 } },
-      { label: 'We actively re-engage everyone', scores: { RA: 0 } }
-    ]
-  },
-
-  // === KNOWLEDGE & TRAINING ===
-  {
-    id: 'training-time',
-    section: 'Knowledge & Training',
-    question: 'How long does it take to train new staff on your processes?',
-    description: 'Include time for them to learn SOPs, policies, and handle common situations independently.',
-    options: [
-      { label: 'Over 1 month', scores: { KOA: 25 } },
-      { label: '2-4 weeks', scores: { KOA: 15 } },
-      { label: '1-2 weeks', scores: { KOA: 5 } },
-      { label: 'Under a week (we have documented SOPs)', scores: { KOA: 0 } }
-    ]
-  },
-
-  // === BUSINESS INTELLIGENCE ===
-  {
-    id: 'performance-visibility',
-    section: 'Business Intelligence',
-    question: 'How do you track team/business performance metrics?',
-    description: 'Consider how you measure and monitor KPIs.',
-    options: [
-      { label: 'Spreadsheets or gut feel', scores: { BIA: 25 } },
-      { label: 'Basic reports from software', scores: { BIA: 15 } },
-      { label: 'Weekly manual reporting', scores: { BIA: 10 } },
-      { label: 'Real-time dashboards with KPIs', scores: { BIA: 0 } }
-    ]
+      { label: 'Real-time dashboards with KPIs', tierScores: { SINGLE_POINT: 40, MULTI_TRACK: 45, COMMAND: 40 } },
+      { label: 'Weekly/monthly reports from software', tierScores: { SINGLE_POINT: 55, MULTI_TRACK: 65, COMMAND: 60 } },
+      { label: 'Spreadsheets and manual tracking', tierScores: { SINGLE_POINT: 60, MULTI_TRACK: 75, COMMAND: 85 } },
+      { label: 'Mostly gut feel and bank balance', tierScores: { SINGLE_POINT: 65, MULTI_TRACK: 80, COMMAND: 95 } },
+    ],
   },
   {
-    id: 'revenue-forecasting',
-    section: 'Business Intelligence',
-    question: 'How do you forecast revenue and demand?',
-    description: 'Think about how you plan for busy seasons and growth.',
+    id: 'white_label',
+    question: 'Do you need white-label/custom branding for customer-facing tools?',
+    description: 'Brand consistency builds trust and recognition',
+    section: 'Business Intelligence & Branding',
     options: [
-      { label: "We don't forecast - react as it comes", scores: { BIA: 20 } },
-      { label: 'Simple historical comparisons', scores: { BIA: 15 } },
-      { label: 'Quarterly planning with estimates', scores: { BIA: 10 } },
-      { label: 'Data-driven forecasting models', scores: { BIA: 0 } }
-    ]
-  }
+      { label: 'Not important - function over form', tierScores: { SINGLE_POINT: 80, MULTI_TRACK: 70, COMMAND: 40 } },
+      { label: 'Nice to have eventually', tierScores: { SINGLE_POINT: 60, MULTI_TRACK: 65, COMMAND: 60 } },
+      { label: 'Yes, brand consistency matters to us', tierScores: { SINGLE_POINT: 40, MULTI_TRACK: 55, COMMAND: 85 } },
+      { label: 'Essential - we serve enterprise clients', tierScores: { SINGLE_POINT: 25, MULTI_TRACK: 40, COMMAND: 95 } },
+    ],
+  },
 ];
 
-export const AGENT_RECOMMENDATIONS: AgentRecommendation[] = [
-  {
-    category: 'FDA',
-    name: 'front-desk',
-    title: '24/7 Front-Desk Agent',
-    why: 'Your business is "leaking" leads during evenings and weekends. Speed-to-lead is critical—78% of customers buy from whoever responds first.',
-    impact: 'This agent acts as a tireless receptionist, qualifying leads and answering FAQs instantly. It stops your competitors from stealing the "fastest finger" win.',
-    icon: 'Headphones',
-    threshold: 30
+// Tier recommendations with full details
+export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
+  SINGLE_POINT: {
+    tier: 'SINGLE_POINT',
+    label: 'Single-Point',
+    price: '$497/mo',
+    description: 'Perfect for small teams focused on lead capture and scheduling automation',
+    keyFeatures: [
+      'AI Receptionist (Triage Agent)',
+      'Scheduling Agent',
+      'Customer Portal Console',
+      'Email Reminders (Resend)',
+      'Up to 5 employees',
+    ],
+    agentCount: 2,
+    consoleCount: 1,
   },
-  {
-    category: 'SA',
-    name: 'scheduler',
-    title: 'Autonomous Scheduler',
-    why: 'Manual booking is a massive administrative tax on your skilled labor. Phone tag wastes 2-3 hours per employee per week.',
-    impact: 'This agent syncs with your calendar to handle scheduling autonomously. It eliminates double bookings and sends automated reminders to slash no-show rates by up to 40%.',
-    icon: 'Calendar',
-    threshold: 20
+  MULTI_TRACK: {
+    tier: 'MULTI_TRACK',
+    label: 'Multi-Track',
+    price: '$897/mo',
+    description: 'Ideal for growing teams with field operations and multi-channel needs',
+    keyFeatures: [
+      'All Single-Point features',
+      '+5 Field Ops Agents (Dispatch, Route, ETA, Check-in, Quote)',
+      'Field Ops Console',
+      'SMS Integration (Twilio)',
+      'Up to 10 employees',
+    ],
+    agentCount: 7,
+    consoleCount: 2,
   },
-  {
-    category: 'RA',
-    name: 'reactivation',
-    title: 'Database Reactivation Agent',
-    why: 'You are sitting on a "gold mine" of past customers that is currently dormant. It costs 5x more to acquire a new customer than retain an existing one.',
-    impact: 'This agent sends personalized SMS/Email reach-outs to your existing database to book repeat service or seasonal maintenance, generating revenue without any new ad spend.',
-    icon: 'Users',
-    threshold: 25
+  COMMAND: {
+    tier: 'COMMAND',
+    label: 'Command',
+    price: '$1,497/mo',
+    description: 'Complete business automation with AI voice, analytics, and white-label',
+    keyFeatures: [
+      'All Multi-Track features',
+      '+11 Agents (Follow-up, Review, Voice, Analytics, Marketing)',
+      'All 5 Control Centers',
+      'AI Voice (ElevenLabs)',
+      'White-Label Branding',
+      'Unlimited employees',
+    ],
+    agentCount: 18,
+    consoleCount: 5,
   },
-  {
-    category: 'KOA',
-    name: 'knowledge',
-    title: 'Internal Knowledge Agent',
-    why: 'Institutional knowledge is trapped in "heads" rather than a system, making scaling difficult and creating bottlenecks.',
-    impact: 'A custom AI trained on your manuals. Staff can ask "How do I fix [X]?" or "What\'s our policy on [Y]?" and get instant, accurate answers—reducing manager interruptions by 60%.',
-    icon: 'BookOpen',
-    threshold: 20
-  },
-  {
-    category: 'FOA',
-    name: 'field-ops',
-    title: 'Field Operations Suite',
-    why: 'Inefficient dispatch and poor route planning cost you fuel, time, and customer satisfaction. Customers hate uncertainty about arrival times.',
-    impact: 'Smart technician assignment based on location, skills, and workload. Real-time ETA updates keep customers informed and reduce "where are you?" calls by 80%.',
-    icon: 'Truck',
-    threshold: 30
-  },
-  {
-    category: 'CA',
-    name: 'multi-channel',
-    title: 'Multi-Channel AI Hub',
-    why: 'Every missed call is a lost opportunity. Customers expect to reach you on their preferred channel—not just phone.',
-    impact: 'AI-powered voice, SMS, and chat agents that never miss a lead. Seamless handoffs between channels ensure no customer falls through the cracks.',
-    icon: 'MessageSquare',
-    threshold: 25
-  },
-  {
-    category: 'FUA',
-    name: 'follow-up',
-    title: 'Follow-up & Review System',
-    why: 'Without systematic follow-up, you lose repeat business and miss review opportunities. Reviews directly impact your Google ranking and conversion rates.',
-    impact: 'Automated appointment reminders reduce no-shows by 40%. Post-service review requests boost your online reputation and generate 3x more reviews.',
-    icon: 'Star',
-    threshold: 20
-  },
-  {
-    category: 'BIA',
-    name: 'business-intel',
-    title: 'Business Intelligence Engine',
-    why: 'Flying blind without data leads to reactive decisions instead of proactive strategy. You can\'t improve what you don\'t measure.',
-    impact: 'AI-powered dashboards surface insights automatically. Demand forecasting helps you staff appropriately and identify revenue opportunities before competitors.',
-    icon: 'BarChart3',
-    threshold: 25
-  }
+};
+
+// Section labels for progress display
+export const SECTION_ORDER = [
+  'Lead Intake & Response',
+  'Scheduling & Booking',
+  'Team & Field Operations',
+  'Communication Channels',
+  'Customer Retention & Growth',
+  'Business Intelligence & Branding',
 ];
-
-export const CATEGORY_LABELS: Record<ScoreCategory, string> = {
-  FDA: 'Front-Desk Automation',
-  SA: 'Scheduling Automation',
-  RA: 'Reactivation Automation',
-  KOA: 'Knowledge Automation',
-  FOA: 'Field Operations',
-  CA: 'Communication Channels',
-  FUA: 'Follow-up & Reviews',
-  BIA: 'Business Intelligence'
-};
-
-export const CATEGORY_MAX_SCORES: Record<ScoreCategory, number> = {
-  FDA: 45,
-  SA: 30,
-  RA: 35,
-  KOA: 25,
-  FOA: 45,
-  CA: 45,
-  FUA: 45,
-  BIA: 45
-};
