@@ -657,7 +657,7 @@ export default function Index() {
                 </Button>
                 <button 
                   onClick={() => setShowPlanComparison(!showPlanComparison)}
-                  className="w-full mt-3 text-sm text-primary hover:text-primary/80 flex items-center justify-center gap-1 transition-colors"
+                  className="w-full mt-3 text-sm text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
                 >
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -716,7 +716,7 @@ export default function Index() {
                 </Button>
                 <button 
                   onClick={() => setShowPlanComparison(!showPlanComparison)}
-                  className="w-full mt-3 text-sm text-primary hover:text-primary/80 flex items-center justify-center gap-1 transition-colors"
+                  className="w-full mt-3 text-sm text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
                 >
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -772,7 +772,7 @@ export default function Index() {
                 </Button>
                 <button 
                   onClick={() => setShowPlanComparison(!showPlanComparison)}
-                  className="w-full mt-3 text-sm text-primary hover:text-primary/80 flex items-center justify-center gap-1 transition-colors"
+                  className="w-full mt-3 text-sm text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
                 >
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
