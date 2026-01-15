@@ -223,7 +223,7 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
               </div>
 
               <div className="space-y-1">
-                <p className="text-[10px] uppercase text-muted-foreground font-medium px-1">Record Permissions</p>
+                <p className="text-[10px] uppercase text-card-foreground font-medium px-1">Record Permissions</p>
                 <div className="grid grid-cols-2 gap-1">
                   {GRANULAR_PERMISSIONS.map((perm) => {
                     const field = perm.field as keyof FeaturePermissions;
