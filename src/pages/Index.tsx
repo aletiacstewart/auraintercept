@@ -381,6 +381,9 @@ export default function Index() {
                   <Building2 className="w-5 h-5 mr-2" />
                   Start Free Trial
                 </Button>
+                <Button size="lg" variant="outline" className="text-lg px-8 py-6 w-full sm:w-auto border-primary/50 hover:bg-primary/10" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}>
+                  Choose Your Plan
+                </Button>
               </div>
             </div>
           </div>
