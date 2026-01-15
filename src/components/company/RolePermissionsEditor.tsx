@@ -158,7 +158,7 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
                         <span className="text-sm font-medium truncate">{agent.name}</span>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <HelpCircle className="h-3 w-3 text-muted-foreground shrink-0 cursor-help" />
+                            <HelpCircle className="h-3 w-3 text-primary shrink-0 cursor-help" />
                           </TooltipTrigger>
                           <TooltipContent side="top" className="max-w-[200px]">
                             {agent.description}
@@ -199,7 +199,7 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
                           <span className="text-sm font-medium truncate">{feature.name}</span>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <HelpCircle className="h-3 w-3 text-muted-foreground shrink-0 cursor-help" />
+                              <HelpCircle className="h-3 w-3 text-primary shrink-0 cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent side="top" className="max-w-[200px]">
                               {feature.description}
@@ -239,7 +239,7 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
                           <span className="text-xs font-medium">{perm.name}</span>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <HelpCircle className="h-2.5 w-2.5 text-muted-foreground shrink-0 cursor-help" />
+                              <HelpCircle className="h-2.5 w-2.5 text-primary shrink-0 cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent side="top" className="max-w-[180px]">
                               {perm.description}
