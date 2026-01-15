@@ -185,10 +185,10 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
         </Card>
 
         {/* CTA Section */}
-        <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+        <Card className="bg-card border-border">
           <CardContent className="pt-8 pb-8 text-center">
-            <h3 className="text-xl font-bold mb-2 text-slate-900">Ready to Automate?</h3>
-            <p className="text-slate-600 mb-6 max-w-md mx-auto">
+            <h3 className="text-xl font-bold mb-2 text-card-foreground">Ready to Automate?</h3>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               Get started with a free trial or book an implementation call to discuss your specific needs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
