@@ -4293,6 +4293,25 @@ export type Database = {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
       }
+      get_appointment_by_customer_token: {
+        Args: { p_token: string }
+        Returns: {
+          company_id: string
+          company_logo_url: string
+          company_name: string
+          company_primary_color: string
+          created_at: string
+          customer_address: string
+          customer_name: string
+          datetime: string
+          duration_minutes: number
+          id: string
+          notes: string
+          service_type: string
+          status: string
+          updated_at: string
+        }[]
+      }
       get_appointment_by_token:
         | {
             Args: { p_token: string }
@@ -4312,6 +4331,24 @@ export type Database = {
               isSetofReturn: true
             }
           }
+      get_company_calendar_appointments: {
+        Args: { p_feed_token: string }
+        Returns: {
+          company_name: string
+          created_at: string
+          customer_address: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          datetime: string
+          duration_minutes: number
+          id: string
+          notes: string
+          service_type: string
+          status: string
+          updated_at: string
+        }[]
+      }
       get_company_public_info: {
         Args: { p_slug: string }
         Returns: {
@@ -4356,6 +4393,23 @@ export type Database = {
           name: string
           parts_covered: boolean
           terms_conditions: string
+        }[]
+      }
+      get_employee_calendar_appointments: {
+        Args: { p_feed_token: string }
+        Returns: {
+          created_at: string
+          customer_address: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          datetime: string
+          duration_minutes: number
+          id: string
+          notes: string
+          service_type: string
+          status: string
+          updated_at: string
         }[]
       }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }

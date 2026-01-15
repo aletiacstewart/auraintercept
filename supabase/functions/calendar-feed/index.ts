@@ -62,7 +62,7 @@ function generateICS(appointments: any[], calendarName: string): string {
     const startDate = new Date(apt.datetime);
     const endDate = new Date(startDate.getTime() + (apt.duration_minutes || 60) * 60 * 1000);
     const createdDate = new Date(apt.created_at);
-    const updatedDate = new Date(apt.updated_at);
+    const updatedDate = new Date(apt.updated_at || apt.created_at);
 
     lines.push("BEGIN:VEVENT");
     lines.push(`UID:${apt.id}@lovable.app`);
@@ -93,7 +93,7 @@ function generateICS(appointments: any[], calendarName: string): string {
   return lines.join("\r\n");
 }
 
-// Generate a single event ICS for customers
+// Generate a single event ICS for customers (no PII in description)
 function generateSingleEventICS(appointment: any, companyName: string): string {
   const lines: string[] = [
     "BEGIN:VCALENDAR",
@@ -118,6 +118,7 @@ function generateSingleEventICS(appointment: any, companyName: string): string {
     lines.push(`LOCATION:${escapeICS(appointment.customer_address)}`);
   }
   
+  // Customer-facing ICS - minimal PII, just service info
   const description = [
     `Service: ${appointment.service_type}`,
     `Provider: ${companyName}`,
@@ -179,7 +180,7 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Handle single appointment download for customers
+    // Handle single appointment download for customers using SECURITY DEFINER RPC
     if (type === "appointment" && appointmentId) {
       // Validate appointmentId format
       if (!uuidRegex.test(appointmentId)) {
@@ -189,16 +190,24 @@ Deno.serve(async (req) => {
         });
       }
 
-      console.log("Fetching single appointment for customer download");
+      console.log("Fetching single appointment via secure RPC for customer download");
       
-      const { data: appointment, error: aptError } = await supabase
-        .from("appointments")
-        .select("*, companies:company_id(name)")
-        .eq("id", appointmentId)
-        .eq("customer_token", token)
-        .single();
+      // Use SECURITY DEFINER function to get appointment by token
+      const { data: appointments, error: aptError } = await supabase
+        .rpc('get_appointment_by_customer_token', { p_token: token });
 
-      if (aptError || !appointment) {
+      if (aptError) {
+        console.error("RPC error fetching appointment:", aptError);
+        return new Response(JSON.stringify({ error: "Failed to fetch appointment" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Find the specific appointment by ID
+      const appointment = appointments?.find((a: any) => a.id === appointmentId);
+      
+      if (!appointment) {
         console.error("Appointment not found or invalid token");
         return new Response(JSON.stringify({ error: "Appointment not found" }), {
           status: 404,
@@ -206,7 +215,7 @@ Deno.serve(async (req) => {
         });
       }
 
-      const companyName = (appointment.companies as any)?.name || "Service Provider";
+      const companyName = appointment.company_name || "Service Provider";
       const icsContent = generateSingleEventICS(appointment, companyName);
 
       return new Response(icsContent, {
@@ -218,68 +227,26 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Handle employee feed
+    // Handle employee feed using SECURITY DEFINER RPC
     if (type === "employee") {
-      console.log("Fetching employee calendar feed");
+      console.log("Fetching employee calendar feed via secure RPC");
       
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("id, full_name, company_id")
-        .eq("calendar_feed_token", token)
-        .single();
-
-      if (profileError || !profile) {
-        console.error("Invalid employee token");
-        return new Response(JSON.stringify({ error: "Invalid token" }), {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-
-      // Get appointments assigned to this employee
-      const { data: jobAssignments, error: jobError } = await supabase
-        .from("job_assignments")
-        .select("appointment_id")
-        .eq("employee_id", profile.id)
-        .neq("status", "cancelled");
-
-      if (jobError) {
-        console.error("Error fetching job assignments:", jobError);
-        return new Response(JSON.stringify({ error: "Failed to fetch assignments" }), {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-
-      const appointmentIds = jobAssignments?.map(j => j.appointment_id) || [];
-
-      if (appointmentIds.length === 0) {
-        const emptyCalendar = generateICS([], `${profile.full_name || "My"} Appointments`);
-        return new Response(emptyCalendar, {
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "text/calendar; charset=utf-8",
-          },
-        });
-      }
-
+      // Use SECURITY DEFINER function to get employee appointments
       const { data: appointments, error: aptError } = await supabase
-        .from("appointments")
-        .select("*")
-        .in("id", appointmentIds)
-        .neq("status", "cancelled")
-        .gte("datetime", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()) // Last 30 days
-        .order("datetime", { ascending: true });
+        .rpc('get_employee_calendar_appointments', { p_feed_token: token });
 
       if (aptError) {
-        console.error("Error fetching appointments:", aptError);
+        console.error("RPC error fetching employee appointments:", aptError);
         return new Response(JSON.stringify({ error: "Failed to fetch appointments" }), {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
-      const icsContent = generateICS(appointments || [], `${profile.full_name || "My"} Appointments`);
+      // If no appointments returned, it could mean invalid token or no assignments
+      // We return empty calendar (RPC returns empty set for invalid token)
+      const calendarName = "My Appointments";
+      const icsContent = generateICS(appointments || [], calendarName);
 
       return new Response(icsContent, {
         headers: {
@@ -289,41 +256,25 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Handle company feed
+    // Handle company feed using SECURITY DEFINER RPC
     if (type === "company") {
-      console.log("Fetching company calendar feed");
+      console.log("Fetching company calendar feed via secure RPC");
       
-      const { data: company, error: companyError } = await supabase
-        .from("companies")
-        .select("id, name")
-        .eq("calendar_feed_token", token)
-        .single();
-
-      if (companyError || !company) {
-        console.error("Invalid company token");
-        return new Response(JSON.stringify({ error: "Invalid token" }), {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-
+      // Use SECURITY DEFINER function to get company appointments
       const { data: appointments, error: aptError } = await supabase
-        .from("appointments")
-        .select("*")
-        .eq("company_id", company.id)
-        .neq("status", "cancelled")
-        .gte("datetime", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
-        .order("datetime", { ascending: true });
+        .rpc('get_company_calendar_appointments', { p_feed_token: token });
 
       if (aptError) {
-        console.error("Error fetching company appointments:", aptError);
+        console.error("RPC error fetching company appointments:", aptError);
         return new Response(JSON.stringify({ error: "Failed to fetch appointments" }), {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
-      const icsContent = generateICS(appointments || [], `${company.name} Appointments`);
+      // Get company name from first appointment or default
+      const companyName = appointments?.[0]?.company_name || "Company Appointments";
+      const icsContent = generateICS(appointments || [], companyName);
 
       return new Response(icsContent, {
         headers: {
