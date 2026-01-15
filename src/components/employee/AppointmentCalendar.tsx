@@ -451,7 +451,7 @@ export function AppointmentCalendar() {
             <CalendarIcon className="w-5 h-5" />
             Calendar
           </CardTitle>
-          <CardDescription className="text-white/70">
+          <CardDescription className="text-muted-foreground">
             Select a date to view appointments
           </CardDescription>
         </CardHeader>
@@ -491,7 +491,7 @@ export function AppointmentCalendar() {
               <CardTitle>
                 {format(selectedDate, 'EEEE, MMMM d, yyyy')}
               </CardTitle>
-              <CardDescription className="text-white/70">
+              <CardDescription className="text-muted-foreground">
                 {selectedDayAppointments.length} appointment{selectedDayAppointments.length !== 1 ? 's' : ''} scheduled
               </CardDescription>
             </div>
@@ -504,7 +504,7 @@ export function AppointmentCalendar() {
                       <Cloud className="w-3 h-3" />
                       <span>{syncSummary.synced} synced</span>
                     </div>
-                    <div className="flex items-center gap-1 text-white/60">
+                    <div className="flex items-center gap-1 text-muted-foreground">
                       <CloudOff className="w-3 h-3" />
                       <span>{syncSummary.notSynced} not synced</span>
                     </div>
@@ -614,9 +614,9 @@ export function AppointmentCalendar() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <CalendarIcon className="w-12 h-12 mx-auto text-white/40 mb-3" />
-              <p className="text-white/70">No appointments on this day</p>
-              <p className="text-sm text-white/60">Select another date or enjoy your day off!</p>
+              <CalendarIcon className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
+              <p className="text-foreground">No appointments on this day</p>
+              <p className="text-sm text-muted-foreground">Select another date or enjoy your day off!</p>
             </div>
           )}
         </CardContent>
