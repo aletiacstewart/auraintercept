@@ -1,10 +1,9 @@
-import { useState } from "react";
-import { AuditProgress } from "./AuditProgress";
+import { useState, useMemo } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { AuditQuestion } from "./AuditQuestion";
 import { AuditResults } from "./AuditResults";
-import { QUESTIONS, type Scores, type ScoreCategory } from "./types";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { QUESTIONS, SECTION_ORDER, TierType, TierScores } from "./types";
 
 export function AgentOpportunityAudit() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -12,23 +11,23 @@ export function AgentOpportunityAudit() {
   const [showResults, setShowResults] = useState(false);
 
   const handleSelect = (option: string) => {
-    setAnswers(prev => ({
+    setAnswers((prev) => ({
       ...prev,
-      [QUESTIONS[currentStep].id]: option
+      [QUESTIONS[currentStep].id]: option,
     }));
   };
 
   const handleNext = () => {
-    if (currentStep === QUESTIONS.length - 1) {
-      setShowResults(true);
+    if (currentStep < QUESTIONS.length - 1) {
+      setCurrentStep((prev) => prev + 1);
     } else {
-      setCurrentStep(prev => prev + 1);
+      setShowResults(true);
     }
   };
 
   const handleBack = () => {
     if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
@@ -38,82 +37,110 @@ export function AgentOpportunityAudit() {
     setShowResults(false);
   };
 
-  const calculateScores = (): Scores => {
-    const scores: Scores = { FDA: 0, SA: 0, RA: 0, KOA: 0, FOA: 0, CA: 0, FUA: 0, BIA: 0 };
+  // Calculate tier fit percentages
+  const tierPercentages = useMemo((): TierScores => {
+    const totals: TierScores = { SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
+    let answeredCount = 0;
 
-    QUESTIONS.forEach(question => {
-      const selectedOption = answers[question.id];
-      if (selectedOption) {
-        const option = question.options.find(o => o.label === selectedOption);
-        if (option?.scores) {
-          (Object.entries(option.scores) as [ScoreCategory, number][]).forEach(
-            ([category, value]) => {
-              scores[category] += value;
-            }
-          );
+    QUESTIONS.forEach((question) => {
+      const selectedLabel = answers[question.id];
+      if (selectedLabel) {
+        const selectedOption = question.options.find(
+          (opt) => opt.label === selectedLabel
+        );
+        if (selectedOption) {
+          totals.SINGLE_POINT += selectedOption.tierScores.SINGLE_POINT;
+          totals.MULTI_TRACK += selectedOption.tierScores.MULTI_TRACK;
+          totals.COMMAND += selectedOption.tierScores.COMMAND;
+          answeredCount++;
         }
       }
     });
 
-    return scores;
-  };
+    // Calculate average percentage for each tier
+    if (answeredCount === 0) {
+      return { SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
+    }
+
+    return {
+      SINGLE_POINT: Math.round(totals.SINGLE_POINT / answeredCount),
+      MULTI_TRACK: Math.round(totals.MULTI_TRACK / answeredCount),
+      COMMAND: Math.round(totals.COMMAND / answeredCount),
+    };
+  }, [answers]);
+
+  // Determine recommended tier
+  const recommendedTier = useMemo((): TierType => {
+    const { SINGLE_POINT, MULTI_TRACK, COMMAND } = tierPercentages;
+    
+    // If Command has highest fit, recommend it
+    if (COMMAND >= MULTI_TRACK && COMMAND >= SINGLE_POINT) {
+      return 'COMMAND';
+    }
+    // If Multi-Track has highest fit
+    if (MULTI_TRACK >= SINGLE_POINT) {
+      return 'MULTI_TRACK';
+    }
+    return 'SINGLE_POINT';
+  }, [tierPercentages]);
+
+  const currentQuestion = QUESTIONS[currentStep];
+  const progress = ((currentStep + 1) / QUESTIONS.length) * 100;
+  const currentSection = currentQuestion?.section || '';
+  const sectionIndex = SECTION_ORDER.indexOf(currentSection);
 
   if (showResults) {
     return (
-      <div className="min-h-screen py-8 px-4">
-        <AuditResults scores={calculateScores()} onRestart={handleRestart} />
-      </div>
+      <AuditResults
+        tierPercentages={tierPercentages}
+        recommendedTier={recommendedTier}
+        onRestart={handleRestart}
+      />
     );
   }
 
-  const currentQuestion = QUESTIONS[currentStep];
-  const currentSection = currentQuestion.section;
-
   return (
-    <div className="min-h-[calc(100vh-200px)] flex flex-col items-center justify-center py-8 px-4">
-      <div className="w-full max-w-2xl space-y-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            AI Agent Opportunity Audit
+        <div className="text-center mb-8">
+          <h1 className="text-3xl sm:text-4xl font-brand uppercase tracking-tight mb-2">
+            AI Opportunity Audit
           </h1>
-          <p className="text-muted-foreground text-lg">
-            Discover where AI can save you time and capture more revenue
-          </p>
-          <p className="text-xs text-muted-foreground/70 mt-2">
-            Results are estimates only. Individual outcomes vary based on implementation and business factors.
+          <p className="text-muted-foreground">
+            Discover which automation tier fits your business needs
           </p>
         </div>
 
         {/* Section Badge */}
-        {currentSection && (
-          <div className="flex justify-center">
-            <Badge variant="secondary" className="px-4 py-1.5 text-sm">
-              {currentSection}
-            </Badge>
-          </div>
-        )}
+        <div className="flex justify-center mb-6">
+          <Badge 
+            variant="outline" 
+            className="text-sm px-4 py-1.5 border-primary/30 bg-primary/5"
+          >
+            {currentSection} ({sectionIndex + 1}/{SECTION_ORDER.length})
+          </Badge>
+        </div>
 
         {/* Progress */}
-        <AuditProgress currentStep={currentStep} totalSteps={QUESTIONS.length} />
-
-        {/* Question */}
-        <div
-          className={cn(
-            "transition-all duration-300 ease-in-out",
-            "transform"
-          )}
-        >
-          <AuditQuestion
-            question={currentQuestion}
-            selectedOption={answers[currentQuestion.id] || null}
-            onSelect={handleSelect}
-            onNext={handleNext}
-            onBack={handleBack}
-            isFirst={currentStep === 0}
-            isLast={currentStep === QUESTIONS.length - 1}
-          />
+        <div className="mb-8">
+          <div className="flex justify-between text-sm text-muted-foreground mb-2">
+            <span>Question {currentStep + 1} of {QUESTIONS.length}</span>
+            <span>{Math.round(progress)}% Complete</span>
+          </div>
+          <Progress value={progress} className="h-2" />
         </div>
+
+        {/* Question Card */}
+        <AuditQuestion
+          question={currentQuestion}
+          selectedOption={answers[currentQuestion.id] || null}
+          onSelect={handleSelect}
+          onNext={handleNext}
+          onBack={handleBack}
+          isFirst={currentStep === 0}
+          isLast={currentStep === QUESTIONS.length - 1}
+        />
       </div>
     </div>
   );
