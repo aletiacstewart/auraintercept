@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Bug, Lightbulb, Bot, HelpCircle, Loader2, Send } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Bug, Lightbulb, Bot, HelpCircle, Loader2, Send, ImagePlus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -29,6 +29,10 @@ export function ReportIssueDialog({ trigger }: ReportIssueDialogProps) {
   const [issueType, setIssueType] = useState<IssueType>('user_reported');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [screenshot, setScreenshot] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { user, userRole } = useAuth();
 
@@ -37,6 +41,80 @@ export function ReportIssueDialog({ trigger }: ReportIssueDialogProps) {
     { value: 'feature_request', label: 'Feature Request', icon: Lightbulb, description: 'Suggest an improvement' },
     { value: 'ai_agent_error', label: 'AI Agent Issue', icon: Bot, description: 'AI not working correctly' },
   ] as const;
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please select an image file (PNG, JPG, etc.)',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Screenshot must be less than 5MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setScreenshot(file);
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setScreenshotPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeScreenshot = () => {
+    setScreenshot(null);
+    setScreenshotPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const uploadScreenshot = async (): Promise<string | null> => {
+    if (!screenshot || !user) return null;
+
+    setIsUploading(true);
+    try {
+      const fileExt = screenshot.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('issue-screenshots')
+        .upload(fileName, screenshot);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('issue-screenshots')
+        .getPublicUrl(fileName);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Screenshot upload failed:', error);
+      toast({
+        title: 'Upload failed',
+        description: 'Could not upload screenshot. Report will be submitted without it.',
+        variant: 'destructive',
+      });
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +140,9 @@ export function ReportIssueDialog({ trigger }: ReportIssueDialogProps) {
         companyId = profile?.company_id || null;
       }
 
+      // Upload screenshot if present
+      const screenshotUrl = await uploadScreenshot();
+
       const { error } = await supabase.from('platform_issues').insert({
         issue_type: issueType,
         severity: issueType === 'ai_agent_error' ? 'high' : 'medium',
@@ -75,6 +156,7 @@ export function ReportIssueDialog({ trigger }: ReportIssueDialogProps) {
         metadata: {
           submitted_from: 'report_dialog',
           timestamp: new Date().toISOString(),
+          screenshot_url: screenshotUrl,
         },
       });
 
@@ -89,6 +171,7 @@ export function ReportIssueDialog({ trigger }: ReportIssueDialogProps) {
       setTitle('');
       setDescription('');
       setIssueType('user_reported');
+      removeScreenshot();
     } catch (error) {
       console.error('Failed to submit report:', error);
       toast({
@@ -161,9 +244,52 @@ export function ReportIssueDialog({ trigger }: ReportIssueDialogProps) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Steps to reproduce, expected behavior, or additional context..."
-              rows={4}
+              rows={3}
               maxLength={2000}
             />
+          </div>
+
+          {/* Screenshot Upload */}
+          <div className="space-y-2">
+            <Label>Screenshot (optional)</Label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            
+            {screenshotPreview ? (
+              <div className="relative">
+                <img
+                  src={screenshotPreview}
+                  alt="Screenshot preview"
+                  className="w-full h-32 object-cover rounded-lg border border-border"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-2 right-2 h-6 w-6"
+                  onClick={removeScreenshot}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            ) : (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-20 border-dashed"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                  <ImagePlus className="h-5 w-5" />
+                  <span className="text-xs">Add screenshot</span>
+                </div>
+              </Button>
+            )}
           </div>
 
           <div className="text-xs text-muted-foreground bg-muted p-2 rounded">
@@ -174,13 +300,13 @@ export function ReportIssueDialog({ trigger }: ReportIssueDialogProps) {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? (
+            <Button type="submit" disabled={isSubmitting || isUploading}>
+              {isSubmitting || isUploading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
                 <Send className="mr-2 h-4 w-4" />
               )}
-              Submit Report
+              {isUploading ? 'Uploading...' : 'Submit Report'}
             </Button>
           </div>
         </form>
