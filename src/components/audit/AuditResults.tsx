@@ -49,13 +49,13 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
   const estimatedHoursSaved = Math.round((avgFit / 100) * 20); // Max 20 hrs/week
 
   const handleViewPricing = () => {
-    navigate('/#pricing');
+    navigate('/');
     setTimeout(() => {
       const pricingSection = document.getElementById('pricing');
       if (pricingSection) {
-        pricingSection.scrollIntoView({ behavior: 'smooth' });
+        pricingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }, 100);
+    }, 300);
   };
 
   const handleBookCall = () => {
