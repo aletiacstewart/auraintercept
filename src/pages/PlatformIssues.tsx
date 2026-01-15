@@ -429,6 +429,25 @@ export default function PlatformIssues() {
                   </div>
                 )}
 
+                {/* Screenshot */}
+                {(selectedIssue.metadata as { screenshot_url?: string })?.screenshot_url && (
+                  <div>
+                    <Label className="text-muted-foreground">Screenshot</Label>
+                    <a
+                      href={(selectedIssue.metadata as { screenshot_url: string }).screenshot_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block mt-1"
+                    >
+                      <img
+                        src={(selectedIssue.metadata as { screenshot_url: string }).screenshot_url}
+                        alt="Issue screenshot"
+                        className="max-w-full h-auto max-h-64 rounded-lg border border-border hover:opacity-90 transition-opacity cursor-pointer"
+                      />
+                    </a>
+                  </div>
+                )}
+
                 <div className="border-t pt-4 space-y-4">
                   <div>
                     <Label>Update Status</Label>
