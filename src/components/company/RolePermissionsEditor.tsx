@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { RotateCcw, Bot, Shield, Loader2, HelpCircle } from 'lucide-react';
+import { RotateCcw, Bot, Shield, Loader2, HelpCircle, Lock } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   useRolePermissions,
@@ -17,6 +17,7 @@ import {
   PLATFORM_DEFAULT_AGENTS,
   PLATFORM_DEFAULT_PERMISSIONS,
 } from '@/hooks/useRolePermissions';
+import { useSubscription } from '@/hooks/useSubscription';
 
 interface RolePermissionsEditorProps {
   companyId: string;
@@ -36,6 +37,14 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
     isUpdating,
     isResetting,
   } = useRolePermissions(companyId);
+
+  const { 
+    canAccessAgent, 
+    getAgentRequiredTier, 
+    canAccessFeatureArea, 
+    getFeatureRequiredTier, 
+    getTierInfo 
+  } = useSubscription();
 
   const [localPermissions, setLocalPermissions] = useState<FeaturePermissions | null>(null);
   const [localAgentAccess, setLocalAgentAccess] = useState<Record<string, boolean>>({});
@@ -148,32 +157,54 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
                 {ALL_AI_AGENTS.map((agent) => {
                   const isDefault = defaultAgents.includes(agent.id);
                   const isEnabled = localAgentAccess[agent.id] ?? isDefault;
+                  const isAvailable = canAccessAgent(agent.id);
+                  const requiredTier = getAgentRequiredTier(agent.id);
+                  const requiredTierInfo = requiredTier ? getTierInfo(requiredTier) : null;
                   
                   return (
                     <div
                       key={agent.id}
-                      className="flex items-center justify-between rounded border border-border/30 px-2.5 py-1.5 hover:bg-muted/50"
+                      className={`flex items-center justify-between rounded border border-border/30 px-2.5 py-1.5 ${
+                        isAvailable ? 'hover:bg-muted/50' : 'opacity-60 bg-muted/20'
+                      }`}
                     >
                       <div className="flex items-center gap-1.5 min-w-0">
-                        <span className="text-sm font-medium truncate">{agent.name}</span>
+                        <span className={`text-sm font-medium truncate ${!isAvailable ? 'text-muted-foreground' : ''}`}>
+                          {agent.name}
+                        </span>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <HelpCircle className="h-3 w-3 text-primary shrink-0 cursor-help" />
                           </TooltipTrigger>
-                          <TooltipContent side="top" className="max-w-[200px]">
-                            {agent.description}
+                          <TooltipContent side="top" className="max-w-[220px]">
+                            <p className="text-xs">{agent.description}</p>
+                            {!isAvailable && requiredTierInfo && (
+                              <>
+                                <Separator className="my-1.5" />
+                                <p className="text-xs text-amber-500 flex items-center gap-1">
+                                  <Lock className="h-3 w-3" />
+                                  Upgrade to {requiredTierInfo.label} to enable
+                                </p>
+                              </>
+                            )}
                           </TooltipContent>
                         </Tooltip>
-                        {isDefault && (
+                        {!isAvailable ? (
+                          <Badge variant="outline" className="text-[9px] px-1 py-0 shrink-0 text-muted-foreground">
+                            <Lock className="h-2.5 w-2.5 mr-0.5" />
+                            Locked
+                          </Badge>
+                        ) : isDefault ? (
                           <Badge variant="secondary" className="text-[9px] px-1 py-0 shrink-0">
                             Default
                           </Badge>
-                        )}
+                        ) : null}
                       </div>
                       <Switch
-                        checked={isEnabled}
+                        checked={isAvailable ? isEnabled : false}
                         onCheckedChange={(checked) => handleAgentAccessChange(agent.id, checked)}
-                        className="scale-90"
+                        disabled={!isAvailable}
+                        className={`scale-90 ${!isAvailable ? 'opacity-50' : ''}`}
                       />
                     </div>
                   );
@@ -189,32 +220,54 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
                     const field = feature.field as keyof FeaturePermissions;
                     const isDefault = defaultPermissions[field] ?? false;
                     const isEnabled = localPermissions[field];
+                    const isAvailable = canAccessFeatureArea(field);
+                    const requiredTier = getFeatureRequiredTier(field);
+                    const requiredTierInfo = requiredTier ? getTierInfo(requiredTier) : null;
                     
                     return (
                       <div
                         key={feature.id}
-                        className="flex items-center justify-between rounded border border-border/30 px-2.5 py-1.5 hover:bg-muted/50"
+                        className={`flex items-center justify-between rounded border border-border/30 px-2.5 py-1.5 ${
+                          isAvailable ? 'hover:bg-muted/50' : 'opacity-60 bg-muted/20'
+                        }`}
                       >
                         <div className="flex items-center gap-1.5 min-w-0">
-                          <span className="text-sm font-medium truncate">{feature.name}</span>
+                          <span className={`text-sm font-medium truncate ${!isAvailable ? 'text-muted-foreground' : ''}`}>
+                            {feature.name}
+                          </span>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <HelpCircle className="h-3 w-3 text-primary shrink-0 cursor-help" />
                             </TooltipTrigger>
-                            <TooltipContent side="top" className="max-w-[200px]">
-                              {feature.description}
+                            <TooltipContent side="top" className="max-w-[220px]">
+                              <p className="text-xs">{feature.description}</p>
+                              {!isAvailable && requiredTierInfo && (
+                                <>
+                                  <Separator className="my-1.5" />
+                                  <p className="text-xs text-amber-500 flex items-center gap-1">
+                                    <Lock className="h-3 w-3" />
+                                    Upgrade to {requiredTierInfo.label} to enable
+                                  </p>
+                                </>
+                              )}
                             </TooltipContent>
                           </Tooltip>
-                          {isDefault && (
+                          {!isAvailable ? (
+                            <Badge variant="outline" className="text-[9px] px-1 py-0 shrink-0 text-muted-foreground">
+                              <Lock className="h-2.5 w-2.5 mr-0.5" />
+                              Locked
+                            </Badge>
+                          ) : isDefault ? (
                             <Badge variant="secondary" className="text-[9px] px-1 py-0 shrink-0">
                               Default
                             </Badge>
-                          )}
+                          ) : null}
                         </div>
                         <Switch
-                          checked={isEnabled}
+                          checked={isAvailable ? isEnabled : false}
                           onCheckedChange={(checked) => handlePermissionChange(field, checked)}
-                          className="scale-90"
+                          disabled={!isAvailable}
+                          className={`scale-90 ${!isAvailable ? 'opacity-50' : ''}`}
                         />
                       </div>
                     );
