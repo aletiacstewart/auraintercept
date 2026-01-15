@@ -268,7 +268,7 @@ export function EmployeeManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Employees</h1>
-          <p className="text-white/70">
+          <p className="text-muted-foreground">
             Manage your team and assign job roles
           </p>
         </div>
@@ -298,7 +298,7 @@ export function EmployeeManagement() {
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
                   />
-                  <p className="text-xs text-white/70">
+                  <p className="text-xs text-muted-foreground">
                     If provided, only this email can use the code
                   </p>
                 </div>
@@ -314,7 +314,7 @@ export function EmployeeManagement() {
               <div className="space-y-4 pt-4">
                 <div className="text-center">
                   <Check className="w-12 h-12 mx-auto text-green-500 mb-3" />
-                  <p className="text-sm text-white/70 mb-4">
+                  <p className="text-sm text-muted-foreground mb-4">
                     Share this code with your employee
                   </p>
                   <div className="flex items-center gap-2 justify-center">
@@ -325,7 +325,7 @@ export function EmployeeManagement() {
                       <Copy className="w-4 h-4" />
                     </Button>
                   </div>
-                  <p className="text-xs text-white/70 mt-3">
+                  <p className="text-xs text-muted-foreground mt-3">
                     This code expires in 7 days
                   </p>
                 </div>
@@ -393,7 +393,7 @@ export function EmployeeManagement() {
       <Card className="border-border/50">
         <CardHeader>
           <CardTitle>Team Members</CardTitle>
-          <CardDescription className="text-white/70">
+          <CardDescription className="text-muted-foreground">
             Manage employees and their job roles for AI agent access
           </CardDescription>
         </CardHeader>
@@ -445,7 +445,7 @@ export function EmployeeManagement() {
                               );
                             })
                           ) : (
-                            <span className="text-white/70 text-sm">No roles assigned</span>
+                            <span className="text-muted-foreground text-sm">No roles assigned</span>
                           )}
                         </div>
                       </TableCell>
@@ -464,7 +464,7 @@ export function EmployeeManagement() {
                             <PopoverContent className="w-72 max-h-[400px] overflow-y-auto" align="end" side="left">
                               <div className="space-y-3">
                                 <h4 className="font-medium text-sm">Assign Job Roles</h4>
-                                <p className="text-xs text-white/70">
+                                <p className="text-xs text-muted-foreground">
                                   Selected roles grant access to related AI agents
                                 </p>
                                 <div className="space-y-2">
