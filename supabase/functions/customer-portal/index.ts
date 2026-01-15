@@ -473,10 +473,10 @@ Deno.serve(async (req) => {
     }
 
   } catch (error: unknown) {
-    console.error('Customer portal error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+    // Log full error server-side for debugging but return generic message to client
+    console.error('Customer portal error:', error, `request_id=${requestId}`);
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: 'An error occurred processing your request' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

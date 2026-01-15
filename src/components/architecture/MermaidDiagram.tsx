@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useId } from 'react';
 import mermaid from 'mermaid';
+import DOMPurify from 'dompurify';
 import { Button } from '@/components/ui/button';
 import { Download, Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
@@ -10,10 +11,11 @@ interface MermaidDiagramProps {
   description?: string;
 }
 
+// Initialize Mermaid with strict security to prevent XSS
 mermaid.initialize({
   startOnLoad: false,
   theme: 'dark',
-  securityLevel: 'loose',
+  securityLevel: 'strict',
   fontFamily: 'inherit',
 });
 
@@ -31,8 +33,12 @@ export function MermaidDiagram({ chart, title, description }: MermaidDiagramProp
           // Create a clean ID with only alphanumeric characters and dashes
           const cleanId = `mermaid${uniqueId}`;
           const { svg } = await mermaid.render(cleanId, chart);
-          containerRef.current.innerHTML = svg;
-          setSvgContent(svg);
+          // Sanitize SVG output using DOMPurify to prevent XSS attacks
+          const sanitizedSvg = DOMPurify.sanitize(svg, {
+            USE_PROFILES: { svg: true, svgFilters: true }
+          });
+          containerRef.current.innerHTML = sanitizedSvg;
+          setSvgContent(sanitizedSvg);
         } catch (error) {
           console.error('Mermaid render error:', error);
           containerRef.current.innerHTML = '<p class="text-destructive">Failed to render diagram</p>';
