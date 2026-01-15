@@ -140,7 +140,7 @@ export function EmployeeDashboard() {
     { label: 'Customer AI', icon: MessageSquare, href: '/dashboard/ai-agent?console=customer', gradient: 'from-purple-500 to-purple-600' },
   ] : [];
 
-  const customerServiceActions = hasJobType('customer_service') ? [
+  const customerServiceActions = (hasJobType('customer_service') || hasJobType('manager')) ? [
     { label: 'Customer AI', icon: MessageSquare, href: '/dashboard/ai-agent?console=customer', gradient: 'from-purple-500 to-purple-600' },
   ] : [];
 
@@ -151,7 +151,7 @@ export function EmployeeDashboard() {
   // Marketing actions removed - restricted to platform_admin only
 
   const hasSpecializedRole = hasJobType('technician') || hasJobType('dispatch') || hasJobType('booking_agent') || 
-    hasJobType('customer_service') || hasJobType('billing_specialist');
+    hasJobType('customer_service') || hasJobType('billing_specialist') || hasJobType('manager');
 
   const defaultAIAction = !hasSpecializedRole ? [
     { label: 'AI Assistant', icon: Bot, href: '/dashboard/ai-agent', gradient: 'from-purple-500 to-purple-600' },

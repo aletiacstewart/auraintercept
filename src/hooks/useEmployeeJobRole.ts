@@ -10,7 +10,8 @@ type DbEmployeeJobType =
   | 'billing'
   | 'marketing'
   | 'inventory'
-  | 'analytics';
+  | 'analytics'
+  | 'manager';
 
 type JobRoleType =
   | 'technician'
@@ -20,7 +21,8 @@ type JobRoleType =
   | 'billing_specialist'
   | 'marketing_manager'
   | 'inventory_manager'
-  | 'analytics_manager';
+  | 'analytics_manager'
+  | 'manager';
 
 function normalizeJobType(dbType: DbEmployeeJobType): JobRoleType {
   switch (dbType) {
@@ -32,6 +34,8 @@ function normalizeJobType(dbType: DbEmployeeJobType): JobRoleType {
       return 'inventory_manager';
     case 'analytics':
       return 'analytics_manager';
+    case 'manager':
+      return 'manager';
     default:
       return dbType;
   }

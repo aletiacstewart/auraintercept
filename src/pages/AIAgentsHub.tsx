@@ -55,6 +55,7 @@ const JOB_TYPE_TO_AGENTS: Record<string, string[]> = {
   booking_agent: ['triage', 'booking', 'followup', 'review'],
   dispatch: ['dispatch', 'route', 'eta', 'triage'],
   customer_service: ['triage', 'followup', 'review', 'booking'],
+  manager: ['triage', 'followup', 'review', 'booking'], // Same as customer_service
   billing: ['quoting', 'invoice', 'warranty'],
   marketing: ['campaign'],
   inventory: ['inventory', 'warranty'],

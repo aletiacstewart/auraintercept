@@ -4567,6 +4567,7 @@ export type Database = {
         | "marketing"
         | "inventory"
         | "analytics"
+        | "manager"
       issue_severity: "critical" | "high" | "medium" | "low"
       issue_status:
         | "new"
@@ -4742,6 +4743,7 @@ export const Constants = {
         "marketing",
         "inventory",
         "analytics",
+        "manager",
       ],
       issue_severity: ["critical", "high", "medium", "low"],
       issue_status: [
