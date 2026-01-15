@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Separator } from '@/components/ui/separator';
-import { RotateCcw, Bot, Shield, Loader2, Info } from 'lucide-react';
+import { RotateCcw, Bot, Shield, Loader2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   useRolePermissions,
@@ -42,7 +41,6 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
   const [localAgentAccess, setLocalAgentAccess] = useState<Record<string, boolean>>({});
   const [hasChanges, setHasChanges] = useState(false);
 
-  // Initialize local state from fetched data
   useEffect(() => {
     const permissions = getPermissionsForRole(jobType);
     setLocalPermissions(permissions);
@@ -69,17 +67,12 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
 
   const handleSave = () => {
     if (!localPermissions) return;
-
-    // Save permissions
     updatePermissions({ jobType, permissions: localPermissions });
-
-    // Save agent access
     const agents = Object.entries(localAgentAccess).map(([agentType, isEnabled]) => ({
       agentType,
       isEnabled,
     }));
     bulkUpdateAgentAccess({ jobType, agents });
-
     setHasChanges(false);
   };
 
@@ -94,77 +87,65 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
 
   if (!localPermissions) {
     return (
-      <Card>
-        <CardContent className="flex items-center justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      <Card className="border-border/30">
+        <CardContent className="flex items-center justify-center py-4">
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5" />
-              Permissions for {jobLabel}
-            </CardTitle>
-            <CardDescription>
-              Customize what employees with this role can access
-            </CardDescription>
-          </div>
+    <Card className="border-border/30 bg-muted/30">
+      <CardContent className="p-3">
+        {/* Compact Header */}
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
+            <Shield className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium">{jobLabel} Permissions</span>
             {isCustomized && (
-              <Badge variant="outline" className="text-xs">
-                Customized
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                Custom
               </Badge>
             )}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleReset}
-                    disabled={isResetting || !isCustomized}
-                  >
-                    {isResetting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <RotateCcw className="h-4 w-4" />
-                    )}
-                    <span className="ml-1 hidden sm:inline">Reset to Defaults</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  Reset this role to platform default permissions
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
           </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleReset}
+                  disabled={isResetting || !isCustomized}
+                  className="h-7 px-2 text-xs"
+                >
+                  {isResetting ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <RotateCcw className="h-3 w-3" />
+                  )}
+                  <span className="ml-1">Reset</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Reset to platform defaults</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
-      </CardHeader>
-      <CardContent>
+
         <Tabs defaultValue="agents" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="agents" className="flex items-center gap-2">
-              <Bot className="h-4 w-4" />
+          <TabsList className="h-8 w-full grid grid-cols-2 mb-2">
+            <TabsTrigger value="agents" className="text-xs h-7 gap-1">
+              <Bot className="h-3 w-3" />
               AI Agents
             </TabsTrigger>
-            <TabsTrigger value="features" className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
+            <TabsTrigger value="features" className="text-xs h-7 gap-1">
+              <Shield className="h-3 w-3" />
               Features
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="agents" className="mt-4 space-y-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Info className="h-4 w-4" />
-              Enable or disable AI agent access for this role
-            </div>
-            <div className="grid gap-3">
+          <TabsContent value="agents" className="mt-0 max-h-[280px] overflow-y-auto">
+            <div className="grid gap-1">
               {ALL_AI_AGENTS.map((agent) => {
                 const isDefault = defaultAgents.includes(agent.id);
                 const isEnabled = localAgentAccess[agent.id] ?? isDefault;
@@ -172,24 +153,20 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
                 return (
                   <div
                     key={agent.id}
-                    className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/50"
+                    className="flex items-center justify-between rounded border border-border/30 px-2.5 py-1.5 hover:bg-muted/50"
                   >
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{agent.name}</span>
-                        {isDefault && (
-                          <Badge variant="secondary" className="text-xs">
-                            Default
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {agent.description}
-                      </p>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-sm font-medium truncate">{agent.name}</span>
+                      {isDefault && (
+                        <Badge variant="secondary" className="text-[9px] px-1 py-0 shrink-0">
+                          Default
+                        </Badge>
+                      )}
                     </div>
                     <Switch
                       checked={isEnabled}
                       onCheckedChange={(checked) => handleAgentAccessChange(agent.id, checked)}
+                      className="scale-90"
                     />
                   </div>
                 );
@@ -197,93 +174,74 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
             </div>
           </TabsContent>
 
-          <TabsContent value="features" className="mt-4 space-y-4">
-            <Accordion type="multiple" defaultValue={['feature-access', 'granular']} className="w-full">
-              <AccordionItem value="feature-access">
-                <AccordionTrigger>Feature Area Access</AccordionTrigger>
-                <AccordionContent>
-                  <div className="grid gap-3 pt-2">
-                    {ALL_FEATURES.map((feature) => {
-                      const field = feature.field as keyof FeaturePermissions;
-                      const isDefault = defaultPermissions[field] ?? false;
-                      const isEnabled = localPermissions[field];
-                      
-                      return (
-                        <div
-                          key={feature.id}
-                          className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/50"
-                        >
-                          <div className="space-y-0.5">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{feature.name}</span>
-                              {isDefault && (
-                                <Badge variant="secondary" className="text-xs">
-                                  Default
-                                </Badge>
-                              )}
-                            </div>
-                            <p className="text-sm text-muted-foreground">
-                              {feature.description}
-                            </p>
-                          </div>
-                          <Switch
-                            checked={isEnabled}
-                            onCheckedChange={(checked) => handlePermissionChange(field, checked)}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+          <TabsContent value="features" className="mt-0 max-h-[280px] overflow-y-auto space-y-2">
+            <div className="space-y-1">
+              <p className="text-[10px] uppercase text-muted-foreground font-medium px-1">Feature Access</p>
+              <div className="grid gap-1">
+                {ALL_FEATURES.map((feature) => {
+                  const field = feature.field as keyof FeaturePermissions;
+                  const isDefault = defaultPermissions[field] ?? false;
+                  const isEnabled = localPermissions[field];
+                  
+                  return (
+                    <div
+                      key={feature.id}
+                      className="flex items-center justify-between rounded border border-border/30 px-2.5 py-1.5 hover:bg-muted/50"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-sm font-medium truncate">{feature.name}</span>
+                        {isDefault && (
+                          <Badge variant="secondary" className="text-[9px] px-1 py-0 shrink-0">
+                            Default
+                          </Badge>
+                        )}
+                      </div>
+                      <Switch
+                        checked={isEnabled}
+                        onCheckedChange={(checked) => handlePermissionChange(field, checked)}
+                        className="scale-90"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
 
-              <AccordionItem value="granular">
-                <AccordionTrigger>Granular Permissions</AccordionTrigger>
-                <AccordionContent>
-                  <div className="grid gap-3 pt-2">
-                    {GRANULAR_PERMISSIONS.map((perm) => {
-                      const field = perm.field as keyof FeaturePermissions;
-                      const isDefault = defaultPermissions[field] ?? false;
-                      const isEnabled = localPermissions[field];
-                      
-                      return (
-                        <div
-                          key={perm.id}
-                          className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/50"
-                        >
-                          <div className="space-y-0.5">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{perm.name}</span>
-                              {isDefault && (
-                                <Badge variant="secondary" className="text-xs">
-                                  Default
-                                </Badge>
-                              )}
-                            </div>
-                            <p className="text-sm text-muted-foreground">
-                              {perm.description}
-                            </p>
-                          </div>
-                          <Switch
-                            checked={isEnabled}
-                            onCheckedChange={(checked) => handlePermissionChange(field, checked)}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            <div className="space-y-1">
+              <p className="text-[10px] uppercase text-muted-foreground font-medium px-1">Actions</p>
+              <div className="grid grid-cols-2 gap-1">
+                {GRANULAR_PERMISSIONS.map((perm) => {
+                  const field = perm.field as keyof FeaturePermissions;
+                  const isDefault = defaultPermissions[field] ?? false;
+                  const isEnabled = localPermissions[field];
+                  
+                  return (
+                    <div
+                      key={perm.id}
+                      className="flex items-center justify-between rounded border border-border/30 px-2 py-1.5 hover:bg-muted/50"
+                    >
+                      <span className="text-xs font-medium">{perm.name}</span>
+                      <Switch
+                        checked={isEnabled}
+                        onCheckedChange={(checked) => handlePermissionChange(field, checked)}
+                        className="scale-75"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
 
         {hasChanges && (
           <>
-            <Separator className="my-4" />
-            <div className="flex justify-end gap-2">
+            <Separator className="my-2" />
+            <div className="flex justify-end gap-1.5">
               <Button
-                variant="outline"
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 text-xs"
                 onClick={() => {
                   const permissions = getPermissionsForRole(jobType);
                   setLocalPermissions(permissions);
@@ -298,14 +256,14 @@ export function RolePermissionsEditor({ companyId, jobType, jobLabel }: RolePerm
               >
                 Cancel
               </Button>
-              <Button onClick={handleSave} disabled={isUpdating}>
+              <Button onClick={handleSave} disabled={isUpdating} size="sm" className="h-7 px-3 text-xs">
                 {isUpdating ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-1 h-3 w-3 animate-spin" />
                     Saving...
                   </>
                 ) : (
-                  'Save Changes'
+                  'Save'
                 )}
               </Button>
             </div>
