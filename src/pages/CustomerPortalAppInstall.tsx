@@ -51,7 +51,7 @@ export default function CustomerPortalAppInstall() {
                 <ul className="space-y-3 text-sm text-white/70">
                   <li className="flex items-start gap-3">
                     <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0 font-semibold">1</span>
-                    <span>Customers sign up through any company's embedded widget</span>
+                    <span>Customers sign up through company's embedded Widget</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0 font-semibold">2</span>
