@@ -82,7 +82,7 @@ export default function CustomerPortalAppInstall() {
                   <Button 
                     variant="outline" 
                     className="gap-2"
-                    onClick={() => window.open('/customer-portal-install', '_blank')}
+                    onClick={() => window.open(installUrl, '_blank')}
                   >
                     <ExternalLink className="w-4 h-4" />
                     Open Customer Portal PWA
@@ -168,7 +168,7 @@ export default function CustomerPortalAppInstall() {
 
               <Button 
                 className="w-full gap-2 mt-4"
-                onClick={() => window.open('/customer-portal-install', '_blank')}
+                onClick={() => window.open(installUrl, '_blank')}
               >
                 Preview Install Page
                 <ArrowRight className="w-4 h-4" />
