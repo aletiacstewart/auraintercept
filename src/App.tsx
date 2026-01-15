@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PWAUpdatePrompt } from "@/components/pwa/PWAUpdatePrompt";
+import ErrorBoundary from "@/components/error/ErrorBoundary";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CustomerAuth from "./pages/CustomerAuth";
@@ -75,6 +76,7 @@ import OpportunityAudit from "./pages/OpportunityAudit";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
+import PlatformIssues from "./pages/PlatformIssues";
 import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
 
 // Technician Dashboard Pages
@@ -100,13 +102,14 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <PWAUpdatePrompt />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
+        <ErrorBoundary>
+          <Toaster />
+          <Sonner />
+          <PWAUpdatePrompt />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
             <Route path="/audit" element={<OpportunityAudit />} />
             <Route path="/field-ops-app" element={<FieldOpsApp />} />
             <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
@@ -174,6 +177,7 @@ const App = () => (
             <Route path="/dashboard/business-mgt-ops-install" element={<BusinessMgtOpsInstall />} />
             <Route path="/dashboard/integrations/embed" element={<IntegrationDocs />} />
             <Route path="/dashboard/guides" element={<PlatformGuides />} />
+            <Route path="/dashboard/platform-issues" element={<PlatformIssues />} />
             
             {/* Customer Portal Routes */}
             <Route path="/customer" element={<CustomerPortalHome />} />
@@ -196,9 +200,10 @@ const App = () => (
             <Route path="/technician/profile" element={<ProtectedRoute><TechnicianProfile /></ProtectedRoute>} />
             <Route path="/technician/install" element={<ProtectedRoute><TechnicianInstall /></ProtectedRoute>} />
             
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </ErrorBoundary>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

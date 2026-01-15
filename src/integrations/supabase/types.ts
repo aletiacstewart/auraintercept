@@ -3127,6 +3127,84 @@ export type Database = {
           },
         ]
       }
+      platform_issues: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          description: string | null
+          error_stack: string | null
+          id: string
+          issue_type: Database["public"]["Enums"]["issue_type"]
+          metadata: Json | null
+          page_url: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: Database["public"]["Enums"]["issue_severity"]
+          status: Database["public"]["Enums"]["issue_status"]
+          title: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string | null
+          user_role: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          description?: string | null
+          error_stack?: string | null
+          id?: string
+          issue_type: Database["public"]["Enums"]["issue_type"]
+          metadata?: Json | null
+          page_url?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["issue_severity"]
+          status?: Database["public"]["Enums"]["issue_status"]
+          title: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          description?: string | null
+          error_stack?: string | null
+          id?: string
+          issue_type?: Database["public"]["Enums"]["issue_type"]
+          metadata?: Json | null
+          page_url?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["issue_severity"]
+          status?: Database["public"]["Enums"]["issue_status"]
+          title?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_issues_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "platform_issues_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           address: string | null
@@ -4489,6 +4567,19 @@ export type Database = {
         | "marketing"
         | "inventory"
         | "analytics"
+      issue_severity: "critical" | "high" | "medium" | "low"
+      issue_status:
+        | "new"
+        | "acknowledged"
+        | "in_progress"
+        | "resolved"
+        | "wont_fix"
+      issue_type:
+        | "frontend_error"
+        | "ai_agent_error"
+        | "api_error"
+        | "user_reported"
+        | "feature_request"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -4651,6 +4742,21 @@ export const Constants = {
         "marketing",
         "inventory",
         "analytics",
+      ],
+      issue_severity: ["critical", "high", "medium", "low"],
+      issue_status: [
+        "new",
+        "acknowledged",
+        "in_progress",
+        "resolved",
+        "wont_fix",
+      ],
+      issue_type: [
+        "frontend_error",
+        "ai_agent_error",
+        "api_error",
+        "user_reported",
+        "feature_request",
       ],
     },
   },
