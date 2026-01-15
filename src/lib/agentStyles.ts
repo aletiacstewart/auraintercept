@@ -28,18 +28,18 @@ export const AGENT_STYLES: Record<string, AgentStyle> = {
   admin: { label: 'Admin', color: 'text-purple-700', bgColor: 'bg-purple-100' },
   
   // Marketing & Sales Agents
+  campaign: { label: 'Campaign', color: 'text-orange-700', bgColor: 'bg-orange-100' },
   marketing: { label: 'Marketing', color: 'text-orange-700', bgColor: 'bg-orange-100' },
   promo: { label: 'Promo', color: 'text-orange-700', bgColor: 'bg-orange-100' },
   referral: { label: 'Referral', color: 'text-pink-700', bgColor: 'bg-pink-100' },
   winback: { label: 'Win-Back', color: 'text-purple-700', bgColor: 'bg-purple-100' },
   seasonal: { label: 'Seasonal', color: 'text-green-700', bgColor: 'bg-green-100' },
   
-  // Analytics & Insights Agents
-  insights: { label: 'Business Insights', color: 'text-indigo-700', bgColor: 'bg-indigo-100' },
-  forecast: { label: 'Forecast', color: 'text-teal-700', bgColor: 'bg-teal-100' },
-  revenue: { label: 'Revenue', color: 'text-emerald-700', bgColor: 'bg-emerald-100' },
-  performance: { label: 'Performance', color: 'text-violet-700', bgColor: 'bg-violet-100' },
-  analytics: { label: 'Data Analytics', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
+  // Analytics & Reports Agents
+  insights: { label: 'Insights', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
+  performance: { label: 'Performance', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
+  revenue: { label: 'Revenue', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
+  forecast: { label: 'Forecast', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
 };
 
 // Default style for unknown agents
@@ -69,9 +69,9 @@ export function getAgentStyle(agent: string | undefined | null): AgentStyle {
 export const AGENT_CATEGORIES = {
   customerEngagement: ['triage', 'booking', 'followup', 'review'],
   fieldOperations: ['dispatch', 'route', 'eta', 'checkin'],
-  businessOperations: ['quoting', 'invoice', 'inventory', 'warranty'],
-  marketingSales: ['marketing', 'promo', 'referral', 'winback', 'seasonal'],
-  analytics: ['insights', 'forecast', 'revenue', 'performance', 'analytics'],
+  businessOperations: ['admin', 'quoting', 'invoice', 'inventory', 'warranty'],
+  marketingSales: ['campaign', 'marketing', 'promo', 'referral', 'winback', 'seasonal'],
+  analyticsReports: ['insights', 'performance', 'revenue', 'forecast'],
 } as const;
 
 export type AgentCategory = keyof typeof AGENT_CATEGORIES;
