@@ -1053,7 +1053,7 @@ export default function Index() {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Ordered from lowest to highest cost */}
-              <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
+              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <Calendar className="w-4 h-4 text-cyan-400" />
                   <span className="font-semibold text-sm text-white">Google Calendar</span>
@@ -1063,7 +1063,7 @@ export default function Index() {
                 <p className="text-xs text-muted-foreground mt-1">Optional for: Single-Point, Multi-Track, Command</p>
               </div>
 
-              <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
+              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <Mail className="w-4 h-4 text-blue-400" />
                   <span className="font-semibold text-sm text-white">Resend</span>
@@ -1074,7 +1074,7 @@ export default function Index() {
                 <p className="text-xs text-muted-foreground mt-1">Required for: Single-Point, Multi-Track, Command</p>
               </div>
 
-              <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
+              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <Mic className="w-4 h-4 text-purple-400" />
                   <span className="font-semibold text-sm text-white">ElevenLabs</span>
@@ -1085,7 +1085,7 @@ export default function Index() {
                 <p className="text-xs text-muted-foreground mt-1">Required for: Multi-Track, Command (Voice Features)</p>
               </div>
 
-              <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
+              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <Phone className="w-4 h-4 text-green-400" />
                   <span className="font-semibold text-sm text-white">Twilio</span>
@@ -1096,7 +1096,7 @@ export default function Index() {
                 <p className="text-xs text-muted-foreground mt-1">Required for: Multi-Track, Command (SMS & Calls)</p>
               </div>
 
-              <div className="rounded-lg p-4" style={{ backgroundColor: '#2a3d4e' }}>
+              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <DollarSign className="w-4 h-4 text-amber-400" />
                   <span className="font-semibold text-sm text-white">Stripe (Your Account)</span>
