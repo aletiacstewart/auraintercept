@@ -5,8 +5,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Lock, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+// Extended tier type to support legacy 'enterprise' for backwards compatibility
+type RequiredTierType = SubscriptionTier | 'enterprise';
+
+// Map legacy 'enterprise' to 'command' for backwards compatibility
+function normalizeRequiredTier(tier: RequiredTierType): SubscriptionTier {
+  if (tier === 'enterprise') return 'command';
+  return tier;
+}
+
 interface FeatureGateProps {
-  requiredTier?: SubscriptionTier;
+  requiredTier?: RequiredTierType;
   requiredFeature?: Feature;
   children: React.ReactNode;
   fallback?: React.ReactNode;
@@ -20,11 +29,13 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
   fallback,
   showUpgradePrompt = true,
 }) => {
-  const { isAtLeastTier, hasFeature, subscriptionTier } = useSubscription();
+  const { isAtLeastTier, hasFeature, subscriptionTier, getTierInfo } = useSubscription();
   const navigate = useNavigate();
 
-  const hasAccess = requiredTier 
-    ? isAtLeastTier(requiredTier) 
+  const normalizedTier = requiredTier ? normalizeRequiredTier(requiredTier) : undefined;
+
+  const hasAccess = normalizedTier 
+    ? isAtLeastTier(normalizedTier) 
     : requiredFeature 
       ? hasFeature(requiredFeature) 
       : true;
@@ -41,9 +52,9 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
     return null;
   }
 
-  const tierLabel = requiredTier 
-    ? requiredTier.charAt(0).toUpperCase() + requiredTier.slice(1)
-    : 'a higher';
+  const tierInfo = normalizedTier ? getTierInfo(normalizedTier) : null;
+  const tierLabel = tierInfo?.label ?? 'a higher';
+  const currentTierInfo = getTierInfo(subscriptionTier);
 
   return (
     <Card className="console-surface border-dashed border-2 border-border">
@@ -54,7 +65,7 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
         <CardTitle className="text-lg">Upgrade Required</CardTitle>
         <CardDescription>
           This feature requires the {tierLabel} plan or higher.
-          You're currently on the {subscriptionTier} plan.
+          You're currently on the {currentTierInfo.label} plan.
         </CardDescription>
       </CardHeader>
       <CardContent className="text-center">
@@ -68,15 +79,17 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
 };
 
 export const FeatureGateInline: React.FC<{
-  requiredTier?: SubscriptionTier;
+  requiredTier?: RequiredTierType;
   requiredFeature?: Feature;
   children: React.ReactNode;
 }> = ({ requiredTier, requiredFeature, children }) => {
   const { isAtLeastTier, hasFeature } = useSubscription();
   const navigate = useNavigate();
 
-  const hasAccess = requiredTier 
-    ? isAtLeastTier(requiredTier) 
+  const normalizedTier = requiredTier ? normalizeRequiredTier(requiredTier) : undefined;
+
+  const hasAccess = normalizedTier 
+    ? isAtLeastTier(normalizedTier) 
     : requiredFeature 
       ? hasFeature(requiredFeature) 
       : true;

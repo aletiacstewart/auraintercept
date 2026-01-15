@@ -824,6 +824,7 @@ export type Database = {
           service_categories: string[] | null
           slug: string
           stripe_customer_id: string | null
+          subscription_tier: string | null
           trial_ends_at: string | null
           trial_expired_sent: boolean | null
           trial_reminder_1d_sent: boolean | null
@@ -910,6 +911,7 @@ export type Database = {
           service_categories?: string[] | null
           slug: string
           stripe_customer_id?: string | null
+          subscription_tier?: string | null
           trial_ends_at?: string | null
           trial_expired_sent?: boolean | null
           trial_reminder_1d_sent?: boolean | null
@@ -996,6 +998,7 @@ export type Database = {
           service_categories?: string[] | null
           slug?: string
           stripe_customer_id?: string | null
+          subscription_tier?: string | null
           trial_ends_at?: string | null
           trial_expired_sent?: boolean | null
           trial_reminder_1d_sent?: boolean | null

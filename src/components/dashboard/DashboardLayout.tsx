@@ -252,22 +252,35 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const tierDisplay = getTierDisplay();
   const daysRemaining = getDaysRemaining();
 
+  // Restricted navigation sections - only for platform_admin, company_admin, or employees with full access
+  const restrictedSections = ['Configuration', '3rd Party Integrations'];
+  const userHasFullAccess = userRole === 'platform_admin' || userRole === 'company_admin' || 
+    (userRole === 'employee' && jobTypes.some(jt => ['manager', 'customer_service'].includes(jt)));
+
   // Filter groups and items based on user role and job types
-  const filteredNavGroups = navGroups.map(group => ({
-    ...group,
-    items: group.items.filter(item => {
-      // Check basic role permission
-      if (!userRole || !item.roles.includes(userRole as UserRole)) return false;
-      
-      // For employees, check job type requirements if specified
-      if (userRole === 'employee' && item.requiredJobTypes) {
-        return item.requiredJobTypes.some(jt => hasJobType(jt as any));
+  const filteredNavGroups = navGroups
+    .filter(group => {
+      // Filter out restricted sections for employees without full access
+      if (restrictedSections.includes(group.label) && !userHasFullAccess) {
+        return false;
       }
-      
-      // Admins see all items they have role access to
       return true;
     })
-  })).filter(group => group.items.length > 0);
+    .map(group => ({
+      ...group,
+      items: group.items.filter(item => {
+        // Check basic role permission
+        if (!userRole || !item.roles.includes(userRole as UserRole)) return false;
+        
+        // For employees, check job type requirements if specified
+        if (userRole === 'employee' && item.requiredJobTypes) {
+          return item.requiredJobTypes.some(jt => hasJobType(jt as any));
+        }
+        
+        // Admins see all items they have role access to
+        return true;
+      })
+    })).filter(group => group.items.length > 0);
 
   const handleSignOut = async () => {
     await signOut();
