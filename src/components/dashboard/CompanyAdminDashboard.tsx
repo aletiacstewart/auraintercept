@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield, Megaphone } from 'lucide-react';
+import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield, Megaphone, Smartphone, QrCode } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
@@ -433,6 +433,70 @@ export function CompanyAdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Customer Portal PWA Info */}
+      <Card className="border-border/50 bg-gradient-to-r from-cyan-500/10 to-primary/10">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Smartphone className="w-5 h-5 text-cyan-400" />
+            Customer Portal App
+          </CardTitle>
+          <CardDescription className="text-white/70">
+            Your customers can install the Aura Customer Portal app for easy access
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-3">
+              <h4 className="font-medium text-sm text-white">What Customers Get</h4>
+              <ul className="space-y-2 text-sm text-white/70">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  Track all appointments with your company
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  View quotes and invoices in one place
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  Get real-time notifications and updates
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  Chat with your AI assistant anytime
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-3">
+              <h4 className="font-medium text-sm text-white">How Customers Install</h4>
+              <p className="text-sm text-white/70">
+                When customers sign up through your embedded widget, they'll automatically be prompted to install the Customer Portal app via QR code.
+              </p>
+              <div className="flex gap-2 pt-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-2"
+                  onClick={() => window.open('/customer-portal-install', '_blank')}
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  View Install Page
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-2"
+                  onClick={() => navigate('/dashboard/widget')}
+                >
+                  <QrCode className="w-4 h-4" />
+                  Configure Widget
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Onboarding Checklist */}
       <OnboardingChecklist />

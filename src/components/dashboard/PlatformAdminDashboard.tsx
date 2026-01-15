@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone, Package, Shield, Target, UserCircle, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
+import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone, Package, Shield, Target, UserCircle, ChevronDown, ChevronUp, ExternalLink, Smartphone } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { startOfMonth, endOfMonth, subDays } from 'date-fns';
 import { useState } from 'react';
@@ -393,6 +393,62 @@ export function PlatformAdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Customer Portal PWA Info */}
+      <Card className="border-border/50 bg-gradient-to-r from-cyan-500/10 to-primary/10">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Smartphone className="w-5 h-5 text-cyan-400" />
+            Customer Portal PWA
+          </CardTitle>
+          <CardDescription className="text-white/70">
+            Mobile app for customers to access all service providers
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-3">
+              <h4 className="font-medium text-sm text-white">How It Works</h4>
+              <ul className="space-y-2 text-sm text-white/70">
+                <li className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0">1</span>
+                  Customers sign up through any company's embedded widget
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0">2</span>
+                  After signup, they're prompted to install the Customer Portal app
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0">3</span>
+                  One app gives access to all companies they interact with
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-3">
+              <h4 className="font-medium text-sm text-white">Customer Benefits</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {['All companies in one app', 'Track appointments', 'View quotes & invoices', 'Get notifications'].map((feature) => (
+                  <div key={feature} className="flex items-center gap-2 text-xs text-white/70 bg-slate-700/50 rounded-lg px-2 py-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                    {feature}
+                  </div>
+                ))}
+              </div>
+              <div className="pt-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-2"
+                  onClick={() => window.open('/customer-portal-install', '_blank')}
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  View Install Page
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Company Breakdown */}
       <Card className="border-border/50">
