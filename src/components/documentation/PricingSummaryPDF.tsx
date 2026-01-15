@@ -334,7 +334,7 @@ const SUBSCRIPTION_TIERS = {
     annualSavings: 2000,
     agents: ['AI Receptionist', 'Scheduling Agent'],
     consoles: ['Customer Portal Console'],
-    appointments: '500/month',
+    appointments: 'Unlimited',
     reminders: 'Email only',
     employees: '5 included',
     additionalEmployees: '$25/mo (max 5 extra)',
@@ -347,7 +347,7 @@ const SUBSCRIPTION_TIERS = {
     annualSavings: 3500,
     agents: ['AI Receptionist', 'Scheduling Agent', 'Dispatch Agent', 'Route Agent', 'ETA Agent', 'Check-in Agent', 'Quote Agent'],
     consoles: ['Customer Portal Console', 'Field Operations Console'],
-    appointments: '2,000/month',
+    appointments: 'Unlimited',
     reminders: 'Email + SMS',
     employees: '10 included',
     additionalEmployees: '$25/mo (max 5 extra)',
@@ -502,7 +502,7 @@ const PricingSummaryPDF = () => (
         {[
           { feature: 'AI Agents', starter: '2', pro: '7', enterprise: '18+' },
           { feature: 'Control Centers', starter: '1', pro: '2', enterprise: '5' },
-          { feature: 'Appointments/Month', starter: '500', pro: '2,000', enterprise: 'Unlimited' },
+          { feature: 'Appointments/Month', starter: 'Unlimited', pro: 'Unlimited', enterprise: 'Unlimited' },
           { feature: 'Reminder Channels', starter: 'Email', pro: 'Email + SMS', enterprise: 'Email + SMS + Voice' },
           { feature: 'Employee Accounts', starter: '5', pro: '10', enterprise: 'Unlimited' },
         ].map((row, i) => (
@@ -548,7 +548,7 @@ const PricingSummaryPDF = () => (
           { category: '', starter: '', pro: '', enterprise: '' },
           { category: 'AI Agents Included', starter: '2', pro: '7', enterprise: 'All 18+' },
           { category: 'Control Centers', starter: '1', pro: '2', enterprise: 'All 5' },
-          { category: 'Appointments/Month', starter: '500', pro: '2,000', enterprise: 'Unlimited' },
+          { category: 'Appointments/Month', starter: 'Unlimited', pro: 'Unlimited', enterprise: 'Unlimited' },
           { category: '', starter: '', pro: '', enterprise: '' },
           { category: 'Email Reminders', starter: '✓', pro: '✓', enterprise: '✓' },
           { category: 'SMS Reminders', starter: '—', pro: '✓', enterprise: '✓' },
@@ -613,7 +613,7 @@ const PricingSummaryPDF = () => (
 
       <Text style={styles.subsectionTitle}>Platform Limits</Text>
       <View style={styles.featureList}>
-        <FeatureItem>500 appointments per month</FeatureItem>
+        <FeatureItem>Unlimited appointments</FeatureItem>
         <FeatureItem>Email reminders only</FeatureItem>
         <FeatureItem>5 employee accounts included</FeatureItem>
         <FeatureItem>Up to 5 additional employees at $25/month each</FeatureItem>
@@ -672,7 +672,7 @@ const PricingSummaryPDF = () => (
 
       <Text style={styles.subsectionTitle}>Platform Limits</Text>
       <View style={styles.featureList}>
-        <FeatureItem>2,000 appointments per month</FeatureItem>
+        <FeatureItem>Unlimited appointments</FeatureItem>
         <FeatureItem>Email + SMS reminders</FeatureItem>
         <FeatureItem>10 employee accounts included</FeatureItem>
         <FeatureItem>Up to 5 additional employees at $25/month each</FeatureItem>

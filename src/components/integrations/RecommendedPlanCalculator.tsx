@@ -144,7 +144,7 @@ export function RecommendedPlanCalculator() {
         { email: true, sms: true, voice: false },
         ['98% SMS open rate', 'Dual touchpoints', 'Affordable'],
         ['Requires phone number ($1.15/mo)', 'SMS costs add up at scale'],
-        'Growing businesses with 50-500 appointments/month'
+        'Growing businesses ready to scale'
       ),
       generatePlan(
         'Maximum Impact',
