@@ -11,11 +11,14 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, User, Mail, Phone, MapPin, Calendar, Briefcase } from 'lucide-react';
+import { ArrowLeft, Save, User, Mail, Phone, MapPin, Calendar, Briefcase, ChevronDown, Settings2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { RolePermissionsEditor } from '@/components/company/RolePermissionsEditor';
+import type { DbJobType } from '@/hooks/useRolePermissions';
 
-const JOB_TYPES = [
+const JOB_TYPES: { value: DbJobType; label: string; description: string; color: string }[] = [
   { value: 'technician', label: 'Technician', description: 'Field service & repairs', color: 'bg-blue-500' },
   { value: 'booking_agent', label: 'Scheduling Agent', description: 'Scheduling & appointments', color: 'bg-green-500' },
   { value: 'dispatch', label: 'Dispatch', description: 'Emergency routing & assignment', color: 'bg-red-500' },
@@ -25,19 +28,20 @@ const JOB_TYPES = [
   { value: 'marketing', label: 'Marketing', description: 'Campaigns & outreach', color: 'bg-pink-500' },
   { value: 'inventory', label: 'Inventory', description: 'Stock management', color: 'bg-orange-500' },
   { value: 'analytics', label: 'Analytics', description: 'Reports & insights', color: 'bg-cyan-500' },
-] as const;
-
-type JobType = typeof JOB_TYPES[number]['value'];
+];
 
 export default function EmployeeDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { companyId } = useAuth();
+  const { companyId, userRole } = useAuth();
   const queryClient = useQueryClient();
   
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [homeAddress, setHomeAddress] = useState('');
+  const [expandedRole, setExpandedRole] = useState<DbJobType | null>(null);
+
+  const isCompanyAdmin = userRole === 'company_admin' || userRole === 'platform_admin';
 
   // Fetch employee details
   const { data: employee, isLoading } = useQuery({
@@ -105,7 +109,7 @@ export default function EmployeeDetail() {
 
   // Toggle job type mutation
   const toggleJobTypeMutation = useMutation({
-    mutationFn: async ({ jobType, isAssigned }: { jobType: JobType; isAssigned: boolean }) => {
+    mutationFn: async ({ jobType, isAssigned }: { jobType: DbJobType; isAssigned: boolean }) => {
       if (isAssigned) {
         const { error } = await supabase
           .from('employee_job_assignments')
@@ -268,38 +272,78 @@ export default function EmployeeDetail() {
               </CardTitle>
               <CardDescription className="text-white/70">
                 Assign job roles to grant access to related AI agents
+                {isCompanyAdmin && (
+                  <span className="block mt-1 text-xs text-primary">
+                    Click <Settings2 className="h-3 w-3 inline" /> to customize role permissions
+                  </span>
+                )}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {JOB_TYPES.map((job) => {
                   const isAssigned = jobAssignments.includes(job.value);
+                  const isExpanded = expandedRole === job.value;
+                  
                   return (
-                    <div
-                      key={job.value}
-                      className={`flex items-center gap-3 p-3 rounded-lg border transition-colors cursor-pointer ${
-                        isAssigned 
-                          ? 'border-primary/50 bg-primary/10' 
-                          : 'border-border/50 hover:bg-muted/50'
-                      }`}
-                      onClick={() => toggleJobTypeMutation.mutate({
-                        jobType: job.value,
-                        isAssigned,
-                      })}
-                    >
-                      <Checkbox
-                        checked={isAssigned}
-                        disabled={toggleJobTypeMutation.isPending}
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${job.color}`} />
-                          <span className="font-medium">{job.label}</span>
+                    <div key={job.value} className="space-y-2">
+                      <div
+                        className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                          isAssigned 
+                            ? 'border-primary/50 bg-primary/10' 
+                            : 'border-border/50 hover:bg-muted/50'
+                        }`}
+                      >
+                        <Checkbox
+                          checked={isAssigned}
+                          disabled={toggleJobTypeMutation.isPending}
+                          onCheckedChange={() => toggleJobTypeMutation.mutate({
+                            jobType: job.value,
+                            isAssigned,
+                          })}
+                        />
+                        <div 
+                          className="flex-1 cursor-pointer"
+                          onClick={() => toggleJobTypeMutation.mutate({
+                            jobType: job.value,
+                            isAssigned,
+                          })}
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${job.color}`} />
+                            <span className="font-medium">{job.label}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground ml-4">{job.description}</p>
                         </div>
-                        <p className="text-xs text-muted-foreground ml-4">{job.description}</p>
+                        <div className="flex items-center gap-2">
+                          {isAssigned && (
+                            <Badge variant="secondary" className="text-xs">Active</Badge>
+                          )}
+                          {isCompanyAdmin && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setExpandedRole(isExpanded ? null : job.value);
+                              }}
+                            >
+                              <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                      {isAssigned && (
-                        <Badge variant="secondary" className="text-xs">Active</Badge>
+                      
+                      {/* Role Permissions Editor (collapsible) */}
+                      {isCompanyAdmin && isExpanded && companyId && (
+                        <div className="ml-4 animate-in slide-in-from-top-2">
+                          <RolePermissionsEditor
+                            companyId={companyId}
+                            jobType={job.value}
+                            jobLabel={job.label}
+                          />
+                        </div>
                       )}
                     </div>
                   );
