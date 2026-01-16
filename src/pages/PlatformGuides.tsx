@@ -120,8 +120,8 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to AI Agents Hub from the sidebar',
-          'View all 22 specialized agents organized by category',
-          'Each agent card shows name, category, and enable status',
+          'View all 18 specialized agents organized by 5 consoles',
+          'Each agent card shows name, console, and enable status',
           'Click an agent card to view detailed settings',
           'Use batch activation to enable multiple agents at once',
           'Monitor agent activity in the event logs'

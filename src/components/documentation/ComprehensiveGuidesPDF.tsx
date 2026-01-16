@@ -233,7 +233,7 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to AI Agents Hub from the sidebar',
-          'View all 22 specialized agents by category',
+          'View all 18 specialized agents organized by 5 consoles',
           'Click an agent card for detailed settings',
           'Use batch activation for multiple agents',
           'Monitor agent activity in event logs'
@@ -660,7 +660,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
               <Text style={{ fontSize: 10, color: '#a5b4fc' }}>Guides</Text>
             </View>
             <View style={{ alignItems: 'center' }}>
-              <Text style={{ fontSize: 28, fontWeight: 700, color: colors.accent }}>22</Text>
+              <Text style={{ fontSize: 28, fontWeight: 700, color: colors.accent }}>18</Text>
               <Text style={{ fontSize: 10, color: '#a5b4fc' }}>AI Agents</Text>
             </View>
           </View>
@@ -743,10 +743,10 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         <Header title="Quick Reference" />
         <Text style={styles.sectionTitle}>Quick Reference</Text>
         
-        <Text style={styles.categoryTitle}>AI Agent Categories</Text>
+        <Text style={styles.categoryTitle}>AI Agent Categories (18 Total)</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Customer Portal (6 agents): Receptionist, Scheduling, Follow-up, Review, Support, Portal</Text>
+          <Text style={styles.bulletText}>Customer Portal (4 agents): AI Receptionist, Scheduling, Follow-up, Review</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
@@ -754,15 +754,15 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Business Operations (5 agents): Quoting, Invoice, Inventory, Warranty, Admin</Text>
+          <Text style={styles.bulletText}>Business Management (5 agents): Admin, Quoting, Invoice, Inventory, Warranty</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Marketing & Sales (6 agents): Marketing, Promo, Referral, Win-back, Seasonal, Lead</Text>
+          <Text style={styles.bulletText}>Marketing & Sales (1 agent): Campaign Agent (handles all campaign types)</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Analytics (4 agents): Insights, Forecast, Revenue, Performance</Text>
+          <Text style={styles.bulletText}>Analytics & Reports (4 agents): Insights, Performance, Revenue, Forecast</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>
