@@ -3,10 +3,12 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot } from 'lucide-react';
+import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2 } from 'lucide-react';
 import PlatformDocumentPDF from '@/components/documentation/PlatformDocumentPDF';
 import PricingSummaryPDF from '@/components/documentation/PricingSummaryPDF';
 import AIAgentGuidesPDF from '@/components/documentation/AIAgentGuidesPDF';
+import { ComprehensiveGuidesPDF } from '@/components/documentation/ComprehensiveGuidesPDF';
+import CompanyGuidesPDF from '@/components/documentation/CompanyGuidesPDF';
 
 const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
 
@@ -21,7 +23,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* AI Agent Guide PDF */}
           <Card className="border-accent/20">
             <CardHeader>
@@ -30,7 +32,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 AI Agent & Console Guide
               </CardTitle>
               <CardDescription>
-                Complete guide to all 18 AI agents, 5 consoles, features, dependencies & integrations
+                Complete guide to all 18 AI agents, 5 consoles, communication channels & integrations
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -39,10 +41,10 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>5 Console Overviews</li>
                   <li>18 AI Agent Descriptions</li>
+                  <li>Communication Channels</li>
                   <li>Agent Dependencies & Requirements</li>
                   <li>3rd Party Integration Guide</li>
                   <li>Subscription Tier Access</li>
-                  <li>Glossary & FAQ</li>
                 </ul>
               </div>
 
@@ -96,16 +98,10 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>Executive Summary</li>
                   <li>Development Timeline (6 phases)</li>
-                  <li>Project Complexity Score (87/100)</li>
-                  <li>Complete AI Agents Catalog (18 agents)</li>
+                  <li>Project Complexity Score</li>
+                  <li>Complete AI Agents Catalog</li>
                   <li>5 Control Center Descriptions</li>
-                  <li>Platform Features Overview</li>
-                  <li>Third-Party Integrations</li>
                   <li>Technical Architecture</li>
-                  <li>User Roles & Portals</li>
-                  <li>Knowledge Base System</li>
-                  <li>Communication Channels</li>
-                  <li>Target Industries</li>
                 </ul>
               </div>
 
@@ -162,7 +158,6 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   <li>Detailed Tier Breakdowns</li>
                   <li>Annual Discount Savings (16%)</li>
                   <li>3rd Party Integration Costs</li>
-                  <li>Billing Clarifications</li>
                   <li>Total Cost Examples</li>
                 </ul>
               </div>
@@ -199,15 +194,129 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
               </PDFDownloadLink>
             </CardContent>
           </Card>
+
+          {/* Comprehensive User Guide PDF */}
+          <Card className="border-green-500/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-green-600" />
+                Comprehensive User Guide
+              </CardTitle>
+              <CardDescription>
+                Step-by-step guides for all platform features organized by category
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm text-card-foreground/70">
+                <p className="font-medium text-card-foreground">Document includes:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Getting Started Guides</li>
+                  <li>AI Agents Configuration</li>
+                  <li>Integrations Setup</li>
+                  <li>Operations Management</li>
+                  <li>Marketing & Campaigns</li>
+                  <li>Analytics & Reports</li>
+                </ul>
+              </div>
+
+              <PDFDownloadLink
+                document={<ComprehensiveGuidesPDF />}
+                fileName={`comprehensive-user-guide-${new Date().toISOString().split('T')[0]}.pdf`}
+              >
+                {({ loading, error }) => {
+                  if (loading) {
+                    return (
+                      <Button disabled className="w-full">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating PDF...
+                      </Button>
+                    );
+                  }
+                  
+                  if (error) {
+                    return (
+                      <Button variant="destructive" disabled className="w-full">
+                        Error generating PDF
+                      </Button>
+                    );
+                  }
+
+                  return (
+                    <Button className="w-full" variant="outline">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download User Guide
+                    </Button>
+                  );
+                }}
+              </PDFDownloadLink>
+            </CardContent>
+          </Card>
+
+          {/* Company Admin Guide PDF */}
+          <Card className="border-orange-500/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="h-5 w-5 text-orange-600" />
+                Company Admin Guide
+              </CardTitle>
+              <CardDescription>
+                Focused guide for company administrators with setup and management guides
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm text-card-foreground/70">
+                <p className="font-medium text-card-foreground">Document includes:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Company Dashboard Overview</li>
+                  <li>AI Agents Configuration</li>
+                  <li>AI Consoles Usage</li>
+                  <li>Integrations Setup</li>
+                  <li>Operations Management</li>
+                  <li>Business & Finance</li>
+                </ul>
+              </div>
+
+              <PDFDownloadLink
+                document={<CompanyGuidesPDF />}
+                fileName={`company-admin-guide-${new Date().toISOString().split('T')[0]}.pdf`}
+              >
+                {({ loading, error }) => {
+                  if (loading) {
+                    return (
+                      <Button disabled className="w-full">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating PDF...
+                      </Button>
+                    );
+                  }
+                  
+                  if (error) {
+                    return (
+                      <Button variant="destructive" disabled className="w-full">
+                        Error generating PDF
+                      </Button>
+                    );
+                  }
+
+                  return (
+                    <Button className="w-full" variant="outline">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Admin Guide
+                    </Button>
+                  );
+                }}
+              </PDFDownloadLink>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Document Contents Cards */}
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader>
               <CardTitle>AI Agent Guide Contents</CardTitle>
               <CardDescription>
-                12-page user-friendly reference document
+                13-page user-friendly reference document
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -216,15 +325,16 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   { page: 1, title: 'Cover Page', desc: 'Key stats: 5 consoles, 18 agents' },
                   { page: 2, title: 'Table of Contents', desc: 'Full document navigation' },
                   { page: 3, title: 'Introduction', desc: 'How to read the guide & legend' },
-                  { page: 4, title: 'Customer Portal', desc: '4 agents with features' },
-                  { page: 5, title: 'Field Operations', desc: '4 agents with features' },
-                  { page: 6, title: 'Business Management', desc: '5 agents with features' },
-                  { page: 7, title: 'Marketing & Analytics', desc: 'Consoles 4 & 5 overview' },
-                  { page: 8, title: 'Analytics Agents', desc: '4 agents + dependency info' },
-                  { page: 9, title: 'Agent Summary Table', desc: 'All 18 agents at a glance' },
-                  { page: 10, title: 'Subscription Tiers', desc: 'Which agents per tier' },
-                  { page: 11, title: '3rd Party Integrations', desc: 'Required & optional services' },
-                  { page: 12, title: 'Glossary & FAQ', desc: 'Terms and common questions' },
+                  { page: 4, title: 'Communication Channels', desc: 'Voice, SMS, Email, Chat' },
+                  { page: 5, title: 'Customer Portal', desc: '4 agents with features' },
+                  { page: 6, title: 'Field Operations', desc: '4 agents with features' },
+                  { page: 7, title: 'Business Management', desc: '5 agents with features' },
+                  { page: 8, title: 'Marketing & Analytics', desc: 'Consoles 4 & 5 overview' },
+                  { page: 9, title: 'Analytics Agents', desc: '4 agents + dependency info' },
+                  { page: 10, title: 'Agent Summary Table', desc: 'All 18 agents at a glance' },
+                  { page: 11, title: 'Subscription Tiers', desc: 'Which agents per tier' },
+                  { page: 12, title: '3rd Party Integrations', desc: 'Required & optional services' },
+                  { page: 13, title: 'Glossary & FAQ', desc: 'Terms and common questions' },
                 ].map((section, i) => (
                   <div key={i} className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors">
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
@@ -255,7 +365,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   { page: 3, title: 'Executive Summary', desc: 'Platform overview and value proposition' },
                   { page: 4, title: 'Development Timeline', desc: '6 phases with 30+ milestones' },
                   { page: 5, title: 'Complexity Score', desc: '87/100 enterprise-grade rating' },
-                  { page: '6-8', title: 'AI Agents Catalog', desc: '18 agents across 5 categories' },
+                  { page: '6-8', title: 'AI Agents Catalog', desc: '18 agents across 5 consoles' },
                   { page: 9, title: 'Control Centers', desc: '5 specialized consoles' },
                   { page: 10, title: 'Platform Features', desc: '8 key platform capabilities' },
                   { page: 11, title: 'Integrations', desc: 'Third-party services and APIs' },
@@ -319,7 +429,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
               <div>
                 <p className="font-medium text-card-foreground">Professional Formatting</p>
                 <p className="text-sm text-card-foreground/70">
-                  Both PDFs are professionally formatted with consistent branding, page numbers,
+                  All PDFs are professionally formatted with consistent branding, page numbers,
                   headers, and tables of contents for easy navigation.
                 </p>
               </div>

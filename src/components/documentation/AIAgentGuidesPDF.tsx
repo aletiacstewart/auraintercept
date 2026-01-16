@@ -593,7 +593,8 @@ const INTEGRATIONS = [
     cost: 'Free up to 3,000 emails/month, then $20/month for 50,000 emails',
     required: true,
     requiredFor: 'All email features (appointment confirmations, reminders, campaigns)',
-    agentsAffected: ['Follow-up Agent', 'Campaign Agent', 'Review Agent'],
+    agentsAffected: ['Follow-up Agent', 'Campaign Agent', 'Review Agent', 'Invoice Agent'],
+    whatHappensWithout: 'No email reminders, confirmations, invoices, or marketing campaigns can be sent.',
   },
   {
     name: 'Twilio',
@@ -601,15 +602,17 @@ const INTEGRATIONS = [
     cost: '$1.15/phone number + ~$0.0079/SMS + ~$0.014/minute for calls',
     required: false,
     requiredFor: 'SMS reminders, voice call reminders, and AI voice features',
-    agentsAffected: ['Follow-up Agent', 'AI Receptionist (Voice)', 'ETA Agent'],
+    agentsAffected: ['AI Receptionist (Voice)', 'Follow-up Agent', 'ETA Agent', 'Campaign Agent'],
+    whatHappensWithout: 'No SMS or voice calls - customers can only interact via chat widget.',
   },
   {
     name: 'ElevenLabs',
     purpose: 'AI Voice Synthesis',
     cost: 'Free 10,000 characters/month, then $5-99+/month tiers',
     required: false,
-    requiredFor: 'AI voice calls, voice cloning, and voice reminders',
-    agentsAffected: ['AI Receptionist (Voice Features)', 'Voice Reminders'],
+    requiredFor: 'Natural-sounding AI voice calls, voice cloning, and voice reminders',
+    agentsAffected: ['AI Receptionist (Voice)', 'Follow-up Agent (Voice Reminders)'],
+    whatHappensWithout: 'Voice calls use basic Twilio TTS instead of natural AI voice.',
   },
   {
     name: 'Google Calendar',
@@ -618,6 +621,7 @@ const INTEGRATIONS = [
     required: false,
     requiredFor: 'Two-way calendar sync with technician schedules',
     agentsAffected: ['Scheduling Agent', 'Dispatch Agent'],
+    whatHappensWithout: 'Manual availability management only - no automatic calendar sync.',
   },
   {
     name: 'Stripe (Company Account)',
@@ -626,6 +630,43 @@ const INTEGRATIONS = [
     required: false,
     requiredFor: 'Accepting invoice payments from customers',
     agentsAffected: ['Invoice Agent'],
+    whatHappensWithout: 'Cannot collect payments through invoices - manual payment collection required.',
+  },
+];
+
+// Communication Channels Mapping
+const COMMUNICATION_CHANNELS = [
+  {
+    channel: 'Voice Calls',
+    icon: '📞',
+    inbound: 'AI Receptionist answers all inbound calls',
+    outbound: 'Follow-up Agent (reminders), Missed Call Callbacks',
+    agents: ['AI Receptionist', 'Follow-up Agent'],
+    integration: 'Twilio + ElevenLabs',
+  },
+  {
+    channel: 'SMS Text',
+    icon: '💬',
+    inbound: 'AI Receptionist receives and responds to texts',
+    outbound: 'Follow-up, ETA, Campaign, Review agents send messages',
+    agents: ['AI Receptionist', 'Follow-up Agent', 'ETA Agent', 'Campaign Agent', 'Review Agent'],
+    integration: 'Twilio',
+  },
+  {
+    channel: 'Email',
+    icon: '✉️',
+    inbound: 'Not automated (manual inbox)',
+    outbound: 'Follow-up, Campaign, Review, Invoice agents send emails',
+    agents: ['Follow-up Agent', 'Campaign Agent', 'Review Agent', 'Invoice Agent'],
+    integration: 'Resend',
+  },
+  {
+    channel: 'Chat Widget',
+    icon: '💭',
+    inbound: 'AI Receptionist handles all chat conversations',
+    outbound: 'All agents can respond via handoff',
+    agents: ['AI Receptionist', 'All Agents via Handoff'],
+    integration: 'Built-in',
   },
 ];
 
@@ -722,15 +763,16 @@ const AIAgentGuidesPDF = () => (
       <View style={{ marginTop: 20 }}>
         {[
           { title: 'Introduction & How to Read This Guide', page: '3' },
-          { title: 'Console 1: Customer Portal', page: '4' },
-          { title: 'Console 2: Field Operations', page: '5' },
-          { title: 'Console 3: Business Management', page: '6' },
-          { title: 'Console 4: Marketing & Sales', page: '7' },
-          { title: 'Console 5: Analytics & Reports', page: '8' },
-          { title: 'Complete Agent Summary Table', page: '9' },
-          { title: 'Subscription Tiers & Agent Access', page: '10' },
-          { title: '3rd Party Integrations (Required & Optional)', page: '11' },
-          { title: 'Glossary & FAQ', page: '12' },
+          { title: 'Communication Channels Overview', page: '4' },
+          { title: 'Console 1: Customer Portal', page: '5' },
+          { title: 'Console 2: Field Operations', page: '6' },
+          { title: 'Console 3: Business Management', page: '7' },
+          { title: 'Console 4: Marketing & Sales', page: '8' },
+          { title: 'Console 5: Analytics & Reports', page: '9' },
+          { title: 'Complete Agent Summary Table', page: '10' },
+          { title: 'Subscription Tiers & Agent Access', page: '11' },
+          { title: '3rd Party Integrations (Required & Optional)', page: '12' },
+          { title: 'Glossary & FAQ', page: '13' },
         ].map((item, i) => (
           <View key={i} style={styles.tocItem}>
             <Text style={styles.tocTitle}>{item.title}</Text>
@@ -788,6 +830,89 @@ const AIAgentGuidesPDF = () => (
         <Text style={styles.noticeText}>
           Always start by enabling the Core Agent (marked with ⭐) for each console you want to use. 
           Other agents in that console depend on the core agent being active.
+        </Text>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Communication Channels Page */}
+    <Page size="A4" style={styles.page}>
+      <Header title="AI Agent & Console Reference Guide" />
+      <Text style={styles.sectionTitle}>Communication Channels</Text>
+      
+      <Text style={styles.paragraph}>
+        AI agents communicate with customers across multiple channels. The AI Receptionist acts as the 
+        primary interceptor for all inbound communication, while specialized agents handle outbound 
+        messages based on their function.
+      </Text>
+
+      <View style={styles.table}>
+        <View style={styles.tableHeader}>
+          <Text style={[styles.tableHeaderCell, { flex: 1.2 }]}>Channel</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Inbound Handling</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Outbound Sending</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Integration</Text>
+        </View>
+        {COMMUNICATION_CHANNELS.map((ch, i) => (
+          <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
+            <Text style={[styles.tableCellLeft, { flex: 1.2 }]}>{ch.icon} {ch.channel}</Text>
+            <Text style={[styles.tableCellLeft, { flex: 2, fontSize: 8 }]}>{ch.inbound}</Text>
+            <Text style={[styles.tableCellLeft, { flex: 2, fontSize: 8 }]}>{ch.outbound}</Text>
+            <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{ch.integration}</Text>
+          </View>
+        ))}
+      </View>
+
+      <Text style={styles.subsectionTitle}>Agent Communication Capabilities</Text>
+      
+      <View style={styles.agentCard}>
+        <Text style={styles.agentName}>📞 AI Receptionist (Triage)</Text>
+        <Text style={styles.agentDesc}>
+          Answers Voice Calls • Responds to SMS • Handles Chat Widget • Routes to Specialists
+        </Text>
+      </View>
+
+      <View style={styles.agentCard}>
+        <Text style={styles.agentName}>🔔 Follow-up Agent</Text>
+        <Text style={styles.agentDesc}>
+          Sends Email Reminders • Sends SMS Reminders • Makes Voice Reminder Calls
+        </Text>
+      </View>
+
+      <View style={styles.agentCard}>
+        <Text style={styles.agentName}>📍 ETA Agent</Text>
+        <Text style={styles.agentDesc}>
+          Sends SMS ETA Updates • Sends Email ETA Notifications
+        </Text>
+      </View>
+
+      <View style={styles.agentCard}>
+        <Text style={styles.agentName}>📢 Campaign Agent</Text>
+        <Text style={styles.agentDesc}>
+          Sends Email Campaigns • Sends SMS Campaigns • Promotional Messages
+        </Text>
+      </View>
+
+      <View style={styles.agentCard}>
+        <Text style={styles.agentName}>⭐ Review Agent</Text>
+        <Text style={styles.agentDesc}>
+          Sends Review Request Emails • Sends Review Request SMS
+        </Text>
+      </View>
+
+      <View style={styles.agentCard}>
+        <Text style={styles.agentName}>💰 Invoice Agent</Text>
+        <Text style={styles.agentDesc}>
+          Sends Invoice Emails • Payment Reminder Emails
+        </Text>
+      </View>
+
+      <View style={styles.infoBox}>
+        <Text style={styles.noticeTitle}>24/7 Availability</Text>
+        <Text style={styles.noticeText}>
+          The AI Receptionist operates around the clock, ensuring customers can always reach your 
+          business via phone, text, or chat widget - even outside business hours.
         </Text>
       </View>
 
@@ -1128,6 +1253,9 @@ const AIAgentGuidesPDF = () => (
           <Text style={{ fontSize: 9, color: colors.gray }}>Enhances: {integration.agentsAffected.join(', ')}</Text>
           <Text style={{ fontSize: 9, color: colors.dark, marginTop: 4 }}>
             Needed for: {integration.requiredFor}
+          </Text>
+          <Text style={{ fontSize: 8, color: colors.amber, marginTop: 2, fontStyle: 'italic' }}>
+            Without: {integration.whatHappensWithout}
           </Text>
         </View>
       ))}
