@@ -260,10 +260,10 @@ export default function Subscription() {
           <CardContent className="space-y-6">
             <div className="text-center">
               <div className="flex items-baseline justify-center gap-1">
-                <span className="text-5xl font-bold">$250</span>
+                <span className="text-5xl font-bold">$497</span>
                 <span className="text-muted-foreground text-lg">/month</span>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">Base subscription • Billed monthly</p>
+              <p className="text-sm text-muted-foreground mt-1">Starting at Single-Point tier • Billed monthly</p>
             </div>
 
             {/* Usage-based pricing info */}

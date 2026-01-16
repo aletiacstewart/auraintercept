@@ -678,14 +678,14 @@ export default function Auth() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-bold text-card-foreground">$1,000</span>
+                        <span className="text-lg font-bold text-card-foreground">$497</span>
                         <span className="text-xs text-card-foreground/70">/mo</span>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-1 text-xs text-card-foreground/70 ml-6">
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>2 AI Agents</span>
+                        <span>4 AI Agents</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
@@ -727,14 +727,14 @@ export default function Auth() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-bold text-primary">$1,750</span>
+                        <span className="text-lg font-bold text-primary">$897</span>
                         <span className="text-xs text-muted-foreground">/mo</span>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground ml-6">
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>7 AI Agents</span>
+                        <span>10 AI Agents</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
@@ -773,7 +773,7 @@ export default function Auth() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-bold text-card-foreground">$2,250</span>
+                        <span className="text-lg font-bold text-card-foreground">$1,497</span>
                         <span className="text-xs text-card-foreground/70">/mo</span>
                       </div>
                     </div>

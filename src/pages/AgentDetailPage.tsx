@@ -276,7 +276,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Inventory Agent',
     description: 'Tracks parts and supplies, manages stock levels, and handles reordering.',
     category: 'business_operations',
-    phase: 8,
+    phase: 4,
     icon: Briefcase,
     color: 'text-purple-500',
     capabilities: [
@@ -296,7 +296,7 @@ const AGENT_DEFINITIONS: Record<string, {
     name: 'Warranty Agent',
     description: 'Manages warranty claims, tracks coverage, and handles claim processing.',
     category: 'business_operations',
-    phase: 9,
+    phase: 5,
     icon: Briefcase,
     color: 'text-purple-500',
     capabilities: [
