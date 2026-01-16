@@ -824,56 +824,56 @@ export default function Index() {
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Dispatch Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Route Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">ETA Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Check-in Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Quote Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Follow-up Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Review Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Voice Agent (AI Calling)</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">All 18 AI Agents</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
 
@@ -889,26 +889,26 @@ export default function Index() {
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Field Operations Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Business Management Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Marketing & Sales Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Analytics & Reports Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
 
@@ -924,14 +924,14 @@ export default function Index() {
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">SMS Reminders</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">AI Voice Calls</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
 
@@ -959,8 +959,8 @@ export default function Index() {
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">White-Label Branding</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-muted-foreground/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
