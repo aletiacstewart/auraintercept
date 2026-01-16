@@ -261,7 +261,7 @@ function getEmailHtml(reminderType: string, companyName: string, daysRemaining: 
         
         <div style="text-align: center;">
           <a href="${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '.lovable.app')}/dashboard/subscription" class="cta-button">
-            Subscribe Now - $250/month
+            Subscribe Now - Starting at $497/month
           </a>
         </div>
         
@@ -305,7 +305,7 @@ function getExpiredEmailHtml(companyName: string): string {
         
         <div style="text-align: center;">
           <a href="${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '.lovable.app')}/dashboard/subscription" class="cta-button">
-            Subscribe Now - $250/month
+            Subscribe Now - Starting at $497/month
           </a>
         </div>
         

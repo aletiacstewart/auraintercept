@@ -82,8 +82,8 @@ const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType;
   businessops: {
     title: 'Business Operations',
     icon: Briefcase,
-    description: 'Powered by 9 specialized AI agents: Admin (Phase 1), Insights (Phase 2), Performance (Phase 3), Quoting (Phase 4), Invoice (Phase 5), Revenue (Phase 6), Forecast (Phase 7), Inventory (Phase 8), and Warranty (Phase 9).',
-    agents: ['Admin Agent', 'Insights Agent', 'Performance Agent', 'Quoting Agent', 'Invoice Agent', 'Revenue Agent', 'Forecast Agent'],
+    description: 'Powered by 5 specialized AI agents: Admin (Phase 1), Quoting (Phase 2), Invoice (Phase 3), Inventory (Phase 4), and Warranty (Phase 5).',
+    agents: ['Admin Agent', 'Quoting Agent', 'Invoice Agent', 'Inventory Agent', 'Warranty Agent'],
     features: [
       'Create and send invoices to customers',
       'Generate detailed quotes for services',
@@ -169,18 +169,17 @@ export default function Help() {
     
     if (consoleType === 'businessops') {
       if (isPlatformAdmin) {
-        // Platform admin sees all agents including Inventory and Warranty
+        // Platform admin sees all agents including full Business Ops
         return {
           ...baseConsole,
-          agents: [...baseConsole.agents, 'Inventory Agent', 'Warranty Agent'],
           features: [...baseConsole.features, ...(baseConsole.platformAdminFeatures || [])],
           useCases: [...baseConsole.useCases, ...(baseConsole.platformAdminUseCases || [])]
         };
       } else {
-        // Company admin/employee sees limited description without Inventory/Warranty
+        // Company admin/employee sees standard Business Management description
         return {
           ...baseConsole,
-          description: 'Powered by 7 specialized AI agents: Admin (Phase 1), Insights (Phase 2), Performance (Phase 3), Quoting (Phase 4), Invoice (Phase 5), Revenue (Phase 6), and Forecast (Phase 7).'
+          description: 'Powered by 5 specialized AI agents: Admin (Phase 1), Quoting (Phase 2), Invoice (Phase 3), Inventory (Phase 4), and Warranty (Phase 5).'
         };
       }
     }
