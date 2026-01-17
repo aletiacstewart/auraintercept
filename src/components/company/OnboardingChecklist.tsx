@@ -53,7 +53,7 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
     title: 'Upload Branding',
     description: 'Add your logo and customize brand colors',
     icon: Palette,
-    href: '/dashboard/onboarding',
+    href: '/dashboard/settings',
     checkComplete: (data) => !!(data.company?.logo_url || data.company?.primary_color),
     priority: 'recommended',
   },

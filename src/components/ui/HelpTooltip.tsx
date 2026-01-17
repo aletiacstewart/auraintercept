@@ -5,11 +5,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { getTooltip } from '@/lib/onboardingTooltips';
 import { cn } from '@/lib/utils';
 
 interface HelpTooltipProps {
   term: string;
+  tooltip?: string;
   children?: React.ReactNode;
   className?: string;
   iconClassName?: string;
@@ -18,13 +18,12 @@ interface HelpTooltipProps {
 
 export function HelpTooltip({ 
   term, 
+  tooltip,
   children, 
   className,
   iconClassName,
   showIcon = true 
 }: HelpTooltipProps) {
-  const tooltip = getTooltip(term);
-  
   if (!tooltip) {
     return <span className={className}>{children || term}</span>;
   }
