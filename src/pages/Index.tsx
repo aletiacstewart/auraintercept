@@ -636,6 +636,10 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Smart Website Included</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                     <span className="text-sm">Unlimited Appointments</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -687,6 +691,10 @@ export default function Index() {
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                     <span className="text-sm">2 AI Consoles</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Smart Website Included</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
@@ -744,6 +752,10 @@ export default function Index() {
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                     <span className="text-sm">All 5 Control Centers</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">Smart Website Included</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
@@ -961,6 +973,12 @@ export default function Index() {
                           <td className="p-3">White-Label Branding</td>
                           <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        </tr>
+                        <tr className="border-b hover:bg-muted/20">
+                          <td className="p-3">Smart Website</td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
