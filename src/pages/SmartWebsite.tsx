@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
-import { Phone, Mail, MapPin, Clock, MessageCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
+import { SmartWebsiteVoiceButton } from '@/components/smartwebsite/SmartWebsiteVoiceButton';
 
 interface WebsiteData {
   website_id: string;
@@ -28,6 +29,7 @@ interface WebsiteData {
   show_hours: boolean;
   show_contact: boolean;
   show_chat_widget: boolean;
+  show_voice_widget: boolean;
   background_style: string;
   background_image_url: string | null;
 }
@@ -49,9 +51,22 @@ interface BusinessHour {
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+// Generate a simple fingerprint for visitor tracking (privacy-friendly)
+function generateVisitorFingerprint(): string {
+  const stored = sessionStorage.getItem('visitor_fingerprint');
+  if (stored) return stored;
+  
+  const fingerprint = `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+  sessionStorage.setItem('visitor_fingerprint', fingerprint);
+  return fingerprint;
+}
+
 export default function SmartWebsite() {
   const { subdomain } = useParams<{ subdomain: string }>();
   const [hasTracked, setHasTracked] = useState(false);
+  
+  // Generate/retrieve visitor fingerprint for tracking
+  const visitorFingerprint = useMemo(() => generateVisitorFingerprint(), []);
 
   // Fetch website data
   const { data: website, isLoading, error } = useQuery({
@@ -356,9 +371,25 @@ export default function SmartWebsite() {
         </div>
       </footer>
 
+      {/* Voice Widget */}
+      {website.show_voice_widget && (
+        <SmartWebsiteVoiceButton
+          websiteId={website.website_id}
+          companyId={website.company_id}
+          companyName={website.company_name}
+          visitorFingerprint={visitorFingerprint}
+          primaryColor={primaryColor}
+        />
+      )}
+
       {/* Chat Widget */}
       {website.show_chat_widget && (
-        <FloatingChatWidget />
+        <FloatingChatWidget
+          websiteId={website.website_id}
+          companyId={website.company_id}
+          visitorFingerprint={visitorFingerprint}
+          primaryColor={primaryColor}
+        />
       )}
     </div>
   );

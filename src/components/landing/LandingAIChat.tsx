@@ -1,18 +1,32 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Bot, Send, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
+interface LandingAIChatProps {
+  /** Website ID for tracking (Smart Website context) */
+  websiteId?: string;
+  /** Company ID for context */
+  companyId?: string;
+  /** Visitor fingerprint for tracking */
+  visitorFingerprint?: string;
+}
+
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/landing-chat`;
 
-export const LandingAIChat: React.FC = () => {
+export const LandingAIChat: React.FC<LandingAIChatProps> = ({
+  websiteId,
+  companyId,
+  visitorFingerprint,
+}) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
@@ -29,6 +43,19 @@ export const LandingAIChat: React.FC = () => {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Track message sent to site_chat_logs
+  const trackMessage = useCallback(async (role: 'user' | 'assistant', content: string) => {
+    if (!websiteId || !visitorFingerprint) return;
+    
+    await supabase.from('site_chat_logs').insert({
+      website_id: websiteId,
+      visitor_fingerprint: visitorFingerprint,
+      interaction_type: 'message_sent',
+      message_role: role,
+      message_preview: content.slice(0, 100), // First 100 chars only for privacy
+    });
+  }, [websiteId, visitorFingerprint]);
 
   const streamChat = async (userMessages: Message[]) => {
     const response = await fetch(CHAT_URL, {
@@ -91,6 +118,11 @@ export const LandingAIChat: React.FC = () => {
         }
       }
     }
+
+    // Track assistant response
+    if (assistantContent) {
+      await trackMessage('assistant', assistantContent);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -102,6 +134,9 @@ export const LandingAIChat: React.FC = () => {
     setMessages(newMessages);
     setInput('');
     setIsLoading(true);
+
+    // Track user message
+    await trackMessage('user', userMessage.content);
 
     try {
       await streamChat(newMessages);

@@ -3819,6 +3819,47 @@ export type Database = {
           },
         ]
       }
+      site_chat_logs: {
+        Row: {
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          interaction_type: string
+          message_preview: string | null
+          message_role: string | null
+          visitor_fingerprint: string | null
+          website_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          interaction_type: string
+          message_preview?: string | null
+          message_role?: string | null
+          visitor_fingerprint?: string | null
+          website_id: string
+        }
+        Update: {
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          interaction_type?: string
+          message_preview?: string | null
+          message_role?: string | null
+          visitor_fingerprint?: string | null
+          website_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_chat_logs_website_id_fkey"
+            columns: ["website_id"]
+            isOneToOne: false
+            referencedRelation: "smart_websites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_metrics: {
         Row: {
           booking_clicks: number
@@ -3938,6 +3979,7 @@ export type Database = {
           show_contact: boolean
           show_hours: boolean
           show_services: boolean
+          show_voice_widget: boolean
           subdomain: string | null
           updated_at: string
         }
@@ -3960,6 +4002,7 @@ export type Database = {
           show_contact?: boolean
           show_hours?: boolean
           show_services?: boolean
+          show_voice_widget?: boolean
           subdomain?: string | null
           updated_at?: string
         }
@@ -3982,6 +4025,7 @@ export type Database = {
           show_contact?: boolean
           show_hours?: boolean
           show_services?: boolean
+          show_voice_widget?: boolean
           subdomain?: string | null
           updated_at?: string
         }
