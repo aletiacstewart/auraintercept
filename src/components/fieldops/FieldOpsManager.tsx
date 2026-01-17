@@ -398,14 +398,14 @@ export function FieldOpsManager({ companyId }: FieldOpsManagerProps) {
   return (
     <div className="h-full flex flex-col bg-background text-foreground">
       {/* Header */}
-      <div className="p-4 border-b border-border bg-card">
+      <div className="p-4 border-b border-border bg-card dark-card-surface text-card-foreground">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-3 text-foreground">
+            <h1 className="text-2xl font-bold flex items-center gap-3">
               <Truck className="h-6 w-6 text-accent" />
               Dispatch-Field Ops
             </h1>
-            <p className="text-muted-foreground text-sm mt-1">
+            <p className="text-card-muted text-sm mt-1">
               Dispatch, track & manage field operations
             </p>
           </div>
