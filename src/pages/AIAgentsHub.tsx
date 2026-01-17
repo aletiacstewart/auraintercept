@@ -512,24 +512,7 @@ export default function AIAgentsHub() {
           {/* Monitor Tab */}
           <TabsContent value="monitor" className="space-y-4">
             {companyId ? (
-              <Tabs defaultValue="jobs">
-                <TabsList>
-                  <TabsTrigger value="jobs" className="flex items-center gap-2">
-                    <ClipboardList className="h-4 w-4" />
-                    Job Status
-                  </TabsTrigger>
-                  <TabsTrigger value="events" className="flex items-center gap-2">
-                    <Activity className="h-4 w-4" />
-                    Agent Events
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="jobs" className="mt-4">
-                  <JobStatusMonitor companyId={companyId} />
-                </TabsContent>
-                <TabsContent value="events" className="mt-4">
-                  <AgentWorkflowMonitor companyId={companyId} />
-                </TabsContent>
-              </Tabs>
+              <AgentWorkflowMonitor companyId={companyId} />
             ) : (
               <Card className="p-12 text-center">
                 <Activity className="h-12 w-12 mx-auto text-muted-foreground mb-4" />

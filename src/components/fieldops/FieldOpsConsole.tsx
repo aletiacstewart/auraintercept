@@ -22,11 +22,14 @@ import {
   ArrowRight,
   Bell,
   Truck,
-  Users
+  Users,
+  ClipboardList,
+  Activity
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { DispatcherMapView } from './DispatcherMapView';
 import { RealTimeETASidebar } from './RealTimeETASidebar';
+import { JobStatusMonitor } from '@/components/ai/agents/JobStatusMonitor';
 import { cn } from '@/lib/utils';
 
 interface JobAssignment {
@@ -74,7 +77,7 @@ interface FieldOpsConsoleProps {
 }
 
 export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
-  const [activeView, setActiveView] = useState<'map' | 'agenda'>('map');
+  const [activeView, setActiveView] = useState<'map' | 'agenda' | 'jobs'>('map');
   const [showETASidebar, setShowETASidebar] = useState(true);
 
   // Fetch all active jobs for dispatchers
@@ -166,7 +169,7 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
 
         {/* View Tabs */}
         <div className="flex items-center justify-between mt-4">
-          <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'map' | 'agenda')}>
+          <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'map' | 'agenda' | 'jobs')}>
             <TabsList className="bg-muted">
               <TabsTrigger 
                 value="map" 
@@ -182,18 +185,27 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
                 <List className="h-4 w-4 mr-2" />
                 Agenda View
               </TabsTrigger>
+              <TabsTrigger 
+                value="jobs"
+                className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
+              >
+                <ClipboardList className="h-4 w-4 mr-2" />
+                Job Status
+              </TabsTrigger>
             </TabsList>
           </Tabs>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowETASidebar(!showETASidebar)}
-            className="text-accent hover:bg-accent/20"
-          >
-            <Clock className="h-4 w-4 mr-2" />
-            {showETASidebar ? 'Hide' : 'Show'} ETA Panel
-          </Button>
+          {activeView !== 'jobs' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowETASidebar(!showETASidebar)}
+              className="text-accent hover:bg-accent/20"
+            >
+              <Clock className="h-4 w-4 mr-2" />
+              {showETASidebar ? 'Hide' : 'Show'} ETA Panel
+            </Button>
+          )}
         </div>
       </div>
 
@@ -203,13 +215,17 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
         <div className="flex-1 overflow-hidden">
           {activeView === 'map' ? (
             <DispatcherMapView jobs={jobs || []} isLoading={isLoading} />
-          ) : (
+          ) : activeView === 'agenda' ? (
             <AgendaView jobs={jobs || []} isLoading={isLoading} jobsByStatus={jobsByStatus} />
+          ) : (
+            <div className="p-4 h-full overflow-auto">
+              <JobStatusMonitor companyId={companyId} />
+            </div>
           )}
         </div>
 
         {/* ETA Sidebar */}
-        {showETASidebar && (
+        {showETASidebar && activeView !== 'jobs' && (
           <RealTimeETASidebar jobs={jobs || []} companyId={companyId} />
         )}
       </div>
