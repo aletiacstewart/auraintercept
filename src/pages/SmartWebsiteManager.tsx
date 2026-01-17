@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -27,12 +27,15 @@ import {
   QrCode
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import { VisitorLimitModal } from '@/components/smartwebsite/VisitorLimitModal';
 
 export default function SmartWebsiteManager() {
   const { companyId } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isCreating, setIsCreating] = useState(false);
+  const [showLimitModal, setShowLimitModal] = useState(false);
+  const [hasShownLimitWarning, setHasShownLimitWarning] = useState(false);
 
   // Fetch website data
   const { data: website, isLoading } = useQuery({
@@ -68,13 +71,13 @@ export default function SmartWebsiteManager() {
     enabled: !!website?.id,
   });
 
-  // Fetch company for slug
+  // Fetch company for slug and subscription tier
   const { data: company } = useQuery({
     queryKey: ['company', companyId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('companies')
-        .select('slug, name')
+        .select('slug, name, subscription_tier')
         .eq('id', companyId)
         .single();
       
@@ -83,6 +86,17 @@ export default function SmartWebsiteManager() {
     },
     enabled: !!companyId,
   });
+
+  // Check if visitor limit warning should be shown
+  useEffect(() => {
+    if (metrics && website && !hasShownLimitWarning) {
+      const usagePercent = (metrics.page_views / website.monthly_visitor_limit) * 100;
+      if (usagePercent >= 80) {
+        setShowLimitModal(true);
+        setHasShownLimitWarning(true);
+      }
+    }
+  }, [metrics, website, hasShownLimitWarning]);
 
   // Create website mutation
   const createWebsite = useMutation({
@@ -364,10 +378,21 @@ export default function SmartWebsiteManager() {
               </CardHeader>
               <CardContent>
                 <Progress value={usagePercentage} className="h-2" />
-                {usagePercentage > 80 && (
-                  <p className="text-sm text-amber-500 mt-2">
-                    Approaching visitor limit. Consider upgrading your plan.
-                  </p>
+                {usagePercentage >= 80 && (
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-sm text-amber-500">
+                      {usagePercentage >= 100 
+                        ? 'Visitor limit reached. New visitors see a placeholder page.'
+                        : 'Approaching visitor limit. Consider upgrading your plan.'}
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setShowLimitModal(true)}
+                    >
+                      View Options
+                    </Button>
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -435,6 +460,15 @@ export default function SmartWebsiteManager() {
             )}
           </TabsContent>
         </Tabs>
+
+        {/* Visitor Limit Modal */}
+        <VisitorLimitModal
+          open={showLimitModal}
+          onOpenChange={setShowLimitModal}
+          currentVisitors={metrics?.page_views || 0}
+          visitorLimit={website.monthly_visitor_limit}
+          currentTier={company?.subscription_tier || 'single_point'}
+        />
       </div>
     </DashboardLayout>
   );
