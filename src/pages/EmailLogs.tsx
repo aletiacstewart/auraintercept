@@ -98,8 +98,8 @@ export default function EmailLogs() {
           <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/20">
-                  <Mail className="h-5 w-5 text-white" />
+                <div className="p-2 rounded-lg bg-channel-email/20">
+                  <Mail className="h-5 w-5 text-channel-email" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-accent">{totalEmails}</p>
@@ -179,7 +179,7 @@ export default function EmailLogs() {
                       className="p-4 rounded-lg border bg-card hover:bg-muted/30 transition-colors"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-primary/10 text-primary">
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-channel-email/10 text-channel-email">
                           <Mail className="w-5 h-5" />
                         </div>
                         <div className="flex-1 min-w-0">

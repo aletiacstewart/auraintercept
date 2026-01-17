@@ -51,13 +51,13 @@ const DEFAULT_QUICK_ACTIONS: QuickAction[] = [
 ];
 
 const AGENT_LABELS: Record<string, { label: string; color: string }> = {
-  triage: { label: 'Assistant', color: 'bg-blue-500' },
-  booking: { label: 'Scheduling Agent', color: 'bg-green-500' },
-  dispatch: { label: 'Dispatch Agent', color: 'bg-orange-500' },
-  quote: { label: 'Quote Agent', color: 'bg-purple-500' },
-  review: { label: 'Social Media Review Agent', color: 'bg-yellow-500' },
-  eta: { label: 'ETA Agent', color: 'bg-cyan-500' },
-  'follow-up': { label: 'Follow-up Agent', color: 'bg-pink-500' },
+  triage: { label: 'Assistant', color: 'bg-channel-chat' },
+  booking: { label: 'Scheduling Agent', color: 'bg-channel-sms' },
+  dispatch: { label: 'Dispatch Agent', color: 'bg-channel-voice' },
+  quote: { label: 'Quote Agent', color: 'bg-channel-chat' },
+  review: { label: 'Social Media Review Agent', color: 'bg-channel-email' },
+  eta: { label: 'ETA Agent', color: 'bg-secondary' },
+  'follow-up': { label: 'Follow-up Agent', color: 'bg-channel-voice' },
 };
 
 export const CustomerChatInterface: React.FC<CustomerChatInterfaceProps> = ({

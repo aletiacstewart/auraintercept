@@ -82,8 +82,8 @@ export default function SMSLogs() {
           <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/20">
-                  <MessageSquare className="h-5 w-5 text-white" />
+                <div className="p-2 rounded-lg bg-channel-sms/20">
+                  <MessageSquare className="h-5 w-5 text-channel-sms" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-accent">{totalSMS}</p>
@@ -162,8 +162,8 @@ export default function SMSLogs() {
                       key={log.id}
                       className="p-4 rounded-lg border bg-card hover:bg-muted/30 transition-colors"
                     >
-                      <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-secondary/10 text-secondary">
+                        <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-channel-sms/10 text-channel-sms">
                           <MessageSquare className="w-5 h-5" />
                         </div>
                         <div className="flex-1 min-w-0">
