@@ -49,6 +49,7 @@ import {
   Smartphone,
   AlertTriangle,
   Bug,
+  Rocket,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/aura-intercept-logo.png';
@@ -141,6 +142,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Configuration',
     items: [
+      { label: 'Aura Quick-Start', icon: Rocket, href: '/dashboard/onboarding', roles: ['platform_admin', 'company_admin'] },
       { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'] },
       { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
       { label: 'Calculators', icon: BarChart3, href: '/dashboard/calculators', roles: ['platform_admin', 'company_admin'] },
