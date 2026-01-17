@@ -48,43 +48,6 @@ const CATEGORY_INFO: Record<string, { label: string; icon: React.ElementType; co
   analytics_reports: { label: 'Analytics & Reports', icon: BarChart3, color: 'text-cyan-500' },
 };
 
-const CONTROL_CENTERS = [
-  {
-    name: 'Customer Portal Console',
-    description: 'AI-powered customer interactions with booking, quotes, and support.',
-    icon: Users,
-    gradient: 'from-cyan-500 to-blue-500',
-    features: ['Online booking', 'Quote requests', 'Appointment tracking', 'AI chat support']
-  },
-  {
-    name: 'Field Operations Console',
-    description: 'Dispatch, routing, and real-time technician management.',
-    icon: Truck,
-    gradient: 'from-green-500 to-emerald-500',
-    features: ['Smart dispatch', 'Route optimization', 'Live ETA tracking', 'Technician check-in']
-  },
-  {
-    name: 'Business Management Console',
-    description: 'Invoicing, inventory, and warranty operations.',
-    icon: Briefcase,
-    gradient: 'from-orange-500 to-amber-500',
-    features: ['Invoice generation', 'Inventory tracking', 'Warranty management', 'Quote builder']
-  },
-  {
-    name: 'Marketing & Sales Console',
-    description: 'Lead management and campaign automation.',
-    icon: Megaphone,
-    gradient: 'from-purple-500 to-pink-500',
-    features: ['Lead capture', 'Campaign automation', 'Customer segments', 'Follow-up sequences']
-  },
-  {
-    name: 'Analytics & Reports Console',
-    description: 'KPIs, insights, and performance dashboards.',
-    icon: BarChart3,
-    gradient: 'from-indigo-500 to-violet-500',
-    features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
-  }
-];
 
 const PHASE_LABELS: Record<number, string> = {
   1: 'Phase 1',
@@ -351,45 +314,6 @@ export default function AIAgentsHub() {
           </Alert>
         )}
 
-        {/* 6 Powerful Intercept Control Centers */}
-        <Card className="border-border/50 bg-gradient-to-br from-slate-900/50 to-slate-800/50">
-          <CardHeader className="text-center pb-4">
-            <Badge variant="secondary" className="mb-2 w-fit mx-auto">Aura Agent Consoles</Badge>
-            <CardTitle className="text-2xl">6 Powerful Intercept Control Centers</CardTitle>
-            <CardDescription className="text-white/70">
-              Purpose-built consoles give your team full control over AI agent operations
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {CONTROL_CENTERS.map((console) => (
-                <div 
-                  key={console.name}
-                  className="group relative overflow-hidden rounded-xl border border-border/50 bg-slate-800/50 p-4 hover:border-primary/50 transition-all duration-300"
-                >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${console.gradient} opacity-5 group-hover:opacity-10 transition-opacity`} />
-                  <div className="relative">
-                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${console.gradient} flex items-center justify-center mb-3`}>
-                      <console.icon className="w-5 h-5 text-white" />
-                    </div>
-                    <h4 className="font-semibold text-sm text-white mb-1">{console.name}</h4>
-                    <p className="text-xs text-white/60 mb-3">{console.description}</p>
-                    <div className="flex flex-wrap gap-1">
-                      {console.features.map((feature) => (
-                        <span 
-                          key={feature}
-                          className="text-[10px] px-2 py-0.5 rounded-full bg-slate-700/50 text-white/70"
-                        >
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
