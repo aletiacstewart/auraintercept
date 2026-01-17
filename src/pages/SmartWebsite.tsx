@@ -102,7 +102,7 @@ export default function SmartWebsite() {
     enabled: !!website?.company_id && website.show_services,
   });
 
-  // Fetch business hours
+  // Fetch business hours (office hours for public website)
   const { data: businessHours } = useQuery({
     queryKey: ['smart-website-hours', website?.company_id],
     queryFn: async () => {
@@ -110,6 +110,7 @@ export default function SmartWebsite() {
         .from('business_hours')
         .select('day_of_week, open_time, close_time, is_closed')
         .eq('company_id', website!.company_id)
+        .eq('hour_type', 'office')
         .order('day_of_week');
       
       if (error) throw error;
