@@ -77,6 +77,7 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
       { label: 'Aura Quick-Start', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Smart Website', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'] },
       { label: 'My Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['employee'] },
       { label: 'AI Console', icon: Bot, href: '/technician/ai-console', roles: ['employee'] },
       { label: 'My Jobs', icon: ClipboardList, href: '/technician/jobs', roles: ['employee'] },
@@ -134,7 +135,6 @@ const navGroups: NavGroup[] = [
     label: 'Customer Consoles & Apps',
     items: [
       { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'] },
-      { label: 'Smart Website', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'] },
       { label: 'Customer Website App', icon: Globe, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
       { label: 'Customer Portal App Install', icon: Smartphone, href: '/dashboard/customer-portal-app-install', roles: ['platform_admin', 'company_admin'] },
     ],
