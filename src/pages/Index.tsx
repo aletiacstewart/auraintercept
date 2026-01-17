@@ -1014,14 +1014,14 @@ export default function Index() {
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Twilio (SMS & Voice)</td>
-                          <td className="p-3 text-center text-xs text-muted-foreground">Not needed</td>
+                          <td className="p-3 text-center text-xs">Required</td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs">Required</td>
                           <td className="p-3 text-center text-xs">Required</td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">ElevenLabs (AI Voice)</td>
-                          <td className="p-3 text-center text-xs text-muted-foreground">Not needed</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs text-muted-foreground">Not needed</td>
+                          <td className="p-3 text-center text-xs">Required</td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs">Required</td>
                           <td className="p-3 text-center text-xs">Required</td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
