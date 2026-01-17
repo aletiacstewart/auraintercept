@@ -213,6 +213,17 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
       if (error) throw new Error(error.message || "Failed to get token");
 
+      // Handle voice locked error (subscription tier gating)
+      if (data?.error === 'voice_locked') {
+        toast({
+          variant: 'destructive',
+          title: 'Voice Upgrade Required',
+          description: 'Voice features require the Command tier subscription. Upgrade to unlock.',
+        });
+        setIsConnecting(false);
+        return;
+      }
+
       lastAuthRef.current = {
         token: data?.token,
         signed_url: data?.signed_url,

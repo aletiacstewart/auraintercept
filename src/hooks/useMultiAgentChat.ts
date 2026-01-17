@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -7,6 +8,7 @@ export interface ChatMessage {
   agent?: string;
   timestamp?: Date;
   actions?: Array<{ label: string; action: string }>;
+  isLocked?: boolean;
 }
 
 export interface UseMultiAgentChatOptions {
@@ -22,6 +24,7 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentAgent, setCurrentAgent] = useState<string>(initialAgent);
   const [sessionId] = useState(() => crypto.randomUUID());
+  const { toast } = useToast();
 
   const sendMessage = useCallback(async (userMessage: string) => {
     if (!userMessage.trim() || isLoading) return;
@@ -55,6 +58,31 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
       }
 
       const data = response.data;
+
+      // Handle agent locked error
+      if (data?.error === 'agent_locked') {
+        const tierLabels: Record<string, string> = {
+          single_point: 'Single-Point',
+          multi_track: 'Multi-Track',
+          command: 'Command'
+        };
+        const requiredTierLabel = tierLabels[data.required_tier] || data.required_tier;
+        
+        const lockedMsg: ChatMessage = {
+          role: 'assistant',
+          content: `This feature requires the ${requiredTierLabel} subscription tier. Would you like to learn more about upgrading your plan?`,
+          agent: currentAgent,
+          timestamp: new Date(),
+          isLocked: true,
+        };
+        setMessages((prev) => [...prev, lockedMsg]);
+        
+        toast({
+          title: 'Upgrade Required',
+          description: `The ${currentAgent} agent requires the ${requiredTierLabel} tier.`,
+        });
+        return;
+      }
       
       // Handle agent change from response or handoff
       const newAgent = data.handoff_to || data.agent;
@@ -122,7 +150,7 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
     } finally {
       setIsLoading(false);
     }
-  }, [companyId, sessionId, messages, currentAgent, isLoading, onAgentChange]);
+  }, [companyId, sessionId, messages, currentAgent, isLoading, onAgentChange, toast]);
 
   const clearMessages = useCallback(() => {
     setMessages([]);

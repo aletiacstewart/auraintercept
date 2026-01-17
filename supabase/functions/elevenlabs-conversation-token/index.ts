@@ -25,6 +25,52 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // === SUBSCRIPTION TIER GATING FOR VOICE ===
+    // Voice features require the Command tier (or active trial)
+    const { data: companyData, error: companyError } = await supabase
+      .from("companies")
+      .select("subscription_tier, trial_ends_at")
+      .eq("id", company_id)
+      .single();
+
+    if (companyError) {
+      console.error("Error fetching company tier:", companyError);
+      return new Response(
+        JSON.stringify({ 
+          error: "company_not_found",
+          message: "Unable to verify company subscription."
+        }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
+
+    const subscriptionTier = companyData?.subscription_tier || "free";
+    const trialEndsAt = companyData?.trial_ends_at;
+    const inTrial = trialEndsAt && new Date(trialEndsAt) > new Date();
+
+    // Voice is only available for Command tier or during trial
+    const voiceTiers = ["command"];
+    const hasVoiceAccess = inTrial || voiceTiers.includes(subscriptionTier);
+
+    if (!hasVoiceAccess) {
+      console.log(`[ElevenLabs Token] Voice locked for company ${company_id}: tier=${subscriptionTier}, trial=${inTrial}`);
+      return new Response(
+        JSON.stringify({ 
+          error: "voice_locked",
+          message: "Voice features require the Command tier subscription.",
+          current_tier: subscriptionTier,
+          required_tier: "command"
+        }),
+        { 
+          status: 403, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
+
     // Fetch company's ElevenLabs API key and agent ID from tenant_integrations
     const { data: integration, error: integrationError } = await supabase
       .from("tenant_integrations")
