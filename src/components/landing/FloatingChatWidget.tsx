@@ -3,6 +3,7 @@ import { MessageCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { LandingAIChat } from './LandingAIChat';
+import { SmartWebsiteChat } from '@/components/smartwebsite/SmartWebsiteChat';
 import { supabase } from '@/integrations/supabase/client';
 
 interface FloatingChatWidgetProps {
@@ -10,17 +11,23 @@ interface FloatingChatWidgetProps {
   websiteId?: string;
   /** Company ID for context */
   companyId?: string;
+  /** Company name for display */
+  companyName?: string;
   /** Visitor fingerprint for tracking */
   visitorFingerprint?: string;
   /** Primary color for styling */
   primaryColor?: string;
+  /** Use full multi-agent system instead of basic landing chat */
+  useMultiAgent?: boolean;
 }
 
 export const FloatingChatWidget: React.FC<FloatingChatWidgetProps> = ({
   websiteId,
   companyId,
+  companyName,
   visitorFingerprint,
   primaryColor,
+  useMultiAgent = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasTrackedOpen, setHasTrackedOpen] = useState(false);
@@ -81,11 +88,21 @@ export const FloatingChatWidget: React.FC<FloatingChatWidgetProps> = ({
               <X className="w-4 h-4" />
             </Button>
             
-            <LandingAIChat 
-              websiteId={websiteId}
-              companyId={companyId}
-              visitorFingerprint={visitorFingerprint}
-            />
+            {useMultiAgent && companyId ? (
+              <SmartWebsiteChat 
+                companyId={companyId}
+                companyName={companyName}
+                websiteId={websiteId}
+                visitorFingerprint={visitorFingerprint}
+                primaryColor={primaryColor}
+              />
+            ) : (
+              <LandingAIChat 
+                websiteId={websiteId}
+                companyId={companyId}
+                visitorFingerprint={visitorFingerprint}
+              />
+            )}
           </Card>
         </div>
       )}
