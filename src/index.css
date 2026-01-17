@@ -160,14 +160,7 @@
   .text-description {
     @apply text-muted-foreground text-sm;
   }
-  
-  /* Dark card surface - forces muted text to be light/white for readability */
-  .dark-card-surface {
-    --muted-foreground: 0 0% 75%;
-  }
-}
 
-@layer utilities {
   /* Form label utilities for proper contrast on light/dark backgrounds */
   .form-label-dark {
     @apply text-slate-700;
@@ -175,13 +168,25 @@
   .form-label-light {
     @apply text-card-foreground/70;
   }
-  /* Guide cards: dark card surface that still reads well on light pages */
+  
+  /* ============================================================
+     GUIDE-CARD: The definitive dark card surface utility
+     ============================================================
+     Use this class on ANY card/container with a dark background.
+     It overrides ALL text tokens so components render correctly.
+     
+     Usage:
+       - Primary text: text-foreground OR text-card-foreground
+       - Secondary text: text-muted-foreground OR text-card-foreground/70
+       - Both will now be readable on dark backgrounds
+     ============================================================ */
   .guide-card {
     background: hsl(var(--card));
     color: hsl(var(--card-foreground));
     border: 1px solid hsl(var(--border));
 
-    /* Make existing `text-muted-foreground` readable on dark cards even in light mode */
+    /* Override ALL text tokens for dark card readability */
+    --foreground: var(--card-foreground);
     --muted-foreground: var(--card-muted);
   }
 
