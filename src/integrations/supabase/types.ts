@@ -4975,6 +4975,15 @@ export type Database = {
           website_id: string
         }[]
       }
+      get_website_public_hours: {
+        Args: { p_subdomain: string }
+        Returns: {
+          close_time: string
+          day_of_week: number
+          is_closed: boolean
+          open_time: string
+        }[]
+      }
       has_agent_access: {
         Args: { _agent_type: string; _user_id: string }
         Returns: boolean

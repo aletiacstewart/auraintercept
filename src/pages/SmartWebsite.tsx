@@ -103,20 +103,20 @@ export default function SmartWebsite() {
   });
 
   // Fetch business hours (office hours for public website)
-  const { data: businessHours } = useQuery({
-    queryKey: ['smart-website-hours', website?.company_id],
+  const {
+    data: businessHours = [],
+    isLoading: isHoursLoading,
+  } = useQuery({
+    queryKey: ['smart-website-hours', subdomain],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('business_hours')
-        .select('day_of_week, open_time, close_time, is_closed')
-        .eq('company_id', website!.company_id)
-        .eq('hour_type', 'office')
-        .order('day_of_week');
-      
+        .rpc('get_website_public_hours', { p_subdomain: subdomain });
+
       if (error) throw error;
-      return data as BusinessHour[];
+      return (data || []) as BusinessHour[];
     },
-    enabled: !!website?.company_id && website.show_hours,
+    enabled: !!subdomain && !!website?.show_hours,
+    initialData: [],
   });
 
   // Track page view
@@ -296,7 +296,7 @@ export default function SmartWebsite() {
       )}
 
       {/* Business Hours Section */}
-      {website.show_hours && businessHours && businessHours.length > 0 && (
+      {website.show_hours && !isHoursLoading && (
         <section className="py-16 px-4">
           <div className="container mx-auto max-w-md">
             <h2 className="text-3xl font-bold text-center mb-10">Business Hours</h2>
@@ -305,19 +305,22 @@ export default function SmartWebsite() {
                 {DAYS.map((day, index) => {
                   const hours = businessHours.find(h => h.day_of_week === index);
                   const isToday = new Date().getDay() === index;
+
+                  const isClosed = !hours || hours.is_closed || !hours.open_time || !hours.close_time;
+                  const is24Hours =
+                    !!hours &&
+                    !hours.is_closed &&
+                    hours.open_time.startsWith('00:00') &&
+                    hours.close_time.startsWith('23:59');
+
                   return (
-                    <div 
-                      key={day} 
+                    <div
+                      key={day}
                       className={`flex justify-between ${isToday ? 'font-semibold' : ''}`}
                     >
                       <span>{day}</span>
                       <span className="text-muted-foreground">
-                        {hours?.is_closed 
-                          ? 'Closed' 
-                          : hours 
-                            ? `${hours.open_time.slice(0, 5)} - ${hours.close_time.slice(0, 5)}`
-                            : 'Closed'
-                        }
+                        {isClosed ? 'Closed' : is24Hours ? 'Open 24 Hours' : `${hours.open_time.slice(0, 5)} - ${hours.close_time.slice(0, 5)}`}
                       </span>
                     </div>
                   );
