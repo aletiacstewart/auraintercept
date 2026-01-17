@@ -179,7 +179,19 @@ export function BusinessHoursManager() {
         if (savedForType.length > 0) {
           newHoursByType[hourType] = getDefaultHours(hourType).map((defaultHour) => {
             const saved = savedForType.find((h) => h.day_of_week === defaultHour.day_of_week);
-            return saved ? { ...saved, hour_type: hourType } : defaultHour;
+            if (saved) {
+              // Detect 24-hour mode: open_time = '00:00:xx' and close_time = '23:59:xx'
+              const is24Hours =
+                saved.open_time?.startsWith('00:00') &&
+                saved.close_time?.startsWith('23:59');
+
+              return {
+                ...saved,
+                hour_type: hourType,
+                open_time: is24Hours ? '24hours' : saved.open_time,
+              };
+            }
+            return defaultHour;
           });
         }
       });
