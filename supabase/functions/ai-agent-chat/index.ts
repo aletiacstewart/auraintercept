@@ -2002,6 +2002,63 @@ serve(async (req) => {
 
     console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, IP: ${clientIP}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}, isInternalAgent: ${isInternalAgent}`);
 
+    // === SUBSCRIPTION TIER GATING ===
+    // Define which agents are available in each subscription tier
+    const TIER_AGENTS: Record<string, string[]> = {
+      free: [],
+      single_point: ['triage', 'booking', 'followup', 'review'],
+      multi_track: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice'],
+      command: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'admin', 'quoting', 'invoice', 'inventory', 'warranty', 'campaign', 'insights', 'performance', 'revenue', 'forecast']
+    };
+
+    // Helper to determine required tier for an agent
+    const getRequiredTierForAgent = (agent: string): string | null => {
+      if (TIER_AGENTS.command.includes(agent) && !TIER_AGENTS.multi_track.includes(agent)) return 'command';
+      if (TIER_AGENTS.multi_track.includes(agent) && !TIER_AGENTS.single_point.includes(agent)) return 'multi_track';
+      if (TIER_AGENTS.single_point.includes(agent)) return 'single_point';
+      return null;
+    };
+
+    // Fetch company's subscription tier
+    const { data: companyTierData, error: tierError } = await supabase
+      .from('companies')
+      .select('name, subscription_tier, trial_ends_at')
+      .eq('id', companyId)
+      .single();
+
+    if (tierError) {
+      console.error(`[AI Agent Chat] Error fetching company tier: ${tierError.message}`);
+      return new Response(JSON.stringify({ 
+        error: 'Company not found or invalid',
+        message: 'Unable to verify company subscription.'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const subscriptionTier = companyTierData?.subscription_tier || 'free';
+    const trialEndsAt = companyTierData?.trial_ends_at;
+    const inTrial = trialEndsAt && new Date(trialEndsAt) > new Date();
+
+    // Determine allowed agents based on tier (trial gets full access)
+    const allowedAgents = inTrial ? TIER_AGENTS.command : (TIER_AGENTS[subscriptionTier] || []);
+
+    // Validate agent access
+    if (!allowedAgents.includes(agentType)) {
+      const requiredTier = getRequiredTierForAgent(agentType);
+      console.log(`[AI Agent Chat] Agent locked: ${agentType} requires ${requiredTier}, company has ${subscriptionTier}`);
+      return new Response(JSON.stringify({ 
+        error: 'agent_locked',
+        message: `The ${agentType} agent requires the ${requiredTier} subscription tier.`,
+        required_tier: requiredTier,
+        current_tier: subscriptionTier
+      }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     // === CUSTOMER COMPANY ASSOCIATION VALIDATION ===
     // For customer-facing requests (not internal admin agents), validate and manage company associations
     if (userId && companyId && !isInternalAgent) {
@@ -2062,12 +2119,8 @@ serve(async (req) => {
 
     const settings = config?.settings || {};
     
-    // Get company info for context
-    const { data: company } = await supabase
-      .from('companies')
-      .select('name')
-      .eq('id', companyId)
-      .single();
+    // Company info already fetched above for tier check
+    const company = companyTierData;
 
     // Fetch knowledge base data for booking/dispatch agents
     let knowledgeBaseContext = '';
@@ -2331,13 +2384,26 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             }
           }
 
-          handoffTo = target;
-          handoffReason = reason;
-          toolCalls.push({
-            name: 'handoff_to_agent',
-            arguments: { ...(args as any), target_agent: target, reason },
-            result: `Handing off to ${target}: ${reason}`,
-          });
+          // Subscription tier gating for handoff target
+          if (!allowedAgents.includes(target)) {
+            const requiredTier = getRequiredTierForAgent(target);
+            console.log(`[AI Agent Chat] Handoff blocked: ${target} requires ${requiredTier}, company has ${subscriptionTier}`);
+            // Block the handoff and provide a graceful message
+            toolCalls.push({
+              name: 'handoff_to_agent',
+              arguments: { ...(args as any), target_agent: target, reason },
+              result: `Cannot hand off to ${target}: This feature requires the ${requiredTier} subscription tier. Please upgrade your plan to access this functionality.`,
+            });
+            // Don't set handoffTo, so the conversation continues with current agent
+          } else {
+            handoffTo = target;
+            handoffReason = reason;
+            toolCalls.push({
+              name: 'handoff_to_agent',
+              arguments: { ...(args as any), target_agent: target, reason },
+              result: `Handing off to ${target}: ${reason}`,
+            });
+          }
         } else {
           // Execute the tool
           const result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
@@ -2428,13 +2494,26 @@ ${isInternalAgent ? `- Provide data and analytics directly without customer-serv
             const args = JSON.parse(toolCall.function?.arguments || '{}');
             
             if (funcName === 'handoff_to_agent') {
-              handoffTo = args.target_agent;
-              handoffReason = args.reason;
-              toolCalls.push({
-                name: 'handoff_to_agent',
-                arguments: args,
-                result: `Handing off to ${args.target_agent}: ${args.reason}`,
-              });
+              const targetAgent = args.target_agent;
+              
+              // Subscription tier gating for handoff target in follow-up calls
+              if (!allowedAgents.includes(targetAgent)) {
+                const requiredTier = getRequiredTierForAgent(targetAgent);
+                console.log(`[AI Agent Chat] Handoff blocked in loop: ${targetAgent} requires ${requiredTier}`);
+                toolCalls.push({
+                  name: 'handoff_to_agent',
+                  arguments: args,
+                  result: `Cannot hand off to ${targetAgent}: This feature requires the ${requiredTier} subscription tier.`,
+                });
+              } else {
+                handoffTo = targetAgent;
+                handoffReason = args.reason;
+                toolCalls.push({
+                  name: 'handoff_to_agent',
+                  arguments: args,
+                  result: `Handing off to ${targetAgent}: ${args.reason}`,
+                });
+              }
             } else {
               const result = await executeAgentTool(supabase, companyId, agentType, funcName, args, userId);
               toolCalls.push({
