@@ -338,6 +338,16 @@ export default function SmartWebsiteManager() {
                     onCheckedChange={(checked) => updateWebsite.mutate({ show_chat_widget: checked })}
                   />
                 </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">AI Voice Widget</p>
+                    <p className="text-sm text-muted-foreground">Enable voice chat for visitors</p>
+                  </div>
+                  <Switch
+                    checked={website.show_voice_widget}
+                    onCheckedChange={(checked) => updateWebsite.mutate({ show_voice_widget: checked })}
+                  />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
