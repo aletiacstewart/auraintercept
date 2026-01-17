@@ -14,7 +14,7 @@ export function CRMSetupGuides() {
     <div className="space-y-6">
       {/* Optional Note */}
       <Alert className="guide-card guide-card-crm">
-        <Info className="h-4 w-4 text-primary" />
+        <Info className="h-4 w-4 text-secondary" />
         <AlertDescription className="text-sm">
           <strong>CRM integrations are optional.</strong> You can use the platform without connecting a CRM.
           Connect your CRM only if you want to sync customer data, leads, deals, and activities between systems.
@@ -53,7 +53,7 @@ export function CRMSetupGuides() {
                   href="https://app.hubspot.com/settings" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-primary hover:underline"
+                  className="inline-flex items-center gap-1 text-secondary hover:underline"
                 >
                   Open HubSpot Settings <ExternalLink className="w-3 h-3" />
                 </a>
@@ -133,7 +133,7 @@ export function CRMSetupGuides() {
                   href="https://login.salesforce.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-primary hover:underline"
+                  className="inline-flex items-center gap-1 text-secondary hover:underline"
                 >
                   Login to Salesforce <ExternalLink className="w-3 h-3" />
                 </a>
@@ -212,7 +212,7 @@ export function CRMSetupGuides() {
                   href="https://api-console.zoho.com/" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-primary hover:underline"
+                  className="inline-flex items-center gap-1 text-secondary hover:underline"
                 >
                   Open Zoho API Console <ExternalLink className="w-3 h-3" />
                 </a>
@@ -290,7 +290,7 @@ export function CRMSetupGuides() {
                   href="https://app.pipedrive.com/settings/api" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-primary hover:underline"
+                  className="inline-flex items-center gap-1 text-secondary hover:underline"
                 >
                   Open Pipedrive API Settings <ExternalLink className="w-3 h-3" />
                 </a>

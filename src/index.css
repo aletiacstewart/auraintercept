@@ -190,6 +190,19 @@
     --muted-foreground: var(--card-muted);
   }
 
+  /* Dark surface border utility - higher contrast on dark cards */
+  .dark-surface-border {
+    --border: 208 30% 35%;
+  }
+
+  /* Dark surface input styling - for form elements on dark backgrounds */
+  .input-dark-surface {
+    @apply bg-sidebar-background text-sidebar-foreground border-sidebar-border;
+  }
+  .input-dark-surface::placeholder {
+    @apply text-sidebar-foreground/50;
+  }
+
   /* Console surfaces: force a light reading surface even when the app is in dark mode.
      This prevents light-mode-optimized forms (bg-white) from inheriting dark-mode text tokens. */
   .console-surface {

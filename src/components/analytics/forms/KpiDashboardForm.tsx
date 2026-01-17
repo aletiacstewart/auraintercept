@@ -147,7 +147,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
             Period
           </Label>
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="bg-white text-slate-900 border-border">
+            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

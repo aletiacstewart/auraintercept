@@ -261,7 +261,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
           <div className="space-y-2">
             <Label className="text-foreground/70">Date Range</Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -275,7 +275,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
           <div className="space-y-2">
             <Label className="text-foreground/70">View</Label>
             <Select value={insightView} onValueChange={(v) => setInsightView(v as InsightView)}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
