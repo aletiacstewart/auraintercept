@@ -29,6 +29,7 @@ import {
 import { QRCodeSVG } from 'qrcode.react';
 import { VisitorLimitModal } from '@/components/smartwebsite/VisitorLimitModal';
 import { SmartWebsiteAnalytics } from '@/components/smartwebsite/SmartWebsiteAnalytics';
+import { AboutSectionEditor } from '@/components/smartwebsite/AboutSectionEditor';
 
 export default function SmartWebsiteManager() {
   const { companyId } = useAuth();
@@ -291,7 +292,7 @@ export default function SmartWebsiteManager() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="sections">
+          <TabsContent value="sections" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Section Visibility</CardTitle>
@@ -350,6 +351,21 @@ export default function SmartWebsiteManager() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* About Section Editor */}
+            <AboutSectionEditor
+              website={{
+                id: website.id,
+                show_about_section: website.show_about_section ?? false,
+                about_image_url: website.about_image_url ?? null,
+                about_header: website.about_header ?? null,
+                about_subheader: website.about_subheader ?? null,
+                about_paragraph: website.about_paragraph ?? null,
+              }}
+              companyId={companyId!}
+              onUpdate={(updates) => updateWebsite.mutate(updates)}
+              isUpdating={updateWebsite.isPending}
+            />
           </TabsContent>
 
           <TabsContent value="analytics">
