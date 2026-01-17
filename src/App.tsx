@@ -19,7 +19,7 @@ import Customers from "./pages/Customers";
 import Employees from "./pages/Employees";
 import EmployeeDetail from "./pages/EmployeeDetail";
 import Settings from "./pages/Settings";
-import Onboarding from "./pages/Onboarding";
+
 import EmployeeAvailability from "./pages/EmployeeAvailability";
 import EmployeeAppointments from "./pages/EmployeeAppointments";
 
@@ -128,7 +128,7 @@ const App = () => (
               <Route path="/dashboard/employees" element={<Employees />} />
               <Route path="/dashboard/employees/:id" element={<EmployeeDetail />} />
               <Route path="/dashboard/settings" element={<Settings />} />
-              <Route path="/dashboard/onboarding" element={<Onboarding />} />
+              
               <Route path="/dashboard/availability" element={<EmployeeAvailability />} />
               <Route path="/dashboard/appointments" element={<EmployeeAppointments />} />
               
