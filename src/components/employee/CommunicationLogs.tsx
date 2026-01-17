@@ -224,9 +224,9 @@ export function CommunicationLogs() {
                         <div
                           className={cn(
                             'w-10 h-10 rounded-full flex items-center justify-center',
-                            log.direction === 'inbound'
-                              ? 'bg-secondary/10 text-secondary'
-                              : 'bg-secondary/10 text-secondary'
+                            log.type === 'call' && 'bg-channel-voice/10 text-channel-voice',
+                            log.type === 'sms' && 'bg-channel-sms/10 text-channel-sms',
+                            log.type === 'email' && 'bg-channel-email/10 text-channel-email'
                           )}
                         >
                           <Icon className="w-5 h-5" />

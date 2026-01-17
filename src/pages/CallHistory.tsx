@@ -169,7 +169,7 @@ export default function CallHistory() {
           <Card className="border-border/50">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-white flex items-center gap-2">
-                <PhoneIncoming className="w-4 h-4" /> Inbound
+                <PhoneIncoming className="w-4 h-4 text-channel-voice" /> Inbound
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -179,7 +179,7 @@ export default function CallHistory() {
           <Card className="border-border/50">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-white flex items-center gap-2">
-                <PhoneOutgoing className="w-4 h-4" /> Outbound
+                <PhoneOutgoing className="w-4 h-4 text-channel-voice" /> Outbound
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -268,9 +268,9 @@ export default function CallHistory() {
                           <TableCell>
                             <div className="flex items-center gap-2">
                               {call.direction === 'inbound' ? (
-                                <PhoneIncoming className="w-4 h-4 text-green-600" />
+                                <PhoneIncoming className="w-4 h-4 text-channel-voice" />
                               ) : (
-                                <PhoneOutgoing className="w-4 h-4 text-blue-600" />
+                                <PhoneOutgoing className="w-4 h-4 text-channel-voice" />
                               )}
                               <span className="capitalize text-sm">{call.direction}</span>
                             </div>
@@ -332,9 +332,9 @@ export default function CallHistory() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {selectedCall?.direction === 'inbound' ? (
-                <PhoneIncoming className="w-5 h-5 text-green-600" />
+                <PhoneIncoming className="w-5 h-5 text-channel-voice" />
               ) : (
-                <PhoneOutgoing className="w-5 h-5 text-blue-600" />
+                <PhoneOutgoing className="w-5 h-5 text-channel-voice" />
               )}
               Call Details
             </DialogTitle>
