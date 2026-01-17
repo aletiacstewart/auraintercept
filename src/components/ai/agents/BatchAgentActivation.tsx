@@ -50,7 +50,7 @@ const PHASE_CONFIG = [
     description: 'Promotions and customer retention',
     icon: Megaphone,
     color: 'text-orange-500',
-    agents: ['promo', 'referral', 'winback', 'seasonal'],
+    agents: ['campaign'],
   },
   {
     phase: 5,
@@ -63,7 +63,7 @@ const PHASE_CONFIG = [
 ];
 
 // Agents hidden from non-platform-admin roles
-const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty', 'promo', 'referral', 'winback', 'seasonal', 'marketing'];
+const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty', 'campaign', 'marketing'];
 
 // Phases hidden entirely from non-platform-admin roles
 const HIDDEN_PHASES_FOR_NON_PLATFORM_ADMIN = [4, 5]; // Marketing & Sales, Analytics & Optimization
