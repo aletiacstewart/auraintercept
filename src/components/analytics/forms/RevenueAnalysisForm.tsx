@@ -123,7 +123,7 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
               Date Range
             </Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -137,7 +137,7 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
           <div className="space-y-2">
             <Label className="text-foreground/70">Group By</Label>
             <Select value={groupBy} onValueChange={setGroupBy}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

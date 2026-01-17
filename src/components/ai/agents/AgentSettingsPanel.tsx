@@ -89,7 +89,7 @@ export function AgentSettingsPanel({
             value={value || ''}
             onChange={(e) => handleChange(field.key, e.target.value)}
             placeholder={field.placeholder}
-            className="bg-white text-slate-900"
+            className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50"
           />
         );
 
@@ -100,7 +100,7 @@ export function AgentSettingsPanel({
             onChange={(e) => handleChange(field.key, e.target.value)}
             placeholder={field.placeholder}
             rows={3}
-            className="bg-white text-slate-900"
+            className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50"
           />
         );
 
@@ -113,19 +113,19 @@ export function AgentSettingsPanel({
             min={field.min}
             max={field.max}
             step={field.step || 1}
-            className="bg-white text-slate-900"
+            className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50"
           />
         );
 
       case 'select':
         return (
           <Select value={value || ''} onValueChange={(v) => handleChange(field.key, v)}>
-            <SelectTrigger className="bg-white text-slate-900">
+            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
               <SelectValue placeholder="Select..." />
             </SelectTrigger>
-            <SelectContent className="bg-white">
+            <SelectContent>
               {field.options?.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value} className="text-slate-900">
+                <SelectItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </SelectItem>
               ))}

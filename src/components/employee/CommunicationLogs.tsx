@@ -225,7 +225,7 @@ export function CommunicationLogs() {
                           className={cn(
                             'w-10 h-10 rounded-full flex items-center justify-center',
                             log.direction === 'inbound'
-                              ? 'bg-primary/10 text-primary'
+                              ? 'bg-secondary/10 text-secondary'
                               : 'bg-secondary/10 text-secondary'
                           )}
                         >
