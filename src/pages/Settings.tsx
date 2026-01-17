@@ -14,6 +14,7 @@ import { CampaignSettings } from '@/components/settings/CampaignSettings';
 import { MissedCallSettings } from '@/components/company/MissedCallSettings';
 import { PublicAppUrlSettings } from '@/components/company/PublicAppUrlSettings';
 import { ContactInfoSettings } from '@/components/company/ContactInfoSettings';
+import { SetupProgressBar } from '@/components/company/SetupProgressBar';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -27,10 +28,12 @@ export default function Settings() {
         <div className="space-y-6 animate-fade-in">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-            <p className="text-white/70">
+            <p className="text-muted-foreground">
               Manage your company settings and preferences
             </p>
           </div>
+          
+          <SetupProgressBar />
           <Tabs defaultValue="branding" className="space-y-4">
             <TabsList className="flex-wrap h-auto gap-1">
               <TabsTrigger value="branding">Branding</TabsTrigger>
