@@ -109,20 +109,20 @@ export function SetupProgressBar() {
   }
 
   return (
-    <div className="rounded-lg border bg-card p-4 space-y-4">
+    <div className="guide-card rounded-lg p-4 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-foreground">Setup Progress</h3>
-          <p className="text-xs text-muted-foreground">
+          <h3 className="text-sm font-semibold text-card-foreground">Setup Progress</h3>
+          <p className="text-xs text-card-foreground/70">
             {completedCount} of {steps.length} steps completed
           </p>
         </div>
-        <span className="text-lg font-bold text-primary">
+        <span className="text-lg font-bold text-secondary">
           {Math.round(progressPercent)}%
         </span>
       </div>
 
-      <Progress value={progressPercent} className="h-2" />
+      <Progress value={progressPercent} className="h-2 bg-primary/40 [&>div]:bg-secondary" />
 
       <div className="flex flex-wrap gap-3">
         {steps.map((step) => (
@@ -131,14 +131,14 @@ export function SetupProgressBar() {
             className={cn(
               'flex items-center gap-1.5 text-xs rounded-full px-2.5 py-1 border',
               step.completed
-                ? 'bg-primary/10 border-primary/30 text-primary'
-                : 'bg-card border-border text-foreground'
+                ? 'bg-secondary/15 border-secondary/40 text-secondary'
+                : 'bg-transparent border-card-foreground/30 text-card-foreground'
             )}
           >
             {step.completed ? (
-              <CheckCircle2 className="h-3.5 w-3.5" />
+              <CheckCircle2 className="h-3.5 w-3.5 text-secondary" />
             ) : (
-              <Circle className="h-3.5 w-3.5" />
+              <Circle className="h-3.5 w-3.5 text-card-foreground/70" />
             )}
             <span>{step.label}</span>
           </div>
