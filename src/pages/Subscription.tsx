@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { Check, Crown, ExternalLink, Loader2, Clock, Sparkles, Users, Mail, MessageSquare, Mic, Info } from 'lucide-react';
+import { Check, X, Crown, ExternalLink, Loader2, Clock, Sparkles, Users, Mail, MessageSquare, Mic, Info, Phone, Calendar, Truck, BarChart3, Megaphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SubscriptionStatus {
@@ -21,19 +21,111 @@ interface SubscriptionStatus {
   trial_ends_at?: string | null;
 }
 
-const ENTERPRISE_FEATURES = [
-  'Unlimited appointments',
-  'Email reminders (included)',
-  'SMS reminders (usage-based)',
-  'AI Voice calls (usage-based)',
-  '10 employee accounts included',
-  'Additional employees: $25/mo per 10',
-  'Premium AI Agent with custom voice',
-  'Embeddable chat widget',
-  'Customized dashboard branding',
-  'Dedicated priority support',
-  'All analytics & digest reports',
-  'API access',
+// Tier configuration with features
+const TIERS = [
+  {
+    id: 'single_point',
+    name: 'Single-Point',
+    price: '$497',
+    description: 'Customer engagement + AI Voice',
+    popular: false,
+    features: {
+      // AI Agents
+      triage: true,
+      booking: false,
+      followup: true,
+      review: true,
+      dispatch: false,
+      fieldOps: false,
+      quoting: false,
+      invoice: false,
+      inventory: false,
+      warranty: false,
+      campaign: false,
+      analytics: false,
+      // Features
+      voiceChat: true,
+      outboundCalls: true,
+      chatWidget: true,
+      onlineBooking: false,
+      employees: '10 included',
+    },
+  },
+  {
+    id: 'multi_track',
+    name: 'Multi-Track',
+    price: '$897',
+    description: 'Customer + Field Operations + Online Booking',
+    popular: true,
+    features: {
+      triage: true,
+      booking: true,
+      followup: true,
+      review: true,
+      dispatch: true,
+      fieldOps: true,
+      quoting: true,
+      invoice: true,
+      inventory: false,
+      warranty: false,
+      campaign: false,
+      analytics: false,
+      voiceChat: true,
+      outboundCalls: true,
+      chatWidget: true,
+      onlineBooking: true,
+      employees: '20 included',
+    },
+  },
+  {
+    id: 'command',
+    name: 'Command',
+    price: '$1,497',
+    description: 'Full business automation suite',
+    popular: false,
+    features: {
+      triage: true,
+      booking: true,
+      followup: true,
+      review: true,
+      dispatch: true,
+      fieldOps: true,
+      quoting: true,
+      invoice: true,
+      inventory: true,
+      warranty: true,
+      campaign: true,
+      analytics: true,
+      voiceChat: true,
+      outboundCalls: true,
+      chatWidget: true,
+      onlineBooking: true,
+      employees: '50 included',
+    },
+  },
+];
+
+const FEATURE_ROWS = [
+  { key: 'header_agents', label: 'AI Agents', isHeader: true },
+  { key: 'triage', label: 'AI Receptionist (Triage)', icon: Phone },
+  { key: 'booking', label: 'Online Booking Agent', icon: Calendar },
+  { key: 'followup', label: 'Follow-up Agent', icon: MessageSquare },
+  { key: 'review', label: 'Review Request Agent', icon: Check },
+  { key: 'dispatch', label: 'Emergency Dispatch', icon: Truck },
+  { key: 'fieldOps', label: 'Field Operations (Route, ETA, Check-in)', icon: Truck },
+  { key: 'quoting', label: 'Quoting Agent', icon: Mail },
+  { key: 'invoice', label: 'Invoice Agent', icon: Mail },
+  { key: 'inventory', label: 'Inventory Agent', icon: BarChart3 },
+  { key: 'warranty', label: 'Warranty Agent', icon: Check },
+  { key: 'campaign', label: 'Campaign Agent', icon: Megaphone },
+  { key: 'analytics', label: 'Analytics Agents (Insights, Revenue, Forecast)', icon: BarChart3 },
+  { key: 'header_features', label: 'Voice & Communication', isHeader: true },
+  { key: 'voiceChat', label: 'AI Voice Chat (ElevenLabs)', icon: Mic },
+  { key: 'outboundCalls', label: 'AI Outbound Calling', icon: Phone },
+  { key: 'chatWidget', label: 'Embeddable Chat Widget', icon: MessageSquare },
+  { key: 'onlineBooking', label: 'Online Appointment Booking', icon: Calendar },
+  { key: 'header_limits', label: 'Platform Limits', isHeader: true },
+  { key: 'employees', label: 'Employee Accounts', icon: Users },
 ];
 
 export default function Subscription() {
@@ -137,6 +229,21 @@ export default function Subscription() {
 
   const isSubscribed = subscription?.subscribed && !subscription?.in_trial;
   const isInTrial = subscription?.in_trial || inTrial;
+  const currentTier = subscription?.tier || 'free';
+
+  const renderFeatureValue = (tier: typeof TIERS[0], featureKey: string) => {
+    const value = tier.features[featureKey as keyof typeof tier.features];
+    
+    if (typeof value === 'string') {
+      return <span className="text-sm text-foreground">{value}</span>;
+    }
+    
+    if (value === true) {
+      return <Check className="w-5 h-5 text-green-500" />;
+    }
+    
+    return <X className="w-5 h-5 text-slate-400" />;
+  };
 
   return (
     <DashboardLayout>
@@ -145,7 +252,7 @@ export default function Subscription() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Subscription</h1>
             <p className="text-muted-foreground">
-              {isInTrial ? 'Subscribe to continue after your trial' : 'Unlock full access to all platform features'}
+              {isInTrial ? 'Subscribe to continue after your trial' : 'Choose the plan that fits your business'}
             </p>
           </div>
           {isSubscribed && (
@@ -214,7 +321,7 @@ export default function Subscription() {
                 </div>
                 <div>
                   <p className="font-medium">
-                    You're on the <span className="text-amber-600 font-semibold">Enterprise</span> plan
+                    You're on the <span className="text-amber-600 font-semibold capitalize">{currentTier?.replace('_', '-')}</span> plan
                   </p>
                   {subscription?.subscription_end && (
                     <p className="text-sm text-muted-foreground">
@@ -230,160 +337,214 @@ export default function Subscription() {
           </Card>
         ) : null}
 
-        {/* Enterprise Plan Card */}
-        <Card className={cn(
-          "relative overflow-hidden transition-all max-w-2xl mx-auto",
-          isSubscribed && "border-amber-500 ring-2 ring-amber-500/20",
-          isInTrial && "border-primary ring-2 ring-primary/20"
-        )}>
-          {isSubscribed && (
-            <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs font-medium px-3 py-1 rounded-bl-lg">
-              Your Plan
-            </div>
-          )}
-          {isInTrial && !isSubscribed && (
-            <div className="absolute top-0 right-0 bg-primary text-white text-xs font-medium px-3 py-1 rounded-bl-lg">
-              Trial Active
-            </div>
-          )}
-          
-          <CardHeader className="text-center pb-2">
-            <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center mb-4">
-              <Crown className="w-8 h-8 text-white" />
-            </div>
-            <CardTitle className="text-2xl">Enterprise Company Subscription</CardTitle>
-            <CardDescription className="text-base">
-              Full access to all AI appointment platform features
-            </CardDescription>
-          </CardHeader>
-          
-          <CardContent className="space-y-6">
-            <div className="text-center">
-              <div className="flex items-baseline justify-center gap-1">
-                <span className="text-5xl font-bold">$497</span>
-                <span className="text-muted-foreground text-lg">/month</span>
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">Starting at Single-Point tier • Billed monthly</p>
-            </div>
-
-            {/* Usage-based pricing info */}
-            <div className="p-4 rounded-lg bg-muted/50 border">
-              <h4 className="font-medium text-sm mb-3 flex items-center gap-2">
-                <Info className="w-4 h-4 text-primary" />
-                What's Included in Base Price
-              </h4>
-              <div className="grid gap-2 text-sm">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
-                    <span>Email reminders</span>
-                  </div>
-                  <span className="text-green-600 font-medium">Included</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-muted-foreground" />
-                    <span>SMS reminders</span>
-                  </div>
-                  <span className="text-muted-foreground text-xs">Usage-based</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Mic className="w-4 h-4 text-muted-foreground" />
-                    <span>AI Voice calls</span>
-                  </div>
-                  <span className="text-muted-foreground text-xs">Usage-based</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-muted-foreground" />
-                    <span>Employee accounts</span>
-                  </div>
-                  <span className="text-muted-foreground text-xs">10 free, +$10/mo each</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {ENTERPRISE_FEATURES.map((feature, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm">
-                  <Check className="w-4 h-4 text-amber-500 shrink-0" />
-                  {feature}
-                </div>
-              ))}
-            </div>
-
-            <div className="pt-4">
-              {isSubscribed ? (
-                <Button variant="outline" className="w-full" disabled>
-                  <Crown className="w-4 h-4 mr-2" />
-                  Current Plan
-                </Button>
-              ) : (
-                <>
-                  <Button 
-                    className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white" 
-                    size="lg"
-                    onClick={handleSubscribe}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Loading...
-                      </>
-                    ) : (
-                      <>
-                        <Crown className="w-4 h-4 mr-2" />
-                        {isInTrial ? 'Subscribe to Continue' : 'Subscribe Now'}
-                      </>
-                    )}
-                  </Button>
-                  {isInTrial && (
-                    <p className="text-xs text-center text-muted-foreground mt-2">
-                      Subscribe now to ensure uninterrupted access when your trial ends
-                    </p>
-                  )}
-                </>
+        {/* Tier Cards */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {TIERS.map((tier) => (
+            <Card 
+              key={tier.id}
+              className={cn(
+                "relative overflow-hidden transition-all",
+                tier.popular && "border-primary ring-2 ring-primary/20",
+                currentTier === tier.id && isSubscribed && "border-amber-500 ring-2 ring-amber-500/20"
               )}
+            >
+              {tier.popular && (
+                <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-bl-lg">
+                  Most Popular
+                </div>
+              )}
+              {currentTier === tier.id && isSubscribed && (
+                <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs font-medium px-3 py-1 rounded-bl-lg">
+                  Your Plan
+                </div>
+              )}
+              
+              <CardHeader className="text-center pb-2">
+                <CardTitle className="text-xl">{tier.name}</CardTitle>
+                <CardDescription className="text-sm">{tier.description}</CardDescription>
+              </CardHeader>
+              
+              <CardContent className="space-y-4">
+                <div className="text-center">
+                  <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-4xl font-bold">{tier.price}</span>
+                    <span className="text-muted-foreground">/mo</span>
+                  </div>
+                </div>
+
+                {/* Key highlights */}
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Mic className="w-4 h-4 text-primary" />
+                    <span>AI Voice Chat & Calling</span>
+                  </div>
+                  {tier.features.booking ? (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-primary" />
+                      <span>Online Booking</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Phone className="w-4 h-4" />
+                      <span>Call to Book</span>
+                    </div>
+                  )}
+                  {tier.features.dispatch && (
+                    <div className="flex items-center gap-2">
+                      <Truck className="w-4 h-4 text-primary" />
+                      <span>Field Operations</span>
+                    </div>
+                  )}
+                  {tier.features.analytics && (
+                    <div className="flex items-center gap-2">
+                      <BarChart3 className="w-4 h-4 text-primary" />
+                      <span>Full Analytics Suite</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Users className="w-4 h-4" />
+                    <span>{tier.features.employees}</span>
+                  </div>
+                </div>
+
+                <Button 
+                  className={cn(
+                    "w-full",
+                    tier.popular && "bg-primary hover:bg-primary/90"
+                  )}
+                  variant={tier.popular ? "default" : "outline"}
+                  onClick={handleSubscribe}
+                  disabled={loading || (currentTier === tier.id && isSubscribed)}
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : currentTier === tier.id && isSubscribed ? (
+                    'Current Plan'
+                  ) : (
+                    'Subscribe'
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Feature Comparison Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Feature Comparison</CardTitle>
+            <CardDescription>See what's included in each plan</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-3 px-4 font-medium">Feature</th>
+                    {TIERS.map((tier) => (
+                      <th key={tier.id} className="text-center py-3 px-4 font-medium">
+                        {tier.name}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {FEATURE_ROWS.map((row) => (
+                    <tr 
+                      key={row.key} 
+                      className={cn(
+                        "border-b last:border-b-0",
+                        row.isHeader && "bg-muted/50"
+                      )}
+                    >
+                      <td className={cn(
+                        "py-3 px-4",
+                        row.isHeader ? "font-semibold text-foreground" : "text-sm"
+                      )}>
+                        <div className="flex items-center gap-2">
+                          {row.icon && !row.isHeader && <row.icon className="w-4 h-4 text-muted-foreground" />}
+                          {row.label}
+                        </div>
+                      </td>
+                      {!row.isHeader && TIERS.map((tier) => (
+                        <td key={tier.id} className="text-center py-3 px-4">
+                          {renderFeatureValue(tier, row.key)}
+                        </td>
+                      ))}
+                      {row.isHeader && TIERS.map((tier) => (
+                        <td key={tier.id} className="text-center py-3 px-4"></td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Usage-based pricing info */}
+        <Card className="border-border/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Info className="w-5 h-5 text-primary" />
+              Usage-Based Pricing
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-3 gap-4 text-sm">
+              <div className="flex items-start gap-3">
+                <Mail className="w-5 h-5 text-green-500 mt-0.5" />
+                <div>
+                  <p className="font-medium">Email Reminders</p>
+                  <p className="text-muted-foreground">Included at no extra cost</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <MessageSquare className="w-5 h-5 text-blue-500 mt-0.5" />
+                <div>
+                  <p className="font-medium">SMS Reminders</p>
+                  <p className="text-muted-foreground">Usage-based via Twilio</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Mic className="w-5 h-5 text-purple-500 mt-0.5" />
+                <div>
+                  <p className="font-medium">AI Voice Calls</p>
+                  <p className="text-muted-foreground">Usage-based via ElevenLabs + Twilio</p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* FAQ */}
-        <Card className="border-border/50 max-w-2xl mx-auto">
+        <Card className="border-border/50">
           <CardHeader>
             <CardTitle>Frequently Asked Questions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
+              <h4 className="font-medium">What's the difference between Single-Point and Multi-Track?</h4>
+              <p className="text-sm text-muted-foreground">
+                Single-Point includes AI Voice (chat & calling) for customer engagement, but customers must call to book appointments. Multi-Track adds online booking, field operations, and quoting/invoicing capabilities.
+              </p>
+            </div>
+            <div>
               <h4 className="font-medium">What happens when my trial ends?</h4>
               <p className="text-sm text-muted-foreground">
-                When your 30-day trial ends, you'll need to subscribe to continue using premium features like AI voice calling, SMS reminders, and the chat widget. Your data will be preserved.
+                When your 30-day trial ends, you'll need to subscribe to continue using AI features. Your data will be preserved.
               </p>
             </div>
             <div>
               <h4 className="font-medium">How does employee pricing work?</h4>
               <p className="text-sm text-muted-foreground">
-                Your subscription includes employee accounts based on your tier. Additional employees beyond the included amount cost $25/month per 10 employees. You can add employees from your dashboard, and billing adjusts automatically.
+                Each tier includes a set number of employee accounts. Additional employees beyond your tier's limit cost $25/month per 10 employees.
               </p>
             </div>
             <div>
-              <h4 className="font-medium">What are usage-based charges?</h4>
+              <h4 className="font-medium">Can I upgrade or downgrade my plan?</h4>
               <p className="text-sm text-muted-foreground">
-                SMS and AI voice calls are billed based on actual usage. Email reminders are included at no extra cost. You can view your estimated costs in the Integrations section.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium">Can I subscribe during my trial?</h4>
-              <p className="text-sm text-muted-foreground">
-                Yes! You can subscribe at any time. Your billing will start immediately, and you won't be charged again until your subscription renews.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium">Will I be charged during the trial?</h4>
-              <p className="text-sm text-muted-foreground">
-                No! The 30-day trial is completely free with no credit card required. You only pay when you choose to subscribe.
+                Yes! You can change your plan at any time through the billing portal. Changes take effect on your next billing cycle.
               </p>
             </div>
             <div>
