@@ -387,6 +387,7 @@ export default function SmartWebsite() {
         <FloatingChatWidget
           websiteId={website.website_id}
           companyId={website.company_id}
+          companySlug={website.company_slug}
           companyName={website.company_name}
           visitorFingerprint={visitorFingerprint}
           primaryColor={primaryColor}

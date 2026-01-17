@@ -1,9 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { LandingAIChat } from './LandingAIChat';
-import { SmartWebsiteChat } from '@/components/smartwebsite/SmartWebsiteChat';
+import { UnifiedCustomerConsole } from '@/components/customer/UnifiedCustomerConsole';
 import { supabase } from '@/integrations/supabase/client';
 
 interface FloatingChatWidgetProps {
@@ -11,6 +10,8 @@ interface FloatingChatWidgetProps {
   websiteId?: string;
   /** Company ID for context */
   companyId?: string;
+  /** Company slug for console */
+  companySlug?: string;
   /** Company name for display */
   companyName?: string;
   /** Visitor fingerprint for tracking */
@@ -24,6 +25,7 @@ interface FloatingChatWidgetProps {
 export const FloatingChatWidget: React.FC<FloatingChatWidgetProps> = ({
   websiteId,
   companyId,
+  companySlug,
   companyName,
   visitorFingerprint,
   primaryColor,
@@ -76,34 +78,34 @@ export const FloatingChatWidget: React.FC<FloatingChatWidgetProps> = ({
     <>
       {/* Chat Panel */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-[380px] h-[500px] animate-in slide-in-from-bottom-4 fade-in duration-300">
-          <Card className="w-full h-full p-4 bg-card/95 backdrop-blur-lg border-primary/30 shadow-2xl flex flex-col">
+        <div className="fixed bottom-24 right-6 z-50 w-[400px] h-[600px] animate-in slide-in-from-bottom-4 fade-in duration-300">
+          <div className="w-full h-full bg-card/95 backdrop-blur-lg border border-primary/30 shadow-2xl rounded-xl overflow-hidden flex flex-col">
             {/* Close Button */}
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-2 right-2 h-8 w-8 rounded-full hover:bg-primary/10"
+              className="absolute top-2 right-2 z-10 h-8 w-8 rounded-full hover:bg-primary/10"
               onClick={() => setIsOpen(false)}
             >
               <X className="w-4 h-4" />
             </Button>
             
-            {useMultiAgent && companyId ? (
-              <SmartWebsiteChat 
+            {useMultiAgent && (companyId || companySlug) ? (
+              <UnifiedCustomerConsole 
                 companyId={companyId}
-                companyName={companyName}
-                websiteId={websiteId}
-                visitorFingerprint={visitorFingerprint}
-                primaryColor={primaryColor}
+                companySlug={companySlug}
+                isEmbedded={true}
               />
             ) : (
-              <LandingAIChat 
-                websiteId={websiteId}
-                companyId={companyId}
-                visitorFingerprint={visitorFingerprint}
-              />
+              <div className="p-4 flex-1">
+                <LandingAIChat 
+                  websiteId={websiteId}
+                  companyId={companyId}
+                  visitorFingerprint={visitorFingerprint}
+                />
+              </div>
             )}
-          </Card>
+          </div>
         </div>
       )}
 
