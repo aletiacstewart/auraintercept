@@ -155,6 +155,14 @@ const agentConsoles = [{
   iconBg: 'bg-indigo-500/10',
   iconColor: 'text-indigo-500',
   features: ['KPI dashboard', 'Customer insights', 'Revenue analysis', 'Trend forecasting', 'Performance reports', 'Reminder analytics']
+}, {
+  name: 'Smart Website Console',
+  description: 'Manage your branded AI-powered 1-page website with built-in chat, voice, and visitor analytics.',
+  icon: Globe,
+  gradient: 'from-pink-500 to-rose-500',
+  iconBg: 'bg-pink-500/10',
+  iconColor: 'text-pink-500',
+  features: ['AI Chat & Voice widgets', 'Content & branding editor', 'Section visibility controls', 'Visitor analytics dashboard', 'Traffic source tracking', 'Domain management']
 }];
 const platformFeatures = [{
   icon: MessageSquare,
@@ -328,7 +336,7 @@ const heroStats = [{
   value: '24/7',
   label: 'Automation'
 }, {
-  value: '5',
+  value: '6',
   label: 'Agent Consoles'
 }, {
   value: '40%',
@@ -459,7 +467,7 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Aura Agent Consoles</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">5 Powerful Intercept Control Centers</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">6 Powerful Intercept Control Centers</h2>
             <p className="text-foreground max-w-2xl mx-auto">
               Purpose-built consoles give your team full control over AI agent operations with intuitive interfaces.
             </p>
@@ -759,7 +767,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">All 5 Control Centers</span>
+                    <span className="text-sm">All 6 Control Centers</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
@@ -929,6 +937,12 @@ export default function Index() {
                           <td className="p-3">Analytics & Reports Console</td>
                           <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        </tr>
+                        <tr className="border-b hover:bg-muted/20">
+                          <td className="p-3">Smart Website Console</td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
 
