@@ -132,7 +132,7 @@ export function SetupProgressBar() {
               'flex items-center gap-1.5 text-xs rounded-full px-2.5 py-1 border',
               step.completed
                 ? 'bg-primary/10 border-primary/30 text-primary'
-                : 'bg-muted/50 border-border text-muted-foreground'
+                : 'bg-card border-border text-foreground'
             )}
           >
             {step.completed ? (
