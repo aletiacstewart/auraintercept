@@ -21,7 +21,7 @@ import {
   Legend
 } from 'recharts';
 import { format, subDays, eachDayOfInterval, parseISO } from 'date-fns';
-import { Eye, Users, MessageSquare, MousePointer, TrendingUp } from 'lucide-react';
+import { Eye, Users, MessageSquare, MousePointer, TrendingUp, Mic, Phone } from 'lucide-react';
 
 interface SmartWebsiteAnalyticsProps {
   websiteId: string;
@@ -30,6 +30,7 @@ interface SmartWebsiteAnalyticsProps {
     unique_visitors: number;
     chat_interactions: number;
     booking_clicks: number;
+    voice_interactions?: number;
   } | null;
   monthlyLimit: number;
   onViewLimitOptions: () => void;
@@ -64,6 +65,24 @@ export function SmartWebsiteAnalytics({
         .eq('website_id', websiteId)
         .gte('visited_at', startDate.toISOString())
         .order('visited_at', { ascending: true });
+      
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!websiteId,
+  });
+
+  // Fetch chat logs for interaction trends
+  const { data: chatLogs } = useQuery({
+    queryKey: ['smart-website-chat-logs', websiteId, timeRange],
+    queryFn: async () => {
+      const startDate = subDays(new Date(), parseInt(timeRange));
+      const { data, error } = await supabase
+        .from('site_chat_logs')
+        .select('created_at, interaction_type, duration_seconds')
+        .eq('website_id', websiteId)
+        .gte('created_at', startDate.toISOString())
+        .order('created_at', { ascending: true });
       
       if (error) throw error;
       return data || [];
@@ -124,6 +143,47 @@ export function SmartWebsiteAnalytics({
     }));
   }, [visitorLogs]);
 
+  // Process engagement trend data (chat + voice over time)
+  const engagementTrendData = useMemo(() => {
+    if (!chatLogs) return [];
+    
+    const startDate = subDays(new Date(), parseInt(timeRange));
+    const days = eachDayOfInterval({ start: startDate, end: new Date() });
+    
+    return days.map(day => {
+      const dayStr = format(day, 'yyyy-MM-dd');
+      const dayLogs = chatLogs.filter(log => 
+        format(parseISO(log.created_at), 'yyyy-MM-dd') === dayStr
+      );
+      
+      return {
+        date: format(day, 'MMM d'),
+        chatOpens: dayLogs.filter(l => l.interaction_type === 'chat_opened').length,
+        voiceSessions: dayLogs.filter(l => l.interaction_type === 'voice_started').length,
+        messages: dayLogs.filter(l => l.interaction_type === 'message_sent').length,
+      };
+    });
+  }, [chatLogs, timeRange]);
+
+  // Calculate engagement breakdown for pie chart
+  const engagementBreakdown = useMemo(() => {
+    const pageViewOnly = (metrics?.page_views || 0) - (metrics?.chat_interactions || 0) - (metrics?.voice_interactions || 0);
+    return [
+      { name: 'View Only', value: Math.max(0, pageViewOnly) },
+      { name: 'Chat', value: metrics?.chat_interactions || 0 },
+      { name: 'Voice', value: metrics?.voice_interactions || 0 },
+    ].filter(item => item.value > 0);
+  }, [metrics]);
+
+  // Calculate average voice duration
+  const avgVoiceDuration = useMemo(() => {
+    if (!chatLogs) return 0;
+    const voiceEndLogs = chatLogs.filter(l => l.interaction_type === 'voice_ended' && l.duration_seconds);
+    if (voiceEndLogs.length === 0) return 0;
+    const totalSeconds = voiceEndLogs.reduce((sum, l) => sum + (l.duration_seconds || 0), 0);
+    return Math.round(totalSeconds / voiceEndLogs.length);
+  }, [chatLogs]);
+
   const usagePercentage = monthlyLimit 
     ? ((metrics?.page_views || 0) / monthlyLimit) * 100
     : 0;
@@ -145,7 +205,7 @@ export function SmartWebsiteAnalytics({
       </div>
 
       {/* Summary Metrics */}
-      <div className="grid md:grid-cols-4 gap-4">
+      <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
@@ -180,7 +240,20 @@ export function SmartWebsiteAnalytics({
               </div>
               <div>
                 <p className="text-2xl font-bold">{metrics?.chat_interactions || 0}</p>
-                <p className="text-sm text-muted-foreground">Chat Interactions</p>
+                <p className="text-sm text-muted-foreground">Chat Sessions</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-chart-5/10">
+                <Mic className="w-5 h-5 text-chart-5" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{metrics?.voice_interactions || 0}</p>
+                <p className="text-sm text-muted-foreground">Voice Sessions</p>
               </div>
             </div>
           </CardContent>
@@ -194,6 +267,19 @@ export function SmartWebsiteAnalytics({
               <div>
                 <p className="text-2xl font-bold">{metrics?.booking_clicks || 0}</p>
                 <p className="text-sm text-muted-foreground">Booking Clicks</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-secondary/10">
+                <Phone className="w-5 h-5 text-secondary" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{avgVoiceDuration}s</p>
+                <p className="text-sm text-muted-foreground">Avg Voice Duration</p>
               </div>
             </div>
           </CardContent>
@@ -255,7 +341,7 @@ export function SmartWebsiteAnalytics({
         </CardContent>
       </Card>
 
-      {/* Traffic Sources and Peak Hours */}
+      {/* Traffic Sources and Engagement Breakdown */}
       <div className="grid md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -302,25 +388,29 @@ export function SmartWebsiteAnalytics({
 
         <Card>
           <CardHeader>
-            <CardTitle>Peak Hours</CardTitle>
-            <CardDescription>When visitors are most active</CardDescription>
+            <CardTitle>Engagement Breakdown</CardTitle>
+            <CardDescription>How visitors interact with your website</CardDescription>
           </CardHeader>
           <CardContent>
-            {visitorLogs && visitorLogs.length > 0 ? (
+            {engagementBreakdown.length > 0 ? (
               <div className="h-[250px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={hourlyData}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis 
-                      dataKey="hour" 
-                      tick={{ fontSize: 10 }}
-                      tickLine={false}
-                      interval={2}
-                    />
-                    <YAxis 
-                      tick={{ fontSize: 12 }}
-                      tickLine={false}
-                    />
+                  <PieChart>
+                    <Pie
+                      data={engagementBreakdown}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      paddingAngle={2}
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {engagementBreakdown.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
                     <Tooltip 
                       contentStyle={{ 
                         backgroundColor: 'hsl(var(--card))',
@@ -328,23 +418,126 @@ export function SmartWebsiteAnalytics({
                         borderRadius: '8px'
                       }}
                     />
-                    <Bar 
-                      dataKey="visits" 
-                      name="Visits"
-                      fill="hsl(var(--primary))" 
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
+                  </PieChart>
                 </ResponsiveContainer>
               </div>
             ) : (
               <div className="h-[250px] flex items-center justify-center text-muted-foreground">
-                No visitor data yet
+                No engagement data yet
               </div>
             )}
           </CardContent>
         </Card>
       </div>
+
+      {/* Chat & Voice Engagement Trend */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="w-5 h-5" />
+            AI Engagement Trend
+          </CardTitle>
+          <CardDescription>Chat and voice interactions over time</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={engagementTrendData}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis 
+                  dataKey="date" 
+                  tick={{ fontSize: 12 }}
+                  tickLine={false}
+                  className="text-muted-foreground"
+                />
+                <YAxis 
+                  tick={{ fontSize: 12 }}
+                  tickLine={false}
+                  className="text-muted-foreground"
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="chatOpens" 
+                  name="Chat Opens"
+                  stroke="hsl(var(--chart-3))" 
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="voiceSessions" 
+                  name="Voice Sessions"
+                  stroke="hsl(var(--chart-5))" 
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="messages" 
+                  name="Messages"
+                  stroke="hsl(var(--primary))" 
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Peak Hours */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Peak Hours</CardTitle>
+          <CardDescription>When visitors are most active</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {visitorLogs && visitorLogs.length > 0 ? (
+            <div className="h-[250px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={hourlyData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis 
+                    dataKey="hour" 
+                    tick={{ fontSize: 10 }}
+                    tickLine={false}
+                    interval={2}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                    tickLine={false}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Bar 
+                    dataKey="visits" 
+                    name="Visits"
+                    fill="hsl(var(--primary))" 
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="h-[250px] flex items-center justify-center text-muted-foreground">
+              No visitor data yet
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Monthly Usage */}
       <Card>
