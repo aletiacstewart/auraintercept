@@ -80,7 +80,8 @@ import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import PlatformIssues from "./pages/PlatformIssues";
 import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
-
+import SmartWebsite from "./pages/SmartWebsite";
+import SmartWebsiteManager from "./pages/SmartWebsiteManager";
 // Technician Dashboard Pages
 import {
   TechnicianDashboard,
@@ -193,6 +194,10 @@ const App = () => (
               <Route path="/appointment" element={<CustomerPortal />} />
               <Route path="/customer-dashboard" element={<CustomerDashboard />} />
               <Route path="/chat/:companySlug" element={<PublicChat />} />
+              
+              {/* Smart Website Routes */}
+              <Route path="/site/:subdomain" element={<SmartWebsite />} />
+              <Route path="/dashboard/smart-website" element={<SmartWebsiteManager />} />
               
               {/* Technician Dashboard Routes - Protected */}
               <Route path="/technician" element={<ProtectedRoute><TechnicianDashboard /></ProtectedRoute>} />
