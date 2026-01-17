@@ -3961,6 +3961,10 @@ export type Database = {
       }
       smart_websites: {
         Row: {
+          about_header: string | null
+          about_image_url: string | null
+          about_paragraph: string | null
+          about_subheader: string | null
           background_image_url: string | null
           background_style: string
           company_id: string
@@ -3975,6 +3979,7 @@ export type Database = {
           id: string
           is_published: boolean
           monthly_visitor_limit: number
+          show_about_section: boolean
           show_chat_widget: boolean
           show_contact: boolean
           show_hours: boolean
@@ -3984,6 +3989,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          about_header?: string | null
+          about_image_url?: string | null
+          about_paragraph?: string | null
+          about_subheader?: string | null
           background_image_url?: string | null
           background_style?: string
           company_id: string
@@ -3998,6 +4007,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           monthly_visitor_limit?: number
+          show_about_section?: boolean
           show_chat_widget?: boolean
           show_contact?: boolean
           show_hours?: boolean
@@ -4007,6 +4017,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          about_header?: string | null
+          about_image_url?: string | null
+          about_paragraph?: string | null
+          about_subheader?: string | null
           background_image_url?: string | null
           background_style?: string
           company_id?: string
@@ -4021,6 +4035,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           monthly_visitor_limit?: number
+          show_about_section?: boolean
           show_chat_widget?: boolean
           show_contact?: boolean
           show_hours?: boolean
@@ -4950,6 +4965,10 @@ export type Database = {
       get_website_public_data: {
         Args: { p_subdomain: string }
         Returns: {
+          about_header: string
+          about_image_url: string
+          about_paragraph: string
+          about_subheader: string
           address: string
           background_image_url: string
           background_style: string
@@ -4965,6 +4984,7 @@ export type Database = {
           phone: string
           primary_color: string
           secondary_color: string
+          show_about_section: boolean
           show_chat_widget: boolean
           show_contact: boolean
           show_hours: boolean

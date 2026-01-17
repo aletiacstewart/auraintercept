@@ -35,6 +35,12 @@ interface WebsiteData {
   // Subscription tier fields for widget visibility gating
   subscription_tier?: string | null;
   trial_ends_at?: string | null;
+  // About section fields
+  show_about_section?: boolean;
+  about_image_url?: string | null;
+  about_header?: string | null;
+  about_subheader?: string | null;
+  about_paragraph?: string | null;
 }
 
 interface Service {
@@ -263,6 +269,49 @@ export default function SmartWebsite() {
           </Button>
         </div>
       </section>
+
+      {/* About Section */}
+      {website.show_about_section && (
+        <section className="py-16 px-4">
+          <div className="container mx-auto">
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+              {/* Left Column - Image */}
+              <div className="aspect-[3/2] rounded-xl overflow-hidden bg-muted shadow-lg">
+                {website.about_image_url ? (
+                  <img 
+                    src={website.about_image_url} 
+                    alt="About us" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+                    <span className="text-muted-foreground text-lg">Company Image</span>
+                  </div>
+                )}
+              </div>
+              
+              {/* Right Column - Text */}
+              <div className="space-y-4">
+                {website.about_header && (
+                  <h2 className="text-3xl md:text-4xl font-bold" style={{ color: primaryColor }}>
+                    {website.about_header}
+                  </h2>
+                )}
+                {website.about_subheader && (
+                  <h3 className="text-xl text-muted-foreground font-medium">
+                    {website.about_subheader}
+                  </h3>
+                )}
+                {website.about_paragraph && (
+                  <p className="text-muted-foreground leading-relaxed text-lg">
+                    {website.about_paragraph}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Services Section */}
       {website.show_services && services && services.length > 0 && (
