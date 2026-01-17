@@ -2004,10 +2004,14 @@ serve(async (req) => {
 
     // === SUBSCRIPTION TIER GATING ===
     // Define which agents are available in each subscription tier
+    // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
-      single_point: ['triage', 'booking', 'followup', 'review'],
+      // Single-Point: NO booking (call to book), but has Voice AI
+      single_point: ['triage', 'followup', 'review'],
+      // Multi-Track: Adds booking, field ops, quoting/invoice
       multi_track: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice'],
+      // Command: Full suite
       command: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'admin', 'quoting', 'invoice', 'inventory', 'warranty', 'campaign', 'insights', 'performance', 'revenue', 'forecast']
     };
 

@@ -40,6 +40,43 @@ serve(async (req) => {
 
     console.log(`Initiating outbound call to ${customerPhone} for company ${companyId}`);
 
+    // === SUBSCRIPTION TIER GATING FOR OUTBOUND CALLING ===
+    // Voice/calling features are available for all paid tiers (Single-Point+)
+    const { data: companyData, error: companyError } = await supabase
+      .from('companies')
+      .select('name, subscription_tier, trial_ends_at')
+      .eq('id', companyId)
+      .single();
+
+    if (companyError) {
+      console.error('Company not found:', companyError);
+      return new Response(
+        JSON.stringify({ error: 'Company not found' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const subscriptionTier = companyData?.subscription_tier || 'free';
+    const trialEndsAt = companyData?.trial_ends_at;
+    const inTrial = trialEndsAt && new Date(trialEndsAt) > new Date();
+
+    // Outbound calling available for all paid tiers
+    const voiceTiers = ['single_point', 'multi_track', 'command'];
+    const hasVoiceAccess = inTrial || voiceTiers.includes(subscriptionTier);
+
+    if (!hasVoiceAccess) {
+      console.log(`[Outbound Call] Voice locked for company ${companyId}: tier=${subscriptionTier}, trial=${inTrial}`);
+      return new Response(
+        JSON.stringify({ 
+          error: 'voice_locked',
+          message: 'Outbound calling requires a paid subscription (Single-Point or higher).',
+          current_tier: subscriptionTier,
+          required_tier: 'single_point'
+        }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Get Twilio credentials
     const { data: integration, error: integrationError } = await supabase
       .from('tenant_integrations')
@@ -55,12 +92,7 @@ serve(async (req) => {
       );
     }
 
-    // Get company name
-    const { data: company } = await supabase
-      .from('companies')
-      .select('name')
-      .eq('id', companyId)
-      .single();
+    const company = companyData;
 
     // Build the call message based on purpose
     let callMessage = '';

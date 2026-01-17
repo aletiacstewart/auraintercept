@@ -32,6 +32,9 @@ interface WebsiteData {
   show_voice_widget: boolean;
   background_style: string;
   background_image_url: string | null;
+  // Subscription tier fields for widget visibility gating
+  subscription_tier?: string | null;
+  trial_ends_at?: string | null;
 }
 
 interface Service {
@@ -140,6 +143,13 @@ export default function SmartWebsite() {
   };
 
   const openStatus = isCurrentlyOpen();
+
+  // Tier-based widget visibility
+  // Voice and Chat require paid subscription (Single-Point+) or active trial
+  const isInTrial = website?.trial_ends_at && new Date(website.trial_ends_at) > new Date();
+  const isPaidTier = ['single_point', 'multi_track', 'command'].includes(website?.subscription_tier || '');
+  const canShowVoice = website?.show_voice_widget && (isInTrial || isPaidTier);
+  const canShowChat = website?.show_chat_widget && (isInTrial || isPaidTier);
 
   if (isLoading) {
     return (
@@ -371,8 +381,8 @@ export default function SmartWebsite() {
         </div>
       </footer>
 
-      {/* Voice Widget */}
-      {website.show_voice_widget && (
+      {/* Voice Widget - only for paid tiers or trial */}
+      {canShowVoice && (
         <SmartWebsiteVoiceButton
           websiteId={website.website_id}
           companyId={website.company_id}
@@ -382,8 +392,8 @@ export default function SmartWebsite() {
         />
       )}
 
-      {/* Chat Widget */}
-      {website.show_chat_widget && (
+      {/* Chat Widget - only for paid tiers or trial */}
+      {canShowChat && (
         <FloatingChatWidget
           websiteId={website.website_id}
           companyId={website.company_id}
