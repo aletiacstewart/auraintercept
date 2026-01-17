@@ -13,7 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { toast } from 'sonner';
-import { Save, Clock, Building2, Truck, AlertTriangle, CalendarHeart, X, Plus } from 'lucide-react';
+import { Save, Clock, Building2, Truck, AlertTriangle, CalendarHeart, X, Plus, Copy, Check, Globe } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { format, addMonths, startOfMonth, isSameDay } from 'date-fns';
 
@@ -39,6 +40,17 @@ const HOUR_TYPES = [
   { value: 'field', label: 'Field Hours', icon: Truck, description: 'Service/field technician hours' },
   { value: 'emergency', label: 'Emergency Hours', icon: AlertTriangle, description: '24/7 emergency availability' },
   { value: 'holiday', label: 'Holiday Hours', icon: CalendarHeart, description: 'Select specific dates your business will be closed' },
+];
+
+const TIMEZONE_OPTIONS = [
+  { value: 'America/New_York', label: 'Eastern Time (ET)' },
+  { value: 'America/Chicago', label: 'Central Time (CT)' },
+  { value: 'America/Denver', label: 'Mountain Time (MT)' },
+  { value: 'America/Los_Angeles', label: 'Pacific Time (PT)' },
+  { value: 'America/Anchorage', label: 'Alaska Time (AKT)' },
+  { value: 'Pacific/Honolulu', label: 'Hawaii Time (HT)' },
+  { value: 'America/Phoenix', label: 'Arizona Time (MST)' },
+  { value: 'UTC', label: 'UTC' },
 ];
 
 const COMMON_HOLIDAYS = [
@@ -100,6 +112,29 @@ export function BusinessHoursManager() {
   const [holidayClosures, setHolidayClosures] = useState<HolidayClosure[]>([]);
   const [newHolidayName, setNewHolidayName] = useState('');
   const [calendarMonth, setCalendarMonth] = useState(new Date());
+  const [selectedTimezone, setSelectedTimezone] = useState('America/New_York');
+
+  // Fetch company settings for timezone
+  const { data: companyData } = useQuery({
+    queryKey: ['company-timezone', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data, error } = await supabase
+        .from('companies')
+        .select('weekly_digest_timezone')
+        .eq('id', companyId)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  useEffect(() => {
+    if (companyData?.weekly_digest_timezone) {
+      setSelectedTimezone(companyData.weekly_digest_timezone);
+    }
+  }, [companyData]);
 
   const { data: savedHours, isLoading } = useQuery({
     queryKey: ['business-hours', companyId],
@@ -289,6 +324,45 @@ export function BusinessHoursManager() {
     addClosureMutation.mutate({ date, name: holiday.name });
   };
 
+  const copyHoursToOtherDays = (hourType: string, sourceDayIndex: number) => {
+    const sourceHour = hoursByType[hourType].find(h => h.day_of_week === sourceDayIndex);
+    if (!sourceHour) return;
+
+    setHoursByType((prev) => ({
+      ...prev,
+      [hourType]: prev[hourType].map((h) => ({
+        ...h,
+        is_closed: sourceHour.is_closed,
+        open_time: sourceHour.open_time,
+        close_time: sourceHour.close_time,
+      })),
+    }));
+    toast.success(`Copied ${DAYS[sourceDayIndex]}'s hours to all days`);
+  };
+
+  const saveTimezoneMutation = useMutation({
+    mutationFn: async (timezone: string) => {
+      if (!companyId) throw new Error('No company ID');
+      const { error } = await supabase
+        .from('companies')
+        .update({ weekly_digest_timezone: timezone })
+        .eq('id', companyId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['company-timezone'] });
+      toast.success('Timezone saved!');
+    },
+    onError: () => {
+      toast.error('Failed to save timezone');
+    },
+  });
+
+  const handleTimezoneChange = (timezone: string) => {
+    setSelectedTimezone(timezone);
+    saveTimezoneMutation.mutate(timezone);
+  };
+
   const renderHoursGrid = (hourType: string) => {
     const hours = hoursByType[hourType];
     
@@ -355,6 +429,21 @@ export function BusinessHoursManager() {
                 )}
               </div>
             )}
+            
+            {/* Copy Hours Button */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="ml-auto h-8 w-8">
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => copyHoursToOtherDays(hourType, hour.day_of_week)}>
+                  <Check className="h-4 w-4 mr-2" />
+                  Copy to all days
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         ))}
 
@@ -487,11 +576,30 @@ export function BusinessHoursManager() {
   return (
     <Card className="border-border/50">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Clock className="w-5 h-5" />
-          Business Hours
-        </CardTitle>
-        <CardDescription className="text-white/70">Set your operating hours for different scenarios</CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="w-5 h-5" />
+              Business Hours
+            </CardTitle>
+            <CardDescription className="text-white/70">Set your operating hours for different scenarios</CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-muted-foreground" />
+            <Select value={selectedTimezone} onValueChange={handleTimezoneChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select timezone" />
+              </SelectTrigger>
+              <SelectContent>
+                {TIMEZONE_OPTIONS.map((tz) => (
+                  <SelectItem key={tz.value} value={tz.value}>
+                    {tz.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading || isLoadingClosures ? (

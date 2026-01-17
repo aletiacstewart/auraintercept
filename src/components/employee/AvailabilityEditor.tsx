@@ -12,8 +12,9 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { toast } from 'sonner';
-import { Save, Clock, Truck, AlertTriangle, CalendarHeart, X, Plus } from 'lucide-react';
+import { Save, Clock, Truck, AlertTriangle, CalendarHeart, X, Plus, Copy, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { format, addMonths, startOfMonth, isSameDay } from 'date-fns';
 
 interface AvailabilityHour {
@@ -39,14 +40,17 @@ const HOUR_TYPES = [
   { value: 'timeoff', label: 'Time Off', icon: CalendarHeart, description: 'Personal days off and holidays' },
 ];
 
-const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
-  const hour = Math.floor(i / 2);
-  const minute = i % 2 === 0 ? '00' : '30';
-  const time = `${hour.toString().padStart(2, '0')}:${minute}:00`;
-  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-  const ampm = hour < 12 ? 'AM' : 'PM';
-  return { value: time, label: `${displayHour}:${minute} ${ampm}` };
-});
+const TIME_OPTIONS = [
+  { value: '24hours', label: '24 Hours' },
+  ...Array.from({ length: 48 }, (_, i) => {
+    const hour = Math.floor(i / 2);
+    const minute = i % 2 === 0 ? '00' : '30';
+    const time = `${hour.toString().padStart(2, '0')}:${minute}:00`;
+    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    const ampm = hour < 12 ? 'AM' : 'PM';
+    return { value: time, label: `${displayHour}:${minute} ${ampm}` };
+  }),
+];
 
 const getDefaultHours = (hourType: string): AvailabilityHour[] => {
   if (hourType === 'emergency') {
@@ -153,12 +157,13 @@ export function AvailabilityEditor({ initialAvailability }: AvailabilityEditorPr
       const hours = hoursByType[hourType];
       
       for (const hour of hours) {
+        const is24Hours = hour.open_time === '24hours';
         const payload = {
           employee_id: user.id,
           company_id: companyId,
           day_of_week: hour.day_of_week,
-          open_time: hour.is_closed ? null : hour.open_time,
-          close_time: hour.is_closed ? null : hour.close_time,
+          open_time: hour.is_closed ? null : (is24Hours ? '00:00:00' : hour.open_time),
+          close_time: hour.is_closed ? null : (is24Hours ? '23:59:59' : hour.close_time),
           is_closed: hour.is_closed,
           hour_type: hourType,
         };
@@ -267,6 +272,22 @@ export function AvailabilityEditor({ initialAvailability }: AvailabilityEditorPr
     }
   };
 
+  const copyHoursToOtherDays = (hourType: string, sourceDayIndex: number) => {
+    const sourceHour = hoursByType[hourType].find(h => h.day_of_week === sourceDayIndex);
+    if (!sourceHour) return;
+
+    setHoursByType((prev) => ({
+      ...prev,
+      [hourType]: prev[hourType].map((h) => ({
+        ...h,
+        is_closed: sourceHour.is_closed,
+        open_time: sourceHour.open_time,
+        close_time: sourceHour.close_time,
+      })),
+    }));
+    toast.success(`Copied ${DAYS[sourceDayIndex]}'s hours to all days`);
+  };
+
   const renderHoursGrid = (hourType: string) => {
     const hours = hoursByType[hourType];
     
@@ -309,24 +330,45 @@ export function AvailabilityEditor({ initialAvailability }: AvailabilityEditorPr
                     ))}
                   </SelectContent>
                 </Select>
-                <span className="text-muted-foreground">to</span>
-                <Select
-                  value={hour.close_time || '17:00:00'}
-                  onValueChange={(value) => updateHour(hourType, hour.day_of_week, 'close_time', value)}
-                >
-                  <SelectTrigger className="w-28">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {TIME_OPTIONS.map((time) => (
-                      <SelectItem key={time.value} value={time.value}>
-                        {time.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {hour.open_time === '24hours' ? (
+                  <span className="text-primary text-sm font-medium">(All Day)</span>
+                ) : (
+                  <>
+                    <span className="text-muted-foreground">to</span>
+                    <Select
+                      value={hour.close_time || '17:00:00'}
+                      onValueChange={(value) => updateHour(hourType, hour.day_of_week, 'close_time', value)}
+                    >
+                      <SelectTrigger className="w-28">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TIME_OPTIONS.filter(t => t.value !== '24hours').map((time) => (
+                          <SelectItem key={time.value} value={time.value}>
+                            {time.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </>
+                )}
               </div>
             )}
+            
+            {/* Copy Hours Button */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="ml-auto h-8 w-8">
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => copyHoursToOtherDays(hourType, hour.day_of_week)}>
+                  <Check className="h-4 w-4 mr-2" />
+                  Copy to all days
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         ))}
 
