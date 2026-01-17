@@ -205,11 +205,11 @@ export function AboutSectionEditor({ website, companyId, onUpdate, isUpdating }:
               onBlur={(e) => onUpdate({ about_paragraph: e.target.value })}
               placeholder="Tell visitors about your company, your mission, and what makes you stand out..."
               rows={5}
-              maxLength={500}
+              maxLength={750}
               disabled={isUpdating}
             />
             <p className="text-xs text-muted-foreground text-right">
-              {website.about_paragraph?.length || 0} / 500 characters
+              {website.about_paragraph?.length || 0} / 750 characters
             </p>
           </div>
         </CardContent>
