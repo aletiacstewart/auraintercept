@@ -48,7 +48,7 @@ const TIERS = [
       outboundCalls: true,
       chatWidget: true,
       onlineBooking: false,
-      employees: '10 included',
+      employees: '5 included',
     },
   },
   {
@@ -74,7 +74,7 @@ const TIERS = [
       outboundCalls: true,
       chatWidget: true,
       onlineBooking: true,
-      employees: '20 included',
+      employees: '10 included',
     },
   },
   {
@@ -100,7 +100,7 @@ const TIERS = [
       outboundCalls: true,
       chatWidget: true,
       onlineBooking: true,
-      employees: '50 included',
+      employees: 'Unlimited',
     },
   },
 ];
