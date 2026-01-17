@@ -13,6 +13,7 @@ import { WarrantySettings } from '@/components/settings/WarrantySettings';
 import { CampaignSettings } from '@/components/settings/CampaignSettings';
 import { MissedCallSettings } from '@/components/company/MissedCallSettings';
 import { PublicAppUrlSettings } from '@/components/company/PublicAppUrlSettings';
+import { ContactInfoSettings } from '@/components/company/ContactInfoSettings';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -33,6 +34,7 @@ export default function Settings() {
           <Tabs defaultValue="branding" className="space-y-4">
             <TabsList className="flex-wrap h-auto gap-1">
               <TabsTrigger value="branding">Branding</TabsTrigger>
+              <TabsTrigger value="contact">Contact Info</TabsTrigger>
               <TabsTrigger value="app-url">App URL</TabsTrigger>
               <TabsTrigger value="reminders">Reminders</TabsTrigger>
               <TabsTrigger value="missed-calls">Missed Calls</TabsTrigger>
@@ -48,6 +50,9 @@ export default function Settings() {
             </TabsList>
             <TabsContent value="branding">
               <BrandingSettings />
+            </TabsContent>
+            <TabsContent value="contact">
+              <ContactInfoSettings />
             </TabsContent>
             <TabsContent value="app-url">
               <PublicAppUrlSettings />

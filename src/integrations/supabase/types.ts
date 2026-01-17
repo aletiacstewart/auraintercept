@@ -773,6 +773,9 @@ export type Database = {
           calendar_feed_token: string | null
           callback_delay_seconds: number | null
           callback_retry_count: number | null
+          contact_address: string | null
+          contact_email: string | null
+          contact_phone: string | null
           cost_alert_email: string | null
           cost_alert_enabled: boolean | null
           cost_alert_threshold: number | null
@@ -863,6 +866,9 @@ export type Database = {
           calendar_feed_token?: string | null
           callback_delay_seconds?: number | null
           callback_retry_count?: number | null
+          contact_address?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           cost_alert_email?: string | null
           cost_alert_enabled?: boolean | null
           cost_alert_threshold?: number | null
@@ -953,6 +959,9 @@ export type Database = {
           calendar_feed_token?: string | null
           callback_delay_seconds?: number | null
           callback_retry_count?: number | null
+          contact_address?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           cost_alert_email?: string | null
           cost_alert_enabled?: boolean | null
           cost_alert_threshold?: number | null
