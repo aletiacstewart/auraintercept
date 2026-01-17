@@ -117,44 +117,52 @@ const agentCategories = [{
 }];
 const agentConsoles = [{
   name: 'Customer Portal Console',
-  description: 'Complete customer engagement hub for appointment scheduling, follow-ups, and review collection.',
+  description: 'AI-powered customer interactions with booking, quotes, and support.',
   icon: HeadphonesIcon,
   gradient: 'from-cyan-500 to-blue-500',
   iconBg: 'bg-cyan-500/10',
   iconColor: 'text-cyan-500',
-  features: ['24/7 natural language booking', 'Multi-service appointment scheduling', 'Automated email & SMS reminders', 'Customer feedback collection', 'Quote request handling', 'Embeddable website widget']
+  features: ['Online booking', 'Quote requests', 'Appointment tracking', 'AI chat support']
 }, {
   name: 'Field Operations Console',
-  description: 'Technician-focused mobile console for job management, navigation, and customer communication.',
+  description: 'Dispatch, routing, and real-time technician management.',
   icon: Truck,
   gradient: 'from-green-500 to-emerald-500',
   iconBg: 'bg-green-500/10',
   iconColor: 'text-green-500',
-  features: ['One-tap job acceptance', 'Real-time GPS navigation', 'ETA updates with notifications', 'Onsite invoice generation', 'Job status tracking', 'Dispatch communication']
+  features: ['Smart dispatch', 'Route optimization', 'Live ETA tracking', 'Technician check-in']
 }, {
   name: 'Business Management Console',
-  description: 'Complete operations center for quotes, invoices, inventory, warranties, and AI-powered business insights.',
+  description: 'Invoicing, inventory, and warranty operations.',
   icon: Briefcase,
-  gradient: 'from-purple-500 to-violet-500',
-  iconBg: 'bg-purple-500/10',
-  iconColor: 'text-purple-500',
-  features: ['AI-powered business insights', 'Performance & revenue reports', 'Demand forecasting', 'Quote & invoice automation', 'Lead & inventory management', 'Warranty tracking']
-}, {
-  name: 'Marketing & Sales Console',
-  description: 'Campaign management for promotions, referrals, win-back strategies, and customer segments.',
-  icon: Megaphone,
   gradient: 'from-orange-500 to-amber-500',
   iconBg: 'bg-orange-500/10',
   iconColor: 'text-orange-500',
-  features: ['Promotional campaigns', 'Referral program management', 'Win-back & re-engagement', 'Seasonal outreach', 'Automated lead capture', 'A/B testing']
+  features: ['Invoice generation', 'Inventory tracking', 'Warranty management', 'Quote builder']
+}, {
+  name: 'Marketing & Sales Console',
+  description: 'Lead management and campaign automation.',
+  icon: Megaphone,
+  gradient: 'from-purple-500 to-pink-500',
+  iconBg: 'bg-purple-500/10',
+  iconColor: 'text-purple-500',
+  features: ['Lead capture', 'Campaign automation', 'Customer segments', 'Follow-up sequences']
 }, {
   name: 'Analytics & Reports Console',
-  description: 'High-level reporting, KPI tracking, revenue forecasting, and performance analytics.',
+  description: 'KPIs, insights, and performance dashboards.',
   icon: BarChart3,
-  gradient: 'from-indigo-500 to-blue-500',
+  gradient: 'from-indigo-500 to-violet-500',
   iconBg: 'bg-indigo-500/10',
   iconColor: 'text-indigo-500',
-  features: ['KPI dashboard', 'Customer insights', 'Revenue analysis', 'Trend forecasting', 'Performance reports', 'Reminder analytics']
+  features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
+}, {
+  name: 'Smart Website Console',
+  description: 'Branded 1-page website with AI chat and voice.',
+  icon: Globe,
+  gradient: 'from-pink-500 to-rose-500',
+  iconBg: 'bg-pink-500/10',
+  iconColor: 'text-pink-500',
+  features: ['AI Chat & Voice', 'Content editor', 'Visitor analytics', 'Domain management']
 }];
 const platformFeatures = [{
   icon: MessageSquare,

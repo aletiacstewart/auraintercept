@@ -83,13 +83,6 @@ const CONTROL_CENTERS = [
     icon: BarChart3,
     gradient: 'from-indigo-500 to-violet-500',
     features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
-  },
-  {
-    name: 'Smart Website Console',
-    description: 'Branded 1-page website with AI chat and voice.',
-    icon: Globe,
-    gradient: 'from-pink-500 to-rose-500',
-    features: ['AI Chat & Voice', 'Content editor', 'Visitor analytics', 'Domain management']
   }
 ];
 
