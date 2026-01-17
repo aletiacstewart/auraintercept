@@ -820,17 +820,29 @@ export default function Index() {
                       <tbody>
                         {/* AI Agents Section */}
                         <tr className="bg-muted/30">
-                          <td colSpan={4} className="p-3 font-semibold text-primary">AI Agents</td>
+                          <td colSpan={4} className="p-3 font-semibold text-primary">AI Agents (3 / 10 / 18)</td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">AI Receptionist</td>
+                          <td className="p-3">AI Receptionist (Triage)</td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Scheduling Agent</td>
+                          <td className="p-3">Follow-up Agent</td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        </tr>
+                        <tr className="border-b hover:bg-muted/20">
+                          <td className="p-3">Review Agent</td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        </tr>
+                        <tr className="border-b hover:bg-muted/20">
+                          <td className="p-3">Scheduling Agent (Booking)</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
@@ -865,21 +877,9 @@ export default function Index() {
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Follow-up Agent</td>
+                          <td className="p-3">Invoice Agent</td>
                           <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                        </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Review Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                        </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Voice Agent (AI Calling)</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
@@ -936,14 +936,14 @@ export default function Index() {
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">SMS Reminders</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">AI Voice Calls</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
+                          <td className="p-3">AI Voice (Chat & Outbound Calls)</td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
 
