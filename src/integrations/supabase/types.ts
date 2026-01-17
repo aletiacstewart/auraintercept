@@ -757,6 +757,7 @@ export type Database = {
       }
       companies: {
         Row: {
+          address: string | null
           ai_agent_prompt: string | null
           ai_voice_greeting: string | null
           assignment_distance_weight: number | null
@@ -780,6 +781,7 @@ export type Database = {
           default_email_enabled: boolean
           default_sms_enabled: boolean
           dispatch_phone: string | null
+          email: string | null
           id: string
           last_bounce_alert_at: string | null
           last_cost_alert_at: string | null
@@ -798,6 +800,7 @@ export type Database = {
           monthly_digest_time: string | null
           monthly_digest_timezone: string | null
           name: string
+          phone: string | null
           primary_color: string | null
           public_app_url: string | null
           quarterly_digest_day: number | null
@@ -844,6 +847,7 @@ export type Database = {
           weekly_digest_timezone: string | null
         }
         Insert: {
+          address?: string | null
           ai_agent_prompt?: string | null
           ai_voice_greeting?: string | null
           assignment_distance_weight?: number | null
@@ -867,6 +871,7 @@ export type Database = {
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
           dispatch_phone?: string | null
+          email?: string | null
           id?: string
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
@@ -885,6 +890,7 @@ export type Database = {
           monthly_digest_time?: string | null
           monthly_digest_timezone?: string | null
           name: string
+          phone?: string | null
           primary_color?: string | null
           public_app_url?: string | null
           quarterly_digest_day?: number | null
@@ -931,6 +937,7 @@ export type Database = {
           weekly_digest_timezone?: string | null
         }
         Update: {
+          address?: string | null
           ai_agent_prompt?: string | null
           ai_voice_greeting?: string | null
           assignment_distance_weight?: number | null
@@ -954,6 +961,7 @@ export type Database = {
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
           dispatch_phone?: string | null
+          email?: string | null
           id?: string
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
@@ -972,6 +980,7 @@ export type Database = {
           monthly_digest_time?: string | null
           monthly_digest_timezone?: string | null
           name?: string
+          phone?: string | null
           primary_color?: string | null
           public_app_url?: string | null
           quarterly_digest_day?: number | null
@@ -3801,6 +3810,189 @@ export type Database = {
           },
         ]
       }
+      site_metrics: {
+        Row: {
+          booking_clicks: number
+          chat_interactions: number
+          company_id: string
+          created_at: string
+          id: string
+          month_year: string
+          page_views: number
+          unique_visitors: number
+          updated_at: string
+          website_id: string
+        }
+        Insert: {
+          booking_clicks?: number
+          chat_interactions?: number
+          company_id: string
+          created_at?: string
+          id?: string
+          month_year: string
+          page_views?: number
+          unique_visitors?: number
+          updated_at?: string
+          website_id: string
+        }
+        Update: {
+          booking_clicks?: number
+          chat_interactions?: number
+          company_id?: string
+          created_at?: string
+          id?: string
+          month_year?: string
+          page_views?: number
+          unique_visitors?: number
+          updated_at?: string
+          website_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_metrics_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "site_metrics_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "site_metrics_website_id_fkey"
+            columns: ["website_id"]
+            isOneToOne: false
+            referencedRelation: "smart_websites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_visitor_logs: {
+        Row: {
+          id: string
+          page_path: string
+          referrer: string | null
+          user_agent: string | null
+          visited_at: string
+          visitor_fingerprint: string | null
+          website_id: string
+        }
+        Insert: {
+          id?: string
+          page_path?: string
+          referrer?: string | null
+          user_agent?: string | null
+          visited_at?: string
+          visitor_fingerprint?: string | null
+          website_id: string
+        }
+        Update: {
+          id?: string
+          page_path?: string
+          referrer?: string | null
+          user_agent?: string | null
+          visited_at?: string
+          visitor_fingerprint?: string | null
+          website_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_visitor_logs_website_id_fkey"
+            columns: ["website_id"]
+            isOneToOne: false
+            referencedRelation: "smart_websites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      smart_websites: {
+        Row: {
+          background_image_url: string | null
+          background_style: string
+          company_id: string
+          created_at: string
+          cta_button_text: string
+          cta_button_url: string | null
+          custom_domain: string | null
+          dns_verification_code: string
+          domain_verified: boolean
+          hero_headline: string | null
+          hero_subheadline: string | null
+          id: string
+          is_published: boolean
+          monthly_visitor_limit: number
+          show_chat_widget: boolean
+          show_contact: boolean
+          show_hours: boolean
+          show_services: boolean
+          subdomain: string | null
+          updated_at: string
+        }
+        Insert: {
+          background_image_url?: string | null
+          background_style?: string
+          company_id: string
+          created_at?: string
+          cta_button_text?: string
+          cta_button_url?: string | null
+          custom_domain?: string | null
+          dns_verification_code?: string
+          domain_verified?: boolean
+          hero_headline?: string | null
+          hero_subheadline?: string | null
+          id?: string
+          is_published?: boolean
+          monthly_visitor_limit?: number
+          show_chat_widget?: boolean
+          show_contact?: boolean
+          show_hours?: boolean
+          show_services?: boolean
+          subdomain?: string | null
+          updated_at?: string
+        }
+        Update: {
+          background_image_url?: string | null
+          background_style?: string
+          company_id?: string
+          created_at?: string
+          cta_button_text?: string
+          cta_button_url?: string | null
+          custom_domain?: string | null
+          dns_verification_code?: string
+          domain_verified?: boolean
+          hero_headline?: string | null
+          hero_subheadline?: string | null
+          id?: string
+          is_published?: boolean
+          monthly_visitor_limit?: number
+          show_chat_widget?: boolean
+          show_contact?: boolean
+          show_hours?: boolean
+          show_services?: boolean
+          subdomain?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smart_websites_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "smart_websites_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sms_templates: {
         Row: {
           company_id: string
@@ -4561,6 +4753,15 @@ export type Database = {
     }
     Functions: {
       can_view_company: { Args: { _company_id: string }; Returns: boolean }
+      check_visitor_limit: {
+        Args: { p_website_id: string }
+        Returns: {
+          allowed: boolean
+          current_views: number
+          monthly_limit: number
+          usage_percentage: number
+        }[]
+      }
       customer_has_company_access: {
         Args: { _company_id: string; _user_id: string }
         Returns: boolean
@@ -4685,6 +4886,39 @@ export type Database = {
         }[]
       }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }
+      get_website_by_custom_domain: {
+        Args: { p_domain: string }
+        Returns: {
+          company_id: string
+          subdomain: string
+          website_id: string
+        }[]
+      }
+      get_website_public_data: {
+        Args: { p_subdomain: string }
+        Returns: {
+          address: string
+          background_image_url: string
+          background_style: string
+          company_id: string
+          company_name: string
+          company_slug: string
+          cta_button_text: string
+          cta_button_url: string
+          email: string
+          hero_headline: string
+          hero_subheadline: string
+          logo_url: string
+          phone: string
+          primary_color: string
+          secondary_color: string
+          show_chat_widget: boolean
+          show_contact: boolean
+          show_hours: boolean
+          show_services: boolean
+          website_id: string
+        }[]
+      }
       has_agent_access: {
         Args: { _agent_type: string; _user_id: string }
         Returns: boolean
@@ -4708,6 +4942,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_site_metric: {
+        Args: { p_metric: string; p_website_id: string }
+        Returns: undefined
       }
       is_assigned_to_job: {
         Args: { _appointment_id: string; _user_id: string }
