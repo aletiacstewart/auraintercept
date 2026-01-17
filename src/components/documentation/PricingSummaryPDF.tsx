@@ -332,13 +332,14 @@ const SUBSCRIPTION_TIERS = {
     monthlyPrice: 497,
     annualPrice: 4970,
     annualSavings: 994,
-    agents: ['AI Receptionist (Triage)', 'Scheduling Agent (Booking)', 'Follow-up Agent', 'Review Agent'],
+    agents: ['AI Receptionist (Triage)', 'Follow-up Agent', 'Review Agent'],
     consoles: ['Customer Portal Console'],
     appointments: 'Unlimited',
-    reminders: 'Email only',
-    employees: 'Base allocation',
+    reminders: 'Email + SMS + Voice',
+    employees: '5 included',
     additionalEmployees: '$25/mo per 10 employees',
-    bestFor: 'Small service companies getting started with AI automation. Saves 10+ hours/week in lead intake.',
+    bestFor: 'Small service companies getting started with AI automation. Includes AI Voice. Saves 10+ hours/week in lead intake.',
+    voiceIncluded: true,
   },
   multiTrack: {
     name: 'Multi-Track',
@@ -348,10 +349,11 @@ const SUBSCRIPTION_TIERS = {
     agents: ['AI Receptionist (Triage)', 'Scheduling Agent (Booking)', 'Follow-up Agent', 'Review Agent', 'Dispatch Agent', 'Route Agent', 'ETA Agent', 'Check-in Agent', 'Quoting Agent', 'Invoice Agent'],
     consoles: ['Customer Portal Console', 'Field Operations Console'],
     appointments: 'Unlimited',
-    reminders: 'Email + SMS',
-    employees: 'Base allocation',
+    reminders: 'Email + SMS + Voice',
+    employees: '10 included',
     additionalEmployees: '$25/mo per 10 employees',
-    bestFor: 'Growing companies with field technicians needing dispatch automation. Manages up to 5 Field Techs automatically.',
+    bestFor: 'Growing companies with field technicians needing dispatch automation and online booking.',
+    voiceIncluded: true,
   },
   command: {
     name: 'Command',
@@ -365,6 +367,7 @@ const SUBSCRIPTION_TIERS = {
     employees: 'Unlimited',
     additionalEmployees: 'N/A',
     bestFor: 'Large service companies requiring full AI automation, voice capabilities, and total brand control.',
+    voiceIncluded: true,
   },
 };
 
@@ -500,11 +503,13 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { feature: 'AI Agents', singlePoint: '4', multiTrack: '10', command: '18' },
+          { feature: 'AI Agents', singlePoint: '3', multiTrack: '10', command: '18' },
           { feature: 'Control Centers', singlePoint: '1', multiTrack: '2', command: '5' },
           { feature: 'Appointments/Month', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
-          { feature: 'Reminder Channels', singlePoint: 'Email', multiTrack: 'Email + SMS', command: 'Email + SMS + Voice' },
-          { feature: 'Employee Accounts', singlePoint: 'Base', multiTrack: 'Base', command: 'Unlimited' },
+          { feature: 'Reminder Channels', singlePoint: 'Email + SMS + Voice', multiTrack: 'Email + SMS + Voice', command: 'Email + SMS + Voice' },
+          { feature: 'AI Voice (Chat + Calls)', singlePoint: '✓', multiTrack: '✓', command: '✓' },
+          { feature: 'Online Booking', singlePoint: '—', multiTrack: '✓', command: '✓' },
+          { feature: 'Employee Accounts', singlePoint: '5', multiTrack: '10', command: 'Unlimited' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.feature}</Text>
@@ -546,15 +551,17 @@ const PricingSummaryPDF = () => (
           { category: 'Annual Price', singlePoint: '$4,970', multiTrack: '$8,970', command: '$14,970' },
           { category: 'Annual Savings', singlePoint: '~$1,000', multiTrack: '~$1,800', command: '~$3,000' },
           { category: '', singlePoint: '', multiTrack: '', command: '' },
-          { category: 'AI Agents Included', singlePoint: '4', multiTrack: '10', command: 'All 18' },
+          { category: 'AI Agents Included', singlePoint: '3', multiTrack: '10', command: 'All 18' },
           { category: 'Control Centers', singlePoint: '1', multiTrack: '2', command: 'All 5' },
           { category: 'Appointments/Month', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
           { category: '', singlePoint: '', multiTrack: '', command: '' },
           { category: 'Email Reminders', singlePoint: '✓', multiTrack: '✓', command: '✓' },
-          { category: 'SMS Reminders', singlePoint: '—', multiTrack: '✓', command: '✓' },
-          { category: 'Voice Reminders', singlePoint: '—', multiTrack: '—', command: '✓' },
+          { category: 'SMS Reminders', singlePoint: '✓', multiTrack: '✓', command: '✓' },
+          { category: 'Voice Reminders', singlePoint: '✓', multiTrack: '✓', command: '✓' },
+          { category: 'AI Voice (Chat + Calls)', singlePoint: '✓', multiTrack: '✓', command: '✓' },
+          { category: 'Online Booking Agent', singlePoint: '—', multiTrack: '✓', command: '✓' },
           { category: '', singlePoint: '', multiTrack: '', command: '' },
-          { category: 'Employee Accounts', singlePoint: 'Base', multiTrack: 'Base', command: 'Unlimited' },
+          { category: 'Employee Accounts', singlePoint: '5', multiTrack: '10', command: 'Unlimited' },
           { category: 'Additional Employees', singlePoint: '$25/mo per 10', multiTrack: '$25/mo per 10', command: 'Included' },
           { category: 'Widget Access', singlePoint: '✓', multiTrack: '✓', command: '✓' },
           { category: '', singlePoint: '', multiTrack: '', command: '' },
@@ -600,33 +607,33 @@ const PricingSummaryPDF = () => (
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>Included AI Agents (4)</Text>
+      <Text style={styles.subsectionTitle}>Included AI Agents (3)</Text>
       <View style={styles.featureList}>
         <FeatureItem>AI Receptionist (Triage) - First point of contact, routes customers to right agent</FeatureItem>
-        <FeatureItem>Scheduling Agent (Booking) - Natural language appointment booking with availability checks</FeatureItem>
-        <FeatureItem>Follow-up Agent - Automated reminders and confirmations</FeatureItem>
+        <FeatureItem>Follow-up Agent - Automated reminders and confirmations via email, SMS, and voice</FeatureItem>
         <FeatureItem>Review Agent - Customer feedback collection for Google, Yelp, Facebook</FeatureItem>
       </View>
 
       <Text style={styles.subsectionTitle}>Control Centers (1)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Customer Portal Console - Self-service booking and appointment management</FeatureItem>
+        <FeatureItem>Customer Portal Console - Self-service appointment management</FeatureItem>
       </View>
 
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
         <FeatureItem>Unlimited appointments</FeatureItem>
-        <FeatureItem>Email reminders only</FeatureItem>
-        <FeatureItem>Base employee allocation</FeatureItem>
-        <FeatureItem>Additional employees at $25/month per 10</FeatureItem>
-        <FeatureItem>Embeddable booking widget</FeatureItem>
+        <FeatureItem>Email + SMS + Voice reminders</FeatureItem>
+        <FeatureItem>AI Voice Chat and Outbound Calling (requires Twilio + ElevenLabs)</FeatureItem>
+        <FeatureItem>5 employees included ($25/month per 10 additional)</FeatureItem>
+        <FeatureItem>Embeddable chat widget</FeatureItem>
+        <FeatureItem>1-Page Smart Website Included</FeatureItem>
       </View>
 
       <Text style={styles.subsectionTitle}>Key Benefits</Text>
       <View style={styles.featureList}>
-        <FeatureItem>24/7 AI-powered chat for customer inquiries</FeatureItem>
-        <FeatureItem>Automated appointment booking and confirmation</FeatureItem>
-        <FeatureItem>Email-based appointment reminders</FeatureItem>
+        <FeatureItem>24/7 AI-powered chat and voice for customer inquiries</FeatureItem>
+        <FeatureItem>Call-to-book via AI Voice (online booking requires Multi-Track)</FeatureItem>
+        <FeatureItem>Multi-channel appointment reminders</FeatureItem>
         <FeatureItem>Customer self-service portal</FeatureItem>
         <FeatureItem>Saves 10+ hours/week in lead intake</FeatureItem>
       </View>

@@ -677,8 +677,10 @@ const TIERS = [
     price: '$497/month',
     annualPrice: '$4,970/year',
     consoles: ['Customer Portal'],
-    agentCount: 4,
-    agents: ['AI Receptionist (Triage)', 'Scheduling Agent', 'Follow-up Agent', 'Review Agent'],
+    agentCount: 3,
+    agents: ['AI Receptionist (Triage)', 'Follow-up Agent', 'Review Agent'],
+    voiceIncluded: true,
+    note: 'AI Voice (Chat + Outbound Calls) included. Online booking requires Multi-Track.',
   },
   {
     name: 'Multi-Track',
@@ -687,10 +689,11 @@ const TIERS = [
     consoles: ['Customer Portal', 'Field Operations'],
     agentCount: 10,
     agents: [
-      'AI Receptionist (Triage)', 'Scheduling Agent', 'Follow-up Agent', 'Review Agent',
+      'AI Receptionist (Triage)', 'Scheduling Agent (Online Booking)', 'Follow-up Agent', 'Review Agent',
       'Dispatch Agent', 'Route Agent', 'ETA Agent', 'Check-in Agent',
       'Quoting Agent', 'Invoice Agent',
     ],
+    voiceIncluded: true,
   },
   {
     name: 'Command',
@@ -699,6 +702,7 @@ const TIERS = [
     consoles: ['All 5 Consoles'],
     agentCount: 18,
     agents: ['All 18 AI Agents'],
+    voiceIncluded: true,
   },
 ];
 

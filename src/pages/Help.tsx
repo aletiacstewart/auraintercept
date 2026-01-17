@@ -32,16 +32,17 @@ const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType;
   customer: {
     title: 'Customer Portal',
     icon: HeadphonesIcon,
-    description: 'Powered by 4 specialized AI agents: Receptionist (Phase 1), Scheduling (Phase 2), Follow-up (Phase 3), and Review (Phase 4).',
-    agents: ['Receptionist Agent', 'Scheduling Agent', 'Follow-up Agent', 'Review Agent'],
+    description: 'Powered by 3-4 specialized AI agents depending on tier: Receptionist, Follow-up, Review (all tiers) + Online Booking (Multi-Track+). AI Voice included in all paid tiers.',
+    agents: ['Receptionist Agent', 'Follow-up Agent', 'Review Agent', 'Booking Agent (Multi-Track+)'],
     features: [
       'Intelligent triage and routing of customer inquiries',
-      'Book and manage appointments with smart scheduling',
+      'Book appointments via AI chat or call (Online Booking requires Multi-Track+)',
       'Provide instant quotes for services',
       'Answer customer questions using your knowledge base',
       'Track existing appointments and send reminders',
       'Collect customer feedback and request reviews',
-      'Voice and SMS support via Twilio integration'
+      'AI Voice Chat and Outbound Calls (all paid tiers)',
+      'Voice, SMS, and Email support via Twilio + ElevenLabs'
     ],
     useCases: [
       '"Book an appointment for AC repair tomorrow at 2pm"',

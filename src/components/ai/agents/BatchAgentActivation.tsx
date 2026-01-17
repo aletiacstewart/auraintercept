@@ -22,15 +22,16 @@ const PHASE_CONFIG = [
   {
     phase: 1,
     name: 'Customer Portal',
-    description: 'Core customer interaction agents',
+    description: 'Core customer interaction agents (Booking requires Multi-Track+)',
     icon: Users,
     color: 'text-blue-500',
     agents: ['triage', 'booking', 'followup', 'review'],
+    tierLockedAgents: { booking: 'multi_track' }, // booking requires Multi-Track or higher
   },
   {
     phase: 2,
     name: 'Field Operations',
-    description: 'Dispatch and route management',
+    description: 'Dispatch and route management (Multi-Track+)',
     icon: Truck,
     color: 'text-green-500',
     agents: ['dispatch', 'route', 'eta', 'checkin'],
