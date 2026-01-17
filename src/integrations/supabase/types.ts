@@ -4969,6 +4969,9 @@ export type Database = {
           show_contact: boolean
           show_hours: boolean
           show_services: boolean
+          show_voice_widget: boolean
+          subscription_tier: string
+          trial_ends_at: string
           website_id: string
         }[]
       }

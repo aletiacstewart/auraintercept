@@ -10,6 +10,7 @@ export interface TierConfig {
   description: string;
 }
 
+// IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
 // Map subscription tiers to available agents and consoles
 export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
   free: {
@@ -20,13 +21,15 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access - upgrade to unlock AI agents',
   },
   single_point: {
-    agents: ['triage', 'booking', 'followup', 'review'],
+    // Voice AI (chat + outbound calling) included, but NO booking (call to book)
+    agents: ['triage', 'followup', 'review'],
     consoles: ['customer_portal'],
     label: 'Single-Point',
     price: '$497/mo',
-    description: 'Customer engagement essentials',
+    description: 'Customer engagement + AI Voice',
   },
   multi_track: {
+    // Adds booking, field ops, and quoting/invoicing
     agents: [
       'triage', 'booking', 'followup', 'review',
       'dispatch', 'route', 'eta', 'checkin',
@@ -35,7 +38,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     consoles: ['customer_portal', 'field_operations'],
     label: 'Multi-Track',
     price: '$897/mo',
-    description: 'Customer + Field operations',
+    description: 'Customer + Field operations + Online booking',
   },
   command: {
     agents: [
@@ -53,10 +56,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
 };
 
 // Agent dependencies - some agents require others to work properly
+// IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts
 export const AGENT_DEPENDENCIES: Record<string, string[]> = {
   booking: ['triage'],
-  followup: ['booking'],
-  review: ['followup'],
+  // followup and review now depend on triage (not booking) so Single-Point can use them
+  followup: ['triage'],
+  review: ['triage'],
   route: ['dispatch'],
   eta: ['dispatch', 'route'],
   checkin: ['dispatch'],

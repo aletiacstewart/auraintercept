@@ -51,8 +51,8 @@ serve(async (req) => {
     const trialEndsAt = companyData?.trial_ends_at;
     const inTrial = trialEndsAt && new Date(trialEndsAt) > new Date();
 
-    // Voice is only available for Command tier or during trial
-    const voiceTiers = ["command"];
+    // Voice is available for all paid tiers (Single-Point and above) or during trial
+    const voiceTiers = ["single_point", "multi_track", "command"];
     const hasVoiceAccess = inTrial || voiceTiers.includes(subscriptionTier);
 
     if (!hasVoiceAccess) {
@@ -60,9 +60,9 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           error: "voice_locked",
-          message: "Voice features require the Command tier subscription.",
+          message: "Voice features require a paid subscription (Single-Point or higher).",
           current_tier: subscriptionTier,
-          required_tier: "command"
+          required_tier: "single_point"
         }),
         { 
           status: 403, 
