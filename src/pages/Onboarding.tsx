@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
-import { OnboardingWizard } from '@/components/company/OnboardingWizard';
+import { AuraQuickStart } from '@/components/company/AuraQuickStart';
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ export default function Onboarding() {
   return (
     <DashboardLayout>
       <div className="py-8">
-        <OnboardingWizard onComplete={handleComplete} />
+        <AuraQuickStart onComplete={handleComplete} />
       </div>
     </DashboardLayout>
   );
