@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { VisitorLimitModal } from '@/components/smartwebsite/VisitorLimitModal';
+import { SmartWebsiteAnalytics } from '@/components/smartwebsite/SmartWebsiteAnalytics';
 
 export default function SmartWebsiteManager() {
   const { companyId } = useAuth();
@@ -342,60 +343,12 @@ export default function SmartWebsiteManager() {
           </TabsContent>
 
           <TabsContent value="analytics">
-            <div className="grid md:grid-cols-4 gap-4 mb-6">
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="text-2xl font-bold">{metrics?.page_views || 0}</p>
-                  <p className="text-sm text-muted-foreground">Page Views</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="text-2xl font-bold">{metrics?.unique_visitors || 0}</p>
-                  <p className="text-sm text-muted-foreground">Unique Visitors</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="text-2xl font-bold">{metrics?.chat_interactions || 0}</p>
-                  <p className="text-sm text-muted-foreground">Chat Interactions</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="text-2xl font-bold">{metrics?.booking_clicks || 0}</p>
-                  <p className="text-sm text-muted-foreground">Booking Clicks</p>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Monthly Usage</CardTitle>
-                <CardDescription>
-                  {metrics?.page_views || 0} of {website.monthly_visitor_limit.toLocaleString()} visitors
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Progress value={usagePercentage} className="h-2" />
-                {usagePercentage >= 80 && (
-                  <div className="flex items-center justify-between mt-2">
-                    <p className="text-sm text-amber-500">
-                      {usagePercentage >= 100 
-                        ? 'Visitor limit reached. New visitors see a placeholder page.'
-                        : 'Approaching visitor limit. Consider upgrading your plan.'}
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => setShowLimitModal(true)}
-                    >
-                      View Options
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <SmartWebsiteAnalytics 
+              websiteId={website.id}
+              metrics={metrics}
+              monthlyLimit={website.monthly_visitor_limit}
+              onViewLimitOptions={() => setShowLimitModal(true)}
+            />
           </TabsContent>
 
           <TabsContent value="domain">
