@@ -113,7 +113,7 @@ export default function SMSLogs() {
                   <MessageSquare className="w-5 h-5" />
                   SMS History
                 </CardTitle>
-                <CardDescription className="text-white/70">
+                <CardDescription className="text-muted-foreground">
                   All text messages and SMS reminders sent to customers
                 </CardDescription>
               </div>
