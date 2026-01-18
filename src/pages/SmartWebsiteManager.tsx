@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
 import { 
   Globe, 
@@ -27,7 +28,13 @@ import {
   Loader2,
   QrCode,
   Moon,
-  Sun
+  Sun,
+  ChevronDown,
+  Briefcase,
+  Clock,
+  Phone,
+  Type,
+  Info
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -40,6 +47,9 @@ import { HolidayMessageManager } from '@/components/smartwebsite/HolidayMessageM
 import { GalleryManager } from '@/components/smartwebsite/GalleryManager';
 import { LogoEditor } from '@/components/smartwebsite/LogoEditor';
 import { HeroBackgroundUpload } from '@/components/smartwebsite/HeroBackgroundUpload';
+import { SmartWebsiteServicesEditor } from '@/components/smartwebsite/SmartWebsiteServicesEditor';
+import { SmartWebsiteHoursEditor } from '@/components/smartwebsite/SmartWebsiteHoursEditor';
+import { SmartWebsiteContactEditor } from '@/components/smartwebsite/SmartWebsiteContactEditor';
 
 // Extended type for website data with new night mode fields
 interface ExtendedWebsiteData {
@@ -303,226 +313,265 @@ export default function SmartWebsiteManager() {
           </TabsList>
 
           <TabsContent value="content" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Website Content</CardTitle>
-                <CardDescription>Customize your website's hero section</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Hero Headline</Label>
-                  <Input
-                    defaultValue={website.hero_headline || ''}
-                    onBlur={(e) => updateWebsite.mutate({ hero_headline: e.target.value })}
-                    placeholder="Welcome to Your Business"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Hero Subheadline</Label>
-                  <Textarea
-                    defaultValue={website.hero_subheadline || ''}
-                    onBlur={(e) => updateWebsite.mutate({ hero_subheadline: e.target.value })}
-                    placeholder="Professional service you can trust"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>CTA Button Text</Label>
-                  <Input
-                    defaultValue={website.cta_button_text || 'Book Now'}
-                    onBlur={(e) => updateWebsite.mutate({ cta_button_text: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>CTA Button URL</Label>
-                  <Input
-                    defaultValue={website.cta_button_url || ''}
-                    onBlur={(e) => updateWebsite.mutate({ cta_button_url: e.target.value })}
-                    placeholder="/customer-portal/your-company"
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            {/* Hero Section */}
+            <Collapsible defaultOpen>
+              <Card>
+                <CollapsibleTrigger className="w-full">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Type className="h-5 w-5 text-primary" />
+                      <div className="text-left">
+                        <CardTitle className="text-lg">Hero Section</CardTitle>
+                        <CardDescription>Customize your website's hero area</CardDescription>
+                      </div>
+                    </div>
+                    <ChevronDown className="h-5 w-5 text-card-foreground/70 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                  </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <CardContent className="space-y-4 pt-0">
+                    <div className="space-y-2">
+                      <Label className="text-card-foreground">Hero Headline</Label>
+                      <Input
+                        defaultValue={website.hero_headline || ''}
+                        onBlur={(e) => updateWebsite.mutate({ hero_headline: e.target.value })}
+                        placeholder="Welcome to Your Business"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-card-foreground">Hero Subheadline</Label>
+                      <Textarea
+                        defaultValue={website.hero_subheadline || ''}
+                        onBlur={(e) => updateWebsite.mutate({ hero_subheadline: e.target.value })}
+                        placeholder="Professional service you can trust"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-card-foreground">CTA Button Text</Label>
+                      <Input
+                        defaultValue={website.cta_button_text || 'Book Now'}
+                        onBlur={(e) => updateWebsite.mutate({ cta_button_text: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-card-foreground">CTA Button URL</Label>
+                      <Input
+                        defaultValue={website.cta_button_url || ''}
+                        onBlur={(e) => updateWebsite.mutate({ cta_button_url: e.target.value })}
+                        placeholder="/customer-portal/your-company"
+                      />
+                    </div>
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
 
             {/* AI-Dynamic Header Section */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Moon className="w-5 h-5" />
-                      AI-Dynamic Header
-                    </CardTitle>
-                    <CardDescription>
-                      Display different content based on visitor's local time
-                    </CardDescription>
-                  </div>
-                  {/* Day/Night Preview Toggle */}
-                  {website.enable_night_mode && (
-                    <ToggleGroup 
-                      type="single" 
-                      value={previewMode}
-                      onValueChange={(value) => value && setPreviewMode(value as 'day' | 'night')}
-                      className="bg-muted rounded-lg p-1"
-                    >
-                      <ToggleGroupItem 
-                        value="day" 
-                        aria-label="Day preview"
-                        className="data-[state=on]:bg-background data-[state=on]:shadow-sm px-3"
+            <Collapsible>
+              <Card>
+                <CollapsibleTrigger className="w-full">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Moon className="h-5 w-5 text-primary" />
+                      <div className="text-left">
+                        <CardTitle className="text-lg">AI-Dynamic Header</CardTitle>
+                        <CardDescription>Display different content based on visitor's local time</CardDescription>
+                      </div>
+                    </div>
+                    <ChevronDown className="h-5 w-5 text-card-foreground/70" />
+                  </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <CardContent className="space-y-4 pt-0">
+                    {/* Day/Night Preview Toggle */}
+                    {website.enable_night_mode && (
+                      <ToggleGroup 
+                        type="single" 
+                        value={previewMode}
+                        onValueChange={(value) => value && setPreviewMode(value as 'day' | 'night')}
+                        className="bg-muted rounded-lg p-1"
                       >
-                        <Sun className="w-4 h-4 mr-1" />
-                        Day
-                      </ToggleGroupItem>
-                      <ToggleGroupItem 
-                        value="night" 
-                        aria-label="Night preview"
-                        className="data-[state=on]:bg-background data-[state=on]:shadow-sm px-3"
-                      >
-                        <Moon className="w-4 h-4 mr-1" />
-                        Night
-                      </ToggleGroupItem>
-                    </ToggleGroup>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Enable Night Mode Toggle */}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Enable Night Mode</p>
-                    <p className="text-sm text-muted-foreground">
-                      Show alternate content during evening/night hours
-                    </p>
-                  </div>
-                  <Switch
-                    checked={website.enable_night_mode ?? false}
-                    onCheckedChange={(checked) => updateWebsite.mutate({ enable_night_mode: checked })}
-                  />
-                </div>
+                        <ToggleGroupItem value="day" aria-label="Day preview" className="data-[state=on]:bg-background data-[state=on]:shadow-sm px-3">
+                          <Sun className="w-4 h-4 mr-1" />
+                          Day
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="night" aria-label="Night preview" className="data-[state=on]:bg-background data-[state=on]:shadow-sm px-3">
+                          <Moon className="w-4 h-4 mr-1" />
+                          Night
+                        </ToggleGroupItem>
+                      </ToggleGroup>
+                    )}
 
-                {website.enable_night_mode && (
-                  <>
-                    {/* Live Preview Card */}
-                    <div className={`rounded-lg border-2 p-6 transition-all ${
-                      previewMode === 'night' 
-                        ? 'bg-slate-900 border-slate-700 text-white' 
-                        : 'bg-gradient-to-br from-sky-50 to-white border-sky-200'
-                    }`}>
-                      <div className="flex items-center justify-between mb-3">
-                        <Badge variant={previewMode === 'night' ? 'secondary' : 'default'} className="text-xs">
-                          {previewMode === 'night' ? (
-                            <><Moon className="w-3 h-3 mr-1" /> Night Preview</>
-                          ) : (
-                            <><Sun className="w-3 h-3 mr-1" /> Day Preview</>
-                          )}
-                        </Badge>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-card-foreground">Enable Night Mode</p>
+                        <p className="text-sm text-card-foreground/70">Show alternate content during evening/night hours</p>
                       </div>
-                      <h3 className={`text-xl font-bold mb-2 ${previewMode === 'night' ? 'text-white' : 'text-slate-900'}`}>
-                        {previewMode === 'night' 
-                          ? (website.night_header || 'Need help after hours?')
-                          : (website.hero_headline || 'Welcome to Your Business')
-                        }
-                      </h3>
-                      <p className={`text-sm mb-4 ${previewMode === 'night' ? 'text-slate-300' : 'text-slate-600'}`}>
-                        {previewMode === 'night'
-                          ? (website.night_subheadline || 'Our emergency team is standing by...')
-                          : (website.hero_subheadline || 'Professional service you can trust')
-                        }
-                      </p>
-                      <div className="flex gap-2 flex-wrap">
-                        <Button size="sm" className={previewMode === 'night' ? 'bg-slate-700 hover:bg-slate-600' : ''}>
-                          {website.cta_button_text || 'Book Now'}
-                        </Button>
-                        {previewMode === 'night' && website.emergency_cta_text && (
-                          <Button size="sm" variant="destructive">
-                            <AlertCircle className="w-3 h-3 mr-1" />
-                            {website.emergency_cta_text}
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Night Start/End Time */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Night Starts At</Label>
-                        <Select
-                          defaultValue={String(website.night_start_hour ?? 18)}
-                          onValueChange={(value) => updateWebsite.mutate({ night_start_hour: parseInt(value) })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Array.from({ length: 24 }, (_, i) => (
-                              <SelectItem key={i} value={String(i)}>
-                                {i === 0 ? '12:00 AM' : i < 12 ? `${i}:00 AM` : i === 12 ? '12:00 PM' : `${i - 12}:00 PM`}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Night Ends At</Label>
-                        <Select
-                          defaultValue={String(website.night_end_hour ?? 6)}
-                          onValueChange={(value) => updateWebsite.mutate({ night_end_hour: parseInt(value) })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Array.from({ length: 24 }, (_, i) => (
-                              <SelectItem key={i} value={String(i)}>
-                                {i === 0 ? '12:00 AM' : i < 12 ? `${i}:00 AM` : i === 12 ? '12:00 PM' : `${i - 12}:00 PM`}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    {/* Night Header/Subheadline */}
-                    <div className="space-y-2">
-                      <Label>Night Headline</Label>
-                      <Input
-                        defaultValue={website.night_header || ''}
-                        onBlur={(e) => updateWebsite.mutate({ night_header: e.target.value })}
-                        placeholder="Need help after hours?"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Night Subheadline</Label>
-                      <Textarea
-                        defaultValue={website.night_subheadline || ''}
-                        onBlur={(e) => updateWebsite.mutate({ night_subheadline: e.target.value })}
-                        placeholder="Our emergency team is standing by 24/7..."
+                      <Switch
+                        checked={website.enable_night_mode ?? false}
+                        onCheckedChange={(checked) => updateWebsite.mutate({ enable_night_mode: checked })}
                       />
                     </div>
 
-                    {/* Emergency CTA */}
-                    <div className="space-y-2">
-                      <Label>Emergency CTA Text</Label>
-                      <Input
-                        defaultValue={website.emergency_cta_text || ''}
-                        onBlur={(e) => updateWebsite.mutate({ emergency_cta_text: e.target.value })}
-                        placeholder="24/7 Emergency Line"
-                      />
+                    {website.enable_night_mode && (
+                      <>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-card-foreground">Night Starts At</Label>
+                            <Select
+                              defaultValue={String(website.night_start_hour ?? 18)}
+                              onValueChange={(value) => updateWebsite.mutate({ night_start_hour: parseInt(value) })}
+                            >
+                              <SelectTrigger><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {Array.from({ length: 24 }, (_, i) => (
+                                  <SelectItem key={i} value={String(i)}>
+                                    {i === 0 ? '12:00 AM' : i < 12 ? `${i}:00 AM` : i === 12 ? '12:00 PM' : `${i - 12}:00 PM`}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-card-foreground">Night Ends At</Label>
+                            <Select
+                              defaultValue={String(website.night_end_hour ?? 6)}
+                              onValueChange={(value) => updateWebsite.mutate({ night_end_hour: parseInt(value) })}
+                            >
+                              <SelectTrigger><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {Array.from({ length: 24 }, (_, i) => (
+                                  <SelectItem key={i} value={String(i)}>
+                                    {i === 0 ? '12:00 AM' : i < 12 ? `${i}:00 AM` : i === 12 ? '12:00 PM' : `${i - 12}:00 PM`}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-card-foreground">Night Headline</Label>
+                          <Input
+                            defaultValue={website.night_header || ''}
+                            onBlur={(e) => updateWebsite.mutate({ night_header: e.target.value })}
+                            placeholder="Need help after hours?"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-card-foreground">Night Subheadline</Label>
+                          <Textarea
+                            defaultValue={website.night_subheadline || ''}
+                            onBlur={(e) => updateWebsite.mutate({ night_subheadline: e.target.value })}
+                            placeholder="Our emergency team is standing by 24/7..."
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-card-foreground">Emergency CTA Text</Label>
+                          <Input
+                            defaultValue={website.emergency_cta_text || ''}
+                            onBlur={(e) => updateWebsite.mutate({ emergency_cta_text: e.target.value })}
+                            placeholder="24/7 Emergency Line"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-card-foreground">Emergency CTA URL</Label>
+                          <Input
+                            defaultValue={website.emergency_cta_url || ''}
+                            onBlur={(e) => updateWebsite.mutate({ emergency_cta_url: e.target.value })}
+                            placeholder="tel:+1-555-EMERGENCY"
+                          />
+                          <p className="text-xs text-card-foreground/70">Use tel: for phone numbers</p>
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
+
+            {/* About Section - Moved from Sections tab */}
+            <AboutSectionEditor
+              website={{
+                id: website.id,
+                show_about_section: website.show_about_section ?? false,
+                about_image_url: website.about_image_url ?? null,
+                about_header: website.about_header ?? null,
+                about_subheader: website.about_subheader ?? null,
+                about_paragraph: website.about_paragraph ?? null,
+              }}
+              companyId={companyId!}
+              onUpdate={(updates) => updateWebsite.mutate(updates)}
+              isUpdating={updateWebsite.isPending}
+            />
+
+            {/* Services Editor */}
+            <Collapsible>
+              <Card>
+                <CollapsibleTrigger className="w-full">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Briefcase className="h-5 w-5 text-primary" />
+                      <div className="text-left">
+                        <CardTitle className="text-lg">Services</CardTitle>
+                        <CardDescription>Manage services displayed on your website</CardDescription>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label>Emergency CTA URL</Label>
-                      <Input
-                        defaultValue={website.emergency_cta_url || ''}
-                        onBlur={(e) => updateWebsite.mutate({ emergency_cta_url: e.target.value })}
-                        placeholder="tel:+1-555-EMERGENCY"
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        Use tel: for phone numbers (e.g., tel:+15551234567)
-                      </p>
+                    <ChevronDown className="h-5 w-5 text-card-foreground/70" />
+                  </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <CardContent className="pt-0">
+                    <SmartWebsiteServicesEditor />
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
+
+            {/* Business Hours Editor */}
+            <Collapsible>
+              <Card>
+                <CollapsibleTrigger className="w-full">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-5 w-5 text-primary" />
+                      <div className="text-left">
+                        <CardTitle className="text-lg">Business Hours</CardTitle>
+                        <CardDescription>Set your office hours for the website</CardDescription>
+                      </div>
                     </div>
-                  </>
-                )}
-              </CardContent>
-            </Card>
+                    <ChevronDown className="h-5 w-5 text-card-foreground/70" />
+                  </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <CardContent className="pt-0">
+                    <SmartWebsiteHoursEditor />
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
+
+            {/* Contact Info Editor */}
+            <Collapsible>
+              <Card>
+                <CollapsibleTrigger className="w-full">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-5 w-5 text-primary" />
+                      <div className="text-left">
+                        <CardTitle className="text-lg">Contact Information</CardTitle>
+                        <CardDescription>Phone, email, and address for visitors</CardDescription>
+                      </div>
+                    </div>
+                    <ChevronDown className="h-5 w-5 text-card-foreground/70" />
+                  </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <CardContent className="pt-0">
+                    <SmartWebsiteContactEditor />
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
 
             {/* Holiday Messages Manager */}
             <HolidayMessageManager websiteId={website.id} companyId={companyId!} />
@@ -568,8 +617,18 @@ export default function SmartWebsiteManager() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Services</p>
-                    <p className="text-sm text-muted-foreground">Show your service offerings</p>
+                    <p className="font-medium text-card-foreground">About Section</p>
+                    <p className="text-sm text-card-foreground/70">Display your about section</p>
+                  </div>
+                  <Switch
+                    checked={website.show_about_section ?? false}
+                    onCheckedChange={(checked) => updateWebsite.mutate({ show_about_section: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-card-foreground">Services</p>
+                    <p className="text-sm text-card-foreground/70">Show your service offerings</p>
                   </div>
                   <Switch
                     checked={website.show_services}
@@ -578,8 +637,8 @@ export default function SmartWebsiteManager() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Business Hours</p>
-                    <p className="text-sm text-muted-foreground">Display your operating hours</p>
+                    <p className="font-medium text-card-foreground">Business Hours</p>
+                    <p className="text-sm text-card-foreground/70">Display your operating hours</p>
                   </div>
                   <Switch
                     checked={website.show_hours}
@@ -588,8 +647,8 @@ export default function SmartWebsiteManager() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Contact Info</p>
-                    <p className="text-sm text-muted-foreground">Show phone, email, address</p>
+                    <p className="font-medium text-card-foreground">Contact Info</p>
+                    <p className="text-sm text-card-foreground/70">Show phone, email, address</p>
                   </div>
                   <Switch
                     checked={website.show_contact}
@@ -598,8 +657,18 @@ export default function SmartWebsiteManager() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">AI Chat Widget</p>
-                    <p className="text-sm text-muted-foreground">Enable AI assistant chat</p>
+                    <p className="font-medium text-card-foreground">Gallery</p>
+                    <p className="text-sm text-card-foreground/70">Display your image gallery</p>
+                  </div>
+                  <Switch
+                    checked={website.show_gallery ?? true}
+                    onCheckedChange={(checked) => updateWebsite.mutate({ show_gallery: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-card-foreground">AI Chat Widget</p>
+                    <p className="text-sm text-card-foreground/70">Enable AI assistant chat</p>
                   </div>
                   <Switch
                     checked={website.show_chat_widget}
@@ -608,41 +677,16 @@ export default function SmartWebsiteManager() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">AI Voice Widget</p>
-                    <p className="text-sm text-muted-foreground">Enable voice chat for visitors</p>
+                    <p className="font-medium text-card-foreground">AI Voice Widget</p>
+                    <p className="text-sm text-card-foreground/70">Enable voice chat for visitors</p>
                   </div>
                   <Switch
                     checked={website.show_voice_widget}
                     onCheckedChange={(checked) => updateWebsite.mutate({ show_voice_widget: checked })}
                   />
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Gallery</p>
-                    <p className="text-sm text-muted-foreground">Display your image gallery</p>
-                  </div>
-                  <Switch
-                    checked={website.show_gallery ?? true}
-                    onCheckedChange={(checked) => updateWebsite.mutate({ show_gallery: checked })}
-                  />
-                </div>
               </CardContent>
             </Card>
-
-            {/* About Section Editor */}
-            <AboutSectionEditor
-              website={{
-                id: website.id,
-                show_about_section: website.show_about_section ?? false,
-                about_image_url: website.about_image_url ?? null,
-                about_header: website.about_header ?? null,
-                about_subheader: website.about_subheader ?? null,
-                about_paragraph: website.about_paragraph ?? null,
-              }}
-              companyId={companyId!}
-              onUpdate={(updates) => updateWebsite.mutate(updates)}
-              isUpdating={updateWebsite.isPending}
-            />
           </TabsContent>
 
           <TabsContent value="analytics">
