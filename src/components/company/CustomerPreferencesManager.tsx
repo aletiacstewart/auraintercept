@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -50,6 +50,31 @@ export function CustomerPreferencesManager() {
   const [statusFilter, setStatusFilter] = useState<string>("scheduled");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isEnabled, setIsEnabled] = useState(true);
+  const [enabledLoaded, setEnabledLoaded] = useState(false);
+
+  // Fetch company's customer_prefs_enabled setting
+  const { data: companySetting } = useQuery({
+    queryKey: ["company-customer-prefs-enabled", companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data, error } = await supabase
+        .from("companies")
+        .select("customer_prefs_enabled")
+        .eq("id", companyId)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  // Sync isEnabled state with database value
+  useEffect(() => {
+    if (companySetting && !enabledLoaded) {
+      setIsEnabled(companySetting.customer_prefs_enabled ?? true);
+      setEnabledLoaded(true);
+    }
+  }, [companySetting, enabledLoaded]);
 
   const { data: appointments, isLoading } = useQuery({
     queryKey: ["appointments-preferences", companyId, statusFilter],
@@ -88,6 +113,16 @@ export function CustomerPreferencesManager() {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
+      if (!companyId) throw new Error("No company ID");
+      
+      // Save the enabled toggle to companies table
+      const { error: companyError } = await supabase
+        .from("companies")
+        .update({ customer_prefs_enabled: isEnabled })
+        .eq("id", companyId);
+      if (companyError) throw companyError;
+
+      // Save individual appointment preference changes
       const updates = Array.from(pendingChanges.entries());
       for (const [id, changes] of updates) {
         const { error } = await supabase
@@ -99,6 +134,7 @@ export function CustomerPreferencesManager() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments-preferences"] });
+      queryClient.invalidateQueries({ queryKey: ["company-customer-prefs-enabled"] });
       toast.success("Customer preferences saved");
       triggerSetupProgressRefresh();
       setHasChanges(false);
