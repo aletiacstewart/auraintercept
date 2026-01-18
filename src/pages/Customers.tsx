@@ -198,6 +198,7 @@ export default function Customers() {
           icon={Users}
           title="Customers"
           description="View and manage customer information, history, and preferences"
+          featureColor="customers"
           badge={
             <Badge variant="secondary" className="gap-1">
               <Users className="h-3 w-3" />

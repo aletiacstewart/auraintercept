@@ -151,6 +151,7 @@ export default function Leads() {
           icon={Users}
           title="Leads"
           description="Manage and follow up on potential customers"
+          featureColor="leads"
           action={
             <Dialog open={isAddLeadOpen} onOpenChange={setIsAddLeadOpen}>
               <DialogTrigger asChild>
