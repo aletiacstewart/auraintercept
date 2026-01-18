@@ -36,7 +36,7 @@ export default function Settings() {
             description="Configure your company settings and preferences"
           />
           
-          <SetupProgressBar />
+          <SetupProgressBar isPlatformAdmin={isPlatformAdmin} />
           <Tabs defaultValue="branding" className="space-y-4">
             <TabsList className="flex-wrap h-auto gap-1">
               <TabsTrigger value="branding">Branding</TabsTrigger>
