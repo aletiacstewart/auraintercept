@@ -76,7 +76,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Overview',
     items: [
-      { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
+      { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-dashboard' },
       { label: 'Aura Quick-Start', icon: Settings, href: '/dashboard/aura-quick-start', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
       { label: 'Smart Website', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
       { label: 'My Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['employee'] },
@@ -111,7 +111,7 @@ const navGroups: NavGroup[] = [
       { label: 'Revenue Forecast', icon: Clock, href: '/dashboard/ai-consoles/revenue-forecast', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-invoices' },
       { label: 'Customer Insights', icon: Users, href: '/dashboard/ai-consoles/customer-insights', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers' },
       { label: 'KPI Dashboard', icon: BarChart3, href: '/dashboard/ai-consoles/kpi-dashboard', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
-      { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-dashboard' },
     ],
   },
   {
@@ -165,11 +165,11 @@ const navGroups: NavGroup[] = [
   {
     label: 'Platform Resources',
     items: [
-      { label: 'Platform Issues', icon: AlertTriangle, href: '/dashboard/platform-issues', roles: ['platform_admin'] },
-      { label: 'Platform Guides', icon: FileText, href: '/dashboard/platform-guides', roles: ['platform_admin'] },
-      { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'] },
-      { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'] },
-      { label: 'Export Docs', icon: FileText, href: '/dashboard/export-docs', roles: ['platform_admin'] },
+      { label: 'Platform Issues', icon: AlertTriangle, href: '/dashboard/platform-issues', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
+      { label: 'Platform Guides', icon: FileText, href: '/dashboard/platform-guides', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
+      { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-platform' },
+      { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
+      { label: 'Export Docs', icon: FileText, href: '/dashboard/export-docs', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
     ],
   },
 ];

@@ -352,12 +352,12 @@ export default function Architecture() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Architecture Documentation</h1>
-            <p className="text-muted-foreground mt-2">
-              Interactive platform flowcharts with download functionality
-            </p>
-          </div>
+          <PageHeader
+            icon={Network}
+            title="Architecture Documentation"
+            description="Interactive platform flowcharts with download functionality"
+            featureColor="platform"
+          />
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <ScrollArea className="w-full">

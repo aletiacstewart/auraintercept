@@ -899,38 +899,38 @@ const PlatformGuides: React.FC = () => {
       <PageContainer>
         <div className="space-y-6 animate-fade-in">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Platform Guides</h1>
-            <p className="text-muted-foreground mt-1">
-              Step-by-step instructions for all platform features
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <PDFDownloadLink 
-              document={<ComprehensiveGuidesPDF />} 
-              fileName="aura-intercept-comprehensive-guide.pdf"
-            >
-              {({ loading }) => (
-                <Button variant="default" disabled={loading} className="gap-2">
-                  <Download className="h-4 w-4" />
-                  {loading ? 'Generating...' : 'Download Complete Guide'}
-                </Button>
-              )}
-            </PDFDownloadLink>
-            <PDFDownloadLink 
-              document={<PlatformDocumentPDF />} 
-              fileName="aura-intercept-overview.pdf"
-            >
-              {({ loading }) => (
-                <Button variant="outline" disabled={loading} className="gap-2">
-                  <FileText className="h-4 w-4" />
-                  {loading ? 'Generating...' : 'Platform Overview'}
-                </Button>
-              )}
-            </PDFDownloadLink>
-          </div>
-        </div>
+        <PageHeader
+          icon={BookOpen}
+          title="Platform Guides"
+          description="Step-by-step instructions for all platform features"
+          featureColor="platform"
+          action={
+            <div className="flex gap-3">
+              <PDFDownloadLink 
+                document={<ComprehensiveGuidesPDF />} 
+                fileName="aura-intercept-comprehensive-guide.pdf"
+              >
+                {({ loading }) => (
+                  <Button variant="default" disabled={loading} className="gap-2">
+                    <Download className="h-4 w-4" />
+                    {loading ? 'Generating...' : 'Download Complete Guide'}
+                  </Button>
+                )}
+              </PDFDownloadLink>
+              <PDFDownloadLink 
+                document={<PlatformDocumentPDF />} 
+                fileName="aura-intercept-overview.pdf"
+              >
+                {({ loading }) => (
+                  <Button variant="outline" disabled={loading} className="gap-2">
+                    <FileText className="h-4 w-4" />
+                    {loading ? 'Generating...' : 'Platform Overview'}
+                  </Button>
+                )}
+              </PDFDownloadLink>
+            </div>
+          }
+        />
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
