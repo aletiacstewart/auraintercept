@@ -229,15 +229,15 @@ export function GalleryManager({
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-card-foreground">
               <Images className="w-5 h-5" />
               Gallery Management
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-card-foreground/70">
               Upload up to {MAX_GALLERY_IMAGES} images for your gallery section
             </CardDescription>
           </div>
-          <Badge variant={isAtCapacity ? 'secondary' : 'outline'}>
+          <Badge variant="outline" className="border-card-foreground/30 text-card-foreground">
             {galleryImages.length}/{MAX_GALLERY_IMAGES} Images
           </Badge>
         </div>
@@ -245,7 +245,7 @@ export function GalleryManager({
       <CardContent className="space-y-4">
         {/* FIFO Warning */}
         {isAtCapacity && (
-          <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm">
+          <div className="flex items-center gap-2 p-3 bg-warning/20 border border-warning/30 rounded-lg text-warning text-sm">
             <AlertTriangle className="w-4 h-4 flex-shrink-0" />
             <span>Gallery is full. Adding a new image will replace the oldest one.</span>
           </div>
@@ -273,10 +273,10 @@ export function GalleryManager({
             </SortableContext>
           </DndContext>
         ) : (
-          <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-            <Images className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
-            <p className="text-muted-foreground">No gallery images yet</p>
-            <p className="text-sm text-muted-foreground/70">Upload your first image below</p>
+          <div className="border-2 border-dashed border-card-foreground/25 rounded-lg p-8 text-center">
+            <Images className="w-12 h-12 mx-auto text-card-foreground/50 mb-3" />
+            <p className="text-card-foreground/70">No gallery images yet</p>
+            <p className="text-sm text-card-foreground/50">Upload your first image below</p>
           </div>
         )}
 
@@ -293,6 +293,7 @@ export function GalleryManager({
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading || isUpdating}
             variant="outline"
+            className="border-card-foreground/30 text-card-foreground hover:bg-card-foreground/10"
           >
             {isUploading ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -301,7 +302,7 @@ export function GalleryManager({
             )}
             {isUploading ? 'Uploading...' : 'Add Image'}
           </Button>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-card-foreground/60">
             JPEG, PNG, or WebP • Max 2MB • Drag to reorder
           </p>
         </div>
