@@ -280,6 +280,7 @@ export function PlatformAdminDashboard() {
         icon={LayoutDashboard}
         title="Platform Dashboard"
         description="Welcome to the Aura Intercept admin panel"
+        featureColor="dashboard"
       />
 
       {/* Stats Grid */}

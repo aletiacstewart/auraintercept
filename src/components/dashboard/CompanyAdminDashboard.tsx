@@ -253,6 +253,7 @@ export function CompanyAdminDashboard() {
         icon={LayoutDashboard}
         title={isLoading ? 'Loading...' : (company?.name || 'Company Dashboard')}
         description={`Company Dashboard ${companyId ? `• ID: ${companyId.slice(0, 8)}...` : ''}`}
+        featureColor="dashboard"
         action={
           <div className="flex items-center gap-3 flex-wrap">
             {company?.registration_code && (

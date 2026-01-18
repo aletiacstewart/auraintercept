@@ -13,6 +13,7 @@ export default function SubscriptionAnalytics() {
             icon={Crown}
             title="Subscription Analytics"
             description="Track customer opt-in and opt-out trends"
+            featureColor="dashboard"
           />
           <SubscriptionAnalyticsComponent />
         </div>

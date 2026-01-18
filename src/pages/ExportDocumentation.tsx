@@ -22,6 +22,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
             icon={FileDown}
             title="Export Documentation"
             description="Download comprehensive PDF documents about the platform for business proposals, investor presentations, or internal documentation"
+            featureColor="platform"
           />
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
