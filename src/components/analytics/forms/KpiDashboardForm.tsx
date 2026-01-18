@@ -127,27 +127,27 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
   };
 
   return (
-    <Card className="border-border bg-card shadow-sm">
-      <CardHeader className="pb-3">
+    <div className="bg-background rounded-lg border border-border shadow-sm">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
+          <div className="flex items-center gap-2">
             <Target className="h-5 w-5 text-primary" />
-            KPI Dashboard
-          </CardTitle>
-          <Button variant="ghost-card" size="icon" onClick={onCancel}>
+            <h3 className="font-semibold text-foreground">KPI Dashboard</h3>
+          </div>
+          <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-muted">
             <X className="h-5 w-5" />
           </Button>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4 bg-muted/50 rounded-b-lg">
+      </div>
+      <div className="p-4 space-y-4">
         {/* Filters */}
         <div className="space-y-2">
-          <Label className="flex items-center gap-1 text-foreground/70">
+          <Label className="flex items-center gap-1 text-sm font-medium text-foreground">
             <Calendar className="h-3 w-3" />
             Period
           </Label>
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
+            <SelectTrigger className="h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -162,7 +162,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-muted/50 animate-pulse h-20" />
+              <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-20" />
             ))}
           </div>
         ) : (
@@ -171,7 +171,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
             <div className="p-4 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-foreground/70" />
+                  <CheckCircle className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium text-foreground">Job Completion Rate</span>
                 </div>
                 <span className={`font-bold ${getProgressColor(kpis?.completionRate.value || 0, kpis?.completionRate.target || 90)}`}>
@@ -179,14 +179,14 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
                 </span>
               </div>
               <Progress value={getProgressValue(kpis?.completionRate.value || 0, kpis?.completionRate.target || 90)} className="h-2" />
-              <p className="text-xs text-foreground/50 mt-1">Target: {kpis?.completionRate.target}%</p>
+              <p className="text-xs text-muted-foreground mt-1">Target: {kpis?.completionRate.target}%</p>
             </div>
 
             {/* Revenue */}
             <div className="p-4 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-foreground/70" />
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium text-foreground">Revenue</span>
                 </div>
                 <span className={`font-bold ${getProgressColor(kpis?.revenue.value || 0, kpis?.revenue.target || 10000)}`}>
@@ -194,14 +194,14 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
                 </span>
               </div>
               <Progress value={getProgressValue(kpis?.revenue.value || 0, kpis?.revenue.target || 10000)} className="h-2" />
-              <p className="text-xs text-foreground/50 mt-1">Target: ${(kpis?.revenue.target || 0).toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground mt-1">Target: ${(kpis?.revenue.target || 0).toLocaleString()}</p>
             </div>
 
             {/* Jobs Completed */}
             <div className="p-4 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-foreground/70" />
+                  <Users className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium text-foreground">Jobs Completed</span>
                 </div>
                 <span className={`font-bold ${getProgressColor(kpis?.jobsCompleted.value || 0, kpis?.jobsCompleted.target || 50)}`}>
@@ -209,14 +209,14 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
                 </span>
               </div>
               <Progress value={getProgressValue(kpis?.jobsCompleted.value || 0, kpis?.jobsCompleted.target || 50)} className="h-2" />
-              <p className="text-xs text-foreground/50 mt-1">Target: {kpis?.jobsCompleted.target}</p>
+              <p className="text-xs text-muted-foreground mt-1">Target: {kpis?.jobsCompleted.target}</p>
             </div>
 
             {/* Response Time */}
             <div className="p-4 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-foreground/70" />
+                  <Clock className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium text-foreground">Avg Response Time</span>
                 </div>
                 <span className={`font-bold ${getProgressColor(kpis?.responseTime.value || 0, kpis?.responseTime.target || 30, true)}`}>
@@ -224,14 +224,14 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
                 </span>
               </div>
               <Progress value={getProgressValue(kpis?.responseTime.value || 0, kpis?.responseTime.target || 30, true)} className="h-2" />
-              <p className="text-xs text-foreground/50 mt-1">Target: ≤{kpis?.responseTime.target} min</p>
+              <p className="text-xs text-muted-foreground mt-1">Target: ≤{kpis?.responseTime.target} min</p>
             </div>
 
             {/* Customer Satisfaction */}
             <div className="p-4 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-foreground/70" />
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium text-foreground">Customer Satisfaction</span>
                 </div>
                 <span className={`font-bold ${getProgressColor((kpis?.satisfaction.value || 0) * 20, (kpis?.satisfaction.target || 4.5) * 20)}`}>
@@ -239,21 +239,21 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
                 </span>
               </div>
               <Progress value={(kpis?.satisfaction.value || 0) * 20} className="h-2" />
-              <p className="text-xs text-foreground/50 mt-1">Target: {kpis?.satisfaction.target}</p>
+              <p className="text-xs text-muted-foreground mt-1">Target: {kpis?.satisfaction.target}</p>
             </div>
           </div>
         )}
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
-          <Button variant="outline" className="flex-1" onClick={() => toast.info('Custom KPIs coming soon!')}>
+          <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Custom KPIs coming soon!')}>
             Configure KPIs
           </Button>
           <Button variant="outline" onClick={onCancel}>
             Close
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };

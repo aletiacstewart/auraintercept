@@ -113,27 +113,27 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
   });
 
   return (
-    <Card className="border-border bg-card">
-      <CardHeader className="pb-3">
+    <div className="bg-background rounded-lg border border-border shadow-sm">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
+          <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
-            Customer Insights
-          </CardTitle>
-          <Button variant="ghost-card" size="icon" onClick={onCancel}>
+            <h3 className="font-semibold text-foreground">Customer Insights</h3>
+          </div>
+          <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-muted">
             <X className="h-5 w-5" />
           </Button>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4 bg-muted/50 rounded-b-lg">
+      </div>
+      <div className="p-4 space-y-4">
         {/* Filters */}
         <div className="space-y-2">
-          <Label className="flex items-center gap-1 text-foreground/70">
+          <Label className="flex items-center gap-1 text-sm font-medium text-foreground">
             <Calendar className="h-3 w-3" />
             Analysis Period
           </Label>
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
+            <SelectTrigger className="h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -143,6 +143,7 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
               <SelectItem value="365">Last year</SelectItem>
             </SelectContent>
           </Select>
+        </div>
         </div>
 
         {/* Metrics */}
@@ -224,14 +225,14 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
-          <Button variant="outline" className="flex-1" onClick={() => toast.info('Customer list coming soon!')}>
+          <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Customer list coming soon!')}>
             View Customers
           </Button>
           <Button variant="outline" onClick={onCancel}>
             Close
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
