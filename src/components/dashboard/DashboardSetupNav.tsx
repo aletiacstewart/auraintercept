@@ -135,7 +135,7 @@ export function DashboardSetupNav() {
           {
             id: 'ai-agents',
             label: 'AI Agents Hub',
-            href: '/dashboard/ai-agents-hub',
+            href: '/dashboard/ai-agents',
             icon: Bot,
             completed: aiAgentsProgress >= 100,
             progress: aiAgentsProgress,
@@ -151,7 +151,7 @@ export function DashboardSetupNav() {
           {
             id: 'overview',
             label: 'Overview',
-            href: '/dashboard',
+            href: '/dashboard/integrations',
             icon: LayoutDashboard,
             completed: overviewProgress >= 100,
             progress: overviewProgress,
