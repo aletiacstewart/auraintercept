@@ -374,6 +374,7 @@ export default function Integrations() {
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-card-foreground/70" />
                         <span className="text-sm font-medium text-card-foreground">CRM Integration</span>
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 border-card-foreground/30 text-card-foreground/60">Optional</Badge>
                       </div>
                       <span className={cn(
                         "text-sm font-bold",

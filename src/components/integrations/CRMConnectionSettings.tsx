@@ -307,7 +307,10 @@ export function CRMConnectionSettings() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">CRM Integrations</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-foreground">CRM Integrations</h2>
+            <Badge variant="outline" className="text-xs border-muted-foreground/30 text-muted-foreground">Optional</Badge>
+          </div>
           <p className="text-sm text-muted-foreground">Connect your CRM to sync customer data automatically</p>
         </div>
         {connectedCRMs.length > 0 && (
