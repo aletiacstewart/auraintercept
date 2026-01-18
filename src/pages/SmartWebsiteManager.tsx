@@ -37,6 +37,9 @@ import { VisitorLimitModal } from '@/components/smartwebsite/VisitorLimitModal';
 import { SmartWebsiteAnalytics } from '@/components/smartwebsite/SmartWebsiteAnalytics';
 import { AboutSectionEditor } from '@/components/smartwebsite/AboutSectionEditor';
 import { HolidayMessageManager } from '@/components/smartwebsite/HolidayMessageManager';
+import { GalleryManager } from '@/components/smartwebsite/GalleryManager';
+import { LogoEditor } from '@/components/smartwebsite/LogoEditor';
+import { HeroBackgroundUpload } from '@/components/smartwebsite/HeroBackgroundUpload';
 
 // Extended type for website data with new night mode fields
 interface ExtendedWebsiteData {
@@ -70,6 +73,10 @@ interface ExtendedWebsiteData {
   night_end_hour?: number;
   emergency_cta_text?: string | null;
   emergency_cta_url?: string | null;
+  // Gallery and media fields
+  gallery_images?: string[];
+  background_image_url?: string | null;
+  logo_transparency_mode?: 'none' | 'multiply' | 'contrast';
 }
 
 export default function SmartWebsiteManager() {
@@ -288,6 +295,7 @@ export default function SmartWebsiteManager() {
         <Tabs defaultValue="content" className="space-y-6">
           <TabsList>
             <TabsTrigger value="content">Content</TabsTrigger>
+            <TabsTrigger value="media">Media</TabsTrigger>
             <TabsTrigger value="sections">Sections</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="domain">Custom Domain</TabsTrigger>
@@ -517,6 +525,37 @@ export default function SmartWebsiteManager() {
 
             {/* Holiday Messages Manager */}
             <HolidayMessageManager websiteId={website.id} companyId={companyId!} />
+          </TabsContent>
+
+          <TabsContent value="media" className="space-y-6">
+            {/* Hero Background */}
+            <HeroBackgroundUpload
+              backgroundUrl={website.background_image_url ?? null}
+              companyId={companyId!}
+              onUpdate={(url) => updateWebsite.mutate({ background_image_url: url })}
+              isUpdating={updateWebsite.isPending}
+            />
+
+            {/* Gallery Manager */}
+            <GalleryManager
+              galleryImages={website.gallery_images ?? []}
+              companyId={companyId!}
+              onUpdate={(images) => updateWebsite.mutate({ gallery_images: images })}
+              isUpdating={updateWebsite.isPending}
+            />
+
+            {/* Logo Editor */}
+            <LogoEditor
+              logoUrl={company?.slug ? null : null}
+              companyId={companyId!}
+              onUpdate={(url) => {
+                // Update company logo
+                supabase.from('companies').update({ logo_url: url }).eq('id', companyId);
+              }}
+              transparencyMode={website.logo_transparency_mode ?? 'none'}
+              onTransparencyChange={(mode) => updateWebsite.mutate({ logo_transparency_mode: mode })}
+              isUpdating={updateWebsite.isPending}
+            />
           </TabsContent>
 
           <TabsContent value="sections" className="space-y-6">

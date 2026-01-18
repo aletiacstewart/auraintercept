@@ -5103,38 +5103,39 @@ export type Database = {
         }[]
       }
       get_website_public_data: {
-        Args: { p_subdomain: string }
+        Args: { website_subdomain: string }
         Returns: {
           about_header: string
           about_image_url: string
           about_paragraph: string
           about_subheader: string
+          background_image_url: string
           background_style: string
           company_id: string
+          company_logo_url: string
           company_name: string
           cta_text: string
           cta_url: string
-          custom_domain: string
-          emergency_cta_text: string
-          emergency_cta_url: string
-          enable_night_mode: boolean
+          gallery_images: Json
           hero_headline: string
           hero_subheadline: string
           id: string
           is_published: boolean
-          logo_url: string
+          logo_transparency_mode: string
+          night_cta_text: string
+          night_cta_url: string
           night_end_hour: number
           night_header: string
+          night_mode_enabled: boolean
           night_start_hour: number
           night_subheadline: string
           primary_color: string
           show_about_section: boolean
-          show_chat: boolean
+          show_chat_widget: boolean
           show_contact: boolean
           show_hours: boolean
           show_services: boolean
-          show_voice: boolean
-          subdomain: string
+          show_voice_widget: boolean
           subscription_tier: string
           trial_ends_at: string
         }[]

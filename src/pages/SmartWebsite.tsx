@@ -14,8 +14,7 @@ interface WebsiteData {
   id: string;
   company_id: string;
   company_name: string;
-  subdomain: string;
-  logo_url: string | null;
+  company_logo_url: string | null;
   primary_color: string | null;
   hero_headline: string | null;
   hero_subheadline: string | null;
@@ -24,10 +23,9 @@ interface WebsiteData {
   show_services: boolean;
   show_hours: boolean;
   show_contact: boolean;
-  show_chat: boolean;
-  show_voice: boolean;
+  show_chat_widget: boolean;
+  show_voice_widget: boolean;
   background_style: string | null;
-  custom_domain: string | null;
   is_published: boolean;
   subscription_tier: string | null;
   trial_ends_at: string | null;
@@ -38,13 +36,17 @@ interface WebsiteData {
   about_subheader: string | null;
   about_paragraph: string | null;
   // Night mode fields
-  enable_night_mode: boolean | null;
+  night_mode_enabled: boolean | null;
   night_header: string | null;
   night_subheadline: string | null;
   night_start_hour: number | null;
   night_end_hour: number | null;
-  emergency_cta_text: string | null;
-  emergency_cta_url: string | null;
+  night_cta_text: string | null;
+  night_cta_url: string | null;
+  // Gallery and background fields
+  gallery_images: string[] | null;
+  background_image_url: string | null;
+  logo_transparency_mode: 'none' | 'multiply' | 'contrast' | null;
 }
 
 interface Service {
@@ -87,11 +89,17 @@ export default function SmartWebsite() {
     queryKey: ['smart-website', subdomain],
     queryFn: async () => {
       const { data, error } = await supabase
-        .rpc('get_website_public_data', { p_subdomain: subdomain });
+        .rpc('get_website_public_data', { website_subdomain: subdomain });
       
       if (error) throw error;
       if (!data || data.length === 0) return null;
-      return data[0] as WebsiteData;
+      
+      // Map the RPC response to our interface
+      const row = data[0];
+      return {
+        ...row,
+        gallery_images: Array.isArray(row.gallery_images) ? row.gallery_images : [],
+      } as WebsiteData;
     },
     enabled: !!subdomain,
   });
@@ -160,7 +168,7 @@ export default function SmartWebsite() {
 
   // Time-based dynamic header logic
   useEffect(() => {
-    if (!website?.enable_night_mode) {
+    if (!website?.night_mode_enabled) {
       setIsNightMode(false);
       return;
     }
@@ -175,7 +183,7 @@ export default function SmartWebsite() {
       : (currentHour >= nightStart && currentHour < nightEnd);
 
     setIsNightMode(isNight);
-  }, [website?.enable_night_mode, website?.night_start_hour, website?.night_end_hour]);
+  }, [website?.night_mode_enabled, website?.night_start_hour, website?.night_end_hour]);
 
   // Check if currently open
   const isCurrentlyOpen = () => {
@@ -196,8 +204,8 @@ export default function SmartWebsite() {
   // Voice and Chat require paid subscription (Single-Point+) or active trial
   const isInTrial = website?.trial_ends_at && new Date(website.trial_ends_at) > new Date();
   const isPaidTier = ['single_point', 'multi_track', 'command'].includes(website?.subscription_tier || '');
-  const canShowVoice = website?.show_voice && (isInTrial || isPaidTier);
-  const canShowChat = website?.show_chat && (isInTrial || isPaidTier);
+  const canShowVoice = website?.show_voice_widget && (isInTrial || isPaidTier);
+  const canShowChat = website?.show_chat_widget && (isInTrial || isPaidTier);
 
   if (isLoading) {
     return (
@@ -247,10 +255,10 @@ export default function SmartWebsite() {
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {website.logo_url ? (
+            {website.company_logo_url ? (
               <div className="h-16 w-auto flex items-center">
                 <img 
-                  src={website.logo_url} 
+                  src={website.company_logo_url} 
                   alt={website.company_name} 
                   className="max-h-full w-auto object-contain"
                   style={{ maxWidth: '200px' }}
@@ -268,18 +276,18 @@ export default function SmartWebsite() {
           </div>
           <div className="flex items-center gap-2">
             {/* Emergency CTA (shown during night mode) */}
-            {isNightMode && website.emergency_cta_text && (
+            {isNightMode && website.night_cta_text && (
               <Button
                 variant="destructive"
                 size="sm"
                 onClick={() => {
-                  if (website.emergency_cta_url) {
-                    window.location.href = website.emergency_cta_url;
+                  if (website.night_cta_url) {
+                    window.location.href = website.night_cta_url;
                   }
                 }}
               >
                 <AlertCircle className="w-4 h-4 mr-2" />
-                {website.emergency_cta_text}
+                {website.night_cta_text}
               </Button>
             )}
             <Button 
@@ -341,19 +349,19 @@ export default function SmartWebsite() {
               {displayCtaText}
             </Button>
             {/* Emergency CTA in hero (shown during night mode, not on holidays) */}
-            {isNightMode && !activeHoliday && website.emergency_cta_text && (
+            {isNightMode && !activeHoliday && website.night_cta_text && (
               <Button
                 variant="destructive"
                 size="lg"
                 className="text-lg px-8"
                 onClick={() => {
-                  if (website.emergency_cta_url) {
-                    window.location.href = website.emergency_cta_url;
+                  if (website.night_cta_url) {
+                    window.location.href = website.night_cta_url;
                   }
                 }}
               >
                 <AlertCircle className="w-4 h-4 mr-2" />
-                {website.emergency_cta_text}
+                {website.night_cta_text}
               </Button>
             )}
           </div>
@@ -534,7 +542,7 @@ export default function SmartWebsite() {
         <FloatingChatWidget
           websiteId={website.id}
           companyId={website.company_id}
-          companySlug={website.subdomain}
+          companySlug={subdomain || ''}
           companyName={website.company_name}
           visitorFingerprint={visitorFingerprint}
           primaryColor={primaryColor}
