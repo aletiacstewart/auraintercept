@@ -43,7 +43,7 @@ const guideCategories = [
     id: 'getting-started',
     title: 'Getting Started',
     icon: BookOpen,
-    color: 'from-blue-500 to-cyan-500',
+    featureColor: 'feature-overview',
     guides: [
       {
         title: 'Platform Overview',
@@ -115,7 +115,7 @@ const guideCategories = [
     id: 'ai-agents',
     title: 'AI Agents',
     icon: Bot,
-    color: 'from-purple-500 to-pink-500',
+    featureColor: 'feature-config',
     guides: [
       {
         title: 'AI Agents Hub Overview',
@@ -253,7 +253,7 @@ const guideCategories = [
     id: 'integrations',
     title: 'Integrations',
     icon: Puzzle,
-    color: 'from-green-500 to-emerald-500',
+    featureColor: 'feature-integrations',
     guides: [
       {
         title: 'Voice Integration (Twilio)',
@@ -372,7 +372,7 @@ const guideCategories = [
     id: 'operations',
     title: 'Operations',
     icon: Truck,
-    color: 'from-orange-500 to-amber-500',
+    featureColor: 'feature-fieldops',
     guides: [
       {
         title: 'Managing Appointments',
@@ -464,7 +464,7 @@ const guideCategories = [
     id: 'business',
     title: 'Business & Finance',
     icon: Briefcase,
-    color: 'from-indigo-500 to-violet-500',
+    featureColor: 'feature-platform',
     guides: [
       {
         title: 'Business & Accounting Console',
@@ -584,7 +584,7 @@ const guideCategories = [
     id: 'marketing',
     title: 'Marketing & Campaigns',
     icon: Megaphone,
-    color: 'from-pink-500 to-rose-500',
+    featureColor: 'feature-marketing',
     guides: [
       {
         title: 'Creating Campaigns',
@@ -676,7 +676,7 @@ const guideCategories = [
     id: 'analytics',
     title: 'Analytics & Reports',
     icon: BarChart3,
-    color: 'from-cyan-500 to-blue-500',
+    featureColor: 'feature-analytics',
     guides: [
       {
         title: 'Dashboard Analytics',
@@ -768,7 +768,7 @@ const guideCategories = [
     id: 'knowledge-base',
     title: 'Knowledge Base',
     icon: FileText,
-    color: 'from-teal-500 to-green-500',
+    featureColor: 'feature-config',
     guides: [
       {
         title: 'Services Catalog Setup',
@@ -1013,7 +1013,7 @@ const PlatformGuides: React.FC = () => {
                             : 'hover:bg-muted'
                         }`}
                       >
-                        <div className={`p-2 rounded-lg shrink-0 ${isSelected ? 'bg-primary-foreground/20' : `bg-gradient-to-br ${category.color}`}`}>
+                        <div className={`p-2 rounded-lg shrink-0 ${isSelected ? 'bg-primary-foreground/20' : `bg-${category.featureColor}`}`}>
                           <Icon className={`h-4 w-4 ${isSelected ? 'text-primary-foreground' : 'text-white'}`} />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -1037,7 +1037,7 @@ const PlatformGuides: React.FC = () => {
             <CardHeader>
               <div className="flex items-center gap-3">
                 {currentCategory && (
-                  <div className={`p-3 rounded-xl bg-gradient-to-br ${currentCategory.color}`}>
+                  <div className={`p-3 rounded-xl bg-${currentCategory.featureColor}`}>
                     <currentCategory.icon className="h-6 w-6 text-white" />
                   </div>
                 )}

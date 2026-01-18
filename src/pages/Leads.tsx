@@ -185,6 +185,7 @@ export default function Leads() {
             icon={Users}
             value={stats.total}
             label="Total Leads"
+            iconColor="text-feature-leads"
           />
           <MetricCard
             icon={Clock}
