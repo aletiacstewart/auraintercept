@@ -18,6 +18,7 @@ export default function RevenueAnalysisPage() {
             icon={DollarSign}
             title="Revenue Analysis"
             description="Analyze revenue, invoices, and paid performance"
+            featureColor="invoices"
           />
 
           {companyId ? (

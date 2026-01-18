@@ -269,6 +269,7 @@ export default function AIAgentsHub() {
           description={canManageAgents 
             ? '18 specialized AI agents powering your business automation'
             : `${totalCount} AI agents available based on your job roles`}
+          featureColor="employees"
           action={
             <div className="flex items-center gap-4">
               <div className="text-right">

@@ -18,6 +18,7 @@ export default function CustomerInsightsPage() {
             icon={UsersRound}
             title="Customer Insights"
             description="Understand behavior, segments, and retention"
+            featureColor="customers"
           />
 
           {companyId ? (

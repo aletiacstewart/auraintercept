@@ -34,6 +34,7 @@ export default function Settings() {
             icon={SettingsIcon}
             title="Aura Quick-Start"
             description="Configure your company settings and preferences"
+            featureColor="employees"
           />
           
           <SetupProgressBar isPlatformAdmin={isPlatformAdmin} />

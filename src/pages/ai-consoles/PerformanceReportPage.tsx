@@ -18,6 +18,7 @@ export default function PerformanceReportPage() {
             icon={BarChart3}
             title="Performance Report"
             description="Review team output, goals, and trends"
+            featureColor="analytics"
           />
 
           {companyId ? (

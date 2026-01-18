@@ -18,6 +18,7 @@ export default function DemandForecastPage() {
             icon={LineChart}
             title="Revenue Forecast"
             description="Forecast revenue and staffing needs"
+            featureColor="invoices"
           />
 
           {companyId ? (
