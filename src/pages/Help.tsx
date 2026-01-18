@@ -23,12 +23,19 @@ import {
   HeadphonesIcon,
   Truck,
   Briefcase,
-  Megaphone
+  Megaphone,
+  Mic,
+  ArrowLeft,
+  Trash2,
+  Check,
+  LogOut,
+  Keyboard,
+  AlertCircle
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 
 type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing';
-type MainTabType = 'ai-agents' | 'company-employee' | 'faq';
+type MainTabType = 'ai-agents' | 'voice' | 'company-employee' | 'faq';
 
 const consoleInfo: Record<ConsoleType, { title: string; icon: React.ElementType; description: string; agents: string[]; features: string[]; useCases: string[]; platformAdminFeatures?: string[]; platformAdminUseCases?: string[] }> = {
   customer: {
@@ -206,10 +213,14 @@ export default function Help() {
 
         {/* Main Tabs */}
         <Tabs value={mainTab} onValueChange={(v) => handleMainTabChange(v as MainTabType)}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="ai-agents">
               <Bot className="h-4 w-4 mr-2" />
               AI Agents
+            </TabsTrigger>
+            <TabsTrigger value="voice">
+              <Mic className="h-4 w-4 mr-2" />
+              Aura Voice
             </TabsTrigger>
             <TabsTrigger value="company-employee">
               <Building2 className="h-4 w-4 mr-2" />
@@ -305,6 +316,156 @@ export default function Help() {
                       </div>
                     ))}
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Aura Voice Tab */}
+          <TabsContent value="voice" className="space-y-6 mt-6">
+            {/* Overview Card */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-aura-emerald/20 flex items-center justify-center">
+                    <Mic className="w-5 h-5 text-aura-emerald" />
+                  </div>
+                  <div>
+                    <CardTitle>Aura Voice - Hands-Free Mode</CardTitle>
+                    <CardDescription className="text-card-foreground/70">Control the platform with your voice using the Web Speech API</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Activation */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    How to Activate
+                  </h3>
+                  <div className="ml-7 space-y-3">
+                    <div className="flex items-start gap-3">
+                      <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">1</Badge>
+                      <div>
+                        <p className="font-medium text-card-foreground">Toggle in Sidebar</p>
+                        <p className="text-sm text-card-foreground/70">Look for the <strong className="text-aura-emerald">Aura Voice</strong> panel at the top of the sidebar and flip the switch.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">2</Badge>
+                      <div>
+                        <p className="font-medium text-card-foreground">Keyboard Shortcut</p>
+                        <p className="text-sm text-card-foreground/70">Press <kbd className="px-1.5 py-0.5 rounded bg-muted font-mono text-xs">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-muted font-mono text-xs">Shift</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-muted font-mono text-xs">V</kbd> from anywhere.</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-card-foreground/70 mt-2">When enabled, a <strong className="text-aura-emerald">green pulsing indicator</strong> appears and a live transcription overlay shows at the bottom of the screen.</p>
+                  </div>
+                </div>
+
+                {/* Navigation Commands */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <Mic className="w-5 h-5 text-aura-emerald" />
+                    Navigation Commands
+                  </h3>
+                  <div className="ml-7 grid gap-2">
+                    {[
+                      { say: '"Next" or "Tab"', action: 'Move to next input field', icon: ArrowRight, color: 'text-blue-500' },
+                      { say: '"Back" or "Previous"', action: 'Move to previous field', icon: ArrowLeft, color: 'text-purple-500' },
+                      { say: '"Clear" or "Erase"', action: 'Clear current field', icon: Trash2, color: 'text-orange-500' },
+                      { say: '"Save Job" or "Submit"', action: 'Submit the current form', icon: Check, color: 'text-green-500' },
+                      { say: '"Clock Out" or "Logout"', action: 'End your session', icon: LogOut, color: 'text-red-500' },
+                    ].map((cmd) => {
+                      const Icon = cmd.icon;
+                      return (
+                        <div key={cmd.say} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
+                          <Icon className={`w-4 h-4 ${cmd.color}`} />
+                          <span className="font-mono text-sm">{cmd.say}</span>
+                          <ArrowRight className="w-3 h-3 text-muted-foreground" />
+                          <span className="text-sm text-card-foreground/70">{cmd.action}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Dictation Mode */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <MessageCircle className="w-5 h-5 text-blue-500" />
+                    Dictation Mode
+                  </h3>
+                  <div className="ml-7 space-y-2 text-sm text-card-foreground/80">
+                    <p>Click into any text field to start dictating:</p>
+                    <ul className="space-y-2 mt-2">
+                      <li className="flex items-start gap-2">
+                        <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
+                        <span>Field glows with a <strong className="text-aura-emerald">green pulse</strong> to show it's listening</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
+                        <span>Speak naturally - text appears in real-time</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <ArrowRight className="w-4 h-4 mt-0.5 text-card-foreground/50 flex-shrink-0" />
+                        <span>Mix dictation with commands: <code className="bg-muted px-1.5 py-0.5 rounded text-xs">"123 Main Street next"</code></span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Pro Tips */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <Keyboard className="w-5 h-5 text-amber-500" />
+                    Pro Tips
+                  </h3>
+                  <ul className="ml-7 space-y-2 text-sm text-card-foreground/80">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 mt-0.5 text-aura-emerald flex-shrink-0" />
+                      <span>Pause briefly after commands for better recognition</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 mt-0.5 text-aura-emerald flex-shrink-0" />
+                      <span>Speak clearly at a natural pace - no need to slow down</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 mt-0.5 text-aura-emerald flex-shrink-0" />
+                      <span>Works in all forms across the platform</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 mt-0.5 text-aura-emerald flex-shrink-0" />
+                      <span>Perfect for field technicians on the go</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Troubleshooting */}
+                <div>
+                  <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <AlertCircle className="w-5 h-5 text-destructive" />
+                    Troubleshooting
+                  </h3>
+                  <Accordion type="single" collapsible className="ml-7">
+                    <AccordionItem value="mic-permissions">
+                      <AccordionTrigger>Microphone not working?</AccordionTrigger>
+                      <AccordionContent>
+                        <p className="text-card-foreground/70">Check that your browser has microphone permissions. Click the lock icon in your browser's address bar and ensure microphone access is allowed for this site.</p>
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="browser-support">
+                      <AccordionTrigger>Voice toggle not appearing?</AccordionTrigger>
+                      <AccordionContent>
+                        <p className="text-card-foreground/70">Aura Voice requires the Web Speech API. Please use <strong className="text-card-foreground">Chrome</strong>, <strong className="text-card-foreground">Edge</strong>, or <strong className="text-card-foreground">Safari</strong>. Firefox is not supported.</p>
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="commands-not-recognized">
+                      <AccordionTrigger>Commands not recognized?</AccordionTrigger>
+                      <AccordionContent>
+                        <p className="text-card-foreground/70">Speak slightly slower and use the exact command phrases listed above. Ensure you're in a quiet environment with minimal background noise.</p>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
                 </div>
               </CardContent>
             </Card>
