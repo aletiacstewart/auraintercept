@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 const WARRANTY_PERIOD_OPTIONS = [
+  { value: '0', label: 'No warranty' },
   { value: '3', label: '3 months' },
   { value: '6', label: '6 months' },
   { value: '12', label: '1 year' },
