@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { Switch } from '@/components/ui/switch';
 
 type MissedCallAction = 'disabled' | 'sms_only' | 'callback_only' | 'callback_then_sms';
 
@@ -156,17 +157,42 @@ export function MissedCallSettings() {
     );
   }
 
+  const isEnabled = company?.missed_call_action && company.missed_call_action !== 'disabled';
+
+  const handleToggleEnabled = () => {
+    if (isEnabled) {
+      updateMutation.mutate({ missed_call_action: 'disabled' });
+    } else {
+      // Enable with sms_only as default
+      updateMutation.mutate({ missed_call_action: 'sms_only' });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card className="border-border/50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <PhoneMissed className="h-5 w-5" />
-            Missed Call Handling
-          </CardTitle>
-          <CardDescription>
-            Configure how to respond when customer calls are missed
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <PhoneMissed className="h-5 w-5" />
+                Missed Call Handling
+              </CardTitle>
+              <CardDescription>
+                Configure how to respond when customer calls are missed
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-3">
+              <Switch
+                checked={isEnabled}
+                onCheckedChange={handleToggleEnabled}
+                disabled={!hasTwilio}
+              />
+              <span className="text-sm font-medium">
+                {isEnabled ? 'Enabled' : 'Disabled'}
+              </span>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
           {!hasTwilio && (
@@ -182,93 +208,89 @@ export function MissedCallSettings() {
             </Alert>
           )}
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>When a call is missed</Label>
-              <Select
-                value={company?.missed_call_action || 'sms_only'}
-                onValueChange={handleActionChange}
-                disabled={!hasTwilio}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select action" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="disabled">
-                    <div className="flex items-center gap-2">
-                      <XCircle className="h-4 w-4" />
-                      Disabled - Do nothing
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="sms_only">
-                    <div className="flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4" />
-                      SMS Only - Send text message
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="callback_only" disabled={!hasVoice}>
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
-                      AI Callback Only {!hasVoice && '(Requires ElevenLabs)'}
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="callback_then_sms" disabled={!hasVoice}>
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
-                      AI Callback, then SMS fallback {!hasVoice && '(Requires ElevenLabs)'}
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {(company?.missed_call_action === 'callback_only' || company?.missed_call_action === 'callback_then_sms') && (
+          {isEnabled && (
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Callback delay (seconds)</Label>
-                <div className="flex items-center gap-4">
-                  <Input
-                    type="number"
-                    min={10}
-                    max={300}
-                    value={company?.callback_delay_seconds || 30}
-                    onChange={(e) => handleDelayChange(e.target.value)}
-                    className="w-32"
-                  />
-                  <span className="text-sm text-muted-foreground">
-                    Wait time before initiating AI callback (10-300 seconds)
-                  </span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  This delay allows time for the customer to call back first
-                </p>
+                <Label>When a call is missed</Label>
+                <Select
+                  value={company?.missed_call_action || 'sms_only'}
+                  onValueChange={handleActionChange}
+                  disabled={!hasTwilio}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select action" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sms_only">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4" />
+                        SMS Only - Send text message
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="callback_only" disabled={!hasVoice}>
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        AI Callback Only {!hasVoice && '(Requires ElevenLabs)'}
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="callback_then_sms" disabled={!hasVoice}>
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        AI Callback, then SMS fallback {!hasVoice && '(Requires ElevenLabs)'}
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            )}
 
-            <div className="bg-white/5 rounded-lg p-4 space-y-3 border border-white/10">
-              <h4 className="font-medium flex items-center gap-2 text-card-foreground">
-                <MessageSquare className="h-4 w-4" />
-                How it works
-              </h4>
-              <ul className="text-sm text-card-foreground/70 space-y-2">
-                <li className="flex items-start gap-2">
-                  <span className="font-semibold text-card-foreground">1.</span>
-                  Customer calls your business phone number
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-semibold text-card-foreground">2.</span>
-                  If the call is missed (no answer, busy, or failed), Twilio triggers the missed call handler
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-semibold text-card-foreground">3.</span>
-                  Based on your settings, the system either sends an SMS, initiates an AI callback, or both
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-semibold text-card-foreground">4.</span>
-                  AI callbacks use your ElevenLabs voice to greet the customer and help them book an appointment
-                </li>
-              </ul>
+              {(company?.missed_call_action === 'callback_only' || company?.missed_call_action === 'callback_then_sms') && (
+                <div className="space-y-2">
+                  <Label>Callback delay (seconds)</Label>
+                  <div className="flex items-center gap-4">
+                    <Input
+                      type="number"
+                      min={10}
+                      max={300}
+                      value={company?.callback_delay_seconds || 30}
+                      onChange={(e) => handleDelayChange(e.target.value)}
+                      className="w-32"
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      Wait time before initiating AI callback (10-300 seconds)
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    This delay allows time for the customer to call back first
+                  </p>
+                </div>
+              )}
+
+              <div className="bg-white/5 rounded-lg p-4 space-y-3 border border-white/10">
+                <h4 className="font-medium flex items-center gap-2 text-card-foreground">
+                  <MessageSquare className="h-4 w-4" />
+                  How it works
+                </h4>
+                <ul className="text-sm text-card-foreground/70 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="font-semibold text-card-foreground">1.</span>
+                    Customer calls your business phone number
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="font-semibold text-card-foreground">2.</span>
+                    If the call is missed (no answer, busy, or failed), Twilio triggers the missed call handler
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="font-semibold text-card-foreground">3.</span>
+                    Based on your settings, the system either sends an SMS, initiates an AI callback, or both
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="font-semibold text-card-foreground">4.</span>
+                    AI callbacks use your ElevenLabs voice to greet the customer and help them book an appointment
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
