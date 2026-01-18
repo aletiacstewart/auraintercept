@@ -74,14 +74,14 @@ interface TranscriptMessage {
 }
 
 const statusConfig: Record<string, { label: string; icon: React.ElementType; color: string }> = {
-  'initiated': { label: 'Initiated', icon: Clock, color: 'text-blue-500 bg-blue-500/10' },
-  'ringing': { label: 'Ringing', icon: Phone, color: 'text-yellow-500 bg-yellow-500/10' },
-  'in-progress': { label: 'In Progress', icon: Phone, color: 'text-green-500 bg-green-500/10' },
-  'answered': { label: 'Answered', icon: CheckCircle2, color: 'text-green-500 bg-green-500/10' },
-  'completed': { label: 'Completed', icon: CheckCircle2, color: 'text-green-500 bg-green-500/10' },
-  'busy': { label: 'Busy', icon: AlertCircle, color: 'text-orange-500 bg-orange-500/10' },
-  'no-answer': { label: 'No Answer', icon: XCircle, color: 'text-red-500 bg-red-500/10' },
-  'failed': { label: 'Failed', icon: XCircle, color: 'text-red-500 bg-red-500/10' },
+  'initiated': { label: 'Initiated', icon: Clock, color: 'text-secondary bg-secondary/10' },
+  'ringing': { label: 'Ringing', icon: Phone, color: 'text-warning bg-warning/10' },
+  'in-progress': { label: 'In Progress', icon: Phone, color: 'text-secondary bg-secondary/10' },
+  'answered': { label: 'Answered', icon: CheckCircle2, color: 'text-secondary bg-secondary/10' },
+  'completed': { label: 'Completed', icon: CheckCircle2, color: 'text-secondary bg-secondary/10' },
+  'busy': { label: 'Busy', icon: AlertCircle, color: 'text-warning bg-warning/10' },
+  'no-answer': { label: 'No Answer', icon: XCircle, color: 'text-destructive bg-destructive/10' },
+  'failed': { label: 'Failed', icon: XCircle, color: 'text-destructive bg-destructive/10' },
   'canceled': { label: 'Canceled', icon: XCircle, color: 'text-muted-foreground bg-muted' },
 };
 

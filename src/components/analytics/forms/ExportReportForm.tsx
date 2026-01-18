@@ -175,7 +175,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
             <Download className="h-5 w-5 text-primary" />
             Export Report
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground hover:text-secondary hover:bg-secondary/10">
+          <Button variant="ghost-card" size="icon" onClick={onCancel}>
             <X className="h-5 w-5" />
           </Button>
         </div>

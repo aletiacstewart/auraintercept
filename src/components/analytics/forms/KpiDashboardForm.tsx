@@ -134,7 +134,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
             <Target className="h-5 w-5 text-primary" />
             KPI Dashboard
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground hover:text-secondary hover:bg-secondary/10">
+          <Button variant="ghost-card" size="icon" onClick={onCancel}>
             <X className="h-5 w-5" />
           </Button>
         </div>

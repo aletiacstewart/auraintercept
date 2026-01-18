@@ -141,7 +141,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
   const renderTrends = () => (
     <div className="space-y-4">
       <h4 className="font-medium flex items-center gap-2 text-foreground">
-        <TrendingUp className="h-4 w-4 text-blue-500" />
+        <TrendingUp className="h-4 w-4 text-secondary" />
         Key Trends
       </h4>
       <div className="space-y-3">
@@ -172,31 +172,31 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
   const renderAnomalies = () => (
     <div className="space-y-4">
       <h4 className="font-medium flex items-center gap-2 text-foreground">
-        <AlertTriangle className="h-4 w-4 text-amber-500" />
+        <AlertTriangle className="h-4 w-4 text-warning" />
         Anomalies & Alerts
       </h4>
       <div className="space-y-3">
         {(metrics?.cancelledAppointments || 0) > (metrics?.totalAppointments || 1) * 0.1 ? (
-          <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
-            <p className="font-medium text-amber-400">Elevated Cancellation Rate</p>
-            <p className="text-sm text-amber-300 mt-1">
+          <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
+            <p className="font-medium text-warning">Elevated Cancellation Rate</p>
+            <p className="text-sm text-warning/80 mt-1">
               {metrics?.cancelledAppointments} cancellations ({((metrics?.cancelledAppointments || 0) / (metrics?.totalAppointments || 1) * 100).toFixed(0)}%).
               Consider reviewing booking confirmation process.
             </p>
           </div>
         ) : null}
         {(metrics?.negativeCount || 0) > 2 ? (
-          <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
-            <p className="font-medium text-red-400">Negative Feedback Spike</p>
-            <p className="text-sm text-red-300 mt-1">
+          <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
+            <p className="font-medium text-destructive">Negative Feedback Spike</p>
+            <p className="text-sm text-destructive/80 mt-1">
               {metrics?.negativeCount} negative reviews received. Review recent service quality.
             </p>
           </div>
         ) : null}
         {!(metrics?.cancelledAppointments || 0) && !(metrics?.negativeCount || 0) ? (
-          <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
-            <p className="font-medium text-green-400">No Anomalies Detected</p>
-            <p className="text-sm text-green-300 mt-1">
+          <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20">
+            <p className="font-medium text-secondary">No Anomalies Detected</p>
+            <p className="text-sm text-secondary/80 mt-1">
               All metrics are within normal ranges. Great work!
             </p>
           </div>
@@ -208,7 +208,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
   const renderRecommendations = () => (
     <div className="space-y-4">
       <h4 className="font-medium flex items-center gap-2 text-foreground">
-        <Lightbulb className="h-4 w-4 text-yellow-500" />
+        <Lightbulb className="h-4 w-4 text-warning" />
         Recommendations
       </h4>
       <div className="space-y-3">
@@ -216,19 +216,19 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
           <div 
             key={idx} 
             className={`p-4 rounded-lg border ${
-              insight.type === 'positive' ? 'bg-green-500/10 border-green-500/20' :
-              insight.type === 'warning' ? 'bg-amber-500/10 border-amber-500/20' :
-              'bg-blue-500/10 border-blue-500/20'
+              insight.type === 'positive' ? 'bg-secondary/10 border-secondary/20' :
+              insight.type === 'warning' ? 'bg-warning/10 border-warning/20' :
+              'bg-secondary/10 border-secondary/20'
             }`}
           >
             <div className="flex items-start gap-2">
-              {insight.type === 'positive' ? <CheckCircle className="h-4 w-4 text-green-400 mt-0.5" /> :
-               insight.type === 'warning' ? <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5" /> :
-               <Lightbulb className="h-4 w-4 text-blue-400 mt-0.5" />}
+              {insight.type === 'positive' ? <CheckCircle className="h-4 w-4 text-secondary mt-0.5" /> :
+               insight.type === 'warning' ? <AlertTriangle className="h-4 w-4 text-warning mt-0.5" /> :
+               <Lightbulb className="h-4 w-4 text-secondary mt-0.5" />}
               <p className={`text-sm ${
-                insight.type === 'positive' ? 'text-green-300' :
-                insight.type === 'warning' ? 'text-amber-300' :
-                'text-blue-300'
+                insight.type === 'positive' ? 'text-secondary' :
+                insight.type === 'warning' ? 'text-warning' :
+                'text-secondary'
               }`}>
                 {insight.message}
               </p>
@@ -250,7 +250,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
             <Lightbulb className="h-5 w-5 text-primary" />
             Business Insights
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground hover:text-secondary hover:bg-secondary/10">
+          <Button variant="ghost-card" size="icon" onClick={onCancel}>
             <X className="h-5 w-5" />
           </Button>
         </div>
