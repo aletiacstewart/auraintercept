@@ -34,7 +34,9 @@ import {
   Clock,
   Phone,
   Type,
-  Info
+  Info,
+  X,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -489,20 +491,112 @@ export default function SmartWebsiteManager() {
               </Card>
             </Collapsible>
 
-            {/* About Section - Moved from Sections tab */}
-            <AboutSectionEditor
-              website={{
-                id: website.id,
-                show_about_section: website.show_about_section ?? false,
-                about_image_url: website.about_image_url ?? null,
-                about_header: website.about_header ?? null,
-                about_subheader: website.about_subheader ?? null,
-                about_paragraph: website.about_paragraph ?? null,
-              }}
-              companyId={companyId!}
-              onUpdate={(updates) => updateWebsite.mutate(updates)}
-              isUpdating={updateWebsite.isPending}
-            />
+            {/* About Section - Wrapped in Collapsible like others */}
+            <Collapsible>
+              <Card>
+                <CollapsibleTrigger className="w-full">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Info className="h-5 w-5 text-primary" />
+                      <div className="text-left">
+                        <CardTitle className="text-lg">About Section</CardTitle>
+                        <CardDescription>Add a two-column section with image and text</CardDescription>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Switch
+                        checked={website.show_about_section ?? false}
+                        onCheckedChange={(checked) => {
+                          updateWebsite.mutate({ show_about_section: checked });
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <ChevronDown className="h-5 w-5 text-card-foreground/70" />
+                    </div>
+                  </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <CardContent className="pt-0 space-y-6">
+                    {/* Image Upload */}
+                    <div className="space-y-2">
+                      <Label className="text-card-foreground">Section Image</Label>
+                      <p className="text-xs text-card-foreground/70 mb-2">
+                        Recommended: 600×400px (3:2 aspect ratio) • Max 2MB • JPG, PNG, or WEBP
+                      </p>
+
+                      {website.about_image_url ? (
+                        <div className="relative w-full max-w-sm">
+                          <img
+                            src={website.about_image_url}
+                            alt="About section"
+                            className="w-full aspect-[3/2] object-cover rounded-lg border"
+                          />
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-2 right-2"
+                            onClick={async () => {
+                              try {
+                                const filePath = website.about_image_url!.split('/').slice(-2).join('/');
+                                await supabase.storage.from('smart-website-images').remove([filePath]);
+                                updateWebsite.mutate({ about_image_url: null });
+                                toast.success('Image removed');
+                              } catch (error: any) {
+                                toast.error(error.message || 'Failed to remove image');
+                              }
+                            }}
+                            disabled={updateWebsite.isPending}
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="w-full max-w-sm aspect-[3/2] border-2 border-dashed border-card-foreground/25 rounded-lg flex flex-col items-center justify-center gap-2 bg-muted/30">
+                          <ImageIcon className="w-10 h-10 text-card-foreground/50" />
+                          <span className="text-sm text-card-foreground/70">No image uploaded</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Text Fields */}
+                    <div className="space-y-2">
+                      <Label className="text-card-foreground">Header</Label>
+                      <Input
+                        defaultValue={website.about_header || ''}
+                        onBlur={(e) => updateWebsite.mutate({ about_header: e.target.value })}
+                        placeholder="About Our Company"
+                        disabled={updateWebsite.isPending}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-card-foreground">Sub-header</Label>
+                      <Input
+                        defaultValue={website.about_subheader || ''}
+                        onBlur={(e) => updateWebsite.mutate({ about_subheader: e.target.value })}
+                        placeholder="Quality service since 2010"
+                        disabled={updateWebsite.isPending}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-card-foreground">Paragraph</Label>
+                      <Textarea
+                        defaultValue={website.about_paragraph || ''}
+                        onBlur={(e) => updateWebsite.mutate({ about_paragraph: e.target.value })}
+                        placeholder="Tell visitors about your company, your mission, and what makes you stand out..."
+                        rows={5}
+                        maxLength={750}
+                        disabled={updateWebsite.isPending}
+                      />
+                      <p className="text-xs text-card-foreground/70 text-right">
+                        {website.about_paragraph?.length || 0} / 750 characters
+                      </p>
+                    </div>
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
 
             {/* Services Editor */}
             <Collapsible>

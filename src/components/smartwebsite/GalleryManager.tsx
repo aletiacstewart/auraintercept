@@ -292,8 +292,7 @@ export function GalleryManager({
           <Button
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading || isUpdating}
-            variant="outline"
-            className="border-card-foreground/30 text-card-foreground hover:bg-card-foreground/10"
+            variant="default"
           >
             {isUploading ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
