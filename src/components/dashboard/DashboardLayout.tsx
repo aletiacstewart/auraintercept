@@ -154,12 +154,12 @@ const navGroups: NavGroup[] = [
   {
     label: '3rd Party Integrations',
     items: [
-      { label: 'Overview', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Voice Agent', icon: Mic, href: '/dashboard/integrations/voice', roles: ['platform_admin', 'company_admin'] },
-      { label: 'SMS & Text', icon: MessageSquare, href: '/dashboard/integrations/sms', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Email', icon: Mail, href: '/dashboard/integrations/email', roles: ['platform_admin', 'company_admin'] },
-      { label: 'CRM', icon: Users, href: '/dashboard/integrations/crm', roles: ['platform_admin'] },
-      { label: 'Calendar', icon: Calendar, href: '/dashboard/integrations/calendar', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Overview', icon: Puzzle, href: '/dashboard/integrations', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'Voice Agent', icon: Mic, href: '/dashboard/integrations/voice', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'SMS & Text', icon: MessageSquare, href: '/dashboard/integrations/sms', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'Email', icon: Mail, href: '/dashboard/integrations/email', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'CRM', icon: Users, href: '/dashboard/integrations/crm', roles: ['platform_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'Calendar', icon: Calendar, href: '/dashboard/integrations/calendar', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
     ],
   },
   {
@@ -431,7 +431,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   collapsed && 'justify-center px-2'
                 )}
               >
-                <Bug className="w-5 h-5 flex-shrink-0" />
+                <Bug className="w-5 h-5 flex-shrink-0 text-feature-integrations" />
                 {!collapsed && <span>Report Issue</span>}
               </Button>
             }

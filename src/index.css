@@ -78,6 +78,7 @@
     --feature-platform: 205 70% 55%;
     --feature-config: 221 91% 52%;
     --feature-overview: 193 89% 64%;
+    --feature-integrations: 282 44% 53%;
 
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 hsl(208 30% 24% / 0.05);
@@ -153,6 +154,7 @@
     --feature-platform: 205 70% 60%;
     --feature-config: 221 91% 57%;
     --feature-overview: 193 89% 69%;
+    --feature-integrations: 282 44% 58%;
   }
 }
 

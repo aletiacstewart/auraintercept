@@ -146,6 +146,7 @@ export default function EmailIntegration() {
             icon={Mail}
             title="Email Integration"
             description="Configure email notifications and reminders"
+            featureColor="integrations"
             action={
               <Button variant="ghost" size="icon" asChild>
                 <Link to="/dashboard/integrations">

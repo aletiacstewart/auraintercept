@@ -262,6 +262,7 @@ export default function Integrations() {
             icon={Puzzle}
             title="Integrations Overview"
             description="Connect services to power your AI agents"
+            featureColor="integrations"
           />
           <div className="flex flex-col gap-2">
             <Button onClick={() => setShowQuickStart(true)} className="gap-2">

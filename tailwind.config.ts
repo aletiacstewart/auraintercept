@@ -105,6 +105,7 @@ export default {
           platform: "hsl(var(--feature-platform))",
           config: "hsl(var(--feature-config))",
           overview: "hsl(var(--feature-overview))",
+          integrations: "hsl(var(--feature-integrations))",
         },
       },
       borderRadius: {

@@ -16,6 +16,7 @@ export default function CRMIntegration() {
             icon={Network}
             title="CRM Integration"
             description="Connect your CRM to sync customer data"
+            featureColor="integrations"
             action={
               <Button variant="ghost" size="icon" asChild>
                 <Link to="/dashboard/integrations">
