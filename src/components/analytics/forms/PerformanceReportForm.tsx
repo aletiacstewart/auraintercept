@@ -244,7 +244,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
   const renderTopPerformers = () => (
     <div className="space-y-3">
       <h4 className="font-medium flex items-center gap-2 text-foreground">
-        <Award className="h-4 w-4 text-yellow-500" />
+        <Award className="h-4 w-4 text-warning" />
         Top Performers
       </h4>
       {currentMetrics?.topPerformers?.length ? (
@@ -253,9 +253,9 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
             <div key={performer.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border">
               <div className="flex items-center gap-3">
                 <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  index === 0 ? 'bg-yellow-500/20 text-yellow-600' :
-                  index === 1 ? 'bg-gray-500/20 text-gray-600' :
-                  index === 2 ? 'bg-orange-500/20 text-orange-600' :
+                  index === 0 ? 'bg-warning/20 text-warning' :
+                  index === 1 ? 'bg-muted text-muted-foreground' :
+                  index === 2 ? 'bg-warning/30 text-warning/80' :
                   'bg-muted text-foreground/70'
                 }`}>
                   {index + 1}
@@ -281,7 +281,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
   const renderGoalProgress = () => (
     <div className="space-y-4">
       <h4 className="font-medium flex items-center gap-2 text-foreground">
-        <Target className="h-4 w-4 text-cyan-500" />
+        <Target className="h-4 w-4 text-secondary" />
         Goal Progress
       </h4>
       <div className="space-y-3">
@@ -292,7 +292,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
           </div>
           <div className="w-full bg-muted rounded-full h-2">
             <div 
-              className="bg-cyan-500 h-2 rounded-full transition-all" 
+              className="bg-secondary h-2 rounded-full transition-all" 
               style={{ width: `${Math.min(((currentMetrics?.totalRevenue || 0) / 10000) * 100, 100)}%` }}
             />
           </div>
@@ -308,7 +308,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
           </div>
           <div className="w-full bg-muted rounded-full h-2">
             <div 
-              className={`h-2 rounded-full transition-all ${(currentMetrics?.completionRate || 0) >= 95 ? 'bg-green-500' : 'bg-yellow-500'}`}
+              className={`h-2 rounded-full transition-all ${(currentMetrics?.completionRate || 0) >= 95 ? 'bg-secondary' : 'bg-warning'}`}
               style={{ width: `${Math.min(currentMetrics?.completionRate || 0, 100)}%` }}
             />
           </div>
@@ -324,7 +324,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
           </div>
           <div className="w-full bg-muted rounded-full h-2">
             <div 
-              className="bg-purple-500 h-2 rounded-full transition-all" 
+              className="bg-accent h-2 rounded-full transition-all" 
               style={{ width: `${Math.min(((currentMetrics?.totalJobs || 0) / 50) * 100, 100)}%` }}
             />
           </div>
@@ -339,38 +339,38 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
   const renderImprovementAreas = () => (
     <div className="space-y-4">
       <h4 className="font-medium flex items-center gap-2 text-foreground">
-        <AlertTriangle className="h-4 w-4 text-amber-500" />
+        <AlertTriangle className="h-4 w-4 text-warning" />
         Areas for Improvement
       </h4>
       <div className="space-y-3">
         {(currentMetrics?.completionRate || 0) < 90 && (
-          <div className="p-4 rounded-lg bg-amber-50 border border-amber-200">
-            <p className="font-medium text-amber-700">Low Completion Rate</p>
-            <p className="text-sm text-amber-600 mt-1">
+          <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
+            <p className="font-medium text-warning">Low Completion Rate</p>
+            <p className="text-sm text-warning/80 mt-1">
               Completion rate is at {(currentMetrics?.completionRate || 0).toFixed(1)}%. Consider reviewing scheduling processes and technician capacity.
             </p>
           </div>
         )}
         {(currentMetrics?.totalAppointments || 0) < 20 && (
-          <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
-            <p className="font-medium text-blue-700">Low Appointment Volume</p>
-            <p className="text-sm text-blue-600 mt-1">
+          <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20">
+            <p className="font-medium text-secondary">Low Appointment Volume</p>
+            <p className="text-sm text-secondary/80 mt-1">
               Only {currentMetrics?.totalAppointments || 0} appointments in this period. Consider marketing efforts to increase bookings.
             </p>
           </div>
         )}
         {revenueChange < 0 && (
-          <div className="p-4 rounded-lg bg-red-50 border border-red-200">
-            <p className="font-medium text-red-700">Revenue Decline</p>
-            <p className="text-sm text-red-600 mt-1">
+          <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
+            <p className="font-medium text-destructive">Revenue Decline</p>
+            <p className="text-sm text-destructive/80 mt-1">
               Revenue is down {Math.abs(revenueChange).toFixed(1)}% compared to the previous period. Review pricing and service mix.
             </p>
           </div>
         )}
         {(currentMetrics?.completionRate || 0) >= 90 && (currentMetrics?.totalAppointments || 0) >= 20 && revenueChange >= 0 && (
-          <div className="p-4 rounded-lg bg-green-50 border border-green-200">
-            <p className="font-medium text-green-700">Great Performance!</p>
-            <p className="text-sm text-green-600 mt-1">
+          <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20">
+            <p className="font-medium text-secondary">Great Performance!</p>
+            <p className="text-sm text-secondary/80 mt-1">
               All key metrics are on track. Keep up the excellent work!
             </p>
           </div>
@@ -382,7 +382,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
   const renderIndividualMetrics = () => (
     <div className="space-y-4">
       <h4 className="font-medium flex items-center gap-2 text-foreground">
-        <Users className="h-4 w-4 text-indigo-500" />
+        <Users className="h-4 w-4 text-secondary" />
         Individual Performance
       </h4>
       {currentMetrics?.employeeStats?.length ? (
@@ -429,7 +429,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
             <BarChart3 className="h-5 w-5 text-primary" />
             Performance Report
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground hover:text-secondary hover:bg-secondary/10">
+          <Button variant="ghost-card" size="icon" onClick={onCancel}>
             <X className="h-5 w-5" />
           </Button>
         </div>

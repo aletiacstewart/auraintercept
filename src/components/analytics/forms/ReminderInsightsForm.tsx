@@ -62,7 +62,7 @@ function MetricCard({ title, value, subtitle, icon, trend }: MetricCardProps) {
             <p className="text-2xl font-bold mt-1">{value}</p>
             {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
             {trend && (
-              <div className={`flex items-center gap-1 mt-2 text-xs ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+              <div className={`flex items-center gap-1 mt-2 text-xs ${trend.isPositive ? 'text-secondary' : 'text-destructive'}`}>
                 {trend.isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 <span>{trend.value}% vs last week</span>
               </div>
@@ -330,7 +330,7 @@ export function ReminderInsightsForm({ companyId, onCancel, onAnalyze }: Reminde
               <Sparkles className="h-4 w-4" />
               Analyze with AI
             </Button>
-            <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground hover:text-secondary hover:bg-secondary/10">
+            <Button variant="ghost-card" size="icon" onClick={onCancel}>
               <X className="h-5 w-5" />
             </Button>
           </div>
@@ -375,19 +375,19 @@ export function ReminderInsightsForm({ companyId, onCancel, onAnalyze }: Reminde
                     title="SMS Sent"
                     value={smsSent}
                     subtitle={`${smsCount} total attempts`}
-                    icon={<MessageSquare className="h-5 w-5 text-blue-600" />}
+                    icon={<MessageSquare className="h-5 w-5 text-channel-sms" />}
                   />
                   <MetricCard
                     title="Emails Sent"
                     value={emailSent}
                     subtitle={`${emailCount} total attempts`}
-                    icon={<Mail className="h-5 w-5 text-purple-600" />}
+                    icon={<Mail className="h-5 w-5 text-channel-email" />}
                   />
                   <MetricCard
                     title="Calls Made"
                     value={callsSent}
                     subtitle={`${callCount} total attempts`}
-                    icon={<Phone className="h-5 w-5 text-green-600" />}
+                    icon={<Phone className="h-5 w-5 text-channel-voice" />}
                   />
                 </div>
 

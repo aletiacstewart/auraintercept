@@ -380,12 +380,12 @@ export function AppointmentCalendar() {
   const getJobStatusBadge = (jobStatus?: string) => {
     if (!jobStatus) return null;
     const colors: Record<string, string> = {
-      pending_acceptance: 'bg-yellow-500/10 text-yellow-600',
-      accepted: 'bg-blue-500/10 text-blue-600',
-      en_route: 'bg-purple-500/10 text-purple-600',
-      arrived: 'bg-indigo-500/10 text-indigo-600',
-      in_progress: 'bg-orange-500/10 text-orange-600',
-      completed: 'bg-green-500/10 text-green-600',
+      pending_acceptance: 'bg-warning/10 text-warning',
+      accepted: 'bg-secondary/10 text-secondary',
+      en_route: 'bg-accent/10 text-accent',
+      arrived: 'bg-secondary/10 text-secondary',
+      in_progress: 'bg-accent/10 text-accent',
+      completed: 'bg-secondary/10 text-secondary',
     };
     const labels: Record<string, string> = {
       pending_acceptance: 'Pending',
