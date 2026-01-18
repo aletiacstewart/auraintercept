@@ -77,8 +77,8 @@ const navGroups: NavGroup[] = [
     label: 'Overview',
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
-      { label: 'Aura Quick-Start', icon: Settings, href: '/dashboard/aura-quick-start', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Smart Website', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Aura Quick-Start', icon: Settings, href: '/dashboard/aura-quick-start', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
+      { label: 'Smart Website', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
       { label: 'My Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['employee'] },
       { label: 'AI Console', icon: Bot, href: '/technician/ai-console', roles: ['employee'] },
       { label: 'My Jobs', icon: ClipboardList, href: '/technician/jobs', roles: ['employee'] },
@@ -98,8 +98,8 @@ const navGroups: NavGroup[] = [
       { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops' },
       { label: 'Quotes', icon: FileText, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-invoices' },
       { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-invoices' },
-      { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin'], featureColor: 'text-feature-inventory' },
-      { label: 'Warranties', icon: FileCheck, href: '/dashboard/warranties', roles: ['platform_admin'], featureColor: 'text-feature-warranties' },
+      { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin'], featureColor: 'text-feature-employees' },
+      { label: 'Warranties', icon: FileCheck, href: '/dashboard/warranties', roles: ['platform_admin'], featureColor: 'text-feature-employees' },
     ],
   },
   {
@@ -144,8 +144,8 @@ const navGroups: NavGroup[] = [
     label: 'Configuration',
     items: [
       
-      { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'] },
+      { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
+      { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
       { label: 'Calculators', icon: BarChart3, href: '/dashboard/calculators', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-invoices' },
       { label: 'Profile', icon: User, href: '/technician/profile', roles: ['employee'] },
       { label: 'Install App', icon: Puzzle, href: '/technician/install', roles: ['employee'] },
