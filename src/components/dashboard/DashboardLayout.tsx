@@ -95,7 +95,7 @@ const navGroups: NavGroup[] = [
       { label: 'Employees', icon: UserCheck, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
       { label: 'Customers', icon: Users, href: '/dashboard/customers', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers' },
       { label: 'Leads', icon: Users, href: '/dashboard/leads', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-leads' },
-      { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-appointments' },
+      { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops' },
       { label: 'Quotes', icon: FileText, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-invoices' },
       { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-invoices' },
       { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin'], featureColor: 'text-feature-inventory' },
