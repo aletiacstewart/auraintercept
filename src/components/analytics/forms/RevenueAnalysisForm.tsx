@@ -102,28 +102,28 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
   });
 
   return (
-    <Card className="border-border bg-card">
-      <CardHeader className="pb-3">
+    <div className="bg-background rounded-lg border border-border shadow-sm">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
+          <div className="flex items-center gap-2">
             <DollarSign className="h-5 w-5 text-primary" />
-            Revenue Analysis
-          </CardTitle>
-          <Button variant="ghost-card" size="icon" onClick={onCancel}>
+            <h3 className="font-semibold text-foreground">Revenue Analysis</h3>
+          </div>
+          <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-muted">
             <X className="h-5 w-5" />
           </Button>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4 bg-muted/50 rounded-b-lg">
+      </div>
+      <div className="p-4 space-y-4">
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-foreground/70">
+            <Label className="flex items-center gap-1 text-sm font-medium text-foreground">
               <Calendar className="h-3 w-3" />
               Date Range
             </Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
+              <SelectTrigger className="h-9 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -135,9 +135,9 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-foreground/70">Group By</Label>
+            <Label className="text-sm font-medium text-foreground">Group By</Label>
             <Select value={groupBy} onValueChange={setGroupBy}>
-              <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
+              <SelectTrigger className="h-9 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -152,14 +152,14 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
         {isLoading ? (
           <div className="grid grid-cols-2 gap-3">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-background animate-pulse h-20" />
+              <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-20" />
             ))}
           </div>
         ) : (
           <>
             <div className="grid grid-cols-2 gap-3">
               <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 text-foreground/70 mb-1">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1">
                   <TrendingUp className="h-4 w-4" />
                   <span className="text-sm">Total Revenue</span>
                 </div>
@@ -169,7 +169,7 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
               </div>
 
               <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 text-foreground/70 mb-1">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1">
                   <CreditCard className="h-4 w-4" />
                   <span className="text-sm">Pending</span>
                 </div>
@@ -179,7 +179,7 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
               </div>
 
               <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 text-foreground/70 mb-1">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1">
                   <Receipt className="h-4 w-4" />
                   <span className="text-sm">Invoices Paid</span>
                 </div>
@@ -187,7 +187,7 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
               </div>
 
               <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 text-foreground/70 mb-1">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1">
                   <DollarSign className="h-4 w-4" />
                   <span className="text-sm">Avg Invoice</span>
                 </div>
@@ -219,14 +219,14 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
-          <Button variant="outline" className="flex-1" onClick={() => toast.info('Detailed report coming soon!')}>
+          <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Detailed report coming soon!')}>
             View Details
           </Button>
           <Button variant="outline" onClick={onCancel}>
             Close
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };

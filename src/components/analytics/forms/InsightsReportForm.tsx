@@ -243,25 +243,25 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
   );
 
   return (
-    <Card className="border-border bg-card shadow-sm">
-      <CardHeader className="pb-3">
+    <div className="bg-background rounded-lg border border-border shadow-sm">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
+          <div className="flex items-center gap-2">
             <Lightbulb className="h-5 w-5 text-primary" />
-            Business Insights
-          </CardTitle>
-          <Button variant="ghost-card" size="icon" onClick={onCancel}>
+            <h3 className="font-semibold text-foreground">Business Insights</h3>
+          </div>
+          <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-muted">
             <X className="h-5 w-5" />
           </Button>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4 bg-muted/50 rounded-b-lg">
+      </div>
+      <div className="p-4 space-y-4">
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="text-foreground/70">Date Range</Label>
+            <Label className="text-sm font-medium text-foreground">Date Range</Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
+              <SelectTrigger className="h-9 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -273,9 +273,9 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-foreground/70">View</Label>
+            <Label className="text-sm font-medium text-foreground">View</Label>
             <Select value={insightView} onValueChange={(v) => setInsightView(v as InsightView)}>
-              <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
+              <SelectTrigger className="h-9 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -292,7 +292,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
         {isLoading ? (
           <div className="grid grid-cols-2 gap-3">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-background animate-pulse h-20" />
+              <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-20" />
             ))}
           </div>
         ) : (
@@ -306,14 +306,14 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
-          <Button variant="outline" className="flex-1" onClick={() => toast.info('Detailed insights coming soon!')}>
+          <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Detailed insights coming soon!')}>
             View Full Report
           </Button>
           <Button variant="outline" onClick={onCancel}>
             Close
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };

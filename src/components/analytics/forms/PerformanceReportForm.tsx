@@ -422,24 +422,24 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
   );
 
   return (
-    <Card className="border-border bg-card">
-      <CardHeader className="pb-3">
+    <div className="bg-background rounded-lg border border-border shadow-sm">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2 text-card-foreground">
+          <div className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-primary" />
-            Performance Report
-          </CardTitle>
-          <Button variant="ghost-card" size="icon" onClick={onCancel}>
+            <h3 className="font-semibold text-foreground">Performance Report</h3>
+          </div>
+          <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-muted">
             <X className="h-5 w-5" />
           </Button>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4 bg-muted/50 rounded-b-lg">
+      </div>
+      <div className="p-4 space-y-4">
         {/* Report Type Selector */}
         <div className="space-y-2">
-          <Label className="text-foreground/70">Report View</Label>
+          <Label className="text-sm font-medium text-foreground">Report View</Label>
           <Select value={reportView} onValueChange={(v) => setReportView(v as ReportView)}>
-            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
+            <SelectTrigger className="h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -455,44 +455,44 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-foreground/70">
+            <Label className="flex items-center gap-1 text-sm font-medium text-foreground">
               <Calendar className="h-3 w-3" />
               Date Range
             </Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7">Last 7 days</SelectItem>
-              <SelectItem value="30">Last 30 days</SelectItem>
-              <SelectItem value="90">Last 90 days</SelectItem>
-              <SelectItem value="365">Last year</SelectItem>
-            </SelectContent>
+              <SelectTrigger className="h-9 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7">Last 7 days</SelectItem>
+                <SelectItem value="30">Last 30 days</SelectItem>
+                <SelectItem value="90">Last 90 days</SelectItem>
+                <SelectItem value="365">Last year</SelectItem>
+              </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-foreground/70">Compare To</Label>
+            <Label className="text-sm font-medium text-foreground">Compare To</Label>
             <Select value={compareRange} onValueChange={setCompareRange}>
-            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="previous">Previous period</SelectItem>
-              <SelectItem value="none">No comparison</SelectItem>
-            </SelectContent>
+              <SelectTrigger className="h-9 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="previous">Previous period</SelectItem>
+                <SelectItem value="none">No comparison</SelectItem>
+              </SelectContent>
             </Select>
           </div>
         </div>
 
         {/* Department Filter */}
         <div className="space-y-2">
-          <Label className="flex items-center gap-1 text-foreground/70">
+          <Label className="flex items-center gap-1 text-sm font-medium text-foreground">
             <Users className="h-3 w-3" />
             Department / Team
           </Label>
           <Select value={department} onValueChange={setDepartment}>
-            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
+            <SelectTrigger className="h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -521,7 +521,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
         {isLoading ? (
           <div className="grid grid-cols-2 gap-3">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-background animate-pulse h-24" />
+              <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-24" />
             ))}
           </div>
         ) : (
@@ -536,14 +536,14 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
-          <Button variant="outline" className="flex-1" onClick={handleExport}>
+          <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={handleExport}>
             Export Report
           </Button>
           <Button variant="outline" onClick={onCancel}>
             Close
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
