@@ -2,14 +2,14 @@ import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
-import { Phone, Mail, MapPin, Clock, AlertCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, AlertCircle, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 import { SmartWebsiteVoiceButton } from '@/components/smartwebsite/SmartWebsiteVoiceButton';
-
 interface WebsiteData {
   id: string;
   company_id: string;
@@ -80,6 +80,8 @@ export default function SmartWebsite() {
   const { subdomain } = useParams<{ subdomain: string }>();
   const [hasTracked, setHasTracked] = useState(false);
   const [isNightMode, setIsNightMode] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   
   // Generate/retrieve visitor fingerprint for tracking
   const visitorFingerprint = useMemo(() => generateVisitorFingerprint(), []);
@@ -311,22 +313,45 @@ export default function SmartWebsite() {
 
       {/* Hero Section */}
       <section 
-        className="py-20 px-4"
+        className="py-20 px-4 relative"
         style={{ 
-          background: website.background_style === 'gradient' 
-            ? `linear-gradient(135deg, ${primaryColor}15 0%, ${primaryColor}05 100%)`
-            : undefined
+          backgroundImage: website.background_image_url 
+            ? `url(${website.background_image_url})`
+            : undefined,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: !website.background_image_url && website.background_style !== 'gradient' 
+            ? undefined 
+            : undefined,
         }}
       >
-        <div className="container mx-auto text-center max-w-3xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+        {/* Dark overlay for text readability when background image exists */}
+        {website.background_image_url && (
+          <div className="absolute inset-0 bg-black/50" />
+        )}
+        {/* Gradient background when no image */}
+        {!website.background_image_url && website.background_style === 'gradient' && (
+          <div 
+            className="absolute inset-0" 
+            style={{ 
+              background: `linear-gradient(135deg, ${primaryColor}15 0%, ${primaryColor}05 100%)` 
+            }} 
+          />
+        )}
+        
+        <div className="container mx-auto text-center max-w-3xl relative z-10">
+          <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${website.background_image_url ? 'text-white drop-shadow-lg' : ''}`}>
             {displayHeadline}
           </h1>
-          <p className="text-xl text-muted-foreground mb-8">
+          <p className={`text-xl mb-8 ${website.background_image_url ? 'text-white/90 drop-shadow-md' : 'text-muted-foreground'}`}>
             {displaySubheadline}
           </p>
           {openStatus !== null && (
-            <Badge variant={openStatus ? 'default' : 'secondary'} className="mb-6">
+            <Badge 
+              variant={openStatus ? 'default' : 'secondary'} 
+              className={`mb-6 ${website.background_image_url ? 'bg-white/90 text-foreground' : ''}`}
+            >
               <Clock className="w-3 h-3 mr-1" />
               {openStatus ? 'Open Now' : 'Currently Closed'}
             </Badge>
@@ -406,6 +431,35 @@ export default function SmartWebsite() {
                   </p>
                 )}
               </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Gallery Section */}
+      {website.gallery_images && website.gallery_images.length > 0 && (
+        <section className="py-16 px-4 bg-muted/30">
+          <div className="container mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-10">Gallery</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {website.gallery_images.map((imageUrl, idx) => (
+                <div 
+                  key={idx}
+                  className="aspect-square rounded-lg overflow-hidden cursor-pointer 
+                             hover:opacity-90 transition-all duration-200 hover:scale-[1.02] 
+                             transform shadow-md hover:shadow-lg"
+                  onClick={() => {
+                    setLightboxIndex(idx);
+                    setLightboxOpen(true);
+                  }}
+                >
+                  <img 
+                    src={imageUrl} 
+                    alt={`Gallery image ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -549,6 +603,65 @@ export default function SmartWebsite() {
           useMultiAgent={true}
         />
       )}
+
+      {/* Gallery Lightbox */}
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent className="max-w-4xl p-0 bg-black/95 border-none">
+          {website?.gallery_images && website.gallery_images.length > 0 && (
+            <div className="relative flex items-center justify-center min-h-[60vh]">
+              {/* Close button */}
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="absolute top-4 right-4 text-white hover:bg-white/20 z-20"
+                onClick={() => setLightboxOpen(false)}
+              >
+                <X className="h-6 w-6" />
+              </Button>
+              
+              {/* Previous arrow */}
+              {website.gallery_images.length > 1 && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 z-10"
+                  onClick={() => setLightboxIndex(prev => 
+                    prev === 0 ? website.gallery_images!.length - 1 : prev - 1
+                  )}
+                >
+                  <ChevronLeft className="h-8 w-8" />
+                </Button>
+              )}
+              
+              {/* Main image */}
+              <img 
+                src={website.gallery_images[lightboxIndex]} 
+                alt={`Gallery ${lightboxIndex + 1}`}
+                className="max-w-full max-h-[80vh] object-contain"
+              />
+              
+              {/* Next arrow */}
+              {website.gallery_images.length > 1 && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 z-10"
+                  onClick={() => setLightboxIndex(prev => 
+                    prev === website.gallery_images!.length - 1 ? 0 : prev + 1
+                  )}
+                >
+                  <ChevronRight className="h-8 w-8" />
+                </Button>
+              )}
+              
+              {/* Image counter */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm bg-black/50 px-3 py-1 rounded-full">
+                {lightboxIndex + 1} / {website.gallery_images.length}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
