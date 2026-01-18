@@ -2,11 +2,13 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { Package } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
+import { PageContainer } from '@/components/ui/page-container';
 
 export default function Inventory() {
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <PageContainer>
+        <div className="space-y-6">
         <PageHeader
           icon={Package}
           title="Inventory"
@@ -14,6 +16,7 @@ export default function Inventory() {
         />
         <InventoryManager />
       </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

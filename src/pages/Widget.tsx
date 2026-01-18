@@ -1,18 +1,22 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { WidgetPreview } from '@/components/widget/WidgetPreview';
+import { PageHeader } from '@/components/ui/page-header';
+import { PageContainer } from '@/components/ui/page-container';
+import { MessageSquare } from 'lucide-react';
 
 const Widget = () => {
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">AI Agent Virtual Assistant for Customers</h1>
-          <p className="text-muted-foreground">
-            Embed the AI Agent Virtual Assistant on your website
-          </p>
+      <PageContainer>
+        <div className="space-y-6">
+          <PageHeader
+            icon={MessageSquare}
+            title="AI Agent Virtual Assistant"
+            description="Embed the AI Agent Virtual Assistant on your website"
+          />
+          <WidgetPreview />
         </div>
-        <WidgetPreview />
-      </div>
+      </PageContainer>
     </DashboardLayout>
   );
 };

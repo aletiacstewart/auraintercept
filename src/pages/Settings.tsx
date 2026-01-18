@@ -18,6 +18,7 @@ import { SetupProgressBar } from '@/components/company/SetupProgressBar';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageHeader } from '@/components/ui/page-header';
+import { PageContainer } from '@/components/ui/page-container';
 import { Settings as SettingsIcon } from 'lucide-react';
 
 export default function Settings() {
@@ -27,7 +28,8 @@ export default function Settings() {
   return (
     <DashboardLayout>
       {userRole === 'company_admin' || userRole === 'platform_admin' ? (
-        <div className="space-y-6 animate-fade-in">
+        <PageContainer>
+          <div className="space-y-6 animate-fade-in">
           <PageHeader
             icon={SettingsIcon}
             title="Settings"
@@ -99,16 +101,19 @@ export default function Settings() {
               </TabsContent>
             )}
           </Tabs>
-        </div>
+          </div>
+        </PageContainer>
       ) : (
-        <div className="space-y-6 animate-fade-in">
-          <PageHeader
-            icon={SettingsIcon}
-            title="Settings"
-            description="Manage your account settings"
-          />
-          <ProfileSettings />
-        </div>
+        <PageContainer>
+          <div className="space-y-6 animate-fade-in">
+            <PageHeader
+              icon={SettingsIcon}
+              title="Settings"
+              description="Manage your account settings"
+            />
+            <ProfileSettings />
+          </div>
+        </PageContainer>
       )}
     </DashboardLayout>
   );

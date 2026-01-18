@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { PageHeader } from '@/components/ui/page-header';
+import { PageContainer } from '@/components/ui/page-container';
 
 interface CustomerProfile {
   id: string;
@@ -190,7 +191,8 @@ export default function Customers() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <PageContainer>
+        <div className="space-y-6">
         {/* Header */}
         <PageHeader
           icon={Users}
@@ -292,8 +294,8 @@ export default function Customers() {
           </CardContent>
         </Card>
 
-      </div>
-
+        </div>
+      </PageContainer>
       {/* Customer Details Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh]">

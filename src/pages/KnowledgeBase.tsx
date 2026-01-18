@@ -10,6 +10,7 @@ import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
 import { Briefcase, HelpCircle, Clock, FileText, Package, Shield, BookOpen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/page-header';
+import { PageContainer } from '@/components/ui/page-container';
 
 export default function KnowledgeBase() {
   const [searchParams] = useSearchParams();
@@ -25,7 +26,8 @@ export default function KnowledgeBase() {
   
   return (
     <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
+      <PageContainer>
+        <div className="space-y-6 animate-fade-in">
         <PageHeader
           icon={BookOpen}
           title="Knowledge Base"
@@ -93,6 +95,7 @@ export default function KnowledgeBase() {
           )}
         </Tabs>
       </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }
