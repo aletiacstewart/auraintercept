@@ -11,9 +11,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Receipt, Eye, Send, Check, Search, Trash2 } from 'lucide-react';
+import { Plus, Receipt, Eye, Send, Check, Search, Trash2, DollarSign, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
+import { PageHeader } from '@/components/ui/page-header';
+import { MetricCard } from '@/components/ui/metric-card';
 
 interface Invoice {
   id: string;
@@ -139,70 +141,66 @@ export default function Invoices() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Invoices</h1>
-            <p className="text-white/70">Create and manage customer invoices</p>
-          </div>
-          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                New Invoice
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Create Invoice</DialogTitle>
-                <DialogDescription>Create a new invoice for a customer.</DialogDescription>
-              </DialogHeader>
-              {companyId && (
-                <InvoiceForm
-                  companyId={companyId}
-                  mode="direct"
-                  showBackButton={false}
-                  onSuccess={() => setIsAddOpen(false)}
-                  onCancel={() => setIsAddOpen(false)}
-                />
-              )}
-            </DialogContent>
-          </Dialog>
-        </div>
+        <PageHeader
+          icon={Receipt}
+          title="Invoices"
+          description="Create and manage customer invoices"
+          action={
+            <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Invoice
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Create Invoice</DialogTitle>
+                  <DialogDescription>Create a new invoice for a customer.</DialogDescription>
+                </DialogHeader>
+                {companyId && (
+                  <InvoiceForm
+                    companyId={companyId}
+                    mode="direct"
+                    showBackButton={false}
+                    onSuccess={() => setIsAddOpen(false)}
+                    onCancel={() => setIsAddOpen(false)}
+                  />
+                )}
+              </DialogContent>
+            </Dialog>
+          }
+        />
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-white">Total Invoices</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{invoices.length}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-white">Total Paid</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">${totalPaid.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-white">Outstanding</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">${totalOutstanding.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-          <Card className={overdueCount > 0 ? 'border-destructive' : ''}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-white">Overdue</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-destructive">{overdueCount}</div>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <MetricCard
+            icon={Receipt}
+            value={invoices.length}
+            label="Total Invoices"
+          />
+          <MetricCard
+            icon={DollarSign}
+            value={`$${totalPaid.toFixed(0)}`}
+            label="Total Paid"
+            valueColor="success"
+            iconColor="text-green-400"
+          />
+          <MetricCard
+            icon={DollarSign}
+            value={`$${totalOutstanding.toFixed(0)}`}
+            label="Outstanding"
+            valueColor="warning"
+            iconColor="text-warning"
+          />
+          <MetricCard
+            icon={AlertTriangle}
+            value={overdueCount}
+            label="Overdue"
+            valueColor="destructive"
+            iconColor="text-destructive"
+            className={overdueCount > 0 ? 'border-destructive/50' : ''}
+          />
         </div>
 
         {/* Filters */}

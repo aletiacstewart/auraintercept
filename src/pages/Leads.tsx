@@ -29,6 +29,8 @@ import {
 } from 'lucide-react';
 import { LeadScoreBadge, LeadActivityTimeline, LeadFollowUpManager, LeadAnalyticsSection } from '@/components/leads';
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
+import { PageHeader } from '@/components/ui/page-header';
+import { MetricCard } from '@/components/ui/metric-card';
 
 interface Lead {
   id: string;
@@ -143,74 +145,63 @@ export default function Leads() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Leads</h1>
-            <p className="text-white/70">Manage and follow up on potential customers</p>
-          </div>
-          <Dialog open={isAddLeadOpen} onOpenChange={setIsAddLeadOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                New Lead
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-0">
-              {companyId && (
-                <LeadForm
-                  companyId={companyId}
-                  onCancel={() => setIsAddLeadOpen(false)}
-                  onSuccess={() => {
-                    setIsAddLeadOpen(false);
-                    queryClient.invalidateQueries({ queryKey: ['leads'] });
-                  }}
-                />
-              )}
-            </DialogContent>
-          </Dialog>
-        </div>
+        <PageHeader
+          icon={Users}
+          title="Leads"
+          description="Manage and follow up on potential customers"
+          action={
+            <Dialog open={isAddLeadOpen} onOpenChange={setIsAddLeadOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Lead
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-0">
+                {companyId && (
+                  <LeadForm
+                    companyId={companyId}
+                    onCancel={() => setIsAddLeadOpen(false)}
+                    onSuccess={() => {
+                      setIsAddLeadOpen(false);
+                      queryClient.invalidateQueries({ queryKey: ['leads'] });
+                    }}
+                  />
+                )}
+              </DialogContent>
+            </Dialog>
+          }
+        />
 
         {/* Analytics Section */}
         <LeadAnalyticsSection />
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-white/70" />
-                <span className="text-2xl font-bold">{stats.total}</span>
-              </div>
-              <p className="text-sm text-white/70">Total Leads</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-blue-500" />
-                <span className="text-2xl font-bold">{stats.new}</span>
-              </div>
-              <p className="text-sm text-white/70">New Leads</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <Flame className="h-5 w-5 text-red-500" />
-                <span className="text-2xl font-bold">{stats.hot}</span>
-              </div>
-              <p className="text-sm text-white/70">Hot Leads</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-500" />
-                <span className="text-2xl font-bold">{stats.converted}</span>
-              </div>
-              <p className="text-sm text-white/70">Converted</p>
-            </CardContent>
-          </Card>
+          <MetricCard
+            icon={Users}
+            value={stats.total}
+            label="Total Leads"
+          />
+          <MetricCard
+            icon={Clock}
+            value={stats.new}
+            label="New Leads"
+            iconColor="text-secondary"
+          />
+          <MetricCard
+            icon={Flame}
+            value={stats.hot}
+            label="Hot Leads"
+            iconColor="text-destructive"
+          />
+          <MetricCard
+            icon={CheckCircle}
+            value={stats.converted}
+            label="Converted"
+            valueColor="success"
+            iconColor="text-green-400"
+          />
         </div>
 
         {/* Filters */}

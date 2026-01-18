@@ -28,6 +28,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { PageHeader } from '@/components/ui/page-header';
 
 interface CustomerProfile {
   id: string;
@@ -191,20 +192,17 @@ export default function Customers() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Customers</h1>
-            <p className="text-white/70">
-              View and manage customer information, history, and preferences
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+        <PageHeader
+          icon={Users}
+          title="Customers"
+          description="View and manage customer information, history, and preferences"
+          badge={
             <Badge variant="secondary" className="gap-1">
               <Users className="h-3 w-3" />
               {customers?.length || 0} total
             </Badge>
-          </div>
-        </div>
+          }
+        />
 
         {/* Search */}
         <div className="relative">

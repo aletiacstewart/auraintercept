@@ -7,10 +7,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Mail, Search, Clock, CheckCircle, XCircle, AlertCircle, ExternalLink } from 'lucide-react';
+import { Mail, Search, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
+import { PageHeader } from '@/components/ui/page-header';
+import { MetricCard } from '@/components/ui/metric-card';
 
 export default function EmailLogs() {
   const { companyId } = useAuth();
@@ -86,54 +88,34 @@ export default function EmailLogs() {
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Email Logs</h1>
-          <p className="text-muted-foreground">
-            View email communication history with customers
-          </p>
-        </div>
+        <PageHeader
+          icon={Mail}
+          title="Email Logs"
+          description="View email communication history with customers"
+        />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-4">
-          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-channel-email/20">
-                  <Mail className="h-5 w-5 text-channel-email" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-accent">{totalEmails}</p>
-                  <p className="text-xs text-white/70">Total Emails</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-500/20">
-                  <CheckCircle className="h-5 w-5 text-green-400" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-accent">{sentEmails}</p>
-                  <p className="text-xs text-white/70">Delivered</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-destructive/20">
-                  <XCircle className="h-5 w-5 text-destructive" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-accent">{failedEmails}</p>
-                  <p className="text-xs text-white/70">Failed</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <MetricCard
+            icon={Mail}
+            value={totalEmails}
+            label="Total Emails"
+            iconColor="text-channel-email"
+          />
+          <MetricCard
+            icon={CheckCircle}
+            value={sentEmails}
+            label="Delivered"
+            valueColor="success"
+            iconColor="text-green-400"
+          />
+          <MetricCard
+            icon={XCircle}
+            value={failedEmails}
+            label="Failed"
+            valueColor="destructive"
+            iconColor="text-destructive"
+          />
         </div>
 
         {/* Email Logs Card */}

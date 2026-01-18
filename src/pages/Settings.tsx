@@ -17,6 +17,8 @@ import { ContactInfoSettings } from '@/components/company/ContactInfoSettings';
 import { SetupProgressBar } from '@/components/company/SetupProgressBar';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { PageHeader } from '@/components/ui/page-header';
+import { Settings as SettingsIcon } from 'lucide-react';
 
 export default function Settings() {
   const { userRole } = useAuth();
@@ -26,12 +28,11 @@ export default function Settings() {
     <DashboardLayout>
       {userRole === 'company_admin' || userRole === 'platform_admin' ? (
         <div className="space-y-6 animate-fade-in">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-            <p className="text-muted-foreground">
-              Manage your company settings and preferences
-            </p>
-          </div>
+          <PageHeader
+            icon={SettingsIcon}
+            title="Settings"
+            description="Manage your company settings and preferences"
+          />
           
           <SetupProgressBar />
           <Tabs defaultValue="branding" className="space-y-4">
@@ -101,12 +102,11 @@ export default function Settings() {
         </div>
       ) : (
         <div className="space-y-6 animate-fade-in">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-            <p className="text-white/70">
-              Manage your account settings
-            </p>
-          </div>
+          <PageHeader
+            icon={SettingsIcon}
+            title="Settings"
+            description="Manage your account settings"
+          />
           <ProfileSettings />
         </div>
       )}

@@ -1,16 +1,17 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { CommunicationLogs } from '@/components/employee/CommunicationLogs';
+import { PageHeader } from '@/components/ui/page-header';
+import { MessageSquare } from 'lucide-react';
 
 export default function Messages() {
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Messages & Calls</h1>
-          <p className="text-white/70">
-            View your communication history with customers
-          </p>
-        </div>
+        <PageHeader
+          icon={MessageSquare}
+          title="Messages & Calls"
+          description="View your communication history with customers"
+        />
 
         <CommunicationLogs />
       </div>
