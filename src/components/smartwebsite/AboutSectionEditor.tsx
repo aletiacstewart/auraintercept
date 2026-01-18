@@ -166,7 +166,7 @@ export function AboutSectionEditor({ website, companyId, onUpdate, isUpdating }:
 
             {!website.about_image_url && (
               <Button
-                variant="outline"
+                variant="default"
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
