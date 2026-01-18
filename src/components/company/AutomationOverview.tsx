@@ -52,6 +52,7 @@ export function AutomationOverview() {
           review_request_enabled, review_request_delay_hours,
           missed_call_action,
           unsubscribe_alert_enabled, unsubscribe_alert_threshold,
+          sms_optout_alert_enabled, sms_optout_alert_threshold,
           bounce_alert_enabled, bounce_alert_threshold,
           cost_alert_enabled, cost_alert_threshold
         `)
@@ -117,6 +118,7 @@ export function AutomationOverview() {
 
   const alertsEnabled = [
     companyData?.unsubscribe_alert_enabled,
+    companyData?.sms_optout_alert_enabled,
     companyData?.bounce_alert_enabled,
     companyData?.cost_alert_enabled
   ].filter(Boolean).length;
@@ -192,15 +194,23 @@ export function AutomationOverview() {
     },
     {
       title: 'System Alerts',
-      description: 'Threshold-based email notifications',
+      description: 'Threshold-based email and SMS notifications',
       icon: <AlertTriangle className="h-5 w-5 text-orange-500" />,
       items: [
         {
-          name: 'Unsubscribe Rate',
+          name: 'Email Unsubscribe',
           enabled: companyData?.unsubscribe_alert_enabled || false,
           icon: <Mail className="h-4 w-4" />,
           detail: companyData?.unsubscribe_alert_enabled 
-            ? `>${companyData.unsubscribe_alert_threshold || 5}%` 
+            ? `>${companyData.unsubscribe_alert_threshold || 10}/24h` 
+            : 'Disabled',
+        },
+        {
+          name: 'SMS Opt-Out',
+          enabled: companyData?.sms_optout_alert_enabled || false,
+          icon: <MessageSquare className="h-4 w-4" />,
+          detail: companyData?.sms_optout_alert_enabled 
+            ? `>${companyData.sms_optout_alert_threshold || 10}/24h` 
             : 'Disabled',
         },
         {
@@ -208,7 +218,7 @@ export function AutomationOverview() {
           enabled: companyData?.bounce_alert_enabled || false,
           icon: <AlertTriangle className="h-4 w-4" />,
           detail: companyData?.bounce_alert_enabled 
-            ? `>${companyData.bounce_alert_threshold || 5}%` 
+            ? `>${companyData.bounce_alert_threshold || 10}/24h` 
             : 'Disabled',
         },
         {
@@ -221,7 +231,7 @@ export function AutomationOverview() {
         },
       ],
       configTab: 'alerts',
-      summary: `${alertsEnabled}/3 Active`,
+      summary: `${alertsEnabled}/4 Active`,
     },
     {
       title: 'Missed Call Handling',
