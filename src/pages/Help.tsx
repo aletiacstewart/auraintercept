@@ -341,7 +341,7 @@ export default function Help() {
                       <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">2</Badge>
                       <div>
                         <p className="font-medium text-card-foreground">Access Your Dashboard</p>
-                        <p className="text-sm text-card-foreground/70">After signing in, you'll be automatically redirected to your dashboard at <code className="bg-white text-slate-800 px-1.5 py-0.5 rounded text-xs">/dashboard</code>. This is your central hub for managing appointments, AI agents, and more.</p>
+                        <p className="text-sm text-card-foreground/70">After signing in, you'll be automatically redirected to your dashboard at <code className="bg-muted text-foreground px-1.5 py-0.5 rounded text-xs">/dashboard</code>. This is your central hub for managing appointments, AI agents, and more.</p>
                       </div>
                     </div>
                     <div className="flex gap-3">
@@ -407,7 +407,7 @@ export default function Help() {
                         <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">3</Badge>
                         <div>
                           <p className="font-medium text-card-foreground">Employee Signs Up</p>
-                          <p className="text-sm text-card-foreground/70">Employee visits <code className="bg-white text-slate-800 px-1.5 py-0.5 rounded text-xs">/auth</code>, selects "Employee Sign Up", and enters the registration code to join your company.</p>
+                          <p className="text-sm text-card-foreground/70">Employee visits <code className="bg-muted text-foreground px-1.5 py-0.5 rounded text-xs">/auth</code>, selects "Employee Sign Up", and enters the registration code to join your company.</p>
                         </div>
                       </div>
                     </div>
@@ -448,7 +448,7 @@ export default function Help() {
                       <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">2</Badge>
                       <div>
                         <p className="font-medium text-card-foreground">Visit the Sign Up Page</p>
-                        <p className="text-sm text-card-foreground/70">Go to <code className="bg-white text-slate-800 px-1.5 py-0.5 rounded text-xs">/auth</code> and select "Employee Sign Up" at the bottom of the form.</p>
+                        <p className="text-sm text-card-foreground/70">Go to <code className="bg-muted text-foreground px-1.5 py-0.5 rounded text-xs">/auth</code> and select "Employee Sign Up" at the bottom of the form.</p>
                       </div>
                     </div>
                     <div className="flex gap-3">

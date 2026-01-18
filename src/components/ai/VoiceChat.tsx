@@ -444,7 +444,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   return (
     <div className="flex flex-col items-center gap-4 p-4">
       {testMode && (
-        <Badge variant="secondary" className="gap-1 bg-blue-500/10 text-blue-600 border-blue-500/20">
+        <Badge variant="secondary" className="gap-1 bg-secondary/10 text-secondary border-secondary/20">
           <MessageSquare className="h-3 w-3" />
           Text Mode (No Voice Credits)
         </Badge>

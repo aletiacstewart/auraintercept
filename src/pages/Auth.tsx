@@ -513,7 +513,7 @@ export default function Auth() {
               <div className="space-y-4 h-fit">
                 {/* Header */}
                 <div className="text-center md:text-left">
-                  <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-blue-500/10 text-blue-600 mb-3">For Employees</span>
+                  <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-secondary/10 text-secondary mb-3">For Employees</span>
                   <h2 className="text-lg font-bold mb-2">Employee Portal Access</h2>
                   <p className="text-sm text-muted-foreground">
                     Access your job queue, manage appointments, and coordinate with dispatch through your company's AI-powered platform.

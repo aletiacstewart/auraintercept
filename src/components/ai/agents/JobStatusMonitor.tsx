@@ -48,13 +48,13 @@ interface JobAssignment {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: string; icon: React.ElementType }> = {
-  pending_acceptance: { label: 'Pending', color: 'text-yellow-600', bgColor: 'bg-yellow-100', icon: Clock },
-  accepted: { label: 'Accepted', color: 'text-blue-600', bgColor: 'bg-blue-100', icon: CheckCircle },
-  en_route: { label: 'En Route', color: 'text-purple-600', bgColor: 'bg-purple-100', icon: Navigation },
-  arrived: { label: 'Arrived', color: 'text-indigo-600', bgColor: 'bg-indigo-100', icon: MapPin },
-  in_progress: { label: 'In Progress', color: 'text-orange-600', bgColor: 'bg-orange-100', icon: Play },
-  completed: { label: 'Completed', color: 'text-green-600', bgColor: 'bg-green-100', icon: CheckCircle },
-  declined: { label: 'Declined', color: 'text-red-600', bgColor: 'bg-red-100', icon: XCircle },
+  pending_acceptance: { label: 'Pending', color: 'text-yellow-400', bgColor: 'bg-yellow-500/10', icon: Clock },
+  accepted: { label: 'Accepted', color: 'text-secondary', bgColor: 'bg-secondary/10', icon: CheckCircle },
+  en_route: { label: 'En Route', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10', icon: Navigation },
+  arrived: { label: 'Arrived', color: 'text-accent', bgColor: 'bg-accent/10', icon: MapPin },
+  in_progress: { label: 'In Progress', color: 'text-orange-400', bgColor: 'bg-orange-500/10', icon: Play },
+  completed: { label: 'Completed', color: 'text-green-400', bgColor: 'bg-green-500/10', icon: CheckCircle },
+  declined: { label: 'Declined', color: 'text-red-400', bgColor: 'bg-red-500/10', icon: XCircle },
   cancelled: { label: 'Cancelled', color: 'text-muted-foreground', bgColor: 'bg-muted', icon: XCircle },
 };
 
