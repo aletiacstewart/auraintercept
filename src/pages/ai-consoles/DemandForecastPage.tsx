@@ -16,8 +16,8 @@ export default function DemandForecastPage() {
         <div className="space-y-6 animate-fade-in">
           <PageHeader
             icon={LineChart}
-            title="Demand Forecast"
-            description="Forecast demand and staffing needs"
+            title="Revenue Forecast"
+            description="Forecast revenue and staffing needs"
           />
 
           {companyId ? (

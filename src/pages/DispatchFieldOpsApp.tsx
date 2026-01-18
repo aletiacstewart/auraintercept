@@ -95,7 +95,7 @@ export default function DispatchFieldOpsApp() {
   };
 
   const handleOpenFullDashboard = () => {
-    window.open('/dashboard/field-operations', '_blank');
+    window.open('/dashboard/dispatch-field-ops', '_blank');
   };
 
   // Loading state

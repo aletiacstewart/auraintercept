@@ -708,7 +708,7 @@ export function CompanyGuidesPDF() {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Settings: /dashboard/settings - Configuration</Text>
+          <Text style={styles.bulletText}>Settings: /dashboard/aura-quick-start - Configuration</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Available AI Consoles</Text>

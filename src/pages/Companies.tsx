@@ -625,7 +625,7 @@ export default function Companies() {
                                 <Pencil className="w-4 h-4 mr-2" />
                                 Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => navigate(`/dashboard/settings?company=${company.id}`)}>
+                              <DropdownMenuItem onClick={() => navigate(`/dashboard/aura-quick-start?company=${company.id}`)}>
                                 <Settings className="w-4 h-4 mr-2" />
                                 Settings
                               </DropdownMenuItem>
