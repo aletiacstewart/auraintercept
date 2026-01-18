@@ -799,7 +799,9 @@ export type Database = {
           monthly_digest_email: string | null
           monthly_digest_enabled: boolean | null
           monthly_digest_include_appointments: boolean | null
+          monthly_digest_include_emails: boolean | null
           monthly_digest_include_reminders: boolean | null
+          monthly_digest_include_sms: boolean | null
           monthly_digest_include_subscriptions: boolean | null
           monthly_digest_time: string | null
           monthly_digest_timezone: string | null
@@ -811,7 +813,9 @@ export type Database = {
           quarterly_digest_email: string | null
           quarterly_digest_enabled: boolean | null
           quarterly_digest_include_appointments: boolean | null
+          quarterly_digest_include_emails: boolean | null
           quarterly_digest_include_reminders: boolean | null
+          quarterly_digest_include_sms: boolean | null
           quarterly_digest_include_subscriptions: boolean | null
           quarterly_digest_month: number | null
           quarterly_digest_time: string | null
@@ -848,7 +852,9 @@ export type Database = {
           weekly_digest_email: string | null
           weekly_digest_enabled: boolean | null
           weekly_digest_include_appointments: boolean | null
+          weekly_digest_include_emails: boolean | null
           weekly_digest_include_reminders: boolean | null
+          weekly_digest_include_sms: boolean | null
           weekly_digest_include_subscriptions: boolean | null
           weekly_digest_time: string | null
           weekly_digest_timezone: string | null
@@ -896,7 +902,9 @@ export type Database = {
           monthly_digest_email?: string | null
           monthly_digest_enabled?: boolean | null
           monthly_digest_include_appointments?: boolean | null
+          monthly_digest_include_emails?: boolean | null
           monthly_digest_include_reminders?: boolean | null
+          monthly_digest_include_sms?: boolean | null
           monthly_digest_include_subscriptions?: boolean | null
           monthly_digest_time?: string | null
           monthly_digest_timezone?: string | null
@@ -908,7 +916,9 @@ export type Database = {
           quarterly_digest_email?: string | null
           quarterly_digest_enabled?: boolean | null
           quarterly_digest_include_appointments?: boolean | null
+          quarterly_digest_include_emails?: boolean | null
           quarterly_digest_include_reminders?: boolean | null
+          quarterly_digest_include_sms?: boolean | null
           quarterly_digest_include_subscriptions?: boolean | null
           quarterly_digest_month?: number | null
           quarterly_digest_time?: string | null
@@ -945,7 +955,9 @@ export type Database = {
           weekly_digest_email?: string | null
           weekly_digest_enabled?: boolean | null
           weekly_digest_include_appointments?: boolean | null
+          weekly_digest_include_emails?: boolean | null
           weekly_digest_include_reminders?: boolean | null
+          weekly_digest_include_sms?: boolean | null
           weekly_digest_include_subscriptions?: boolean | null
           weekly_digest_time?: string | null
           weekly_digest_timezone?: string | null
@@ -993,7 +1005,9 @@ export type Database = {
           monthly_digest_email?: string | null
           monthly_digest_enabled?: boolean | null
           monthly_digest_include_appointments?: boolean | null
+          monthly_digest_include_emails?: boolean | null
           monthly_digest_include_reminders?: boolean | null
+          monthly_digest_include_sms?: boolean | null
           monthly_digest_include_subscriptions?: boolean | null
           monthly_digest_time?: string | null
           monthly_digest_timezone?: string | null
@@ -1005,7 +1019,9 @@ export type Database = {
           quarterly_digest_email?: string | null
           quarterly_digest_enabled?: boolean | null
           quarterly_digest_include_appointments?: boolean | null
+          quarterly_digest_include_emails?: boolean | null
           quarterly_digest_include_reminders?: boolean | null
+          quarterly_digest_include_sms?: boolean | null
           quarterly_digest_include_subscriptions?: boolean | null
           quarterly_digest_month?: number | null
           quarterly_digest_time?: string | null
@@ -1042,7 +1058,9 @@ export type Database = {
           weekly_digest_email?: string | null
           weekly_digest_enabled?: boolean | null
           weekly_digest_include_appointments?: boolean | null
+          weekly_digest_include_emails?: boolean | null
           weekly_digest_include_reminders?: boolean | null
+          weekly_digest_include_sms?: boolean | null
           weekly_digest_include_subscriptions?: boolean | null
           weekly_digest_time?: string | null
           weekly_digest_timezone?: string | null

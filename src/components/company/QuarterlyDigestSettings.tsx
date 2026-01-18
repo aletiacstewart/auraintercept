@@ -63,7 +63,8 @@ export function QuarterlyDigestSettings() {
   const [timezone, setTimezone] = useState<string>('America/New_York');
   const [includeAppointments, setIncludeAppointments] = useState(true);
   const [includeReminders, setIncludeReminders] = useState(true);
-  const [includeSubscriptions, setIncludeSubscriptions] = useState(true);
+  const [includeEmails, setIncludeEmails] = useState(true);
+  const [includeSms, setIncludeSms] = useState(true);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
 
@@ -90,7 +91,7 @@ export function QuarterlyDigestSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('quarterly_digest_enabled, quarterly_digest_email, quarterly_digest_month, quarterly_digest_day, quarterly_digest_time, quarterly_digest_timezone, quarterly_digest_include_appointments, quarterly_digest_include_reminders, quarterly_digest_include_subscriptions, last_quarterly_digest_at')
+        .select('quarterly_digest_enabled, quarterly_digest_email, quarterly_digest_month, quarterly_digest_day, quarterly_digest_time, quarterly_digest_timezone, quarterly_digest_include_appointments, quarterly_digest_include_reminders, quarterly_digest_include_emails, quarterly_digest_include_sms, last_quarterly_digest_at')
         .eq('id', companyId)
         .maybeSingle();
       if (error) throw error;
@@ -109,7 +110,8 @@ export function QuarterlyDigestSettings() {
       setTimezone(company.quarterly_digest_timezone || browserTimezone || 'America/New_York');
       setIncludeAppointments(company.quarterly_digest_include_appointments ?? true);
       setIncludeReminders(company.quarterly_digest_include_reminders ?? true);
-      setIncludeSubscriptions(company.quarterly_digest_include_subscriptions ?? true);
+      setIncludeEmails(company.quarterly_digest_include_emails ?? true);
+      setIncludeSms(company.quarterly_digest_include_sms ?? true);
     }
   }, [company, browserTimezone]);
 
@@ -123,7 +125,8 @@ export function QuarterlyDigestSettings() {
       quarterly_digest_timezone?: string;
       quarterly_digest_include_appointments?: boolean;
       quarterly_digest_include_reminders?: boolean;
-      quarterly_digest_include_subscriptions?: boolean;
+      quarterly_digest_include_emails?: boolean;
+      quarterly_digest_include_sms?: boolean;
     }) => {
       if (!companyId) throw new Error('No company ID');
       const { error } = await supabase
@@ -146,7 +149,7 @@ export function QuarterlyDigestSettings() {
       toast.error('Please enter an email address');
       return;
     }
-    if (enabled && !includeAppointments && !includeReminders && !includeSubscriptions) {
+    if (enabled && !includeAppointments && !includeReminders && !includeEmails && !includeSms) {
       toast.error('Please select at least one metric to include');
       return;
     }
@@ -159,7 +162,8 @@ export function QuarterlyDigestSettings() {
       quarterly_digest_timezone: timezone,
       quarterly_digest_include_appointments: includeAppointments,
       quarterly_digest_include_reminders: includeReminders,
-      quarterly_digest_include_subscriptions: includeSubscriptions,
+      quarterly_digest_include_emails: includeEmails,
+      quarterly_digest_include_sms: includeSms,
     });
   };
 
@@ -337,10 +341,12 @@ export function QuarterlyDigestSettings() {
         <DigestMetricsSelector
           includeAppointments={includeAppointments}
           includeReminders={includeReminders}
-          includeSubscriptions={includeSubscriptions}
+          includeEmails={includeEmails}
+          includeSms={includeSms}
           onChangeAppointments={setIncludeAppointments}
           onChangeReminders={setIncludeReminders}
-          onChangeSubscriptions={setIncludeSubscriptions}
+          onChangeEmails={setIncludeEmails}
+          onChangeSms={setIncludeSms}
           disabled={!enabled}
         />
 
@@ -370,7 +376,8 @@ export function QuarterlyDigestSettings() {
                 companyName={companyDetails?.name || 'Your Company'}
                 includeAppointments={includeAppointments}
                 includeReminders={includeReminders}
-                includeSubscriptions={includeSubscriptions}
+                includeEmails={includeEmails}
+                includeSms={includeSms}
               />
             </DialogContent>
           </Dialog>

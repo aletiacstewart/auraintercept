@@ -56,7 +56,8 @@ export function MonthlyDigestSettings() {
   const [timezone, setTimezone] = useState<string>('America/New_York');
   const [includeAppointments, setIncludeAppointments] = useState(true);
   const [includeReminders, setIncludeReminders] = useState(true);
-  const [includeSubscriptions, setIncludeSubscriptions] = useState(true);
+  const [includeEmails, setIncludeEmails] = useState(true);
+  const [includeSms, setIncludeSms] = useState(true);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
 
@@ -83,7 +84,7 @@ export function MonthlyDigestSettings() {
       if (!companyId) return null;
       const { data, error } = await supabase
         .from('companies')
-        .select('monthly_digest_enabled, monthly_digest_email, monthly_digest_day, monthly_digest_time, monthly_digest_timezone, monthly_digest_include_appointments, monthly_digest_include_reminders, monthly_digest_include_subscriptions, last_monthly_digest_at')
+        .select('monthly_digest_enabled, monthly_digest_email, monthly_digest_day, monthly_digest_time, monthly_digest_timezone, monthly_digest_include_appointments, monthly_digest_include_reminders, monthly_digest_include_emails, monthly_digest_include_sms, last_monthly_digest_at')
         .eq('id', companyId)
         .single();
       if (error) throw error;
@@ -101,7 +102,8 @@ export function MonthlyDigestSettings() {
       setTimezone(company.monthly_digest_timezone || browserTimezone || 'America/New_York');
       setIncludeAppointments(company.monthly_digest_include_appointments ?? true);
       setIncludeReminders(company.monthly_digest_include_reminders ?? true);
-      setIncludeSubscriptions(company.monthly_digest_include_subscriptions ?? true);
+      setIncludeEmails(company.monthly_digest_include_emails ?? true);
+      setIncludeSms(company.monthly_digest_include_sms ?? true);
     }
   }, [company, browserTimezone]);
 
@@ -114,7 +116,8 @@ export function MonthlyDigestSettings() {
       monthly_digest_timezone?: string;
       monthly_digest_include_appointments?: boolean;
       monthly_digest_include_reminders?: boolean;
-      monthly_digest_include_subscriptions?: boolean;
+      monthly_digest_include_emails?: boolean;
+      monthly_digest_include_sms?: boolean;
     }) => {
       if (!companyId) throw new Error('No company ID');
       const { error } = await supabase
@@ -137,7 +140,7 @@ export function MonthlyDigestSettings() {
       toast.error('Please enter an email address');
       return;
     }
-    if (enabled && !includeAppointments && !includeReminders && !includeSubscriptions) {
+    if (enabled && !includeAppointments && !includeReminders && !includeEmails && !includeSms) {
       toast.error('Please select at least one metric to include');
       return;
     }
@@ -149,7 +152,8 @@ export function MonthlyDigestSettings() {
       monthly_digest_timezone: timezone,
       monthly_digest_include_appointments: includeAppointments,
       monthly_digest_include_reminders: includeReminders,
-      monthly_digest_include_subscriptions: includeSubscriptions,
+      monthly_digest_include_emails: includeEmails,
+      monthly_digest_include_sms: includeSms,
     });
   };
 
@@ -309,10 +313,12 @@ export function MonthlyDigestSettings() {
         <DigestMetricsSelector
           includeAppointments={includeAppointments}
           includeReminders={includeReminders}
-          includeSubscriptions={includeSubscriptions}
+          includeEmails={includeEmails}
+          includeSms={includeSms}
           onChangeAppointments={setIncludeAppointments}
           onChangeReminders={setIncludeReminders}
-          onChangeSubscriptions={setIncludeSubscriptions}
+          onChangeEmails={setIncludeEmails}
+          onChangeSms={setIncludeSms}
           disabled={!enabled}
         />
 
@@ -342,7 +348,8 @@ export function MonthlyDigestSettings() {
                 companyName={companyDetails?.name || 'Your Company'}
                 includeAppointments={includeAppointments}
                 includeReminders={includeReminders}
-                includeSubscriptions={includeSubscriptions}
+                includeEmails={includeEmails}
+                includeSms={includeSms}
               />
             </DialogContent>
           </Dialog>
