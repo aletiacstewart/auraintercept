@@ -404,9 +404,9 @@ export function CostCalculator() {
   const bestValue = getBestValue();
 
   const channelConfig = [
-    { key: 'email', label: 'Email', icon: Mail, color: 'emerald', bgClass: 'bg-emerald-50/50 dark:bg-emerald-950/20', borderClass: 'border-emerald-200 dark:border-emerald-900/50', textClass: 'text-emerald-600 dark:text-emerald-400' },
-    { key: 'sms', label: 'SMS', icon: MessageSquare, color: 'red', bgClass: 'bg-red-50/50 dark:bg-red-950/20', borderClass: 'border-red-200 dark:border-red-900/50', textClass: 'text-red-600 dark:text-red-400' },
-    { key: 'voice', label: 'Voice', icon: Phone, color: 'blue', bgClass: 'bg-blue-50/50 dark:bg-blue-950/20', borderClass: 'border-blue-200 dark:border-blue-900/50', textClass: 'text-blue-600 dark:text-blue-400' },
+    { key: 'email', label: 'Email', icon: Mail, color: 'email', bgClass: 'bg-channel-email/10', borderClass: 'border-channel-email/30', textClass: 'text-channel-email' },
+    { key: 'sms', label: 'SMS', icon: MessageSquare, color: 'sms', bgClass: 'bg-channel-sms/10', borderClass: 'border-channel-sms/30', textClass: 'text-channel-sms' },
+    { key: 'voice', label: 'Voice', icon: Phone, color: 'voice', bgClass: 'bg-channel-voice/10', borderClass: 'border-channel-voice/30', textClass: 'text-channel-voice' },
   ];
 
   // Calculate variance for comparison

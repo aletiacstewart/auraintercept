@@ -625,45 +625,45 @@ export default function Index() {
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-2">Aura Single-Point</h3>
-                <p className="text-xs text-muted-foreground mb-1">(Solo-Focus)</p>
+                <p className="text-xs text-card-foreground/60 mb-1">(Solo-Focus)</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-4xl font-bold">$497</span>
-                  <span className="text-muted-foreground">/month</span>
+                  <span className="text-card-foreground/60">/month</span>
                 </div>
-                <p className="text-xs text-green-500 mb-4">$4,970/year (Save $994)</p>
-                <p className="text-sm text-muted-foreground mb-6">Perfect for small service companies getting started with AI automation.</p>
+                <p className="text-xs text-secondary mb-4">$4,970/year (Save $994)</p>
+                <p className="text-sm text-card-foreground/70 mb-6">Perfect for small service companies getting started with AI automation.</p>
                 
                 <div className="space-y-2 text-left mb-6">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">3 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">AI Voice (Chat + Outbound Calls)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Customer Portal Console</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">1-Page Smart Website Included</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Unlimited Appointments</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Email + SMS + Voice</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">5 Employee Accounts</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Saves 10+ hours/week in lead intake</span>
                   </div>
                 </div>
@@ -687,49 +687,49 @@ export default function Index() {
               <CardContent className="p-6">
                 <Badge className="mb-2 gradient-primary border-0">Most Popular</Badge>
                 <h3 className="text-xl font-bold mb-2">Aura Multi-Track</h3>
-                <p className="text-xs text-muted-foreground mb-1">(Business)</p>
+                <p className="text-xs text-card-foreground/60 mb-1">(Business)</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-4xl font-bold gradient-text">$897</span>
-                  <span className="text-muted-foreground">/month</span>
+                  <span className="text-card-foreground/60">/month</span>
                 </div>
-                <p className="text-xs text-green-500 mb-4">$8,970/year (Save $1,794)</p>
-                <p className="text-sm text-muted-foreground mb-6">For growing companies with field technicians needing dispatch automation.</p>
+                <p className="text-xs text-secondary mb-4">$8,970/year (Save $1,794)</p>
+                <p className="text-sm text-card-foreground/70 mb-6">For growing companies with field technicians needing dispatch automation.</p>
                 
                 <div className="space-y-2 text-left mb-6">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">10 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">AI Voice (Chat + Outbound Calls)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">2 AI Consoles</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">1-Page Smart Website Included</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Unlimited Appointments</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Email + SMS + Voice</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Field Operations Management</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">10 Employee Accounts</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Manages up to 5 Field Techs automatically</span>
                   </div>
                 </div>
@@ -752,45 +752,45 @@ export default function Index() {
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-2">Aura Command</h3>
-                <p className="text-xs text-muted-foreground mb-1">(Enterprise)</p>
+                <p className="text-xs text-card-foreground/60 mb-1">(Enterprise)</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-4xl font-bold">$1,497</span>
-                  <span className="text-muted-foreground">/month</span>
+                  <span className="text-card-foreground/60">/month</span>
                 </div>
-                <p className="text-xs text-green-500 mb-4">$14,970/year (Save $2,994)</p>
-                <p className="text-sm text-muted-foreground mb-6">Full platform access with all agents, consoles, and voice capabilities.</p>
+                <p className="text-xs text-secondary mb-4">$14,970/year (Save $2,994)</p>
+                <p className="text-sm text-card-foreground/70 mb-6">Full platform access with all agents, consoles, and voice capabilities.</p>
                 
                 <div className="space-y-2 text-left mb-6">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">All 18 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">All 5 Control Centers</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">1-Page Smart Website Included</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Unlimited Appointments</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Email + SMS + Voice</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Unlimited Employees</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">White-Label Branding</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Total Business Automation & Brand Control</span>
                   </div>
                 </div>
@@ -1099,7 +1099,7 @@ export default function Index() {
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-2">
-                  <Mail className="w-4 h-4 text-blue-400" />
+                  <Mail className="w-4 h-4 text-channel-email" />
                   <span className="font-semibold text-sm text-white">Resend</span>
                 </div>
                 <p className="text-xs text-white/70 mb-2">Email Notifications</p>

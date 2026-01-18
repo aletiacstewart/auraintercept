@@ -64,13 +64,13 @@ interface JobAssignment {
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   pending_acceptance: { label: 'Pending', color: 'bg-yellow-500', icon: Clock },
-  accepted: { label: 'Accepted', color: 'bg-blue-500', icon: CheckCircle },
-  en_route: { label: 'En Route', color: 'bg-purple-500', icon: Navigation },
-  arrived: { label: 'Arrived', color: 'bg-indigo-500', icon: MapPin },
+  accepted: { label: 'Accepted', color: 'bg-secondary', icon: CheckCircle },
+  en_route: { label: 'En Route', color: 'bg-channel-chat', icon: Navigation },
+  arrived: { label: 'Arrived', color: 'bg-accent', icon: MapPin },
   in_progress: { label: 'In Progress', color: 'bg-orange-500', icon: Play },
   completed: { label: 'Completed', color: 'bg-green-500', icon: CheckCircle },
   declined: { label: 'Declined', color: 'bg-red-500', icon: XCircle },
-  cancelled: { label: 'Cancelled', color: 'bg-gray-500', icon: XCircle },
+  cancelled: { label: 'Cancelled', color: 'bg-muted', icon: XCircle },
 };
 
 export function TechnicianJobQueue() {

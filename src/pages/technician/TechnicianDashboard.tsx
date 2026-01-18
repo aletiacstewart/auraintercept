@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils';
 // Aura Intercept themed status styles
 const STATUS_STYLES: Record<string, { bg: string; text: string; glow: string; label: string }> = {
   pending_acceptance: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', glow: 'shadow-yellow-500/30', label: 'Pending' },
-  accepted: { bg: 'bg-blue-500/20', text: 'text-blue-400', glow: 'shadow-blue-500/30', label: 'Accepted' },
+  accepted: { bg: 'bg-secondary/20', text: 'text-secondary', glow: 'shadow-secondary/30', label: 'Accepted' },
   en_route: { bg: 'bg-accent/20', text: 'text-accent', glow: 'shadow-accent/50', label: 'En Route' },
   arrived: { bg: 'bg-accent/20', text: 'text-accent', glow: 'shadow-accent/50', label: 'On Site' },
   in_progress: { bg: 'bg-orange-500/20', text: 'text-orange-400', glow: 'shadow-orange-500/30', label: 'In Progress' },

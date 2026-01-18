@@ -145,7 +145,7 @@ export default function DispatchFieldOpsApp() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
-                  className="bg-white text-slate-900 placeholder:text-slate-400"
+                  className="bg-input text-foreground placeholder:text-muted-foreground border-border"
                 />
               </div>
               
@@ -160,7 +160,7 @@ export default function DispatchFieldOpsApp() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     autoComplete="current-password"
-                    className="bg-white text-slate-900 placeholder:text-slate-400 pr-10"
+                    className="bg-input text-foreground placeholder:text-muted-foreground border-border pr-10"
                   />
                   <Button
                     type="button"

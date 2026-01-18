@@ -49,16 +49,16 @@ interface Lead {
 }
 
 const STATUS_CONFIG = {
-  new: { label: 'New', color: 'bg-blue-500', icon: Clock },
+  new: { label: 'New', color: 'bg-secondary', icon: Clock },
   contacted: { label: 'Contacted', color: 'bg-yellow-500', icon: Phone },
   qualified: { label: 'Qualified', color: 'bg-purple-500', icon: TrendingUp },
   converted: { label: 'Converted', color: 'bg-green-500', icon: CheckCircle },
-  lost: { label: 'Lost', color: 'bg-gray-500', icon: XCircle },
+  lost: { label: 'Lost', color: 'bg-muted', icon: XCircle },
 };
 
 const PRIORITY_CONFIG = {
-  low: { label: 'Low', color: 'text-gray-500' },
-  normal: { label: 'Normal', color: 'text-blue-500' },
+  low: { label: 'Low', color: 'text-muted-foreground' },
+  normal: { label: 'Normal', color: 'text-secondary' },
   high: { label: 'High', color: 'text-orange-500' },
   hot: { label: 'Hot', color: 'text-red-500', icon: Flame },
 };

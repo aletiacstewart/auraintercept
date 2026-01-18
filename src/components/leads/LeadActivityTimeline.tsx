@@ -30,14 +30,14 @@ interface LeadActivityTimelineProps {
 }
 
 const ACTIVITY_CONFIG: Record<string, { icon: any; color: string; label: string }> = {
-  call: { icon: Phone, color: 'text-blue-400', label: 'Call' },
-  email: { icon: Mail, color: 'text-purple-400', label: 'Email' },
-  sms: { icon: MessageSquare, color: 'text-green-400', label: 'SMS' },
+  call: { icon: Phone, color: 'text-channel-voice', label: 'Call' },
+  email: { icon: Mail, color: 'text-channel-email', label: 'Email' },
+  sms: { icon: MessageSquare, color: 'text-channel-sms', label: 'SMS' },
   note: { icon: FileText, color: 'text-yellow-400', label: 'Note' },
   status_change: { icon: RefreshCw, color: 'text-orange-400', label: 'Status Change' },
-  score_update: { icon: TrendingUp, color: 'text-cyan-400', label: 'Score Update' },
-  follow_up_scheduled: { icon: Clock, color: 'text-pink-400', label: 'Follow-up Scheduled' },
-  follow_up_sent: { icon: MessageSquare, color: 'text-emerald-400', label: 'Follow-up Sent' },
+  score_update: { icon: TrendingUp, color: 'text-secondary', label: 'Score Update' },
+  follow_up_scheduled: { icon: Clock, color: 'text-accent', label: 'Follow-up Scheduled' },
+  follow_up_sent: { icon: MessageSquare, color: 'text-channel-sms', label: 'Follow-up Sent' },
 };
 
 export function LeadActivityTimeline({ leadId, maxHeight = '300px' }: LeadActivityTimelineProps) {
