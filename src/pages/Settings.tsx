@@ -39,22 +39,24 @@ export default function Settings() {
           
           <SetupProgressBar isPlatformAdmin={isPlatformAdmin} />
           <Tabs defaultValue="branding" className="space-y-4">
-            <TabsList className="flex flex-wrap h-auto gap-2 p-2">
-              <TabsTrigger value="branding">Branding</TabsTrigger>
-              <TabsTrigger value="contact">Contact Info</TabsTrigger>
-              <TabsTrigger value="app-url">App URL</TabsTrigger>
-              <TabsTrigger value="reminders">Reminders</TabsTrigger>
-              <TabsTrigger value="missed-calls">Missed Calls</TabsTrigger>
-              <TabsTrigger value="default-prefs">Default Prefs</TabsTrigger>
-              <TabsTrigger value="reports">Reports</TabsTrigger>
-              <TabsTrigger value="alerts">Alerts</TabsTrigger>
-              <TabsTrigger value="customer-prefs">Customer Prefs</TabsTrigger>
-              <TabsTrigger value="emails">Email Templates</TabsTrigger>
-              <TabsTrigger value="sms">SMS Templates</TabsTrigger>
-              <TabsTrigger value="reviews">Reviews</TabsTrigger>
-              {isPlatformAdmin && <TabsTrigger value="warranties">Warranties</TabsTrigger>}
-              {isPlatformAdmin && <TabsTrigger value="campaigns">Campaigns</TabsTrigger>}
-            </TabsList>
+            <div className="guide-card p-4">
+              <TabsList className="flex flex-wrap h-auto gap-2">
+                <TabsTrigger value="branding">Branding</TabsTrigger>
+                <TabsTrigger value="contact">Contact Info</TabsTrigger>
+                <TabsTrigger value="app-url">App URL</TabsTrigger>
+                <TabsTrigger value="reminders">Reminders</TabsTrigger>
+                <TabsTrigger value="missed-calls">Missed Calls</TabsTrigger>
+                <TabsTrigger value="default-prefs">Default Prefs</TabsTrigger>
+                <TabsTrigger value="reports">Reports</TabsTrigger>
+                <TabsTrigger value="alerts">Alerts</TabsTrigger>
+                <TabsTrigger value="customer-prefs">Customer Prefs</TabsTrigger>
+                <TabsTrigger value="emails">Email Templates</TabsTrigger>
+                <TabsTrigger value="sms">SMS Templates</TabsTrigger>
+                <TabsTrigger value="reviews">Reviews</TabsTrigger>
+                {isPlatformAdmin && <TabsTrigger value="warranties">Warranties</TabsTrigger>}
+                {isPlatformAdmin && <TabsTrigger value="campaigns">Campaigns</TabsTrigger>}
+              </TabsList>
+            </div>
             <TabsContent value="branding">
               <BrandingSettings />
             </TabsContent>
