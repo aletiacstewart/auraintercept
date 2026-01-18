@@ -116,12 +116,12 @@ interface Invoice {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: string; iconColor: string; icon: React.ElementType }> = {
-  pending_acceptance: { label: 'Pending', color: 'text-yellow-400', bgColor: 'bg-yellow-500/20', iconColor: 'text-yellow-400', icon: Clock },
-  accepted: { label: 'Accepted', color: 'text-blue-400', bgColor: 'bg-blue-500/20', iconColor: 'text-blue-400', icon: CheckCircle },
+  pending_acceptance: { label: 'Pending', color: 'text-warning', bgColor: 'bg-warning/20', iconColor: 'text-warning', icon: Clock },
+  accepted: { label: 'Accepted', color: 'text-secondary', bgColor: 'bg-secondary/20', iconColor: 'text-secondary', icon: CheckCircle },
   en_route: { label: 'En Route', color: 'text-accent', bgColor: 'bg-accent/20', iconColor: 'text-accent', icon: Navigation },
   arrived: { label: 'On Site', color: 'text-accent', bgColor: 'bg-accent/20', iconColor: 'text-accent', icon: MapPin },
-  in_progress: { label: 'In Progress', color: 'text-orange-400', bgColor: 'bg-orange-500/20', iconColor: 'text-orange-400', icon: Play },
-  completed: { label: 'Completed', color: 'text-green-400', bgColor: 'bg-green-500/20', iconColor: 'text-green-400', icon: CheckCircle },
+  in_progress: { label: 'In Progress', color: 'text-warning', bgColor: 'bg-warning/20', iconColor: 'text-warning', icon: Play },
+  completed: { label: 'Completed', color: 'text-secondary', bgColor: 'bg-secondary/20', iconColor: 'text-secondary', icon: CheckCircle },
 };
 
 interface FieldOpsManagerProps {

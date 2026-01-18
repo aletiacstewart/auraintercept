@@ -92,7 +92,7 @@ export default function CalendarIntegration() {
                 One-way sync - your calendar will automatically show appointments.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-green-500/10 text-green-600 text-xs rounded-full">Free</span>
+                <span className="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">Free</span>
                 <span className="px-2 py-1 bg-muted text-foreground/80 text-xs rounded-full">Works Everywhere</span>
                 <span className="px-2 py-1 bg-muted text-foreground/80 text-xs rounded-full">No Setup Required</span>
               </div>
@@ -109,8 +109,8 @@ export default function CalendarIntegration() {
                 Changes you make in your calendar app sync back to the platform.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-green-500/10 text-green-600 text-xs rounded-full">Free</span>
-                <span className="px-2 py-1 bg-blue-500/10 text-blue-600 text-xs rounded-full">Two-Way Sync</span>
+                <span className="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">Free</span>
+                <span className="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">Two-Way Sync</span>
                 <span className="px-2 py-1 bg-muted text-foreground/80 text-xs rounded-full">Apple/Android/Thunderbird</span>
               </div>
             </div>
@@ -126,9 +126,9 @@ export default function CalendarIntegration() {
                 Requires Google Cloud OAuth setup.
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-blue-500/10 text-blue-600 text-xs rounded-full">Two-Way Sync</span>
-                <span className="px-2 py-1 bg-purple-500/10 text-purple-600 text-xs rounded-full">Instant Updates</span>
-                <span className="px-2 py-1 bg-amber-500/10 text-amber-600 text-xs rounded-full">Setup Required</span>
+                <span className="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">Two-Way Sync</span>
+                <span className="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">Instant Updates</span>
+                <span className="px-2 py-1 bg-warning/10 text-warning text-xs rounded-full">Setup Required</span>
               </div>
             </div>
             <GoogleCalendarSettings />

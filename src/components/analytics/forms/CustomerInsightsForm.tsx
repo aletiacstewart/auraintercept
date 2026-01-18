@@ -133,7 +133,7 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
             Analysis Period
           </Label>
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="bg-white text-slate-900 border-border">
+            <SelectTrigger className="bg-input text-foreground border-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -165,26 +165,26 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
 
               <div className="p-4 rounded-lg bg-muted/50 border border-border">
                 <div className="flex items-center gap-2 text-foreground/70 mb-1">
-                  <UserPlus className="h-4 w-4 text-green-500" />
+                  <UserPlus className="h-4 w-4 text-secondary" />
                   <span className="text-sm">New Customers</span>
                 </div>
-                <p className="text-2xl font-bold text-green-600">{insights?.newCustomers || 0}</p>
+                <p className="text-2xl font-bold text-secondary">{insights?.newCustomers || 0}</p>
               </div>
 
               <div className="p-4 rounded-lg bg-muted/50 border border-border">
                 <div className="flex items-center gap-2 text-foreground/70 mb-1">
-                  <TrendingUp className="h-4 w-4 text-blue-500" />
+                  <TrendingUp className="h-4 w-4 text-secondary" />
                   <span className="text-sm">Returning</span>
                 </div>
-                <p className="text-2xl font-bold text-blue-600">{insights?.returningCustomers || 0}</p>
+                <p className="text-2xl font-bold text-secondary">{insights?.returningCustomers || 0}</p>
               </div>
 
               <div className="p-4 rounded-lg bg-muted/50 border border-border">
                 <div className="flex items-center gap-2 text-foreground/70 mb-1">
-                  <UserMinus className="h-4 w-4 text-orange-500" />
+                  <UserMinus className="h-4 w-4 text-warning" />
                   <span className="text-sm">Inactive</span>
                 </div>
-                <p className="text-2xl font-bold text-orange-600">{insights?.inactiveCustomers || 0}</p>
+                <p className="text-2xl font-bold text-warning">{insights?.inactiveCustomers || 0}</p>
               </div>
             </div>
 

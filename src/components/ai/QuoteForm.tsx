@@ -88,7 +88,7 @@ export function QuoteForm({ services, company, onSubmit, onCancel, onSelectDiffe
             </Button>
           )}
           <DollarSign className="h-4 w-4 text-primary" />
-          <h3 className="font-semibold text-sm text-slate-900">Request a Quote</h3>
+        <h3 className="font-semibold text-sm text-foreground">Request a Quote</h3>
         </div>
 
         <Card className="border-primary/20">
@@ -161,9 +161,9 @@ export function QuoteForm({ services, company, onSubmit, onCancel, onSelectDiffe
           </Button>
         )}
         <DollarSign className="h-4 w-4 text-primary" />
-        <h3 className="font-semibold text-sm text-slate-900">Request a Quote</h3>
+        <h3 className="font-semibold text-sm text-foreground">Request a Quote</h3>
         {company && (
-          <span className="text-xs text-slate-500 ml-auto">from {company.name}</span>
+          <span className="text-xs text-muted-foreground ml-auto">from {company.name}</span>
         )}
       </div>
 
@@ -201,7 +201,7 @@ export function QuoteForm({ services, company, onSubmit, onCancel, onSelectDiffe
         />
 
         <div>
-          <Label className="text-xs text-slate-700">Services Needed *</Label>
+          <Label className="text-xs text-muted-foreground">Services Needed *</Label>
           <div className="mt-1 space-y-1 max-h-24 overflow-y-auto border rounded p-1.5 bg-white">
             {services.length > 0 ? (
               services.map((service) => (
@@ -211,13 +211,13 @@ export function QuoteForm({ services, company, onSubmit, onCancel, onSelectDiffe
                     checked={selectedServices.includes(service.id)}
                     onCheckedChange={() => handleServiceToggle(service.id)}
                   />
-                  <label htmlFor={`quote-service-${service.id}`} className="text-xs cursor-pointer flex-1 text-slate-700">
+                  <label htmlFor={`quote-service-${service.id}`} className="text-xs cursor-pointer flex-1 text-foreground/70">
                     {service.name}
                   </label>
                 </div>
               ))
             ) : (
-              <p className="text-xs text-slate-500">No services available</p>
+              <p className="text-xs text-muted-foreground">No services available</p>
             )}
           </div>
         </div>

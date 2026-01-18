@@ -119,8 +119,8 @@ export function UnsubscribeAlertSettings() {
 
         <div className="flex items-center justify-between p-4 rounded-lg border bg-card">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-full bg-primary/10">
-              <Bell className="h-5 w-5 text-primary" />
+            <div className="p-2 rounded-full bg-secondary/10">
+              <Bell className="h-5 w-5 text-secondary" />
             </div>
             <div>
               <Label htmlFor="alerts-enabled" className="text-base font-medium">

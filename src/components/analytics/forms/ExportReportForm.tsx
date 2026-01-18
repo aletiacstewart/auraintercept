@@ -185,7 +185,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
         <div className="space-y-2">
           <Label className="text-foreground/70">Report Type</Label>
           <Select value={reportType} onValueChange={setReportType}>
-            <SelectTrigger className="bg-white text-slate-900 border-border">
+            <SelectTrigger className="bg-input text-foreground border-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -205,7 +205,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
               Date Range
             </Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-input text-foreground border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -222,7 +222,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
               Format
             </Label>
             <Select value={exportFormat} onValueChange={setExportFormat}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-input text-foreground border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -300,7 +300,7 @@ export const ExportReportForm: React.FC<ExportReportFormProps> = ({ companyId, o
             placeholder="email@example.com"
             value={emailTo}
             onChange={(e) => setEmailTo(e.target.value)}
-            className="bg-white text-slate-900 border-border placeholder:text-slate-400"
+            className="bg-input text-foreground border-border placeholder:text-muted-foreground"
           />
         </div>
 

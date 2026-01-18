@@ -44,11 +44,11 @@ interface JobAssignment {
 
 // Aura Intercept themed status colors
 const STATUS_STYLES: Record<string, { bg: string; text: string; glow: string }> = {
-  accepted: { bg: 'bg-blue-500/20', text: 'text-blue-400', glow: 'shadow-blue-500/30' },
+  accepted: { bg: 'bg-secondary/20', text: 'text-secondary', glow: 'shadow-secondary/30' },
   en_route: { bg: 'bg-accent/20', text: 'text-accent', glow: 'shadow-accent/50' },
   arrived: { bg: 'bg-accent/20', text: 'text-accent', glow: 'shadow-accent/50' },
-  in_progress: { bg: 'bg-orange-500/20', text: 'text-orange-400', glow: 'shadow-orange-500/30' },
-  completed: { bg: 'bg-green-500/20', text: 'text-green-400', glow: 'shadow-green-500/30' },
+  in_progress: { bg: 'bg-warning/20', text: 'text-warning', glow: 'shadow-warning/30' },
+  completed: { bg: 'bg-secondary/20', text: 'text-secondary', glow: 'shadow-secondary/30' },
 };
 
 export function TechnicianCheckIn() {

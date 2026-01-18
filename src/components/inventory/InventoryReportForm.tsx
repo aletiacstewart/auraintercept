@@ -63,35 +63,35 @@ export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ compan
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div className="p-4 rounded-lg bg-background border">
-          <div className="flex items-center gap-2 text-slate-600 mb-1">
+          <div className="flex items-center gap-2 text-muted-foreground mb-1">
             <Boxes className="h-4 w-4" />
             <span className="text-sm">Total Items</span>
           </div>
-          <p className="text-2xl font-bold">{inventoryData?.totalItems || 0}</p>
+          <p className="text-2xl font-bold text-foreground">{inventoryData?.totalItems || 0}</p>
         </div>
 
         <div className="p-4 rounded-lg bg-background border">
-          <div className="flex items-center gap-2 text-slate-600 mb-1">
+          <div className="flex items-center gap-2 text-muted-foreground mb-1">
             <Package className="h-4 w-4" />
             <span className="text-sm">Total Value</span>
           </div>
-          <p className="text-2xl font-bold text-green-600">${(inventoryData?.totalValue || 0).toLocaleString()}</p>
+          <p className="text-2xl font-bold text-secondary">${(inventoryData?.totalValue || 0).toLocaleString()}</p>
         </div>
 
         <div className="p-4 rounded-lg bg-background border">
-          <div className="flex items-center gap-2 text-slate-600 mb-1">
-            <CheckCircle className="h-4 w-4 text-green-500" />
+          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+            <CheckCircle className="h-4 w-4 text-secondary" />
             <span className="text-sm">Healthy Stock</span>
           </div>
-          <p className="text-2xl font-bold text-green-600">{inventoryData?.healthyItems?.length || 0}</p>
+          <p className="text-2xl font-bold text-secondary">{inventoryData?.healthyItems?.length || 0}</p>
         </div>
 
         <div className="p-4 rounded-lg bg-background border">
-          <div className="flex items-center gap-2 text-slate-600 mb-1">
-            <AlertTriangle className="h-4 w-4 text-amber-500" />
+          <div className="flex items-center gap-2 text-muted-foreground mb-1">
+            <AlertTriangle className="h-4 w-4 text-warning" />
             <span className="text-sm">Low Stock</span>
           </div>
-          <p className="text-2xl font-bold text-amber-600">{inventoryData?.lowStockItems?.length || 0}</p>
+          <p className="text-2xl font-bold text-warning">{inventoryData?.lowStockItems?.length || 0}</p>
         </div>
       </div>
 
@@ -107,7 +107,7 @@ export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ compan
                 <div key={item.id} className="flex items-center justify-between p-2 rounded bg-muted/50">
                   <div>
                     <p className="font-medium text-sm">{item.name}</p>
-                    <p className="text-xs text-slate-500">{item.category || 'Uncategorized'}</p>
+                    <p className="text-xs text-muted-foreground">{item.category || 'Uncategorized'}</p>
                   </div>
                   <Badge variant={item.quantity <= item.min_quantity ? 'destructive' : 'secondary'}>
                     {item.quantity} in stock
@@ -134,14 +134,14 @@ export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ compan
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">{item.name}</p>
-                  <p className="text-xs text-slate-500">{item.sku || 'No SKU'} • {item.category || 'Uncategorized'}</p>
+                  <p className="text-xs text-muted-foreground">{item.sku || 'No SKU'} • {item.category || 'Uncategorized'}</p>
                 </div>
                 <Badge variant={item.quantity === 0 ? 'destructive' : 'secondary'}>
                   {item.quantity === 0 ? 'Out of Stock' : `${item.quantity} left`}
                 </Badge>
               </div>
               <div className="mt-2">
-                <div className="flex justify-between text-xs text-slate-500 mb-1">
+                <div className="flex justify-between text-xs text-muted-foreground mb-1">
                   <span>Stock Level</span>
                   <span>{item.quantity} / {item.min_quantity} min</span>
                 </div>
@@ -189,16 +189,16 @@ export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ compan
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-xs">
                     <div>
-                      <p className="text-slate-500">Current</p>
-                      <p className="font-medium">{item.quantity}</p>
+                      <p className="text-muted-foreground">Current</p>
+                      <p className="font-medium text-foreground">{item.quantity}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Minimum</p>
-                      <p className="font-medium">{item.min_quantity}</p>
+                      <p className="text-muted-foreground">Minimum</p>
+                      <p className="font-medium text-foreground">{item.min_quantity}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Est. Cost</p>
-                      <p className="font-medium">${estimatedCost.toFixed(2)}</p>
+                      <p className="text-muted-foreground">Est. Cost</p>
+                      <p className="font-medium text-foreground">${estimatedCost.toFixed(2)}</p>
                     </div>
                   </div>
                 </div>
@@ -206,9 +206,9 @@ export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ compan
             })}
           </div>
 
-          <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
-            <p className="font-medium text-blue-800">Total Reorder Estimate</p>
-            <p className="text-2xl font-bold text-blue-600 mt-1">
+          <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20">
+            <p className="font-medium text-secondary-foreground">Total Reorder Estimate</p>
+            <p className="text-2xl font-bold text-secondary mt-1">
               ${inventoryData.lowStockItems
                 .reduce((sum, item) => {
                   const reorderQty = Math.max(item.min_quantity * 2 - item.quantity, item.min_quantity);
@@ -216,7 +216,7 @@ export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ compan
                 }, 0)
                 .toLocaleString()}
             </p>
-            <p className="text-xs text-blue-700 mt-1">{inventoryData.lowStockItems.length} items need reordering</p>
+            <p className="text-xs text-secondary mt-1">{inventoryData.lowStockItems.length} items need reordering</p>
           </div>
         </>
       ) : (

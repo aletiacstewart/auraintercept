@@ -138,7 +138,7 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
           <div className="space-y-2">
             <Label className="text-foreground/70">Metric</Label>
             <Select value={metric} onValueChange={setMetric}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-input text-foreground border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -151,7 +151,7 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
           <div className="space-y-2">
             <Label className="text-foreground/70">Forecast Period</Label>
             <Select value={forecastDays} onValueChange={setForecastDays}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-input text-foreground border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -193,12 +193,12 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
               </div>
               <div className="flex items-center justify-center gap-2 pt-2">
                 {trendData?.trend === 'up' ? (
-                  <Badge className="bg-green-100 text-green-700">
+                  <Badge className="bg-secondary/10 text-secondary">
                     <TrendingUp className="h-3 w-3 mr-1" />
                     +{(trendData?.recentChange || 0).toFixed(1)}% growth
                   </Badge>
                 ) : trendData?.trend === 'down' ? (
-                  <Badge className="bg-red-100 text-red-700">
+                  <Badge className="bg-destructive/10 text-destructive">
                     <TrendingDown className="h-3 w-3 mr-1" />
                     {(trendData?.recentChange || 0).toFixed(1)}% decline
                   </Badge>

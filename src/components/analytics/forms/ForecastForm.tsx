@@ -75,14 +75,14 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
   const renderDemandForecast = () => (
     <div className="space-y-4">
       <div className="p-4 rounded-lg bg-muted/50 border border-border">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-blue-500" />
-            <span className="font-medium text-foreground">Demand Forecast</span>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-secondary" />
+              <span className="font-medium text-foreground">Demand Forecast</span>
+            </div>
+            <Badge variant="secondary" className="text-xs">Next {forecastDays} days</Badge>
           </div>
-          <Badge variant="secondary" className="text-xs">Next {forecastDays} days</Badge>
-        </div>
-        <p className="text-3xl font-bold text-blue-600">{demandForecast}</p>
+          <p className="text-3xl font-bold text-secondary">{demandForecast}</p>
         <p className="text-sm text-foreground/70">Expected appointments</p>
         
         <div className="mt-4 space-y-2">
@@ -105,26 +105,26 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
         </div>
       </div>
 
-      <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
-        <p className="text-sm text-blue-800">
-          <strong>Forecast Insight:</strong> Based on the last 30 days, expect approximately {demandForecast} appointments. 
-          Consider having {staffingNeed} technicians available during peak hours.
-        </p>
-      </div>
+        <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20">
+          <p className="text-sm text-secondary-foreground">
+            <strong>Forecast Insight:</strong> Based on the last 30 days, expect approximately {demandForecast} appointments. 
+            Consider having {staffingNeed} technicians available during peak hours.
+          </p>
+        </div>
     </div>
   );
 
   const renderRevenueForecast = () => (
     <div className="space-y-4">
       <div className="p-4 rounded-lg bg-muted/50 border border-border">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5 text-green-500" />
-            <span className="font-medium text-foreground">Revenue Forecast</span>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-secondary" />
+              <span className="font-medium text-foreground">Revenue Forecast</span>
+            </div>
+            <Badge variant="secondary" className="text-xs">Next {forecastDays} days</Badge>
           </div>
-          <Badge variant="secondary" className="text-xs">Next {forecastDays} days</Badge>
-        </div>
-        <p className="text-3xl font-bold text-green-600">${revenueForecast.toLocaleString()}</p>
+          <p className="text-3xl font-bold text-secondary">${revenueForecast.toLocaleString()}</p>
         <p className="text-sm text-foreground/70">Projected revenue</p>
         
         <div className="mt-4 space-y-2">
@@ -147,26 +147,26 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
         </div>
       </div>
 
-      <div className="p-4 rounded-lg bg-green-50 border border-green-200">
-        <p className="text-sm text-green-800">
-          <strong>Revenue Insight:</strong> Maintaining current booking rates should generate approximately ${revenueForecast.toLocaleString()} 
-          over the next {forecastDays} days.
-        </p>
-      </div>
+        <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20">
+          <p className="text-sm text-secondary-foreground">
+            <strong>Revenue Insight:</strong> Maintaining current booking rates should generate approximately ${revenueForecast.toLocaleString()} 
+            over the next {forecastDays} days.
+          </p>
+        </div>
     </div>
   );
 
   const renderStaffingForecast = () => (
     <div className="space-y-4">
       <div className="p-4 rounded-lg bg-muted/50 border border-border">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-purple-500" />
-            <span className="font-medium text-foreground">Staffing Forecast</span>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-accent" />
+              <span className="font-medium text-foreground">Staffing Forecast</span>
+            </div>
+            <Badge variant="secondary" className="text-xs">Next {forecastDays} days</Badge>
           </div>
-          <Badge variant="secondary" className="text-xs">Next {forecastDays} days</Badge>
-        </div>
-        <p className="text-3xl font-bold text-purple-600">{staffingNeed}</p>
+          <p className="text-3xl font-bold text-accent">{staffingNeed}</p>
         <p className="text-sm text-foreground/70">Recommended staff</p>
         
         <div className="mt-4 flex items-center gap-2">
@@ -178,7 +178,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
               Need {staffingNeed - (historicalData?.totalEmployees || 0)} more
             </Badge>
           ) : (
-            <Badge variant="secondary" className="gap-1 bg-green-100 text-green-700">
+            <Badge variant="secondary" className="gap-1 bg-secondary/10 text-secondary">
               Sufficient capacity
             </Badge>
           )}
@@ -196,15 +196,15 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
         </div>
       </div>
 
-      <div className="p-4 rounded-lg bg-purple-50 border border-purple-200">
-        <p className="text-sm text-purple-800">
-          <strong>Staffing Insight:</strong> With {demandForecast} expected appointments over {forecastDays} days, 
-          {staffingNeed <= (historicalData?.totalEmployees || 0) 
-            ? ` your current team of ${historicalData?.totalEmployees} should handle the workload well.`
-            : ` consider adding ${staffingNeed - (historicalData?.totalEmployees || 0)} temporary staff or overtime hours.`
-          }
-        </p>
-      </div>
+        <div className="p-4 rounded-lg bg-accent/10 border border-accent/20">
+          <p className="text-sm text-accent-foreground">
+            <strong>Staffing Insight:</strong> With {demandForecast} expected appointments over {forecastDays} days, 
+            {staffingNeed <= (historicalData?.totalEmployees || 0) 
+              ? ` your current team of ${historicalData?.totalEmployees} should handle the workload well.`
+              : ` consider adding ${staffingNeed - (historicalData?.totalEmployees || 0)} temporary staff or overtime hours.`
+            }
+          </p>
+        </div>
     </div>
   );
 
@@ -227,7 +227,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
           <div className="space-y-2">
             <Label className="text-foreground/70">Forecast Type</Label>
             <Select value={forecastType} onValueChange={(v) => setForecastType(v as ForecastType)}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-input text-foreground border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -240,7 +240,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
           <div className="space-y-2">
             <Label className="text-foreground/70">Time Period</Label>
             <Select value={forecastPeriod} onValueChange={setForecastPeriod}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
+              <SelectTrigger className="bg-input text-foreground border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
