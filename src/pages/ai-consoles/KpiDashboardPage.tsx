@@ -18,6 +18,7 @@ export default function KpiDashboardPage() {
             icon={Gauge}
             title="KPI Dashboard"
             description="Build and export KPI dashboards for your business"
+            featureColor="analytics"
           />
 
           {companyId ? (

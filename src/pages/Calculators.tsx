@@ -16,6 +16,7 @@ export default function Calculators() {
             icon={Calculator}
             title="Cost & ROI Calculator"
             description="Estimate costs and calculate potential savings from AI-powered reminders"
+            featureColor="invoices"
           />
 
           {/* Calculator Card */}

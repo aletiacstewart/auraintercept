@@ -39,6 +39,7 @@ export default function FieldOperations() {
             icon={Truck}
             title="Dispatch-Field Ops"
             description="Real-time dispatch console for managing field technicians"
+            featureColor="fieldops"
           />
           <div className="h-[calc(100vh-14rem)]">
             <FieldOpsManager companyId={companyId} />
