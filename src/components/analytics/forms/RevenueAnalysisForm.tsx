@@ -118,7 +118,7 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-sm font-medium text-foreground">
+            <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
               <Calendar className="h-3 w-3" />
               Date Range
             </Label>
@@ -135,7 +135,7 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-foreground">Group By</Label>
+            <Label className="text-sm font-medium text-muted-foreground">Group By</Label>
             <Select value={groupBy} onValueChange={setGroupBy}>
               <SelectTrigger className="h-9 text-sm">
                 <SelectValue />

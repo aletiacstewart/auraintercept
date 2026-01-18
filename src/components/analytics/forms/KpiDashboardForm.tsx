@@ -142,7 +142,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
       <div className="p-4 space-y-4">
         {/* Filters */}
         <div className="space-y-2">
-          <Label className="flex items-center gap-1 text-sm font-medium text-foreground">
+          <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
             <Calendar className="h-3 w-3" />
             Period
           </Label>
