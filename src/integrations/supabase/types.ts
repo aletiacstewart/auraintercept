@@ -790,6 +790,7 @@ export type Database = {
           last_cost_alert_at: string | null
           last_monthly_digest_at: string | null
           last_quarterly_digest_at: string | null
+          last_sms_optout_alert_at: string | null
           last_unsubscribe_alert_at: string | null
           last_weekly_digest_at: string | null
           logo_url: string | null
@@ -829,6 +830,9 @@ export type Database = {
           service_area_zip_codes: string[] | null
           service_categories: string[] | null
           slug: string
+          sms_optout_alert_email: string | null
+          sms_optout_alert_enabled: boolean | null
+          sms_optout_alert_threshold: number | null
           stripe_customer_id: string | null
           subscription_tier: string | null
           trial_ends_at: string | null
@@ -883,6 +887,7 @@ export type Database = {
           last_cost_alert_at?: string | null
           last_monthly_digest_at?: string | null
           last_quarterly_digest_at?: string | null
+          last_sms_optout_alert_at?: string | null
           last_unsubscribe_alert_at?: string | null
           last_weekly_digest_at?: string | null
           logo_url?: string | null
@@ -922,6 +927,9 @@ export type Database = {
           service_area_zip_codes?: string[] | null
           service_categories?: string[] | null
           slug: string
+          sms_optout_alert_email?: string | null
+          sms_optout_alert_enabled?: boolean | null
+          sms_optout_alert_threshold?: number | null
           stripe_customer_id?: string | null
           subscription_tier?: string | null
           trial_ends_at?: string | null
@@ -976,6 +984,7 @@ export type Database = {
           last_cost_alert_at?: string | null
           last_monthly_digest_at?: string | null
           last_quarterly_digest_at?: string | null
+          last_sms_optout_alert_at?: string | null
           last_unsubscribe_alert_at?: string | null
           last_weekly_digest_at?: string | null
           logo_url?: string | null
@@ -1015,6 +1024,9 @@ export type Database = {
           service_area_zip_codes?: string[] | null
           service_categories?: string[] | null
           slug?: string
+          sms_optout_alert_email?: string | null
+          sms_optout_alert_enabled?: boolean | null
+          sms_optout_alert_threshold?: number | null
           stripe_customer_id?: string | null
           subscription_tier?: string | null
           trial_ends_at?: string | null
