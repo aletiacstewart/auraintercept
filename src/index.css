@@ -741,4 +741,102 @@
     background: hsl(var(--feature-fieldops) / 0.15);
     color: hsl(var(--feature-fieldops));
   }
+
+  /* ============================================================
+     AURA INTERCEPT - LIVE ACTIVITY STREAM ANIMATIONS
+     ============================================================
+     These utilities power the "Aura Live" activity stream with
+     organic, breathing animations that show AI agents "caring"
+     for customers.
+     ============================================================ */
+
+  /* Aura Breathing Animation - organic heartbeat for active agents */
+  .aura-breathing {
+    animation: aura-breathe 2.5s ease-in-out infinite;
+  }
+
+  @keyframes aura-breathe {
+    0%, 100% { 
+      transform: scale(1); 
+      opacity: 1;
+      box-shadow: 0 0 0 0 hsl(199 60% 55% / 0.4);
+    }
+    50% { 
+      transform: scale(1.08); 
+      opacity: 0.85;
+      box-shadow: 0 0 12px 4px hsl(199 60% 55% / 0.25);
+    }
+  }
+
+  /* Aura Pulse Ring - expanding ring effect for active states */
+  .aura-pulse-ring {
+    animation: aura-pulse-ring 2s ease-out infinite;
+  }
+
+  @keyframes aura-pulse-ring {
+    0% {
+      box-shadow: 0 0 0 0 hsl(199 60% 55% / 0.5);
+    }
+    70% {
+      box-shadow: 0 0 0 8px hsl(199 60% 55% / 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 hsl(199 60% 55% / 0);
+    }
+  }
+
+  /* Aura Sparkle Burst - celebration effect for high-value events */
+  .aura-sparkle-burst {
+    position: relative;
+  }
+
+  .aura-sparkle-burst::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle, hsl(45 93% 58% / 0.3) 0%, transparent 70%);
+    animation: aura-sparkle 1s ease-out forwards;
+    pointer-events: none;
+  }
+
+  @keyframes aura-sparkle {
+    0% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 1; }
+    100% { opacity: 0; transform: scale(1.3); }
+  }
+
+  /* Aura Status Colors - Empathy Color Palette */
+  .aura-status-emerald {
+    color: #34D399;
+    background: rgba(52, 211, 153, 0.15);
+  }
+
+  .aura-status-curious {
+    color: #FBBF24;
+    background: rgba(251, 191, 36, 0.15);
+  }
+
+  .aura-status-connection {
+    color: #3B82F6;
+    background: rgba(59, 130, 246, 0.15);
+  }
+
+  .aura-status-resting {
+    color: #94A3B8;
+    background: rgba(148, 163, 184, 0.15);
+  }
+
+  /* Aura Glow Effects */
+  .aura-glow-emerald {
+    box-shadow: 0 0 20px rgba(52, 211, 153, 0.4);
+  }
+
+  .aura-glow-curious {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+  }
+
+  .aura-glow-connection {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  }
 }
