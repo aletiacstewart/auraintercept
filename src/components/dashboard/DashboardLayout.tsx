@@ -105,12 +105,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Analytics & Reports',
     items: [
-      { label: 'Performance Report', icon: BarChart3, href: '/dashboard/ai-consoles/performance-report', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
-      { label: 'Business Insights', icon: Cpu, href: '/dashboard/ai-consoles/business-insights', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
-      { label: 'Revenue Analysis', icon: CreditCard, href: '/dashboard/ai-consoles/revenue-analysis', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-invoices' },
-      { label: 'Revenue Forecast', icon: Clock, href: '/dashboard/ai-consoles/revenue-forecast', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-invoices' },
-      { label: 'Customer Insights', icon: Users, href: '/dashboard/ai-consoles/customer-insights', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers' },
-      { label: 'KPI Dashboard', icon: BarChart3, href: '/dashboard/ai-consoles/kpi-dashboard', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
+      { label: 'Ask Aura', icon: Cpu, href: '/dashboard/ask-aura', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
       { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-overview' },
     ],
   },

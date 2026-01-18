@@ -4,9 +4,3 @@ export { default as BusinessManagementConsole } from './BusinessManagementConsol
 export { default as MarketingSalesConsole } from './MarketingSalesConsole';
 export { default as AnalyticsConsole } from './AnalyticsConsole';
 export { default as NewLeadPage } from './NewLeadPage';
-export { default as PerformanceReportPage } from './PerformanceReportPage';
-export { default as BusinessInsightsPage } from './BusinessInsightsPage';
-export { default as RevenueAnalysisPage } from './RevenueAnalysisPage';
-export { default as DemandForecastPage } from './DemandForecastPage';
-export { default as CustomerInsightsPage } from './CustomerInsightsPage';
-export { default as KpiDashboardPage } from './KpiDashboardPage';
