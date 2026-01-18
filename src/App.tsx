@@ -4,7 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { VoiceProvider } from "@/contexts/VoiceContext";
 import { PWAUpdatePrompt } from "@/components/pwa/PWAUpdatePrompt";
+import { AuraVoiceOverlay } from "@/components/voice/AuraVoiceOverlay";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -105,18 +107,19 @@ const App = () => (
           <Sonner />
           <PWAUpdatePrompt />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/audit" element={<OpportunityAudit />} />
-              <Route path="/field-ops-app" element={<FieldOpsApp />} />
-              <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
-              <Route path="/business-mgt-ops-app" element={<BusinessMgtOpsApp />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
-              <Route path="/customer-auth" element={<CustomerAuth />} />
-            
+            <VoiceProvider>
+              <AuraVoiceOverlay />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/audit" element={<OpportunityAudit />} />
+                <Route path="/field-ops-app" element={<FieldOpsApp />} />
+                <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
+                <Route path="/business-mgt-ops-app" element={<BusinessMgtOpsApp />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
+                <Route path="/customer-auth" element={<CustomerAuth />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/companies" element={<Companies />} />
               <Route path="/dashboard/customers" element={<Customers />} />
@@ -207,8 +210,9 @@ const App = () => (
               <Route path="/technician/profile" element={<ProtectedRoute><TechnicianProfile /></ProtectedRoute>} />
               <Route path="/technician/install" element={<ProtectedRoute><TechnicianInstall /></ProtectedRoute>} />
               
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </VoiceProvider>
           </BrowserRouter>
         </ErrorBoundary>
       </AuthProvider>

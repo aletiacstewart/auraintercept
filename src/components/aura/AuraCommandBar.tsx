@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Search, Command } from 'lucide-react';
+import { Sparkles, Search, Command, Mic, MicOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useVoice } from '@/contexts/VoiceContext';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface AuraCommandBarProps {
   value: string;
@@ -24,6 +26,7 @@ export function AuraCommandBar({
   className,
 }: AuraCommandBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { isVoiceModeEnabled, isListening, isSupported, toggleVoiceMode } = useVoice();
 
   useEffect(() => {
     if (autoFocus && inputRef.current) {
@@ -50,7 +53,10 @@ export function AuraCommandBar({
         {/* Gradient border effect */}
         <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-secondary rounded-xl opacity-75 blur-sm" />
         
-        <div className="relative flex items-center gap-2 bg-background rounded-xl border border-border p-1">
+        <div className={cn(
+          "relative flex items-center gap-2 bg-background rounded-xl border border-border p-1",
+          isVoiceModeEnabled && isListening && "voice-listening-active"
+        )}>
           {/* Icon */}
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary">
             <Sparkles className="h-5 w-5 text-white" />
@@ -67,6 +73,34 @@ export function AuraCommandBar({
             disabled={isLoading}
             className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
           />
+          
+          {/* Voice input toggle */}
+          {isSupported && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleVoiceMode}
+                  className={cn(
+                    "h-9 w-9 rounded-lg transition-all",
+                    isVoiceModeEnabled && "bg-aura-emerald/10 text-aura-emerald"
+                  )}
+                >
+                  {isVoiceModeEnabled ? (
+                    <Mic className={cn("h-4 w-4", isListening && "aura-breathing")} />
+                  ) : (
+                    <MicOff className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>{isVoiceModeEnabled ? 'Disable Voice' : 'Enable Voice'}</span>
+                <span className="ml-2 text-muted-foreground text-xs">Ctrl+Shift+V</span>
+              </TooltipContent>
+            </Tooltip>
+          )}
           
           {/* Keyboard shortcut hint */}
           <div className="hidden md:flex items-center gap-1 px-2 py-1 rounded bg-muted text-muted-foreground text-xs">

@@ -839,4 +839,64 @@
   .aura-glow-connection {
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
   }
+
+  /* Voice Input Styles */
+  .voice-overlay-container {
+    backdrop-filter: blur(12px);
+    background: linear-gradient(
+      135deg, 
+      hsl(var(--sidebar-background) / 0.95),
+      hsl(var(--sidebar-background) / 0.85)
+    );
+  }
+
+  .voice-listening-active input,
+  .voice-listening-active textarea {
+    box-shadow: 0 0 0 2px hsl(var(--secondary) / 0.3);
+    animation: voice-field-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes voice-field-pulse {
+    0%, 100% { 
+      box-shadow: 0 0 0 2px hsl(var(--secondary) / 0.2);
+    }
+    50% { 
+      box-shadow: 0 0 0 4px hsl(var(--secondary) / 0.4);
+    }
+  }
+
+  .voice-mic-pulse {
+    animation: voice-mic-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes voice-mic-pulse {
+    0%, 100% { 
+      opacity: 0.7; 
+      transform: scale(1); 
+    }
+    50% { 
+      opacity: 1; 
+      transform: scale(1.15); 
+    }
+  }
+
+  .voice-mic-ring {
+    animation: voice-mic-ring 2s ease-out infinite;
+  }
+
+  @keyframes voice-mic-ring {
+    0% { 
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    100% { 
+      opacity: 0;
+      transform: scale(2);
+    }
+  }
+
+  /* Voice command toast styling */
+  .voice-command-toast {
+    border-left: 3px solid #34D399;
+  }
 }
