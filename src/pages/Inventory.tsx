@@ -13,7 +13,7 @@ export default function Inventory() {
           icon={Package}
           title="Inventory"
           description="Manage parts, supplies, and stock levels"
-          featureColor="inventory"
+          featureColor="employees"
         />
         <InventoryManager />
       </div>

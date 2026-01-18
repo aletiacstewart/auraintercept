@@ -23,6 +23,7 @@ export default function EmployeeAppointments() {
             icon={Calendar}
             title="Appointments"
             description="View and manage scheduled appointments"
+            featureColor="fieldops"
             action={
               <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
                 <DialogTrigger asChild>

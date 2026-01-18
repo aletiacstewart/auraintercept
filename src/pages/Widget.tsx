@@ -13,6 +13,7 @@ const Widget = () => {
             icon={Globe}
             title="Customer Website App"
             description="Embed the AI Agent Virtual Assistant on your website"
+            featureColor="customers"
           />
           <WidgetPreview />
         </div>
