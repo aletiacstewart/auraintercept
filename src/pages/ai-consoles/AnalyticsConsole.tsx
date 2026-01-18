@@ -23,6 +23,7 @@ export default function AnalyticsConsole() {
               icon={BarChart3}
               title="Analytics & Reports Console"
               description="AI-powered analytics, reporting, and business insights"
+              featureColor="analytics"
               action={
                 canManageSettings ? (
                   <Button

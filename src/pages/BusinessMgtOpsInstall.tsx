@@ -1,5 +1,6 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
+import { PageHeader } from '@/components/ui/page-header';
 import { BusinessMgtOpsAppCard } from '@/components/company/BusinessMgtOpsAppCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,18 +30,18 @@ export default function BusinessMgtOpsInstall() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Business Mgt Ops App Install</h1>
-            <p className="text-muted-foreground">
-              Install the Business Management Ops app on your device for quick access
-            </p>
-          </div>
-          <Badge variant={isOnline ? 'default' : 'secondary'} className="gap-1">
-            {isOnline ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
-            {isOnline ? 'Online' : 'Offline'}
-          </Badge>
-        </div>
+          <PageHeader
+            icon={Briefcase}
+            title="Business Mgt Ops App Install"
+            description="Install the Business Management Ops app on your device for quick access"
+            featureColor="analytics"
+            badge={
+              <Badge variant={isOnline ? 'default' : 'secondary'} className="gap-1">
+                {isOnline ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
+                {isOnline ? 'Online' : 'Offline'}
+              </Badge>
+            }
+          />
 
         {/* Main Install Card */}
         <BusinessMgtOpsAppCard />
