@@ -12,11 +12,7 @@ interface SetupStep {
   completed: boolean;
 }
 
-interface SetupProgressBarProps {
-  isPlatformAdmin?: boolean;
-}
-
-export function SetupProgressBar({ isPlatformAdmin = false }: SetupProgressBarProps) {
+export function SetupProgressBar() {
   const { companyId } = useAuth();
   const [steps, setSteps] = useState<SetupStep[]>([]);
   const [loading, setLoading] = useState(true);
@@ -144,19 +140,21 @@ export function SetupProgressBar({ isPlatformAdmin = false }: SetupProgressBarPr
           },
         ];
 
-        // Add platform admin only steps
-        const adminSteps: SetupStep[] = isPlatformAdmin ? [
+        // Warranties and Campaigns are available for both company admin and platform admin
+        const adminSteps: SetupStep[] = [
           {
             id: 'warranties',
             label: 'Warranties',
+            // Check if warranty settings have been configured (any warranty policies exist)
             completed: (warrantyPoliciesCount || 0) > 0,
           },
           {
             id: 'campaigns',
             label: 'Campaigns',
+            // Check if any marketing campaigns have been created
             completed: (campaignsCount || 0) > 0,
           },
-        ] : [];
+        ];
 
         setSteps([...baseSteps, ...adminSteps]);
       } catch (error) {
@@ -167,7 +165,7 @@ export function SetupProgressBar({ isPlatformAdmin = false }: SetupProgressBarPr
     };
 
     checkSetupStatus();
-  }, [companyId, isPlatformAdmin, refreshKey]);
+  }, [companyId, refreshKey]);
 
   const completedCount = steps.filter((s) => s.completed).length;
   const progressPercent = steps.length > 0 ? (completedCount / steps.length) * 100 : 0;
