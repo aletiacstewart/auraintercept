@@ -39,7 +39,7 @@ export default function Settings() {
           
           <SetupProgressBar isPlatformAdmin={isPlatformAdmin} />
           <Tabs defaultValue="branding" className="space-y-4">
-            <TabsList className="flex-wrap h-auto gap-1">
+            <TabsList className="flex flex-wrap h-auto gap-2 p-2">
               <TabsTrigger value="branding">Branding</TabsTrigger>
               <TabsTrigger value="contact">Contact Info</TabsTrigger>
               <TabsTrigger value="app-url">App URL</TabsTrigger>
