@@ -77,7 +77,7 @@ const navGroups: NavGroup[] = [
     label: 'Overview',
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-overview' },
-      { label: 'Aura Quick-Start', icon: Settings, href: '/dashboard/aura-quick-start', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
+      { label: 'Start Step 1 Setup', icon: Settings, href: '/dashboard/start-step-1-setup', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'Smart Website', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'My Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['employee'] },
       { label: 'AI Console', icon: Bot, href: '/technician/ai-console', roles: ['employee'] },

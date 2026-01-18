@@ -264,7 +264,7 @@ export function AutomationOverview() {
 
   const handleConfigureClick = (tabValue: string) => {
     // Navigate to the Settings page with the appropriate tab
-    navigate(`/dashboard/aura-quick-start?tab=${tabValue}`);
+    navigate(`/dashboard/start-step-1-setup?tab=${tabValue}`);
   };
 
   return (

@@ -91,7 +91,7 @@ export function DispatchFieldOpsAppCard() {
                 <AlertDescription className="text-xs">
                   Install links can't use lovableproject.com (preview) — phones will be redirected to create a Lovable account.
                   {' '}
-                  <Link to="/dashboard/aura-quick-start" className="underline font-medium inline-flex items-center gap-1">
+                  <Link to="/dashboard/start-step-1-setup" className="underline font-medium inline-flex items-center gap-1">
                     Set your published app URL <Settings className="h-3 w-3" />
                   </Link>
                 </AlertDescription>
