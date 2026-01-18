@@ -24,7 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Users, Mail, Phone, MessageSquare, Loader2, Search, CheckCircle, XCircle } from "lucide-react";
+import { Users, Mail, Phone, MessageSquare, Loader2, Search, CheckCircle, XCircle, Save } from "lucide-react";
+import { triggerSetupProgressRefresh } from "@/hooks/useSetupProgress";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -68,6 +69,43 @@ export function CustomerPreferencesManager() {
       return data as AppointmentWithPrefs[];
     },
     enabled: !!companyId,
+  });
+
+  const [hasChanges, setHasChanges] = useState(false);
+  const [pendingChanges, setPendingChanges] = useState<Map<string, Partial<AppointmentWithPrefs>>>(new Map());
+
+  const handlePreferenceChange = (id: string, field: string, value: boolean) => {
+    setHasChanges(true);
+    setPendingChanges(prev => {
+      const newMap = new Map(prev);
+      const existing = newMap.get(id) || {};
+      newMap.set(id, { ...existing, [field]: value });
+      return newMap;
+    });
+  };
+
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      const updates = Array.from(pendingChanges.entries());
+      for (const [id, changes] of updates) {
+        const { error } = await supabase
+          .from("appointments")
+          .update(changes)
+          .eq("id", id);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments-preferences"] });
+      toast.success("Customer preferences saved");
+      triggerSetupProgressRefresh();
+      setHasChanges(false);
+      setPendingChanges(new Map());
+    },
+    onError: (error) => {
+      toast.error("Failed to save preferences");
+      console.error(error);
+    },
   });
 
   const updatePreferenceMutation = useMutation({
@@ -302,29 +340,35 @@ export function CustomerPreferencesManager() {
                     </TableCell>
                     <TableCell className="text-center">
                       <Switch
-                        checked={!apt.sms_opt_out}
+                        checked={pendingChanges.get(apt.id)?.sms_opt_out !== undefined 
+                          ? !pendingChanges.get(apt.id)?.sms_opt_out 
+                          : !apt.sms_opt_out}
                         onCheckedChange={(checked) => 
-                          updatePreferenceMutation.mutate({ id: apt.id, field: "sms_opt_out", value: !checked })
+                          handlePreferenceChange(apt.id, "sms_opt_out", !checked)
                         }
-                        disabled={!apt.customer_phone || updatePreferenceMutation.isPending}
+                        disabled={!apt.customer_phone}
                       />
                     </TableCell>
                     <TableCell className="text-center">
                       <Switch
-                        checked={!apt.email_opt_out}
+                        checked={pendingChanges.get(apt.id)?.email_opt_out !== undefined 
+                          ? !pendingChanges.get(apt.id)?.email_opt_out 
+                          : !apt.email_opt_out}
                         onCheckedChange={(checked) => 
-                          updatePreferenceMutation.mutate({ id: apt.id, field: "email_opt_out", value: !checked })
+                          handlePreferenceChange(apt.id, "email_opt_out", !checked)
                         }
-                        disabled={!apt.customer_email || updatePreferenceMutation.isPending}
+                        disabled={!apt.customer_email}
                       />
                     </TableCell>
                     <TableCell className="text-center">
                       <Switch
-                        checked={!apt.call_opt_out}
+                        checked={pendingChanges.get(apt.id)?.call_opt_out !== undefined 
+                          ? !pendingChanges.get(apt.id)?.call_opt_out 
+                          : !apt.call_opt_out}
                         onCheckedChange={(checked) => 
-                          updatePreferenceMutation.mutate({ id: apt.id, field: "call_opt_out", value: !checked })
+                          handlePreferenceChange(apt.id, "call_opt_out", !checked)
                         }
-                        disabled={!apt.customer_phone || updatePreferenceMutation.isPending}
+                        disabled={!apt.customer_phone}
                       />
                     </TableCell>
                   </TableRow>
@@ -334,9 +378,22 @@ export function CustomerPreferencesManager() {
           </ScrollArea>
         )}
 
-        <p className="text-xs text-muted-foreground">
-          Showing {filteredAppointments.length} of {appointments?.length || 0} appointments
-        </p>
+        <div className="flex items-center justify-between pt-4 border-t">
+          <p className="text-xs text-muted-foreground">
+            Showing {filteredAppointments.length} of {appointments?.length || 0} appointments
+          </p>
+          <Button 
+            onClick={() => saveMutation.mutate()} 
+            disabled={!hasChanges || saveMutation.isPending}
+          >
+            {saveMutation.isPending ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4 mr-2" />
+            )}
+            Save Preferences
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
