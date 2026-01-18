@@ -3796,6 +3796,10 @@ export type Database = {
           sort_order: number | null
           sync_to_crm: boolean | null
           updated_at: string
+          website_show_description: boolean
+          website_show_duration: boolean
+          website_show_price: boolean
+          website_show_service: boolean
         }
         Insert: {
           category?: string | null
@@ -3818,6 +3822,10 @@ export type Database = {
           sort_order?: number | null
           sync_to_crm?: boolean | null
           updated_at?: string
+          website_show_description?: boolean
+          website_show_duration?: boolean
+          website_show_price?: boolean
+          website_show_service?: boolean
         }
         Update: {
           category?: string | null
@@ -3840,6 +3848,10 @@ export type Database = {
           sort_order?: number | null
           sync_to_crm?: boolean | null
           updated_at?: string
+          website_show_description?: boolean
+          website_show_duration?: boolean
+          website_show_price?: boolean
+          website_show_service?: boolean
         }
         Relationships: [
           {

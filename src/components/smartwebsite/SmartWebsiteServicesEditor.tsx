@@ -25,6 +25,10 @@ interface Service {
   duration_minutes: number | null;
   is_active: boolean;
   service_type: string | null;
+  website_show_service: boolean;
+  website_show_price: boolean;
+  website_show_duration: boolean;
+  website_show_description: boolean;
 }
 
 const SERVICE_TYPES = [
@@ -54,6 +58,10 @@ export function SmartWebsiteServicesEditor() {
     duration_minutes: '',
     service_type: 'standard',
     is_active: true,
+    website_show_service: true,
+    website_show_price: true,
+    website_show_duration: true,
+    website_show_description: true,
   });
 
   const { data: services, isLoading } = useQuery({
@@ -62,7 +70,7 @@ export function SmartWebsiteServicesEditor() {
       if (!companyId) return [];
       const { data, error } = await supabase
         .from('services')
-        .select('id, name, description, price, price_display, duration_minutes, is_active, service_type')
+        .select('id, name, description, price, price_display, duration_minutes, is_active, service_type, website_show_service, website_show_price, website_show_duration, website_show_description')
         .eq('company_id', companyId)
         .order('sort_order', { ascending: true });
       if (error) throw error;
@@ -84,6 +92,10 @@ export function SmartWebsiteServicesEditor() {
         duration_minutes: data.duration_minutes ? parseInt(data.duration_minutes) : null,
         service_type: data.service_type,
         is_active: data.is_active,
+        website_show_service: data.website_show_service,
+        website_show_price: data.website_show_price,
+        website_show_duration: data.website_show_duration,
+        website_show_description: data.website_show_description,
       };
 
       if (editingService) {
@@ -134,6 +146,10 @@ export function SmartWebsiteServicesEditor() {
         duration_minutes: service.duration_minutes?.toString() || '',
         service_type: service.service_type || 'standard',
         is_active: service.is_active,
+        website_show_service: service.website_show_service,
+        website_show_price: service.website_show_price,
+        website_show_duration: service.website_show_duration,
+        website_show_description: service.website_show_description,
       });
     } else {
       setEditingService(null);
@@ -145,6 +161,10 @@ export function SmartWebsiteServicesEditor() {
         duration_minutes: '',
         service_type: 'standard',
         is_active: true,
+        website_show_service: true,
+        website_show_price: true,
+        website_show_duration: true,
+        website_show_description: true,
       });
     }
     setShowDialog(true);
@@ -359,12 +379,58 @@ export function SmartWebsiteServicesEditor() {
             <div className="flex items-center justify-between">
               <div>
                 <Label>Active</Label>
-                <p className="text-xs text-muted-foreground">Show on website</p>
+                <p className="text-xs text-muted-foreground">Service is active in system</p>
               </div>
               <Switch
                 checked={formData.is_active}
                 onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
               />
+            </div>
+
+            <div className="border-t pt-4 mt-4">
+              <Label className="text-sm font-semibold mb-3 block">Smart Website Display Options</Label>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-sm">Show on Website</Label>
+                    <p className="text-xs text-muted-foreground">Display this service on Smart Website</p>
+                  </div>
+                  <Switch
+                    checked={formData.website_show_service}
+                    onCheckedChange={(checked) => setFormData({ ...formData, website_show_service: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-sm">Show Description</Label>
+                    <p className="text-xs text-muted-foreground">Display service description</p>
+                  </div>
+                  <Switch
+                    checked={formData.website_show_description}
+                    onCheckedChange={(checked) => setFormData({ ...formData, website_show_description: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-sm">Show Price</Label>
+                    <p className="text-xs text-muted-foreground">Display service price</p>
+                  </div>
+                  <Switch
+                    checked={formData.website_show_price}
+                    onCheckedChange={(checked) => setFormData({ ...formData, website_show_price: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-sm">Show Duration</Label>
+                    <p className="text-xs text-muted-foreground">Display service duration</p>
+                  </div>
+                  <Switch
+                    checked={formData.website_show_duration}
+                    onCheckedChange={(checked) => setFormData({ ...formData, website_show_duration: checked })}
+                  />
+                </div>
+              </div>
             </div>
 
             <DialogFooter>
