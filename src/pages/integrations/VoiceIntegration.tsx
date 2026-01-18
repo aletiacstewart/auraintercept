@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
+import { PageHeader } from '@/components/ui/page-header';
 import { ElevenLabsSetupGuide } from '@/components/integrations/ElevenLabsSetupGuide';
 import { ElevenLabsVoiceSetupGuide } from '@/components/integrations/ElevenLabsVoiceSetupGuide';
 import { GoogleTTSSetupGuide } from '@/components/integrations/GoogleTTSSetupGuide';
@@ -157,18 +158,18 @@ export default function VoiceIntegration() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6 animate-fade-in">
-          {/* Header */}
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link to="/dashboard/integrations">
-                <ArrowLeft className="w-4 h-4" />
-              </Link>
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">Voice Integration</h1>
-              <p className="text-muted-foreground">Configure AI voice synthesis for calls and reminders</p>
-            </div>
-          </div>
+          <PageHeader
+            icon={Mic}
+            title="Voice Integration"
+            description="Configure AI voice synthesis for calls and reminders"
+            action={
+              <Button variant="ghost" size="icon" asChild>
+                <Link to="/dashboard/integrations">
+                  <ArrowLeft className="w-4 h-4" />
+                </Link>
+              </Button>
+            }
+          />
 
           {/* ElevenLabs Setup Guide */}
           <ElevenLabsVoiceSetupGuide />

@@ -1,5 +1,6 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
+import { PageHeader } from '@/components/ui/page-header';
 import { CalendarSubscription } from '@/components/integrations/CalendarSubscription';
 import { CalDAVSubscription } from '@/components/integrations/CalDAVSubscription';
 import { GoogleCalendarSettings } from '@/components/integrations/GoogleCalendarSettings';
@@ -14,18 +15,18 @@ export default function CalendarIntegration() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6 animate-fade-in">
-          {/* Header */}
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link to="/dashboard/integrations">
-                <ArrowLeft className="w-4 h-4" />
-              </Link>
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">Calendar Integration</h1>
-              <p className="text-muted-foreground">Sync appointments with your calendar</p>
-            </div>
-          </div>
+          <PageHeader
+            icon={CalendarDays}
+            title="Calendar Integration"
+            description="Sync appointments with your calendar"
+            action={
+              <Button variant="ghost" size="icon" asChild>
+                <Link to="/dashboard/integrations">
+                  <ArrowLeft className="w-4 h-4" />
+                </Link>
+              </Button>
+            }
+          />
 
           {/* Overview Card */}
           <Card className="border-border/50 bg-gradient-to-br from-primary/5 to-transparent">
