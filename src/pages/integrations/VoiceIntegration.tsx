@@ -162,6 +162,7 @@ export default function VoiceIntegration() {
             icon={Mic}
             title="Voice Integration"
             description="Configure AI voice synthesis for calls and reminders"
+            featureColor="integrations"
             action={
               <Button variant="ghost" size="icon" asChild>
                 <Link to="/dashboard/integrations">

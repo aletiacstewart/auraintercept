@@ -148,6 +148,7 @@ export default function SMSIntegration() {
             icon={Phone}
             title="SMS & Voice Integration"
             description="Configure SMS and voice call capabilities"
+            featureColor="integrations"
             action={
               <Button variant="ghost" size="icon" asChild>
                 <Link to="/dashboard/integrations">

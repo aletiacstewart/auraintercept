@@ -19,6 +19,7 @@ export default function CalendarIntegration() {
             icon={CalendarDays}
             title="Calendar Integration"
             description="Sync appointments with your calendar"
+            featureColor="integrations"
             action={
               <Button variant="ghost" size="icon" asChild>
                 <Link to="/dashboard/integrations">
