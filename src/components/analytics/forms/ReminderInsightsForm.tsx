@@ -330,8 +330,8 @@ export function ReminderInsightsForm({ companyId, onCancel, onAnalyze }: Reminde
               <Sparkles className="h-4 w-4" />
               Analyze with AI
             </Button>
-            <Button variant="ghost" size="icon" onClick={onCancel}>
-              <X className="h-4 w-4" />
+            <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground hover:text-secondary hover:bg-secondary/10">
+              <X className="h-5 w-5" />
             </Button>
           </div>
         </div>

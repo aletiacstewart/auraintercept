@@ -112,13 +112,13 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
   const getProgressColor = (value: number, target: number, inverse = false) => {
     const ratio = value / target;
     if (inverse) {
-      if (ratio <= 1) return 'text-green-600';
-      if (ratio <= 1.5) return 'text-yellow-600';
-      return 'text-red-600';
+      if (ratio <= 1) return 'text-secondary';
+      if (ratio <= 1.5) return 'text-warning';
+      return 'text-destructive';
     }
-    if (ratio >= 1) return 'text-green-600';
-    if (ratio >= 0.7) return 'text-yellow-600';
-    return 'text-red-600';
+    if (ratio >= 1) return 'text-secondary';
+    if (ratio >= 0.7) return 'text-warning';
+    return 'text-destructive';
   };
 
   const getProgressValue = (value: number, target: number, inverse = false) => {
@@ -134,8 +134,8 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
             <Target className="h-5 w-5 text-primary" />
             KPI Dashboard
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-foreground/70 hover:text-foreground">
-            <X className="h-4 w-4" />
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground hover:text-secondary hover:bg-secondary/10">
+            <X className="h-5 w-5" />
           </Button>
         </div>
       </CardHeader>
