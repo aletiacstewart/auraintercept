@@ -162,19 +162,19 @@ export function HeroBackgroundUpload({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-card-foreground">
           <ImageIcon className="w-5 h-5" />
           Hero Background
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-card-foreground/70">
           Add a background image to your hero section (max {MAX_WIDTH}px width, auto-resized)
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Current Background Preview */}
         <div className="space-y-2">
-          <Label>Current Background</Label>
-          <div className="relative border rounded-lg overflow-hidden bg-muted aspect-[21/9]">
+          <Label className="text-card-foreground">Current Background</Label>
+          <div className="relative border border-border rounded-lg overflow-hidden bg-muted aspect-[21/9]">
             {backgroundUrl ? (
               <>
                 <img
@@ -199,7 +199,7 @@ export function HeroBackgroundUpload({
                 </div>
               </>
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
+              <div className="w-full h-full flex flex-col items-center justify-center text-card-foreground/50">
                 <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
                 <p className="text-sm">No background image</p>
               </div>
@@ -208,7 +208,7 @@ export function HeroBackgroundUpload({
         </div>
 
         {/* Upload Info */}
-        <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 p-3 bg-muted/30 border border-border rounded-lg text-sm text-card-foreground/70">
           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           <span>Images wider than {MAX_WIDTH}px will be automatically resized</span>
         </div>
@@ -226,6 +226,7 @@ export function HeroBackgroundUpload({
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading || isUpdating}
             variant="outline"
+            className="border-card-foreground/30 text-card-foreground hover:bg-card-foreground/10"
           >
             {isUploading ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -234,7 +235,7 @@ export function HeroBackgroundUpload({
             )}
             {backgroundUrl ? 'Replace Background' : 'Upload Background'}
           </Button>
-          <p className="text-xs text-muted-foreground mt-2">
+          <p className="text-xs text-card-foreground/60 mt-2">
             JPEG, PNG, or WebP • Max {MAX_SIZE_MB}MB • Max {MAX_WIDTH}px width
           </p>
         </div>
