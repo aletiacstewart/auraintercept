@@ -450,6 +450,7 @@ export default function Companies() {
           icon={Building2}
           title="Companies"
           description="Manage tenant companies on the platform"
+          featureColor="companies"
           action={
             <Button onClick={() => setIsCreateOpen(true)}>
               <Plus className="w-4 h-4 mr-2" />

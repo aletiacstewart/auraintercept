@@ -136,6 +136,7 @@ export default function Quotes() {
           icon={FileText}
           title="Quotes"
           description="Create and manage service quotes"
+          featureColor="quotes"
           action={
             <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
               <DialogTrigger asChild>

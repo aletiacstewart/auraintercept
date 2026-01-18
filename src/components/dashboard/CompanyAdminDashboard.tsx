@@ -144,7 +144,7 @@ export function CompanyAdminDashboard() {
       value: stats?.employees ?? 0, 
       icon: Users, 
       description: 'Team members',
-      gradient: 'from-primary to-primary/80',
+      colorClass: 'bg-feature-employees/15 text-feature-employees',
       href: '/dashboard/employees'
     },
     { 
@@ -152,7 +152,7 @@ export function CompanyAdminDashboard() {
       value: stats?.customers ?? 0, 
       icon: UserCircle, 
       description: 'Total customers',
-      gradient: 'from-cyan-500 to-cyan-600',
+      colorClass: 'bg-feature-customers/15 text-feature-customers',
       href: '/dashboard/customers'
     },
     { 
@@ -160,7 +160,7 @@ export function CompanyAdminDashboard() {
       value: stats?.leads ?? 0, 
       icon: Target, 
       description: `${stats?.newLeads ?? 0} new`,
-      gradient: 'from-orange-500 to-orange-600',
+      colorClass: 'bg-feature-leads/15 text-feature-leads',
       href: '/dashboard/leads'
     },
     {
@@ -168,7 +168,7 @@ export function CompanyAdminDashboard() {
       value: stats?.appointments ?? 0, 
       icon: Calendar, 
       description: 'Total scheduled',
-      gradient: 'from-secondary to-secondary/80',
+      colorClass: 'bg-feature-appointments/15 text-feature-appointments',
       href: '/dashboard/appointments'
     },
     { 
@@ -176,7 +176,7 @@ export function CompanyAdminDashboard() {
       value: stats?.openQuotes ?? 0, 
       icon: FileText, 
       description: `$${(stats?.openQuotesTotal ?? 0).toLocaleString()} total`,
-      gradient: 'from-accent to-accent/80',
+      colorClass: 'bg-feature-quotes/15 text-feature-quotes',
       href: '/dashboard/quotes'
     },
     { 
@@ -184,7 +184,7 @@ export function CompanyAdminDashboard() {
       value: stats?.outstandingInvoices ?? 0, 
       icon: Receipt, 
       description: `$${(stats?.outstandingTotal ?? 0).toLocaleString()} unpaid`,
-      gradient: 'from-primary to-secondary',
+      colorClass: 'bg-feature-invoices/15 text-feature-invoices',
       href: '/dashboard/invoices'
     },
     { 
@@ -192,7 +192,7 @@ export function CompanyAdminDashboard() {
       value: `$${(stats?.monthlyRevenue ?? 0).toLocaleString()}`, 
       icon: DollarSign, 
       description: format(new Date(), 'MMMM yyyy'),
-      gradient: 'from-green-500 to-green-600',
+      colorClass: 'bg-green-500/15 text-green-500',
       isString: true,
       href: '/dashboard/analytics'
     },
@@ -201,7 +201,7 @@ export function CompanyAdminDashboard() {
       value: stats?.messagesCount ?? 0, 
       icon: MessageSquare, 
       description: 'This month',
-      gradient: 'from-blue-500 to-blue-600',
+      colorClass: 'bg-channel-sms/15 text-channel-sms',
       href: '/dashboard/messages'
     },
     { 
@@ -209,7 +209,7 @@ export function CompanyAdminDashboard() {
       value: stats?.inventoryCount ?? 0, 
       icon: Package, 
       description: stats?.lowStockItems ? `${stats.lowStockItems} low stock` : 'Items tracked',
-      gradient: 'from-amber-500 to-amber-600',
+      colorClass: 'bg-feature-inventory/15 text-feature-inventory',
       href: '/dashboard/inventory'
     },
     { 
@@ -217,7 +217,7 @@ export function CompanyAdminDashboard() {
       value: stats?.warrantyCount ?? 0, 
       icon: Shield, 
       description: 'Active policies',
-      gradient: 'from-purple-500 to-purple-600',
+      colorClass: 'bg-feature-warranties/15 text-feature-warranties',
       href: '/dashboard/warranties'
     },
     { 
@@ -225,21 +225,21 @@ export function CompanyAdminDashboard() {
       value: stats?.activeCampaigns ?? 0, 
       icon: Megaphone, 
       description: `${stats?.totalCampaigns ?? 0} total campaigns`,
-      gradient: 'from-pink-500 to-pink-600',
+      colorClass: 'bg-feature-marketing/15 text-feature-marketing',
       href: '/dashboard/campaigns'
     },
   ];
 
   const quickActions = [
-    { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', gradient: 'from-primary to-primary/80' },
-    { label: 'Analytics', icon: TrendingUp, href: '/dashboard/analytics', gradient: 'from-cyan-500 to-blue-500' },
-    { label: 'Communication Logs', icon: MessageSquare, href: '/dashboard/messages', gradient: 'from-green-500 to-emerald-500' },
-    { label: 'Knowledge Base', icon: FileText, href: '/dashboard/knowledge', gradient: 'from-purple-500 to-violet-500' },
-    { label: 'Inventory', icon: Package, href: '/dashboard/inventory', gradient: 'from-amber-500 to-orange-500' },
-    { label: 'Warranties', icon: Shield, href: '/dashboard/warranties', gradient: 'from-purple-500 to-violet-500' },
-    { label: 'Campaigns', icon: Megaphone, href: '/dashboard/campaigns', gradient: 'from-pink-500 to-pink-600' },
-    { label: 'Calculators', icon: DollarSign, href: '/dashboard/calculators', gradient: 'from-teal-500 to-teal-600' },
-    { label: 'Integrations', icon: Puzzle, href: '/dashboard/integrations', gradient: 'from-slate-600 to-slate-700' },
+    { label: 'Appointments', icon: Calendar, colorClass: 'bg-feature-appointments/15 text-feature-appointments', href: '/dashboard/appointments' },
+    { label: 'Analytics', icon: TrendingUp, colorClass: 'bg-feature-analytics/15 text-feature-analytics', href: '/dashboard/analytics' },
+    { label: 'Communication Logs', icon: MessageSquare, colorClass: 'bg-channel-sms/15 text-channel-sms', href: '/dashboard/messages' },
+    { label: 'Knowledge Base', icon: FileText, colorClass: 'bg-primary/15 text-primary', href: '/dashboard/knowledge' },
+    { label: 'Inventory', icon: Package, colorClass: 'bg-feature-inventory/15 text-feature-inventory', href: '/dashboard/inventory' },
+    { label: 'Warranties', icon: Shield, colorClass: 'bg-feature-warranties/15 text-feature-warranties', href: '/dashboard/warranties' },
+    { label: 'Campaigns', icon: Megaphone, colorClass: 'bg-feature-marketing/15 text-feature-marketing', href: '/dashboard/campaigns' },
+    { label: 'Calculators', icon: DollarSign, colorClass: 'bg-feature-invoices/15 text-feature-invoices', href: '/dashboard/calculators' },
+    { label: 'Integrations', icon: Puzzle, colorClass: 'bg-muted text-muted-foreground', href: '/dashboard/integrations' },
   ];
 
   return (
@@ -328,8 +328,8 @@ export function CompanyAdminDashboard() {
               <CardTitle className="text-sm font-medium text-white">
                 {stat.title}
               </CardTitle>
-              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}>
-                <stat.icon className="w-5 h-5 text-primary-foreground" />
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${stat.colorClass}`}>
+                <stat.icon className="w-5 h-5" />
               </div>
             </CardHeader>
             <CardContent>
@@ -342,7 +342,6 @@ export function CompanyAdminDashboard() {
               )}
               <p className="text-xs text-white/70 mt-1">{stat.description}</p>
             </CardContent>
-            <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`} />
           </Card>
         ))}
       </div>
@@ -366,8 +365,8 @@ export function CompanyAdminDashboard() {
                   className="h-auto py-4 px-2 flex flex-col items-center gap-2 hover:border-primary whitespace-normal"
                   onClick={() => navigate(action.href)}
                 >
-                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${action.gradient} flex items-center justify-center shrink-0`}>
-                    <action.icon className="w-5 h-5 text-primary-foreground" />
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${action.colorClass}`}>
+                    <action.icon className="w-5 h-5" />
                   </div>
                   <span className="font-medium text-xs text-center leading-tight">{action.label}</span>
                 </Button>

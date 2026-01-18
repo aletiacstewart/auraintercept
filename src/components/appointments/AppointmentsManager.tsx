@@ -19,11 +19,16 @@ export const AppointmentsManager: React.FC<AppointmentsManagerProps> = ({ onClos
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-foreground">Appointments</h3>
-          <p className="text-sm text-foreground/70">
-            View and manage scheduled appointments
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-feature-appointments/15">
+            <Calendar className="h-5 w-5 text-feature-appointments" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-foreground">Appointments</h3>
+            <p className="text-sm text-muted-foreground">
+              View and manage scheduled appointments
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>

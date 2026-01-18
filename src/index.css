@@ -62,6 +62,20 @@
     --channel-email: 199 89% 65%;
     --channel-chat: 270 67% 75%;
 
+    /* Feature Colors - Platform Feature Areas */
+    --feature-companies: 238 66% 65%;
+    --feature-employees: 173 58% 50%;
+    --feature-customers: 38 92% 55%;
+    --feature-leads: 280 67% 60%;
+    --feature-appointments: 188 94% 45%;
+    --feature-quotes: 25 95% 55%;
+    --feature-invoices: 160 84% 40%;
+    --feature-inventory: 215 50% 55%;
+    --feature-warranties: 330 81% 65%;
+    --feature-analytics: 223 73% 50%;
+    --feature-marketing: 292 84% 60%;
+    --feature-fieldops: 84 81% 45%;
+
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 hsl(208 30% 24% / 0.05);
     --shadow-md: 0 4px 6px -1px hsl(208 30% 24% / 0.1), 0 2px 4px -2px hsl(208 30% 24% / 0.1);
@@ -119,6 +133,20 @@
     --channel-sms: 142 71% 70%;
     --channel-email: 199 89% 70%;
     --channel-chat: 270 67% 80%;
+
+    /* Feature Colors - Dark Mode (slightly brighter) */
+    --feature-companies: 238 66% 70%;
+    --feature-employees: 173 58% 55%;
+    --feature-customers: 38 92% 60%;
+    --feature-leads: 280 67% 65%;
+    --feature-appointments: 188 94% 50%;
+    --feature-quotes: 25 95% 60%;
+    --feature-invoices: 160 84% 45%;
+    --feature-inventory: 215 50% 60%;
+    --feature-warranties: 330 81% 70%;
+    --feature-analytics: 223 73% 55%;
+    --feature-marketing: 292 84% 65%;
+    --feature-fieldops: 84 81% 50%;
   }
 }
 
@@ -573,5 +601,136 @@
   
   .rank-bronze {
     @apply text-warning/70;
+  }
+
+  /* ============================================================
+     FEATURE COLOR UTILITIES
+     ============================================================
+     Use these classes for consistent feature styling across the platform.
+     Each major feature area has a distinct color for icons, badges, and cards.
+     ============================================================ */
+  
+  /* Feature Badge Utilities */
+  .badge-feature-companies {
+    background: hsl(var(--feature-companies) / 0.1);
+    color: hsl(var(--feature-companies));
+    border-color: hsl(var(--feature-companies) / 0.3);
+  }
+  .badge-feature-employees {
+    background: hsl(var(--feature-employees) / 0.1);
+    color: hsl(var(--feature-employees));
+    border-color: hsl(var(--feature-employees) / 0.3);
+  }
+  .badge-feature-customers {
+    background: hsl(var(--feature-customers) / 0.1);
+    color: hsl(var(--feature-customers));
+    border-color: hsl(var(--feature-customers) / 0.3);
+  }
+  .badge-feature-leads {
+    background: hsl(var(--feature-leads) / 0.1);
+    color: hsl(var(--feature-leads));
+    border-color: hsl(var(--feature-leads) / 0.3);
+  }
+  .badge-feature-appointments {
+    background: hsl(var(--feature-appointments) / 0.1);
+    color: hsl(var(--feature-appointments));
+    border-color: hsl(var(--feature-appointments) / 0.3);
+  }
+  .badge-feature-quotes {
+    background: hsl(var(--feature-quotes) / 0.1);
+    color: hsl(var(--feature-quotes));
+    border-color: hsl(var(--feature-quotes) / 0.3);
+  }
+  .badge-feature-invoices {
+    background: hsl(var(--feature-invoices) / 0.1);
+    color: hsl(var(--feature-invoices));
+    border-color: hsl(var(--feature-invoices) / 0.3);
+  }
+  .badge-feature-inventory {
+    background: hsl(var(--feature-inventory) / 0.1);
+    color: hsl(var(--feature-inventory));
+    border-color: hsl(var(--feature-inventory) / 0.3);
+  }
+  .badge-feature-warranties {
+    background: hsl(var(--feature-warranties) / 0.1);
+    color: hsl(var(--feature-warranties));
+    border-color: hsl(var(--feature-warranties) / 0.3);
+  }
+  .badge-feature-analytics {
+    background: hsl(var(--feature-analytics) / 0.1);
+    color: hsl(var(--feature-analytics));
+    border-color: hsl(var(--feature-analytics) / 0.3);
+  }
+  .badge-feature-marketing {
+    background: hsl(var(--feature-marketing) / 0.1);
+    color: hsl(var(--feature-marketing));
+    border-color: hsl(var(--feature-marketing) / 0.3);
+  }
+  .badge-feature-fieldops {
+    background: hsl(var(--feature-fieldops) / 0.1);
+    color: hsl(var(--feature-fieldops));
+    border-color: hsl(var(--feature-fieldops) / 0.3);
+  }
+
+  /* Feature Icon Container Utilities */
+  .icon-feature-companies {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-companies) / 0.15);
+    color: hsl(var(--feature-companies));
+  }
+  .icon-feature-employees {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-employees) / 0.15);
+    color: hsl(var(--feature-employees));
+  }
+  .icon-feature-customers {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-customers) / 0.15);
+    color: hsl(var(--feature-customers));
+  }
+  .icon-feature-leads {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-leads) / 0.15);
+    color: hsl(var(--feature-leads));
+  }
+  .icon-feature-appointments {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-appointments) / 0.15);
+    color: hsl(var(--feature-appointments));
+  }
+  .icon-feature-quotes {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-quotes) / 0.15);
+    color: hsl(var(--feature-quotes));
+  }
+  .icon-feature-invoices {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-invoices) / 0.15);
+    color: hsl(var(--feature-invoices));
+  }
+  .icon-feature-inventory {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-inventory) / 0.15);
+    color: hsl(var(--feature-inventory));
+  }
+  .icon-feature-warranties {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-warranties) / 0.15);
+    color: hsl(var(--feature-warranties));
+  }
+  .icon-feature-analytics {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-analytics) / 0.15);
+    color: hsl(var(--feature-analytics));
+  }
+  .icon-feature-marketing {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-marketing) / 0.15);
+    color: hsl(var(--feature-marketing));
+  }
+  .icon-feature-fieldops {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-fieldops) / 0.15);
+    color: hsl(var(--feature-fieldops));
   }
 }

@@ -147,6 +147,7 @@ export default function Invoices() {
           icon={Receipt}
           title="Invoices"
           description="Create and manage customer invoices"
+          featureColor="invoices"
           action={
             <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
               <DialogTrigger asChild>

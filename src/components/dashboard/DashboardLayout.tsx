@@ -64,6 +64,7 @@ interface NavItem {
   roles: UserRole[];
   requiredJobTypes?: string[];
   external?: boolean;
+  featureColor?: string;
 }
 
 interface NavGroup {
@@ -90,26 +91,26 @@ const navGroups: NavGroup[] = [
     label: 'Business Management',
     items: [
       { label: 'Business Ops Overview', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'] },
-      { label: 'Employees', icon: UserCheck, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Customers', icon: Users, href: '/dashboard/customers', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Leads', icon: Users, href: '/dashboard/leads', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Quotes', icon: FileText, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin'] },
-      { label: 'Warranties', icon: FileCheck, href: '/dashboard/warranties', roles: ['platform_admin'] },
+      { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'], featureColor: 'text-feature-companies' },
+      { label: 'Employees', icon: UserCheck, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
+      { label: 'Customers', icon: Users, href: '/dashboard/customers', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers' },
+      { label: 'Leads', icon: Users, href: '/dashboard/leads', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-leads' },
+      { label: 'Appointments', icon: Calendar, href: '/dashboard/appointments', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-appointments' },
+      { label: 'Quotes', icon: FileText, href: '/dashboard/quotes', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-quotes' },
+      { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-invoices' },
+      { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin'], featureColor: 'text-feature-inventory' },
+      { label: 'Warranties', icon: FileCheck, href: '/dashboard/warranties', roles: ['platform_admin'], featureColor: 'text-feature-warranties' },
     ],
   },
   {
     label: 'Analytics & Reports',
     items: [
-      { label: 'Performance Report', icon: BarChart3, href: '/dashboard/ai-consoles/performance-report', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Business Insights', icon: Cpu, href: '/dashboard/ai-consoles/business-insights', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Revenue Analysis', icon: CreditCard, href: '/dashboard/ai-consoles/revenue-analysis', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Revenue Forecast', icon: Clock, href: '/dashboard/ai-consoles/revenue-forecast', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Customer Insights', icon: Users, href: '/dashboard/ai-consoles/customer-insights', roles: ['platform_admin', 'company_admin'] },
-      { label: 'KPI Dashboard', icon: BarChart3, href: '/dashboard/ai-consoles/kpi-dashboard', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Performance Report', icon: BarChart3, href: '/dashboard/ai-consoles/performance-report', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
+      { label: 'Business Insights', icon: Cpu, href: '/dashboard/ai-consoles/business-insights', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
+      { label: 'Revenue Analysis', icon: CreditCard, href: '/dashboard/ai-consoles/revenue-analysis', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
+      { label: 'Revenue Forecast', icon: Clock, href: '/dashboard/ai-consoles/revenue-forecast', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
+      { label: 'Customer Insights', icon: Users, href: '/dashboard/ai-consoles/customer-insights', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers' },
+      { label: 'KPI Dashboard', icon: BarChart3, href: '/dashboard/ai-consoles/kpi-dashboard', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
       { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin', 'company_admin'] },
     ],
   },
@@ -117,16 +118,16 @@ const navGroups: NavGroup[] = [
     label: 'Business Consoles & Apps',
     items: [
       { label: 'Business Management Ops', icon: Briefcase, href: '/dashboard/ai-consoles/business-management', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'] },
-      { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'] },
-      { label: 'Marketing & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'] },
+      { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-analytics' },
+      { label: 'Marketing & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'], featureColor: 'text-feature-marketing' },
       { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'] },
     ],
   },
   {
     label: 'Field Ops Consoles & Apps',
     items: [
-      { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
-      { label: 'Dispatch-Field Ops', icon: Map, href: '/dashboard/dispatch-field-ops', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'], featureColor: 'text-feature-fieldops' },
+      { label: 'Dispatch-Field Ops', icon: Map, href: '/dashboard/dispatch-field-ops', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops' },
       { label: 'Technician Field Ops Install', icon: Smartphone, href: '/dashboard/field-ops-install', roles: ['platform_admin', 'company_admin'] },
       { label: 'Dispatch Field Ops Install', icon: Smartphone, href: '/dashboard/dispatch-field-ops-install', roles: ['platform_admin', 'company_admin'] },
     ],
@@ -367,7 +368,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                           }
                         }}
                       >
-                        <Icon className="w-5 h-5 flex-shrink-0" />
+                        <Icon className={cn("w-5 h-5 flex-shrink-0", item.featureColor && !isActive && item.featureColor)} />
                         {!collapsed && <span className="truncate">{displayLabel}</span>}
                       </Button>
                     );
