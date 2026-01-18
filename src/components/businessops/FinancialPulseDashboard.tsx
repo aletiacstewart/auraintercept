@@ -172,8 +172,8 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 rounded-lg bg-accent/20">
-          <Sparkles className="h-6 w-6 text-accent" />
+        <div className="p-2 rounded-lg bg-feature-analytics/15">
+          <Sparkles className="h-6 w-6 text-feature-analytics" />
         </div>
         <div>
           <h2 className="text-xl font-bold text-foreground">Business Ops Overview</h2>
@@ -184,65 +184,65 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
       {/* Summary Stats - Row 1 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          className="bg-slate-800 border-white/10 hover:border-feature-leads/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/leads')}
         >
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <UserPlus className="h-5 w-5 text-white" />
+              <UserPlus className="h-5 w-5 text-feature-leads" />
               <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30">
                 30d
               </Badge>
             </div>
-            <p className="text-2xl font-bold mt-2 text-accent">{newLeads.length}</p>
+            <p className="text-2xl font-bold mt-2 text-feature-leads">{newLeads.length}</p>
             <p className="text-xs text-white/70">New Leads</p>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          className="bg-slate-800 border-white/10 hover:border-feature-quotes/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/quotes')}
         >
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <FileText className="h-5 w-5 text-white" />
-              <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30">
+              <FileText className="h-5 w-5 text-feature-quotes" />
+              <Badge variant="outline" className="bg-feature-quotes/20 text-feature-quotes border-feature-quotes/30">
                 {quotes.length}
               </Badge>
             </div>
-            <p className="text-2xl font-bold mt-2 text-accent">${pendingQuoteValue.toFixed(0)}</p>
+            <p className="text-2xl font-bold mt-2 text-feature-quotes">${pendingQuoteValue.toFixed(0)}</p>
             <p className="text-xs text-white/70">Pending Quotes</p>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          className="bg-slate-800 border-white/10 hover:border-feature-invoices/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/invoices')}
         >
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <Receipt className="h-5 w-5 text-white" />
-              <Badge variant="outline" className={`${overdueInvoices.length > 0 ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-accent/20 text-accent border-accent/30'}`}>
+              <Receipt className="h-5 w-5 text-feature-invoices" />
+              <Badge variant="outline" className={`${overdueInvoices.length > 0 ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-feature-invoices/20 text-feature-invoices border-feature-invoices/30'}`}>
                 {invoices.length}
               </Badge>
             </div>
-            <p className="text-2xl font-bold mt-2 text-accent">${unpaidInvoiceValue.toFixed(0)}</p>
+            <p className="text-2xl font-bold mt-2 text-feature-invoices">${unpaidInvoiceValue.toFixed(0)}</p>
             <p className="text-xs text-white/70">Unpaid Invoices</p>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          className="bg-slate-800 border-white/10 hover:border-feature-inventory/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/inventory')}
         >
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <Package className="h-5 w-5 text-white" />
+              <Package className="h-5 w-5 text-feature-inventory" />
               {inventoryAlerts.length > 0 && (
                 <AlertTriangle className="h-4 w-4 text-destructive animate-pulse" />
               )}
             </div>
-            <p className="text-2xl font-bold mt-2 text-accent">{inventoryAlerts.length}</p>
+            <p className="text-2xl font-bold mt-2 text-feature-inventory">{inventoryAlerts.length}</p>
             <p className="text-xs text-white/70">Low Stock Alerts</p>
           </CardContent>
         </Card>
@@ -251,46 +251,46 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
       {/* Summary Stats - Row 2 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          className="bg-slate-800 border-white/10 hover:border-feature-appointments/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/appointments')}
         >
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <Calendar className="h-5 w-5 text-white" />
-              <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30">
+              <Calendar className="h-5 w-5 text-feature-appointments" />
+              <Badge variant="outline" className="bg-feature-appointments/20 text-feature-appointments border-feature-appointments/30">
                 7d
               </Badge>
             </div>
-            <p className="text-2xl font-bold mt-2 text-accent">{upcomingAppointments.length}</p>
+            <p className="text-2xl font-bold mt-2 text-feature-appointments">{upcomingAppointments.length}</p>
             <p className="text-xs text-white/70">Upcoming Appts</p>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          className="bg-slate-800 border-white/10 hover:border-feature-warranties/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/warranties')}
         >
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <Shield className="h-5 w-5 text-white" />
+              <Shield className="h-5 w-5 text-feature-warranties" />
             </div>
-            <p className="text-2xl font-bold mt-2 text-accent">{activeWarranties}</p>
+            <p className="text-2xl font-bold mt-2 text-feature-warranties">{activeWarranties}</p>
             <p className="text-xs text-white/70">Active Warranties</p>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" 
+          className="bg-slate-800 border-white/10 hover:border-feature-marketing/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/campaigns')}
         >
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <Megaphone className="h-5 w-5 text-white" />
-              <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30">
+              <Megaphone className="h-5 w-5 text-feature-marketing" />
+              <Badge variant="outline" className="bg-feature-marketing/20 text-feature-marketing border-feature-marketing/30">
                 {campaignStats?.total || 0}
               </Badge>
             </div>
-            <p className="text-2xl font-bold mt-2 text-accent">{campaignStats?.active || 0}</p>
+            <p className="text-2xl font-bold mt-2 text-feature-marketing">{campaignStats?.active || 0}</p>
             <p className="text-xs text-white/70">Active Campaigns</p>
           </CardContent>
         </Card>
@@ -299,9 +299,9 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               {stripeConnected ? (
-                <CreditCard className="h-5 w-5 text-white" />
+                <CreditCard className="h-5 w-5 text-feature-invoices" />
               ) : (
-                <DollarSign className="h-5 w-5 text-white" />
+                <DollarSign className="h-5 w-5 text-amber-400" />
               )}
               {stripeConnected ? (
                 <TrendingUp className="h-4 w-4 text-green-400" />
@@ -325,7 +325,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
-                <FileText className="h-4 w-4 text-accent" />
+                <FileText className="h-4 w-4 text-feature-quotes" />
                 Quotes
               </CardTitle>
             </div>
@@ -377,7 +377,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
-                <Receipt className="h-4 w-4 text-accent" />
+                <Receipt className="h-4 w-4 text-feature-invoices" />
                 Invoices
               </CardTitle>
             </div>

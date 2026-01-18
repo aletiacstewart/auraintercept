@@ -159,7 +159,7 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
         <Card className="bg-background/50">
           <CardContent className="p-3">
             <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-foreground/70" />
+              <Users className="h-4 w-4 text-feature-leads" />
               <span className="text-xl font-bold">{stats.total}</span>
             </div>
             <p className="text-xs text-foreground/70">Total</p>
@@ -168,7 +168,7 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
         <Card className="bg-background/50">
           <CardContent className="p-3">
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-blue-500" />
+              <Clock className="h-4 w-4 text-feature-leads" />
               <span className="text-xl font-bold">{stats.new}</span>
             </div>
             <p className="text-xs text-foreground/70">New</p>
