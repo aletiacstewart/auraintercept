@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { 
   Dialog,
   DialogContent,
@@ -22,7 +23,8 @@ import {
   Square,
   RectangleHorizontal,
   Sparkles,
-  Blend
+  Blend,
+  ChevronDown
 } from 'lucide-react';
 import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -234,96 +236,103 @@ export function LogoEditor({
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CropIcon className="w-5 h-5" />
-            Logo Editor
-          </CardTitle>
-          <CardDescription>
-            Upload and crop your company logo
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Current Logo Preview */}
-          <div className="space-y-3">
-            <Label>Current Logo</Label>
-            <div 
-              className="border rounded-lg p-4 bg-white flex items-center justify-center min-h-[120px]"
-              style={{ backgroundColor: transparencyMode === 'multiply' ? '#f5f5f5' : 'white' }}
-            >
-              {logoUrl ? (
-                <img
-                  src={logoUrl}
-                  alt="Company logo"
-                  className="max-h-24 max-w-full object-contain"
-                  style={getLogoStyle()}
-                />
-              ) : (
-                <div className="text-center text-muted-foreground">
-                  <ImageIcon className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No logo uploaded</p>
+      <Collapsible>
+        <Card>
+          <CollapsibleTrigger className="w-full">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CropIcon className="h-5 w-5 text-primary" />
+                <div className="text-left">
+                  <CardTitle className="text-lg">Logo Editor</CardTitle>
+                  <CardDescription>Upload and crop your company logo</CardDescription>
+                </div>
+              </div>
+              <ChevronDown className="h-5 w-5 text-card-foreground/70" />
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="pt-0 space-y-4">
+              {/* Current Logo Preview */}
+              <div className="space-y-3">
+                <Label>Current Logo</Label>
+                <div 
+                  className="border rounded-lg p-4 bg-white flex items-center justify-center min-h-[120px]"
+                  style={{ backgroundColor: transparencyMode === 'multiply' ? '#f5f5f5' : 'white' }}
+                >
+                  {logoUrl ? (
+                    <img
+                      src={logoUrl}
+                      alt="Company logo"
+                      className="max-h-24 max-w-full object-contain"
+                      style={getLogoStyle()}
+                    />
+                  ) : (
+                    <div className="text-center text-muted-foreground">
+                      <ImageIcon className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">No logo uploaded</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Transparency Toggle */}
+              {logoUrl && (
+                <div className="space-y-3">
+                  <Label>Background Transparency Effect</Label>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    Apply visual effects to help remove white backgrounds from logos
+                  </p>
+                  <ToggleGroup
+                    type="single"
+                    value={transparencyMode}
+                    onValueChange={(value) => value && onTransparencyChange(value as 'none' | 'multiply' | 'contrast')}
+                    className="justify-start"
+                  >
+                    <ToggleGroupItem value="none" aria-label="Original">
+                      <ImageIcon className="w-4 h-4 mr-1" />
+                      Original
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="multiply" aria-label="Blend mode">
+                      <Blend className="w-4 h-4 mr-1" />
+                      Blend
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="contrast" aria-label="High contrast">
+                      <Sparkles className="w-4 h-4 mr-1" />
+                      Contrast
+                    </ToggleGroupItem>
+                  </ToggleGroup>
                 </div>
               )}
-            </div>
-          </div>
 
-          {/* Transparency Toggle */}
-          {logoUrl && (
-            <div className="space-y-3">
-              <Label>Background Transparency Effect</Label>
-              <p className="text-xs text-muted-foreground mb-2">
-                Apply visual effects to help remove white backgrounds from logos
-              </p>
-              <ToggleGroup
-                type="single"
-                value={transparencyMode}
-                onValueChange={(value) => value && onTransparencyChange(value as 'none' | 'multiply' | 'contrast')}
-                className="justify-start"
-              >
-                <ToggleGroupItem value="none" aria-label="Original">
-                  <ImageIcon className="w-4 h-4 mr-1" />
-                  Original
-                </ToggleGroupItem>
-                <ToggleGroupItem value="multiply" aria-label="Blend mode">
-                  <Blend className="w-4 h-4 mr-1" />
-                  Blend
-                </ToggleGroupItem>
-                <ToggleGroupItem value="contrast" aria-label="High contrast">
-                  <Sparkles className="w-4 h-4 mr-1" />
-                  Contrast
-                </ToggleGroupItem>
-              </ToggleGroup>
-            </div>
-          )}
-
-          {/* Upload Button */}
-          <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/svg+xml"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-            <Button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading || isUpdating}
-              variant="outline"
-            >
-              {isUploading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Upload className="w-4 h-4 mr-2" />
-              )}
-              {logoUrl ? 'Replace Logo' : 'Upload Logo'}
-            </Button>
-            <p className="text-xs text-muted-foreground mt-2">
-              JPEG, PNG, WebP, or SVG • Max 2MB
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+              {/* Upload Button */}
+              <div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading || isUpdating}
+                  variant="outline"
+                >
+                  {isUploading ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Upload className="w-4 h-4 mr-2" />
+                  )}
+                  {logoUrl ? 'Replace Logo' : 'Upload Logo'}
+                </Button>
+                <p className="text-xs text-muted-foreground mt-2">
+                  JPEG, PNG, WebP, or SVG • Max 2MB
+                </p>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
 
       {/* Crop Dialog */}
       <Dialog open={isCropping} onOpenChange={(open) => {
