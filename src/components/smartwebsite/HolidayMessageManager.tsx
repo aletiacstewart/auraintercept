@@ -312,37 +312,7 @@ export function HolidayMessageManager({ websiteId, companyId }: HolidayMessageMa
                 <CardDescription>Schedule special greetings for holidays and important dates</CardDescription>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button size="sm" onClick={(e) => { e.stopPropagation(); resetForm(); }}>
-                    <Plus className="w-4 h-4 mr-1" />
-                    Add Holiday
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-lg">
-                  <DialogHeader>
-                    <DialogTitle>Add Holiday Message</DialogTitle>
-                    <DialogDescription>
-                      Create a special message that will display on your website on the selected date.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <HolidayForm />
-                  <div className="flex justify-end gap-2 mt-4">
-                    <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button 
-                      onClick={() => createHoliday.mutate()}
-                      disabled={!formData.holiday_name || !formData.custom_headline || !selectedDate || createHoliday.isPending}
-                    >
-                      {createHoliday.isPending ? 'Creating...' : 'Create Holiday'}
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-              <ChevronDown className="h-5 w-5 text-card-foreground/70" />
-            </div>
+            <ChevronDown className="h-5 w-5 text-card-foreground/70" />
           </CardHeader>
         </CollapsibleTrigger>
         <CollapsibleContent>
@@ -433,6 +403,35 @@ export function HolidayMessageManager({ websiteId, companyId }: HolidayMessageMa
                 ))}
               </div>
             )}
+
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="mt-4" onClick={() => resetForm()}>
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add Holiday
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-lg">
+                <DialogHeader>
+                  <DialogTitle>Add Holiday Message</DialogTitle>
+                  <DialogDescription>
+                    Create a special message that will display on your website on the selected date.
+                  </DialogDescription>
+                </DialogHeader>
+                <HolidayForm />
+                <div className="flex justify-end gap-2 mt-4">
+                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={() => createHoliday.mutate()}
+                    disabled={!formData.holiday_name || !formData.custom_headline || !selectedDate || createHoliday.isPending}
+                  >
+                    {createHoliday.isPending ? 'Creating...' : 'Create Holiday'}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </CardContent>
         </CollapsibleContent>
       </Card>
