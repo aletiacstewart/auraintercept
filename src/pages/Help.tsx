@@ -201,7 +201,7 @@ export default function Help() {
           icon={HelpCircle}
           title="Help & Documentation"
           description="Learn how to use your AI agents, set up your dashboard, and manage your team"
-          featureColor="platform"
+          featureColor="overview"
         />
 
         {/* Main Tabs */}

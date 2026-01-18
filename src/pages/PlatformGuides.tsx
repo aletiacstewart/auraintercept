@@ -903,7 +903,7 @@ const PlatformGuides: React.FC = () => {
           icon={BookOpen}
           title="Platform Guides"
           description="Step-by-step instructions for all platform features"
-          featureColor="platform"
+          featureColor="overview"
           action={
             <div className="flex gap-3">
               <PDFDownloadLink 

@@ -76,9 +76,9 @@ const navGroups: NavGroup[] = [
   {
     label: 'Overview',
     items: [
-      { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-dashboard' },
-      { label: 'Aura Quick-Start', icon: Settings, href: '/dashboard/aura-quick-start', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
-      { label: 'Smart Website', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
+      { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-overview' },
+      { label: 'Aura Quick-Start', icon: Settings, href: '/dashboard/aura-quick-start', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
+      { label: 'Smart Website', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'My Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['employee'] },
       { label: 'AI Console', icon: Bot, href: '/technician/ai-console', roles: ['employee'] },
       { label: 'My Jobs', icon: ClipboardList, href: '/technician/jobs', roles: ['employee'] },
@@ -111,16 +111,16 @@ const navGroups: NavGroup[] = [
       { label: 'Revenue Forecast', icon: Clock, href: '/dashboard/ai-consoles/revenue-forecast', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-invoices' },
       { label: 'Customer Insights', icon: Users, href: '/dashboard/ai-consoles/customer-insights', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers' },
       { label: 'KPI Dashboard', icon: BarChart3, href: '/dashboard/ai-consoles/kpi-dashboard', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
-      { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-dashboard' },
+      { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-overview' },
     ],
   },
   {
     label: 'Business Consoles & Apps',
     items: [
-      { label: 'Business Management Ops', icon: Briefcase, href: '/dashboard/ai-consoles/business-management', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-analytics' },
-      { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-analytics' },
-      { label: 'Marketing & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'], featureColor: 'text-feature-analytics' },
-      { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
+      { label: 'Business Management Ops', icon: Briefcase, href: '/dashboard/ai-consoles/business-management', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform' },
+      { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
+      { label: 'Marketing & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
+      { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform' },
     ],
   },
   {
@@ -144,8 +144,8 @@ const navGroups: NavGroup[] = [
     label: 'Configuration',
     items: [
       
-      { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
-      { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
+      { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
+      { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'Calculators', icon: BarChart3, href: '/dashboard/calculators', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-invoices' },
       { label: 'Profile', icon: User, href: '/technician/profile', roles: ['employee'] },
       { label: 'Install App', icon: Puzzle, href: '/technician/install', roles: ['employee'] },
@@ -165,11 +165,11 @@ const navGroups: NavGroup[] = [
   {
     label: 'Platform Resources',
     items: [
-      { label: 'Platform Issues', icon: AlertTriangle, href: '/dashboard/platform-issues', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
-      { label: 'Platform Guides', icon: FileText, href: '/dashboard/platform-guides', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
-      { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-platform' },
-      { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
-      { label: 'Export Docs', icon: FileText, href: '/dashboard/export-docs', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
+      { label: 'Platform Issues', icon: AlertTriangle, href: '/dashboard/platform-issues', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
+      { label: 'Platform Guides', icon: FileText, href: '/dashboard/platform-guides', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
+      { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-overview' },
+      { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
+      { label: 'Export Docs', icon: FileText, href: '/dashboard/export-docs', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
     ],
   },
 ];

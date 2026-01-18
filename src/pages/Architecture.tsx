@@ -356,7 +356,7 @@ export default function Architecture() {
             icon={Network}
             title="Architecture Documentation"
             description="Interactive platform flowcharts with download functionality"
-            featureColor="platform"
+            featureColor="overview"
           />
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

@@ -23,7 +23,7 @@ export default function MarketingSalesConsole() {
               icon={Megaphone}
               title="Marketing & Sales Console"
               description="AI-powered marketing automation and sales intelligence"
-              featureColor="analytics"
+              featureColor="platform"
               action={
                 canManageSettings ? (
                   <Button

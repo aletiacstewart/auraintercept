@@ -34,7 +34,7 @@ export default function BusinessMgtOpsInstall() {
             icon={Briefcase}
             title="Business Mgt Ops App Install"
             description="Install the Business Management Ops app on your device for quick access"
-            featureColor="analytics"
+            featureColor="platform"
             badge={
               <Badge variant={isOnline ? 'default' : 'secondary'} className="gap-1">
                 {isOnline ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}

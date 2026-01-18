@@ -23,7 +23,7 @@ export default function BusinessManagementConsole() {
               icon={Briefcase}
               title="Business Management Console"
               description="AI-powered business operations and management tools"
-              featureColor="analytics"
+              featureColor="platform"
               action={
                 canManageSettings ? (
                   <Button
