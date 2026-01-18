@@ -24,8 +24,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Users, Mail, Phone, MessageSquare, Loader2, Search, CheckCircle, XCircle, Save } from "lucide-react";
+import { Users, Mail, Phone, MessageSquare, Loader2, Search, CheckCircle, XCircle, Save, Power } from "lucide-react";
 import { triggerSetupProgressRefresh } from "@/hooks/useSetupProgress";
+import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -48,6 +49,7 @@ export function CustomerPreferencesManager() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("scheduled");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isEnabled, setIsEnabled] = useState(true);
 
   const { data: appointments, isLoading } = useQuery({
     queryKey: ["appointments-preferences", companyId, statusFilter],
@@ -208,15 +210,32 @@ export function CustomerPreferencesManager() {
   return (
     <Card className="border-border/50">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Users className="h-5 w-5" />
-          Customer Preferences
-        </CardTitle>
-        <CardDescription>
-          Manage notification preferences for customer appointments
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              Customer Preferences
+            </CardTitle>
+            <CardDescription>
+              Manage notification preferences for customer appointments
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="customer-prefs-toggle" className="text-sm text-muted-foreground">
+              {isEnabled ? "Enabled" : "Disabled"}
+            </Label>
+            <Switch
+              id="customer-prefs-toggle"
+              checked={isEnabled}
+              onCheckedChange={(checked) => {
+                setIsEnabled(checked);
+                setHasChanges(true);
+              }}
+            />
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className={`space-y-4 ${!isEnabled ? 'opacity-50 pointer-events-none' : ''}`}>
         {/* Filters */}
         <div className="flex flex-wrap gap-3">
           <div className="relative flex-1 min-w-[200px]">
