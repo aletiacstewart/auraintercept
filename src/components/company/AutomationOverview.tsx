@@ -264,7 +264,7 @@ export function AutomationOverview() {
 
   const handleConfigureClick = (tabValue: string) => {
     // Navigate to the Settings page with the appropriate tab
-    navigate(`/dashboard/start-step-1-setup?tab=${tabValue}`);
+    navigate(`/dashboard/quick-setup?tab=${tabValue}`);
   };
 
   return (
