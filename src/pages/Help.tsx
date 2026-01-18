@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -192,11 +193,12 @@ export default function Help() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold">Help & Documentation</h1>
-          <p className="text-white/70 mt-2">
+      <PageContainer>
+        <div className="space-y-8">
+          {/* Header */}
+          <div>
+            <h1 className="text-3xl font-bold">Help & Documentation</h1>
+            <p className="text-muted-foreground mt-2">
             Learn how to use your AI agents, set up your dashboard, and manage your team.
           </p>
         </div>
@@ -600,7 +602,8 @@ export default function Help() {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
+        </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }
