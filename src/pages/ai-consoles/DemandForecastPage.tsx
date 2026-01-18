@@ -1,32 +1,36 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
+import { PageHeader } from '@/components/ui/page-header';
 import { useAuth } from '@/contexts/AuthContext';
 import { ForecastForm } from '@/components/analytics/forms/ForecastForm';
 import { useNavigate } from 'react-router-dom';
+import { LineChart } from 'lucide-react';
 
 export default function DemandForecastPage() {
   const { companyId } = useAuth();
   const navigate = useNavigate();
 
-  if (!companyId) {
-    return (
-      <DashboardLayout>
-        <PageContainer>
-          <div className="flex items-center justify-center h-64">
-            <p className="text-muted-foreground">No company associated with your account.</p>
-          </div>
-        </PageContainer>
-      </DashboardLayout>
-    );
-  }
-
   return (
     <DashboardLayout>
       <PageContainer>
-        <ForecastForm 
-          companyId={companyId} 
-          onCancel={() => navigate('/dashboard/ai-consoles/business-management')}
-        />
+        <div className="space-y-6 animate-fade-in">
+          <PageHeader
+            icon={LineChart}
+            title="Demand Forecast"
+            description="Forecast demand and staffing needs"
+          />
+
+          {companyId ? (
+            <ForecastForm
+              companyId={companyId}
+              onCancel={() => navigate('/dashboard/ai-consoles/business-management')}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-64">
+              <p className="text-muted-foreground">No company associated with your account.</p>
+            </div>
+          )}
+        </div>
       </PageContainer>
     </DashboardLayout>
   );

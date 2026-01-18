@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
+import { PageHeader } from '@/components/ui/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -143,18 +144,18 @@ export default function SMSIntegration() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6 animate-fade-in">
-          {/* Header */}
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link to="/dashboard/integrations">
-                <ArrowLeft className="w-4 h-4" />
-              </Link>
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">SMS & Voice Integration</h1>
-              <p className="text-muted-foreground">Configure SMS and voice call capabilities</p>
-            </div>
-          </div>
+          <PageHeader
+            icon={Phone}
+            title="SMS & Voice Integration"
+            description="Configure SMS and voice call capabilities"
+            action={
+              <Button variant="ghost" size="icon" asChild>
+                <Link to="/dashboard/integrations">
+                  <ArrowLeft className="w-4 h-4" />
+                </Link>
+              </Button>
+            }
+          />
 
           {/* Twilio Setup Guide */}
           <TwilioSetupGuide />
