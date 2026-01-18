@@ -37,16 +37,16 @@ export default {
           foreground: "hsl(var(--destructive-foreground))",
         },
         warning: {
-          DEFAULT: "hsl(38 92% 50%)",
-          foreground: "hsl(0 0% 100%)",
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
         },
         success: {
-          DEFAULT: "hsl(142 71% 45%)",
-          foreground: "hsl(0 0% 100%)",
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
         },
         info: {
-          DEFAULT: "hsl(199 89% 48%)",
-          foreground: "hsl(0 0% 100%)",
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -80,6 +80,14 @@ export default {
           sms: "hsl(var(--channel-sms))",
           email: "hsl(var(--channel-email))",
           chat: "hsl(var(--channel-chat))",
+        },
+        status: {
+          pending: "hsl(var(--status-pending))",
+          accepted: "hsl(var(--status-accepted))",
+          "in-progress": "hsl(var(--status-in-progress))",
+          completed: "hsl(var(--status-completed))",
+          cancelled: "hsl(var(--status-cancelled))",
+          scheduled: "hsl(var(--status-scheduled))",
         },
       },
       borderRadius: {
