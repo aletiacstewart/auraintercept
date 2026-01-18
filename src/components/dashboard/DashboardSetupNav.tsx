@@ -143,7 +143,7 @@ export function DashboardSetupNav() {
           {
             id: 'knowledge-base',
             label: 'Knowledge Base',
-            href: '/dashboard/knowledge-base',
+            href: '/dashboard/knowledge',
             icon: BookOpen,
             completed: knowledgeProgress >= 100,
             progress: knowledgeProgress,
