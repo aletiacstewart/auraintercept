@@ -39,7 +39,7 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
         </TabsTrigger>
         <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=active]:bg-background">
           <BarChart3 className="h-4 w-4" />
-          <span className="hidden sm:inline">All Analytics</span>
+          <span className="hidden sm:inline">All Insights & Reports</span>
         </TabsTrigger>
       </TabsList>
 
@@ -115,11 +115,6 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
               />
             </AccordionContent>
           </AccordionItem>
-        </Accordion>
-      </TabsContent>
-
-      <TabsContent value="analytics" className="mt-6">
-        <Accordion type="single" collapsible defaultValue="customer-insights" className="space-y-4">
           <AccordionItem value="customer-insights" className="border border-border rounded-lg bg-background px-4">
             <AccordionTrigger className="hover:no-underline py-4">
               <div className="flex items-center gap-3">
@@ -136,6 +131,101 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="kpi-dashboard" className="border border-border rounded-lg bg-background px-4">
+            <AccordionTrigger className="hover:no-underline py-4">
+              <div className="flex items-center gap-3">
+                <Activity className="h-5 w-5 text-primary" />
+                <span className="font-semibold">KPI Dashboard</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <KpiDashboardForm
+                companyId={companyId}
+                onCancel={handleCancel}
+                onAnalyze={handleAnalyze('kpi')}
+              />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </TabsContent>
+
+      <TabsContent value="analytics" className="mt-6">
+        <Accordion type="single" collapsible defaultValue="all-revenue" className="space-y-4">
+          <AccordionItem value="all-revenue" className="border border-border rounded-lg bg-background px-4">
+            <AccordionTrigger className="hover:no-underline py-4">
+              <div className="flex items-center gap-3">
+                <DollarSign className="h-5 w-5 text-primary" />
+                <span className="font-semibold">Revenue Analysis</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <RevenueAnalysisForm
+                companyId={companyId}
+                onCancel={handleCancel}
+                onAnalyze={handleAnalyze('revenue')}
+              />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="all-forecast" className="border border-border rounded-lg bg-background px-4">
+            <AccordionTrigger className="hover:no-underline py-4">
+              <div className="flex items-center gap-3">
+                <LineChart className="h-5 w-5 text-primary" />
+                <span className="font-semibold">Trend Forecast</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <TrendForecastForm
+                companyId={companyId}
+                onCancel={handleCancel}
+                onForecast={handleAnalyze('forecast')}
+              />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="all-performance" className="border border-border rounded-lg bg-background px-4">
+            <AccordionTrigger className="hover:no-underline py-4">
+              <div className="flex items-center gap-3">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                <span className="font-semibold">Performance Report</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <PerformanceReportForm
+                companyId={companyId}
+                onCancel={handleCancel}
+                onAnalyze={handleAnalyze('performance')}
+              />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="all-insights" className="border border-border rounded-lg bg-background px-4">
+            <AccordionTrigger className="hover:no-underline py-4">
+              <div className="flex items-center gap-3">
+                <Lightbulb className="h-5 w-5 text-primary" />
+                <span className="font-semibold">Business Insights</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <InsightsReportForm
+                companyId={companyId}
+                onCancel={handleCancel}
+                onAnalyze={handleAnalyze('insights')}
+              />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="all-customers" className="border border-border rounded-lg bg-background px-4">
+            <AccordionTrigger className="hover:no-underline py-4">
+              <div className="flex items-center gap-3">
+                <Users className="h-5 w-5 text-primary" />
+                <span className="font-semibold">Customer Insights</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <CustomerInsightsForm
+                companyId={companyId}
+                onCancel={handleCancel}
+                onAnalyze={handleAnalyze('customers')}
+              />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="all-kpi" className="border border-border rounded-lg bg-background px-4">
             <AccordionTrigger className="hover:no-underline py-4">
               <div className="flex items-center gap-3">
                 <Activity className="h-5 w-5 text-primary" />
