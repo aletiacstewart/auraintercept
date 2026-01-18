@@ -1,17 +1,27 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MessageSquare, Mail, Phone, Info } from 'lucide-react';
+import { MessageSquare, Mail, Phone, Info, Save } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export function DefaultPreferencesSettings() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
+  
+  const [localSettings, setLocalSettings] = useState({
+    default_sms_enabled: true,
+    default_email_enabled: true,
+    default_call_enabled: true,
+  });
+  const [hasChanges, setHasChanges] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   const { data: company, isLoading } = useQuery({
     queryKey: ['company-defaults', companyId],
@@ -28,6 +38,18 @@ export function DefaultPreferencesSettings() {
     enabled: !!companyId,
   });
 
+  // Sync local state with fetched data
+  useEffect(() => {
+    if (company) {
+      setLocalSettings({
+        default_sms_enabled: company.default_sms_enabled ?? true,
+        default_email_enabled: company.default_email_enabled ?? true,
+        default_call_enabled: company.default_call_enabled ?? true,
+      });
+      setHasChanges(false);
+    }
+  }, [company]);
+
   const updateMutation = useMutation({
     mutationFn: async (updates: {
       default_sms_enabled?: boolean;
@@ -43,12 +65,26 @@ export function DefaultPreferencesSettings() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['company-defaults', companyId] });
-      toast.success('Default preferences updated');
+      setSaveStatus('saved');
+      setHasChanges(false);
+      toast.success('Default preferences saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
     },
     onError: () => {
-      toast.error('Failed to update preferences');
+      setSaveStatus('idle');
+      toast.error('Failed to save preferences');
     },
   });
+
+  const handleToggle = (key: keyof typeof localSettings, value: boolean) => {
+    setLocalSettings(prev => ({ ...prev, [key]: value }));
+    setHasChanges(true);
+  };
+
+  const handleSave = () => {
+    setSaveStatus('saving');
+    updateMutation.mutate(localSettings);
+  };
 
   if (isLoading) {
     return (
@@ -68,11 +104,22 @@ export function DefaultPreferencesSettings() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Default Notification Preferences</CardTitle>
-        <CardDescription>
-          These settings apply to all new appointments. Customers can change their preferences later.
-        </CardDescription>
+      <CardHeader className="flex flex-row items-start justify-between">
+        <div>
+          <CardTitle>Default Notification Preferences</CardTitle>
+          <CardDescription>
+            These settings apply to all new appointments. Customers can change their preferences later.
+          </CardDescription>
+        </div>
+        <Button 
+          onClick={handleSave} 
+          disabled={!hasChanges || saveStatus === 'saving'}
+          size="sm"
+          className="gap-2"
+        >
+          <Save className="h-4 w-4" />
+          {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved!' : 'Save'}
+        </Button>
       </CardHeader>
       <CardContent className="space-y-6">
         <Alert>
@@ -100,10 +147,8 @@ export function DefaultPreferencesSettings() {
             </div>
             <Switch
               id="sms-default"
-              checked={company?.default_sms_enabled ?? true}
-              onCheckedChange={(checked) =>
-                updateMutation.mutate({ default_sms_enabled: checked })
-              }
+              checked={localSettings.default_sms_enabled}
+              onCheckedChange={(checked) => handleToggle('default_sms_enabled', checked)}
             />
           </div>
 
@@ -123,10 +168,8 @@ export function DefaultPreferencesSettings() {
             </div>
             <Switch
               id="email-default"
-              checked={company?.default_email_enabled ?? true}
-              onCheckedChange={(checked) =>
-                updateMutation.mutate({ default_email_enabled: checked })
-              }
+              checked={localSettings.default_email_enabled}
+              onCheckedChange={(checked) => handleToggle('default_email_enabled', checked)}
             />
           </div>
 
@@ -146,10 +189,8 @@ export function DefaultPreferencesSettings() {
             </div>
             <Switch
               id="call-default"
-              checked={company?.default_call_enabled ?? true}
-              onCheckedChange={(checked) =>
-                updateMutation.mutate({ default_call_enabled: checked })
-              }
+              checked={localSettings.default_call_enabled}
+              onCheckedChange={(checked) => handleToggle('default_call_enabled', checked)}
             />
           </div>
         </div>
