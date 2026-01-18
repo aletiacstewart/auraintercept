@@ -11,7 +11,6 @@ import { Briefcase, HelpCircle, Clock, FileText, Package, Shield, BookOpen } fro
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
-import { DashboardSetupNav } from '@/components/dashboard/DashboardSetupNav';
 
 export default function KnowledgeBase() {
   const [searchParams] = useSearchParams();
@@ -35,9 +34,6 @@ export default function KnowledgeBase() {
           description="Train your AI agent with your business information"
           featureColor="config"
         />
-
-        {/* Setup Navigation & Progress */}
-        <DashboardSetupNav />
 
         <Tabs defaultValue={defaultTab} className="space-y-6">
           <TabsList className={`grid w-full ${gridColsClass} lg:w-auto lg:inline-grid`}>
