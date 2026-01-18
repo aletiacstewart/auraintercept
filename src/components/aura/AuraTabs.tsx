@@ -46,10 +46,10 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
       <TabsContent value="revenue" className="mt-6">
         <Accordion type="single" collapsible defaultValue="revenue-analysis" className="space-y-4">
           <AccordionItem value="revenue-analysis" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
                 <DollarSign className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Revenue Analysis</span>
+                <span className="font-semibold text-foreground">Revenue Analysis</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
@@ -61,10 +61,10 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="trend-forecast" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
                 <LineChart className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Trend Forecast</span>
+                <span className="font-semibold text-foreground">Trend Forecast</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
@@ -81,10 +81,10 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
       <TabsContent value="performance" className="mt-6">
         <Accordion type="single" collapsible defaultValue="performance-report" className="space-y-4">
           <AccordionItem value="performance-report" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
                 <TrendingUp className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Performance Report</span>
+                <span className="font-semibold text-foreground">Performance Report</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
@@ -101,10 +101,10 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
       <TabsContent value="insights" className="mt-6">
         <Accordion type="single" collapsible defaultValue="insights-report" className="space-y-4">
           <AccordionItem value="insights-report" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
                 <Lightbulb className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Business Insights</span>
+                <span className="font-semibold text-foreground">Business Insights</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
@@ -116,10 +116,10 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="customer-insights" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
                 <Users className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Customer Insights</span>
+                <span className="font-semibold text-foreground">Customer Insights</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
@@ -131,10 +131,10 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="kpi-dashboard" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
                 <Activity className="h-5 w-5 text-primary" />
-                <span className="font-semibold">KPI Dashboard</span>
+                <span className="font-semibold text-foreground">KPI Dashboard</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
@@ -151,10 +151,10 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
       <TabsContent value="analytics" className="mt-6">
         <Accordion type="single" collapsible defaultValue="all-revenue" className="space-y-4">
           <AccordionItem value="all-revenue" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
                 <DollarSign className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Revenue Analysis</span>
+                <span className="font-semibold text-foreground">Revenue Analysis</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
@@ -166,10 +166,10 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="all-forecast" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
                 <LineChart className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Trend Forecast</span>
+                <span className="font-semibold text-foreground">Trend Forecast</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
@@ -181,10 +181,10 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="all-performance" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
                 <TrendingUp className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Performance Report</span>
+                <span className="font-semibold text-foreground">Performance Report</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
@@ -196,10 +196,10 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="all-insights" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
                 <Lightbulb className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Business Insights</span>
+                <span className="font-semibold text-foreground">Business Insights</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
@@ -211,10 +211,10 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="all-customers" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
                 <Users className="h-5 w-5 text-primary" />
-                <span className="font-semibold">Customer Insights</span>
+                <span className="font-semibold text-foreground">Customer Insights</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
@@ -226,10 +226,10 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="all-kpi" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
                 <Activity className="h-5 w-5 text-primary" />
-                <span className="font-semibold">KPI Dashboard</span>
+                <span className="font-semibold text-foreground">KPI Dashboard</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
