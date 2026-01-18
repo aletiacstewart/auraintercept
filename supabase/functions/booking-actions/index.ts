@@ -468,7 +468,11 @@ async function checkAvailability(supabase: any, companyId: string, params: any) 
 }
 
 async function bookAppointment(supabase: any, companyId: string, params: any) {
-  const { service_name, datetime, customer_name, customer_email, customer_phone, customer_address, employee_id } = params;
+  const { 
+    service_name, datetime, customer_name, customer_email, customer_phone, customer_address, employee_id,
+    // Customer notification preferences (opt-in means they WANT notifications)
+    sms_opt_in, email_opt_in, call_opt_in
+  } = params;
 
   // Get service
   const { data: service } = await supabase
@@ -490,9 +494,11 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
     .eq('id', companyId)
     .single();
 
-  const smsOptOut = !(company?.default_sms_enabled ?? true);
-  const emailOptOut = !(company?.default_email_enabled ?? true);
-  const callOptOut = !(company?.default_call_enabled ?? true);
+  // Use customer preferences if provided, otherwise fall back to company defaults
+  // opt_out is the inverse of opt_in (true means don't send, false means do send)
+  const smsOptOut = sms_opt_in !== undefined ? !sms_opt_in : !(company?.default_sms_enabled ?? true);
+  const emailOptOut = email_opt_in !== undefined ? !email_opt_in : !(company?.default_email_enabled ?? true);
+  const callOptOut = call_opt_in !== undefined ? !call_opt_in : !(company?.default_call_enabled ?? true);
 
   // Find best available employee using smart scoring if not specified
   let assignedEmployeeId = employee_id;

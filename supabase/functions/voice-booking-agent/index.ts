@@ -465,9 +465,15 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
   const customerPhone = params.customer_phone || params.customerPhone;
   const customerAddress = params.customer_address || params.customerAddress;
   const issueDescription = params.issue_description || params.notes || params.issueDescription;
+  
+  // Customer notification preferences (opt-in means they WANT notifications)
+  const smsOptIn = params.sms_opt_in ?? params.smsOptIn;
+  const emailOptIn = params.email_opt_in ?? params.emailOptIn;
+  const callOptIn = params.call_opt_in ?? params.callOptIn;
 
   console.log('[Voice Booking Agent] Booking appointment with params:', {
-    serviceName, date, time, customerName, customerEmail, customerPhone, customerAddress, issueDescription
+    serviceName, date, time, customerName, customerEmail, customerPhone, customerAddress, issueDescription,
+    smsOptIn, emailOptIn, callOptIn
   });
 
   // Validate all required fields
@@ -562,6 +568,12 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
     .eq('id', companyId)
     .single();
 
+  // Use customer preferences if provided, otherwise fall back to company defaults
+  // opt_out is the inverse of opt_in (true means don't send, false means do send)
+  const smsOptOut = smsOptIn !== undefined ? !smsOptIn : !(company?.default_sms_enabled ?? true);
+  const emailOptOut = emailOptIn !== undefined ? !emailOptIn : !(company?.default_email_enabled ?? true);
+  const callOptOut = callOptIn !== undefined ? !callOptIn : !(company?.default_call_enabled ?? true);
+
   // ===== STEP 3: Create the appointment =====
   const { data: appointment, error: appointmentError } = await supabase
     .from('appointments')
@@ -578,9 +590,9 @@ async function bookAppointmentWithAccountCreation(supabase: any, companyId: stri
       customer_token: customerToken,
       notes: issueDescription || null,
       status: 'scheduled',
-      sms_opt_out: !(company?.default_sms_enabled ?? true),
-      email_opt_out: !(company?.default_email_enabled ?? true),
-      call_opt_out: !(company?.default_call_enabled ?? true),
+      sms_opt_out: smsOptOut,
+      email_opt_out: emailOptOut,
+      call_opt_out: callOptOut,
     })
     .select()
     .single();
