@@ -1,30 +1,34 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { CalendarDays, Bell, TrendingDown } from 'lucide-react';
+import { CalendarDays, Bell, Mail, MessageSquare } from 'lucide-react';
 
 interface DigestMetricsSelectorProps {
   includeAppointments: boolean;
   includeReminders: boolean;
-  includeSubscriptions: boolean;
+  includeEmails: boolean;
+  includeSms: boolean;
   onChangeAppointments: (checked: boolean) => void;
   onChangeReminders: (checked: boolean) => void;
-  onChangeSubscriptions: (checked: boolean) => void;
+  onChangeEmails: (checked: boolean) => void;
+  onChangeSms: (checked: boolean) => void;
   disabled?: boolean;
 }
 
 export function DigestMetricsSelector({
   includeAppointments,
   includeReminders,
-  includeSubscriptions,
+  includeEmails,
+  includeSms,
   onChangeAppointments,
   onChangeReminders,
-  onChangeSubscriptions,
+  onChangeEmails,
+  onChangeSms,
   disabled = false,
 }: DigestMetricsSelectorProps) {
   return (
     <div className="space-y-3">
       <Label className="text-sm font-medium text-card-foreground">Include in Report</Label>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="flex items-center space-x-3 p-3 rounded-lg border border-card-foreground/20 bg-card">
           <Checkbox
             id="include-appointments"
@@ -34,9 +38,12 @@ export function DigestMetricsSelector({
           />
           <div className="flex items-center gap-2">
             <CalendarDays className="h-4 w-4 text-card-foreground/60" />
-            <Label htmlFor="include-appointments" className="text-sm font-normal cursor-pointer text-card-foreground">
-              Appointments
-            </Label>
+            <div>
+              <Label htmlFor="include-appointments" className="text-sm font-normal cursor-pointer text-card-foreground">
+                Appointments
+              </Label>
+              <p className="text-xs text-muted-foreground">Scheduled, canceled, completed</p>
+            </div>
           </div>
         </div>
         <div className="flex items-center space-x-3 p-3 rounded-lg border border-card-foreground/20 bg-card">
@@ -48,23 +55,46 @@ export function DigestMetricsSelector({
           />
           <div className="flex items-center gap-2">
             <Bell className="h-4 w-4 text-card-foreground/60" />
-            <Label htmlFor="include-reminders" className="text-sm font-normal cursor-pointer text-card-foreground">
-              Reminders
-            </Label>
+            <div>
+              <Label htmlFor="include-reminders" className="text-sm font-normal cursor-pointer text-card-foreground">
+                Reminders
+              </Label>
+              <p className="text-xs text-muted-foreground">Sent via SMS & email</p>
+            </div>
           </div>
         </div>
         <div className="flex items-center space-x-3 p-3 rounded-lg border border-card-foreground/20 bg-card">
           <Checkbox
-            id="include-subscriptions"
-            checked={includeSubscriptions}
-            onCheckedChange={(checked) => onChangeSubscriptions(checked === true)}
+            id="include-emails"
+            checked={includeEmails}
+            onCheckedChange={(checked) => onChangeEmails(checked === true)}
             disabled={disabled}
           />
           <div className="flex items-center gap-2">
-            <TrendingDown className="h-4 w-4 text-card-foreground/60" />
-            <Label htmlFor="include-subscriptions" className="text-sm font-normal cursor-pointer text-card-foreground">
-              Subscriptions
-            </Label>
+            <Mail className="h-4 w-4 text-card-foreground/60" />
+            <div>
+              <Label htmlFor="include-emails" className="text-sm font-normal cursor-pointer text-card-foreground">
+                Emails
+              </Label>
+              <p className="text-xs text-muted-foreground">Sent, bounced, subscribed, unsubscribed</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center space-x-3 p-3 rounded-lg border border-card-foreground/20 bg-card">
+          <Checkbox
+            id="include-sms"
+            checked={includeSms}
+            onCheckedChange={(checked) => onChangeSms(checked === true)}
+            disabled={disabled}
+          />
+          <div className="flex items-center gap-2">
+            <MessageSquare className="h-4 w-4 text-card-foreground/60" />
+            <div>
+              <Label htmlFor="include-sms" className="text-sm font-normal cursor-pointer text-card-foreground">
+                SMS
+              </Label>
+              <p className="text-xs text-muted-foreground">Sent, bounced, subscribed, unsubscribed</p>
+            </div>
           </div>
         </div>
       </div>

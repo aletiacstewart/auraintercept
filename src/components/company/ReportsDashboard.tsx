@@ -11,13 +11,12 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { Calendar, Clock, Mail, CheckCircle2, XCircle, AlertCircle, FileText, TrendingUp, Send, Loader2, ChevronDown, Settings2, Globe, Activity, DollarSign } from 'lucide-react';
+import { Calendar, Clock, Mail, CheckCircle2, XCircle, AlertCircle, FileText, TrendingUp, Send, Loader2, ChevronDown, Settings2, Globe, Activity, MessageSquare, Bell, CalendarDays } from 'lucide-react';
 import { format, formatDistanceToNow, addDays, setHours, setMinutes, setDate } from 'date-fns';
 import { DigestDeliveryHistory } from './DigestDeliveryHistory';
 import { DigestDeliveryStats } from './DigestDeliveryStats';
 import { SuppressedEmailsManager } from './SuppressedEmailsManager';
 import { DigestMetricsSelector } from './DigestMetricsSelector';
-import { FinancialReports } from './FinancialReports';
 import { AutomationOverview } from './AutomationOverview';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -31,7 +30,8 @@ interface ReportConfig {
   timezone: string;
   includeAppointments: boolean;
   includeReminders: boolean;
-  includeSubscriptions: boolean;
+  includeEmails: boolean;
+  includeSms: boolean;
   scheduleDescription: string;
   day: number;
   time: string;
@@ -83,11 +83,11 @@ export function ReportsDashboard() {
       .from('companies')
       .select(`
         weekly_digest_enabled, weekly_digest_email, weekly_digest_day, weekly_digest_time, weekly_digest_timezone,
-        weekly_digest_include_appointments, weekly_digest_include_reminders, weekly_digest_include_subscriptions, last_weekly_digest_at,
+        weekly_digest_include_appointments, weekly_digest_include_reminders, weekly_digest_include_emails, weekly_digest_include_sms, last_weekly_digest_at,
         monthly_digest_enabled, monthly_digest_email, monthly_digest_day, monthly_digest_time, monthly_digest_timezone,
-        monthly_digest_include_appointments, monthly_digest_include_reminders, monthly_digest_include_subscriptions, last_monthly_digest_at,
+        monthly_digest_include_appointments, monthly_digest_include_reminders, monthly_digest_include_emails, monthly_digest_include_sms, last_monthly_digest_at,
         quarterly_digest_enabled, quarterly_digest_email, quarterly_digest_month, quarterly_digest_day, quarterly_digest_time, quarterly_digest_timezone,
-        quarterly_digest_include_appointments, quarterly_digest_include_reminders, quarterly_digest_include_subscriptions, last_quarterly_digest_at
+        quarterly_digest_include_appointments, quarterly_digest_include_reminders, quarterly_digest_include_emails, quarterly_digest_include_sms, last_quarterly_digest_at
       `)
       .eq('id', companyId)
       .single();
@@ -142,7 +142,8 @@ export function ReportsDashboard() {
         timezone: data.weekly_digest_timezone || browserTimezone || 'America/New_York',
         includeAppointments: data.weekly_digest_include_appointments !== false,
         includeReminders: data.weekly_digest_include_reminders !== false,
-        includeSubscriptions: data.weekly_digest_include_subscriptions !== false,
+        includeEmails: data.weekly_digest_include_emails !== false,
+        includeSms: data.weekly_digest_include_sms !== false,
         scheduleDescription: `Every ${DAYS_OF_WEEK[weeklyDay]} at ${weeklyTime}`,
         day: weeklyDay,
         time: weeklyTime.slice(0, 5),
@@ -157,7 +158,8 @@ export function ReportsDashboard() {
         timezone: data.monthly_digest_timezone || browserTimezone || 'America/New_York',
         includeAppointments: data.monthly_digest_include_appointments !== false,
         includeReminders: data.monthly_digest_include_reminders !== false,
-        includeSubscriptions: data.monthly_digest_include_subscriptions !== false,
+        includeEmails: data.monthly_digest_include_emails !== false,
+        includeSms: data.monthly_digest_include_sms !== false,
         scheduleDescription: `Day ${monthlyDay} of each month at ${monthlyTime}`,
         day: monthlyDay,
         time: monthlyTime.slice(0, 5),
@@ -172,7 +174,8 @@ export function ReportsDashboard() {
         timezone: data.quarterly_digest_timezone || browserTimezone || 'America/New_York',
         includeAppointments: data.quarterly_digest_include_appointments !== false,
         includeReminders: data.quarterly_digest_include_reminders !== false,
-        includeSubscriptions: data.quarterly_digest_include_subscriptions !== false,
+        includeEmails: data.quarterly_digest_include_emails !== false,
+        includeSms: data.quarterly_digest_include_sms !== false,
         scheduleDescription: `${QUARTER_MONTHS[quarterlyMonth - 1]?.label.split(' ')[0]} month of quarter, day ${quarterlyDay} at ${quarterlyTime}`,
         day: quarterlyDay,
         time: quarterlyTime.slice(0, 5),
@@ -226,7 +229,8 @@ export function ReportsDashboard() {
       [`${reportType}_digest_timezone`]: edit.timezone,
       [`${reportType}_digest_include_appointments`]: edit.includeAppointments,
       [`${reportType}_digest_include_reminders`]: edit.includeReminders,
-      [`${reportType}_digest_include_subscriptions`]: edit.includeSubscriptions,
+      [`${reportType}_digest_include_emails`]: edit.includeEmails,
+      [`${reportType}_digest_include_sms`]: edit.includeSms,
     };
 
     if (reportType === 'quarterly' && edit.month) {
@@ -298,7 +302,8 @@ export function ReportsDashboard() {
     const metrics = [];
     if (report.includeAppointments) metrics.push('Appointments');
     if (report.includeReminders) metrics.push('Reminders');
-    if (report.includeSubscriptions) metrics.push('Subscriptions');
+    if (report.includeEmails) metrics.push('Emails');
+    if (report.includeSms) metrics.push('SMS');
     return metrics;
   };
 
@@ -338,10 +343,6 @@ export function ReportsDashboard() {
           <TabsTrigger value="scheduled" className="gap-1">
             <FileText className="h-4 w-4" />
             Digest Reports
-          </TabsTrigger>
-          <TabsTrigger value="financial" className="gap-1">
-            <DollarSign className="h-4 w-4" />
-            Financial
           </TabsTrigger>
         </TabsList>
       </div>
@@ -569,10 +570,12 @@ export function ReportsDashboard() {
                         <DigestMetricsSelector
                           includeAppointments={edit.includeAppointments}
                           includeReminders={edit.includeReminders}
-                          includeSubscriptions={edit.includeSubscriptions}
+                          includeEmails={edit.includeEmails}
+                          includeSms={edit.includeSms}
                           onChangeAppointments={(v) => updateEditState(report.id, { includeAppointments: v })}
                           onChangeReminders={(v) => updateEditState(report.id, { includeReminders: v })}
-                          onChangeSubscriptions={(v) => updateEditState(report.id, { includeSubscriptions: v })}
+                          onChangeEmails={(v) => updateEditState(report.id, { includeEmails: v })}
+                          onChangeSms={(v) => updateEditState(report.id, { includeSms: v })}
                           disabled={false}
                         />
 
@@ -604,10 +607,6 @@ export function ReportsDashboard() {
       <div className="mt-6">
         <DigestDeliveryHistory />
       </div>
-      </TabsContent>
-      
-      <TabsContent value="financial">
-        <FinancialReports />
       </TabsContent>
     </Tabs>
   );
