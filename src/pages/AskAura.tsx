@@ -165,13 +165,11 @@ export default function AskAura() {
 
           {/* Tabbed Content */}
           {companyId && (
-            <Card className="bg-card border-border p-6">
-              <AuraTabs
-                companyId={companyId}
-                defaultTab={activeTab}
-                onAnalyze={handleAnalyze}
-              />
-            </Card>
+            <AuraTabs
+              companyId={companyId}
+              defaultTab={activeTab}
+              onAnalyze={handleAnalyze}
+            />
           )}
         </div>
       </PageContainer>

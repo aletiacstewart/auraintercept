@@ -18,22 +18,25 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
     onAnalyze?.(type, data);
   };
 
+  // Empty handler for cancel since we don't hide forms in tabbed view
+  const handleCancel = () => {};
+
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-4 bg-muted/50">
-        <TabsTrigger value="revenue" className="flex items-center gap-2">
+      <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1">
+        <TabsTrigger value="revenue" className="flex items-center gap-2 data-[state=active]:bg-background">
           <DollarSign className="h-4 w-4" />
           <span className="hidden sm:inline">Revenue</span>
         </TabsTrigger>
-        <TabsTrigger value="performance" className="flex items-center gap-2">
+        <TabsTrigger value="performance" className="flex items-center gap-2 data-[state=active]:bg-background">
           <TrendingUp className="h-4 w-4" />
           <span className="hidden sm:inline">Performance</span>
         </TabsTrigger>
-        <TabsTrigger value="insights" className="flex items-center gap-2">
+        <TabsTrigger value="insights" className="flex items-center gap-2 data-[state=active]:bg-background">
           <Lightbulb className="h-4 w-4" />
           <span className="hidden sm:inline">Insights</span>
         </TabsTrigger>
-        <TabsTrigger value="analytics" className="flex items-center gap-2">
+        <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=active]:bg-background">
           <BarChart3 className="h-4 w-4" />
           <span className="hidden sm:inline">All Analytics</span>
         </TabsTrigger>
@@ -42,12 +45,12 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
       <TabsContent value="revenue" className="mt-6 space-y-6">
         <RevenueAnalysisForm
           companyId={companyId}
-          onCancel={() => {}}
+          onCancel={handleCancel}
           onAnalyze={handleAnalyze('revenue')}
         />
         <TrendForecastForm
           companyId={companyId}
-          onCancel={() => {}}
+          onCancel={handleCancel}
           onForecast={handleAnalyze('forecast')}
         />
       </TabsContent>
@@ -55,7 +58,7 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
       <TabsContent value="performance" className="mt-6">
         <PerformanceReportForm
           companyId={companyId}
-          onCancel={() => {}}
+          onCancel={handleCancel}
           onAnalyze={handleAnalyze('performance')}
         />
       </TabsContent>
@@ -63,7 +66,7 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
       <TabsContent value="insights" className="mt-6 space-y-6">
         <InsightsReportForm
           companyId={companyId}
-          onCancel={() => {}}
+          onCancel={handleCancel}
           onAnalyze={handleAnalyze('insights')}
         />
       </TabsContent>
@@ -71,12 +74,12 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
       <TabsContent value="analytics" className="mt-6 space-y-6">
         <CustomerInsightsForm
           companyId={companyId}
-          onCancel={() => {}}
+          onCancel={handleCancel}
           onAnalyze={handleAnalyze('customers')}
         />
         <KpiDashboardForm
           companyId={companyId}
-          onCancel={() => {}}
+          onCancel={handleCancel}
           onAnalyze={handleAnalyze('kpi')}
         />
       </TabsContent>
