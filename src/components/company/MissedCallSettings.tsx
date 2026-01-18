@@ -174,7 +174,7 @@ export function MissedCallSettings() {
               <AlertCircle className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-sm">
                 Missed call handling requires{' '}
-                <Link to="/integrations" className="text-primary underline hover:no-underline">
+                <Link to="/integrations" className="text-secondary underline hover:no-underline">
                   Twilio integration
                 </Link>{' '}
                 to be configured.

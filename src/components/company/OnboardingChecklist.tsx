@@ -245,13 +245,13 @@ export function OnboardingChecklist() {
                 </Badge>
               )}
             </CardTitle>
-            <CardDescription className="mt-1 text-white/80">
+            <CardDescription className="mt-1 text-muted-foreground">
               Complete these steps to get your AI agent up and running
             </CardDescription>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold text-white">{progress}%</div>
-            <div className="text-xs text-white/70">complete</div>
+            <div className="text-2xl font-bold text-foreground">{progress}%</div>
+            <div className="text-xs text-muted-foreground">complete</div>
           </div>
         </div>
         <Progress value={progress} className="mt-4" />
@@ -288,7 +288,7 @@ export function OnboardingChecklist() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className={cn('text-sm font-medium', isItemComplete && 'text-white/50 line-through')}>
+                  <p className={cn('text-sm font-medium', isItemComplete && 'text-foreground/50 line-through')}>
                     {item.title}
                   </p>
                   {item.priority === 'required' && !isItemComplete && (
@@ -297,7 +297,7 @@ export function OnboardingChecklist() {
                     </Badge>
                   )}
                 </div>
-                <p className="text-xs text-white/70 truncate">{item.description}</p>
+                <p className="text-xs text-muted-foreground truncate">{item.description}</p>
               </div>
               {!isItemComplete && (
                 <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
