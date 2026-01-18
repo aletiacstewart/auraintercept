@@ -451,43 +451,44 @@ export default function Companies() {
           title="Companies"
           description="Manage tenant companies on the platform"
           action={
-            <Dialog open={isCreateOpen} onOpenChange={(open) => { setIsCreateOpen(open); if (!open) resetForm(); }}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Add Company
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-lg">
-              <DialogHeader>
-                <DialogTitle>
-                  {createdCredentials ? 'Company Admin Credentials' : 'Create New Company'}
-                </DialogTitle>
-                <DialogDescription>
-                  {createdCredentials 
-                    ? 'Share these credentials securely with the company admin'
-                    : 'Add a new tenant company to the platform'
-                  }
-                </DialogDescription>
-              </DialogHeader>
-              {createdCredentials ? (
-                <CredentialsDisplay 
-                  credentials={createdCredentials} 
-                  onClose={() => { setIsCreateOpen(false); resetForm(); }} 
-                />
-              ) : (
-                <CompanyForm
-                  formData={formData}
-                  setFormData={setFormData}
-                  onSubmit={handleSubmit}
-                  onCancel={() => { setIsCreateOpen(false); resetForm(); }}
-                  isLoading={createMutation.isPending}
-                  generateSlug={generateSlug}
-                />
-              )}
-            </DialogContent>
-          </Dialog>
-        </div>
+            <Button onClick={() => setIsCreateOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Company
+            </Button>
+          }
+        />
+
+        {/* Create Company Dialog */}
+        <Dialog open={isCreateOpen} onOpenChange={(open) => { setIsCreateOpen(open); if (!open) resetForm(); }}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>
+                {createdCredentials ? 'Company Admin Credentials' : 'Create New Company'}
+              </DialogTitle>
+              <DialogDescription>
+                {createdCredentials 
+                  ? 'Share these credentials securely with the company admin'
+                  : 'Add a new tenant company to the platform'
+                }
+              </DialogDescription>
+            </DialogHeader>
+            {createdCredentials ? (
+              <CredentialsDisplay 
+                credentials={createdCredentials} 
+                onClose={() => { setIsCreateOpen(false); resetForm(); }} 
+              />
+            ) : (
+              <CompanyForm
+                formData={formData}
+                setFormData={setFormData}
+                onSubmit={handleSubmit}
+                onCancel={() => { setIsCreateOpen(false); resetForm(); }}
+                isLoading={createMutation.isPending}
+                generateSlug={generateSlug}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-3">
