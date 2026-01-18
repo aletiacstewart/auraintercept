@@ -67,9 +67,27 @@ const SheetContent = React.forwardRef<React.ElementRef<typeof SheetPrimitive.Con
 );
 SheetContent.displayName = SheetPrimitive.Content.displayName;
 
-const SheetHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex flex-col space-y-2 text-center sm:text-left", className)} {...props} />
-);
+const SheetHeader = ({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+  // Dynamically import to avoid circular dependencies
+  const [FormVoiceIndicator, setFormVoiceIndicator] = React.useState<React.ComponentType<{ className?: string }> | null>(null);
+  
+  React.useEffect(() => {
+    import('@/components/voice/FormVoiceIndicator').then(module => {
+      setFormVoiceIndicator(() => module.FormVoiceIndicator);
+    }).catch(() => {
+      // Voice indicator not available, that's fine
+    });
+  }, []);
+
+  return (
+    <div className={cn("flex flex-col space-y-2 text-center sm:text-left", className)} {...props}>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex-1">{children}</div>
+        {FormVoiceIndicator && <FormVoiceIndicator className="shrink-0" />}
+      </div>
+    </div>
+  );
+};
 SheetHeader.displayName = "SheetHeader";
 
 const SheetFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (

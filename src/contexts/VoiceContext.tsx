@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
-import { executeCommand, parseCommand, VoiceCommand, CommandResult } from '@/lib/voiceNavigation';
+import { executeCommand, parseCommand, VoiceCommand, CommandResult, parseNavigationCommand, parseSearchIntent, PAGE_ROUTES } from '@/lib/voiceNavigation';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -81,6 +81,51 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     
+    // Check for navigation command (e.g., "go to companies")
+    const navigationDestination = parseNavigationCommand(text);
+    if (navigationDestination) {
+      const route = PAGE_ROUTES[navigationDestination];
+      if (route) {
+        navigate(route);
+        toast.success(`Navigating to ${navigationDestination}`, {
+          duration: 1500,
+          className: 'voice-command-toast',
+        });
+        return;
+      }
+    }
+    
+    // Check for search command (e.g., "search for demo company")
+    const searchIntent = parseSearchIntent(text);
+    if (searchIntent) {
+      // Find search input on the page and inject the query
+      const searchInput = document.querySelector<HTMLInputElement>(
+        'input[placeholder*="Search"], input[placeholder*="search"], input[type="search"], input[name="search"]'
+      );
+      
+      if (searchInput) {
+        searchInput.focus();
+        
+        // Inject the search query
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype, 'value'
+        )?.set;
+        
+        nativeInputValueSetter?.call(searchInput, searchIntent.query);
+        
+        const event = new Event('input', { bubbles: true });
+        searchInput.dispatchEvent(event);
+        
+        toast.success(`Searching for "${searchIntent.query}"`, {
+          duration: 1500,
+          className: 'voice-command-toast',
+        });
+        return;
+      } else {
+        toast.info(`No search field found on this page`, { duration: 2000 });
+      }
+    }
+    
     // Otherwise, inject text into the active field
     const activeElement = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
     if (activeElement && ('value' in activeElement)) {
@@ -99,7 +144,7 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
       const event = new Event('input', { bubbles: true });
       activeElement.dispatchEvent(event);
     }
-  }, [handleCommand]);
+  }, [handleCommand, navigate]);
 
   const handleError = useCallback((error: string) => {
     toast.error(error, { duration: 3000 });

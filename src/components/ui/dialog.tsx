@@ -51,9 +51,27 @@ const DialogContent = React.forwardRef<
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
-const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)} {...props} />
-);
+const DialogHeader = ({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+  // Dynamically import to avoid circular dependencies
+  const [FormVoiceIndicator, setFormVoiceIndicator] = React.useState<React.ComponentType<{ className?: string }> | null>(null);
+  
+  React.useEffect(() => {
+    import('@/components/voice/FormVoiceIndicator').then(module => {
+      setFormVoiceIndicator(() => module.FormVoiceIndicator);
+    }).catch(() => {
+      // Voice indicator not available, that's fine
+    });
+  }, []);
+
+  return (
+    <div className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)} {...props}>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex-1">{children}</div>
+        {FormVoiceIndicator && <FormVoiceIndicator className="shrink-0" />}
+      </div>
+    </div>
+  );
+};
 DialogHeader.displayName = "DialogHeader";
 
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
