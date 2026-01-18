@@ -442,32 +442,32 @@ export function PlatformAdminDashboard() {
                           </div>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-secondary/20 text-secondary border-secondary/30">
+                          <Badge variant="outline" className="bg-feature-employees/20 text-feature-employees border-feature-employees/30">
                             {company.users}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
+                          <Badge variant="outline" className="bg-feature-customers/20 text-feature-customers border-feature-customers/30">
                             {company.customers}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-orange-500/20 text-orange-400 border-orange-500/30">
+                          <Badge variant="outline" className="bg-feature-leads/20 text-feature-leads border-feature-leads/30">
                             {company.leads}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30">
+                          <Badge variant="outline" className="bg-feature-appointments/20 text-feature-appointments border-feature-appointments/30">
                             {company.appointments}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+                          <Badge variant="outline" className="bg-feature-quotes/20 text-feature-quotes border-feature-quotes/30">
                             {company.quotes}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                          <Badge variant="outline" className="bg-feature-invoices/20 text-feature-invoices border-feature-invoices/30">
                             {company.invoices}
                           </Badge>
                         </TableCell>
@@ -477,12 +477,12 @@ export function PlatformAdminDashboard() {
                           </span>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-amber-500/20 text-amber-400 border-amber-500/30">
+                          <Badge variant="outline" className="bg-feature-inventory/20 text-feature-inventory border-feature-inventory/30">
                             {company.inventory}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant="outline" className="bg-pink-500/20 text-pink-400 border-pink-500/30">
+                          <Badge variant="outline" className="bg-feature-marketing/20 text-feature-marketing border-feature-marketing/30">
                             {company.campaigns}
                           </Badge>
                         </TableCell>
