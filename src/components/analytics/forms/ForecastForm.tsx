@@ -225,7 +225,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-foreground">Forecast Type</Label>
+            <Label className="text-sm font-medium text-muted-foreground">Forecast Type</Label>
             <Select value={forecastType} onValueChange={(v) => setForecastType(v as ForecastType)}>
               <SelectTrigger className="h-9 text-sm">
                 <SelectValue />
@@ -238,7 +238,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-foreground">Time Period</Label>
+            <Label className="text-sm font-medium text-muted-foreground">Time Period</Label>
             <Select value={forecastPeriod} onValueChange={setForecastPeriod}>
               <SelectTrigger className="h-9 text-sm">
                 <SelectValue />

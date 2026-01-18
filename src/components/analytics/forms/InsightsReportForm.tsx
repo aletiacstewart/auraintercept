@@ -259,7 +259,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-foreground">Date Range</Label>
+            <Label className="text-sm font-medium text-muted-foreground">Date Range</Label>
             <Select value={dateRange} onValueChange={setDateRange}>
               <SelectTrigger className="h-9 text-sm">
                 <SelectValue />
@@ -273,7 +273,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-foreground">View</Label>
+            <Label className="text-sm font-medium text-muted-foreground">View</Label>
             <Select value={insightView} onValueChange={(v) => setInsightView(v as InsightView)}>
               <SelectTrigger className="h-9 text-sm">
                 <SelectValue />

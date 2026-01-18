@@ -437,7 +437,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
       <div className="p-4 space-y-4">
         {/* Report Type Selector */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-foreground">Report View</Label>
+          <Label className="text-sm font-medium text-muted-foreground">Report View</Label>
           <Select value={reportView} onValueChange={(v) => setReportView(v as ReportView)}>
             <SelectTrigger className="h-9 text-sm">
               <SelectValue />
@@ -455,7 +455,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
         {/* Filters */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-sm font-medium text-foreground">
+            <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
               <Calendar className="h-3 w-3" />
               Date Range
             </Label>
@@ -472,7 +472,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-foreground">Compare To</Label>
+            <Label className="text-sm font-medium text-muted-foreground">Compare To</Label>
             <Select value={compareRange} onValueChange={setCompareRange}>
               <SelectTrigger className="h-9 text-sm">
                 <SelectValue />
@@ -487,7 +487,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
 
         {/* Department Filter */}
         <div className="space-y-2">
-          <Label className="flex items-center gap-1 text-sm font-medium text-foreground">
+          <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
             <Users className="h-3 w-3" />
             Department / Team
           </Label>
