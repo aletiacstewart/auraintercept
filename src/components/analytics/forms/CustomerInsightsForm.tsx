@@ -144,7 +144,6 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
             </SelectContent>
           </Select>
         </div>
-        </div>
 
         {/* Metrics */}
         {isLoading ? (
