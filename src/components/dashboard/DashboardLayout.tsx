@@ -90,7 +90,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Business Management',
     items: [
-      { label: 'Business Ops Overview', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Business Ops Overview', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
       { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'], featureColor: 'text-feature-companies' },
       { label: 'Employees', icon: UserCheck, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
       { label: 'Customers', icon: Users, href: '/dashboard/customers', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers' },
@@ -117,10 +117,10 @@ const navGroups: NavGroup[] = [
   {
     label: 'Business Consoles & Apps',
     items: [
-      { label: 'Business Management Ops', icon: Briefcase, href: '/dashboard/ai-consoles/business-management', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'] },
+      { label: 'Business Management Ops', icon: Briefcase, href: '/dashboard/ai-consoles/business-management', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-analytics' },
       { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-analytics' },
-      { label: 'Marketing & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'], featureColor: 'text-feature-marketing' },
-      { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Marketing & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'], featureColor: 'text-feature-analytics' },
+      { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
     ],
   },
   {
