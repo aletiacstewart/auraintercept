@@ -65,7 +65,7 @@ export function CampaignSettings() {
           <h3 className="font-medium text-card-foreground">Default Promotional Discount</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label className="text-label">Discount Type</Label>
+              <Label className="text-card-foreground">Discount Type</Label>
               <Select
                 value={settings.defaultDiscountType}
                 onValueChange={(v) => setSettings(s => ({ ...s, defaultDiscountType: v }))}
@@ -80,7 +80,7 @@ export function CampaignSettings() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-label">Discount Value</Label>
+              <Label className="text-card-foreground">Discount Value</Label>
               <Input
                 type="number"
                 value={settings.defaultDiscountValue}
@@ -94,7 +94,7 @@ export function CampaignSettings() {
           <h3 className="font-medium text-card-foreground">Referral Rewards</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label className="text-label">Reward Type</Label>
+              <Label className="text-card-foreground">Reward Type</Label>
               <Select
                 value={settings.referralRewardType}
                 onValueChange={(v) => setSettings(s => ({ ...s, referralRewardType: v }))}
@@ -110,7 +110,7 @@ export function CampaignSettings() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-label">Reward Value (%)</Label>
+              <Label className="text-card-foreground">Reward Value (%)</Label>
               <Input
                 type="number"
                 value={settings.referralRewardValue}
@@ -124,7 +124,7 @@ export function CampaignSettings() {
           <h3 className="font-medium text-card-foreground">Message Templates</h3>
           <div className="space-y-6">
             <div className="space-y-3">
-              <Label className="text-label">Win-back Campaign Template</Label>
+              <Label className="text-card-foreground">Win-back Campaign Template</Label>
               <Textarea
                 value={settings.winbackTemplate}
                 onChange={(e) => setSettings(s => ({ ...s, winbackTemplate: e.target.value }))}
@@ -135,7 +135,7 @@ export function CampaignSettings() {
                   <Link className="w-4 h-4 text-primary" />
                   <div>
                     <Label className="text-sm font-medium text-card-foreground">Include Campaign Link</Label>
-                    <p className="text-xs text-muted-foreground">Add a link for customers to redeem the offer</p>
+                    <p className="text-xs text-card-foreground/70">Add a link for customers to redeem the offer</p>
                   </div>
                 </div>
                 <Switch
@@ -162,7 +162,7 @@ export function CampaignSettings() {
               </div>
             </div>
             <div className="space-y-3">
-              <Label className="text-label">Referral Reward Template</Label>
+              <Label className="text-card-foreground">Referral Reward Template</Label>
               <Textarea
                 value={settings.referralTemplate}
                 onChange={(e) => setSettings(s => ({ ...s, referralTemplate: e.target.value }))}
@@ -173,7 +173,7 @@ export function CampaignSettings() {
                   <Link className="w-4 h-4 text-primary" />
                   <div>
                     <Label className="text-sm font-medium text-card-foreground">Include Referral Link</Label>
-                    <p className="text-xs text-muted-foreground">Add a referral link for customers to share</p>
+                    <p className="text-xs text-card-foreground/70">Add a referral link for customers to share</p>
                   </div>
                 </div>
                 <Switch
