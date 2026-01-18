@@ -107,6 +107,13 @@ export default {
           overview: "hsl(var(--feature-overview))",
           integrations: "hsl(var(--feature-integrations))",
         },
+        // Aura Empathy Color Palette
+        aura: {
+          emerald: "#34D399",
+          curious: "#FBBF24",
+          connection: "#3B82F6",
+          resting: "#94A3B8",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -138,6 +145,23 @@ export default {
           "0%, 100%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },
         },
+        // Aura breathing animation - organic heartbeat
+        "aura-breathe": {
+          "0%, 100%": { 
+            transform: "scale(1)", 
+            opacity: "1",
+          },
+          "50%": { 
+            transform: "scale(1.08)", 
+            opacity: "0.85",
+          },
+        },
+        // Aura sparkle burst for wins
+        "aura-sparkle": {
+          "0%": { opacity: "0", transform: "scale(0.8)" },
+          "50%": { opacity: "1" },
+          "100%": { opacity: "0", transform: "scale(1.5)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -146,6 +170,8 @@ export default {
         "slide-in": "slide-in 0.3s ease-out",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "gradient-shift": "gradient-shift 3s ease infinite",
+        "aura-breathe": "aura-breathe 2.5s ease-in-out infinite",
+        "aura-sparkle": "aura-sparkle 1s ease-out forwards",
       },
     },
   },

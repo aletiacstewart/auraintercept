@@ -23,6 +23,7 @@ import {
   XCircle
 } from 'lucide-react';
 import { format, isPast, parseISO, subDays, addDays } from 'date-fns';
+import { AuraLiveStream } from '@/components/aura/AuraLiveStream';
 
 interface FinancialPulseDashboardProps {
   companyId: string;
@@ -170,6 +171,9 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
 
   return (
     <div className="space-y-6">
+      {/* Aura Live Activity Stream */}
+      <AuraLiveStream companyId={companyId} />
+
       {/* Summary Stats - Row 1 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card 
