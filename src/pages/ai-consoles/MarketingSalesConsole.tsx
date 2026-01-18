@@ -2,9 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
+import { PageHeader } from '@/components/ui/page-header';
 import { MarketingSalesAgentConsole } from '@/components/marketing/MarketingSalesAgentConsole';
 import { Button } from '@/components/ui/button';
-import { Cpu } from 'lucide-react';
+import { Cpu, Megaphone } from 'lucide-react';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 
 export default function MarketingSalesConsole() {
@@ -18,22 +19,23 @@ export default function MarketingSalesConsole() {
       <PageContainer>
         <FeatureGate requiredTier="enterprise">
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <h2 className="text-lg font-semibold">Marketing & Sales Ops Console</h2>
-                {canManageSettings && (
+            <PageHeader
+              icon={Megaphone}
+              title="Marketing & Sales Console"
+              description="AI-powered marketing automation and sales intelligence"
+              action={
+                canManageSettings ? (
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => navigate('/dashboard/ai-agents')}
-                    className="h-7"
                   >
                     <Cpu className="h-3.5 w-3.5 mr-1.5" />
                     Manage Agents
                   </Button>
-                )}
-              </div>
-            </div>
+                ) : undefined
+              }
+            />
             
             <MarketingSalesAgentConsole />
           </div>

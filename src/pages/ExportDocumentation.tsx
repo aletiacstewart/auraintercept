@@ -4,7 +4,8 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2 } from 'lucide-react';
+import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 import PlatformDocumentPDF from '@/components/documentation/PlatformDocumentPDF';
 import PricingSummaryPDF from '@/components/documentation/PricingSummaryPDF';
 import AIAgentGuidesPDF from '@/components/documentation/AIAgentGuidesPDF';
@@ -17,13 +18,11 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold">Platform Documentation</h1>
-            <p className="text-muted-foreground mt-1">
-              Download comprehensive PDF documents about the platform for business proposals, 
-              investor presentations, or internal documentation.
-            </p>
-          </div>
+          <PageHeader
+            icon={FileDown}
+            title="Export Documentation"
+            description="Download comprehensive PDF documents about the platform for business proposals, investor presentations, or internal documentation"
+          />
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* AI Agent Guide PDF */}

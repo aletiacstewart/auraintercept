@@ -1,5 +1,6 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
+import { PageHeader } from '@/components/ui/page-header';
 import { CostCalculator } from '@/components/integrations/CostCalculator';
 import { ROICalculator } from '@/components/integrations/ROICalculator';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,11 +12,11 @@ export default function Calculators() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6 animate-fade-in">
-          {/* Header */}
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Cost & ROI Calculator</h1>
-            <p className="text-muted-foreground">Estimate costs and calculate potential savings from AI-powered reminders</p>
-          </div>
+          <PageHeader
+            icon={Calculator}
+            title="Cost & ROI Calculator"
+            description="Estimate costs and calculate potential savings from AI-powered reminders"
+          />
 
           {/* Calculator Card */}
           <Card className="border-border/50">

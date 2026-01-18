@@ -2,9 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
+import { PageHeader } from '@/components/ui/page-header';
 import { BusinessOpsAgentConsole } from '@/components/billing/BusinessOpsAgentConsole';
 import { Button } from '@/components/ui/button';
-import { Cpu } from 'lucide-react';
+import { Cpu, Briefcase } from 'lucide-react';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 
 export default function BusinessManagementConsole() {
@@ -18,22 +19,23 @@ export default function BusinessManagementConsole() {
       <PageContainer>
         <FeatureGate requiredTier="enterprise">
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <h2 className="text-lg font-semibold">Business Management Ops Console</h2>
-                {canManageSettings && (
+            <PageHeader
+              icon={Briefcase}
+              title="Business Management Console"
+              description="AI-powered business operations and management tools"
+              action={
+                canManageSettings ? (
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => navigate('/dashboard/ai-agents')}
-                    className="h-7"
                   >
                     <Cpu className="h-3.5 w-3.5 mr-1.5" />
                     Manage Agents
                   </Button>
-                )}
-              </div>
-            </div>
+                ) : undefined
+              }
+            />
             
             <BusinessOpsAgentConsole />
           </div>

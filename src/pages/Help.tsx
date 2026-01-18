@@ -25,6 +25,7 @@ import {
   Briefcase,
   Megaphone
 } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 
 type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing';
 type MainTabType = 'ai-agents' | 'company-employee' | 'faq';
@@ -196,12 +197,11 @@ export default function Help() {
       <PageContainer>
         <div className="space-y-8">
           {/* Header */}
-          <div>
-            <h1 className="text-3xl font-bold">Help & Documentation</h1>
-            <p className="text-muted-foreground mt-2">
-            Learn how to use your AI agents, set up your dashboard, and manage your team.
-          </p>
-        </div>
+        <PageHeader
+          icon={HelpCircle}
+          title="Help & Documentation"
+          description="Learn how to use your AI agents, set up your dashboard, and manage your team"
+        />
 
         {/* Main Tabs */}
         <Tabs value={mainTab} onValueChange={(v) => handleMainTabChange(v as MainTabType)}>
