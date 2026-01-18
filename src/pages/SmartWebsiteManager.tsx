@@ -77,6 +77,7 @@ interface ExtendedWebsiteData {
   gallery_images?: string[];
   background_image_url?: string | null;
   logo_transparency_mode?: 'none' | 'multiply' | 'contrast';
+  show_gallery?: boolean;
 }
 
 export default function SmartWebsiteManager() {
@@ -613,6 +614,16 @@ export default function SmartWebsiteManager() {
                   <Switch
                     checked={website.show_voice_widget}
                     onCheckedChange={(checked) => updateWebsite.mutate({ show_voice_widget: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Gallery</p>
+                    <p className="text-sm text-muted-foreground">Display your image gallery</p>
+                  </div>
+                  <Switch
+                    checked={website.show_gallery ?? true}
+                    onCheckedChange={(checked) => updateWebsite.mutate({ show_gallery: checked })}
                   />
                 </div>
               </CardContent>
