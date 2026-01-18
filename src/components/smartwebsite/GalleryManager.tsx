@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -10,7 +11,8 @@ import {
   X, 
   AlertTriangle,
   Loader2,
-  GripVertical
+  GripVertical,
+  ChevronDown
 } from 'lucide-react';
 import {
   DndContext,
@@ -225,87 +227,92 @@ export function GalleryManager({
   const isAtCapacity = galleryImages.length >= MAX_GALLERY_IMAGES;
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2 text-card-foreground">
-              <Images className="w-5 h-5" />
-              Gallery Management
-            </CardTitle>
-            <CardDescription className="text-card-foreground/70">
-              Upload up to {MAX_GALLERY_IMAGES} images for your gallery section
-            </CardDescription>
-          </div>
-          <Badge variant="outline" className="border-card-foreground/30 text-card-foreground">
-            {galleryImages.length}/{MAX_GALLERY_IMAGES} Images
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* FIFO Warning */}
-        {isAtCapacity && (
-          <div className="flex items-center gap-2 p-3 bg-warning/20 border border-warning/30 rounded-lg text-warning text-sm">
-            <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-            <span>Gallery is full. Adding a new image will replace the oldest one.</span>
-          </div>
-        )}
-
-        {/* Gallery Grid */}
-        {galleryImages.length > 0 ? (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={galleryImages} strategy={rectSortingStrategy}>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                {galleryImages.map((url, index) => (
-                  <SortableImage
-                    key={url}
-                    url={url}
-                    index={index}
-                    onRemove={handleRemove}
-                    isRemoving={removingUrl === url}
-                  />
-                ))}
+    <Collapsible>
+      <Card>
+        <CollapsibleTrigger className="w-full">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Images className="h-5 w-5 text-primary" />
+              <div className="text-left">
+                <CardTitle className="text-lg">Gallery Management</CardTitle>
+                <CardDescription>Upload up to {MAX_GALLERY_IMAGES} images for your gallery section</CardDescription>
               </div>
-            </SortableContext>
-          </DndContext>
-        ) : (
-          <div className="border-2 border-dashed border-card-foreground/25 rounded-lg p-8 text-center">
-            <Images className="w-12 h-12 mx-auto text-card-foreground/50 mb-3" />
-            <p className="text-card-foreground/70">No gallery images yet</p>
-            <p className="text-sm text-card-foreground/50">Upload your first image below</p>
-          </div>
-        )}
-
-        {/* Upload Button */}
-        <div className="flex items-center gap-4">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={handleFileSelect}
-            className="hidden"
-          />
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploading || isUpdating}
-            variant="default"
-          >
-            {isUploading ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <Upload className="w-4 h-4 mr-2" />
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className="border-card-foreground/30 text-card-foreground">
+                {galleryImages.length}/{MAX_GALLERY_IMAGES} Images
+              </Badge>
+              <ChevronDown className="h-5 w-5 text-card-foreground/70" />
+            </div>
+          </CardHeader>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <CardContent className="pt-0 space-y-4">
+            {/* FIFO Warning */}
+            {isAtCapacity && (
+              <div className="flex items-center gap-2 p-3 bg-warning/20 border border-warning/30 rounded-lg text-warning text-sm">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                <span>Gallery is full. Adding a new image will replace the oldest one.</span>
+              </div>
             )}
-            {isUploading ? 'Uploading...' : 'Add Image'}
-          </Button>
-          <p className="text-xs text-card-foreground/60">
-            JPEG, PNG, or WebP • Max 2MB • Drag to reorder
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+
+            {/* Gallery Grid */}
+            {galleryImages.length > 0 ? (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext items={galleryImages} strategy={rectSortingStrategy}>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                    {galleryImages.map((url, index) => (
+                      <SortableImage
+                        key={url}
+                        url={url}
+                        index={index}
+                        onRemove={handleRemove}
+                        isRemoving={removingUrl === url}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            ) : (
+              <div className="border-2 border-dashed border-card-foreground/25 rounded-lg p-8 text-center">
+                <Images className="w-12 h-12 mx-auto text-card-foreground/50 mb-3" />
+                <p className="text-card-foreground/70">No gallery images yet</p>
+                <p className="text-sm text-card-foreground/50">Upload your first image below</p>
+              </div>
+            )}
+
+            {/* Upload Button */}
+            <div className="flex items-center gap-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <Button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading || isUpdating}
+                variant="default"
+              >
+                {isUploading ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4 mr-2" />
+                )}
+                {isUploading ? 'Uploading...' : 'Add Image'}
+              </Button>
+              <p className="text-xs text-card-foreground/60">
+                JPEG, PNG, or WebP • Max 2MB • Drag to reorder
+              </p>
+            </div>
+          </CardContent>
+        </CollapsibleContent>
+      </Card>
+    </Collapsible>
   );
 }

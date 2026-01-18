@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { 
   LineChart, 
   Line, 
@@ -21,7 +22,7 @@ import {
   Legend
 } from 'recharts';
 import { format, subDays, eachDayOfInterval, parseISO } from 'date-fns';
-import { Eye, Users, MessageSquare, MousePointer, TrendingUp, Mic, Phone } from 'lucide-react';
+import { Eye, Users, MessageSquare, MousePointer, TrendingUp, Mic, Phone, BarChart3, ChevronDown } from 'lucide-react';
 
 interface SmartWebsiteAnalyticsProps {
   websiteId: string;
@@ -189,20 +190,35 @@ export function SmartWebsiteAnalytics({
     : 0;
 
   return (
-    <div className="space-y-6">
-      {/* Time Range Selector */}
-      <div className="flex justify-end">
-        <Select value={timeRange} onValueChange={setTimeRange}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select range" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="7">Last 7 days</SelectItem>
-            <SelectItem value="30">Last 30 days</SelectItem>
-            <SelectItem value="90">Last 90 days</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    <Collapsible defaultOpen>
+      <Card>
+        <CollapsibleTrigger className="w-full">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-primary" />
+              <div className="text-left">
+                <CardTitle className="text-lg">Website Analytics</CardTitle>
+                <CardDescription>Track your website performance and visitor engagement</CardDescription>
+              </div>
+            </div>
+            <ChevronDown className="h-5 w-5 text-card-foreground/70" />
+          </CardHeader>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <CardContent className="pt-0 space-y-6">
+            {/* Time Range Selector */}
+            <div className="flex justify-end">
+              <Select value={timeRange} onValueChange={setTimeRange}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select range" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">Last 7 days</SelectItem>
+                  <SelectItem value="30">Last 30 days</SelectItem>
+                  <SelectItem value="90">Last 90 days</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
       {/* Summary Metrics */}
       <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -572,6 +588,9 @@ export function SmartWebsiteAnalytics({
           </div>
         </CardContent>
       </Card>
-    </div>
+          </CardContent>
+        </CollapsibleContent>
+      </Card>
+    </Collapsible>
   );
 }

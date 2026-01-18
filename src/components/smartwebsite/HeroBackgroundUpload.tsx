@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -9,7 +10,8 @@ import {
   Upload, 
   X, 
   Loader2,
-  AlertTriangle
+  AlertTriangle,
+  ChevronDown
 } from 'lucide-react';
 
 const MAX_WIDTH = 1920;
@@ -160,85 +162,92 @@ export function HeroBackgroundUpload({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-card-foreground">
-          <ImageIcon className="w-5 h-5" />
-          Hero Background
-        </CardTitle>
-        <CardDescription className="text-card-foreground/70">
-          Add a background image to your hero section (max {MAX_WIDTH}px width, auto-resized)
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Current Background Preview */}
-        <div className="space-y-2">
-          <Label className="text-card-foreground">Current Background</Label>
-          <div className="relative border border-border rounded-lg overflow-hidden bg-muted aspect-[21/9]">
-            {backgroundUrl ? (
-              <>
-                <img
-                  src={backgroundUrl}
-                  alt="Hero background"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={handleRemove}
-                    disabled={isRemoving}
-                  >
-                    {isRemoving ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <X className="w-4 h-4 mr-2" />
-                    )}
-                    Remove
-                  </Button>
-                </div>
-              </>
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-card-foreground/50">
-                <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
-                <p className="text-sm">No background image</p>
+    <Collapsible defaultOpen>
+      <Card>
+        <CollapsibleTrigger className="w-full">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ImageIcon className="h-5 w-5 text-primary" />
+              <div className="text-left">
+                <CardTitle className="text-lg">Hero Background</CardTitle>
+                <CardDescription>Add a background image to your hero section (max {MAX_WIDTH}px width, auto-resized)</CardDescription>
               </div>
-            )}
-          </div>
-        </div>
+            </div>
+            <ChevronDown className="h-5 w-5 text-card-foreground/70" />
+          </CardHeader>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <CardContent className="pt-0 space-y-4">
+            {/* Current Background Preview */}
+            <div className="space-y-2">
+              <Label className="text-card-foreground">Current Background</Label>
+              <div className="relative border border-border rounded-lg overflow-hidden bg-muted aspect-[21/9]">
+                {backgroundUrl ? (
+                  <>
+                    <img
+                      src={backgroundUrl}
+                      alt="Hero background"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={handleRemove}
+                        disabled={isRemoving}
+                      >
+                        {isRemoving ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <X className="w-4 h-4 mr-2" />
+                        )}
+                        Remove
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-card-foreground/50">
+                    <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
+                    <p className="text-sm">No background image</p>
+                  </div>
+                )}
+              </div>
+            </div>
 
-        {/* Upload Info */}
-        <div className="flex items-center gap-2 p-3 bg-muted/30 border border-border rounded-lg text-sm text-card-foreground/70">
-          <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-          <span>Images wider than {MAX_WIDTH}px will be automatically resized</span>
-        </div>
+            {/* Upload Info */}
+            <div className="flex items-center gap-2 p-3 bg-muted/30 border border-border rounded-lg text-sm text-card-foreground/70">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+              <span>Images wider than {MAX_WIDTH}px will be automatically resized</span>
+            </div>
 
-        {/* Upload Button */}
-        <div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={handleFileSelect}
-            className="hidden"
-          />
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploading || isUpdating}
-            variant="default"
-          >
-            {isUploading ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <Upload className="w-4 h-4 mr-2" />
-            )}
-            {backgroundUrl ? 'Replace Background' : 'Upload Background'}
-          </Button>
-          <p className="text-xs text-card-foreground/60 mt-2">
-            JPEG, PNG, or WebP • Max {MAX_SIZE_MB}MB • Max {MAX_WIDTH}px width
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+            {/* Upload Button */}
+            <div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <Button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading || isUpdating}
+                variant="default"
+              >
+                {isUploading ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4 mr-2" />
+                )}
+                {backgroundUrl ? 'Replace Background' : 'Upload Background'}
+              </Button>
+              <p className="text-xs text-card-foreground/60 mt-2">
+                JPEG, PNG, or WebP • Max {MAX_SIZE_MB}MB • Max {MAX_WIDTH}px width
+              </p>
+            </div>
+          </CardContent>
+        </CollapsibleContent>
+      </Card>
+    </Collapsible>
   );
 }
