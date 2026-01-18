@@ -264,41 +264,10 @@ export default function Integrations() {
             description="Connect services to power your AI agents"
             featureColor="integrations"
           />
-          <div className="flex flex-col gap-2">
-            <Button onClick={() => setShowQuickStart(true)} className="gap-2">
-              <Rocket className="w-4 h-4" />
-              Quick Start
-            </Button>
-            
-            {/* TTS Quick Setup */}
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-1">
-                <span className="text-xs text-muted-foreground mr-1">Voice:</span>
-                <Button
-                  variant={hasElevenLabs ? "secondary" : "outline"}
-                  size="sm"
-                  className={cn(
-                    "h-7 px-2 text-xs relative",
-                    hasElevenLabs && "bg-green-500/10 text-green-600 border-green-500/30",
-                    !hasElevenLabs && "ring-2 ring-primary/50"
-                  )}
-                  onClick={() => handleOpenSetup(INTEGRATIONS.find(i => i.id === 'elevenlabs')!)}
-                >
-                  <Mic className="w-3 h-3 mr-1" />
-                  ElevenLabs
-                  {hasElevenLabs && <Check className="w-3 h-3 ml-1" />}
-                  {!hasElevenLabs && (
-                    <Badge className="absolute -top-2 -right-2 h-4 px-1 text-[10px] bg-primary">★</Badge>
-                  )}
-                </Button>
-              </div>
-              {!hasElevenLabs && (
-                <p className="text-[10px] text-muted-foreground">
-                  ★ Recommended: ElevenLabs - Premium quality voices
-                </p>
-              )}
-            </div>
-          </div>
+          <Button onClick={() => setShowQuickStart(true)} className="gap-2">
+            <Rocket className="w-4 h-4" />
+            Quick Start
+          </Button>
         </div>
 
         <QuickStartWizard
