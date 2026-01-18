@@ -68,7 +68,7 @@ export default function FieldOpsInstall() {
                 <Button 
                   variant="outline" 
                   className="w-full"
-                  onClick={() => navigate('/dashboard/field-operations')}
+                  onClick={() => navigate('/dashboard/dispatch-field-ops')}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Open Dispatch Console

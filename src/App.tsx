@@ -127,7 +127,7 @@ const App = () => (
               <Route path="/dashboard/customers" element={<Customers />} />
               <Route path="/dashboard/employees" element={<Employees />} />
               <Route path="/dashboard/employees/:id" element={<EmployeeDetail />} />
-              <Route path="/dashboard/settings" element={<Settings />} />
+              <Route path="/dashboard/aura-quick-start" element={<Settings />} />
               
               <Route path="/dashboard/availability" element={<EmployeeAvailability />} />
               <Route path="/dashboard/appointments" element={<EmployeeAppointments />} />
@@ -150,12 +150,12 @@ const App = () => (
               <Route path="/dashboard/ai-consoles/performance-report" element={<PerformanceReportPage />} />
               <Route path="/dashboard/ai-consoles/business-insights" element={<BusinessInsightsPage />} />
               <Route path="/dashboard/ai-consoles/revenue-analysis" element={<RevenueAnalysisPage />} />
-              <Route path="/dashboard/ai-consoles/demand-forecast" element={<DemandForecastPage />} />
+              <Route path="/dashboard/ai-consoles/revenue-forecast" element={<DemandForecastPage />} />
               <Route path="/dashboard/ai-consoles/customer-insights" element={<CustomerInsightsPage />} />
               <Route path="/dashboard/ai-consoles/kpi-dashboard" element={<KpiDashboardPage />} />
               <Route path="/dashboard/ai-agents" element={<AIAgentsHub />} />
               <Route path="/dashboard/ai-agents/:agentId" element={<AgentDetailPage />} />
-              <Route path="/dashboard/widget" element={<Widget />} />
+              <Route path="/dashboard/customer-website-app" element={<Widget />} />
               <Route path="/dashboard/calls" element={<CallHistory />} />
               <Route path="/dashboard/email-logs" element={<EmailLogs />} />
               <Route path="/dashboard/sms-logs" element={<SMSLogs />} />
@@ -172,15 +172,15 @@ const App = () => (
               <Route path="/dashboard/help" element={<Help />} />
               <Route path="/dashboard/architecture" element={<Architecture />} />
               <Route path="/dashboard/calculators" element={<Calculators />} />
-              <Route path="/dashboard/documentation" element={<ExportDocumentation />} />
-              <Route path="/dashboard/field-operations" element={<FieldOperations />} />
+              <Route path="/dashboard/export-docs" element={<ExportDocumentation />} />
+              <Route path="/dashboard/dispatch-field-ops" element={<FieldOperations />} />
               <Route path="/dashboard/business-operations" element={<BusinessOperations />} />
               <Route path="/dashboard/field-ops-install" element={<FieldOpsInstall />} />
               <Route path="/dashboard/dispatch-field-ops-install" element={<DispatchFieldOpsInstall />} />
               <Route path="/dashboard/business-mgt-ops-install" element={<BusinessMgtOpsInstall />} />
               <Route path="/dashboard/customer-portal-app-install" element={<CustomerPortalAppInstall />} />
               <Route path="/dashboard/integrations/embed" element={<IntegrationDocs />} />
-              <Route path="/dashboard/guides" element={<PlatformGuides />} />
+              <Route path="/dashboard/platform-guides" element={<PlatformGuides />} />
               <Route path="/dashboard/platform-issues" element={<PlatformIssues />} />
               <Route path="/dashboard/platform-issues" element={<PlatformIssues />} />
               

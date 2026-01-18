@@ -158,7 +158,7 @@ export function EmployeeDashboard() {
   ] : [];
 
   const profileAction = [
-    { label: 'Profile', icon: User, href: '/dashboard/settings', gradient: 'from-accent to-accent/80' },
+    { label: 'Profile', icon: User, href: '/dashboard/aura-quick-start', gradient: 'from-accent to-accent/80' },
   ];
 
   const quickActions = [

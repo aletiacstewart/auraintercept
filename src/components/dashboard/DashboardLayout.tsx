@@ -76,7 +76,7 @@ const navGroups: NavGroup[] = [
     label: 'Overview',
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'] },
-      { label: 'Aura Quick-Start', icon: Settings, href: '/dashboard/settings', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Aura Quick-Start', icon: Settings, href: '/dashboard/aura-quick-start', roles: ['platform_admin', 'company_admin'] },
       { label: 'Smart Website', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'] },
       { label: 'My Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['employee'] },
       { label: 'AI Console', icon: Bot, href: '/technician/ai-console', roles: ['employee'] },
@@ -107,7 +107,7 @@ const navGroups: NavGroup[] = [
       { label: 'Performance Report', icon: BarChart3, href: '/dashboard/ai-consoles/performance-report', roles: ['platform_admin', 'company_admin'] },
       { label: 'Business Insights', icon: Cpu, href: '/dashboard/ai-consoles/business-insights', roles: ['platform_admin', 'company_admin'] },
       { label: 'Revenue Analysis', icon: CreditCard, href: '/dashboard/ai-consoles/revenue-analysis', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Revenue Forecast', icon: Clock, href: '/dashboard/ai-consoles/demand-forecast', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Revenue Forecast', icon: Clock, href: '/dashboard/ai-consoles/revenue-forecast', roles: ['platform_admin', 'company_admin'] },
       { label: 'Customer Insights', icon: Users, href: '/dashboard/ai-consoles/customer-insights', roles: ['platform_admin', 'company_admin'] },
       { label: 'KPI Dashboard', icon: BarChart3, href: '/dashboard/ai-consoles/kpi-dashboard', roles: ['platform_admin', 'company_admin'] },
       { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin', 'company_admin'] },
@@ -126,7 +126,7 @@ const navGroups: NavGroup[] = [
     label: 'Field Ops Consoles & Apps',
     items: [
       { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
-      { label: 'Dispatch-Field Ops', icon: Map, href: '/dashboard/field-operations', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Dispatch-Field Ops', icon: Map, href: '/dashboard/dispatch-field-ops', roles: ['platform_admin', 'company_admin'] },
       { label: 'Technician Field Ops Install', icon: Smartphone, href: '/dashboard/field-ops-install', roles: ['platform_admin', 'company_admin'] },
       { label: 'Dispatch Field Ops Install', icon: Smartphone, href: '/dashboard/dispatch-field-ops-install', roles: ['platform_admin', 'company_admin'] },
     ],
@@ -135,7 +135,7 @@ const navGroups: NavGroup[] = [
     label: 'Customer Consoles & Apps',
     items: [
       { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'] },
-      { label: 'Customer Website App', icon: Globe, href: '/dashboard/widget', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Customer Website App', icon: Globe, href: '/dashboard/customer-website-app', roles: ['platform_admin', 'company_admin'] },
       { label: 'Customer Portal App Install', icon: Smartphone, href: '/dashboard/customer-portal-app-install', roles: ['platform_admin', 'company_admin'] },
     ],
   },
@@ -165,10 +165,10 @@ const navGroups: NavGroup[] = [
     label: 'Platform Resources',
     items: [
       { label: 'Platform Issues', icon: AlertTriangle, href: '/dashboard/platform-issues', roles: ['platform_admin'] },
-      { label: 'Platform Guides', icon: FileText, href: '/dashboard/guides', roles: ['platform_admin'] },
+      { label: 'Platform Guides', icon: FileText, href: '/dashboard/platform-guides', roles: ['platform_admin'] },
       { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'] },
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'] },
-      { label: 'Export Docs', icon: FileText, href: '/dashboard/documentation', roles: ['platform_admin'] },
+      { label: 'Export Docs', icon: FileText, href: '/dashboard/export-docs', roles: ['platform_admin'] },
     ],
   },
 ];
