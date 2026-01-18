@@ -102,8 +102,9 @@ export default {
           analytics: "hsl(var(--feature-analytics))",
           marketing: "hsl(var(--feature-marketing))",
           fieldops: "hsl(var(--feature-fieldops))",
-          dashboard: "hsl(var(--feature-dashboard))",
           platform: "hsl(var(--feature-platform))",
+          config: "hsl(var(--feature-config))",
+          overview: "hsl(var(--feature-overview))",
         },
       },
       borderRadius: {

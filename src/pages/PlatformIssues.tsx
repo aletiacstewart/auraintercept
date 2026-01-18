@@ -192,7 +192,7 @@ export default function PlatformIssues() {
             icon={AlertCircle}
             title="Platform Issues"
             description="Monitor and resolve issues across the platform"
-            featureColor="platform"
+            featureColor="overview"
             action={
               <Button onClick={() => refetch()} variant="outline" size="sm">
                 <RefreshCw className="mr-2 h-4 w-4" />

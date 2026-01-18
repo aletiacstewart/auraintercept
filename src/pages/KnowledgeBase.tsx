@@ -32,7 +32,7 @@ export default function KnowledgeBase() {
           icon={BookOpen}
           title="Knowledge Base"
           description="Train your AI agent with your business information"
-          featureColor="employees"
+          featureColor="config"
         />
 
         <Tabs defaultValue={defaultTab} className="space-y-6">

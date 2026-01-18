@@ -14,8 +14,9 @@ export type FeatureColor =
   | 'analytics' 
   | 'marketing' 
   | 'fieldops'
-  | 'dashboard'
-  | 'platform';
+  | 'platform'
+  | 'config'
+  | 'overview';
 
 interface PageHeaderProps {
   icon: LucideIcon;
@@ -40,8 +41,9 @@ const featureColorClasses: Record<FeatureColor, { bg: string; text: string }> = 
   analytics: { bg: 'bg-feature-analytics/15', text: 'text-feature-analytics' },
   marketing: { bg: 'bg-feature-marketing/15', text: 'text-feature-marketing' },
   fieldops: { bg: 'bg-feature-fieldops/15', text: 'text-feature-fieldops' },
-  dashboard: { bg: 'bg-feature-dashboard/15', text: 'text-feature-dashboard' },
   platform: { bg: 'bg-feature-platform/15', text: 'text-feature-platform' },
+  config: { bg: 'bg-feature-config/15', text: 'text-feature-config' },
+  overview: { bg: 'bg-feature-overview/15', text: 'text-feature-overview' },
 };
 
 export function PageHeader({ 
