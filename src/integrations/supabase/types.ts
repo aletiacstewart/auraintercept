@@ -4086,6 +4086,19 @@ export type Database = {
           background_image_url: string | null
           background_style: string
           company_id: string
+          contact_address: string | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          contact_title: string | null
+          contact2_email: string | null
+          contact2_name: string | null
+          contact2_phone: string | null
+          contact2_title: string | null
+          contact3_email: string | null
+          contact3_name: string | null
+          contact3_phone: string | null
+          contact3_title: string | null
           created_at: string
           cta_button_text: string
           cta_button_url: string | null
@@ -4125,6 +4138,19 @@ export type Database = {
           background_image_url?: string | null
           background_style?: string
           company_id: string
+          contact_address?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          contact_title?: string | null
+          contact2_email?: string | null
+          contact2_name?: string | null
+          contact2_phone?: string | null
+          contact2_title?: string | null
+          contact3_email?: string | null
+          contact3_name?: string | null
+          contact3_phone?: string | null
+          contact3_title?: string | null
           created_at?: string
           cta_button_text?: string
           cta_button_url?: string | null
@@ -4164,6 +4190,19 @@ export type Database = {
           background_image_url?: string | null
           background_style?: string
           company_id?: string
+          contact_address?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          contact_title?: string | null
+          contact2_email?: string | null
+          contact2_name?: string | null
+          contact2_phone?: string | null
+          contact2_title?: string | null
+          contact3_email?: string | null
+          contact3_name?: string | null
+          contact3_phone?: string | null
+          contact3_title?: string | null
           created_at?: string
           cta_button_text?: string
           cta_button_url?: string | null
