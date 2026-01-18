@@ -899,4 +899,28 @@
   .voice-command-toast {
     border-left: 3px solid #34D399;
   }
+
+  /* Voice Status Indicator Styles */
+  .voice-indicator-enabled {
+    color: hsl(160 84% 39%);
+    background: hsl(160 84% 39% / 0.15);
+  }
+
+  .voice-indicator-disabled {
+    color: hsl(0 84% 60%);
+    background: hsl(0 84% 60% / 0.15);
+  }
+
+  .voice-indicator-pulse {
+    animation: voice-status-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes voice-status-pulse {
+    0%, 100% { 
+      box-shadow: 0 0 0 0 hsl(160 84% 39% / 0.4);
+    }
+    50% { 
+      box-shadow: 0 0 0 6px hsl(160 84% 39% / 0);
+    }
+  }
 }

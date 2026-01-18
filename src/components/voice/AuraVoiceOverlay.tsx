@@ -16,7 +16,7 @@ export function AuraVoiceOverlay() {
   if (!isVoiceModeEnabled) return null;
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] animate-fade-in">
       <div className={cn(
         "voice-overlay-container rounded-2xl px-6 py-4 min-w-[320px] max-w-[500px]",
         "flex items-center gap-4 shadow-2xl",

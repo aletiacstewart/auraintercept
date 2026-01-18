@@ -1,5 +1,6 @@
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { VoiceStatusIndicator } from '@/components/voice/VoiceStatusIndicator';
 
 export type FeatureColor = 
   | 'companies' 
@@ -69,6 +70,7 @@ export function PageHeader({
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold text-foreground">{title}</h1>
             {badge}
+            <VoiceStatusIndicator size="sm" />
           </div>
           <p className="text-sm text-muted-foreground">{description}</p>
         </div>
