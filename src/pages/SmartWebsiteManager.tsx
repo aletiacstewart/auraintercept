@@ -26,9 +26,11 @@ import {
   AlertCircle,
   Loader2,
   QrCode,
-  Moon
+  Moon,
+  Sun
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { PageHeader } from '@/components/ui/page-header';
 import { QRCodeSVG } from 'qrcode.react';
 import { VisitorLimitModal } from '@/components/smartwebsite/VisitorLimitModal';
@@ -76,6 +78,7 @@ export default function SmartWebsiteManager() {
   const [isCreating, setIsCreating] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [hasShownLimitWarning, setHasShownLimitWarning] = useState(false);
+  const [previewMode, setPreviewMode] = useState<'day' | 'night'>('day');
 
   // Fetch website data
   const { data: website, isLoading } = useQuery({
@@ -333,13 +336,43 @@ export default function SmartWebsiteManager() {
             {/* AI-Dynamic Header Section */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Moon className="w-5 h-5" />
-                  AI-Dynamic Header
-                </CardTitle>
-                <CardDescription>
-                  Display different content based on visitor's local time
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Moon className="w-5 h-5" />
+                      AI-Dynamic Header
+                    </CardTitle>
+                    <CardDescription>
+                      Display different content based on visitor's local time
+                    </CardDescription>
+                  </div>
+                  {/* Day/Night Preview Toggle */}
+                  {website.enable_night_mode && (
+                    <ToggleGroup 
+                      type="single" 
+                      value={previewMode}
+                      onValueChange={(value) => value && setPreviewMode(value as 'day' | 'night')}
+                      className="bg-muted rounded-lg p-1"
+                    >
+                      <ToggleGroupItem 
+                        value="day" 
+                        aria-label="Day preview"
+                        className="data-[state=on]:bg-background data-[state=on]:shadow-sm px-3"
+                      >
+                        <Sun className="w-4 h-4 mr-1" />
+                        Day
+                      </ToggleGroupItem>
+                      <ToggleGroupItem 
+                        value="night" 
+                        aria-label="Night preview"
+                        className="data-[state=on]:bg-background data-[state=on]:shadow-sm px-3"
+                      >
+                        <Moon className="w-4 h-4 mr-1" />
+                        Night
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  )}
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Enable Night Mode Toggle */}
@@ -358,6 +391,46 @@ export default function SmartWebsiteManager() {
 
                 {website.enable_night_mode && (
                   <>
+                    {/* Live Preview Card */}
+                    <div className={`rounded-lg border-2 p-6 transition-all ${
+                      previewMode === 'night' 
+                        ? 'bg-slate-900 border-slate-700 text-white' 
+                        : 'bg-gradient-to-br from-sky-50 to-white border-sky-200'
+                    }`}>
+                      <div className="flex items-center justify-between mb-3">
+                        <Badge variant={previewMode === 'night' ? 'secondary' : 'default'} className="text-xs">
+                          {previewMode === 'night' ? (
+                            <><Moon className="w-3 h-3 mr-1" /> Night Preview</>
+                          ) : (
+                            <><Sun className="w-3 h-3 mr-1" /> Day Preview</>
+                          )}
+                        </Badge>
+                      </div>
+                      <h3 className={`text-xl font-bold mb-2 ${previewMode === 'night' ? 'text-white' : 'text-slate-900'}`}>
+                        {previewMode === 'night' 
+                          ? (website.night_header || 'Need help after hours?')
+                          : (website.hero_headline || 'Welcome to Your Business')
+                        }
+                      </h3>
+                      <p className={`text-sm mb-4 ${previewMode === 'night' ? 'text-slate-300' : 'text-slate-600'}`}>
+                        {previewMode === 'night'
+                          ? (website.night_subheadline || 'Our emergency team is standing by...')
+                          : (website.hero_subheadline || 'Professional service you can trust')
+                        }
+                      </p>
+                      <div className="flex gap-2 flex-wrap">
+                        <Button size="sm" className={previewMode === 'night' ? 'bg-slate-700 hover:bg-slate-600' : ''}>
+                          {website.cta_button_text || 'Book Now'}
+                        </Button>
+                        {previewMode === 'night' && website.emergency_cta_text && (
+                          <Button size="sm" variant="destructive">
+                            <AlertCircle className="w-3 h-3 mr-1" />
+                            {website.emergency_cta_text}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
                     {/* Night Start/End Time */}
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
