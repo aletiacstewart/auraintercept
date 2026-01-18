@@ -9,28 +9,33 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { MessageSquare, Save, RotateCcw, Loader2, CheckCircle, XCircle, Bell } from 'lucide-react';
+import { MessageSquare, Save, RotateCcw, Loader2, CheckCircle, XCircle, Bell, Link } from 'lucide-react';
 
 interface SmsTemplate {
   id?: string;
   company_id: string;
   template_type: 'confirmation' | 'cancellation' | 'reminder';
   message: string;
+  include_portal_link?: boolean;
 }
 
 const DEFAULT_TEMPLATES: Record<string, Omit<SmsTemplate, 'id' | 'company_id'>> = {
   confirmation: {
     template_type: 'confirmation',
     message: 'Hi {{customer_name}}! Your {{service_type}} appointment at {{company_name}} is confirmed for {{date}} at {{time}}. Reply HELP for assistance.',
+    include_portal_link: true,
   },
   cancellation: {
     template_type: 'cancellation',
     message: 'Hi {{customer_name}}, your appointment at {{company_name}} on {{date}} at {{time}} has been cancelled. Contact us to rebook.',
+    include_portal_link: false,
   },
   reminder: {
     template_type: 'reminder',
     message: 'Reminder: You have a {{service_type}} appointment at {{company_name}} on {{date}} at {{time}}. See you soon!',
+    include_portal_link: true,
   },
 };
 
@@ -62,6 +67,7 @@ const PLACEHOLDERS = [
   { key: '{{date}}', description: 'Appointment date' },
   { key: '{{time}}', description: 'Appointment time' },
   { key: '{{duration}}', description: 'Duration in minutes' },
+  { key: '{{portal_link}}', description: 'Customer portal link' },
 ];
 
 export function SmsTemplatesEditor() {
@@ -94,7 +100,10 @@ export function SmsTemplatesEditor() {
       if (existingTemplate?.id) {
         const { error } = await supabase
           .from('sms_templates')
-          .update({ message: template.message })
+          .update({ 
+            message: template.message,
+            include_portal_link: template.include_portal_link ?? true,
+          })
           .eq('id', existingTemplate.id);
         if (error) throw error;
       } else {
@@ -104,6 +113,7 @@ export function SmsTemplatesEditor() {
             company_id: companyId,
             template_type: template.template_type,
             message: template.message,
+            include_portal_link: template.include_portal_link ?? true,
           });
         if (error) throw error;
       }
@@ -129,6 +139,7 @@ export function SmsTemplatesEditor() {
       company_id: companyId || '',
       template_type: type,
       message: edited.message ?? saved?.message ?? defaultTemplate.message,
+      include_portal_link: edited.include_portal_link ?? saved?.include_portal_link ?? defaultTemplate.include_portal_link ?? true,
     };
   };
 
@@ -142,11 +153,24 @@ export function SmsTemplatesEditor() {
     }));
   };
 
+  const updateIncludePortalLink = (value: boolean) => {
+    setEditedTemplates(prev => ({
+      ...prev,
+      [activeTab]: {
+        ...prev[activeTab],
+        include_portal_link: value,
+      },
+    }));
+  };
+
   const resetToDefault = () => {
     const defaultTemplate = DEFAULT_TEMPLATES[activeTab];
     setEditedTemplates(prev => ({
       ...prev,
-      [activeTab]: { message: defaultTemplate.message },
+      [activeTab]: { 
+        message: defaultTemplate.message,
+        include_portal_link: defaultTemplate.include_portal_link,
+      },
     }));
   };
 
@@ -244,6 +268,21 @@ export function SmsTemplatesEditor() {
                     className="font-mono text-sm bg-white text-slate-900"
                   />
                 </div>
+              </div>
+
+              {/* Portal Link Toggle */}
+              <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-card-foreground/10">
+                <div className="flex items-center gap-3">
+                  <Link className="w-4 h-4 text-primary" />
+                  <div>
+                    <Label className="text-sm font-medium text-card-foreground">Show Appointment Portal Link</Label>
+                    <p className="text-xs text-card-foreground/70">Include a link for customers to manage their appointment</p>
+                  </div>
+                </div>
+                <Switch
+                  checked={currentTemplate.include_portal_link ?? true}
+                  onCheckedChange={updateIncludePortalLink}
+                />
               </div>
 
               {/* Placeholders */}

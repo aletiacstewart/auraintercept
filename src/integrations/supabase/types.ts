@@ -4102,6 +4102,7 @@ export type Database = {
           company_id: string
           created_at: string
           id: string
+          include_portal_link: boolean
           message: string
           template_type: string
           updated_at: string
@@ -4110,6 +4111,7 @@ export type Database = {
           company_id: string
           created_at?: string
           id?: string
+          include_portal_link?: boolean
           message: string
           template_type: string
           updated_at?: string
@@ -4118,6 +4120,7 @@ export type Database = {
           company_id?: string
           created_at?: string
           id?: string
+          include_portal_link?: boolean
           message?: string
           template_type?: string
           updated_at?: string
