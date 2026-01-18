@@ -392,7 +392,7 @@ export default function Integrations() {
                         <Check className="w-3 h-3" />
                       </div>
                     ) : (
-                      <Button variant="outline" size="sm" asChild>
+                      <Button variant="outline-card" size="sm" asChild>
                         <Link to="/dashboard/integrations/crm">
                           Connect CRM <ArrowRight className="w-3 h-3 ml-1" />
                         </Link>
@@ -431,7 +431,7 @@ export default function Integrations() {
                       <Check className="w-3 h-3" />
                     </div>
                   ) : (
-                    <Button variant="outline" size="sm" asChild>
+                    <Button variant="outline-card" size="sm" asChild>
                       <Link to="/dashboard/integrations/calendar">
                         Set Up Calendar <ArrowRight className="w-3 h-3 ml-1" />
                       </Link>
