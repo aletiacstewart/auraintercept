@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { MermaidDiagram } from '@/components/architecture/MermaidDiagram';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -347,39 +348,41 @@ export default function Architecture() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Architecture Documentation</h1>
-          <p className="text-muted-foreground mt-2">
-            Interactive platform flowcharts with download functionality
-          </p>
+      <PageContainer>
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Architecture Documentation</h1>
+            <p className="text-muted-foreground mt-2">
+              Interactive platform flowcharts with download functionality
+            </p>
+          </div>
+
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <ScrollArea className="w-full">
+              <TabsList className="inline-flex w-max mb-4">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="roles">Roles & Access</TabsTrigger>
+                <TabsTrigger value="agents">AI Agents</TabsTrigger>
+                <TabsTrigger value="handoff">Agent Handoffs</TabsTrigger>
+                <TabsTrigger value="database">Database</TabsTrigger>
+                <TabsTrigger value="consoles">AI Consoles</TabsTrigger>
+                <TabsTrigger value="journey">Customer Journey</TabsTrigger>
+                <TabsTrigger value="edgeFunctions">Edge Functions</TabsTrigger>
+              </TabsList>
+            </ScrollArea>
+
+            {Object.entries(diagrams).map(([key, diagram]) => (
+              <TabsContent key={key} value={key} className="mt-0">
+                <MermaidDiagram
+                  chart={diagram.chart}
+                  title={diagram.title}
+                  description={diagram.description}
+                />
+              </TabsContent>
+            ))}
+          </Tabs>
         </div>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <ScrollArea className="w-full">
-            <TabsList className="inline-flex w-max mb-4">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="roles">Roles & Access</TabsTrigger>
-              <TabsTrigger value="agents">AI Agents</TabsTrigger>
-              <TabsTrigger value="handoff">Agent Handoffs</TabsTrigger>
-              <TabsTrigger value="database">Database</TabsTrigger>
-              <TabsTrigger value="consoles">AI Consoles</TabsTrigger>
-              <TabsTrigger value="journey">Customer Journey</TabsTrigger>
-              <TabsTrigger value="edgeFunctions">Edge Functions</TabsTrigger>
-            </TabsList>
-          </ScrollArea>
-
-          {Object.entries(diagrams).map(([key, diagram]) => (
-            <TabsContent key={key} value={key} className="mt-0">
-              <MermaidDiagram
-                chart={diagram.chart}
-                title={diagram.title}
-                description={diagram.description}
-              />
-            </TabsContent>
-          ))}
-        </Tabs>
-      </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

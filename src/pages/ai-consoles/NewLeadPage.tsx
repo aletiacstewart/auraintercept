@@ -1,4 +1,5 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { useAuth } from '@/contexts/AuthContext';
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
 import { useNavigate } from 'react-router-dom';
@@ -10,20 +11,24 @@ export default function NewLeadPage() {
   if (!companyId) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <p className="text-white/70">No company associated with your account.</p>
-        </div>
+        <PageContainer>
+          <div className="flex items-center justify-center h-64">
+            <p className="text-muted-foreground">No company associated with your account.</p>
+          </div>
+        </PageContainer>
       </DashboardLayout>
     );
   }
 
   return (
     <DashboardLayout>
-      <LeadForm 
-        companyId={companyId} 
-        onCancel={() => navigate('/dashboard/leads')}
-        onSuccess={() => navigate('/dashboard/leads')}
-      />
+      <PageContainer>
+        <LeadForm 
+          companyId={companyId} 
+          onCancel={() => navigate('/dashboard/leads')}
+          onSuccess={() => navigate('/dashboard/leads')}
+        />
+      </PageContainer>
     </DashboardLayout>
   );
 }

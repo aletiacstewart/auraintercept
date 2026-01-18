@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -107,179 +108,181 @@ export default function Referrals() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-              <Users className="h-6 w-6" />
-              Referral Program
-            </h1>
-            <p className="text-white/70">
-              Manage customer referrals and rewards
-            </p>
-          </div>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-2" /> New Referral Code</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Generate Referral Code</DialogTitle>
-                <DialogDescription>Create a unique referral code for a customer</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Referrer Name *</Label>
-                  <Input
-                    value={formData.referrer_name}
-                    onChange={(e) => setFormData(p => ({ ...p, referrer_name: e.target.value }))}
-                    placeholder="John Smith"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+      <PageContainer>
+        <div className="space-y-6 animate-fade-in">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                <Users className="h-6 w-6" />
+                Referral Program
+              </h1>
+              <p className="text-muted-foreground">
+                Manage customer referrals and rewards
+              </p>
+            </div>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button><Plus className="h-4 w-4 mr-2" /> New Referral Code</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Generate Referral Code</DialogTitle>
+                  <DialogDescription>Create a unique referral code for a customer</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Email</Label>
+                    <Label>Referrer Name *</Label>
                     <Input
-                      type="email"
-                      value={formData.referrer_email}
-                      onChange={(e) => setFormData(p => ({ ...p, referrer_email: e.target.value }))}
-                      placeholder="john@example.com"
+                      value={formData.referrer_name}
+                      onChange={(e) => setFormData(p => ({ ...p, referrer_name: e.target.value }))}
+                      placeholder="John Smith"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label>Phone</Label>
-                    <Input
-                      value={formData.referrer_phone}
-                      onChange={(e) => setFormData(p => ({ ...p, referrer_phone: e.target.value }))}
-                      placeholder="(555) 123-4567"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Reward Type</Label>
-                    <Input
-                      value={formData.reward_type}
-                      onChange={(e) => setFormData(p => ({ ...p, reward_type: e.target.value }))}
-                      placeholder="discount"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Reward Value (%)</Label>
-                    <Input
-                      type="number"
-                      value={formData.reward_value}
-                      onChange={(e) => setFormData(p => ({ ...p, reward_value: Number(e.target.value) }))}
-                    />
-                  </div>
-                </div>
-                <Button
-                  onClick={() => createReferral.mutate()}
-                  disabled={!formData.referrer_name || createReferral.isPending}
-                  className="w-full"
-                >
-                  Generate Code
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        {/* Stats */}
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Total Referrals</CardDescription>
-              <CardTitle className="text-3xl">{stats.total}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Pending</CardDescription>
-              <CardTitle className="text-3xl flex items-center gap-2">
-                <Clock className="h-6 w-6 text-amber-500" />
-                {stats.pending}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Converted</CardDescription>
-              <CardTitle className="text-3xl flex items-center gap-2">
-                <TrendingUp className="h-6 w-6 text-green-500" />
-                {stats.converted}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Rewards Issued</CardDescription>
-              <CardTitle className="text-3xl flex items-center gap-2">
-                <Gift className="h-6 w-6 text-purple-500" />
-                {stats.rewardsIssued}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-        </div>
-
-        {/* Referrals List */}
-        {isLoading ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map(i => <Skeleton key={i} className="h-24" />)}
-          </div>
-        ) : referrals?.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Users className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium">No referrals yet</h3>
-              <p className="text-muted-foreground text-sm">Generate your first referral code</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-4">
-            {referrals?.map(referral => (
-              <Card key={referral.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-medium">{referral.referrer_name}</h3>
-                        {getStatusBadge(referral.status)}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <code className="text-sm bg-muted px-2 py-1 rounded">{referral.referral_code}</code>
-                        <Button variant="ghost" size="sm" onClick={() => copyCode(referral.referral_code)}>
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                      </div>
-                      {referral.referred_name && (
-                        <p className="text-sm text-muted-foreground">
-                          Referred: {referral.referred_name}
-                        </p>
-                      )}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Email</Label>
+                      <Input
+                        type="email"
+                        value={formData.referrer_email}
+                        onChange={(e) => setFormData(p => ({ ...p, referrer_email: e.target.value }))}
+                        placeholder="john@example.com"
+                      />
                     </div>
-                    <div className="text-right text-sm">
-                      <p className="text-muted-foreground">
-                        Created: {format(new Date(referral.created_at), 'MMM d, yyyy')}
-                      </p>
-                      {referral.expires_at && (
+                    <div className="space-y-2">
+                      <Label>Phone</Label>
+                      <Input
+                        value={formData.referrer_phone}
+                        onChange={(e) => setFormData(p => ({ ...p, referrer_phone: e.target.value }))}
+                        placeholder="(555) 123-4567"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Reward Type</Label>
+                      <Input
+                        value={formData.reward_type}
+                        onChange={(e) => setFormData(p => ({ ...p, reward_type: e.target.value }))}
+                        placeholder="discount"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Reward Value (%)</Label>
+                      <Input
+                        type="number"
+                        value={formData.reward_value}
+                        onChange={(e) => setFormData(p => ({ ...p, reward_value: Number(e.target.value) }))}
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => createReferral.mutate()}
+                    disabled={!formData.referrer_name || createReferral.isPending}
+                    className="w-full"
+                  >
+                    Generate Code
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          {/* Stats */}
+          <div className="grid gap-4 md:grid-cols-4">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardDescription>Total Referrals</CardDescription>
+                <CardTitle className="text-3xl">{stats.total}</CardTitle>
+              </CardHeader>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardDescription>Pending</CardDescription>
+                <CardTitle className="text-3xl flex items-center gap-2">
+                  <Clock className="h-6 w-6 text-amber-500" />
+                  {stats.pending}
+                </CardTitle>
+              </CardHeader>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardDescription>Converted</CardDescription>
+                <CardTitle className="text-3xl flex items-center gap-2">
+                  <TrendingUp className="h-6 w-6 text-green-500" />
+                  {stats.converted}
+                </CardTitle>
+              </CardHeader>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardDescription>Rewards Issued</CardDescription>
+                <CardTitle className="text-3xl flex items-center gap-2">
+                  <Gift className="h-6 w-6 text-purple-500" />
+                  {stats.rewardsIssued}
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          </div>
+
+          {/* Referrals List */}
+          {isLoading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => <Skeleton key={i} className="h-24" />)}
+            </div>
+          ) : referrals?.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <Users className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-medium">No referrals yet</h3>
+                <p className="text-muted-foreground text-sm">Generate your first referral code</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4">
+              {referrals?.map(referral => (
+                <Card key={referral.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-medium">{referral.referrer_name}</h3>
+                          {getStatusBadge(referral.status)}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <code className="text-sm bg-muted px-2 py-1 rounded">{referral.referral_code}</code>
+                          <Button variant="ghost" size="sm" onClick={() => copyCode(referral.referral_code)}>
+                            <Copy className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        {referral.referred_name && (
+                          <p className="text-sm text-muted-foreground">
+                            Referred: {referral.referred_name}
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-right text-sm">
                         <p className="text-muted-foreground">
-                          Expires: {format(new Date(referral.expires_at), 'MMM d, yyyy')}
+                          Created: {format(new Date(referral.created_at), 'MMM d, yyyy')}
                         </p>
-                      )}
-                      {referral.reward_value && (
-                        <Badge variant="outline" className="mt-1">
-                          {referral.reward_value}% {referral.reward_type}
-                        </Badge>
-                      )}
+                        {referral.expires_at && (
+                          <p className="text-muted-foreground">
+                            Expires: {format(new Date(referral.expires_at), 'MMM d, yyyy')}
+                          </p>
+                        )}
+                        {referral.reward_value && (
+                          <Badge variant="outline" className="mt-1">
+                            {referral.reward_value}% {referral.reward_type}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

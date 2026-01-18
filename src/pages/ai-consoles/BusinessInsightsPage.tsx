@@ -1,4 +1,5 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { useAuth } from '@/contexts/AuthContext';
 import { InsightsReportForm } from '@/components/analytics/forms/InsightsReportForm';
 import { useNavigate } from 'react-router-dom';
@@ -10,19 +11,23 @@ export default function BusinessInsightsPage() {
   if (!companyId) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <p className="text-white/70">No company associated with your account.</p>
-        </div>
+        <PageContainer>
+          <div className="flex items-center justify-center h-64">
+            <p className="text-muted-foreground">No company associated with your account.</p>
+          </div>
+        </PageContainer>
       </DashboardLayout>
     );
   }
 
   return (
     <DashboardLayout>
-      <InsightsReportForm 
-        companyId={companyId} 
-        onCancel={() => navigate('/dashboard/ai-consoles/business-management')}
-      />
+      <PageContainer>
+        <InsightsReportForm 
+          companyId={companyId} 
+          onCancel={() => navigate('/dashboard/ai-consoles/business-management')}
+        />
+      </PageContainer>
     </DashboardLayout>
   );
 }

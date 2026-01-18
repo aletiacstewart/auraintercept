@@ -1,4 +1,5 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { useAuth } from '@/contexts/AuthContext';
 import { PerformanceReportForm } from '@/components/analytics/forms/PerformanceReportForm';
 import { useNavigate } from 'react-router-dom';
@@ -10,19 +11,23 @@ export default function PerformanceReportPage() {
   if (!companyId) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <p className="text-white/70">No company associated with your account.</p>
-        </div>
+        <PageContainer>
+          <div className="flex items-center justify-center h-64">
+            <p className="text-muted-foreground">No company associated with your account.</p>
+          </div>
+        </PageContainer>
       </DashboardLayout>
     );
   }
 
   return (
     <DashboardLayout>
-      <PerformanceReportForm 
-        companyId={companyId} 
-        onCancel={() => navigate('/dashboard/ai-consoles/business-management')}
-      />
+      <PageContainer>
+        <PerformanceReportForm 
+          companyId={companyId} 
+          onCancel={() => navigate('/dashboard/ai-consoles/business-management')}
+        />
+      </PageContainer>
     </DashboardLayout>
   );
 }
