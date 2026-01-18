@@ -7,8 +7,9 @@ import { BusinessHoursManager } from '@/components/knowledge/BusinessHoursManage
 import { DocumentsManager } from '@/components/knowledge/DocumentsManager';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
-import { Briefcase, HelpCircle, Clock, FileText, Package, Shield } from 'lucide-react';
+import { Briefcase, HelpCircle, Clock, FileText, Package, Shield, BookOpen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { PageHeader } from '@/components/ui/page-header';
 
 export default function KnowledgeBase() {
   const [searchParams] = useSearchParams();
@@ -25,12 +26,11 @@ export default function KnowledgeBase() {
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Knowledge Base</h1>
-          <p className="text-white/70">
-            Train your AI agent with your business information
-          </p>
-        </div>
+        <PageHeader
+          icon={BookOpen}
+          title="Knowledge Base"
+          description="Train your AI agent with your business information"
+        />
 
         <Tabs defaultValue={defaultTab} className="space-y-6">
           <TabsList className={`grid w-full ${gridColsClass} lg:w-auto lg:inline-grid`}>

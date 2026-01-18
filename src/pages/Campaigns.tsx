@@ -29,6 +29,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { Megaphone, Plus, Send, TrendingUp, Eye, MousePointer, Users, Mail, MessageSquare, Sparkles, Loader2 } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
+import { MetricCard } from '@/components/ui/metric-card';
 
 export default function Campaigns() {
   const { companyId } = useAuth();
@@ -158,20 +160,15 @@ export default function Campaigns() {
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-              <Megaphone className="h-6 w-6" />
-              Marketing Campaigns
-            </h1>
-            <p className="text-muted-foreground">
-              Create and track marketing campaigns
-            </p>
-          </div>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button><Plus className="h-4 w-4 mr-2" /> New Campaign</Button>
-            </DialogTrigger>
+        <PageHeader
+          icon={Megaphone}
+          title="Marketing Campaigns"
+          description="Create and track marketing campaigns"
+          action={
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button><Plus className="h-4 w-4 mr-2" /> New Campaign</Button>
+              </DialogTrigger>
             <DialogContent className="max-w-lg">
               <DialogHeader>
                 <DialogTitle>Create Campaign</DialogTitle>
@@ -299,53 +296,42 @@ export default function Campaigns() {
                 </Button>
               </div>
             </DialogContent>
-          </Dialog>
-        </div>
+            </Dialog>
+          }
+        />
 
         {/* Stats */}
-        <div className="grid gap-4 md:grid-cols-5">
-          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/70">Total Campaigns</CardDescription>
-              <CardTitle className="text-2xl text-accent">{stats.total}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/70">Messages Sent</CardDescription>
-              <CardTitle className="text-2xl flex items-center gap-2 text-accent">
-                <Send className="h-5 w-5 text-blue-400" />
-                {stats.totalSent}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/70">Opened</CardDescription>
-              <CardTitle className="text-2xl flex items-center gap-2 text-accent">
-                <Eye className="h-5 w-5 text-amber-400" />
-                {stats.totalOpened}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/70">Clicked</CardDescription>
-              <CardTitle className="text-2xl flex items-center gap-2 text-accent">
-                <MousePointer className="h-5 w-5 text-purple-400" />
-                {stats.totalClicked}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-white/70">Conversions</CardDescription>
-              <CardTitle className="text-2xl flex items-center gap-2 text-accent">
-                <TrendingUp className="h-5 w-5 text-green-400" />
-                {stats.totalConverted}
-              </CardTitle>
-            </CardHeader>
-          </Card>
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-5">
+          <MetricCard
+            icon={Megaphone}
+            value={stats.total}
+            label="Total Campaigns"
+          />
+          <MetricCard
+            icon={Send}
+            value={stats.totalSent}
+            label="Messages Sent"
+            iconColor="text-secondary"
+          />
+          <MetricCard
+            icon={Eye}
+            value={stats.totalOpened}
+            label="Opened"
+            iconColor="text-warning"
+          />
+          <MetricCard
+            icon={MousePointer}
+            value={stats.totalClicked}
+            label="Clicked"
+            iconColor="text-purple-400"
+          />
+          <MetricCard
+            icon={TrendingUp}
+            value={stats.totalConverted}
+            label="Conversions"
+            valueColor="success"
+            iconColor="text-green-400"
+          />
         </div>
 
         {/* Campaigns List */}

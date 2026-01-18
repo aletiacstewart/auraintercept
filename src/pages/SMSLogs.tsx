@@ -6,10 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageSquare, Search, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { MessageSquare, Search, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
+import { PageHeader } from '@/components/ui/page-header';
+import { MetricCard } from '@/components/ui/metric-card';
 
 export default function SMSLogs() {
   const { companyId } = useAuth();
@@ -70,54 +72,34 @@ export default function SMSLogs() {
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">SMS / Text Logs</h1>
-          <p className="text-muted-foreground">
-            View SMS and text message history with customers
-          </p>
-        </div>
+        <PageHeader
+          icon={MessageSquare}
+          title="SMS / Text Logs"
+          description="View SMS and text message history with customers"
+        />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-4">
-          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-channel-sms/20">
-                  <MessageSquare className="h-5 w-5 text-channel-sms" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-accent">{totalSMS}</p>
-                  <p className="text-xs text-white/70">Total Messages</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-500/20">
-                  <CheckCircle className="h-5 w-5 text-green-400" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-accent">{sentSMS}</p>
-                  <p className="text-xs text-white/70">Delivered</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600/50">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-destructive/20">
-                  <XCircle className="h-5 w-5 text-destructive" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-accent">{failedSMS}</p>
-                  <p className="text-xs text-white/70">Failed</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <MetricCard
+            icon={MessageSquare}
+            value={totalSMS}
+            label="Total Messages"
+            iconColor="text-channel-sms"
+          />
+          <MetricCard
+            icon={CheckCircle}
+            value={sentSMS}
+            label="Delivered"
+            valueColor="success"
+            iconColor="text-green-400"
+          />
+          <MetricCard
+            icon={XCircle}
+            value={failedSMS}
+            label="Failed"
+            valueColor="destructive"
+            iconColor="text-destructive"
+          />
         </div>
 
         {/* SMS Logs Card */}

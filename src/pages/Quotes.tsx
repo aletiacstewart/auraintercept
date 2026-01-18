@@ -11,9 +11,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, FileText, Eye, Send, Check, X, Search, Trash2 } from 'lucide-react';
+import { Plus, FileText, Eye, Send, Check, X, Search, Trash2, Clock, TrendingUp } from 'lucide-react';
 import { format } from 'date-fns';
 import { BusinessQuoteForm } from '@/components/billing/forms/BusinessQuoteForm';
+import { PageHeader } from '@/components/ui/page-header';
+import { MetricCard } from '@/components/ui/metric-card';
 
 interface Quote {
   id: string;
@@ -128,72 +130,63 @@ export default function Quotes() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Quotes</h1>
-            <p className="text-white/70">Create and manage service quotes</p>
-          </div>
-          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                New Quote
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Create Quote</DialogTitle>
-                <DialogDescription>Create a new quote for a customer.</DialogDescription>
-              </DialogHeader>
-              {companyId && (
-                <BusinessQuoteForm
-                  companyId={companyId}
-                  mode="direct"
-                  showBackButton={false}
-                  onSuccess={() => setIsAddOpen(false)}
-                  onCancel={() => setIsAddOpen(false)}
-                />
-              )}
-            </DialogContent>
-          </Dialog>
-        </div>
+        <PageHeader
+          icon={FileText}
+          title="Quotes"
+          description="Create and manage service quotes"
+          action={
+            <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Quote
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Create Quote</DialogTitle>
+                  <DialogDescription>Create a new quote for a customer.</DialogDescription>
+                </DialogHeader>
+                {companyId && (
+                  <BusinessQuoteForm
+                    companyId={companyId}
+                    mode="direct"
+                    showBackButton={false}
+                    onSuccess={() => setIsAddOpen(false)}
+                    onCancel={() => setIsAddOpen(false)}
+                  />
+                )}
+              </DialogContent>
+            </Dialog>
+          }
+        />
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-white">Total Quotes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{quotes.length}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-white">Pending</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{pendingQuotes}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-white">Accepted Value</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">${totalQuoteValue.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-white">Conversion Rate</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {quotes.length > 0 ? ((quotes.filter(q => q.status === 'accepted').length / quotes.length) * 100).toFixed(0) : 0}%
-              </div>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <MetricCard
+            icon={FileText}
+            value={quotes.length}
+            label="Total Quotes"
+          />
+          <MetricCard
+            icon={Clock}
+            value={pendingQuotes}
+            label="Pending"
+            valueColor="warning"
+            iconColor="text-warning"
+          />
+          <MetricCard
+            icon={Check}
+            value={`$${totalQuoteValue.toFixed(0)}`}
+            label="Accepted Value"
+            valueColor="success"
+            iconColor="text-green-400"
+          />
+          <MetricCard
+            icon={TrendingUp}
+            value={`${quotes.length > 0 ? ((quotes.filter(q => q.status === 'accepted').length / quotes.length) * 100).toFixed(0) : 0}%`}
+            label="Conversion Rate"
+          />
         </div>
 
         {/* Filters */}

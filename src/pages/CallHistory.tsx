@@ -45,6 +45,8 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { AudioPlayer } from '@/components/calls/AudioPlayer';
 import { TranscriptViewer } from '@/components/calls/TranscriptViewer';
+import { PageHeader } from '@/components/ui/page-header';
+import { MetricCard } from '@/components/ui/metric-card';
 
 interface CallLog {
   id: string;
@@ -149,51 +151,37 @@ export default function CallHistory() {
   return (
     <DashboardLayout>
       <div className="space-y-6 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Call History</h1>
-          <p className="text-white/70">
-            View and analyze all AI agent call activity
-          </p>
-        </div>
+        <PageHeader
+          icon={Phone}
+          title="Call History"
+          description="View and analyze all AI agent call activity"
+        />
 
         {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card className="border-border/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-white">Total Calls</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.total}</div>
-            </CardContent>
-          </Card>
-          <Card className="border-border/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-white flex items-center gap-2">
-                <PhoneIncoming className="w-4 h-4 text-channel-voice" /> Inbound
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-green-600">{stats.inbound}</div>
-            </CardContent>
-          </Card>
-          <Card className="border-border/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-white flex items-center gap-2">
-                <PhoneOutgoing className="w-4 h-4 text-channel-voice" /> Outbound
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-blue-600">{stats.outbound}</div>
-            </CardContent>
-          </Card>
-          <Card className="border-border/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-white">Avg Duration</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{formatDuration(Math.round(stats.avgDuration))}</div>
-            </CardContent>
-          </Card>
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
+          <MetricCard
+            icon={Phone}
+            value={stats.total}
+            label="Total Calls"
+          />
+          <MetricCard
+            icon={PhoneIncoming}
+            value={stats.inbound}
+            label="Inbound"
+            valueColor="success"
+            iconColor="text-green-400"
+          />
+          <MetricCard
+            icon={PhoneOutgoing}
+            value={stats.outbound}
+            label="Outbound"
+            iconColor="text-secondary"
+          />
+          <MetricCard
+            icon={Clock}
+            value={formatDuration(Math.round(stats.avgDuration))}
+            label="Avg Duration"
+          />
         </div>
 
         {/* Filters and Table */}
