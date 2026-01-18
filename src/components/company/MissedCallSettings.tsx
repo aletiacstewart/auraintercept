@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { PhoneMissed, Phone, MessageSquare, Clock, History, CheckCircle, XCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { PhoneMissed, Phone, MessageSquare, Clock, History, CheckCircle, XCircle, AlertCircle, Loader2, Save } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +30,15 @@ interface MissedCallCallback {
 export function MissedCallSettings() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
+
+  // Local state for form
+  const [localSettings, setLocalSettings] = useState({
+    missed_call_action: 'disabled' as MissedCallAction,
+    callback_delay_seconds: 30,
+    callback_retry_count: 3,
+  });
+  const [hasChanges, setHasChanges] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   const { data: company, isLoading } = useQuery({
     queryKey: ['company-missed-call-settings', companyId],
@@ -77,6 +86,18 @@ export function MissedCallSettings() {
     enabled: !!companyId,
   });
 
+  // Sync local state with fetched data
+  useEffect(() => {
+    if (company) {
+      setLocalSettings({
+        missed_call_action: (company.missed_call_action as MissedCallAction) || 'disabled',
+        callback_delay_seconds: company.callback_delay_seconds || 30,
+        callback_retry_count: company.callback_retry_count || 3,
+      });
+      setHasChanges(false);
+    }
+  }, [company]);
+
   const hasTwilio = !!(integrations?.twilio_account_sid && integrations?.twilio_phone_number);
   const hasVoice = !!(hasTwilio && integrations?.elevenlabs_api_key);
 
@@ -95,10 +116,14 @@ export function MissedCallSettings() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['company-missed-call-settings'] });
-      toast.success('Missed call settings updated');
+      setSaveStatus('saved');
+      setHasChanges(false);
+      toast.success('Missed call settings saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
     },
     onError: (error) => {
-      toast.error('Failed to update settings: ' + error.message);
+      setSaveStatus('idle');
+      toast.error('Failed to save settings: ' + error.message);
     },
   });
 
@@ -111,14 +136,21 @@ export function MissedCallSettings() {
       toast.error('SMS requires Twilio integration');
       return;
     }
-    updateMutation.mutate({ missed_call_action: value });
+    setLocalSettings(prev => ({ ...prev, missed_call_action: value }));
+    setHasChanges(true);
   };
 
   const handleDelayChange = (value: string) => {
     const delay = parseInt(value);
     if (!isNaN(delay) && delay >= 10 && delay <= 300) {
-      updateMutation.mutate({ callback_delay_seconds: delay });
+      setLocalSettings(prev => ({ ...prev, callback_delay_seconds: delay }));
+      setHasChanges(true);
     }
+  };
+
+  const handleSave = () => {
+    setSaveStatus('saving');
+    updateMutation.mutate(localSettings);
   };
 
   const getStatusBadge = (status: string) => {
@@ -157,17 +189,16 @@ export function MissedCallSettings() {
     );
   }
 
-  const isEnabled = company?.missed_call_action && company.missed_call_action !== 'disabled';
+  const isEnabled = localSettings.missed_call_action !== 'disabled';
 
   const handleToggleEnabled = () => {
     if (isEnabled) {
-      updateMutation.mutate({ missed_call_action: 'disabled' });
+      setLocalSettings(prev => ({ ...prev, missed_call_action: 'disabled' }));
     } else {
-      // Enable with sms_only as default
-      updateMutation.mutate({ missed_call_action: 'sms_only' });
+      setLocalSettings(prev => ({ ...prev, missed_call_action: 'sms_only' }));
     }
+    setHasChanges(true);
   };
-
   return (
     <div className="space-y-6">
       <Card className="border-border/50">
@@ -191,6 +222,15 @@ export function MissedCallSettings() {
               <span className="text-sm font-medium">
                 {isEnabled ? 'Enabled' : 'Disabled'}
               </span>
+              <Button 
+                onClick={handleSave} 
+                disabled={!hasChanges || saveStatus === 'saving'}
+                size="sm"
+                className="gap-2 ml-2"
+              >
+                <Save className="h-4 w-4" />
+                {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved!' : 'Save'}
+              </Button>
             </div>
           </div>
         </CardHeader>
@@ -213,7 +253,7 @@ export function MissedCallSettings() {
               <div className="space-y-2">
                 <Label>When a call is missed</Label>
                 <Select
-                  value={company?.missed_call_action || 'sms_only'}
+                  value={localSettings.missed_call_action}
                   onValueChange={handleActionChange}
                   disabled={!hasTwilio}
                 >
@@ -243,7 +283,7 @@ export function MissedCallSettings() {
                 </Select>
               </div>
 
-              {(company?.missed_call_action === 'callback_only' || company?.missed_call_action === 'callback_then_sms') && (
+              {(localSettings.missed_call_action === 'callback_only' || localSettings.missed_call_action === 'callback_then_sms') && (
                 <div className="space-y-2">
                   <Label>Callback delay (seconds)</Label>
                   <div className="flex items-center gap-4">
@@ -251,7 +291,7 @@ export function MissedCallSettings() {
                       type="number"
                       min={10}
                       max={300}
-                      value={company?.callback_delay_seconds || 30}
+                      value={localSettings.callback_delay_seconds}
                       onChange={(e) => handleDelayChange(e.target.value)}
                       className="w-32"
                     />
