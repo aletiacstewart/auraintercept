@@ -109,8 +109,8 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
             <DollarSign className="h-5 w-5 text-primary" />
             Revenue Analysis
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-foreground/70 hover:text-foreground">
-            <X className="h-4 w-4" />
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground hover:text-secondary hover:bg-secondary/10">
+            <X className="h-5 w-5" />
           </Button>
         </div>
       </CardHeader>
@@ -163,7 +163,7 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
                   <TrendingUp className="h-4 w-4" />
                   <span className="text-sm">Total Revenue</span>
                 </div>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-secondary">
                   ${(revenueData?.totalRevenue || 0).toLocaleString()}
                 </p>
               </div>
@@ -173,7 +173,7 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
                   <CreditCard className="h-4 w-4" />
                   <span className="text-sm">Pending</span>
                 </div>
-                <p className="text-2xl font-bold text-orange-600">
+                <p className="text-2xl font-bold text-warning">
                   ${(pendingData || 0).toLocaleString()}
                 </p>
               </div>

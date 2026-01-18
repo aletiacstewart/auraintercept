@@ -120,8 +120,8 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
             <Users className="h-5 w-5 text-primary" />
             Customer Insights
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-foreground/70 hover:text-foreground">
-            <X className="h-4 w-4" />
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground hover:text-secondary hover:bg-secondary/10">
+            <X className="h-5 w-5" />
           </Button>
         </div>
       </CardHeader>
@@ -133,7 +133,7 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
             Analysis Period
           </Label>
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="bg-input text-foreground border-border">
+            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -149,7 +149,7 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
         {isLoading ? (
           <div className="grid grid-cols-2 gap-3">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-white/5 animate-pulse h-20" />
+              <div key={i} className="p-4 rounded-lg bg-muted/50 animate-pulse h-20" />
             ))}
           </div>
         ) : (

@@ -127,8 +127,8 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
             <TrendingUp className="h-5 w-5 text-primary" />
             Trend Forecast
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-foreground/70 hover:text-foreground">
-            <X className="h-4 w-4" />
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground hover:text-secondary hover:bg-secondary/10">
+            <X className="h-5 w-5" />
           </Button>
         </div>
       </CardHeader>
@@ -138,7 +138,7 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
           <div className="space-y-2">
             <Label className="text-foreground/70">Metric</Label>
             <Select value={metric} onValueChange={setMetric}>
-              <SelectTrigger className="bg-input text-foreground border-border">
+              <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -151,7 +151,7 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
           <div className="space-y-2">
             <Label className="text-foreground/70">Forecast Period</Label>
             <Select value={forecastDays} onValueChange={setForecastDays}>
-              <SelectTrigger className="bg-input text-foreground border-border">
+              <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

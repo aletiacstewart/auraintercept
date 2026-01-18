@@ -161,7 +161,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
   const renderTrend = (change: number) => {
     if (change > 0) {
       return (
-        <span className="flex items-center gap-1 text-green-600 text-sm">
+        <span className="flex items-center gap-1 text-secondary text-sm">
           <TrendingUp className="h-4 w-4" />
           +{change.toFixed(1)}%
         </span>
@@ -169,7 +169,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
     }
     if (change < 0) {
       return (
-        <span className="flex items-center gap-1 text-red-600 text-sm">
+        <span className="flex items-center gap-1 text-destructive text-sm">
           <TrendingDown className="h-4 w-4" />
           {change.toFixed(1)}%
         </span>
@@ -429,8 +429,8 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
             <BarChart3 className="h-5 w-5 text-primary" />
             Performance Report
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-foreground/70 hover:text-foreground">
-            <X className="h-4 w-4" />
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground hover:text-secondary hover:bg-secondary/10">
+            <X className="h-5 w-5" />
           </Button>
         </div>
       </CardHeader>
@@ -439,7 +439,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
         <div className="space-y-2">
           <Label className="text-foreground/70">Report View</Label>
           <Select value={reportView} onValueChange={(v) => setReportView(v as ReportView)}>
-            <SelectTrigger className="bg-white text-slate-900 border-border">
+            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -460,27 +460,27 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
               Date Range
             </Label>
             <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Last 7 days</SelectItem>
-                <SelectItem value="30">Last 30 days</SelectItem>
-                <SelectItem value="90">Last 90 days</SelectItem>
-                <SelectItem value="365">Last year</SelectItem>
-              </SelectContent>
+            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7">Last 7 days</SelectItem>
+              <SelectItem value="30">Last 30 days</SelectItem>
+              <SelectItem value="90">Last 90 days</SelectItem>
+              <SelectItem value="365">Last year</SelectItem>
+            </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
             <Label className="text-foreground/70">Compare To</Label>
             <Select value={compareRange} onValueChange={setCompareRange}>
-              <SelectTrigger className="bg-white text-slate-900 border-border">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="previous">Previous period</SelectItem>
-                <SelectItem value="none">No comparison</SelectItem>
-              </SelectContent>
+            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="previous">Previous period</SelectItem>
+              <SelectItem value="none">No comparison</SelectItem>
+            </SelectContent>
             </Select>
           </div>
         </div>
@@ -492,7 +492,7 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
             Department / Team
           </Label>
           <Select value={department} onValueChange={setDepartment}>
-            <SelectTrigger className="bg-white text-slate-900 border-border">
+            <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

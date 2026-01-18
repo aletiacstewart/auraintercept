@@ -216,8 +216,8 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
             <Target className="h-5 w-5 text-primary" />
             Forecast Report
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="text-foreground/70 hover:text-foreground">
-            <X className="h-4 w-4" />
+          <Button variant="ghost" size="icon" onClick={onCancel} className="text-card-foreground hover:text-secondary hover:bg-secondary/10">
+            <X className="h-5 w-5" />
           </Button>
         </div>
       </CardHeader>
@@ -227,7 +227,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
           <div className="space-y-2">
             <Label className="text-foreground/70">Forecast Type</Label>
             <Select value={forecastType} onValueChange={(v) => setForecastType(v as ForecastType)}>
-              <SelectTrigger className="bg-input text-foreground border-border">
+              <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -240,7 +240,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
           <div className="space-y-2">
             <Label className="text-foreground/70">Time Period</Label>
             <Select value={forecastPeriod} onValueChange={setForecastPeriod}>
-              <SelectTrigger className="bg-input text-foreground border-border">
+              <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
