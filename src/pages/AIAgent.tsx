@@ -20,6 +20,8 @@ import { TestCallDialog } from '@/components/ai/TestCallDialog';
 import { Button } from '@/components/ui/button';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { useSubscription } from '@/hooks/useSubscription';
+import { PageContainer } from '@/components/ui/page-container';
+import { PageHeader } from '@/components/ui/page-header';
 
 type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'marketing' | 'analytics';
 
@@ -95,38 +97,36 @@ const AIAgent = () => {
 
   return (
     <DashboardLayout>
-      <FeatureGate requiredTier="enterprise">
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">AI Agent</h1>
-              <p className="text-white/70 mt-1">
-                Test and monitor your AI-powered virtual assistant
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              {hasVoice && (
-                <>
-                  <TestCallDialog
-                    trigger={
-                      <Button variant="outline">
-                        <PhoneCall className="w-4 h-4 mr-2" />
-                        Test Call
-                      </Button>
-                    }
-                  />
-                  <OutboundCallDialog
-                    trigger={
-                      <Button>
-                        <PhoneOutgoing className="w-4 h-4 mr-2" />
-                        Make Outbound Call
-                      </Button>
-                    }
-                  />
-                </>
-              )}
-            </div>
-          </div>
+      <PageContainer>
+        <FeatureGate requiredTier="enterprise">
+          <div className="space-y-6">
+            <PageHeader
+              icon={Bot}
+              title="AI Agent"
+              description="Test and monitor your AI-powered virtual assistant"
+              action={
+                hasVoice ? (
+                  <div className="flex items-center gap-2">
+                    <TestCallDialog
+                      trigger={
+                        <Button variant="outline">
+                          <PhoneCall className="w-4 h-4 mr-2" />
+                          Test Call
+                        </Button>
+                      }
+                    />
+                    <OutboundCallDialog
+                      trigger={
+                        <Button>
+                          <PhoneOutgoing className="w-4 h-4 mr-2" />
+                          Make Outbound Call
+                        </Button>
+                      }
+                    />
+                  </div>
+                ) : undefined
+              }
+            />
 
         {/* Status Cards */}
         <div className="grid gap-4 md:grid-cols-4">
@@ -139,7 +139,7 @@ const AIAgent = () => {
             </CardHeader>
             <CardContent>
               <Badge variant="default" className="bg-green-500">Active</Badge>
-              <p className="text-xs text-white/70 mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 Knowledge base connected
               </p>
             </CardContent>
@@ -154,7 +154,7 @@ const AIAgent = () => {
             </CardHeader>
             <CardContent>
               <Badge variant="default" className="bg-green-500">Ready</Badge>
-              <p className="text-xs text-white/70 mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 Appointment logic enabled
               </p>
             </CardContent>
@@ -174,7 +174,7 @@ const AIAgent = () => {
                     <CheckCircle2 className="w-3 h-3 mr-1" />
                     Active
                   </Badge>
-                  <p className="text-xs text-white/70 mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     Twilio + {getConnectedProviderNames().join(', ')}
                   </p>
                 </>
@@ -184,7 +184,7 @@ const AIAgent = () => {
                     <XCircle className="w-3 h-3 mr-1" />
                     {canManageSettings ? 'Requires Setup' : 'Not Configured'}
                   </Badge>
-                  <p className="text-xs text-white/70 mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     {canManageSettings ? (
                       !hasTwilio && !hasAnyTTS 
                         ? 'Configure Twilio & a TTS provider'
@@ -232,7 +232,7 @@ const AIAgent = () => {
                     <CheckCircle2 className="w-3 h-3 mr-1" />
                     Active
                   </Badge>
-                  <p className="text-xs text-white/70 mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     Twilio connected
                   </p>
                 </>
@@ -242,7 +242,7 @@ const AIAgent = () => {
                     <XCircle className="w-3 h-3 mr-1" />
                     {canManageSettings ? 'Requires Setup' : 'Not Configured'}
                   </Badge>
-                  <p className="text-xs text-white/70 mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     {canManageSettings ? 'Configure Twilio integration' : 'Contact your admin to enable'}
                   </p>
                   {canManageSettings && (
@@ -376,8 +376,9 @@ const AIAgent = () => {
             </TabsContent>
           )}
         </Tabs>
-        </div>
-      </FeatureGate>
+          </div>
+        </FeatureGate>
+      </PageContainer>
     </DashboardLayout>
   );
 };

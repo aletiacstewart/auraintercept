@@ -46,7 +46,9 @@ import {
   Server,
   ArrowRight,
   Users,
+  Puzzle,
 } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 import { cn } from '@/lib/utils';
 
 // CRM Provider display names
@@ -256,10 +258,11 @@ export default function Integrations() {
         <div className="space-y-6 animate-fade-in">
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Integrations</h1>
-            <p className="text-white/70">Connect services to power your reminders</p>
-          </div>
+          <PageHeader
+            icon={Puzzle}
+            title="Integrations Overview"
+            description="Connect services to power your AI agents"
+          />
           <div className="flex flex-col gap-2">
             <Button onClick={() => setShowQuickStart(true)} className="gap-2">
               <Rocket className="w-4 h-4" />

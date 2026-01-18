@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { Check, X, Crown, ExternalLink, Loader2, Clock, Sparkles, Users, Mail, MessageSquare, Mic, Info, Phone, Calendar, Truck, BarChart3, Megaphone } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 import { cn } from '@/lib/utils';
 
 interface SubscriptionStatus {
@@ -250,28 +251,27 @@ export default function Subscription() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6 animate-fade-in">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Subscription</h1>
-            <p className="text-muted-foreground">
-              {isInTrial ? 'Subscribe to continue after your trial' : 'Choose the plan that fits your business'}
-            </p>
-          </div>
-          {isSubscribed && (
-            <Button 
-              variant="outline" 
-              onClick={handleManageSubscription}
-              disabled={portalLoading}
-            >
-              {portalLoading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <ExternalLink className="w-4 h-4 mr-2" />
-              )}
-              Manage Billing
-            </Button>
-          )}
-        </div>
+        <PageHeader
+          icon={Crown}
+          title="Subscription"
+          description={isInTrial ? 'Subscribe to continue after your trial' : 'Choose the plan that fits your business'}
+          action={
+            isSubscribed ? (
+              <Button 
+                variant="outline" 
+                onClick={handleManageSubscription}
+                disabled={portalLoading}
+              >
+                {portalLoading ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                )}
+                Manage Billing
+              </Button>
+            ) : undefined
+          }
+        />
 
         {/* Trial Status Banner */}
         {isInTrial && (

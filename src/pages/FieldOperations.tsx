@@ -33,9 +33,16 @@ export default function FieldOperations() {
 
   return (
     <DashboardLayout>
-      <PageContainer className="p-0">
-        <div className="h-[calc(100vh-8rem)]">
-          <FieldOpsManager companyId={companyId} />
+      <PageContainer>
+        <div className="space-y-6">
+          <PageHeader
+            icon={Truck}
+            title="Dispatch-Field Ops"
+            description="Real-time dispatch console for managing field technicians"
+          />
+          <div className="h-[calc(100vh-14rem)]">
+            <FieldOpsManager companyId={companyId} />
+          </div>
         </div>
       </PageContainer>
     </DashboardLayout>

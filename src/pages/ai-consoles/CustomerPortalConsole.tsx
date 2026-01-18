@@ -9,7 +9,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Monitor, Code, Cpu, Eye } from 'lucide-react';
+import { Monitor, Code, Cpu, Eye, HeadphonesIcon } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 
 export default function CustomerPortalConsole() {
@@ -35,41 +36,46 @@ export default function CustomerPortalConsole() {
               </Alert>
             )}
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <h2 className="text-lg font-semibold">Customer Portal Console</h2>
-                {canManageSettings && (
+            <PageHeader
+              icon={HeadphonesIcon}
+              title="Customer Portal Console"
+              description="AI-powered customer service portal"
+              badge={
+                canManageSettings ? (
                   <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700">
                     Admin Preview
                   </Badge>
-                )}
-                {canManageSettings && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate('/dashboard/ai-agents')}
-                    className="h-7"
-                  >
-                    <Cpu className="h-3.5 w-3.5 mr-1.5" />
-                    Manage Agents
-                  </Button>
-                )}
-              </div>
-              {userRole !== 'employee' && (
-                <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
-                  <TabsList className="h-8">
-                    <TabsTrigger value="customer" className="text-xs h-7 px-3">
-                      <Monitor className="h-3 w-3 mr-1" />
-                      Customer View
-                    </TabsTrigger>
-                    <TabsTrigger value="debug" className="text-xs h-7 px-3">
-                      <Code className="h-3 w-3 mr-1" />
-                      Debug
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              )}
-            </div>
+                ) : undefined
+              }
+              action={
+                <div className="flex items-center gap-2">
+                  {canManageSettings && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate('/dashboard/ai-agents')}
+                    >
+                      <Cpu className="h-3.5 w-3.5 mr-1.5" />
+                      Manage Agents
+                    </Button>
+                  )}
+                  {userRole !== 'employee' && (
+                    <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
+                      <TabsList className="h-8">
+                        <TabsTrigger value="customer" className="text-xs h-7 px-3">
+                          <Monitor className="h-3 w-3 mr-1" />
+                          Customer View
+                        </TabsTrigger>
+                        <TabsTrigger value="debug" className="text-xs h-7 px-3">
+                          <Code className="h-3 w-3 mr-1" />
+                          Debug
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
+                  )}
+                </div>
+              }
+            />
             
             {viewMode === 'customer' ? (
               <AIAgentConsole allowCompanySelection={userRole === 'platform_admin'} />

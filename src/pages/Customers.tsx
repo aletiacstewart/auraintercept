@@ -221,7 +221,7 @@ export default function Customers() {
         <Card>
           <CardHeader>
             <CardTitle>Customer Directory</CardTitle>
-            <CardDescription className="text-white/70">
+            <CardDescription className="text-muted-foreground">
               Click on a customer to view their complete history and details
             </CardDescription>
           </CardHeader>

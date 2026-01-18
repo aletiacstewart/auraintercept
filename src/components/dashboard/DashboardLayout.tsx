@@ -119,7 +119,7 @@ const navGroups: NavGroup[] = [
       { label: 'Business Management Ops', icon: Briefcase, href: '/dashboard/ai-consoles/business-management', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'] },
       { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'] },
       { label: 'Marketing & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'] },
-      { label: 'Bus.Mgt Ops App Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'] },
     ],
   },
   {
@@ -127,8 +127,8 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'] },
       { label: 'Dispatch-Field Ops', icon: Map, href: '/dashboard/field-operations', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Tech-Field Ops App Install', icon: Smartphone, href: '/dashboard/field-ops-install', roles: ['platform_admin', 'company_admin'] },
-      { label: 'Dispatch-Field Ops App Install', icon: Smartphone, href: '/dashboard/dispatch-field-ops-install', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Technician Field Ops Install', icon: Smartphone, href: '/dashboard/field-ops-install', roles: ['platform_admin', 'company_admin'] },
+      { label: 'Dispatch Field Ops Install', icon: Smartphone, href: '/dashboard/dispatch-field-ops-install', roles: ['platform_admin', 'company_admin'] },
     ],
   },
   {
