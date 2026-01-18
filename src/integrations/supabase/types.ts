@@ -3998,6 +3998,73 @@ export type Database = {
           },
         ]
       }
+      smart_website_holidays: {
+        Row: {
+          company_id: string
+          created_at: string
+          custom_cta_text: string | null
+          custom_cta_url: string | null
+          custom_headline: string
+          custom_subheadline: string | null
+          holiday_date: string
+          holiday_name: string
+          id: string
+          is_active: boolean
+          updated_at: string
+          website_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          custom_cta_text?: string | null
+          custom_cta_url?: string | null
+          custom_headline: string
+          custom_subheadline?: string | null
+          holiday_date: string
+          holiday_name: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+          website_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          custom_cta_text?: string | null
+          custom_cta_url?: string | null
+          custom_headline?: string
+          custom_subheadline?: string | null
+          holiday_date?: string
+          holiday_name?: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+          website_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smart_website_holidays_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "smart_website_holidays_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "smart_website_holidays_website_id_fkey"
+            columns: ["website_id"]
+            isOneToOne: false
+            referencedRelation: "smart_websites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       smart_websites: {
         Row: {
           about_header: string | null
@@ -5017,6 +5084,16 @@ export type Database = {
         }[]
       }
       get_user_company_id: { Args: { _user_id: string }; Returns: string }
+      get_website_active_holiday: {
+        Args: { p_check_date?: string; p_website_id: string }
+        Returns: {
+          custom_cta_text: string
+          custom_cta_url: string
+          custom_headline: string
+          custom_subheadline: string
+          holiday_name: string
+        }[]
+      }
       get_website_by_custom_domain: {
         Args: { p_domain: string }
         Returns: {
