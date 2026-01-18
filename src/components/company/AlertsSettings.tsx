@@ -12,6 +12,7 @@ import { Bell, Mail, AlertTriangle, Info, ShieldAlert, MessageSquare } from 'luc
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useState, useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 export function AlertsSettings() {
   const { companyId } = useAuth();
@@ -77,6 +78,7 @@ export function AlertsSettings() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['company-alerts', companyId] });
       toast.success('Alert settings updated');
+      triggerSetupProgressRefresh();
     },
     onError: () => {
       toast.error('Failed to update settings');

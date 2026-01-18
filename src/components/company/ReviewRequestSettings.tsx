@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { Star, MessageSquare, Mail, Clock, ExternalLink, RotateCcw, Save, Loader2 } from 'lucide-react';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 interface ReviewSettings {
   review_request_enabled: boolean;
@@ -105,6 +106,7 @@ export function ReviewRequestSettings() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['company-review-settings', companyId] });
       toast.success('Review request settings saved');
+      triggerSetupProgressRefresh();
     },
     onError: (error) => {
       toast.error('Failed to save settings: ' + error.message);

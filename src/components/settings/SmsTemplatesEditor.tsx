@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { MessageSquare, Save, RotateCcw, Loader2, CheckCircle, XCircle, Bell, Link } from 'lucide-react';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 interface SmsTemplate {
   id?: string;
@@ -121,6 +122,7 @@ export function SmsTemplatesEditor() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sms-templates'] });
       toast.success('SMS template saved successfully');
+      triggerSetupProgressRefresh();
       setEditedTemplates(prev => ({ ...prev, [activeTab]: {} }));
     },
     onError: (error) => {

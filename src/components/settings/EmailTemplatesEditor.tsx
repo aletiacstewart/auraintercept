@@ -13,6 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Mail, Save, RotateCcw, Loader2, CheckCircle, XCircle, Bell } from 'lucide-react';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 interface EmailTemplate {
   id?: string;
@@ -133,6 +134,7 @@ export function EmailTemplatesEditor() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['email-templates'] });
       toast.success('Email template saved successfully');
+      triggerSetupProgressRefresh();
       setEditedTemplates(prev => ({ ...prev, [activeTab]: {} }));
     },
     onError: (error) => {

@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Megaphone, Save, Copy, Link } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 const WINBACK_PLACEHOLDERS = [
   { key: '{customer_name}', description: 'Customer\'s name' },
@@ -46,6 +47,7 @@ export function CampaignSettings() {
     setSaving(true);
     await new Promise(resolve => setTimeout(resolve, 500));
     toast.success('Campaign settings saved');
+    triggerSetupProgressRefresh();
     setSaving(false);
   };
 

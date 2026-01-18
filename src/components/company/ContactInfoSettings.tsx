@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Phone, Mail, MapPin, Globe, Loader2, Save } from 'lucide-react';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 export function ContactInfoSettings() {
   const { companyId } = useAuth();
@@ -60,6 +61,7 @@ export function ContactInfoSettings() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['company-contact-info', companyId] });
       toast.success('Contact information updated successfully');
+      triggerSetupProgressRefresh();
     },
     onError: (error) => {
       console.error('Failed to update contact info:', error);

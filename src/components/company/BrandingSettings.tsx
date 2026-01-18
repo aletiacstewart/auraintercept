@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { Upload, Save, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 const PRESET_COLORS = [
   { primary: '#0EA5E9', secondary: '#8B5CF6', name: 'Ocean Violet' },
@@ -75,6 +76,7 @@ export function BrandingSettings() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['company'] });
       toast.success('Branding updated successfully!');
+      triggerSetupProgressRefresh();
     },
     onError: (error) => {
       console.error('Error updating branding:', error);
