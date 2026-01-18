@@ -345,7 +345,7 @@ export function EmployeeManagement() {
             <CardTitle className="text-sm font-medium text-white">
               Total Employees
             </CardTitle>
-            <Users className="w-5 h-5 text-primary" />
+            <Users className="w-5 h-5 text-feature-employees" />
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -361,7 +361,7 @@ export function EmployeeManagement() {
             <CardTitle className="text-sm font-medium text-white">
               Pending Invites
             </CardTitle>
-            <Mail className="w-5 h-5 text-secondary" />
+            <Mail className="w-5 h-5 text-feature-employees" />
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -377,7 +377,7 @@ export function EmployeeManagement() {
             <CardTitle className="text-sm font-medium text-white">
               Job Roles Assigned
             </CardTitle>
-            <Briefcase className="w-5 h-5 text-accent" />
+            <Briefcase className="w-5 h-5 text-feature-employees" />
           </CardHeader>
           <CardContent>
             {isLoading ? (

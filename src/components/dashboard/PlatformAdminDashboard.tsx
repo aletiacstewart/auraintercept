@@ -190,49 +190,49 @@ export function PlatformAdminDashboard() {
       value: stats?.companies ?? 0, 
       icon: Building2, 
       description: 'Active tenants on the platform',
-      gradient: 'from-primary to-primary/80'
+      colorClass: 'text-feature-companies'
     },
     { 
       title: 'Total Users', 
       value: stats?.users ?? 0, 
       icon: Users, 
       description: 'Admins and employees',
-      gradient: 'from-secondary to-secondary/80'
+      colorClass: 'text-feature-employees'
     },
     { 
       title: 'Customers', 
       value: stats?.customers ?? 0, 
       icon: UserCircle, 
       description: 'Across all companies',
-      gradient: 'from-cyan-500 to-cyan-600'
+      colorClass: 'text-feature-customers'
     },
     { 
       title: 'Leads', 
       value: stats?.leads ?? 0, 
       icon: Target, 
       description: `${stats?.newLeads ?? 0} new leads`,
-      gradient: 'from-orange-500 to-orange-600'
+      colorClass: 'text-feature-leads'
     },
     { 
       title: 'Appointments', 
       value: stats?.appointments ?? 0, 
       icon: Calendar, 
       description: 'Scheduled across all companies',
-      gradient: 'from-accent to-accent/80'
+      colorClass: 'text-feature-appointments'
     },
     { 
       title: 'AI Agents Active', 
       value: stats?.companies ?? 0, 
       icon: Bot, 
       description: 'Deployed AI agents',
-      gradient: 'from-primary to-secondary'
+      colorClass: 'text-primary'
     },
     { 
       title: 'Platform Revenue', 
       value: `$${(stats?.totalRevenue ?? 0).toLocaleString()}`, 
       icon: DollarSign, 
       description: 'Total collected',
-      gradient: 'from-green-500 to-green-600',
+      colorClass: 'text-feature-invoices',
       isString: true
     },
     { 
@@ -240,7 +240,7 @@ export function PlatformAdminDashboard() {
       value: `$${(stats?.monthlyRevenue ?? 0).toLocaleString()}`, 
       icon: TrendingUp, 
       description: 'This month',
-      gradient: 'from-green-400 to-green-500',
+      colorClass: 'text-feature-invoices',
       isString: true
     },
     { 
@@ -248,28 +248,28 @@ export function PlatformAdminDashboard() {
       value: stats?.pendingQuotes ?? 0, 
       icon: FileText, 
       description: 'Awaiting customer response',
-      gradient: 'from-yellow-500 to-yellow-600'
+      colorClass: 'text-feature-quotes'
     },
     { 
       title: 'Inventory', 
       value: stats?.inventoryCount ?? 0, 
       icon: Package, 
       description: stats?.lowStockItems ? `${stats.lowStockItems} low stock` : 'Items tracked',
-      gradient: 'from-amber-500 to-amber-600'
+      colorClass: 'text-feature-inventory'
     },
     { 
       title: 'Warranties', 
       value: stats?.warranties ?? 0, 
       icon: Shield, 
       description: 'Active policies',
-      gradient: 'from-purple-500 to-purple-600'
+      colorClass: 'text-feature-warranties'
     },
     { 
       title: 'Active Campaigns', 
       value: stats?.activeCampaigns ?? 0, 
       icon: Megaphone, 
       description: 'Marketing campaigns running',
-      gradient: 'from-pink-500 to-pink-600'
+      colorClass: 'text-feature-marketing'
     },
   ];
 
@@ -290,8 +290,8 @@ export function PlatformAdminDashboard() {
               <CardTitle className="text-sm font-medium text-white">
                 {stat.title}
               </CardTitle>
-              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}>
-                <stat.icon className="w-5 h-5 text-primary-foreground" />
+              <div className={`w-10 h-10 rounded-lg ${stat.colorClass.replace('text-', 'bg-')}/15 flex items-center justify-center`}>
+                <stat.icon className={`w-5 h-5 ${stat.colorClass}`} />
               </div>
             </CardHeader>
             <CardContent>
@@ -304,7 +304,6 @@ export function PlatformAdminDashboard() {
               )}
               <p className="text-xs text-white/70 mt-1">{stat.description}</p>
             </CardContent>
-            <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`} />
           </Card>
         ))}
       </div>
