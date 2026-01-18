@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Bell, Clock, MessageSquare, Phone, Plus, Trash2, AlertTriangle, PhoneCall, Loader2, Lock, Sparkles } from 'lucide-react';
+import { Bell, Clock, MessageSquare, Phone, Plus, Trash2, AlertTriangle, PhoneCall, Loader2, Lock, Sparkles, Mail } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Link, useNavigate } from 'react-router-dom';
@@ -24,10 +24,25 @@ interface ReminderSetting {
   sms_template: string;
   call_enabled: boolean;
   call_template: string | null;
+  email_enabled: boolean;
+  email_template: string | null;
 }
 
 const DEFAULT_TEMPLATE = 'Hi {customer_name}, this is a reminder for your {service_type} appointment at {company_name} on {date} at {time}.';
 const DEFAULT_CALL_TEMPLATE = 'Hello {customer_name}, this is a friendly reminder from {company_name} about your upcoming {service_type} appointment on {date} at {time}. We look forward to seeing you. Press 1 to confirm your appointment or press 2 if you need to reschedule.';
+const DEFAULT_EMAIL_TEMPLATE = `Dear {customer_name},
+
+This is a friendly reminder about your upcoming {service_type} appointment at {company_name}.
+
+Date: {date}
+Time: {time}
+
+If you need to reschedule or cancel, please contact us as soon as possible.
+
+We look forward to seeing you!
+
+Best regards,
+{company_name}`;
 
 const PRESET_REMINDERS = [
   { type: '48h', hours: 48, label: '48 hours before' },
@@ -45,6 +60,7 @@ export function ReminderSettings() {
   const [newHours, setNewHours] = useState('');
   const hasSmsReminders = hasFeature('sms_reminders');
   const hasVoiceReminders = hasFeature('voice_reminders');
+  const hasEmailReminders = hasFeature('email_reminders');
 
   const { data: settings, isLoading } = useQuery({
     queryKey: ['reminder-settings', companyId],
@@ -149,6 +165,23 @@ export function ReminderSettings() {
     });
   };
 
+  const handleToggleEmail = (setting: ReminderSetting) => {
+    if (!hasEmailReminders) {
+      toast.error('Email reminders require a subscription upgrade', {
+        action: {
+          label: 'Upgrade',
+          onClick: () => navigate('/dashboard/subscription'),
+        },
+      });
+      return;
+    }
+    upsertMutation.mutate({
+      ...setting,
+      email_enabled: !setting.email_enabled,
+      email_template: !setting.email_enabled && !setting.email_template ? DEFAULT_EMAIL_TEMPLATE : setting.email_template,
+    });
+  };
+
   const handleUpdateTemplate = (setting: ReminderSetting, template: string) => {
     upsertMutation.mutate({
       ...setting,
@@ -163,6 +196,13 @@ export function ReminderSettings() {
     });
   };
 
+  const handleUpdateEmailTemplate = (setting: ReminderSetting, template: string) => {
+    upsertMutation.mutate({
+      ...setting,
+      email_template: template,
+    });
+  };
+
   const handleAddPreset = (preset: typeof PRESET_REMINDERS[0]) => {
     if (!companyId) return;
     upsertMutation.mutate({
@@ -172,6 +212,7 @@ export function ReminderSettings() {
       is_enabled: true,
       sms_template: DEFAULT_TEMPLATE,
       call_enabled: false,
+      email_enabled: false,
     });
   };
 
@@ -189,6 +230,7 @@ export function ReminderSettings() {
       is_enabled: true,
       sms_template: DEFAULT_TEMPLATE,
       call_enabled: false,
+      email_enabled: false,
     });
     setNewHours('');
     setIsAddDialogOpen(false);
@@ -318,11 +360,14 @@ export function ReminderSettings() {
               hasVoiceSupport={hasVoiceSupport}
               hasSmsReminders={hasSmsReminders}
               hasVoiceReminders={hasVoiceReminders}
+              hasEmailReminders={hasEmailReminders}
               companyId={companyId}
               onToggleEnabled={() => handleToggleEnabled(setting)}
               onToggleCall={() => handleToggleCall(setting)}
+              onToggleEmail={() => handleToggleEmail(setting)}
               onUpdateTemplate={(template) => handleUpdateTemplate(setting, template)}
               onUpdateCallTemplate={(template) => handleUpdateCallTemplate(setting, template)}
+              onUpdateEmailTemplate={(template) => handleUpdateEmailTemplate(setting, template)}
               onDelete={() => deleteMutation.mutate(setting.id)}
             />
           ))
@@ -352,19 +397,24 @@ interface ReminderCardProps {
   hasVoiceSupport: boolean;
   hasSmsReminders: boolean;
   hasVoiceReminders: boolean;
+  hasEmailReminders: boolean;
   companyId: string | null;
   onToggleEnabled: () => void;
   onToggleCall: () => void;
+  onToggleEmail: () => void;
   onUpdateTemplate: (template: string) => void;
   onUpdateCallTemplate: (template: string) => void;
+  onUpdateEmailTemplate: (template: string) => void;
   onDelete: () => void;
 }
 
-function ReminderCard({ setting, hasVoiceSupport, hasSmsReminders, hasVoiceReminders, companyId, onToggleEnabled, onToggleCall, onUpdateTemplate, onUpdateCallTemplate, onDelete }: ReminderCardProps) {
+function ReminderCard({ setting, hasVoiceSupport, hasSmsReminders, hasVoiceReminders, hasEmailReminders, companyId, onToggleEnabled, onToggleCall, onToggleEmail, onUpdateTemplate, onUpdateCallTemplate, onUpdateEmailTemplate, onDelete }: ReminderCardProps) {
   const [template, setTemplate] = useState(setting.sms_template);
   const [callTemplate, setCallTemplate] = useState(setting.call_template || '');
+  const [emailTemplate, setEmailTemplate] = useState(setting.email_template || '');
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingCall, setIsEditingCall] = useState(false);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [isTestCallDialogOpen, setIsTestCallDialogOpen] = useState(false);
   const [testPhoneNumber, setTestPhoneNumber] = useState('');
   const [isTestingCall, setIsTestingCall] = useState(false);
@@ -372,11 +422,17 @@ function ReminderCard({ setting, hasVoiceSupport, hasSmsReminders, hasVoiceRemin
   useEffect(() => {
     setTemplate(setting.sms_template);
     setCallTemplate(setting.call_template || '');
-  }, [setting.sms_template, setting.call_template]);
+    setEmailTemplate(setting.email_template || '');
+  }, [setting.sms_template, setting.call_template, setting.email_template]);
 
   const handleSave = () => {
     onUpdateTemplate(template);
     setIsEditing(false);
+  };
+
+  const handleSaveEmail = () => {
+    onUpdateEmailTemplate(emailTemplate);
+    setIsEditingEmail(false);
   };
 
   const handleSaveCall = () => {
@@ -471,11 +527,26 @@ function ReminderCard({ setting, hasVoiceSupport, hasSmsReminders, hasVoiceRemin
         </div>
       </div>
 
-      <div className="flex items-center gap-4 text-sm">
+      <div className="flex items-center gap-4 text-sm flex-wrap">
         <div className="flex items-center gap-2">
           <MessageSquare className="h-4 w-4" />
           <span>SMS</span>
           <span className="text-primary">Always</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Mail className="h-4 w-4" />
+          <span>Email</span>
+          {hasEmailReminders ? (
+            <Switch
+              checked={setting.email_enabled}
+              onCheckedChange={onToggleEmail}
+            />
+          ) : (
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <Lock className="h-3 w-3" />
+              <span className="text-xs">Pro</span>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <Phone className="h-4 w-4" />
@@ -521,6 +592,39 @@ function ReminderCard({ setting, hasVoiceSupport, hasSmsReminders, hasVoiceRemin
           </div>
         )}
       </div>
+
+      {setting.email_enabled && (
+        <div className="space-y-2">
+          <Label className="text-sm flex items-center gap-2">
+            <Mail className="h-3.5 w-3.5" />
+            Email Template
+          </Label>
+          {isEditingEmail ? (
+            <div className="space-y-2">
+              <Textarea
+                value={emailTemplate}
+                onChange={(e) => setEmailTemplate(e.target.value)}
+                rows={6}
+                placeholder="Enter the email content..."
+              />
+              <div className="flex gap-2">
+                <Button size="sm" onClick={handleSaveEmail}>Save</Button>
+                <Button size="sm" variant="outline" onClick={() => {
+                  setEmailTemplate(setting.email_template || '');
+                  setIsEditingEmail(false);
+                }}>Cancel</Button>
+              </div>
+            </div>
+          ) : (
+            <div
+              className="bg-muted/50 rounded p-2 text-sm cursor-pointer hover:bg-muted transition-colors whitespace-pre-wrap"
+              onClick={() => setIsEditingEmail(true)}
+            >
+              {setting.email_template || 'Click to add an email template...'}
+            </div>
+          )}
+        </div>
+      )}
 
       {setting.call_enabled && (
         <div className="space-y-2">
