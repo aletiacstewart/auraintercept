@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
-import { Phone, Mail, MapPin, Clock } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,36 +11,40 @@ import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 import { SmartWebsiteVoiceButton } from '@/components/smartwebsite/SmartWebsiteVoiceButton';
 
 interface WebsiteData {
-  website_id: string;
+  id: string;
   company_id: string;
   company_name: string;
-  company_slug: string;
+  subdomain: string;
   logo_url: string | null;
   primary_color: string | null;
-  secondary_color: string | null;
-  phone: string | null;
-  email: string | null;
-  address: string | null;
   hero_headline: string | null;
   hero_subheadline: string | null;
-  cta_button_text: string;
-  cta_button_url: string | null;
+  cta_text: string | null;
+  cta_url: string | null;
   show_services: boolean;
   show_hours: boolean;
   show_contact: boolean;
-  show_chat_widget: boolean;
-  show_voice_widget: boolean;
-  background_style: string;
-  background_image_url: string | null;
-  // Subscription tier fields for widget visibility gating
-  subscription_tier?: string | null;
-  trial_ends_at?: string | null;
+  show_chat: boolean;
+  show_voice: boolean;
+  background_style: string | null;
+  custom_domain: string | null;
+  is_published: boolean;
+  subscription_tier: string | null;
+  trial_ends_at: string | null;
   // About section fields
-  show_about_section?: boolean;
-  about_image_url?: string | null;
-  about_header?: string | null;
-  about_subheader?: string | null;
-  about_paragraph?: string | null;
+  show_about_section: boolean | null;
+  about_image_url: string | null;
+  about_header: string | null;
+  about_subheader: string | null;
+  about_paragraph: string | null;
+  // Night mode fields
+  enable_night_mode: boolean | null;
+  night_header: string | null;
+  night_subheadline: string | null;
+  night_start_hour: number | null;
+  night_end_hour: number | null;
+  emergency_cta_text: string | null;
+  emergency_cta_url: string | null;
 }
 
 interface Service {
@@ -73,6 +77,7 @@ function generateVisitorFingerprint(): string {
 export default function SmartWebsite() {
   const { subdomain } = useParams<{ subdomain: string }>();
   const [hasTracked, setHasTracked] = useState(false);
+  const [isNightMode, setIsNightMode] = useState(false);
   
   // Generate/retrieve visitor fingerprint for tracking
   const visitorFingerprint = useMemo(() => generateVisitorFingerprint(), []);
@@ -127,14 +132,33 @@ export default function SmartWebsite() {
 
   // Track page view
   useEffect(() => {
-    if (website?.website_id && !hasTracked) {
+    if (website?.id && !hasTracked) {
       supabase.rpc('increment_site_metric', {
-        p_website_id: website.website_id,
+        p_website_id: website.id,
         p_metric: 'page_views'
       });
       setHasTracked(true);
     }
-  }, [website?.website_id, hasTracked]);
+  }, [website?.id, hasTracked]);
+
+  // Time-based dynamic header logic
+  useEffect(() => {
+    if (!website?.enable_night_mode) {
+      setIsNightMode(false);
+      return;
+    }
+
+    const currentHour = new Date().getHours();
+    const nightStart = website.night_start_hour ?? 18;
+    const nightEnd = website.night_end_hour ?? 6;
+
+    // Handle overnight periods (e.g., 18:00 - 06:00)
+    const isNight = nightStart > nightEnd
+      ? (currentHour >= nightStart || currentHour < nightEnd)
+      : (currentHour >= nightStart && currentHour < nightEnd);
+
+    setIsNightMode(isNight);
+  }, [website?.enable_night_mode, website?.night_start_hour, website?.night_end_hour]);
 
   // Check if currently open
   const isCurrentlyOpen = () => {
@@ -155,8 +179,8 @@ export default function SmartWebsite() {
   // Voice and Chat require paid subscription (Single-Point+) or active trial
   const isInTrial = website?.trial_ends_at && new Date(website.trial_ends_at) > new Date();
   const isPaidTier = ['single_point', 'multi_track', 'command'].includes(website?.subscription_tier || '');
-  const canShowVoice = website?.show_voice_widget && (isInTrial || isPaidTier);
-  const canShowChat = website?.show_chat_widget && (isInTrial || isPaidTier);
+  const canShowVoice = website?.show_voice && (isInTrial || isPaidTier);
+  const canShowChat = website?.show_chat && (isInTrial || isPaidTier);
 
   if (isLoading) {
     return (
@@ -183,6 +207,15 @@ export default function SmartWebsite() {
 
   const primaryColor = website.primary_color || '#214ebb';
 
+  // Determine display content based on night mode
+  const displayHeadline = isNightMode && website.night_header
+    ? website.night_header
+    : website.hero_headline || `Welcome to ${website.company_name}`;
+  
+  const displaySubheadline = isNightMode && website.night_subheadline
+    ? website.night_subheadline
+    : website.hero_subheadline || 'Professional service you can trust';
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -190,7 +223,14 @@ export default function SmartWebsite() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {website.logo_url ? (
-              <img src={website.logo_url} alt={website.company_name} className="h-10 w-auto" />
+              <div className="h-16 w-auto flex items-center">
+                <img 
+                  src={website.logo_url} 
+                  alt={website.company_name} 
+                  className="max-h-full w-auto object-contain"
+                  style={{ maxWidth: '200px' }}
+                />
+              </div>
             ) : (
               <div 
                 className="h-10 w-10 rounded-lg flex items-center justify-center text-white font-bold"
@@ -202,12 +242,19 @@ export default function SmartWebsite() {
             <span className="font-semibold text-lg">{website.company_name}</span>
           </div>
           <div className="flex items-center gap-2">
-            {website.phone && (
-              <Button variant="outline" size="sm" asChild>
-                <a href={`tel:${website.phone}`}>
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call
-                </a>
+            {/* Emergency CTA (shown during night mode) */}
+            {isNightMode && website.emergency_cta_text && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  if (website.emergency_cta_url) {
+                    window.location.href = website.emergency_cta_url;
+                  }
+                }}
+              >
+                <AlertCircle className="w-4 h-4 mr-2" />
+                {website.emergency_cta_text}
               </Button>
             )}
             <Button 
@@ -215,15 +262,15 @@ export default function SmartWebsite() {
               style={{ backgroundColor: primaryColor }}
               onClick={() => {
                 supabase.rpc('increment_site_metric', {
-                  p_website_id: website.website_id,
+                  p_website_id: website.id,
                   p_metric: 'booking_clicks'
                 });
-                if (website.cta_button_url) {
-                  window.location.href = website.cta_button_url;
+                if (website.cta_url) {
+                  window.location.href = website.cta_url;
                 }
               }}
             >
-              {website.cta_button_text}
+              {website.cta_text || 'Book Now'}
             </Button>
           </div>
         </div>
@@ -234,16 +281,16 @@ export default function SmartWebsite() {
         className="py-20 px-4"
         style={{ 
           background: website.background_style === 'gradient' 
-            ? `linear-gradient(135deg, ${primaryColor}15 0%, ${website.secondary_color || '#46a2d3'}15 100%)`
+            ? `linear-gradient(135deg, ${primaryColor}15 0%, ${primaryColor}05 100%)`
             : undefined
         }}
       >
         <div className="container mx-auto text-center max-w-3xl">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            {website.hero_headline || `Welcome to ${website.company_name}`}
+            {displayHeadline}
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
-            {website.hero_subheadline || 'Professional service you can trust'}
+            {displaySubheadline}
           </p>
           {openStatus !== null && (
             <Badge variant={openStatus ? 'default' : 'secondary'} className="mb-6">
@@ -251,22 +298,40 @@ export default function SmartWebsite() {
               {openStatus ? 'Open Now' : 'Currently Closed'}
             </Badge>
           )}
-          <Button 
-            size="lg" 
-            className="text-lg px-8"
-            style={{ backgroundColor: primaryColor }}
-            onClick={() => {
-              supabase.rpc('increment_site_metric', {
-                p_website_id: website.website_id,
-                p_metric: 'booking_clicks'
-              });
-              if (website.cta_button_url) {
-                window.location.href = website.cta_button_url;
-              }
-            }}
-          >
-            {website.cta_button_text}
-          </Button>
+          <div className="flex items-center justify-center gap-4 flex-wrap">
+            <Button 
+              size="lg" 
+              className="text-lg px-8"
+              style={{ backgroundColor: primaryColor }}
+              onClick={() => {
+                supabase.rpc('increment_site_metric', {
+                  p_website_id: website.id,
+                  p_metric: 'booking_clicks'
+                });
+                if (website.cta_url) {
+                  window.location.href = website.cta_url;
+                }
+              }}
+            >
+              {website.cta_text || 'Book Now'}
+            </Button>
+            {/* Emergency CTA in hero (shown during night mode) */}
+            {isNightMode && website.emergency_cta_text && (
+              <Button
+                variant="destructive"
+                size="lg"
+                className="text-lg px-8"
+                onClick={() => {
+                  if (website.emergency_cta_url) {
+                    window.location.href = website.emergency_cta_url;
+                  }
+                }}
+              >
+                <AlertCircle className="w-4 h-4 mr-2" />
+                {website.emergency_cta_text}
+              </Button>
+            )}
+          </div>
         </div>
       </section>
 
@@ -386,39 +451,33 @@ export default function SmartWebsite() {
           <div className="container mx-auto max-w-2xl">
             <h2 className="text-3xl font-bold text-center mb-10">Contact Us</h2>
             <div className="grid md:grid-cols-3 gap-6 text-center">
-              {website.phone && (
-                <a href={`tel:${website.phone}`} className="flex flex-col items-center gap-2 hover:opacity-80">
-                  <div 
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-white"
-                    style={{ backgroundColor: primaryColor }}
-                  >
-                    <Phone className="w-5 h-5" />
-                  </div>
-                  <span className="text-sm">{website.phone}</span>
-                </a>
-              )}
-              {website.email && (
-                <a href={`mailto:${website.email}`} className="flex flex-col items-center gap-2 hover:opacity-80">
-                  <div 
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-white"
-                    style={{ backgroundColor: primaryColor }}
-                  >
-                    <Mail className="w-5 h-5" />
-                  </div>
-                  <span className="text-sm">{website.email}</span>
-                </a>
-              )}
-              {website.address && (
-                <div className="flex flex-col items-center gap-2">
-                  <div 
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-white"
-                    style={{ backgroundColor: primaryColor }}
-                  >
-                    <MapPin className="w-5 h-5" />
-                  </div>
-                  <span className="text-sm">{website.address}</span>
+              <div className="flex flex-col items-center gap-2">
+                <div 
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-white"
+                  style={{ backgroundColor: primaryColor }}
+                >
+                  <Phone className="w-5 h-5" />
                 </div>
-              )}
+                <span className="text-sm text-muted-foreground">Contact us for details</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div 
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-white"
+                  style={{ backgroundColor: primaryColor }}
+                >
+                  <Mail className="w-5 h-5" />
+                </div>
+                <span className="text-sm text-muted-foreground">Email us anytime</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div 
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-white"
+                  style={{ backgroundColor: primaryColor }}
+                >
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <span className="text-sm text-muted-foreground">Visit our location</span>
+              </div>
             </div>
           </div>
         </section>
@@ -437,7 +496,7 @@ export default function SmartWebsite() {
       {/* Voice Widget - only for paid tiers or trial */}
       {canShowVoice && (
         <SmartWebsiteVoiceButton
-          websiteId={website.website_id}
+          websiteId={website.id}
           companyId={website.company_id}
           companyName={website.company_name}
           visitorFingerprint={visitorFingerprint}
@@ -448,9 +507,9 @@ export default function SmartWebsite() {
       {/* Chat Widget - only for paid tiers or trial */}
       {canShowChat && (
         <FloatingChatWidget
-          websiteId={website.website_id}
+          websiteId={website.id}
           companyId={website.company_id}
-          companySlug={website.company_slug}
+          companySlug={website.subdomain}
           companyName={website.company_name}
           visitorFingerprint={visitorFingerprint}
           primaryColor={primaryColor}

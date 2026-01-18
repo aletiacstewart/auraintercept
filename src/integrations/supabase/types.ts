@@ -4013,11 +4013,18 @@ export type Database = {
           custom_domain: string | null
           dns_verification_code: string
           domain_verified: boolean
+          emergency_cta_text: string | null
+          emergency_cta_url: string | null
+          enable_night_mode: boolean | null
           hero_headline: string | null
           hero_subheadline: string | null
           id: string
           is_published: boolean
           monthly_visitor_limit: number
+          night_end_hour: number | null
+          night_header: string | null
+          night_start_hour: number | null
+          night_subheadline: string | null
           show_about_section: boolean
           show_chat_widget: boolean
           show_contact: boolean
@@ -4041,11 +4048,18 @@ export type Database = {
           custom_domain?: string | null
           dns_verification_code?: string
           domain_verified?: boolean
+          emergency_cta_text?: string | null
+          emergency_cta_url?: string | null
+          enable_night_mode?: boolean | null
           hero_headline?: string | null
           hero_subheadline?: string | null
           id?: string
           is_published?: boolean
           monthly_visitor_limit?: number
+          night_end_hour?: number | null
+          night_header?: string | null
+          night_start_hour?: number | null
+          night_subheadline?: string | null
           show_about_section?: boolean
           show_chat_widget?: boolean
           show_contact?: boolean
@@ -4069,11 +4083,18 @@ export type Database = {
           custom_domain?: string | null
           dns_verification_code?: string
           domain_verified?: boolean
+          emergency_cta_text?: string | null
+          emergency_cta_url?: string | null
+          enable_night_mode?: boolean | null
           hero_headline?: string | null
           hero_subheadline?: string | null
           id?: string
           is_published?: boolean
           monthly_visitor_limit?: number
+          night_end_hour?: number | null
+          night_header?: string | null
+          night_start_hour?: number | null
+          night_subheadline?: string | null
           show_about_section?: boolean
           show_chat_widget?: boolean
           show_contact?: boolean
@@ -5011,30 +5032,34 @@ export type Database = {
           about_image_url: string
           about_paragraph: string
           about_subheader: string
-          address: string
-          background_image_url: string
           background_style: string
           company_id: string
           company_name: string
-          company_slug: string
-          cta_button_text: string
-          cta_button_url: string
-          email: string
+          cta_text: string
+          cta_url: string
+          custom_domain: string
+          emergency_cta_text: string
+          emergency_cta_url: string
+          enable_night_mode: boolean
           hero_headline: string
           hero_subheadline: string
+          id: string
+          is_published: boolean
           logo_url: string
-          phone: string
+          night_end_hour: number
+          night_header: string
+          night_start_hour: number
+          night_subheadline: string
           primary_color: string
-          secondary_color: string
           show_about_section: boolean
-          show_chat_widget: boolean
+          show_chat: boolean
           show_contact: boolean
           show_hours: boolean
           show_services: boolean
-          show_voice_widget: boolean
+          show_voice: boolean
+          subdomain: string
           subscription_tier: string
           trial_ends_at: string
-          website_id: string
         }[]
       }
       get_website_public_hours: {
