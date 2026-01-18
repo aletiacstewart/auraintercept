@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
-import { CalendarIcon, Gift, Plus, Trash2, Edit2, X, Check } from 'lucide-react';
+import { CalendarIcon, Gift, Plus, Trash2, Edit2, X, Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
 
 interface Holiday {
@@ -300,134 +301,141 @@ export function HolidayMessageManager({ websiteId, companyId }: HolidayMessageMa
   );
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Gift className="w-5 h-5" />
-              Holiday Messages
-            </CardTitle>
-            <CardDescription>
-              Schedule special greetings for holidays and important dates
-            </CardDescription>
-          </div>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" onClick={() => resetForm()}>
-                <Plus className="w-4 h-4 mr-1" />
-                Add Holiday
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-lg">
-              <DialogHeader>
-                <DialogTitle>Add Holiday Message</DialogTitle>
-                <DialogDescription>
-                  Create a special message that will display on your website on the selected date.
-                </DialogDescription>
-              </DialogHeader>
-              <HolidayForm />
-              <div className="flex justify-end gap-2 mt-4">
-                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button 
-                  onClick={() => createHoliday.mutate()}
-                  disabled={!formData.holiday_name || !formData.custom_headline || !selectedDate || createHoliday.isPending}
-                >
-                  {createHoliday.isPending ? 'Creating...' : 'Create Holiday'}
-                </Button>
+    <Collapsible>
+      <Card>
+        <CollapsibleTrigger className="w-full">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Gift className="h-5 w-5 text-primary" />
+              <div className="text-left">
+                <CardTitle className="text-lg">Holiday Messages</CardTitle>
+                <CardDescription>Schedule special greetings for holidays and important dates</CardDescription>
               </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {holidays.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <Gift className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>No holiday messages scheduled yet.</p>
-            <p className="text-sm">Add special greetings for Christmas, New Year, and more!</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {holidays.map(holiday => (
-              <div
-                key={holiday.id}
-                className={cn(
-                  "flex items-center justify-between p-4 rounded-lg border transition-all",
-                  holiday.is_active ? "bg-background" : "bg-muted/50 opacity-60"
-                )}
-              >
-                {editingHoliday?.id === holiday.id ? (
-                  <div className="w-full space-y-4">
-                    <HolidayForm />
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setEditingHoliday(null);
-                          resetForm();
-                        }}
-                      >
-                        <X className="w-4 h-4 mr-1" />
-                        Cancel
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => updateHoliday.mutate(holiday.id)}
-                        disabled={updateHoliday.isPending}
-                      >
-                        <Check className="w-4 h-4 mr-1" />
-                        Save
-                      </Button>
-                    </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" onClick={(e) => { e.stopPropagation(); resetForm(); }}>
+                    <Plus className="w-4 h-4 mr-1" />
+                    Add Holiday
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-lg">
+                  <DialogHeader>
+                    <DialogTitle>Add Holiday Message</DialogTitle>
+                    <DialogDescription>
+                      Create a special message that will display on your website on the selected date.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <HolidayForm />
+                  <div className="flex justify-end gap-2 mt-4">
+                    <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button 
+                      onClick={() => createHoliday.mutate()}
+                      disabled={!formData.holiday_name || !formData.custom_headline || !selectedDate || createHoliday.isPending}
+                    >
+                      {createHoliday.isPending ? 'Creating...' : 'Create Holiday'}
+                    </Button>
                   </div>
-                ) : (
-                  <>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-medium">{holiday.holiday_name}</span>
-                        <Badge variant="outline" className="text-xs">
-                          {format(new Date(holiday.holiday_date), 'MMM d, yyyy')}
-                        </Badge>
-                        {new Date(holiday.holiday_date).toDateString() === new Date().toDateString() && (
-                          <Badge className="text-xs bg-green-500">Today!</Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground truncate max-w-md">
-                        {holiday.custom_headline}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        checked={holiday.is_active}
-                        onCheckedChange={(checked) => toggleActive.mutate({ id: holiday.id, is_active: checked })}
-                      />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEdit(holiday)}
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => deleteHoliday.mutate(holiday.id)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </>
-                )}
+                </DialogContent>
+              </Dialog>
+              <ChevronDown className="h-5 w-5 text-card-foreground/70" />
+            </div>
+          </CardHeader>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <CardContent className="pt-0">
+            {holidays.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Gift className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>No holiday messages scheduled yet.</p>
+                <p className="text-sm">Add special greetings for Christmas, New Year, and more!</p>
               </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+            ) : (
+              <div className="space-y-3">
+                {holidays.map(holiday => (
+                  <div
+                    key={holiday.id}
+                    className={cn(
+                      "flex items-center justify-between p-4 rounded-lg border transition-all",
+                      holiday.is_active ? "bg-background" : "bg-muted/50 opacity-60"
+                    )}
+                  >
+                    {editingHoliday?.id === holiday.id ? (
+                      <div className="w-full space-y-4">
+                        <HolidayForm />
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setEditingHoliday(null);
+                              resetForm();
+                            }}
+                          >
+                            <X className="w-4 h-4 mr-1" />
+                            Cancel
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => updateHoliday.mutate(holiday.id)}
+                            disabled={updateHoliday.isPending}
+                          >
+                            <Check className="w-4 h-4 mr-1" />
+                            Save
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-medium">{holiday.holiday_name}</span>
+                            <Badge variant="outline" className="text-xs">
+                              {format(new Date(holiday.holiday_date), 'MMM d, yyyy')}
+                            </Badge>
+                            {new Date(holiday.holiday_date).toDateString() === new Date().toDateString() && (
+                              <Badge className="text-xs bg-green-500">Today!</Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground truncate max-w-md">
+                            {holiday.custom_headline}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={holiday.is_active}
+                            onCheckedChange={(checked) => toggleActive.mutate({ id: holiday.id, is_active: checked })}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="btn-ghost-card"
+                            onClick={(e) => { e.stopPropagation(); handleEdit(holiday); }}
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => { e.stopPropagation(); deleteHoliday.mutate(holiday.id); }}
+                            className="btn-ghost-card text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </CollapsibleContent>
+      </Card>
+    </Collapsible>
   );
 }
