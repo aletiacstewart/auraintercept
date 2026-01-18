@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -313,9 +314,11 @@ export default function Companies() {
   if (!isPlatformAdmin && !isCompanyAdmin) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">You don't have access to this page.</p>
-        </div>
+        <PageContainer>
+          <div className="flex items-center justify-center h-64">
+            <p className="text-muted-foreground">You don't have access to this page.</p>
+          </div>
+        </PageContainer>
       </DashboardLayout>
     );
   }
@@ -331,7 +334,8 @@ export default function Companies() {
     const company = companies[0];
     return (
       <DashboardLayout>
-        <div className="space-y-6 animate-fade-in">
+        <PageContainer>
+          <div className="space-y-6 animate-fade-in">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">Company Profile</h1>
@@ -430,7 +434,8 @@ export default function Companies() {
               />
             </DialogContent>
           </Dialog>
-        </div>
+          </div>
+        </PageContainer>
       </DashboardLayout>
     );
   }
@@ -438,7 +443,8 @@ export default function Companies() {
   // Platform Admin View - show all companies with full management
   return (
     <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
+      <PageContainer>
+        <div className="space-y-6 animate-fade-in">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Companies</h1>
@@ -701,6 +707,7 @@ export default function Companies() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      </PageContainer>
     </DashboardLayout>
   );
 }
