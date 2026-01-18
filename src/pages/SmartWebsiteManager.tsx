@@ -25,13 +25,49 @@ import {
   CheckCircle,
   AlertCircle,
   Loader2,
-  QrCode
+  QrCode,
+  Moon
 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PageHeader } from '@/components/ui/page-header';
 import { QRCodeSVG } from 'qrcode.react';
 import { VisitorLimitModal } from '@/components/smartwebsite/VisitorLimitModal';
 import { SmartWebsiteAnalytics } from '@/components/smartwebsite/SmartWebsiteAnalytics';
 import { AboutSectionEditor } from '@/components/smartwebsite/AboutSectionEditor';
+
+// Extended type for website data with new night mode fields
+interface ExtendedWebsiteData {
+  id: string;
+  company_id: string;
+  subdomain: string;
+  hero_headline: string | null;
+  hero_subheadline: string | null;
+  cta_button_text: string | null;
+  cta_button_url: string | null;
+  show_services: boolean;
+  show_hours: boolean;
+  show_contact: boolean;
+  show_chat_widget: boolean;
+  show_voice_widget: boolean;
+  is_published: boolean;
+  monthly_visitor_limit: number;
+  custom_domain: string | null;
+  domain_verified: boolean;
+  dns_verification_code: string | null;
+  show_about_section: boolean | null;
+  about_image_url: string | null;
+  about_header: string | null;
+  about_subheader: string | null;
+  about_paragraph: string | null;
+  // Night mode fields
+  enable_night_mode?: boolean;
+  night_header?: string | null;
+  night_subheadline?: string | null;
+  night_start_hour?: number;
+  night_end_hour?: number;
+  emergency_cta_text?: string | null;
+  emergency_cta_url?: string | null;
+}
 
 export default function SmartWebsiteManager() {
   const { companyId } = useAuth();
@@ -52,7 +88,7 @@ export default function SmartWebsiteManager() {
         .maybeSingle();
       
       if (error) throw error;
-      return data;
+      return data as unknown as ExtendedWebsiteData | null;
     },
     enabled: !!companyId,
   });
@@ -253,7 +289,7 @@ export default function SmartWebsiteManager() {
             <TabsTrigger value="domain">Custom Domain</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="content">
+          <TabsContent value="content" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Website Content</CardTitle>
@@ -291,6 +327,117 @@ export default function SmartWebsiteManager() {
                     placeholder="/customer-portal/your-company"
                   />
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* AI-Dynamic Header Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Moon className="w-5 h-5" />
+                  AI-Dynamic Header
+                </CardTitle>
+                <CardDescription>
+                  Display different content based on visitor's local time
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Enable Night Mode Toggle */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Enable Night Mode</p>
+                    <p className="text-sm text-muted-foreground">
+                      Show alternate content during evening/night hours
+                    </p>
+                  </div>
+                  <Switch
+                    checked={website.enable_night_mode ?? false}
+                    onCheckedChange={(checked) => updateWebsite.mutate({ enable_night_mode: checked })}
+                  />
+                </div>
+
+                {website.enable_night_mode && (
+                  <>
+                    {/* Night Start/End Time */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Night Starts At</Label>
+                        <Select
+                          defaultValue={String(website.night_start_hour ?? 18)}
+                          onValueChange={(value) => updateWebsite.mutate({ night_start_hour: parseInt(value) })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 24 }, (_, i) => (
+                              <SelectItem key={i} value={String(i)}>
+                                {i === 0 ? '12:00 AM' : i < 12 ? `${i}:00 AM` : i === 12 ? '12:00 PM' : `${i - 12}:00 PM`}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Night Ends At</Label>
+                        <Select
+                          defaultValue={String(website.night_end_hour ?? 6)}
+                          onValueChange={(value) => updateWebsite.mutate({ night_end_hour: parseInt(value) })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 24 }, (_, i) => (
+                              <SelectItem key={i} value={String(i)}>
+                                {i === 0 ? '12:00 AM' : i < 12 ? `${i}:00 AM` : i === 12 ? '12:00 PM' : `${i - 12}:00 PM`}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    {/* Night Header/Subheadline */}
+                    <div className="space-y-2">
+                      <Label>Night Headline</Label>
+                      <Input
+                        defaultValue={website.night_header || ''}
+                        onBlur={(e) => updateWebsite.mutate({ night_header: e.target.value })}
+                        placeholder="Need help after hours?"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Night Subheadline</Label>
+                      <Textarea
+                        defaultValue={website.night_subheadline || ''}
+                        onBlur={(e) => updateWebsite.mutate({ night_subheadline: e.target.value })}
+                        placeholder="Our emergency team is standing by 24/7..."
+                      />
+                    </div>
+
+                    {/* Emergency CTA */}
+                    <div className="space-y-2">
+                      <Label>Emergency CTA Text</Label>
+                      <Input
+                        defaultValue={website.emergency_cta_text || ''}
+                        onBlur={(e) => updateWebsite.mutate({ emergency_cta_text: e.target.value })}
+                        placeholder="24/7 Emergency Line"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Emergency CTA URL</Label>
+                      <Input
+                        defaultValue={website.emergency_cta_url || ''}
+                        onBlur={(e) => updateWebsite.mutate({ emergency_cta_url: e.target.value })}
+                        placeholder="tel:+1-555-EMERGENCY"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Use tel: for phone numbers (e.g., tel:+15551234567)
+                      </p>
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
