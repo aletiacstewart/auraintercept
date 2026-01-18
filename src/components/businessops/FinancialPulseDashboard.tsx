@@ -170,17 +170,6 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 rounded-lg bg-feature-analytics/15">
-          <Sparkles className="h-6 w-6 text-feature-analytics" />
-        </div>
-        <div>
-          <h2 className="text-xl font-bold text-foreground">Business Ops Overview</h2>
-          <p className="text-sm text-muted-foreground">Real-time business operations overview</p>
-        </div>
-      </div>
-
       {/* Summary Stats - Row 1 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card 
