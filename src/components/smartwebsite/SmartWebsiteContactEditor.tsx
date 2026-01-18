@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import { Phone, Mail, MapPin, Save, Loader2 } from 'lucide-react';
+import { Phone, Mail, MapPin, Save, Loader2, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 export function SmartWebsiteContactEditor() {
@@ -130,19 +131,29 @@ export function SmartWebsiteContactEditor() {
         />
       </div>
       
-      <Button type="submit" disabled={updateMutation.isPending}>
-        {updateMutation.isPending ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Saving...
-          </>
-        ) : (
-          <>
-            <Save className="mr-2 h-4 w-4" />
-            Save Contact Info
-          </>
-        )}
-      </Button>
+      <div className="flex items-center justify-between pt-2">
+        <Button type="submit" disabled={updateMutation.isPending}>
+          {updateMutation.isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              Save Contact Info
+            </>
+          )}
+        </Button>
+        
+        <Link
+          to="/dashboard/settings?tab=contact"
+          className="text-sm text-accent hover:underline flex items-center gap-1"
+        >
+          Full Contact Settings
+          <ExternalLink className="h-3 w-3" />
+        </Link>
+      </div>
     </form>
   );
 }

@@ -309,8 +309,8 @@ export default function SmartWebsiteManager() {
           <TabsList>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="media">Media</TabsTrigger>
-            <TabsTrigger value="sections">Sections</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="sections">Content Section Visibility</TabsTrigger>
+            <TabsTrigger value="analytics">Smart Website Analytics</TabsTrigger>
             <TabsTrigger value="domain">Custom Domain</TabsTrigger>
           </TabsList>
 
@@ -503,16 +503,7 @@ export default function SmartWebsiteManager() {
                         <CardDescription>Add a two-column section with image and text</CardDescription>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <Switch
-                        checked={website.show_about_section ?? false}
-                        onCheckedChange={(checked) => {
-                          updateWebsite.mutate({ show_about_section: checked });
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                      <ChevronDown className="h-5 w-5 text-card-foreground/70" />
-                    </div>
+                    <ChevronDown className="h-5 w-5 text-card-foreground/70" />
                   </CardHeader>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
