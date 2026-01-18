@@ -260,7 +260,7 @@ export function BusinessMgtOpsAppCard() {
                       <strong>Preview URL detected.</strong> The install link must use your published app URL (not lovableproject.com),
                       otherwise phones will be redirected to create a Lovable account.
                       {' '}
-                      <Link to="/dashboard/aura-quick-start" className="underline font-medium inline-flex items-center gap-1">
+                      <Link to="/dashboard/start-step-1-setup" className="underline font-medium inline-flex items-center gap-1">
                         Set a published app URL <Settings className="h-3 w-3" />
                       </Link>{' '}
                       to fix this.

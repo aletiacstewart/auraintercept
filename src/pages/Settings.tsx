@@ -46,7 +46,7 @@ export default function Settings() {
           <div className="space-y-6 animate-fade-in">
           <PageHeader
             icon={SettingsIcon}
-            title="Aura Quick-Start"
+            title="Start Step 1 Setup"
             description="Configure your company settings and preferences"
             featureColor="config"
           />
@@ -121,7 +121,7 @@ export default function Settings() {
           <div className="space-y-6 animate-fade-in">
             <PageHeader
               icon={SettingsIcon}
-              title="Aura Quick-Start"
+              title="Start Step 1 Setup"
               description="Manage your account settings"
             />
             <ProfileSettings />
