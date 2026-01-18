@@ -20,10 +20,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
 import { Settings as SettingsIcon } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+
+const VALID_TABS = [
+  'branding', 'contact', 'app-url', 'reminders', 'missed-calls', 
+  'default-prefs', 'reports', 'alerts', 'customer-prefs', 
+  'emails', 'sms', 'reviews', 'warranties', 'campaigns'
+];
 
 export default function Settings() {
   const { userRole } = useAuth();
   const isPlatformAdmin = userRole === 'platform_admin';
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const tabParam = searchParams.get('tab');
+  const activeTab = tabParam && VALID_TABS.includes(tabParam) ? tabParam : 'branding';
+
+  const handleTabChange = (value: string) => {
+    setSearchParams({ tab: value });
+  };
 
   return (
     <DashboardLayout>
@@ -38,7 +53,7 @@ export default function Settings() {
           />
           
           <SetupProgressBar isPlatformAdmin={isPlatformAdmin} />
-          <Tabs defaultValue="branding" className="space-y-4">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
             <div className="guide-card p-4">
               <TabsList className="flex flex-wrap h-auto gap-2">
                 <TabsTrigger value="branding">Branding</TabsTrigger>
