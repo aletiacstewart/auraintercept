@@ -47,6 +47,7 @@ interface WebsiteData {
   gallery_images: string[] | null;
   background_image_url: string | null;
   logo_transparency_mode: 'none' | 'multiply' | 'contrast' | null;
+  show_gallery: boolean | null;
 }
 
 interface Service {
@@ -437,7 +438,7 @@ export default function SmartWebsite() {
       )}
 
       {/* Gallery Section */}
-      {website.gallery_images && website.gallery_images.length > 0 && (
+      {(website.show_gallery ?? true) && website.gallery_images && website.gallery_images.length > 0 && (
         <section className="py-16 px-4 bg-muted/30">
           <div className="container mx-auto">
             <h2 className="text-3xl font-bold text-center mb-10">Gallery</h2>

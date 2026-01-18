@@ -4095,6 +4095,7 @@ export type Database = {
           show_about_section: boolean
           show_chat_widget: boolean
           show_contact: boolean
+          show_gallery: boolean | null
           show_hours: boolean
           show_services: boolean
           show_voice_widget: boolean
@@ -4130,6 +4131,7 @@ export type Database = {
           show_about_section?: boolean
           show_chat_widget?: boolean
           show_contact?: boolean
+          show_gallery?: boolean | null
           show_hours?: boolean
           show_services?: boolean
           show_voice_widget?: boolean
@@ -4165,6 +4167,7 @@ export type Database = {
           show_about_section?: boolean
           show_chat_widget?: boolean
           show_contact?: boolean
+          show_gallery?: boolean | null
           show_hours?: boolean
           show_services?: boolean
           show_voice_widget?: boolean
@@ -5133,6 +5136,7 @@ export type Database = {
           show_about_section: boolean
           show_chat_widget: boolean
           show_contact: boolean
+          show_gallery: boolean
           show_hours: boolean
           show_services: boolean
           show_voice_widget: boolean
