@@ -127,7 +127,7 @@ const App = () => (
               <Route path="/dashboard/customers" element={<Customers />} />
               <Route path="/dashboard/employees" element={<Employees />} />
               <Route path="/dashboard/employees/:id" element={<EmployeeDetail />} />
-              <Route path="/dashboard/start-step-1-setup" element={<Settings />} />
+              <Route path="/dashboard/quick-setup" element={<Settings />} />
               
               <Route path="/dashboard/availability" element={<EmployeeAvailability />} />
               <Route path="/dashboard/appointments" element={<EmployeeAppointments />} />

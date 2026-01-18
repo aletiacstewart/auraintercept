@@ -626,7 +626,7 @@ export default function Companies() {
                                 <Pencil className="w-4 h-4 mr-2" />
                                 Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => navigate(`/dashboard/start-step-1-setup?company=${company.id}`)}>
+                              <DropdownMenuItem onClick={() => navigate(`/dashboard/quick-setup?company=${company.id}`)}>
                                 <Settings className="w-4 h-4 mr-2" />
                                 Settings
                               </DropdownMenuItem>
