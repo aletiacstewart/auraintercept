@@ -11,13 +11,14 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { Calendar, Clock, Mail, CheckCircle2, XCircle, AlertCircle, FileText, TrendingUp, Send, Loader2, ChevronDown, Settings2, Globe } from 'lucide-react';
+import { Calendar, Clock, Mail, CheckCircle2, XCircle, AlertCircle, FileText, TrendingUp, Send, Loader2, ChevronDown, Settings2, Globe, Activity, DollarSign } from 'lucide-react';
 import { format, formatDistanceToNow, addDays, setHours, setMinutes, setDate } from 'date-fns';
 import { DigestDeliveryHistory } from './DigestDeliveryHistory';
 import { DigestDeliveryStats } from './DigestDeliveryStats';
 import { SuppressedEmailsManager } from './SuppressedEmailsManager';
 import { DigestMetricsSelector } from './DigestMetricsSelector';
 import { FinancialReports } from './FinancialReports';
+import { AutomationOverview } from './AutomationOverview';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface ReportConfig {
@@ -327,11 +328,38 @@ export function ReportsDashboard() {
   }
 
   return (
-    <Tabs defaultValue="scheduled" className="space-y-6">
+    <Tabs defaultValue="overview" className="space-y-6">
       <TabsList>
-        <TabsTrigger value="scheduled">Scheduled Reports</TabsTrigger>
-        <TabsTrigger value="financial">Financial Reports</TabsTrigger>
+        <TabsTrigger value="overview" className="gap-1">
+          <Activity className="h-4 w-4" />
+          All Automations
+        </TabsTrigger>
+        <TabsTrigger value="scheduled" className="gap-1">
+          <FileText className="h-4 w-4" />
+          Digest Reports
+        </TabsTrigger>
+        <TabsTrigger value="financial" className="gap-1">
+          <DollarSign className="h-4 w-4" />
+          Financial
+        </TabsTrigger>
       </TabsList>
+      
+      <TabsContent value="overview">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              All Platform Automations
+            </CardTitle>
+            <CardDescription>
+              Overview of all automated reports, reminders, and notifications configured for your company
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AutomationOverview />
+          </CardContent>
+        </Card>
+      </TabsContent>
       
       <TabsContent value="scheduled">
         <Card>
