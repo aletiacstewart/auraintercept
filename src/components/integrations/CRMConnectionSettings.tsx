@@ -307,7 +307,7 @@ export function CRMConnectionSettings() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold">CRM Integrations</h2>
+          <h2 className="text-lg font-semibold text-foreground">CRM Integrations</h2>
           <p className="text-sm text-muted-foreground">Connect your CRM to sync customer data automatically</p>
         </div>
         {connectedCRMs.length > 0 && (

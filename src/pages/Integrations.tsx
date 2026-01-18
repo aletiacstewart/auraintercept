@@ -532,7 +532,7 @@ export default function Integrations() {
         {/* Calendar Integrations */}
         <div className="space-y-4">
           <div>
-            <h2 className="text-lg font-semibold">Calendar</h2>
+            <h2 className="text-lg font-semibold text-foreground">Calendar</h2>
             <p className="text-sm text-muted-foreground">Sync appointments with your preferred calendar</p>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
