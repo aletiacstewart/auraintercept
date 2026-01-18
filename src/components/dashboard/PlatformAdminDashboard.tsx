@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { DashboardSetupNav } from './DashboardSetupNav';
 
 interface CompanyStats {
   id: string;
@@ -282,6 +283,9 @@ export function PlatformAdminDashboard() {
         description="Welcome to the Aura Intercept admin panel"
         featureColor="overview"
       />
+
+      {/* Setup Navigation & Progress */}
+      <DashboardSetupNav />
 
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

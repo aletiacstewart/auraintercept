@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
 import { TrialBanner } from '@/components/dashboard/TrialBanner';
+import { DashboardSetupNav } from './DashboardSetupNav';
 
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { PDFDownloadLink } from '@react-pdf/renderer';
@@ -284,6 +285,9 @@ export function CompanyAdminDashboard() {
           </div>
         }
       />
+
+      {/* Setup Navigation & Progress */}
+      <DashboardSetupNav />
 
       <div className="flex items-center gap-4">
         <PDFDownloadLink 
