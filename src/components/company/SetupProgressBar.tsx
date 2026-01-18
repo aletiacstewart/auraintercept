@@ -47,11 +47,6 @@ export function SetupProgressBar() {
           .select('*', { count: 'exact', head: true })
           .eq('company_id', companyId);
 
-        // Fetch customer profiles count (for customer prefs)
-        const { count: customersCount } = await supabase
-          .from('customer_profiles')
-          .select('*', { count: 'exact', head: true })
-          .eq('company_id', companyId);
 
         // Fetch email templates count
         const { count: emailTemplatesCount } = await supabase
@@ -121,7 +116,7 @@ export function SetupProgressBar() {
           {
             id: 'customer-prefs',
             label: 'Customer Prefs',
-            completed: (customersCount || 0) > 0,
+            completed: company?.customer_prefs_enabled === true || company?.customer_prefs_enabled === false,
           },
           {
             id: 'emails',

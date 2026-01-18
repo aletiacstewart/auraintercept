@@ -780,6 +780,7 @@ export type Database = {
           cost_alert_enabled: boolean | null
           cost_alert_threshold: number | null
           created_at: string
+          customer_prefs_enabled: boolean | null
           default_call_enabled: boolean
           default_email_enabled: boolean
           default_sms_enabled: boolean
@@ -883,6 +884,7 @@ export type Database = {
           cost_alert_enabled?: boolean | null
           cost_alert_threshold?: number | null
           created_at?: string
+          customer_prefs_enabled?: boolean | null
           default_call_enabled?: boolean
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
@@ -986,6 +988,7 @@ export type Database = {
           cost_alert_enabled?: boolean | null
           cost_alert_threshold?: number | null
           created_at?: string
+          customer_prefs_enabled?: boolean | null
           default_call_enabled?: boolean
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
