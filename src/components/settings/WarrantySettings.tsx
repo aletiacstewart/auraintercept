@@ -4,10 +4,14 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Shield, Save, Wrench, Package, Factory } from 'lucide-react';
-import { useState } from 'react';
+import { Shield, Save, Wrench, Package, Factory, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const WARRANTY_PERIOD_OPTIONS = [
   { value: '0', label: 'No warranty' },
@@ -19,29 +23,152 @@ const WARRANTY_PERIOD_OPTIONS = [
   { value: '60', label: '5 years' },
 ];
 
+interface WarrantyPolicy {
+  id?: string;
+  company_id: string;
+  name: string;
+  coverage_type: string;
+  duration_months: number;
+  labor_covered: boolean;
+  parts_covered: boolean;
+  is_active: boolean;
+}
+
 export function WarrantySettings() {
+  const { companyId } = useAuth();
+  const queryClient = useQueryClient();
+  
   const [settings, setSettings] = useState({
-    // Service warranty by company
     serviceWarrantyPeriod: 12,
-    // Parts warranty by company
     partsWarrantyCompanyPeriod: 12,
-    // Parts warranty by manufacturer
     partsWarrantyManufacturerPeriod: 24,
     enableExpirationAlerts: true,
     alertDaysBefore: 30,
     autoExtendOffers: false,
     extendOfferDiscount: 10,
   });
-  const [saving, setSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
-  const handleSave = async () => {
-    setSaving(true);
-    // In a real app, save to database
-    await new Promise(resolve => setTimeout(resolve, 500));
-    toast.success('Warranty settings saved');
-    triggerSetupProgressRefresh();
-    setSaving(false);
+  // Fetch existing warranty policies
+  const { data: policies, isLoading } = useQuery({
+    queryKey: ['warranty-policies', companyId],
+    queryFn: async () => {
+      if (!companyId) return [];
+      const { data, error } = await supabase
+        .from('warranty_policies')
+        .select('*')
+        .eq('company_id', companyId)
+        .in('coverage_type', ['service', 'parts_company', 'parts_manufacturer']);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  // Sync local state with fetched data
+  useEffect(() => {
+    if (policies) {
+      const servicePolicy = policies.find(p => p.coverage_type === 'service');
+      const partsCompanyPolicy = policies.find(p => p.coverage_type === 'parts_company');
+      const partsManufacturerPolicy = policies.find(p => p.coverage_type === 'parts_manufacturer');
+      
+      setSettings(s => ({
+        ...s,
+        serviceWarrantyPeriod: servicePolicy?.duration_months ?? 12,
+        partsWarrantyCompanyPeriod: partsCompanyPolicy?.duration_months ?? 12,
+        partsWarrantyManufacturerPeriod: partsManufacturerPolicy?.duration_months ?? 24,
+      }));
+      setHasChanges(false);
+    }
+  }, [policies]);
+
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      if (!companyId) throw new Error('No company ID');
+
+      const warrantyPolicies: WarrantyPolicy[] = [
+        {
+          company_id: companyId,
+          name: 'Service Warranty',
+          coverage_type: 'service',
+          duration_months: settings.serviceWarrantyPeriod,
+          labor_covered: true,
+          parts_covered: false,
+          is_active: settings.serviceWarrantyPeriod > 0,
+        },
+        {
+          company_id: companyId,
+          name: 'Parts Warranty (Company)',
+          coverage_type: 'parts_company',
+          duration_months: settings.partsWarrantyCompanyPeriod,
+          labor_covered: false,
+          parts_covered: true,
+          is_active: settings.partsWarrantyCompanyPeriod > 0,
+        },
+        {
+          company_id: companyId,
+          name: 'Parts Warranty (Manufacturer)',
+          coverage_type: 'parts_manufacturer',
+          duration_months: settings.partsWarrantyManufacturerPeriod,
+          labor_covered: false,
+          parts_covered: true,
+          is_active: settings.partsWarrantyManufacturerPeriod > 0,
+        },
+      ];
+
+      // Upsert each warranty policy
+      for (const policy of warrantyPolicies) {
+        const existingPolicy = policies?.find(p => p.coverage_type === policy.coverage_type);
+        
+        if (existingPolicy) {
+          const { error } = await supabase
+            .from('warranty_policies')
+            .update({
+              duration_months: policy.duration_months,
+              is_active: policy.is_active,
+            })
+            .eq('id', existingPolicy.id);
+          if (error) throw error;
+        } else {
+          const { error } = await supabase
+            .from('warranty_policies')
+            .insert(policy);
+          if (error) throw error;
+        }
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['warranty-policies', companyId] });
+      toast.success('Warranty settings saved');
+      triggerSetupProgressRefresh();
+      setHasChanges(false);
+    },
+    onError: (error) => {
+      console.error('Failed to save warranty settings:', error);
+      toast.error('Failed to save warranty settings');
+    },
+  });
+
+  const handleChange = (key: keyof typeof settings, value: number | boolean) => {
+    setSettings(s => ({ ...s, [key]: value }));
+    setHasChanges(true);
   };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-4 w-72 mt-2" />
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-20 w-full" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -72,7 +199,7 @@ export function WarrantySettings() {
             </div>
             <Select
               value={String(settings.serviceWarrantyPeriod)}
-              onValueChange={(v) => setSettings(s => ({ ...s, serviceWarrantyPeriod: Number(v) }))}
+              onValueChange={(v) => handleChange('serviceWarrantyPeriod', Number(v))}
             >
               <SelectTrigger className="w-[140px]">
                 <SelectValue />
@@ -98,7 +225,7 @@ export function WarrantySettings() {
             </div>
             <Select
               value={String(settings.partsWarrantyCompanyPeriod)}
-              onValueChange={(v) => setSettings(s => ({ ...s, partsWarrantyCompanyPeriod: Number(v) }))}
+              onValueChange={(v) => handleChange('partsWarrantyCompanyPeriod', Number(v))}
             >
               <SelectTrigger className="w-[140px]">
                 <SelectValue />
@@ -124,7 +251,7 @@ export function WarrantySettings() {
             </div>
             <Select
               value={String(settings.partsWarrantyManufacturerPeriod)}
-              onValueChange={(v) => setSettings(s => ({ ...s, partsWarrantyManufacturerPeriod: Number(v) }))}
+              onValueChange={(v) => handleChange('partsWarrantyManufacturerPeriod', Number(v))}
             >
               <SelectTrigger className="w-[140px]">
                 <SelectValue />
@@ -147,7 +274,7 @@ export function WarrantySettings() {
             <Input
               type="number"
               value={settings.alertDaysBefore}
-              onChange={(e) => setSettings(s => ({ ...s, alertDaysBefore: Number(e.target.value) }))}
+              onChange={(e) => handleChange('alertDaysBefore', Number(e.target.value))}
               className="max-w-[200px]"
             />
           </div>
@@ -161,7 +288,7 @@ export function WarrantySettings() {
             </div>
             <Switch
               checked={settings.enableExpirationAlerts}
-              onCheckedChange={(checked) => setSettings(s => ({ ...s, enableExpirationAlerts: checked }))}
+              onCheckedChange={(checked) => handleChange('enableExpirationAlerts', checked)}
             />
           </div>
 
@@ -174,7 +301,7 @@ export function WarrantySettings() {
             </div>
             <Switch
               checked={settings.autoExtendOffers}
-              onCheckedChange={(checked) => setSettings(s => ({ ...s, autoExtendOffers: checked }))}
+              onCheckedChange={(checked) => handleChange('autoExtendOffers', checked)}
             />
           </div>
 
@@ -184,16 +311,23 @@ export function WarrantySettings() {
               <Input
                 type="number"
                 value={settings.extendOfferDiscount}
-                onChange={(e) => setSettings(s => ({ ...s, extendOfferDiscount: Number(e.target.value) }))}
+                onChange={(e) => handleChange('extendOfferDiscount', Number(e.target.value))}
                 className="max-w-xs"
               />
             </div>
           )}
         </div>
 
-        <Button onClick={handleSave} disabled={saving}>
-          <Save className="h-4 w-4 mr-2" />
-          Save Settings
+        <Button 
+          onClick={() => saveMutation.mutate()} 
+          disabled={saveMutation.isPending || !hasChanges}
+        >
+          {saveMutation.isPending ? (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4 mr-2" />
+          )}
+          {saveMutation.isPending ? 'Saving...' : hasChanges ? 'Save Settings' : 'Saved'}
         </Button>
       </CardContent>
     </Card>

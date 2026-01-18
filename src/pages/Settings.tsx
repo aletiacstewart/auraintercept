@@ -30,7 +30,6 @@ const VALID_TABS = [
 
 export default function Settings() {
   const { userRole } = useAuth();
-  const isPlatformAdmin = userRole === 'platform_admin';
   const [searchParams, setSearchParams] = useSearchParams();
   
   const tabParam = searchParams.get('tab');
@@ -52,7 +51,7 @@ export default function Settings() {
             featureColor="config"
           />
           
-          <SetupProgressBar isPlatformAdmin={isPlatformAdmin} />
+          <SetupProgressBar />
           <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
             <div className="guide-card p-4">
               <TabsList className="flex flex-wrap h-auto gap-2">
@@ -68,8 +67,8 @@ export default function Settings() {
                 <TabsTrigger value="emails">Email Templates</TabsTrigger>
                 <TabsTrigger value="sms">SMS Templates</TabsTrigger>
                 <TabsTrigger value="reviews">Reviews</TabsTrigger>
-                {isPlatformAdmin && <TabsTrigger value="warranties">Warranties</TabsTrigger>}
-                {isPlatformAdmin && <TabsTrigger value="campaigns">Campaigns</TabsTrigger>}
+                <TabsTrigger value="warranties">Warranties</TabsTrigger>
+                <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
               </TabsList>
             </div>
             <TabsContent value="branding">
@@ -108,16 +107,12 @@ export default function Settings() {
             <TabsContent value="reviews">
               <ReviewRequestSettings />
             </TabsContent>
-            {isPlatformAdmin && (
-              <TabsContent value="warranties">
-                <WarrantySettings />
-              </TabsContent>
-            )}
-            {isPlatformAdmin && (
-              <TabsContent value="campaigns">
-                <CampaignSettings />
-              </TabsContent>
-            )}
+            <TabsContent value="warranties">
+              <WarrantySettings />
+            </TabsContent>
+            <TabsContent value="campaigns">
+              <CampaignSettings />
+            </TabsContent>
           </Tabs>
           </div>
         </PageContainer>
