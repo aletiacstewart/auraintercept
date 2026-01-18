@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { Mic, MicOff, X } from 'lucide-react';
 import { useVoice } from '@/contexts/VoiceContext';
 import { cn } from '@/lib/utils';
@@ -15,12 +16,12 @@ export function AuraVoiceOverlay() {
 
   if (!isVoiceModeEnabled) return null;
 
-  return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] animate-fade-in">
+  const overlayContent = (
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] animate-fade-in pointer-events-auto">
       <div className={cn(
         "voice-overlay-container rounded-2xl px-6 py-4 min-w-[320px] max-w-[500px]",
         "flex items-center gap-4 shadow-2xl",
-        "border border-secondary/30"
+        "border border-secondary/30 bg-background"
       )}>
         {/* Microphone indicator */}
         <div className={cn(
@@ -62,7 +63,7 @@ export function AuraVoiceOverlay() {
           
           {/* Hint text */}
           <p className="text-xs text-muted-foreground/60 mt-1">
-            Say "Next", "Clear", or "Save Job" • Ctrl+Shift+V to toggle
+            Say "Go to [page]", "Search for [term]", or "Save Job" • Ctrl+Shift+V
           </p>
         </div>
 
@@ -78,4 +79,7 @@ export function AuraVoiceOverlay() {
       </div>
     </div>
   );
+
+  // Use portal to ensure overlay renders at document.body level, above all modals
+  return createPortal(overlayContent, document.body);
 }

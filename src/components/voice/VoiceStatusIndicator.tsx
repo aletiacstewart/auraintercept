@@ -19,7 +19,7 @@ export function VoiceStatusIndicator({
   showLabel = false,
   className 
 }: VoiceStatusIndicatorProps) {
-  const { isVoiceModeEnabled, isListening, enableVoiceMode, disableVoiceMode } = useVoice();
+  const { isVoiceModeEnabled, isListening, isSupported, enableVoiceMode, disableVoiceMode } = useVoice();
 
   const sizeClasses = {
     sm: 'w-5 h-5',
@@ -32,6 +32,35 @@ export function VoiceStatusIndicator({
     md: 'w-3.5 h-3.5',
     lg: 'w-4 h-4',
   };
+
+  // Show disabled indicator if voice is not supported
+  if (!isSupported) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className={cn("inline-flex items-center gap-1.5 opacity-50", className)}>
+              <div className={cn(
+                "flex items-center justify-center rounded-full bg-muted text-muted-foreground",
+                sizeClasses[size]
+              )}>
+                <MicOff className={cn(iconSizeClasses[size])} />
+              </div>
+              {showLabel && (
+                <span className="text-xs font-medium text-muted-foreground">
+                  Not Supported
+                </span>
+              )}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="bg-popover text-popover-foreground">
+            <p className="text-xs">Voice not supported in this browser</p>
+            <p className="text-xs text-muted-foreground">Try Chrome, Edge, or Safari</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
 
   const handleToggle = () => {
     if (isVoiceModeEnabled) {

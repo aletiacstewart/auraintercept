@@ -17,7 +17,90 @@ export type VoiceCommand =
   | 'ask aura'
   | 'aura help'
   | 'cancel'
-  | 'stop listening';
+  | 'stop listening'
+  | 'navigate';
+
+// Page routes for voice navigation
+export const PAGE_ROUTES: Record<string, string> = {
+  'dashboard': '/dashboard',
+  'home': '/dashboard',
+  'companies': '/dashboard/companies',
+  'employees': '/dashboard/employees',
+  'customers': '/dashboard/customers',
+  'leads': '/dashboard/leads',
+  'appointments': '/dashboard/appointments',
+  'quotes': '/dashboard/quotes',
+  'invoices': '/dashboard/invoices',
+  'inventory': '/dashboard/inventory',
+  'warranties': '/dashboard/warranties',
+  'settings': '/dashboard/settings',
+  'help': '/dashboard/help',
+  'analytics': '/dashboard/ask-aura',
+  'ask aura': '/dashboard/ask-aura',
+  'aura': '/dashboard/ask-aura',
+  'campaigns': '/dashboard/campaigns',
+  'field operations': '/dashboard/field-operations',
+  'field ops': '/dashboard/field-operations',
+  'integrations': '/dashboard/integrations',
+  'quick setup': '/dashboard/quick-setup',
+  'setup': '/dashboard/quick-setup',
+};
+
+// Parse navigation command and extract destination
+export function parseNavigationCommand(text: string): string | null {
+  const normalizedText = text.toLowerCase().trim();
+  
+  // Match patterns like "go to companies", "open invoices", "show leads"
+  const navigationPatterns = [
+    /\b(?:go to|navigate to|open|show|take me to)\s+(.+)/i,
+  ];
+  
+  for (const pattern of navigationPatterns) {
+    const match = normalizedText.match(pattern);
+    if (match) {
+      const destination = match[1].trim();
+      // Check if destination exists in routes
+      if (PAGE_ROUTES[destination]) {
+        return destination;
+      }
+      // Try partial match
+      for (const key of Object.keys(PAGE_ROUTES)) {
+        if (key.includes(destination) || destination.includes(key)) {
+          return key;
+        }
+      }
+    }
+  }
+  
+  return null;
+}
+
+// Parse search intent from voice input
+export interface SearchIntent {
+  intent: 'search' | 'filter' | 'lookup';
+  query: string;
+}
+
+export function parseSearchIntent(text: string): SearchIntent | null {
+  const normalizedText = text.toLowerCase().trim();
+  
+  const searchPatterns = [
+    /\b(?:search for|search|find|look up|lookup|look for)\s+(.+)/i,
+    /\b(?:filter by|show only|display)\s+(.+)/i,
+  ];
+  
+  for (const pattern of searchPatterns) {
+    const match = normalizedText.match(pattern);
+    if (match) {
+      return {
+        intent: 'search',
+        query: match[1].trim(),
+      };
+    }
+  }
+  
+  return null;
+}
 
 export interface CommandResult {
   success: boolean;
