@@ -329,20 +329,22 @@ export function ReportsDashboard() {
 
   return (
     <Tabs defaultValue="overview" className="space-y-6">
-      <TabsList>
-        <TabsTrigger value="overview" className="gap-1">
-          <Activity className="h-4 w-4" />
-          All Automations
-        </TabsTrigger>
-        <TabsTrigger value="scheduled" className="gap-1">
-          <FileText className="h-4 w-4" />
-          Digest Reports
-        </TabsTrigger>
-        <TabsTrigger value="financial" className="gap-1">
-          <DollarSign className="h-4 w-4" />
-          Financial
-        </TabsTrigger>
-      </TabsList>
+      <div className="guide-card p-4">
+        <TabsList className="flex flex-wrap h-auto gap-2">
+          <TabsTrigger value="overview" className="gap-1">
+            <Activity className="h-4 w-4" />
+            All Automations
+          </TabsTrigger>
+          <TabsTrigger value="scheduled" className="gap-1">
+            <FileText className="h-4 w-4" />
+            Digest Reports
+          </TabsTrigger>
+          <TabsTrigger value="financial" className="gap-1">
+            <DollarSign className="h-4 w-4" />
+            Financial
+          </TabsTrigger>
+        </TabsList>
+      </div>
       
       <TabsContent value="overview">
         <Card>
