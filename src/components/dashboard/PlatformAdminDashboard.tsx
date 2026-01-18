@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { PageContainer } from '@/components/ui/page-container';
 import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone, Package, Shield, Target, UserCircle, ChevronDown, ChevronUp, ExternalLink, Smartphone } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { startOfMonth, endOfMonth, subDays } from 'date-fns';
@@ -272,7 +273,8 @@ export function PlatformAdminDashboard() {
   ];
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <PageContainer>
+      <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Platform Dashboard</h1>
@@ -517,5 +519,6 @@ export function PlatformAdminDashboard() {
         </CardContent>
       </Card>
     </div>
+    </PageContainer>
   );
 }

@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -201,7 +202,8 @@ export default function SmartWebsiteManager() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
+      <PageContainer>
+        <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Smart Website</h1>
@@ -449,6 +451,7 @@ export default function SmartWebsiteManager() {
           currentTier={company?.subscription_tier || 'single_point'}
         />
       </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

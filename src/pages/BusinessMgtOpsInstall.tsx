@@ -1,4 +1,5 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { BusinessMgtOpsAppCard } from '@/components/company/BusinessMgtOpsAppCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,7 +27,8 @@ export default function BusinessMgtOpsInstall() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <PageContainer>
+        <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Business Mgt Ops App Install</h1>
@@ -81,7 +83,8 @@ export default function BusinessMgtOpsInstall() {
             </Button>
           </CardContent>
         </Card>
-      </div>
+        </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }
