@@ -13,7 +13,7 @@ export default function Warranties() {
           icon={ShieldCheck}
           title="Warranties"
           description="Manage warranty records, claims, and policies"
-          featureColor="warranties"
+          featureColor="employees"
         />
         <WarrantiesManager />
       </div>

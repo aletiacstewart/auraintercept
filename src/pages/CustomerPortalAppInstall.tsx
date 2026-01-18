@@ -33,6 +33,7 @@ export default function CustomerPortalAppInstall() {
             icon={Users}
             title="Customer Portal App Install"
             description="Mobile app installation page for your customers"
+            featureColor="customers"
           />
 
         {/* Customer Portal PWA Info Card */}
