@@ -130,6 +130,23 @@ export default function SmartWebsite() {
     initialData: [],
   });
 
+  // Fetch active holiday message for today
+  const { data: activeHoliday } = useQuery({
+    queryKey: ['smart-website-holiday', website?.id],
+    queryFn: async () => {
+      const today = new Date().toISOString().split('T')[0];
+      const { data, error } = await supabase
+        .rpc('get_website_active_holiday', { 
+          p_website_id: website!.id,
+          p_check_date: today 
+        });
+
+      if (error) throw error;
+      return data && data.length > 0 ? data[0] : null;
+    },
+    enabled: !!website?.id,
+  });
+
   // Track page view
   useEffect(() => {
     if (website?.id && !hasTracked) {
@@ -207,14 +224,22 @@ export default function SmartWebsite() {
 
   const primaryColor = website.primary_color || '#214ebb';
 
-  // Determine display content based on night mode
-  const displayHeadline = isNightMode && website.night_header
-    ? website.night_header
-    : website.hero_headline || `Welcome to ${website.company_name}`;
+  // Determine display content based on holiday, night mode, or default
+  // Priority: Holiday > Night Mode > Default
+  const displayHeadline = activeHoliday?.custom_headline
+    ? activeHoliday.custom_headline
+    : isNightMode && website.night_header
+      ? website.night_header
+      : website.hero_headline || `Welcome to ${website.company_name}`;
   
-  const displaySubheadline = isNightMode && website.night_subheadline
-    ? website.night_subheadline
-    : website.hero_subheadline || 'Professional service you can trust';
+  const displaySubheadline = activeHoliday?.custom_subheadline
+    ? activeHoliday.custom_subheadline
+    : isNightMode && website.night_subheadline
+      ? website.night_subheadline
+      : website.hero_subheadline || 'Professional service you can trust';
+
+  const displayCtaText = activeHoliday?.custom_cta_text || website.cta_text || 'Book Now';
+  const displayCtaUrl = activeHoliday?.custom_cta_url || website.cta_url;
 
   return (
     <div className="min-h-screen bg-background">
@@ -265,12 +290,12 @@ export default function SmartWebsite() {
                   p_website_id: website.id,
                   p_metric: 'booking_clicks'
                 });
-                if (website.cta_url) {
-                  window.location.href = website.cta_url;
+                if (displayCtaUrl) {
+                  window.location.href = displayCtaUrl;
                 }
               }}
             >
-              {website.cta_text || 'Book Now'}
+              {displayCtaText}
             </Button>
           </div>
         </div>
@@ -308,15 +333,15 @@ export default function SmartWebsite() {
                   p_website_id: website.id,
                   p_metric: 'booking_clicks'
                 });
-                if (website.cta_url) {
-                  window.location.href = website.cta_url;
+                if (displayCtaUrl) {
+                  window.location.href = displayCtaUrl;
                 }
               }}
             >
-              {website.cta_text || 'Book Now'}
+              {displayCtaText}
             </Button>
-            {/* Emergency CTA in hero (shown during night mode) */}
-            {isNightMode && website.emergency_cta_text && (
+            {/* Emergency CTA in hero (shown during night mode, not on holidays) */}
+            {isNightMode && !activeHoliday && website.emergency_cta_text && (
               <Button
                 variant="destructive"
                 size="lg"

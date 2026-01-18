@@ -36,6 +36,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { VisitorLimitModal } from '@/components/smartwebsite/VisitorLimitModal';
 import { SmartWebsiteAnalytics } from '@/components/smartwebsite/SmartWebsiteAnalytics';
 import { AboutSectionEditor } from '@/components/smartwebsite/AboutSectionEditor';
+import { HolidayMessageManager } from '@/components/smartwebsite/HolidayMessageManager';
 
 // Extended type for website data with new night mode fields
 interface ExtendedWebsiteData {
@@ -513,6 +514,9 @@ export default function SmartWebsiteManager() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Holiday Messages Manager */}
+            <HolidayMessageManager websiteId={website.id} companyId={companyId!} />
           </TabsContent>
 
           <TabsContent value="sections" className="space-y-6">
