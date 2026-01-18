@@ -19,6 +19,7 @@ export default function DispatchFieldOpsInstall() {
             icon={MapPin}
             title="Dispatch-Field Ops App Installation"
             description="Deploy the Dispatch Field Ops mobile app to your dispatchers' and managers' devices"
+            featureColor="fieldops"
           />
         
         <DispatchFieldOpsAppCard />

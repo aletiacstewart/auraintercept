@@ -23,6 +23,7 @@ export default function FieldOpsConsole() {
               icon={HardHat}
               title="Technician-Field Ops"
               description="Your intelligent field operations assistant"
+              featureColor="fieldops"
               action={
                 canManageSettings ? (
                   <Button
