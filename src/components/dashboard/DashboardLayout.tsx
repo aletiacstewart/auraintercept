@@ -54,6 +54,7 @@ import { cn } from '@/lib/utils';
 import logo from '@/assets/aura-intercept-logo.png';
 import { differenceInDays, parseISO } from 'date-fns';
 import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
+import { VoiceModeToggle, VoiceModeBadge } from '@/components/voice/VoiceModeToggle';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
@@ -415,6 +416,15 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <span className="text-xs font-medium text-white">{roleBadge.label}</span>
             </div>
           )}
+          
+          {/* Voice Mode Toggle */}
+          <div className={cn(
+            "flex items-center gap-2 px-2 py-1",
+            collapsed ? "justify-center" : "justify-between"
+          )}>
+            <VoiceModeToggle size="sm" />
+            {!collapsed && <VoiceModeBadge />}
+          </div>
           
           {/* Report Issue Button */}
           <ReportIssueDialog
