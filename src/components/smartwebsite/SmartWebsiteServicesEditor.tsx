@@ -255,7 +255,7 @@ export function SmartWebsiteServicesEditor() {
 
         <Link
           to="/dashboard/knowledge?tab=services"
-          className="text-sm text-primary hover:underline flex items-center gap-1"
+          className="text-sm text-accent hover:underline flex items-center gap-1"
         >
           Full Services Manager
           <ExternalLink className="h-3 w-3" />
