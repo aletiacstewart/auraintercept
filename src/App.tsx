@@ -37,13 +37,8 @@ import {
   MarketingSalesConsole,
   AnalyticsConsole,
   NewLeadPage,
-  PerformanceReportPage,
-  BusinessInsightsPage,
-  RevenueAnalysisPage,
-  DemandForecastPage,
-  CustomerInsightsPage,
-  KpiDashboardPage,
 } from "./pages/ai-consoles";
+import AskAura from "./pages/AskAura";
 import AIAgentsHub from "./pages/AIAgentsHub";
 import AgentDetailPage from "./pages/AgentDetailPage";
 import Widget from "./pages/Widget";
@@ -147,12 +142,14 @@ const App = () => (
               <Route path="/dashboard/ai-consoles/marketing-sales" element={<MarketingSalesConsole />} />
               <Route path="/dashboard/ai-consoles/analytics" element={<AnalyticsConsole />} />
               <Route path="/dashboard/ai-consoles/new-lead" element={<NewLeadPage />} />
-              <Route path="/dashboard/ai-consoles/performance-report" element={<PerformanceReportPage />} />
-              <Route path="/dashboard/ai-consoles/business-insights" element={<BusinessInsightsPage />} />
-              <Route path="/dashboard/ai-consoles/revenue-analysis" element={<RevenueAnalysisPage />} />
-              <Route path="/dashboard/ai-consoles/revenue-forecast" element={<DemandForecastPage />} />
-              <Route path="/dashboard/ai-consoles/customer-insights" element={<CustomerInsightsPage />} />
-              <Route path="/dashboard/ai-consoles/kpi-dashboard" element={<KpiDashboardPage />} />
+              <Route path="/dashboard/ask-aura" element={<AskAura />} />
+              {/* Legacy routes redirect to Ask Aura */}
+              <Route path="/dashboard/ai-consoles/performance-report" element={<AskAura />} />
+              <Route path="/dashboard/ai-consoles/business-insights" element={<AskAura />} />
+              <Route path="/dashboard/ai-consoles/revenue-analysis" element={<AskAura />} />
+              <Route path="/dashboard/ai-consoles/revenue-forecast" element={<AskAura />} />
+              <Route path="/dashboard/ai-consoles/customer-insights" element={<AskAura />} />
+              <Route path="/dashboard/ai-consoles/kpi-dashboard" element={<AskAura />} />
               <Route path="/dashboard/ai-agents" element={<AIAgentsHub />} />
               <Route path="/dashboard/ai-agents/:agentId" element={<AgentDetailPage />} />
               <Route path="/dashboard/customer-website-app" element={<Widget />} />
