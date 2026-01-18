@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Star, MessageSquare, Mail, Clock, ExternalLink, Info } from 'lucide-react';
+import { Star, MessageSquare, Mail, Clock, ExternalLink, RotateCcw, Save, Loader2 } from 'lucide-react';
 
 interface ReviewSettings {
   review_request_enabled: boolean;
@@ -41,16 +41,17 @@ Thank you again for your business!
 Best regards,
 The {company_name} Team`;
 
-const TEMPLATE_VARIABLES = [
-  { variable: '{customer_name}', description: 'Customer\'s name' },
-  { variable: '{company_name}', description: 'Your company name' },
-  { variable: '{technician_name}', description: 'Technician who completed the job' },
-  { variable: '{service_type}', description: 'Type of service provided' },
+const PLACEHOLDERS = [
+  { key: '{customer_name}', description: "Customer's name" },
+  { key: '{company_name}', description: 'Your company name' },
+  { key: '{technician_name}', description: 'Technician who completed the job' },
+  { key: '{service_type}', description: 'Type of service provided' },
 ];
 
 export function ReviewRequestSettings() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<'sms' | 'email'>('sms');
   const [settings, setSettings] = useState<ReviewSettings>({
     review_request_enabled: true,
     review_request_delay_hours: 1,
@@ -126,6 +127,10 @@ export function ReviewRequestSettings() {
     }));
   };
 
+  const getSmsCharCount = () => {
+    return (settings.review_sms_template || '').length;
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -135,6 +140,9 @@ export function ReviewRequestSettings() {
       </Card>
     );
   }
+
+  const charCount = getSmsCharCount();
+  const isOverLimit = charCount > 160;
 
   return (
     <div className="space-y-6">
@@ -231,37 +239,20 @@ export function ReviewRequestSettings() {
         </CardContent>
       </Card>
 
-      {/* Template Variables */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Info className="h-4 w-4" />
-            Available Template Variables
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {TEMPLATE_VARIABLES.map((item) => (
-              <Badge key={item.variable} variant="secondary" className="font-mono text-xs text-card-foreground border border-card-foreground/20">
-                {item.variable}
-                <span className="ml-1 font-normal text-card-foreground/70">- {item.description}</span>
-              </Badge>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Message Templates */}
       <Card>
         <CardHeader>
-          <CardTitle>Message Templates</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="w-5 h-5" />
+            Message Templates
+          </CardTitle>
           <CardDescription>
             Customize the review request messages sent to customers
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="sms">
-            <TabsList className="mb-4">
+        <CardContent className="space-y-6">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+            <TabsList className="grid w-full grid-cols-2 max-w-xs">
               <TabsTrigger value="sms" className="flex items-center gap-2">
                 <MessageSquare className="h-4 w-4" />
                 SMS
@@ -272,38 +263,79 @@ export function ReviewRequestSettings() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="sms" className="space-y-4">
-              <div className="flex justify-between items-center">
-                <Label className="text-card-foreground">SMS Template</Label>
-                <Button variant="ghost" size="sm" onClick={handleResetSMS}>
+            <TabsContent value="sms" className="space-y-4 mt-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-card-foreground">SMS Template</Label>
+                  <span className={`text-xs ${isOverLimit ? 'text-destructive' : 'text-card-foreground/70'}`}>
+                    {charCount}/160 characters {isOverLimit && '(may be split into multiple SMS)'}
+                  </span>
+                </div>
+                <Textarea
+                  value={settings.review_sms_template || ''}
+                  onChange={(e) => 
+                    setSettings(prev => ({ ...prev, review_sms_template: e.target.value }))
+                  }
+                  rows={4}
+                  placeholder="Enter SMS template..."
+                  className="font-mono text-sm bg-white text-slate-900"
+                />
+              </div>
+
+              {/* Placeholders */}
+              <div className="p-4 rounded-lg bg-muted/30 border border-card-foreground/10">
+                <Label className="text-xs uppercase text-card-foreground/70">Available Placeholders</Label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {PLACEHOLDERS.map((p) => (
+                    <button
+                      key={p.key}
+                      type="button"
+                      className="text-xs px-2 py-1 rounded bg-card border border-card-foreground/20 text-card-foreground hover:bg-card-foreground/10 transition-colors"
+                      onClick={() => {
+                        navigator.clipboard.writeText(p.key);
+                        toast.success(`Copied ${p.key}`);
+                      }}
+                      title={p.description}
+                    >
+                      {p.key}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={handleResetSMS}
+                  disabled={saveMutation.isPending}
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
                   Reset to Default
                 </Button>
+                <Button
+                  onClick={handleSave}
+                  disabled={saveMutation.isPending}
+                >
+                  {saveMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Template
+                    </>
+                  )}
+                </Button>
               </div>
-              <Textarea
-                value={settings.review_sms_template || ''}
-                onChange={(e) => 
-                  setSettings(prev => ({ ...prev, review_sms_template: e.target.value }))
-                }
-                rows={4}
-                placeholder="Enter SMS template..."
-                className="bg-white text-slate-900"
-              />
-              <p className="text-xs text-card-foreground/70">
-                SMS messages are limited to 160 characters. Longer messages may be split.
-                Current length: {(settings.review_sms_template || '').length} characters
-              </p>
             </TabsContent>
 
-            <TabsContent value="email" className="space-y-4">
-              <div className="flex justify-between items-center">
-                <Label className="text-card-foreground">Email Template</Label>
-                <Button variant="ghost" size="sm" onClick={handleResetEmail}>
-                  Reset to Default
-                </Button>
-              </div>
+            <TabsContent value="email" className="space-y-4 mt-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email-subject" className="text-sm text-card-foreground/80">Subject Line</Label>
+                  <Label htmlFor="email-subject" className="text-card-foreground">Email Subject</Label>
                   <Input
                     id="email-subject"
                     value={settings.review_email_subject || ''}
@@ -314,29 +346,72 @@ export function ReviewRequestSettings() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email-body" className="text-sm text-card-foreground/80">Email Body</Label>
+                  <Label htmlFor="email-body" className="text-card-foreground">Email Message</Label>
                   <Textarea
                     id="email-body"
                     value={settings.review_email_template || ''}
                     onChange={(e) => 
                       setSettings(prev => ({ ...prev, review_email_template: e.target.value }))
                     }
-                    rows={12}
+                    rows={10}
                     placeholder="Enter email template..."
-                    className="bg-white text-slate-900"
+                    className="font-mono text-sm bg-white text-slate-900"
                   />
                 </div>
+              </div>
+
+              {/* Placeholders */}
+              <div className="p-4 rounded-lg bg-muted/30 border border-card-foreground/10">
+                <Label className="text-xs uppercase text-card-foreground/70">Available Placeholders</Label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {PLACEHOLDERS.map((p) => (
+                    <button
+                      key={p.key}
+                      type="button"
+                      className="text-xs px-2 py-1 rounded bg-card border border-card-foreground/20 text-card-foreground hover:bg-card-foreground/10 transition-colors"
+                      onClick={() => {
+                        navigator.clipboard.writeText(p.key);
+                        toast.success(`Copied ${p.key}`);
+                      }}
+                      title={p.description}
+                    >
+                      {p.key}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={handleResetEmail}
+                  disabled={saveMutation.isPending}
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Reset to Default
+                </Button>
+                <Button
+                  onClick={handleSave}
+                  disabled={saveMutation.isPending}
+                >
+                  {saveMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Template
+                    </>
+                  )}
+                </Button>
               </div>
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
-
-      <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={saveMutation.isPending}>
-          {saveMutation.isPending ? 'Saving...' : 'Save Settings'}
-        </Button>
-      </div>
     </div>
   );
 }
