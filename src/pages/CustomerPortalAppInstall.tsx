@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { PageContainer } from '@/components/ui/page-container';
 import { Button } from '@/components/ui/button';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { 
@@ -24,7 +25,8 @@ export default function CustomerPortalAppInstall() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
+      <PageContainer>
+        <div className="space-y-6 animate-fade-in">
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Customer Portal App Install</h1>
@@ -209,7 +211,8 @@ export default function CustomerPortalAppInstall() {
             </div>
           </CardContent>
         </Card>
-      </div>
+        </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

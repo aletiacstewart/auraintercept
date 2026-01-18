@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { useAIAgentOrchestrator, AgentInfo } from '@/hooks/useAIAgentOrchestrator';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -258,7 +259,8 @@ export default function AIAgentsHub() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 p-6">
+      <PageContainer>
+        <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -438,7 +440,8 @@ export default function AIAgentsHub() {
             )}
           </TabsContent>
         </Tabs>
-      </div>
+        </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

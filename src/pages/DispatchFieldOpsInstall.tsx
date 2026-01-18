@@ -1,4 +1,5 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { DispatchFieldOpsAppCard } from '@/components/company/DispatchFieldOpsAppCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,8 @@ export default function DispatchFieldOpsInstall() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <PageContainer>
+        <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Dispatch-Field Ops App Installation</h1>
           <p className="text-muted-foreground">
@@ -78,7 +80,8 @@ export default function DispatchFieldOpsInstall() {
             </p>
           </CardContent>
         </Card>
-      </div>
+        </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

@@ -895,7 +895,8 @@ const PlatformGuides: React.FC = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
+      <PageContainer>
+        <div className="space-y-6 animate-fade-in">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
@@ -1113,7 +1114,8 @@ const PlatformGuides: React.FC = () => {
             </CardContent>
           </Card>
         </div>
-      </div>
+        </div>
+      </PageContainer>
     </DashboardLayout>
   );
 };

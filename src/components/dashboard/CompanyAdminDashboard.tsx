@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { PageContainer } from '@/components/ui/page-container';
 import { Button } from '@/components/ui/button';
 import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield, Megaphone } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -241,7 +242,8 @@ export function CompanyAdminDashboard() {
   ];
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <PageContainer>
+      <div className="space-y-8 animate-fade-in">
       {/* Trial Banner */}
       <TrialBanner />
 
@@ -437,5 +439,6 @@ export function CompanyAdminDashboard() {
       {/* Onboarding Checklist */}
       <OnboardingChecklist />
     </div>
+    </PageContainer>
   );
 }
