@@ -3717,6 +3717,8 @@ export type Database = {
           call_template: string | null
           company_id: string
           created_at: string
+          email_enabled: boolean
+          email_template: string | null
           hours_before: number
           id: string
           is_enabled: boolean
@@ -3729,6 +3731,8 @@ export type Database = {
           call_template?: string | null
           company_id: string
           created_at?: string
+          email_enabled?: boolean
+          email_template?: string | null
           hours_before: number
           id?: string
           is_enabled?: boolean
@@ -3741,6 +3745,8 @@ export type Database = {
           call_template?: string | null
           company_id?: string
           created_at?: string
+          email_enabled?: boolean
+          email_template?: string | null
           hours_before?: number
           id?: string
           is_enabled?: boolean
