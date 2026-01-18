@@ -4,9 +4,27 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Megaphone, Save } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Megaphone, Save, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+
+const WINBACK_PLACEHOLDERS = [
+  { key: '{customer_name}', description: 'Customer\'s name' },
+  { key: '{discount}', description: 'Discount value' },
+  { key: '{company_name}', description: 'Your company name' },
+];
+
+const REFERRAL_PLACEHOLDERS = [
+  { key: '{customer_name}', description: 'Customer\'s name' },
+  { key: '{discount}', description: 'Discount value' },
+  { key: '{code}', description: 'Referral discount code' },
+];
+
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
+  toast.success(`Copied ${text} to clipboard`);
+};
 
 export function CampaignSettings() {
   const [settings, setSettings] = useState({
@@ -100,36 +118,68 @@ export function CampaignSettings() {
         <div className="space-y-4">
           <h3 className="font-medium text-card-foreground">Message Templates</h3>
           <div className="space-y-4">
+          <div className="space-y-3">
+            <Label className="text-card-foreground">Win-back Campaign Template</Label>
+            <Textarea
+              value={settings.winbackTemplate}
+              onChange={(e) => setSettings(s => ({ ...s, winbackTemplate: e.target.value }))}
+              rows={3}
+            />
             <div className="space-y-2">
-              <Label className="text-card-foreground">Win-back Campaign Template</Label>
-              <Textarea
-                value={settings.winbackTemplate}
-                onChange={(e) => setSettings(s => ({ ...s, winbackTemplate: e.target.value }))}
-                rows={3}
-              />
-              <p className="text-xs text-card-foreground/70">
-                Variables: {'{customer_name}'}, {'{discount}'}, {'{company_name}'}
-              </p>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-xs">Available Placeholders</Badge>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {WINBACK_PLACEHOLDERS.map((placeholder) => (
+                  <button
+                    key={placeholder.key}
+                    type="button"
+                    onClick={() => copyToClipboard(placeholder.key)}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs bg-muted/50 hover:bg-muted rounded-md border border-border/50 transition-colors group"
+                    title={placeholder.description}
+                  >
+                    <code className="text-primary font-mono">{placeholder.key}</code>
+                    <Copy className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </button>
+                ))}
+              </div>
             </div>
+          </div>
+          <div className="space-y-3">
+            <Label className="text-card-foreground">Referral Reward Template</Label>
+            <Textarea
+              value={settings.referralTemplate}
+              onChange={(e) => setSettings(s => ({ ...s, referralTemplate: e.target.value }))}
+              rows={3}
+            />
             <div className="space-y-2">
-              <Label className="text-card-foreground">Referral Reward Template</Label>
-              <Textarea
-                value={settings.referralTemplate}
-                onChange={(e) => setSettings(s => ({ ...s, referralTemplate: e.target.value }))}
-                rows={3}
-              />
-              <p className="text-xs text-card-foreground/70">
-                Variables: {'{customer_name}'}, {'{discount}'}, {'{code}'}
-              </p>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-xs">Available Placeholders</Badge>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {REFERRAL_PLACEHOLDERS.map((placeholder) => (
+                  <button
+                    key={placeholder.key}
+                    type="button"
+                    onClick={() => copyToClipboard(placeholder.key)}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs bg-muted/50 hover:bg-muted rounded-md border border-border/50 transition-colors group"
+                    title={placeholder.description}
+                  >
+                    <code className="text-primary font-mono">{placeholder.key}</code>
+                    <Copy className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <Button onClick={handleSave} disabled={saving}>
-          <Save className="h-4 w-4 mr-2" />
-          Save Settings
-        </Button>
-      </CardContent>
-    </Card>
+      <Button onClick={handleSave} disabled={saving}>
+        <Save className="h-4 w-4 mr-2" />
+        Save Settings
+      </Button>
+    </CardContent>
+  </Card>
   );
 }
