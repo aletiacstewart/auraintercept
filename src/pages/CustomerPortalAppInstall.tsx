@@ -12,8 +12,10 @@ import {
   QrCode,
   Download,
   CheckCircle2,
-  ArrowRight
+  ArrowRight,
+  Users
 } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 import { QRCodeSVG } from 'qrcode.react';
 
 export default function CustomerPortalAppInstall() {
@@ -27,13 +29,11 @@ export default function CustomerPortalAppInstall() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6 animate-fade-in">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Customer Portal App Install</h1>
-          <p className="text-white/70 mt-1">
-            Mobile app installation page for your customers
-          </p>
-        </div>
+          <PageHeader
+            icon={Users}
+            title="Customer Portal App Install"
+            description="Mobile app installation page for your customers"
+          />
 
         {/* Customer Portal PWA Info Card */}
         <Card className="border-border/50 bg-gradient-to-r from-cyan-500/10 to-primary/10">

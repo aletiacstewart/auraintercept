@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
+import { PageHeader } from '@/components/ui/page-header';
 import { MermaidDiagram } from '@/components/architecture/MermaidDiagram';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Network } from 'lucide-react';
 
 const diagrams = {
   overview: {

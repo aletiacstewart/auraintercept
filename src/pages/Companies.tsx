@@ -49,6 +49,7 @@ import {
   Mail,
   Trash2
 } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -445,14 +446,12 @@ export default function Companies() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6 animate-fade-in">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Companies</h1>
-            <p className="text-muted-foreground">
-              Manage tenant companies on the platform
-            </p>
-          </div>
-          <Dialog open={isCreateOpen} onOpenChange={(open) => { setIsCreateOpen(open); if (!open) resetForm(); }}>
+        <PageHeader
+          icon={Building2}
+          title="Companies"
+          description="Manage tenant companies on the platform"
+          action={
+            <Dialog open={isCreateOpen} onOpenChange={(open) => { setIsCreateOpen(open); if (!open) resetForm(); }}>
             <DialogTrigger asChild>
               <Button>
                 <Plus className="w-4 h-4 mr-2" />

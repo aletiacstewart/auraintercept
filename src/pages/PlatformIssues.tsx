@@ -13,7 +13,9 @@ import {
   Eye,
   Filter,
   RefreshCw,
+  AlertCircle,
 } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -186,16 +188,17 @@ export default function PlatformIssues() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Platform Issues</h1>
-              <p className="text-muted-foreground">Monitor and resolve issues across the platform</p>
-            </div>
-            <Button onClick={() => refetch()} variant="outline" size="sm">
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Refresh
-            </Button>
-          </div>
+          <PageHeader
+            icon={AlertCircle}
+            title="Platform Issues"
+            description="Monitor and resolve issues across the platform"
+            action={
+              <Button onClick={() => refetch()} variant="outline" size="sm">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Refresh
+              </Button>
+            }
+          />
 
           {/* Stats Cards */}
           <div className="grid gap-4 md:grid-cols-4">

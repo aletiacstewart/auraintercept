@@ -4,7 +4,8 @@ import { FieldOpsAppCard } from '@/components/company/FieldOpsAppCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Monitor, ExternalLink, Globe } from 'lucide-react';
+import { Monitor, ExternalLink, Globe, Truck } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 import { useNavigate } from 'react-router-dom';
 
 export default function FieldOpsInstall() {
@@ -14,12 +15,11 @@ export default function FieldOpsInstall() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold">Field Ops App Installation</h1>
-          <p className="text-muted-foreground">
-            Deploy the Field Ops mobile app to your technicians' devices
-          </p>
-        </div>
+          <PageHeader
+            icon={Truck}
+            title="Field Ops App Installation"
+            description="Deploy the Field Ops mobile app to your technicians' devices"
+          />
         
         <FieldOpsAppCard />
 

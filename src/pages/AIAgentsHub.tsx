@@ -37,6 +37,7 @@ import {
   Globe
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { PageHeader } from '@/components/ui/page-header';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { hasFullAccess, canManageAIAgents } from '@/lib/accessControl';
@@ -262,29 +263,25 @@ export default function AIAgentsHub() {
       <PageContainer>
         <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              <Bot className="h-8 w-8 text-primary" />
-              AI Agents Hub
-            </h1>
-            <p className="text-white/70 mt-1">
-              {canManageAgents 
-                ? '18 specialized AI agents powering your business automation'
-                : `${totalCount} AI agents available based on your job roles`}
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-2xl font-bold">{enabledCount}/{totalCount}</p>
-              <p className="text-sm text-white/70">Agents Active</p>
+        <PageHeader
+          icon={Bot}
+          title="AI Agents Hub"
+          description={canManageAgents 
+            ? '18 specialized AI agents powering your business automation'
+            : `${totalCount} AI agents available based on your job roles`}
+          action={
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-2xl font-bold text-foreground">{enabledCount}/{totalCount}</p>
+                <p className="text-sm text-muted-foreground">Agents Active</p>
+              </div>
+              <Button variant="outline" onClick={() => navigate('/dashboard/ai-agent')}>
+                <Settings className="h-4 w-4 mr-2" />
+                Global Settings
+              </Button>
             </div>
-            <Button variant="outline" onClick={() => navigate('/dashboard/ai-agent')}>
-              <Settings className="h-4 w-4 mr-2" />
-              Global Settings
-            </Button>
-          </div>
-        </div>
+          }
+        />
 
         {/* Subscription Tier Info Banner */}
         {canManageAgents && (

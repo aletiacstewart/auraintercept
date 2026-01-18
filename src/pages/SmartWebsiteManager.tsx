@@ -27,6 +27,7 @@ import {
   Loader2,
   QrCode
 } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 import { QRCodeSVG } from 'qrcode.react';
 import { VisitorLimitModal } from '@/components/smartwebsite/VisitorLimitModal';
 import { SmartWebsiteAnalytics } from '@/components/smartwebsite/SmartWebsiteAnalytics';
@@ -204,26 +205,25 @@ export default function SmartWebsiteManager() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Smart Website</h1>
-            <p className="text-muted-foreground">Manage your company's 1-page website</p>
-          </div>
-          <div className="flex gap-2">
-            {websiteUrl && (
-              <>
-                <Button variant="outline" onClick={() => window.open(websiteUrl, '_blank')}>
-                  <Eye className="w-4 h-4 mr-2" />
-                  Preview
-                </Button>
-                <Button variant="outline" onClick={() => copyToClipboard(websiteUrl)}>
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy URL
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
+          <PageHeader
+            icon={Globe}
+            title="Smart Website"
+            description="Manage your company's 1-page website"
+            action={
+              websiteUrl ? (
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => window.open(websiteUrl, '_blank')}>
+                    <Eye className="w-4 h-4 mr-2" />
+                    Preview
+                  </Button>
+                  <Button variant="outline" onClick={() => copyToClipboard(websiteUrl)}>
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy URL
+                  </Button>
+                </div>
+              ) : undefined
+            }
+          />
 
         {/* Status Card */}
         <Card>

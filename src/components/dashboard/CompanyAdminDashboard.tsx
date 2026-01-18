@@ -4,7 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageContainer } from '@/components/ui/page-container';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield, Megaphone } from 'lucide-react';
+import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield, Megaphone, LayoutDashboard } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
@@ -248,80 +249,70 @@ export function CompanyAdminDashboard() {
       <TrialBanner />
 
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          {isLoading ? (
-            <>
-              <Skeleton className="h-8 w-48 mb-2" />
-              <Skeleton className="h-4 w-64" />
-            </>
-          ) : (
-            <>
-              <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-3xl font-bold tracking-tight">{company?.name}</h1>
-                {company?.registration_code && (
-                  <div className="flex items-center gap-2 bg-slate-700/80 border border-slate-600/50 rounded-lg px-3 py-1.5">
-                    <span className="text-xs text-white/70">Registration Code:</span>
-                    <code className="text-sm font-mono font-bold text-white">{company.registration_code}</code>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6 text-white/70 hover:text-white"
-                      onClick={() => {
-                        navigator.clipboard.writeText(company.registration_code || '');
-                      }}
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
-                  </div>
-                )}
-                {/* Aura AI Agent Status Badge */}
-                <div 
-                  className="flex items-center gap-2 bg-slate-700/80 border border-slate-600/50 rounded-lg px-3 py-1.5 cursor-pointer hover:bg-slate-600/80 transition-colors"
-                  onClick={() => navigate('/dashboard/ai-agents')}
+      <PageHeader
+        icon={LayoutDashboard}
+        title={isLoading ? 'Loading...' : (company?.name || 'Company Dashboard')}
+        description={`Company Dashboard ${companyId ? `• ID: ${companyId.slice(0, 8)}...` : ''}`}
+        action={
+          <div className="flex items-center gap-3 flex-wrap">
+            {company?.registration_code && (
+              <div className="flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5">
+                <span className="text-xs text-muted-foreground">Registration Code:</span>
+                <code className="text-sm font-mono font-bold text-foreground">{company.registration_code}</code>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-6 w-6"
+                  onClick={() => {
+                    navigator.clipboard.writeText(company.registration_code || '');
+                  }}
                 >
-                  <span className="text-xs text-white/70">Aura AI Agents:</span>
-                  <span className="text-sm font-medium text-green-400">Active</span>
-                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <ExternalLink className="h-3 w-3 text-green-400 hover:text-green-300" />
-                </div>
-              </div>
-              <p className="text-white/70 mt-1">
-                Company Dashboard {companyId && <span className="text-xs opacity-60">• ID: {companyId.slice(0, 8)}...</span>}
-              </p>
-            </>
-          )}
-        </div>
-        <div className="flex items-center gap-4">
-          <PDFDownloadLink 
-            document={<CompanyGuidesPDF />} 
-            fileName="company-admin-guide.pdf"
-          >
-            {({ loading }) => (
-              <Button variant="outline" disabled={loading} className="gap-2">
-                <Download className="h-4 w-4" />
-                {loading ? 'Generating...' : 'Company Guide Download'}
-              </Button>
-            )}
-          </PDFDownloadLink>
-          <div 
-            className="w-16 h-16 rounded-xl border-2 overflow-hidden"
-            style={{ borderColor: company?.primary_color || 'hsl(var(--primary))' }}
-          >
-            {company?.logo_url ? (
-              <img src={company.logo_url} alt="Company Logo" className="w-full h-full object-cover" />
-            ) : (
-              <div 
-                className="w-full h-full flex items-center justify-center text-2xl font-bold"
-                style={{ 
-                  background: `linear-gradient(135deg, ${company?.primary_color || '#0EA5E9'}, ${company?.secondary_color || '#8B5CF6'})`,
-                  color: 'white'
-                }}
-              >
-                {company?.name?.charAt(0) || 'C'}
+                  <Copy className="h-3 w-3" />
+                </Button>
               </div>
             )}
+            <div 
+              className="flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5 cursor-pointer hover:bg-muted/80 transition-colors"
+              onClick={() => navigate('/dashboard/ai-agents')}
+            >
+              <span className="text-xs text-muted-foreground">Aura AI Agents:</span>
+              <span className="text-sm font-medium text-green-600">Active</span>
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <ExternalLink className="h-3 w-3 text-green-600 hover:text-green-500" />
+            </div>
           </div>
+        }
+      />
+
+      <div className="flex items-center gap-4">
+        <PDFDownloadLink 
+          document={<CompanyGuidesPDF />} 
+          fileName="company-admin-guide.pdf"
+        >
+          {({ loading }) => (
+            <Button variant="outline" disabled={loading} className="gap-2">
+              <Download className="h-4 w-4" />
+              {loading ? 'Generating...' : 'Company Guide Download'}
+            </Button>
+          )}
+        </PDFDownloadLink>
+        <div 
+          className="w-16 h-16 rounded-xl border-2 overflow-hidden"
+          style={{ borderColor: company?.primary_color || 'hsl(var(--primary))' }}
+        >
+          {company?.logo_url ? (
+            <img src={company.logo_url} alt="Company Logo" className="w-full h-full object-cover" />
+          ) : (
+            <div 
+              className="w-full h-full flex items-center justify-center text-2xl font-bold"
+              style={{ 
+                background: `linear-gradient(135deg, ${company?.primary_color || '#0EA5E9'}, ${company?.secondary_color || '#8B5CF6'})`,
+                color: 'white'
+              }}
+            >
+              {company?.name?.charAt(0) || 'C'}
+            </div>
+          )}
         </div>
       </div>
 

@@ -36,6 +36,7 @@ import {
   Zap,
   Globe
 } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 
 const guideCategories = [
   {

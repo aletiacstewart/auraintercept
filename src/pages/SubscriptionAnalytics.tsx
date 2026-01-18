@@ -1,5 +1,6 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
+import { PageHeader } from '@/components/ui/page-header';
 import { SubscriptionAnalytics as SubscriptionAnalyticsComponent } from '@/components/company/SubscriptionAnalytics';
 import { Crown } from 'lucide-react';
 
@@ -8,13 +9,11 @@ export default function SubscriptionAnalytics() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6">
-          <div className="flex items-center gap-3">
-            <Crown className="h-8 w-8 text-primary" />
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Subscription Analytics</h1>
-              <p className="text-muted-foreground">Track customer opt-in and opt-out trends</p>
-            </div>
-          </div>
+          <PageHeader
+            icon={Crown}
+            title="Subscription Analytics"
+            description="Track customer opt-in and opt-out trends"
+          />
           <SubscriptionAnalyticsComponent />
         </div>
       </PageContainer>

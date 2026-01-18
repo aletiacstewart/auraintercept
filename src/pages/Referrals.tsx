@@ -21,6 +21,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { Users, Plus, Copy, Gift, TrendingUp, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
 
 export default function Referrals() {
   const { companyId } = useAuth();
@@ -110,82 +111,79 @@ export default function Referrals() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6 animate-fade-in">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                <Users className="h-6 w-6" />
-                Referral Program
-              </h1>
-              <p className="text-muted-foreground">
-                Manage customer referrals and rewards
-              </p>
-            </div>
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button><Plus className="h-4 w-4 mr-2" /> New Referral Code</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Generate Referral Code</DialogTitle>
-                  <DialogDescription>Create a unique referral code for a customer</DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
+          <PageHeader
+            icon={Gift}
+            title="Referral Program"
+            description="Manage customer referrals and rewards"
+            action={
+              <Button onClick={() => setDialogOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" /> New Referral Code
+              </Button>
+            }
+          />
+
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Generate Referral Code</DialogTitle>
+                <DialogDescription>Create a unique referral code for a customer</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Referrer Name *</Label>
+                  <Input
+                    value={formData.referrer_name}
+                    onChange={(e) => setFormData(p => ({ ...p, referrer_name: e.target.value }))}
+                    placeholder="John Smith"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Referrer Name *</Label>
+                    <Label>Email</Label>
                     <Input
-                      value={formData.referrer_name}
-                      onChange={(e) => setFormData(p => ({ ...p, referrer_name: e.target.value }))}
-                      placeholder="John Smith"
+                      type="email"
+                      value={formData.referrer_email}
+                      onChange={(e) => setFormData(p => ({ ...p, referrer_email: e.target.value }))}
+                      placeholder="john@example.com"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Email</Label>
-                      <Input
-                        type="email"
-                        value={formData.referrer_email}
-                        onChange={(e) => setFormData(p => ({ ...p, referrer_email: e.target.value }))}
-                        placeholder="john@example.com"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Phone</Label>
-                      <Input
-                        value={formData.referrer_phone}
-                        onChange={(e) => setFormData(p => ({ ...p, referrer_phone: e.target.value }))}
-                        placeholder="(555) 123-4567"
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label>Phone</Label>
+                    <Input
+                      value={formData.referrer_phone}
+                      onChange={(e) => setFormData(p => ({ ...p, referrer_phone: e.target.value }))}
+                      placeholder="(555) 123-4567"
+                    />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Reward Type</Label>
-                      <Input
-                        value={formData.reward_type}
-                        onChange={(e) => setFormData(p => ({ ...p, reward_type: e.target.value }))}
-                        placeholder="discount"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Reward Value (%)</Label>
-                      <Input
-                        type="number"
-                        value={formData.reward_value}
-                        onChange={(e) => setFormData(p => ({ ...p, reward_value: Number(e.target.value) }))}
-                      />
-                    </div>
-                  </div>
-                  <Button
-                    onClick={() => createReferral.mutate()}
-                    disabled={!formData.referrer_name || createReferral.isPending}
-                    className="w-full"
-                  >
-                    Generate Code
-                  </Button>
                 </div>
-              </DialogContent>
-            </Dialog>
-          </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Reward Type</Label>
+                    <Input
+                      value={formData.reward_type}
+                      onChange={(e) => setFormData(p => ({ ...p, reward_type: e.target.value }))}
+                      placeholder="discount"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Reward Value (%)</Label>
+                    <Input
+                      type="number"
+                      value={formData.reward_value}
+                      onChange={(e) => setFormData(p => ({ ...p, reward_value: Number(e.target.value) }))}
+                    />
+                  </div>
+                </div>
+                <Button
+                  onClick={() => createReferral.mutate()}
+                  disabled={!formData.referrer_name || createReferral.isPending}
+                  className="w-full"
+                >
+                  Generate Code
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           {/* Stats */}
           <div className="grid gap-4 md:grid-cols-4">
