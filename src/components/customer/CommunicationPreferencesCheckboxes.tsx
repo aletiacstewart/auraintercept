@@ -34,7 +34,7 @@ export function CommunicationPreferencesCheckboxes({
   if (compact) {
     return (
       <div className={cn("space-y-2", className)}>
-        <Label className="text-xs font-medium text-muted-foreground">Communication Preferences</Label>
+        <Label className="text-xs font-medium text-muted-foreground">Send Reminders Via</Label>
         <div className="flex flex-wrap gap-3">
           <label className="flex items-center gap-1.5 cursor-pointer">
             <Checkbox
@@ -69,7 +69,7 @@ export function CommunicationPreferencesCheckboxes({
             />
             <span className="text-xs flex items-center gap-1">
               <Phone className="h-3 w-3 text-muted-foreground" />
-              Calls
+              AI Voice Call
             </span>
           </label>
         </div>
@@ -79,7 +79,7 @@ export function CommunicationPreferencesCheckboxes({
 
   return (
     <div className={cn("space-y-3", className)}>
-      <Label className="text-sm font-medium">Communication Preferences</Label>
+      <Label className="text-sm font-medium">Appointment Reminder Preferences</Label>
       <p className="text-xs text-muted-foreground">
         Choose how you'd like to receive appointment reminders and updates.
       </p>
@@ -130,8 +130,8 @@ export function CommunicationPreferencesCheckboxes({
           />
           <Phone className="h-4 w-4 text-muted-foreground" />
           <div className="flex-1">
-            <span className="text-sm font-medium">Phone Calls</span>
-            <p className="text-xs text-muted-foreground">Receive automated voice call reminders</p>
+            <span className="text-sm font-medium">AI Voice Call</span>
+            <p className="text-xs text-muted-foreground">Receive automated AI voice call reminders</p>
           </div>
         </label>
       </div>
