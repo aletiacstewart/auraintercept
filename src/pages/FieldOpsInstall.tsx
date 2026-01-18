@@ -19,6 +19,7 @@ export default function FieldOpsInstall() {
             icon={Truck}
             title="Field Ops App Installation"
             description="Deploy the Field Ops mobile app to your technicians' devices"
+            featureColor="fieldops"
           />
         
         <FieldOpsAppCard />
