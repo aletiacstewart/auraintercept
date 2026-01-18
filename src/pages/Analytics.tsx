@@ -4,6 +4,7 @@ import { CompanyAnalytics } from '@/components/analytics/CompanyAnalytics';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSearchParams } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/page-header';
+import { PageContainer } from '@/components/ui/page-container';
 import { BarChart3 } from 'lucide-react';
 
 export default function Analytics() {
@@ -16,7 +17,8 @@ export default function Analytics() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <PageContainer>
+        <div className="space-y-6">
         <PageHeader
           icon={BarChart3}
           title="Analytics"
@@ -34,6 +36,7 @@ export default function Analytics() {
           </div>
         )}
       </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

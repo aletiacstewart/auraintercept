@@ -1,7 +1,10 @@
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { FieldOpsManager } from '@/components/fieldops';
+import { PageContainer } from '@/components/ui/page-container';
+import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Truck } from 'lucide-react';
 
 export default function FieldOperations() {
   const { companyId, loading } = useAuth();
@@ -9,9 +12,9 @@ export default function FieldOperations() {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="h-full flex items-center justify-center">
+        <PageContainer>
           <Skeleton className="h-[600px] w-full" />
-        </div>
+        </PageContainer>
       </DashboardLayout>
     );
   }
@@ -19,18 +22,22 @@ export default function FieldOperations() {
   if (!companyId) {
     return (
       <DashboardLayout>
-        <div className="h-full flex items-center justify-center text-white/70">
-          No company selected
-        </div>
+        <PageContainer>
+          <div className="h-full flex items-center justify-center text-muted-foreground">
+            No company selected
+          </div>
+        </PageContainer>
       </DashboardLayout>
     );
   }
 
   return (
     <DashboardLayout>
-      <div className="h-[calc(100vh-4rem)]">
-        <FieldOpsManager companyId={companyId} />
-      </div>
+      <PageContainer className="p-0">
+        <div className="h-[calc(100vh-8rem)]">
+          <FieldOpsManager companyId={companyId} />
+        </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

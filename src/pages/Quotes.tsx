@@ -16,6 +16,7 @@ import { format } from 'date-fns';
 import { BusinessQuoteForm } from '@/components/billing/forms/BusinessQuoteForm';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
+import { PageContainer } from '@/components/ui/page-container';
 
 interface Quote {
   id: string;
@@ -129,7 +130,8 @@ export default function Quotes() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <PageContainer>
+        <div className="space-y-6">
         <PageHeader
           icon={FileText}
           title="Quotes"
@@ -349,6 +351,7 @@ export default function Quotes() {
           </DialogContent>
         </Dialog>
       </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

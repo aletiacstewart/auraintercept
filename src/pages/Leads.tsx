@@ -31,6 +31,7 @@ import { LeadScoreBadge, LeadActivityTimeline, LeadFollowUpManager, LeadAnalytic
 import { LeadForm } from '@/components/marketing/forms/LeadForm';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
+import { PageContainer } from '@/components/ui/page-container';
 
 interface Lead {
   id: string;
@@ -144,7 +145,8 @@ export default function Leads() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <PageContainer>
+        <div className="space-y-6">
         <PageHeader
           icon={Users}
           title="Leads"
@@ -452,6 +454,7 @@ export default function Leads() {
           </CardContent>
         </Card>
       </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

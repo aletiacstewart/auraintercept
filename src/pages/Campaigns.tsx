@@ -31,6 +31,7 @@ import { format } from 'date-fns';
 import { Megaphone, Plus, Send, TrendingUp, Eye, MousePointer, Users, Mail, MessageSquare, Sparkles, Loader2 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
+import { PageContainer } from '@/components/ui/page-container';
 
 export default function Campaigns() {
   const { companyId } = useAuth();
@@ -159,7 +160,8 @@ export default function Campaigns() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
+      <PageContainer>
+        <div className="space-y-6 animate-fade-in">
         <PageHeader
           icon={Megaphone}
           title="Marketing Campaigns"
@@ -405,6 +407,7 @@ export default function Campaigns() {
           </div>
         )}
       </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

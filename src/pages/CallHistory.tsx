@@ -47,6 +47,7 @@ import { AudioPlayer } from '@/components/calls/AudioPlayer';
 import { TranscriptViewer } from '@/components/calls/TranscriptViewer';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
+import { PageContainer } from '@/components/ui/page-container';
 
 interface CallLog {
   id: string;
@@ -150,7 +151,8 @@ export default function CallHistory() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
+      <PageContainer>
+        <div className="space-y-6 animate-fade-in">
         <PageHeader
           icon={Phone}
           title="Call History"
@@ -313,7 +315,7 @@ export default function CallHistory() {
           </CardContent>
         </Card>
       </div>
-
+      </PageContainer>
       {/* Call Details Dialog */}
       <Dialog open={!!selectedCall} onOpenChange={() => setSelectedCall(null)}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">

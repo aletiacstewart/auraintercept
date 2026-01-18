@@ -16,6 +16,7 @@ import { format } from 'date-fns';
 import { InvoiceForm } from '@/components/billing/forms/InvoiceForm';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
+import { PageContainer } from '@/components/ui/page-container';
 
 interface Invoice {
   id: string;
@@ -140,7 +141,8 @@ export default function Invoices() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <PageContainer>
+        <div className="space-y-6">
         <PageHeader
           icon={Receipt}
           title="Invoices"
@@ -369,6 +371,7 @@ export default function Invoices() {
           </DialogContent>
         </Dialog>
       </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

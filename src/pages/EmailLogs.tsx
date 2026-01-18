@@ -13,6 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
+import { PageContainer } from '@/components/ui/page-container';
 
 export default function EmailLogs() {
   const { companyId } = useAuth();
@@ -87,7 +88,8 @@ export default function EmailLogs() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
+      <PageContainer>
+        <div className="space-y-6 animate-fade-in">
         <PageHeader
           icon={Mail}
           title="Email Logs"
@@ -218,6 +220,7 @@ export default function EmailLogs() {
           </CardContent>
         </Card>
       </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

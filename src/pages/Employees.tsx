@@ -3,6 +3,7 @@ import { EmployeeManagement } from '@/components/company/EmployeeManagement';
 import { CreateTestEmployees } from '@/components/admin/CreateTestEmployees';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/page-header';
+import { PageContainer } from '@/components/ui/page-container';
 import { Users } from 'lucide-react';
 
 export default function Employees() {
@@ -10,7 +11,8 @@ export default function Employees() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <PageContainer>
+        <div className="space-y-6">
         <PageHeader
           icon={Users}
           title="Employees"
@@ -21,6 +23,7 @@ export default function Employees() {
           <CreateTestEmployees companyId={companyId} />
         )}
       </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { format } from 'date-fns';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
+import { PageContainer } from '@/components/ui/page-container';
 
 export default function SMSLogs() {
   const { companyId } = useAuth();
@@ -71,7 +72,8 @@ export default function SMSLogs() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
+      <PageContainer>
+        <div className="space-y-6 animate-fade-in">
         <PageHeader
           icon={MessageSquare}
           title="SMS / Text Logs"
@@ -202,6 +204,7 @@ export default function SMSLogs() {
           </CardContent>
         </Card>
       </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }
