@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -251,7 +252,8 @@ export default function Integrations() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
+      <PageContainer>
+        <div className="space-y-6 animate-fade-in">
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
@@ -672,6 +674,7 @@ export default function Integrations() {
           )}
         </DialogContent>
       </Dialog>
+      </PageContainer>
     </DashboardLayout>
   );
 }

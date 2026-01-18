@@ -15,6 +15,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -183,20 +184,21 @@ export default function PlatformIssues() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Platform Issues</h1>
-            <p className="text-muted-foreground">Monitor and resolve issues across the platform</p>
+      <PageContainer>
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Platform Issues</h1>
+              <p className="text-muted-foreground">Monitor and resolve issues across the platform</p>
+            </div>
+            <Button onClick={() => refetch()} variant="outline" size="sm">
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Refresh
+            </Button>
           </div>
-          <Button onClick={() => refetch()} variant="outline" size="sm">
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh
-          </Button>
-        </div>
 
-        {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-4">
+          {/* Stats Cards */}
+          <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Issues</CardTitle>
@@ -493,7 +495,8 @@ export default function PlatformIssues() {
             )}
           </DialogContent>
         </Dialog>
-      </div>
+        </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }

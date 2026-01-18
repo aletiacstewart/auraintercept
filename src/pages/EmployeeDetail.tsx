@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -142,10 +143,12 @@ export default function EmployeeDetail() {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="space-y-6">
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-[400px] w-full" />
-        </div>
+        <PageContainer>
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-[400px] w-full" />
+          </div>
+        </PageContainer>
       </DashboardLayout>
     );
   }
@@ -153,19 +156,22 @@ export default function EmployeeDetail() {
   if (!employee) {
     return (
       <DashboardLayout>
-        <div className="flex flex-col items-center justify-center h-[400px] text-white/70">
-          <p>Employee not found</p>
-          <Button variant="outline" className="mt-4" onClick={() => navigate('/dashboard/employees')}>
-            Back to Employees
-          </Button>
-        </div>
+        <PageContainer>
+          <div className="flex flex-col items-center justify-center h-[400px] text-white/70">
+            <p>Employee not found</p>
+            <Button variant="outline" className="mt-4" onClick={() => navigate('/dashboard/employees')}>
+              Back to Employees
+            </Button>
+          </div>
+        </PageContainer>
       </DashboardLayout>
     );
   }
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <PageContainer>
+        <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard/employees')}>
@@ -352,7 +358,8 @@ export default function EmployeeDetail() {
             </CardContent>
           </Card>
         </div>
-      </div>
+        </div>
+      </PageContainer>
     </DashboardLayout>
   );
 }
