@@ -15,17 +15,18 @@ import { MissedCallSettings } from '@/components/company/MissedCallSettings';
 import { PublicAppUrlSettings } from '@/components/company/PublicAppUrlSettings';
 import { ContactInfoSettings } from '@/components/company/ContactInfoSettings';
 import { SetupProgressBar } from '@/components/company/SetupProgressBar';
+import { VoiceOnboardingSettings } from '@/components/settings/VoiceOnboardingSettings';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
-import { Settings as SettingsIcon } from 'lucide-react';
+import { Settings as SettingsIcon, Mic } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
 const VALID_TABS = [
   'branding', 'contact', 'app-url', 'reminders', 'missed-calls', 
   'default-prefs', 'reports', 'alerts', 'customer-prefs', 
-  'emails', 'sms', 'reviews', 'warranties', 'campaigns'
+  'emails', 'sms', 'reviews', 'warranties', 'campaigns', 'voice'
 ];
 
 export default function Settings() {
@@ -68,7 +69,11 @@ export default function Settings() {
                 <TabsTrigger value="sms">SMS Templates</TabsTrigger>
                 <TabsTrigger value="reviews">Reviews</TabsTrigger>
                 <TabsTrigger value="warranties">Warranties</TabsTrigger>
-                <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+              <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+                <TabsTrigger value="voice" className="flex items-center gap-1.5">
+                  <Mic className="w-3.5 h-3.5" />
+                  Aura Voice
+                </TabsTrigger>
               </TabsList>
             </div>
             <TabsContent value="branding">
@@ -112,6 +117,9 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="campaigns">
               <CampaignSettings />
+            </TabsContent>
+            <TabsContent value="voice">
+              <VoiceOnboardingSettings />
             </TabsContent>
           </Tabs>
           </div>

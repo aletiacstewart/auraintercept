@@ -54,7 +54,7 @@ import { cn } from '@/lib/utils';
 import logo from '@/assets/aura-intercept-logo.png';
 import { differenceInDays, parseISO } from 'date-fns';
 import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
-import { VoiceModeToggle, VoiceModeBadge } from '@/components/voice/VoiceModeToggle';
+import { AuraVoicePanel } from '@/components/voice/AuraVoicePanel';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
@@ -327,6 +327,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
         <Separator className="bg-sidebar-border" />
 
+        {/* Aura Voice Panel - Prominent position */}
+        <div className="py-3">
+          <AuraVoicePanel collapsed={collapsed} />
+        </div>
+
+        <Separator className="bg-sidebar-border" />
+
         {/* Navigation */}
         <div ref={sidebarScrollRootRef} className="flex-1 min-h-0 px-2 py-4">
           <ScrollArea className="h-full w-full">
@@ -416,15 +423,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <span className="text-xs font-medium text-white">{roleBadge.label}</span>
             </div>
           )}
-          
-          {/* Voice Mode Toggle */}
-          <div className={cn(
-            "flex items-center gap-2 px-2 py-1",
-            collapsed ? "justify-center" : "justify-between"
-          )}>
-            <VoiceModeToggle size="sm" />
-            {!collapsed && <VoiceModeBadge />}
-          </div>
           
           {/* Report Issue Button */}
           <ReportIssueDialog
