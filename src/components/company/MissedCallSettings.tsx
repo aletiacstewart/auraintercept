@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { Switch } from '@/components/ui/switch';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 type MissedCallAction = 'disabled' | 'sms_only' | 'callback_only' | 'callback_then_sms';
 
@@ -119,6 +120,7 @@ export function MissedCallSettings() {
       setSaveStatus('saved');
       setHasChanges(false);
       toast.success('Missed call settings saved');
+      triggerSetupProgressRefresh();
       setTimeout(() => setSaveStatus('idle'), 2000);
     },
     onError: (error) => {

@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, Circle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SETUP_PROGRESS_REFRESH_EVENT } from '@/hooks/useSetupProgress';
 
 interface SetupStep {
   id: string;
@@ -19,6 +20,17 @@ export function SetupProgressBar({ isPlatformAdmin = false }: SetupProgressBarPr
   const { companyId } = useAuth();
   const [steps, setSteps] = useState<SetupStep[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Listen for refresh events from settings components
+  useEffect(() => {
+    const handleRefresh = () => {
+      setRefreshKey(prev => prev + 1);
+    };
+    
+    window.addEventListener(SETUP_PROGRESS_REFRESH_EVENT, handleRefresh);
+    return () => window.removeEventListener(SETUP_PROGRESS_REFRESH_EVENT, handleRefresh);
+  }, []);
 
   useEffect(() => {
     if (!companyId) return;
@@ -155,7 +167,7 @@ export function SetupProgressBar({ isPlatformAdmin = false }: SetupProgressBarPr
     };
 
     checkSetupStatus();
-  }, [companyId, isPlatformAdmin]);
+  }, [companyId, isPlatformAdmin, refreshKey]);
 
   const completedCount = steps.filter((s) => s.completed).length;
   const progressPercent = steps.length > 0 ? (completedCount / steps.length) * 100 : 0;

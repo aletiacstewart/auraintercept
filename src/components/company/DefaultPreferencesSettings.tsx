@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MessageSquare, Mail, Phone, Info, Save } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 export function DefaultPreferencesSettings() {
   const { companyId } = useAuth();
@@ -68,6 +69,7 @@ export function DefaultPreferencesSettings() {
       setSaveStatus('saved');
       setHasChanges(false);
       toast.success('Default preferences saved');
+      triggerSetupProgressRefresh();
       setTimeout(() => setSaveStatus('idle'), 2000);
     },
     onError: () => {

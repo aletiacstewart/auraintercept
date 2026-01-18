@@ -19,6 +19,7 @@ import { SuppressedEmailsManager } from './SuppressedEmailsManager';
 import { DigestMetricsSelector } from './DigestMetricsSelector';
 import { AutomationOverview } from './AutomationOverview';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 interface ReportConfig {
   id: string;
@@ -246,6 +247,7 @@ export function ReportsDashboard() {
       toast.error('Failed to save settings');
     } else {
       toast.success('Settings saved');
+      triggerSetupProgressRefresh();
       fetchReportConfigs();
       setExpandedReport(null);
     }

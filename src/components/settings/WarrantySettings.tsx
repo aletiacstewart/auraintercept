@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { Shield, Save, Wrench, Package, Factory } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 const WARRANTY_PERIOD_OPTIONS = [
   { value: '0', label: 'No warranty' },
@@ -38,6 +39,7 @@ export function WarrantySettings() {
     // In a real app, save to database
     await new Promise(resolve => setTimeout(resolve, 500));
     toast.success('Warranty settings saved');
+    triggerSetupProgressRefresh();
     setSaving(false);
   };
 

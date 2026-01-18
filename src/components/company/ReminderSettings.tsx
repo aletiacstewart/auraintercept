@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSubscription } from '@/hooks/useSubscription';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 interface ReminderSetting {
   id: string;
@@ -105,6 +106,7 @@ export function ReminderSettings() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reminder-settings'] });
       toast.success('Reminder settings updated');
+      triggerSetupProgressRefresh();
     },
     onError: (error) => {
       toast.error('Failed to update settings: ' + error.message);

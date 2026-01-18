@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { isLovablePreviewOrigin, normalizePublicBaseUrl } from '@/lib/url';
 import { toast } from 'sonner';
+import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
 
 export function PublicAppUrlSettings() {
   const { companyId } = useAuth();
@@ -75,6 +76,7 @@ export function PublicAppUrlSettings() {
       console.error(error);
     } else {
       toast.success('Public app URL saved');
+      triggerSetupProgressRefresh();
     }
 
     setIsSaving(false);
