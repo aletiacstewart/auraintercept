@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { AddCustomerForm } from '@/components/customers/AddCustomerForm';
 
 import { 
   Search, 
@@ -25,7 +26,8 @@ import {
   Ban,
   Check,
   ChevronRight,
-  Loader2
+  Loader2,
+  UserPlus
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { PageHeader } from '@/components/ui/page-header';
@@ -81,6 +83,7 @@ export default function Customers() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerProfile | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [addCustomerOpen, setAddCustomerOpen] = useState(false);
 
   // Fetch customer profiles for the company
   const { data: customers, isLoading } = useQuery({
@@ -208,15 +211,21 @@ export default function Customers() {
           }
         />
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search by name, email, or phone..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 max-w-md"
-          />
+        {/* Search and Add Button */}
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by name, email, or phone..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button onClick={() => setAddCustomerOpen(true)}>
+            <UserPlus className="h-4 w-4 mr-2" />
+            New Customer
+          </Button>
         </div>
 
         {/* Customer List */}
@@ -493,6 +502,9 @@ export default function Customers() {
           </ScrollArea>
         </DialogContent>
       </Dialog>
+
+      {/* Add Customer Dialog */}
+      <AddCustomerForm open={addCustomerOpen} onOpenChange={setAddCustomerOpen} />
     </DashboardLayout>
   );
 }
