@@ -231,15 +231,22 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
   const handleTranscript = useCallback(async (text: string, isFinal: boolean) => {
     if (!isFinal) return;
     
+    // Skip empty or whitespace-only transcripts
+    const trimmedText = text?.trim();
+    if (!trimmedText) {
+      console.log('Voice: Skipping empty transcript');
+      return;
+    }
+    
     // Check if it's a simple command first (fast path)
-    const command = parseCommand(text);
+    const command = parseCommand(trimmedText);
     if (command) {
       handleCommand(command);
       return;
     }
     
     // Check for local navigation command (fast path for common patterns)
-    const navigationDestination = parseNavigationCommand(text);
+    const navigationDestination = parseNavigationCommand(trimmedText);
     if (navigationDestination && PAGE_ROUTES[navigationDestination]) {
       const route = PAGE_ROUTES[navigationDestination];
       navigate(route);
@@ -252,7 +259,7 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
     }
     
     // Check for search command (fast path)
-    const searchIntent = parseSearchIntent(text);
+    const searchIntent = parseSearchIntent(trimmedText);
     if (searchIntent) {
       const result = injectSearchQuery(searchIntent.query);
       setLastCommand(result);
@@ -265,28 +272,31 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
     }
     
     // For complex commands, use AI interpretation
-    const aiHandled = await processWithAI(text);
+    const aiHandled = await processWithAI(trimmedText);
     
     // If AI couldn't handle it, fall back to text injection
-    if (!aiHandled) {
-      const activeElement = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
-      if (activeElement && ('value' in activeElement)) {
+    if (!aiHandled && trimmedText) {
+      const activeElement = document.activeElement;
+      
+      // Only inject text into actual input/textarea elements
+      const isInputElement = activeElement instanceof HTMLInputElement;
+      const isTextAreaElement = activeElement instanceof HTMLTextAreaElement;
+      
+      if (isInputElement || isTextAreaElement) {
         const currentValue = activeElement.value;
-        const newValue = currentValue ? `${currentValue} ${text}` : text;
+        const newValue = currentValue ? `${currentValue} ${trimmedText}` : trimmedText;
         
-        // Create a native input event for React
-        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-          window.HTMLInputElement.prototype, 'value'
-        )?.set || Object.getOwnPropertyDescriptor(
-          window.HTMLTextAreaElement.prototype, 'value'
-        )?.set;
+        // Create a native input event for React - use the correct setter for element type
+        const nativeInputValueSetter = isInputElement
+          ? Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set
+          : Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value')?.set;
         
-        nativeInputValueSetter?.call(activeElement, newValue);
-        
-        const event = new Event('input', { bubbles: true });
-        activeElement.dispatchEvent(event);
-        
-        setLastCommand({ success: true, action: 'dictate', message: 'Text entered' });
+        if (nativeInputValueSetter) {
+          nativeInputValueSetter.call(activeElement, newValue);
+          const event = new Event('input', { bubbles: true });
+          activeElement.dispatchEvent(event);
+          setLastCommand({ success: true, action: 'dictate', message: 'Text entered' });
+        }
       }
     }
   }, [handleCommand, navigate, processWithAI]);
