@@ -12,9 +12,12 @@ import {
   clickButtonByText,
   clickCardByLabel,
   fillFieldByLabel,
+  focusFieldByLabel,
   injectSearchQuery,
   getVisibleButtonLabels,
   getVisibleCardLabels,
+  getVisibleFieldLabels,
+  isLikelyDictationText,
 } from '@/lib/voiceNavigation';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -102,6 +105,12 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
         }
         break;
         
+      case 'focus_field':
+        if (action.target) {
+          result = focusFieldByLabel(action.target);
+        }
+        break;
+        
       case 'open_form':
         // Try to click "New X" or "+ New X" button
         if (action.target) {
@@ -166,6 +175,7 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
           currentPage: location.pathname,
           visibleButtons: getVisibleButtonLabels(),
           visibleCards: getVisibleCardLabels(),
+          visibleFields: getVisibleFieldLabels(),
         }
       });
       
@@ -242,6 +252,30 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
     const command = parseCommand(trimmedText);
     if (command) {
       handleCommand(command);
+      return;
+    }
+    
+    // Context-aware dictation: If an input is focused and text looks like dictation, inject directly
+    const activeElement = document.activeElement;
+    const isInputElement = activeElement instanceof HTMLInputElement;
+    const isTextAreaElement = activeElement instanceof HTMLTextAreaElement;
+    
+    if ((isInputElement || isTextAreaElement) && isLikelyDictationText(trimmedText)) {
+      // This looks like dictation content, inject directly without AI processing
+      const currentValue = activeElement.value;
+      const newValue = currentValue ? `${currentValue} ${trimmedText}` : trimmedText;
+      
+      const nativeInputValueSetter = isInputElement
+        ? Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set
+        : Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value')?.set;
+      
+      if (nativeInputValueSetter) {
+        nativeInputValueSetter.call(activeElement, newValue);
+        const event = new Event('input', { bubbles: true });
+        activeElement.dispatchEvent(event);
+        setLastCommand({ success: true, action: 'dictate', message: 'Text entered' });
+        toast.success('Text entered', { duration: 1000, className: 'voice-command-toast' });
+      }
       return;
     }
     

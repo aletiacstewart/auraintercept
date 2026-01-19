@@ -210,7 +210,7 @@ export interface CommandResult {
 
 // AI-interpreted action from the voice-navigator edge function
 export interface AIAction {
-  action: 'navigate' | 'click_button' | 'click_card' | 'search' | 'fill_field' | 'open_form' | 'scroll' | 'unknown';
+  action: 'navigate' | 'click_button' | 'click_card' | 'search' | 'fill_field' | 'focus_field' | 'open_form' | 'scroll' | 'unknown';
   target?: string;
   value?: string;
   route?: string;
@@ -472,6 +472,104 @@ export function getVisibleCardLabels(): string[] {
   });
   
   return [...new Set(labels)].slice(0, 20); // Limit to 20 unique labels
+}
+
+// Get visible form field labels for AI context
+export function getVisibleFieldLabels(): string[] {
+  const labels = document.querySelectorAll('label');
+  const fieldLabels: string[] = [];
+  
+  labels.forEach(label => {
+    const text = label.textContent?.trim();
+    if (text && text.length > 0 && text.length < 50) {
+      fieldLabels.push(text);
+    }
+  });
+  
+  // Also check for placeholders
+  const inputs = document.querySelectorAll('input:not([type="hidden"]), textarea');
+  inputs.forEach(input => {
+    const placeholder = (input as HTMLInputElement).placeholder?.trim();
+    if (placeholder && placeholder.length > 0 && placeholder.length < 50) {
+      fieldLabels.push(placeholder);
+    }
+  });
+  
+  return [...new Set(fieldLabels)].slice(0, 20); // Limit to 20 unique labels
+}
+
+// Focus a form field by its label (without filling it)
+export function focusFieldByLabel(label: string): CommandResult {
+  const normalizedLabel = label.toLowerCase().trim();
+  
+  // Find label element
+  const labels = document.querySelectorAll('label');
+  for (const labelEl of labels) {
+    const labelText = labelEl.textContent?.toLowerCase().trim() || '';
+    if (labelText.includes(normalizedLabel) || normalizedLabel.includes(labelText)) {
+      const forId = labelEl.getAttribute('for');
+      let input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null = null;
+      
+      if (forId) {
+        input = document.getElementById(forId) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+      } else {
+        // Try to find input within or after the label
+        input = labelEl.querySelector('input, textarea, select') || 
+                labelEl.nextElementSibling?.querySelector('input, textarea, select') as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+      }
+      
+      if (input) {
+        input.focus();
+        return { success: true, action: 'focus_field', message: `Focused "${label}" field` };
+      }
+    }
+  }
+  
+  // Try by placeholder
+  const inputs = document.querySelectorAll('input, textarea');
+  for (const input of inputs) {
+    const placeholder = (input as HTMLInputElement).placeholder?.toLowerCase() || '';
+    if (placeholder.includes(normalizedLabel)) {
+      (input as HTMLInputElement).focus();
+      return { success: true, action: 'focus_field', message: `Focused "${label}" field` };
+    }
+  }
+  
+  // Try by name attribute
+  for (const input of inputs) {
+    const name = (input as HTMLInputElement).name?.toLowerCase() || '';
+    if (name.includes(normalizedLabel)) {
+      (input as HTMLInputElement).focus();
+      return { success: true, action: 'focus_field', message: `Focused "${label}" field` };
+    }
+  }
+  
+  return { success: false, action: 'focus_field', message: `Field "${label}" not found` };
+}
+
+// Check if text is likely dictation content (not a command)
+export function isLikelyDictationText(text: string): boolean {
+  const normalizedText = text.toLowerCase().trim();
+  
+  // Command keywords that indicate this is NOT dictation
+  const commandPatterns = [
+    /^(go to|navigate to|open|show|take me to|switch to)\s/i,
+    /^(click|press|tap|select)\s/i,
+    /^(search|find|look up|lookup|look for)\s/i,
+    /^(set|fill|enter|type|put)\s.+\s(to|in|into|with)\s/i,
+    /^(new|create|add)\s/i,
+    /^(scroll|page)\s(up|down)/i,
+    /\s(field|button|card|page)$/i,
+    /^(next|back|previous|tab|clear|erase|save|submit|cancel|stop)/i,
+  ];
+  
+  for (const pattern of commandPatterns) {
+    if (pattern.test(normalizedText)) {
+      return false; // This looks like a command
+    }
+  }
+  
+  return true; // This looks like dictation content
 }
 
 // Inject text into search input
