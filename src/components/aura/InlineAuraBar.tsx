@@ -86,7 +86,7 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder={placeholder || "Ask Aura anything..."}
-          className="border-0 bg-transparent flex-1 focus-visible:ring-0 focus-visible:ring-offset-0 text-sm"
+          className="border-0 bg-transparent flex-1 focus-visible:ring-0 focus-visible:ring-offset-0 text-sm text-foreground placeholder:text-muted-foreground"
           onKeyDown={handleKeyDown}
           disabled={isLoading}
         />
