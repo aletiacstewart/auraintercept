@@ -923,4 +923,162 @@
       box-shadow: 0 0 0 6px hsl(160 84% 39% / 0);
     }
   }
+
+  /* ============================================================
+     FEATURE PULSE ANIMATIONS - Dynamic Icon Pulsing
+     ============================================================
+     Use CSS custom property --feature-color to set the pulse color
+     or inherit from current text color (currentColor).
+     ============================================================ */
+  
+  /* Dynamic Feature Pulse - for active icons with breathing effect */
+  .feature-pulse-active {
+    animation: feature-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes feature-pulse {
+    0%, 100% { 
+      transform: scale(1); 
+      filter: drop-shadow(0 0 0 transparent);
+    }
+    50% { 
+      transform: scale(1.1); 
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+  }
+
+  /* Feature Glow Pulse - for containers with color glow */
+  .feature-glow-pulse {
+    animation: feature-glow-pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes feature-glow-pulse {
+    0%, 100% { 
+      box-shadow: 0 0 0 0 hsl(var(--feature-color, 199 60% 55%) / 0.4);
+    }
+    50% { 
+      box-shadow: 0 0 15px 5px hsl(var(--feature-color, 199 60% 55%) / 0.3);
+    }
+  }
+
+  /* ============================================================
+     MIC FLASH ANIMATION - Attention-grabbing voice indicator
+     ============================================================ */
+  
+  .mic-flash-enabled {
+    animation: mic-flash-glow 1.2s ease-in-out infinite;
+  }
+
+  @keyframes mic-flash-glow {
+    0%, 100% { 
+      opacity: 1;
+      filter: drop-shadow(0 0 0 hsl(160 84% 39% / 0));
+    }
+    25% { 
+      opacity: 0.8;
+      filter: drop-shadow(0 0 12px hsl(160 84% 39% / 0.8));
+    }
+    50% { 
+      opacity: 1;
+      filter: drop-shadow(0 0 4px hsl(160 84% 39% / 0.6));
+    }
+    75% { 
+      opacity: 0.9;
+      filter: drop-shadow(0 0 16px hsl(160 84% 39% / 0.9));
+    }
+  }
+
+  /* Mic Ring Ripple - expanding rings from mic icon */
+  .mic-ring-ripple {
+    position: relative;
+  }
+
+  .mic-ring-ripple::before,
+  .mic-ring-ripple::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid hsl(160 84% 39% / 0.5);
+    animation: mic-ring-expand 2s ease-out infinite;
+    pointer-events: none;
+  }
+
+  .mic-ring-ripple::after {
+    animation-delay: 1s;
+  }
+
+  @keyframes mic-ring-expand {
+    0% { 
+      transform: scale(1); 
+      opacity: 0.6; 
+    }
+    100% { 
+      transform: scale(2.2); 
+      opacity: 0; 
+    }
+  }
+
+  /* ============================================================
+     ADDITIONAL FEATURE ICON UTILITIES
+     ============================================================ */
+  .icon-feature-platform {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-platform) / 0.15);
+    color: hsl(var(--feature-platform));
+  }
+  
+  .icon-feature-config {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-config) / 0.15);
+    color: hsl(var(--feature-config));
+  }
+  
+  .icon-feature-overview {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-overview) / 0.15);
+    color: hsl(var(--feature-overview));
+  }
+  
+  .icon-feature-integrations {
+    @apply rounded-lg p-2;
+    background: hsl(var(--feature-integrations) / 0.15);
+    color: hsl(var(--feature-integrations));
+  }
+
+  /* Feature text color utilities */
+  .text-feature-companies { color: hsl(var(--feature-companies)); }
+  .text-feature-employees { color: hsl(var(--feature-employees)); }
+  .text-feature-customers { color: hsl(var(--feature-customers)); }
+  .text-feature-leads { color: hsl(var(--feature-leads)); }
+  .text-feature-appointments { color: hsl(var(--feature-appointments)); }
+  .text-feature-quotes { color: hsl(var(--feature-quotes)); }
+  .text-feature-invoices { color: hsl(var(--feature-invoices)); }
+  .text-feature-inventory { color: hsl(var(--feature-inventory)); }
+  .text-feature-warranties { color: hsl(var(--feature-warranties)); }
+  .text-feature-analytics { color: hsl(var(--feature-analytics)); }
+  .text-feature-marketing { color: hsl(var(--feature-marketing)); }
+  .text-feature-fieldops { color: hsl(var(--feature-fieldops)); }
+  .text-feature-platform { color: hsl(var(--feature-platform)); }
+  .text-feature-config { color: hsl(var(--feature-config)); }
+  .text-feature-overview { color: hsl(var(--feature-overview)); }
+  .text-feature-integrations { color: hsl(var(--feature-integrations)); }
+
+  /* Feature background color utilities */
+  .bg-feature-companies { background-color: hsl(var(--feature-companies)); }
+  .bg-feature-employees { background-color: hsl(var(--feature-employees)); }
+  .bg-feature-customers { background-color: hsl(var(--feature-customers)); }
+  .bg-feature-leads { background-color: hsl(var(--feature-leads)); }
+  .bg-feature-appointments { background-color: hsl(var(--feature-appointments)); }
+  .bg-feature-quotes { background-color: hsl(var(--feature-quotes)); }
+  .bg-feature-invoices { background-color: hsl(var(--feature-invoices)); }
+  .bg-feature-inventory { background-color: hsl(var(--feature-inventory)); }
+  .bg-feature-warranties { background-color: hsl(var(--feature-warranties)); }
+  .bg-feature-analytics { background-color: hsl(var(--feature-analytics)); }
+  .bg-feature-marketing { background-color: hsl(var(--feature-marketing)); }
+  .bg-feature-fieldops { background-color: hsl(var(--feature-fieldops)); }
+  .bg-feature-platform { background-color: hsl(var(--feature-platform)); }
+  .bg-feature-config { background-color: hsl(var(--feature-config)); }
+  .bg-feature-overview { background-color: hsl(var(--feature-overview)); }
+  .bg-feature-integrations { background-color: hsl(var(--feature-integrations)); }
 }

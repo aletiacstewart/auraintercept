@@ -88,16 +88,20 @@ export function VoiceStatusIndicator({
           >
             <div
               className={cn(
-                "flex items-center justify-center rounded-full transition-all",
+                "flex items-center justify-center rounded-full transition-all relative",
                 sizeClasses[size],
                 isVoiceModeEnabled
                   ? "bg-emerald-500/20 text-emerald-500"
                   : "bg-red-500/20 text-red-500",
+                isVoiceModeEnabled && "mic-ring-ripple",
                 isListening && "voice-indicator-pulse"
               )}
             >
               {isVoiceModeEnabled ? (
-                <Mic className={cn(iconSizeClasses[size])} />
+                <Mic className={cn(
+                  iconSizeClasses[size], 
+                  isListening && "mic-flash-enabled"
+                )} />
               ) : (
                 <MicOff className={cn(iconSizeClasses[size])} />
               )}
