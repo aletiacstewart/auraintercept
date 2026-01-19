@@ -98,7 +98,37 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
     dataPart: string | null;
     actionPart: string | null;
   }> => {
-    // Try local detection first (fast)
+    const normalizedInput = input.trim().toLowerCase();
+    
+    // PRIORITY FAST-PATH: Questions starting with "how many" are ALWAYS data queries
+    if (/^how many\b/i.test(normalizedInput)) {
+      return {
+        intent: 'data_query',
+        dataPart: input,
+        actionPart: null,
+      };
+    }
+    
+    // PRIORITY FAST-PATH: Questions with "do I have" about business entities are data queries
+    const businessEntities = /customers?|leads?|appointments?|quotes?|invoices?|warranties?|campaigns?|inventory|items?/i;
+    if (/\bdo i have\b/i.test(normalizedInput) && businessEntities.test(normalizedInput)) {
+      return {
+        intent: 'data_query',
+        dataPart: input,
+        actionPart: null,
+      };
+    }
+    
+    // PRIORITY FAST-PATH: "What is/are my X" questions are data queries
+    if (/^what('?s| is| are)?\s+(my |our |the )?/i.test(normalizedInput) && businessEntities.test(normalizedInput)) {
+      return {
+        intent: 'data_query',
+        dataPart: input,
+        actionPart: null,
+      };
+    }
+    
+    // Try local detection (fast)
     const localResult = detectLocalIntent(input);
     
     if (localResult.confidence >= 0.75) {

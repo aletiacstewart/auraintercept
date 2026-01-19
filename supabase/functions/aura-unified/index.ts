@@ -9,14 +9,41 @@ const corsHeaders = {
 const INTENT_CLASSIFICATION_PROMPT = `You are an intent classifier for a unified voice/text assistant called Aura. 
 Classify the user's input into one of these categories:
 
-1. "data_query" - Questions about metrics, analytics, reports, trends, business data
-   Examples: "What's my revenue this month?", "Show me top customers", "How many appointments today?"
+1. "data_query" - Questions asking for INFORMATION, counts, metrics, analytics, reports, data
+   ALWAYS classify as data_query when:
+   - Question starts with "how many", "how much", "what is", "what are"
+   - Asking about counts, totals, numbers, or status of business entities
+   - Mentions: customers, leads, appointments, quotes, invoices, inventory, warranties, campaigns
+   - User wants a NUMBER or LIST of data, not to navigate somewhere
+   
+   Examples:
+   - "How many customers do I have?" → data_query (wants a NUMBER)
+   - "What's my revenue this month?" → data_query
+   - "How many active warranties?" → data_query
+   - "What are my pending invoices?" → data_query
+   - "Do I have any overdue invoices?" → data_query
 
 2. "action_command" - Navigation, clicking buttons, form filling, UI interactions
-   Examples: "Go to customers", "Open new quote", "Navigate to invoices", "Click add button"
+   ONLY use action_command when user explicitly wants to:
+   - GO somewhere: "Go to customers", "Open the customers page", "Navigate to invoices"
+   - PERFORM a UI action: "Create a new quote", "Click add button", "Open settings"
+   
+   Navigation keywords: "go to", "open", "navigate to", "take me to", "show me the page"
+   
+   Examples:
+   - "Go to customers" → action_command (wants navigation)
+   - "Open the invoices page" → action_command
+   - "Navigate to analytics" → action_command
+   - "Create a new quote" → action_command
 
 3. "hybrid" - Contains BOTH a data request AND an action to take
    Examples: "Show me top leads and open the first one", "What's revenue then go to reports"
+
+CRITICAL DISTINCTION:
+- "How many customers do I have?" → data_query (user wants a NUMBER answer)
+- "Go to customers" → action_command (user wants to navigate)
+- "Show me the customers page" → action_command (navigation)
+- "What customers do I have?" → data_query (wants information)
 
 Respond with ONLY valid JSON in this exact format:
 {
