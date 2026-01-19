@@ -92,9 +92,6 @@ const navGroups: NavGroup[] = [
     label: 'Business Management',
     items: [
       { label: 'Business Ops Overview', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
-      { label: 'Companies', icon: Building2, href: '/dashboard/companies', roles: ['platform_admin'], featureColor: 'text-feature-companies' },
-      { label: 'Employees', icon: UserCheck, href: '/dashboard/employees', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-employees' },
-      { label: 'Customers', icon: Users, href: '/dashboard/customers', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers' },
       { label: 'Business Ops Hub', icon: Briefcase, href: '/dashboard/business-ops-hub', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform' },
       { label: 'Analytics & Reports', icon: Cpu, href: '/dashboard/analytics-reports', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
       { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-overview' },
