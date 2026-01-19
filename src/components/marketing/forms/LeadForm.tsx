@@ -124,7 +124,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
           <div className="space-y-2">
             <Label className="text-foreground/70">Name *</Label>
             <Input
-              className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50"
+              className="bg-background text-foreground border-input placeholder:text-muted-foreground"
               placeholder="John Smith"
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
@@ -140,7 +140,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
               </Label>
               <Input
                 type="email"
-                className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50"
+                className="bg-background text-foreground border-input placeholder:text-muted-foreground"
                 placeholder="john@email.com"
                 value={formData.email}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
@@ -152,7 +152,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
                 Phone
               </Label>
               <Input
-                className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50"
+                className="bg-background text-foreground border-input placeholder:text-muted-foreground"
                 placeholder="(555) 123-4567"
                 value={formData.phone}
                 onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
@@ -164,7 +164,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
           <div className="space-y-2">
             <Label className="text-foreground/70">Address</Label>
             <Input
-              className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50"
+              className="bg-background text-foreground border-input placeholder:text-muted-foreground"
               placeholder="123 Main St, City, State"
               value={formData.address}
               onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
@@ -179,7 +179,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
                 value={formData.source}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, source: value }))}
               >
-                <SelectTrigger className="bg-sidebar-background text-sidebar-foreground border-sidebar-border">
+                <SelectTrigger className="bg-background text-foreground border-input">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -196,7 +196,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
             <div className="space-y-2">
               <Label className="text-foreground/70">Service Interest</Label>
               <Input
-                className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50"
+                className="bg-background text-foreground border-input placeholder:text-muted-foreground"
                 placeholder="e.g., HVAC repair"
                 value={formData.serviceInterest}
                 onChange={(e) => setFormData(prev => ({ ...prev, serviceInterest: e.target.value }))}
@@ -208,7 +208,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
           <div className="space-y-2">
             <Label className="text-foreground/70">Notes</Label>
             <Textarea
-              className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50"
+              className="bg-background text-foreground border-input placeholder:text-muted-foreground"
               placeholder="Any additional details about this lead..."
               value={formData.notes}
               onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
@@ -221,25 +221,25 @@ export const LeadForm: React.FC<LeadFormProps> = ({ companyId, onCancel, onSucce
             <Label className="text-foreground/70 text-xs">Attribution (CRM Sync)</Label>
             <div className="grid grid-cols-2 gap-2">
               <Input
-                className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50 h-8 text-xs"
+                className="bg-background text-foreground border-input placeholder:text-muted-foreground h-8 text-xs"
                 placeholder="Campaign Source"
                 value={formData.campaignSource}
                 onChange={(e) => setFormData(prev => ({ ...prev, campaignSource: e.target.value }))}
               />
               <Input
-                className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50 h-8 text-xs"
+                className="bg-background text-foreground border-input placeholder:text-muted-foreground h-8 text-xs"
                 placeholder="UTM Source"
                 value={formData.utmSource}
                 onChange={(e) => setFormData(prev => ({ ...prev, utmSource: e.target.value }))}
               />
               <Input
-                className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50 h-8 text-xs"
+                className="bg-background text-foreground border-input placeholder:text-muted-foreground h-8 text-xs"
                 placeholder="UTM Medium"
                 value={formData.utmMedium}
                 onChange={(e) => setFormData(prev => ({ ...prev, utmMedium: e.target.value }))}
               />
               <Input
-                className="bg-sidebar-background text-sidebar-foreground border-sidebar-border placeholder:text-sidebar-foreground/50 h-8 text-xs"
+                className="bg-background text-foreground border-input placeholder:text-muted-foreground h-8 text-xs"
                 placeholder="UTM Campaign"
                 value={formData.utmCampaign}
                 onChange={(e) => setFormData(prev => ({ ...prev, utmCampaign: e.target.value }))}
