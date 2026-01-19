@@ -33,7 +33,7 @@ export default function BusinessInsightsPage() {
             description="AI-powered business intelligence and insights"
             featureColor="analytics"
             action={
-              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/ai-consoles/business-management')}>
+              <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/ai-consoles/business-mgt-ops')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Console
               </Button>
@@ -41,7 +41,7 @@ export default function BusinessInsightsPage() {
           />
           <InsightsReportForm 
             companyId={companyId} 
-            onCancel={() => navigate('/dashboard/ai-consoles/business-management')}
+            onCancel={() => navigate('/dashboard/ai-consoles/business-mgt-ops')}
           />
         </div>
       </PageContainer>

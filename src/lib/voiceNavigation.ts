@@ -98,7 +98,8 @@ export const PAGE_ROUTES: Record<string, string> = {
   'subscription analytics': '/dashboard/subscription-analytics',
   
   // Business Consoles & Apps Section
-  'business management ops': '/dashboard/ai-consoles/business-management',
+  'business mgt ops console': '/dashboard/ai-consoles/business-mgt-ops',
+  'business management ops': '/dashboard/ai-consoles/business-mgt-ops',
   'analytics & reports ops': '/dashboard/ai-consoles/analytics',
   'analytics and reports ops': '/dashboard/ai-consoles/analytics',
   'marketing & sales ops': '/dashboard/ai-consoles/marketing-sales',

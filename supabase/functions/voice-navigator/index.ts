@@ -23,7 +23,7 @@ Dashboard Pages (use these exact routes):
 - Warranties: /dashboard/warranties
 - Ask Aura/Analytics: /dashboard/ask-aura
 - Subscription Analytics: /dashboard/subscription-analytics
-- Business Management Ops: /dashboard/ai-consoles/business-management
+- Business Mgt Ops Console: /dashboard/ai-consoles/business-mgt-ops
 - Analytics & Reports Ops: /dashboard/ai-consoles/analytics
 - Marketing & Sales Ops: /dashboard/ai-consoles/marketing-sales
 - Business Mgt Ops Install: /dashboard/business-mgt-ops-install

@@ -142,7 +142,7 @@ const App = () => (
               <Route path="/dashboard/ai-agent" element={<AIAgent />} />
               <Route path="/dashboard/ai-consoles/customer-portal" element={<CustomerPortalConsole />} />
               <Route path="/dashboard/ai-consoles/field-ops" element={<FieldOpsConsole />} />
-              <Route path="/dashboard/ai-consoles/business-management" element={<BusinessManagementConsole />} />
+              <Route path="/dashboard/ai-consoles/business-mgt-ops" element={<BusinessManagementConsole />} />
               <Route path="/dashboard/ai-consoles/marketing-sales" element={<MarketingSalesConsole />} />
               <Route path="/dashboard/ai-consoles/analytics" element={<AnalyticsConsole />} />
               <Route path="/dashboard/ai-consoles/new-lead" element={<NewLeadPage />} />
