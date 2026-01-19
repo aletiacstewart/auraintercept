@@ -330,6 +330,32 @@ export function TechnicianJobQueue() {
     } catch (err) {
       console.error('Error sending review request:', err);
     }
+
+    // Trigger social content generation if after photos exist
+    if (job.after_photos && job.after_photos.length > 0) {
+      try {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('company_id, full_name')
+          .eq('id', user?.id)
+          .single();
+        
+        await supabase.functions.invoke('generate-social-content', {
+          body: {
+            jobAssignmentId: job.id,
+            afterPhotos: job.after_photos,
+            companyId: profile?.company_id,
+            serviceType: job.appointments?.service_type,
+            customerName: job.appointments?.customer_name,
+            employeeName: profile?.full_name,
+          },
+        });
+        console.log('[Social Content] Generation triggered for job:', job.id);
+      } catch (socialErr) {
+        console.error('[Social Content] Generation failed:', socialErr);
+        // Non-blocking - don't fail job completion if content generation fails
+      }
+    }
   };
 
   const handleUpdateNotes = (job: JobAssignment, notes: string, partsUsed: string) => {

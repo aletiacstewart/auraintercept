@@ -161,3 +161,9 @@ verify_jwt = true
 
 [functions.voice-navigator]
 verify_jwt = true
+
+[functions.generate-social-content]
+verify_jwt = false
+
+[functions.publish-social-content]
+verify_jwt = true

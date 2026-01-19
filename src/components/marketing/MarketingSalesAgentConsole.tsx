@@ -11,21 +11,25 @@ import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { CampaignForm } from './forms/CampaignForm';
 import { CustomerSegmentsForm } from './forms/CustomerSegmentsForm';
+import { SocialFeedQueue } from './SocialFeedQueue';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Megaphone, 
-  Users, 
+  Users,
+  Share2, 
 } from 'lucide-react';
 
 // Tab configuration
 const TABS = [
   { id: 'chat', label: 'Home', icon: Megaphone },
+  { id: 'social', label: 'Social Feed', icon: Share2 },
 ];
 
 // Quick actions for Marketing & Sales - consolidated campaign creation
 const QUICK_ACTIONS = [
   { id: 'campaign', label: 'Create Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign' },
   { id: 'customers', label: 'Customer Segments', icon: Users, message: 'Show me customer segments' },
+  { id: 'social', label: 'Social Feed', icon: Share2, message: 'Show me pending social media content' },
 ];
 
 interface MarketingSalesAgentConsoleProps {
@@ -90,21 +94,36 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   };
 
   const handleQuickAction = async (message: string, actionId?: string) => {
-    // Show appropriate form based on action
+    // Show appropriate form or switch tab based on action
     if (actionId === 'campaign') {
       hideAllForms();
       setShowCampaignForm(true);
+      setActiveTab('chat');
       return;
     }
     if (actionId === 'customers') {
       hideAllForms();
       setShowSegmentsForm(true);
+      setActiveTab('chat');
+      return;
+    }
+    if (actionId === 'social') {
+      hideAllForms();
+      setActiveTab('social');
       return;
     }
     
     // Default: send message to AI
     hideAllForms();
+    setActiveTab('chat');
     await sendMessage(message);
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (tab !== 'chat') {
+      hideAllForms();
+    }
   };
 
   const handleHome = () => {
@@ -126,11 +145,12 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   };
 
   const isShowingForm = showCampaignForm || showSegmentsForm;
-  const showWelcome = messages.length === 0 && !isShowingForm;
+  const showWelcome = messages.length === 0 && !isShowingForm && activeTab === 'chat';
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
   // Get active label based on form type - show "Home" when no form is active
   const getActiveLabel = () => {
+    if (activeTab === 'social') return 'Social Feed';
     if (showCampaignForm) return 'Campaign';
     if (showSegmentsForm) return 'Segments';
     if (messages.length > 0) return agentStyle.label; // Show agent label during chat
@@ -146,8 +166,8 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
         logoUrl={company?.logo_url}
         companyName={company?.name || 'Marketing & Sales'}
         agentLabel={activeLabel}
-        agentColor={agentStyle.color}
-        agentBgColor={agentStyle.bgColor}
+        agentColor={activeTab === 'social' ? 'text-pink-400' : agentStyle.color}
+        agentBgColor={activeTab === 'social' ? 'bg-gradient-to-br from-pink-500/20 to-purple-500/20' : agentStyle.bgColor}
         useDefaultLogo={true}
       />
 
@@ -155,83 +175,95 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       <MobileTabNav
         tabs={TABS}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         onHomeClick={handleHome}
       />
 
       {/* Content Area */}
       <div className="flex-1 flex flex-col min-h-0 relative console-surface">
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
-          {showWelcome ? (
-            <WelcomeScreen
-              companyName={company?.name || 'Marketing & Sales'}
-              title="Marketing & Sales"
-              subtitle="I can help you with campaigns, promotions, referrals, and lead management. How can I assist you today?"
-              actions={QUICK_ACTIONS}
-              onAction={handleQuickAction}
-              consoleType="marketing"
-            />
-          ) : (
-            <div className="space-y-4">
-              {/* Forms */}
-              {showCampaignForm && effectiveCompanyId && (
-                <CampaignForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                  onSuccess={(data) => handleFormSuccess('campaign', data)}
-                />
-              )}
-              
-              {showSegmentsForm && effectiveCompanyId && (
-                <CustomerSegmentsForm
-                  companyId={effectiveCompanyId}
-                  onCancel={handleHome}
-                />
-              )}
+        {/* Social Feed Tab */}
+        {activeTab === 'social' && effectiveCompanyId && (
+          <div className="flex-1 overflow-y-auto p-4">
+            <SocialFeedQueue companyId={effectiveCompanyId} />
+          </div>
+        )}
 
-              {/* Chat Messages */}
-              {!isShowingForm && messages.map((msg, idx) => {
-                const msgAgentStyle = msg.agent ? getAgentStyle(msg.agent) : agentStyle;
-                const prevAgent = idx > 0 ? messages[idx - 1].agent : null;
-                const isHandoff = msg.role === 'assistant' && msg.agent !== prevAgent && idx > 0;
-                
-                return (
-                  <ChatBubble
-                    key={idx}
-                    role={msg.role}
-                    content={msg.content}
-                    agentLabel={msgAgentStyle.label}
-                    agentColor={msgAgentStyle.color}
-                    agentBgColor={msgAgentStyle.bgColor}
-                    isHandoff={isHandoff}
-                  />
-                );
-              })}
-              {isLoading && !isShowingForm && (
-                <ChatBubble
-                  role="assistant"
-                  content=""
-                  isLoading={true}
-                  agentLabel={agentStyle.label}
-                  agentColor={agentStyle.color}
-                  agentBgColor={agentStyle.bgColor}
+        {/* Chat Tab */}
+        {activeTab === 'chat' && (
+          <>
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
+              {showWelcome ? (
+                <WelcomeScreen
+                  companyName={company?.name || 'Marketing & Sales'}
+                  title="Marketing & Sales"
+                  subtitle="I can help you with campaigns, promotions, referrals, and lead management. How can I assist you today?"
+                  actions={QUICK_ACTIONS}
+                  onAction={handleQuickAction}
+                  consoleType="marketing"
                 />
+              ) : (
+                <div className="space-y-4">
+                  {/* Forms */}
+                  {showCampaignForm && effectiveCompanyId && (
+                    <CampaignForm
+                      companyId={effectiveCompanyId}
+                      onCancel={handleHome}
+                      onSuccess={(data) => handleFormSuccess('campaign', data)}
+                    />
+                  )}
+                  
+                  {showSegmentsForm && effectiveCompanyId && (
+                    <CustomerSegmentsForm
+                      companyId={effectiveCompanyId}
+                      onCancel={handleHome}
+                    />
+                  )}
+
+                  {/* Chat Messages */}
+                  {!isShowingForm && messages.map((msg, idx) => {
+                    const msgAgentStyle = msg.agent ? getAgentStyle(msg.agent) : agentStyle;
+                    const prevAgent = idx > 0 ? messages[idx - 1].agent : null;
+                    const isHandoff = msg.role === 'assistant' && msg.agent !== prevAgent && idx > 0;
+                    
+                    return (
+                      <ChatBubble
+                        key={idx}
+                        role={msg.role}
+                        content={msg.content}
+                        agentLabel={msgAgentStyle.label}
+                        agentColor={msgAgentStyle.color}
+                        agentBgColor={msgAgentStyle.bgColor}
+                        isHandoff={isHandoff}
+                      />
+                    );
+                  })}
+                  {isLoading && !isShowingForm && (
+                    <ChatBubble
+                      role="assistant"
+                      content=""
+                      isLoading={true}
+                      agentLabel={agentStyle.label}
+                      agentColor={agentStyle.color}
+                      agentBgColor={agentStyle.bgColor}
+                    />
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
               )}
-              <div ref={messagesEndRef} />
             </div>
-          )}
-        </div>
 
-        {/* Floating Input */}
-        <FloatingInput
-          value={inputValue}
-          onChange={setInputValue}
-          onSubmit={handleSubmit}
-          onHome={handleHome}
-          isLoading={isLoading}
-          placeholder="Ask about campaigns, promos, referrals..."
-        />
+            {/* Floating Input */}
+            <FloatingInput
+              value={inputValue}
+              onChange={setInputValue}
+              onSubmit={handleSubmit}
+              onHome={handleHome}
+              isLoading={isLoading}
+              placeholder="Ask about campaigns, promos, referrals..."
+            />
+          </>
+        )}
       </div>
     </Card>
   );
