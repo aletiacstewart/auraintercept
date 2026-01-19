@@ -107,7 +107,7 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
     title: 'Connect Twilio',
     description: 'Enable voice calls and SMS for your AI agent',
     icon: Phone,
-    href: '/dashboard/integrations',
+    href: '/dashboard/3rd-party-overview',
     checkComplete: (data) => !!(
       data.integrations?.twilio_account_sid && 
       data.integrations?.twilio_auth_token && 
@@ -120,7 +120,7 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
     title: 'Connect ElevenLabs',
     description: 'Add natural AI voice synthesis to calls',
     icon: Mic,
-    href: '/dashboard/integrations',
+    href: '/dashboard/3rd-party-overview',
     checkComplete: (data) => !!data.integrations?.elevenlabs_api_key,
     priority: 'required',
   },
@@ -129,7 +129,7 @@ const CHECKLIST_ITEMS: ChecklistItem[] = [
     title: 'Set Up Payments',
     description: 'Configure Stripe for invoices and quotes',
     icon: CreditCard,
-    href: '/dashboard/integrations',
+    href: '/dashboard/3rd-party-overview',
     checkComplete: () => false, // Manual check - no stripe column yet
     priority: 'optional',
   },

@@ -260,7 +260,7 @@ export default function Integrations() {
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <PageHeader
             icon={Puzzle}
-            title="Integrations Overview"
+            title="3rd Party Overview"
             description="Connect services to power your AI agents"
             featureColor="integrations"
             showAuraBar

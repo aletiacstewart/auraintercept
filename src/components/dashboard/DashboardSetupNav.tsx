@@ -150,8 +150,8 @@ export function DashboardSetupNav() {
           },
           {
             id: 'overview',
-            label: 'Overview',
-            href: '/dashboard/integrations',
+            label: '3rd Party Overview',
+            href: '/dashboard/3rd-party-overview',
             icon: LayoutDashboard,
             completed: overviewProgress >= 100,
             progress: overviewProgress,

@@ -206,7 +206,7 @@ const AIAgent = () => {
                       )}
                       {!hasAnyTTS && (
                         <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild>
-                          <a href="/dashboard/integrations">
+                          <a href="/dashboard/3rd-party-overview">
                             Setup TTS <ExternalLink className="w-3 h-3 ml-1" />
                           </a>
                         </Button>
