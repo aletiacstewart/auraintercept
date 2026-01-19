@@ -54,33 +54,41 @@ const PLATFORM_CONFIG = {
   instagram: {
     icon: Instagram,
     label: 'Instagram',
-    gradient: 'from-pink-500 via-purple-500 to-orange-400',
-    bgClass: 'bg-gradient-to-br from-pink-500/20 to-purple-500/20',
-    borderClass: 'border-pink-500/30',
+    color: 'hsl(330, 70%, 55%)',
+    bgClass: 'bg-[hsl(330,70%,50%)]/10',
+    borderClass: 'border-[hsl(330,70%,50%)]/25',
+    textClass: 'text-[hsl(330,70%,60%)]',
+    iconBg: 'bg-[hsl(330,70%,50%)]/15',
     charLimit: 2200,
   },
   google_business: {
     icon: MapPin,
     label: 'Google Business',
-    gradient: 'from-blue-500 to-green-500',
-    bgClass: 'bg-blue-500/20',
-    borderClass: 'border-blue-500/30',
+    color: 'hsl(210, 80%, 55%)',
+    bgClass: 'bg-[hsl(210,80%,50%)]/10',
+    borderClass: 'border-[hsl(210,80%,50%)]/25',
+    textClass: 'text-[hsl(210,80%,60%)]',
+    iconBg: 'bg-[hsl(210,80%,50%)]/15',
     charLimit: 1500,
   },
   facebook: {
     icon: Facebook,
     label: 'Facebook',
-    gradient: 'from-blue-600 to-blue-400',
-    bgClass: 'bg-blue-600/20',
-    borderClass: 'border-blue-600/30',
+    color: 'hsl(220, 70%, 55%)',
+    bgClass: 'bg-[hsl(220,70%,50%)]/10',
+    borderClass: 'border-[hsl(220,70%,50%)]/25',
+    textClass: 'text-[hsl(220,70%,60%)]',
+    iconBg: 'bg-[hsl(220,70%,50%)]/15',
     charLimit: 500,
   },
   sms: {
     icon: MessageSquare,
     label: 'SMS Template',
-    gradient: 'from-green-500 to-emerald-400',
-    bgClass: 'bg-green-500/20',
-    borderClass: 'border-green-500/30',
+    color: 'hsl(145, 60%, 50%)',
+    bgClass: 'bg-[hsl(145,60%,45%)]/10',
+    borderClass: 'border-[hsl(145,60%,45%)]/25',
+    textClass: 'text-[hsl(145,60%,55%)]',
+    iconBg: 'bg-[hsl(145,60%,45%)]/15',
     charLimit: 160,
   },
 };
@@ -115,13 +123,13 @@ export function SocialContentCard({
   const getStatusBadge = () => {
     switch (draft.status) {
       case 'pending':
-        return <Badge variant="outline" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30"><Clock className="h-3 w-3 mr-1" /> Pending</Badge>;
+        return <Badge variant="outline" className="bg-status-pending/15 text-status-pending border-status-pending/30"><Clock className="h-3 w-3 mr-1" /> Pending</Badge>;
       case 'approved':
-        return <Badge variant="outline" className="bg-blue-500/20 text-blue-400 border-blue-500/30"><Check className="h-3 w-3 mr-1" /> Approved</Badge>;
+        return <Badge variant="outline" className="bg-info/15 text-info border-info/30"><Check className="h-3 w-3 mr-1" /> Approved</Badge>;
       case 'published':
-        return <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30"><Send className="h-3 w-3 mr-1" /> Published</Badge>;
+        return <Badge variant="outline" className="bg-success/15 text-success border-success/30"><Send className="h-3 w-3 mr-1" /> Published</Badge>;
       case 'rejected':
-        return <Badge variant="outline" className="bg-red-500/20 text-red-400 border-red-500/30">Rejected</Badge>;
+        return <Badge variant="outline" className="bg-destructive/15 text-destructive border-destructive/30">Rejected</Badge>;
       default:
         return null;
     }
@@ -129,34 +137,34 @@ export function SocialContentCard({
 
   return (
     <>
-      <Card className={`overflow-hidden border ${config.borderClass} ${config.bgClass} backdrop-blur-sm`}>
+      <Card className={`overflow-hidden border ${config.borderClass} bg-card rounded-xl`}>
         <CardContent className="p-0">
           {/* Header */}
-          <div className="flex items-center justify-between p-3 border-b border-slate-700/50">
+          <div className="flex items-center justify-between p-3 border-b border-card-foreground/10">
             <div className="flex items-center gap-2">
-              <div className={`p-1.5 rounded-md bg-gradient-to-br ${config.gradient}`}>
-                <PlatformIcon className="h-4 w-4 text-white" />
+              <div className={`p-2 rounded-lg ${config.iconBg} border ${config.borderClass}`}>
+                <PlatformIcon className={`h-4 w-4 ${config.textClass}`} />
               </div>
-              <span className="font-medium text-sm text-slate-200">{config.label}</span>
+              <span className="font-medium text-sm text-card-foreground">{config.label}</span>
             </div>
             {getStatusBadge()}
           </div>
 
           {/* Image Preview */}
           {draft.image_url && draft.platform !== 'sms' && (
-            <div className="relative aspect-video bg-slate-900/50">
+            <div className="relative aspect-video bg-muted/30">
               <img 
                 src={draft.image_url} 
                 alt="Job completion" 
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-card/60 to-transparent" />
             </div>
           )}
 
           {!draft.image_url && draft.platform !== 'sms' && (
-            <div className="aspect-video bg-slate-900/50 flex items-center justify-center">
-              <div className="text-center text-slate-500">
+            <div className="aspect-video bg-muted/20 flex items-center justify-center border-b border-card-foreground/10">
+              <div className="text-center text-card-foreground/40">
                 <ImageIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 <span className="text-xs">No image</span>
               </div>
@@ -170,15 +178,15 @@ export function SocialContentCard({
                 <Textarea
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
-                  className="min-h-[120px] bg-slate-900/50 border-slate-700 text-slate-200 text-sm resize-none"
+                  className="min-h-[120px] bg-muted/30 border-card-foreground/20 text-card-foreground text-sm resize-none"
                   placeholder="Edit content..."
                 />
                 <div className="flex items-center justify-between text-xs">
-                  <span className={isOverLimit ? 'text-red-400' : 'text-slate-400'}>
+                  <span className={isOverLimit ? 'text-destructive' : 'text-card-foreground/50'}>
                     {editContent.length} / {config.charLimit}
                   </span>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="ghost" onClick={handleCancelEdit}>
+                    <Button size="sm" variant="ghost" onClick={handleCancelEdit} className="text-card-foreground/70">
                       Cancel
                     </Button>
                     <Button size="sm" onClick={handleSaveEdit}>
@@ -189,7 +197,7 @@ export function SocialContentCard({
               </div>
             ) : (
               <>
-                <p className="text-sm text-slate-300 line-clamp-4 whitespace-pre-wrap">
+                <p className="text-sm text-card-foreground/80 line-clamp-4 whitespace-pre-wrap">
                   {content}
                 </p>
                 
@@ -200,22 +208,22 @@ export function SocialContentCard({
                       <Badge 
                         key={idx} 
                         variant="outline" 
-                        className="text-xs bg-slate-800/50 border-slate-700 text-slate-400"
+                        className="text-xs bg-muted/30 border-card-foreground/15 text-card-foreground/60"
                       >
                         <Hash className="h-2.5 w-2.5 mr-0.5" />
                         {tag}
                       </Badge>
                     ))}
                     {draft.hashtags.length > 5 && (
-                      <Badge variant="outline" className="text-xs bg-slate-800/50 border-slate-700 text-slate-400">
+                      <Badge variant="outline" className="text-xs bg-muted/30 border-card-foreground/15 text-card-foreground/60">
                         +{draft.hashtags.length - 5} more
                       </Badge>
-                    )}
-                  </div>
                 )}
+                </div>
+              )}
 
-                <div className="flex items-center justify-between text-xs text-slate-500">
-                  <span className={isOverLimit ? 'text-red-400' : ''}>
+                <div className="flex items-center justify-between text-xs text-card-foreground/50">
+                  <span className={isOverLimit ? 'text-destructive' : ''}>
                     {charCount} / {config.charLimit}
                   </span>
                 </div>
@@ -224,11 +232,11 @@ export function SocialContentCard({
 
             {/* Actions */}
             {draft.status === 'pending' && !isEditing && (
-              <div className="flex gap-2 pt-2 border-t border-slate-700/50">
+              <div className="flex gap-2 pt-2 border-t border-card-foreground/10">
                 <Button 
                   size="sm" 
                   variant="ghost" 
-                  className="flex-1 text-slate-400 hover:text-slate-200"
+                  className="flex-1 text-card-foreground/60 hover:text-card-foreground hover:bg-card-foreground/10"
                   onClick={() => setIsEditing(true)}
                 >
                   <Edit2 className="h-3.5 w-3.5 mr-1.5" />
@@ -237,7 +245,7 @@ export function SocialContentCard({
                 <Button 
                   size="sm" 
                   variant="ghost" 
-                  className="flex-1 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                  className="flex-1 text-destructive/70 hover:text-destructive hover:bg-destructive/10"
                   onClick={() => setShowDeleteConfirm(true)}
                 >
                   <Trash2 className="h-3.5 w-3.5 mr-1.5" />
@@ -245,13 +253,13 @@ export function SocialContentCard({
                 </Button>
                 <Button 
                   size="sm" 
-                  className={`flex-1 bg-gradient-to-r ${config.gradient} text-white hover:opacity-90`}
+                  className={`flex-1 ${config.iconBg} ${config.textClass} border ${config.borderClass} hover:opacity-90`}
                   onClick={() => onApprove(draft.id)}
                   disabled={isPublishing}
                 >
                   {isPublishing ? (
                     <>
-                      <div className="h-3.5 w-3.5 mr-1.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="h-3.5 w-3.5 mr-1.5 border-2 border-current/30 border-t-current rounded-full animate-spin" />
                       Publishing...
                     </>
                   ) : (
@@ -265,7 +273,7 @@ export function SocialContentCard({
             )}
 
             {draft.status === 'published' && draft.published_at && (
-              <div className="text-xs text-slate-500 pt-2 border-t border-slate-700/50">
+              <div className="text-xs text-card-foreground/50 pt-2 border-t border-card-foreground/10">
                 Published {new Date(draft.published_at).toLocaleDateString()} at {new Date(draft.published_at).toLocaleTimeString()}
               </div>
             )}
@@ -275,15 +283,15 @@ export function SocialContentCard({
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
-        <DialogContent className="bg-slate-800 border-slate-700">
+        <DialogContent className="bg-card border-card-foreground/20">
           <DialogHeader>
-            <DialogTitle className="text-slate-100">Delete Draft?</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogTitle className="text-card-foreground">Delete Draft?</DialogTitle>
+            <DialogDescription className="text-card-foreground/60">
               This will permanently delete this {config.label} draft. This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setShowDeleteConfirm(false)}>
+            <Button variant="ghost" onClick={() => setShowDeleteConfirm(false)} className="text-card-foreground/70">
               Cancel
             </Button>
             <Button 

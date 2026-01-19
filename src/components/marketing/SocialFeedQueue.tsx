@@ -17,7 +17,7 @@ import {
   MessageSquare,
   Inbox,
   CheckCircle,
-  Send,
+  X,
 } from 'lucide-react';
 
 interface SocialFeedQueueProps {
@@ -26,6 +26,14 @@ interface SocialFeedQueueProps {
 
 type FilterStatus = 'all' | 'pending' | 'published';
 type FilterPlatform = 'all' | 'instagram' | 'google_business' | 'facebook' | 'sms';
+
+// Platform colors matching feature color system
+const PLATFORM_COLORS = {
+  instagram: { bg: 'bg-[hsl(330,70%,50%)]/15', text: 'text-[hsl(330,70%,60%)]', border: 'border-[hsl(330,70%,50%)]/30' },
+  google_business: { bg: 'bg-[hsl(210,80%,50%)]/15', text: 'text-[hsl(210,80%,60%)]', border: 'border-[hsl(210,80%,50%)]/30' },
+  facebook: { bg: 'bg-[hsl(220,70%,50%)]/15', text: 'text-[hsl(220,70%,60%)]', border: 'border-[hsl(220,70%,50%)]/30' },
+  sms: { bg: 'bg-[hsl(145,60%,45%)]/15', text: 'text-[hsl(145,60%,55%)]', border: 'border-[hsl(145,60%,45%)]/30' },
+};
 
 const PLATFORM_ICONS = {
   instagram: Instagram,
@@ -165,16 +173,16 @@ export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
   const publishedCount = drafts?.filter((d) => d.status === 'published').length || 0;
 
   return (
-    <Card className="border-slate-700 bg-slate-800/50">
+    <Card className="border-card-foreground/20 bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-pink-500/20 to-purple-500/20 border border-pink-500/30">
-              <Share2 className="h-5 w-5 text-pink-400" />
+            <div className="p-2.5 rounded-xl bg-feature-marketing/15 border border-feature-marketing/30">
+              <Share2 className="h-5 w-5 text-feature-marketing" />
             </div>
             <div>
-              <CardTitle className="text-lg text-slate-100">Social Feed Queue</CardTitle>
-              <p className="text-sm text-slate-400">
+              <CardTitle className="text-lg text-card-foreground">Social Feed Queue</CardTitle>
+              <p className="text-sm text-card-foreground/60">
                 AI-generated content from job completions
               </p>
             </div>
@@ -184,7 +192,7 @@ export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
             size="sm"
             onClick={() => refetch()}
             disabled={isLoading}
-            className="border-slate-600 text-slate-300"
+            className="border-card-foreground/20 text-card-foreground hover:bg-card-foreground/10"
           >
             <RefreshCw className={`h-4 w-4 mr-1.5 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
@@ -196,26 +204,32 @@ export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
         {/* Status Tabs */}
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <Tabs value={statusFilter} onValueChange={(v) => setStatusFilter(v as FilterStatus)}>
-            <TabsList className="bg-slate-900/50">
-              <TabsTrigger value="pending" className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400">
+            <TabsList className="bg-muted/30 border border-card-foreground/10">
+              <TabsTrigger 
+                value="pending" 
+                className="data-[state=active]:bg-status-pending/20 data-[state=active]:text-status-pending data-[state=active]:border data-[state=active]:border-status-pending/40"
+              >
                 <Inbox className="h-4 w-4 mr-1.5" />
                 Pending
                 {pendingCount > 0 && (
-                  <Badge variant="secondary" className="ml-1.5 bg-yellow-500/30 text-yellow-300 text-xs">
+                  <Badge variant="secondary" className="ml-1.5 bg-status-pending/30 text-status-pending text-xs">
                     {pendingCount}
                   </Badge>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="published" className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400">
+              <TabsTrigger 
+                value="published" 
+                className="data-[state=active]:bg-success/20 data-[state=active]:text-success data-[state=active]:border data-[state=active]:border-success/40"
+              >
                 <CheckCircle className="h-4 w-4 mr-1.5" />
                 Published
                 {publishedCount > 0 && (
-                  <Badge variant="secondary" className="ml-1.5 bg-green-500/30 text-green-300 text-xs">
+                  <Badge variant="secondary" className="ml-1.5 bg-success/30 text-success text-xs">
                     {publishedCount}
                   </Badge>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="all" className="data-[state=active]:bg-slate-600">
+              <TabsTrigger value="all" className="data-[state=active]:bg-card-foreground/15 data-[state=active]:text-card-foreground">
                 All
               </TabsTrigger>
             </TabsList>
@@ -223,17 +237,24 @@ export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
 
           {/* Platform Filter */}
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-slate-500" />
-            <div className="flex gap-1">
+            <Filter className="h-4 w-4 text-card-foreground/50" />
+            <div className="flex gap-1 p-1 rounded-lg bg-muted/30 border border-card-foreground/10">
               {(['all', 'instagram', 'google_business', 'facebook', 'sms'] as const).map((platform) => {
                 const Icon = platform === 'all' ? null : PLATFORM_ICONS[platform];
+                const colors = platform === 'all' ? null : PLATFORM_COLORS[platform];
                 const isActive = platformFilter === platform;
                 return (
                   <Button
                     key={platform}
                     variant="ghost"
                     size="sm"
-                    className={`px-2 ${isActive ? 'bg-slate-700 text-slate-100' : 'text-slate-400'}`}
+                    className={`px-2.5 rounded-md transition-all ${
+                      isActive 
+                        ? colors 
+                          ? `${colors.bg} ${colors.text} ${colors.border} border` 
+                          : 'bg-card-foreground/15 text-card-foreground border border-card-foreground/20'
+                        : 'text-card-foreground/50 hover:text-card-foreground hover:bg-card-foreground/10'
+                    }`}
                     onClick={() => setPlatformFilter(platform)}
                   >
                     {Icon ? <Icon className="h-4 w-4" /> : 'All'}
@@ -248,7 +269,7 @@ export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-64 rounded-lg bg-slate-900/50 animate-pulse" />
+              <div key={i} className="h-64 rounded-xl bg-muted/30 animate-pulse" />
             ))}
           </div>
         ) : filteredDrafts && filteredDrafts.length > 0 ? (
@@ -265,10 +286,12 @@ export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <Share2 className="h-12 w-12 mx-auto text-slate-600 mb-3" />
-            <h3 className="text-lg font-medium text-slate-300 mb-1">No content yet</h3>
-            <p className="text-sm text-slate-500">
+          <div className="text-center py-12 rounded-xl bg-muted/20 border border-card-foreground/10">
+            <div className="p-3 rounded-xl bg-feature-marketing/15 border border-feature-marketing/30 w-fit mx-auto mb-4">
+              <Share2 className="h-8 w-8 text-feature-marketing" />
+            </div>
+            <h3 className="text-lg font-medium text-card-foreground mb-1">No content yet</h3>
+            <p className="text-sm text-card-foreground/60 max-w-md mx-auto">
               {statusFilter === 'pending' 
                 ? "When technicians complete jobs with photos, AI-generated social content will appear here."
                 : statusFilter === 'published'
