@@ -55,28 +55,26 @@ export default function Settings() {
           
           <SetupProgressBar />
           <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
-            <div className="guide-card p-4">
-              <TabsList className="inline-flex flex-wrap h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
-                <TabsTrigger value="branding" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Branding</TabsTrigger>
-                <TabsTrigger value="contact" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Contact Info</TabsTrigger>
-                <TabsTrigger value="app-url" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">App URL</TabsTrigger>
-                <TabsTrigger value="reminders" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Reminders</TabsTrigger>
-                <TabsTrigger value="missed-calls" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Missed Calls</TabsTrigger>
-                <TabsTrigger value="default-prefs" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Default Prefs</TabsTrigger>
-                <TabsTrigger value="reports" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Reports</TabsTrigger>
-                <TabsTrigger value="alerts" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Alerts</TabsTrigger>
-                <TabsTrigger value="customer-prefs" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Customer Prefs</TabsTrigger>
-                <TabsTrigger value="emails" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Email Templates</TabsTrigger>
-                <TabsTrigger value="sms" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">SMS Templates</TabsTrigger>
-                <TabsTrigger value="reviews" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Reviews</TabsTrigger>
-                <TabsTrigger value="warranties" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Warranties</TabsTrigger>
-                <TabsTrigger value="campaigns" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Campaigns</TabsTrigger>
-                <TabsTrigger value="voice" className="flex items-center gap-1.5 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-                  <Mic className="w-3.5 h-3.5" />
-                  Aura Voice
-                </TabsTrigger>
-              </TabsList>
-            </div>
+            <TabsList className="inline-flex flex-wrap h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
+              <TabsTrigger value="branding" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 data-[state=active]:text-primary transition-all">Branding</TabsTrigger>
+              <TabsTrigger value="contact" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Contact Info</TabsTrigger>
+              <TabsTrigger value="app-url" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">App URL</TabsTrigger>
+              <TabsTrigger value="reminders" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Reminders</TabsTrigger>
+              <TabsTrigger value="missed-calls" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Missed Calls</TabsTrigger>
+              <TabsTrigger value="default-prefs" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Default Prefs</TabsTrigger>
+              <TabsTrigger value="reports" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Reports</TabsTrigger>
+              <TabsTrigger value="alerts" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Alerts</TabsTrigger>
+              <TabsTrigger value="customer-prefs" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Customer Prefs</TabsTrigger>
+              <TabsTrigger value="emails" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Email Templates</TabsTrigger>
+              <TabsTrigger value="sms" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">SMS Templates</TabsTrigger>
+              <TabsTrigger value="reviews" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Reviews</TabsTrigger>
+              <TabsTrigger value="warranties" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Warranties</TabsTrigger>
+              <TabsTrigger value="campaigns" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Campaigns</TabsTrigger>
+              <TabsTrigger value="voice" className="flex items-center gap-1.5 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+                <Mic className="w-3.5 h-3.5" />
+                Aura Voice
+              </TabsTrigger>
+            </TabsList>
             <TabsContent value="branding">
               <BrandingSettings />
             </TabsContent>
