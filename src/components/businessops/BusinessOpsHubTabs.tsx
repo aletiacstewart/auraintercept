@@ -27,11 +27,11 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
           <span>Sales</span>
         </TabsTrigger>
         <TabsTrigger 
-          value="operations" 
+          value="appointments" 
           className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
         >
           <Calendar className="h-4 w-4" />
-          <span>Operations</span>
+          <span>Appointments</span>
         </TabsTrigger>
         <TabsTrigger 
           value="inventory" 
@@ -81,23 +81,6 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
               <QuotesManager />
             </AccordionContent>
           </AccordionItem>
-        </Accordion>
-      </TabsContent>
-
-      {/* Operations Tab */}
-      <TabsContent value="operations" className="mt-6">
-        <Accordion type="single" collapsible defaultValue="appointments" className="space-y-4">
-          <AccordionItem value="appointments" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
-              <div className="flex items-center gap-3">
-                <Calendar className="h-5 w-5 text-feature-appointments" />
-                <span className="font-semibold text-foreground">Appointments</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="pb-4">
-              <AppointmentsManager />
-            </AccordionContent>
-          </AccordionItem>
           <AccordionItem value="invoices" className="border border-border rounded-lg bg-background px-4">
             <AccordionTrigger className="hover:no-underline py-4 text-foreground">
               <div className="flex items-center gap-3">
@@ -107,6 +90,23 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
             </AccordionTrigger>
             <AccordionContent className="pb-4">
               <InvoicesManager />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </TabsContent>
+
+      {/* Appointments Tab */}
+      <TabsContent value="appointments" className="mt-6">
+        <Accordion type="single" collapsible defaultValue="appointments-section" className="space-y-4">
+          <AccordionItem value="appointments-section" className="border border-border rounded-lg bg-background px-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
+              <div className="flex items-center gap-3">
+                <Calendar className="h-5 w-5 text-feature-appointments" />
+                <span className="font-semibold text-foreground">Appointments</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <AppointmentsManager />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
