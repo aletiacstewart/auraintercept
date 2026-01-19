@@ -636,12 +636,23 @@ Suggest A/B testing approaches and measure campaign effectiveness.`,
 
   // Data Analytics agent - for detailed data analysis and metrics
   analytics: `You are a Data Analytics Agent for a service business. Your role is to:
+- Answer questions about business data using the query_business_data tool
 - Query and analyze raw operational data in detail
 - Build custom reports with specific metrics and breakdowns
 - Perform statistical analysis and calculations
 - Create data exports and detailed metric breakdowns
 - Focus on "what do the numbers show" perspective
 - Drill down into granular data for specific questions
+
+CRITICAL - USE TOOLS FOR DATA QUESTIONS:
+When users ask about counts, totals, or status of business data (warranties, leads, appointments, quotes, invoices, inventory, campaigns, customers, feedback), ALWAYS use the query_business_data tool to get accurate real-time data. DO NOT guess or make up numbers!
+
+Examples:
+- "How many active warranties?" → query_business_data(data_type: "warranties", filter: "active", count_only: true)
+- "Show me pending quotes" → query_business_data(data_type: "quotes", filter: "pending", count_only: false)
+- "How many leads this month?" → query_business_data(data_type: "leads", time_period: "month", count_only: true)
+- "Low stock inventory items" → query_business_data(data_type: "inventory", filter: "low_stock")
+- "Today's appointments" → query_business_data(data_type: "appointments", filter: "today")
 
 QUICK ACTIONS YOU CAN HELP WITH:
 - "Custom Report" → Build reports with specific metrics and filters
@@ -652,7 +663,7 @@ QUICK ACTIONS YOU CAN HELP WITH:
 - "Query Data" → Answer specific data questions with precision
 
 Be precise with numbers and methodology. Provide data-backed answers with clear sources.
-For strategic interpretation and business recommendations, suggest the Business Insights Agent.`,
+After getting tool results, present the data clearly in a conversational response.`,
 
   // Admin/Business agent - for BusinessOpsAgentConsole
   admin: `You are a Business Operations Agent for a service business. Your role is to:
@@ -1815,6 +1826,41 @@ const AGENT_TOOLS: Record<string, any[]> = {
     {
       type: 'function',
       function: {
+        name: 'query_business_data',
+        description: 'Query business data for counts, summaries, and details. Use this for questions about warranties, leads, appointments, quotes, invoices, inventory, campaigns, customers, and feedback.',
+        parameters: {
+          type: 'object',
+          properties: {
+            data_type: { 
+              type: 'string', 
+              enum: ['warranties', 'leads', 'appointments', 'quotes', 'invoices', 'inventory', 'campaigns', 'customers', 'feedback', 'services'],
+              description: 'Type of business data to query'
+            },
+            filter: { 
+              type: 'string', 
+              description: 'Filter criteria (e.g., active, pending, expired, overdue, low_stock, new, scheduled, completed, draft, sent, paid)'
+            },
+            count_only: {
+              type: 'boolean',
+              description: 'Return only the count, not detailed records. Default true for simple count questions.'
+            },
+            time_period: {
+              type: 'string',
+              enum: ['today', 'week', 'month', 'quarter', 'year', 'all'],
+              description: 'Time period filter for date-based data'
+            },
+            limit: {
+              type: 'number',
+              description: 'Maximum number of records to return (default 10, max 50)'
+            }
+          },
+          required: ['data_type']
+        }
+      }
+    },
+    {
+      type: 'function',
+      function: {
         name: 'get_performance_metrics',
         description: 'Get business performance metrics',
         parameters: {
@@ -1972,7 +2018,7 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest } = await req.json();
+    const { agentType, message, companyId, userId, conversationHistory = [], contextId, isHandoff, handoffFrom, handoffReason: incomingHandoffReason, customerInfo, isInternalRequest, pageContext } = await req.json();
     
     // Get client IP for rate limiting and logging
     const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
@@ -2259,9 +2305,19 @@ You are serving a COMPANY ADMINISTRATOR or MANAGER, NOT an external customer.
 - BE direct and data-focused in your responses
 - IMMEDIATELY provide the requested information or analysis`;
     }
+
+    // Page context for analytics agent
+    let pageContextInstructions = '';
+    if (pageContext && agentType === 'analytics') {
+      pageContextInstructions = `
+USER'S CURRENT PAGE CONTEXT:
+${pageContext}
+Use the query_business_data tool to answer questions about any data mentioned in the page context.`;
+    }
     
     const systemPrompt = `${basePrompt}
 ${handoffInstructions}
+${pageContextInstructions}
 ${internalAgentInstructions}
 
 Company Name: ${company?.name || 'Our Company'}
@@ -5185,6 +5241,379 @@ async function executeAgentTool(
         success: true,
         message: `Lead status updated to ${args.status}`,
       };
+    }
+
+    case 'query_business_data': {
+      console.log('[AI Agent] Query business data:', args);
+      
+      const dataType = args.data_type as string;
+      const filter = args.filter as string | undefined;
+      const countOnly = args.count_only !== false; // Default to true
+      const timePeriod = args.time_period as string | undefined;
+      const limit = Math.min(args.limit || 10, 50);
+      
+      // Calculate date range based on time period
+      const now = new Date();
+      let startDate: Date | null = null;
+      if (timePeriod) {
+        switch (timePeriod) {
+          case 'today':
+            startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            break;
+          case 'week':
+            startDate = new Date(now);
+            startDate.setDate(now.getDate() - 7);
+            break;
+          case 'month':
+            startDate = new Date(now);
+            startDate.setMonth(now.getMonth() - 1);
+            break;
+          case 'quarter':
+            startDate = new Date(now);
+            startDate.setMonth(now.getMonth() - 3);
+            break;
+          case 'year':
+            startDate = new Date(now);
+            startDate.setFullYear(now.getFullYear() - 1);
+            break;
+        }
+      }
+      
+      try {
+        switch (dataType) {
+          case 'warranties': {
+            let query = supabase
+              .from('warranty_records')
+              .select(countOnly ? 'id' : '*', { count: 'exact' })
+              .eq('company_id', companyId);
+            
+            if (filter === 'active') {
+              query = query.gte('expiration_date', now.toISOString());
+            } else if (filter === 'expired') {
+              query = query.lt('expiration_date', now.toISOString());
+            } else if (filter === 'expiring_soon') {
+              const thirtyDaysFromNow = new Date(now);
+              thirtyDaysFromNow.setDate(now.getDate() + 30);
+              query = query.gte('expiration_date', now.toISOString()).lte('expiration_date', thirtyDaysFromNow.toISOString());
+            }
+            
+            if (!countOnly) query = query.limit(limit);
+            
+            const { data, count, error } = await query;
+            if (error) return { success: false, error: error.message };
+            
+            return {
+              success: true,
+              data_type: 'warranties',
+              filter: filter || 'all',
+              count: count || data?.length || 0,
+              records: countOnly ? undefined : data,
+              message: `Found ${count || data?.length || 0} ${filter || ''} warranties.`,
+            };
+          }
+          
+          case 'leads': {
+            let query = supabase
+              .from('leads')
+              .select(countOnly ? 'id' : '*', { count: 'exact' })
+              .eq('company_id', companyId);
+            
+            if (filter) {
+              if (['new', 'contacted', 'qualified', 'converted', 'lost'].includes(filter)) {
+                query = query.eq('status', filter);
+              } else if (['low', 'normal', 'high', 'hot'].includes(filter)) {
+                query = query.eq('priority', filter);
+              }
+            }
+            if (startDate) query = query.gte('created_at', startDate.toISOString());
+            if (!countOnly) query = query.order('created_at', { ascending: false }).limit(limit);
+            
+            const { data, count, error } = await query;
+            if (error) return { success: false, error: error.message };
+            
+            return {
+              success: true,
+              data_type: 'leads',
+              filter: filter || 'all',
+              time_period: timePeriod || 'all',
+              count: count || data?.length || 0,
+              records: countOnly ? undefined : data,
+              message: `Found ${count || data?.length || 0} ${filter || ''} leads${timePeriod ? ` from ${timePeriod}` : ''}.`,
+            };
+          }
+          
+          case 'appointments': {
+            let query = supabase
+              .from('appointments')
+              .select(countOnly ? 'id' : '*', { count: 'exact' })
+              .eq('company_id', companyId);
+            
+            if (filter) {
+              if (['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'].includes(filter)) {
+                query = query.eq('status', filter);
+              } else if (filter === 'upcoming') {
+                query = query.gte('datetime', now.toISOString()).in('status', ['scheduled', 'confirmed']);
+              } else if (filter === 'today') {
+                const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const endOfDay = new Date(startOfDay);
+                endOfDay.setDate(endOfDay.getDate() + 1);
+                query = query.gte('datetime', startOfDay.toISOString()).lt('datetime', endOfDay.toISOString());
+              }
+            }
+            if (startDate && !['today', 'upcoming'].includes(filter || '')) {
+              query = query.gte('datetime', startDate.toISOString());
+            }
+            if (!countOnly) query = query.order('datetime', { ascending: true }).limit(limit);
+            
+            const { data, count, error } = await query;
+            if (error) return { success: false, error: error.message };
+            
+            return {
+              success: true,
+              data_type: 'appointments',
+              filter: filter || 'all',
+              time_period: timePeriod || 'all',
+              count: count || data?.length || 0,
+              records: countOnly ? undefined : data,
+              message: `Found ${count || data?.length || 0} ${filter || ''} appointments${timePeriod ? ` from ${timePeriod}` : ''}.`,
+            };
+          }
+          
+          case 'quotes': {
+            let query = supabase
+              .from('quotes')
+              .select(countOnly ? 'id, total_amount' : '*', { count: 'exact' })
+              .eq('company_id', companyId);
+            
+            if (filter) {
+              if (['draft', 'sent', 'accepted', 'rejected', 'expired'].includes(filter)) {
+                query = query.eq('status', filter);
+              } else if (filter === 'pending') {
+                query = query.in('status', ['draft', 'sent']);
+              }
+            }
+            if (startDate) query = query.gte('created_at', startDate.toISOString());
+            if (!countOnly) query = query.order('created_at', { ascending: false }).limit(limit);
+            
+            const { data, count, error } = await query;
+            if (error) return { success: false, error: error.message };
+            
+            const totalValue = data?.reduce((sum: number, q: any) => sum + (q.total_amount || 0), 0) || 0;
+            
+            return {
+              success: true,
+              data_type: 'quotes',
+              filter: filter || 'all',
+              time_period: timePeriod || 'all',
+              count: count || data?.length || 0,
+              total_value: totalValue,
+              records: countOnly ? undefined : data,
+              message: `Found ${count || data?.length || 0} ${filter || ''} quotes${timePeriod ? ` from ${timePeriod}` : ''}. Total value: $${totalValue.toFixed(2)}.`,
+            };
+          }
+          
+          case 'invoices': {
+            let query = supabase
+              .from('invoices')
+              .select(countOnly ? 'id, total, status' : '*', { count: 'exact' })
+              .eq('company_id', companyId);
+            
+            if (filter) {
+              if (['draft', 'sent', 'paid', 'overdue', 'cancelled'].includes(filter)) {
+                query = query.eq('status', filter);
+              } else if (filter === 'unpaid') {
+                query = query.in('status', ['draft', 'sent', 'overdue']);
+              }
+            }
+            if (startDate) query = query.gte('created_at', startDate.toISOString());
+            if (!countOnly) query = query.order('created_at', { ascending: false }).limit(limit);
+            
+            const { data, count, error } = await query;
+            if (error) return { success: false, error: error.message };
+            
+            const totalValue = data?.reduce((sum: number, i: any) => sum + (i.total || 0), 0) || 0;
+            const paidTotal = data?.filter((i: any) => i.status === 'paid').reduce((sum: number, i: any) => sum + (i.total || 0), 0) || 0;
+            
+            return {
+              success: true,
+              data_type: 'invoices',
+              filter: filter || 'all',
+              time_period: timePeriod || 'all',
+              count: count || data?.length || 0,
+              total_value: totalValue,
+              paid_total: paidTotal,
+              records: countOnly ? undefined : data,
+              message: `Found ${count || data?.length || 0} ${filter || ''} invoices${timePeriod ? ` from ${timePeriod}` : ''}. Total: $${totalValue.toFixed(2)}, Paid: $${paidTotal.toFixed(2)}.`,
+            };
+          }
+          
+          case 'inventory': {
+            let query = supabase
+              .from('inventory_items')
+              .select(countOnly ? 'id, quantity, reorder_point' : '*', { count: 'exact' })
+              .eq('company_id', companyId);
+            
+            if (filter === 'low_stock') {
+              // This requires checking quantity vs reorder_point
+              const { data: allItems, error } = await supabase
+                .from('inventory_items')
+                .select('*')
+                .eq('company_id', companyId);
+              
+              if (error) return { success: false, error: error.message };
+              
+              const lowStockItems = (allItems || []).filter((item: any) => 
+                item.quantity <= (item.reorder_point || 0)
+              );
+              
+              return {
+                success: true,
+                data_type: 'inventory',
+                filter: 'low_stock',
+                count: lowStockItems.length,
+                records: countOnly ? undefined : lowStockItems.slice(0, limit),
+                message: `Found ${lowStockItems.length} inventory items with low stock (at or below reorder point).`,
+              };
+            }
+            
+            if (!countOnly) query = query.limit(limit);
+            
+            const { data, count, error } = await query;
+            if (error) return { success: false, error: error.message };
+            
+            return {
+              success: true,
+              data_type: 'inventory',
+              filter: filter || 'all',
+              count: count || data?.length || 0,
+              records: countOnly ? undefined : data,
+              message: `Found ${count || data?.length || 0} inventory items.`,
+            };
+          }
+          
+          case 'campaigns': {
+            let query = supabase
+              .from('marketing_campaigns')
+              .select(countOnly ? 'id, status' : '*', { count: 'exact' })
+              .eq('company_id', companyId);
+            
+            if (filter) {
+              if (['draft', 'scheduled', 'active', 'completed', 'paused'].includes(filter)) {
+                query = query.eq('status', filter);
+              }
+            }
+            if (startDate) query = query.gte('created_at', startDate.toISOString());
+            if (!countOnly) query = query.order('created_at', { ascending: false }).limit(limit);
+            
+            const { data, count, error } = await query;
+            if (error) return { success: false, error: error.message };
+            
+            return {
+              success: true,
+              data_type: 'campaigns',
+              filter: filter || 'all',
+              time_period: timePeriod || 'all',
+              count: count || data?.length || 0,
+              records: countOnly ? undefined : data,
+              message: `Found ${count || data?.length || 0} ${filter || ''} marketing campaigns${timePeriod ? ` from ${timePeriod}` : ''}.`,
+            };
+          }
+          
+          case 'customers': {
+            let query = supabase
+              .from('customer_profiles')
+              .select(countOnly ? 'id' : '*', { count: 'exact' })
+              .eq('company_id', companyId);
+            
+            if (startDate) query = query.gte('created_at', startDate.toISOString());
+            if (!countOnly) query = query.order('created_at', { ascending: false }).limit(limit);
+            
+            const { data, count, error } = await query;
+            if (error) return { success: false, error: error.message };
+            
+            return {
+              success: true,
+              data_type: 'customers',
+              time_period: timePeriod || 'all',
+              count: count || data?.length || 0,
+              records: countOnly ? undefined : data,
+              message: `Found ${count || data?.length || 0} customers${timePeriod ? ` from ${timePeriod}` : ''}.`,
+            };
+          }
+          
+          case 'feedback': {
+            let query = supabase
+              .from('customer_feedback')
+              .select(countOnly ? 'id, rating, sentiment' : '*', { count: 'exact' })
+              .eq('company_id', companyId);
+            
+            if (filter) {
+              if (['positive', 'negative', 'neutral'].includes(filter)) {
+                query = query.eq('sentiment', filter);
+              } else if (filter === 'high_rating') {
+                query = query.gte('rating', 4);
+              } else if (filter === 'low_rating') {
+                query = query.lte('rating', 2);
+              }
+            }
+            if (startDate) query = query.gte('created_at', startDate.toISOString());
+            if (!countOnly) query = query.order('created_at', { ascending: false }).limit(limit);
+            
+            const { data, count, error } = await query;
+            if (error) return { success: false, error: error.message };
+            
+            const avgRating = data?.length 
+              ? (data.reduce((sum: number, f: any) => sum + (f.rating || 0), 0) / data.length).toFixed(1)
+              : 'N/A';
+            
+            return {
+              success: true,
+              data_type: 'feedback',
+              filter: filter || 'all',
+              time_period: timePeriod || 'all',
+              count: count || data?.length || 0,
+              average_rating: avgRating,
+              records: countOnly ? undefined : data,
+              message: `Found ${count || data?.length || 0} ${filter || ''} feedback entries${timePeriod ? ` from ${timePeriod}` : ''}. Average rating: ${avgRating}.`,
+            };
+          }
+          
+          case 'services': {
+            let query = supabase
+              .from('services')
+              .select(countOnly ? 'id' : '*', { count: 'exact' })
+              .eq('company_id', companyId);
+            
+            if (filter === 'active') {
+              query = query.eq('is_active', true);
+            } else if (filter === 'inactive') {
+              query = query.eq('is_active', false);
+            }
+            if (!countOnly) query = query.limit(limit);
+            
+            const { data, count, error } = await query;
+            if (error) return { success: false, error: error.message };
+            
+            return {
+              success: true,
+              data_type: 'services',
+              filter: filter || 'all',
+              count: count || data?.length || 0,
+              records: countOnly ? undefined : data,
+              message: `Found ${count || data?.length || 0} ${filter || ''} services.`,
+            };
+          }
+          
+          default:
+            return {
+              success: false,
+              error: `Unknown data type: ${dataType}. Supported types: warranties, leads, appointments, quotes, invoices, inventory, campaigns, customers, feedback, services.`,
+            };
+        }
+      } catch (err: any) {
+        console.error('[AI Agent] Query business data error:', err);
+        return { success: false, error: err.message || 'Failed to query data' };
+      }
     }
 
     default:
