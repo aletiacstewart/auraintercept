@@ -74,7 +74,7 @@ export function AuraFloatingButton({ className }: AuraFloatingButtonProps) {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="left">
-            <p className="font-medium">Ask Aura</p>
+            <p className="font-medium">Analytics & Reports</p>
             <p className="text-xs text-muted-foreground">Click to chat • Hold for voice</p>
           </TooltipContent>
         </Tooltip>

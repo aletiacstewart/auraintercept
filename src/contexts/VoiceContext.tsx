@@ -227,7 +227,7 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
         navigate('/auth');
       },
       onAuraActivate: () => {
-        navigate('/dashboard/ask-aura');
+        navigate('/dashboard/analytics-reports');
       },
       onStopListening: () => {
         setIsVoiceModeEnabled(false);

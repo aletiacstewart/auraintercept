@@ -105,7 +105,7 @@ export default function AskAura() {
               <ShieldAlert className="h-5 w-5" />
               <AlertTitle>Access Denied</AlertTitle>
               <AlertDescription>
-                You don't have permission to access Ask Aura. 
+                You don't have permission to access Analytics & Reports. 
                 This feature is available to Company and Platform Administrators only.
               </AlertDescription>
             </Alert>
@@ -121,8 +121,9 @@ export default function AskAura() {
         <div className="space-y-6">
           <PageHeader
             icon={Sparkles}
-            title="Ask Aura"
+            title="Analytics & Reports"
             description="Your AI-powered analytics assistant. Ask anything about your business data."
+            showAuraBar
           />
 
           {/* Command Bar */}

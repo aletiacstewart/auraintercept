@@ -145,8 +145,9 @@ const App = () => (
               <Route path="/dashboard/ai-consoles/marketing-sales" element={<MarketingSalesConsole />} />
               <Route path="/dashboard/ai-consoles/analytics" element={<AnalyticsConsole />} />
               <Route path="/dashboard/ai-consoles/new-lead" element={<NewLeadPage />} />
+              <Route path="/dashboard/analytics-reports" element={<AskAura />} />
+              {/* Legacy routes redirect to Analytics & Reports */}
               <Route path="/dashboard/ask-aura" element={<AskAura />} />
-              {/* Legacy routes redirect to Ask Aura */}
               <Route path="/dashboard/ai-consoles/performance-report" element={<AskAura />} />
               <Route path="/dashboard/ai-consoles/business-insights" element={<AskAura />} />
               <Route path="/dashboard/ai-consoles/revenue-analysis" element={<AskAura />} />

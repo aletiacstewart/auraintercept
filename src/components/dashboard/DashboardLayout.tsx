@@ -101,15 +101,11 @@ const navGroups: NavGroup[] = [
       { label: 'Invoices', icon: Receipt, href: '/dashboard/invoices', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-invoices' },
       { label: 'Inventory', icon: Package, href: '/dashboard/inventory', roles: ['platform_admin'], featureColor: 'text-feature-inventory' },
       { label: 'Warranties', icon: FileCheck, href: '/dashboard/warranties', roles: ['platform_admin'], featureColor: 'text-feature-warranties' },
-    ],
-  },
-  {
-    label: 'Analytics & Reports',
-    items: [
-      { label: 'Ask Aura', icon: Cpu, href: '/dashboard/ask-aura', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
+      { label: 'Analytics & Reports', icon: Cpu, href: '/dashboard/analytics-reports', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
       { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-overview' },
     ],
   },
+  // Analytics & Reports moved under Business Management
   {
     label: 'Business Consoles & Apps',
     items: [
