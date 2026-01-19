@@ -32,19 +32,19 @@ import {
 
 // Quick actions for Analytics & Optimization
 const QUICK_ACTIONS = [
-  { id: 'performance', label: 'Report', icon: BarChart3, message: 'I need a performance report' },
-  { id: 'revenue', label: 'Revenue', icon: DollarSign, message: 'Show me revenue analysis' },
-  { id: 'customers', label: 'Insights', icon: Users, message: 'I need customer insights' },
-  { id: 'forecast', label: 'Forecast', icon: TrendingUp, message: 'Show me revenue forecasts' },
-  { id: 'kpi', label: 'KPIs', icon: Target, message: 'Show KPI dashboard' },
-  { id: 'reminders', label: 'Reminders', icon: Bell, message: 'Show me reminder analytics' },
-  { id: 'export', label: 'Export', icon: Download, message: 'I need to export a report' },
+  { id: 'performance', label: 'Report', icon: BarChart3, message: 'I need a performance report', featureColor: 'text-feature-analytics' },
+  { id: 'revenue', label: 'Revenue', icon: DollarSign, message: 'Show me revenue analysis', featureColor: 'text-feature-invoices' },
+  { id: 'customers', label: 'Insights', icon: Users, message: 'I need customer insights', featureColor: 'text-feature-customers' },
+  { id: 'forecast', label: 'Forecast', icon: TrendingUp, message: 'Show me revenue forecasts', featureColor: 'text-feature-analytics' },
+  { id: 'kpi', label: 'KPIs', icon: Target, message: 'Show KPI dashboard', featureColor: 'text-feature-analytics' },
+  { id: 'reminders', label: 'Reminders', icon: Bell, message: 'Show me reminder analytics', featureColor: 'text-feature-appointments' },
+  { id: 'export', label: 'Export', icon: Download, message: 'I need to export a report', featureColor: 'text-feature-overview' },
 ];
 
 // Tab configuration - includes quick actions as tabs
 const TABS = [
-  { id: 'chat', label: 'Home', icon: BarChart3 },
-  ...QUICK_ACTIONS.map(action => ({ id: action.id, label: action.label, icon: action.icon })),
+  { id: 'chat', label: 'Home', icon: BarChart3, featureColor: 'text-feature-analytics' },
+  ...QUICK_ACTIONS.map(action => ({ id: action.id, label: action.label, icon: action.icon, featureColor: action.featureColor })),
 ];
 
 interface AnalyticsAgentConsoleProps {

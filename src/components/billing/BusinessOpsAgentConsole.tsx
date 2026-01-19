@@ -29,18 +29,18 @@ import {
 
 // Quick actions for Business Operations
 const BASE_QUICK_ACTIONS = [
-  { id: 'quote', label: 'Quote', icon: FileText, message: 'I need to create a new quote for a customer' },
-  { id: 'invoice', label: 'Invoice', icon: Receipt, message: 'I need to generate an invoice' },
-  { id: 'lead', label: 'Lead', icon: UserPlus, message: 'I need to add a new lead' },
-  { id: 'appointments', label: 'Appts', icon: Calendar, message: 'I need to manage appointments' },
-  { id: 'inventory', label: 'Inventory', icon: Package, message: 'Manage inventory items' },
-  { id: 'warranties', label: 'Warranty', icon: Shield, message: 'Manage warranties' },
+  { id: 'quote', label: 'Quote', icon: FileText, message: 'I need to create a new quote for a customer', featureColor: 'text-feature-quotes' },
+  { id: 'invoice', label: 'Invoice', icon: Receipt, message: 'I need to generate an invoice', featureColor: 'text-feature-invoices' },
+  { id: 'lead', label: 'Lead', icon: UserPlus, message: 'I need to add a new lead', featureColor: 'text-feature-leads' },
+  { id: 'appointments', label: 'Appts', icon: Calendar, message: 'I need to manage appointments', featureColor: 'text-feature-appointments' },
+  { id: 'inventory', label: 'Inventory', icon: Package, message: 'Manage inventory items', featureColor: 'text-feature-inventory' },
+  { id: 'warranties', label: 'Warranty', icon: Shield, message: 'Manage warranties', featureColor: 'text-feature-warranties' },
 ];
 
 // Tab configuration - includes quick actions as tabs
 const TABS = [
-  { id: 'chat', label: 'Home', icon: Briefcase },
-  ...BASE_QUICK_ACTIONS.map(action => ({ id: action.id, label: action.label, icon: action.icon })),
+  { id: 'chat', label: 'Home', icon: Briefcase, featureColor: 'text-feature-platform' },
+  ...BASE_QUICK_ACTIONS.map(action => ({ id: action.id, label: action.label, icon: action.icon, featureColor: action.featureColor })),
 ];
 
 interface BusinessOpsAgentConsoleProps {

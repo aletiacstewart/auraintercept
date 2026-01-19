@@ -9,6 +9,7 @@ interface QuickAction {
   icon: LucideIcon;
   message: string;
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  featureColor?: string;
 }
 
 interface QuickActionGridProps {
@@ -45,7 +46,7 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
           )}
           onClick={() => onAction(action.message, action.id)}
         >
-          <action.icon className="h-5 w-5" />
+          <action.icon className={cn("h-5 w-5", action.featureColor)} />
           <span className="text-center leading-tight">{action.label}</span>
         </Button>
       ))}
@@ -77,7 +78,7 @@ export const QuickActionBar: React.FC<QuickActionBarProps> = ({
             )}
             onClick={() => onAction(action.message, action.id)}
           >
-            <action.icon className="h-3 w-3 mr-1.5" />
+            <action.icon className={cn("h-3 w-3 mr-1.5", action.featureColor)} />
             {action.label}
           </Button>
         ))}
