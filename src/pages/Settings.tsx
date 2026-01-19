@@ -55,7 +55,7 @@ export default function Settings() {
           
           <SetupProgressBar />
           <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
-            <TabsList className="inline-flex flex-wrap h-auto p-1 bg-muted/30 rounded-full border border-border/50 gap-0.5">
+            <TabsList className="inline-flex flex-wrap h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1">
               <TabsTrigger value="branding" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 data-[state=active]:text-primary transition-all">Branding</TabsTrigger>
               <TabsTrigger value="contact" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Contact Info</TabsTrigger>
               <TabsTrigger value="app-url" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">App URL</TabsTrigger>

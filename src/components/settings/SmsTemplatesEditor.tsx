@@ -227,7 +227,7 @@ export function SmsTemplatesEditor() {
       </CardHeader>
       <CardContent className="space-y-6">
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-          <TabsList className="inline-flex h-auto p-1 bg-muted/30 rounded-full border border-border/50 gap-0.5 flex-wrap">
+          <TabsList className="inline-flex h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1 flex-wrap">
             {(Object.keys(TEMPLATE_INFO) as Array<keyof typeof TEMPLATE_INFO>).map((type) => {
               const typeInfo = TEMPLATE_INFO[type];
               const TypeIcon = typeInfo.icon;

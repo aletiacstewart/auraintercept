@@ -31,7 +31,7 @@ export default function Calculators() {
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="costs" className="w-full">
-                <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 mb-4">
+                <TabsList className="inline-flex h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1 mb-4">
                   <TabsTrigger value="costs" className="flex items-center gap-1 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                     <Calculator className="w-4 h-4" />
                     Estimate Costs
