@@ -254,12 +254,12 @@ export function ReviewRequestSettings() {
         </CardHeader>
         <CardContent className="space-y-6">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-            <TabsList className="grid w-full grid-cols-2 max-w-xs">
-              <TabsTrigger value="sms" className="flex items-center gap-2">
+            <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 flex-wrap">
+              <TabsTrigger value="sms" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <MessageSquare className="h-4 w-4" />
                 SMS
               </TabsTrigger>
-              <TabsTrigger value="email" className="flex items-center gap-2">
+              <TabsTrigger value="email" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <Mail className="h-4 w-4" />
                 Email
               </TabsTrigger>
