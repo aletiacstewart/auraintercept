@@ -368,7 +368,7 @@ export default function Customers() {
 
               {/* Tabs for different data types */}
               <Tabs defaultValue="appointments" className="w-full">
-                <TabsList className="inline-flex h-auto p-1 bg-muted/30 rounded-full border border-border/50 gap-0.5 flex-wrap">
+                <TabsList className="inline-flex h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1 flex-wrap">
                   <TabsTrigger value="appointments" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                     <Calendar className="h-3 w-3" />
                     Appointments
