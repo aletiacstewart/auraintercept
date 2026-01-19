@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -82,7 +83,7 @@ serve(async (req) => {
   }
 
   try {
-    const { contentType, action, existingContent, context } = await req.json();
+    const { contentType, action, existingContent, context, companyId } = await req.json();
 
     if (!contentType || !action) {
       return new Response(
@@ -104,23 +105,100 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    // Build context string
+    // Fetch AI Content Profile and Services from database if companyId is provided
+    let aiProfile = null;
+    let services: string[] = [];
+    
+    if (companyId) {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      // Fetch AI Content Profile
+      const { data: profileData } = await supabase
+        .from('company_ai_content_profiles')
+        .select('*')
+        .eq('company_id', companyId)
+        .maybeSingle();
+      
+      aiProfile = profileData;
+
+      // Fetch active services
+      const { data: servicesData } = await supabase
+        .from('services')
+        .select('name, description')
+        .eq('company_id', companyId)
+        .eq('is_active', true)
+        .limit(10);
+      
+      if (servicesData) {
+        services = servicesData.map(s => s.name);
+      }
+    }
+
+    // Build comprehensive context string
     const contextParts: string[] = [];
-    if (context?.companyName) contextParts.push(`Company: ${context.companyName}`);
-    if (context?.industry) contextParts.push(`Industry: ${context.industry}`);
-    if (context?.tone) contextParts.push(`Tone: ${context.tone}`);
+    
+    // Basic context from props
+    if (context?.companyName) contextParts.push(`Company Name: ${context.companyName}`);
     if (context?.holidayName) contextParts.push(`Holiday: ${context.holidayName}`);
     if (context?.platform) contextParts.push(`Platform: ${context.platform}`);
     if (context?.templateType) contextParts.push(`Template Type: ${context.templateType}`);
     if (context?.serviceType) contextParts.push(`Service Type: ${context.serviceType}`);
+    
+    // Rich context from AI Content Profile (stored in Knowledge Base)
+    if (aiProfile) {
+      if (aiProfile.primary_industry) {
+        contextParts.push(`Primary Industry: ${aiProfile.primary_industry}`);
+      }
+      if (aiProfile.secondary_industries?.length > 0) {
+        contextParts.push(`Related Industries: ${aiProfile.secondary_industries.join(', ')}`);
+      }
+      if (aiProfile.keywords?.length > 0) {
+        contextParts.push(`Key Terms to Include: ${aiProfile.keywords.join(', ')}`);
+      }
+      if (aiProfile.business_description) {
+        contextParts.push(`Business Description: ${aiProfile.business_description}`);
+      }
+      if (aiProfile.unique_selling_points?.length > 0) {
+        contextParts.push(`Unique Selling Points: ${aiProfile.unique_selling_points.join(', ')}`);
+      }
+      if (aiProfile.target_audience) {
+        contextParts.push(`Target Audience: ${aiProfile.target_audience}`);
+      }
+      if (aiProfile.tone) {
+        contextParts.push(`Preferred Tone: ${aiProfile.tone}`);
+      }
+      if (aiProfile.brand_voice) {
+        contextParts.push(`Brand Voice: ${aiProfile.brand_voice}`);
+      }
+      if (aiProfile.avoid_keywords?.length > 0) {
+        contextParts.push(`Words/Phrases to Avoid: ${aiProfile.avoid_keywords.join(', ')}`);
+      }
+    } else {
+      // Fallback to basic context props if no AI profile exists
+      if (context?.industry) contextParts.push(`Industry: ${context.industry}`);
+      if (context?.tone) contextParts.push(`Tone: ${context.tone}`);
+    }
+    
+    // Add services context
+    if (services.length > 0) {
+      contextParts.push(`Services Offered: ${services.join(', ')}`);
+    }
 
     const contextString = contextParts.length > 0 
-      ? `\n\nContext:\n${contextParts.join('\n')}`
+      ? `\n\nBusiness Context:\n${contextParts.join('\n')}`
       : '';
+
+    // Build avoidance instructions
+    let avoidanceInstructions = '';
+    if (aiProfile?.avoid_keywords?.length > 0) {
+      avoidanceInstructions = `\n\nIMPORTANT: Do NOT use these words/phrases: ${aiProfile.avoid_keywords.join(', ')}`;
+    }
 
     let userPrompt = '';
     if (action === 'generate') {
-      userPrompt = promptConfig.generate + contextString;
+      userPrompt = promptConfig.generate + contextString + avoidanceInstructions;
     } else if (action === 'reword') {
       if (!existingContent) {
         return new Response(
@@ -128,7 +206,7 @@ serve(async (req) => {
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      userPrompt = `${promptConfig.reword}${contextString}\n\nOriginal content:\n"${existingContent}"`;
+      userPrompt = `${promptConfig.reword}${contextString}${avoidanceInstructions}\n\nOriginal content:\n"${existingContent}"`;
     } else {
       return new Response(
         JSON.stringify({ error: 'action must be either "generate" or "reword"' }),
@@ -136,7 +214,36 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Generating content for ${contentType}, action: ${action}`);
+    console.log(`Generating content for ${contentType}, action: ${action}, companyId: ${companyId || 'none'}`);
+    console.log(`Context parts: ${contextParts.length}, AI Profile: ${aiProfile ? 'yes' : 'no'}, Services: ${services.length}`);
+
+    // Build system prompt with tone guidance
+    let toneGuidance = '';
+    if (aiProfile?.tone) {
+      const toneDescriptions: Record<string, string> = {
+        professional: 'Use a professional, business-like tone that conveys expertise and trust.',
+        friendly: 'Use a warm, approachable tone that makes customers feel welcome.',
+        casual: 'Use a relaxed, conversational tone that feels natural and relatable.',
+        formal: 'Use a traditional, sophisticated tone that conveys authority and prestige.',
+        energetic: 'Use a dynamic, exciting tone that creates enthusiasm and energy.',
+        empathetic: 'Use an understanding, caring tone that shows you genuinely care about customers.',
+        authoritative: 'Use an expert, confident tone that establishes credibility and leadership.',
+      };
+      toneGuidance = toneDescriptions[aiProfile.tone] || '';
+    }
+
+    const systemPrompt = `You are a professional marketing copywriter specializing in service business websites. 
+Generate concise, engaging content that:
+- Is clear and easy to read
+- Focuses on customer benefits
+- Uses active voice
+- Avoids jargon unless industry-specific
+- Creates trust and professionalism
+${toneGuidance ? `\nTone: ${toneGuidance}` : ''}
+${aiProfile?.brand_voice ? `\nBrand Voice: ${aiProfile.brand_voice}` : ''}
+
+IMPORTANT: Return ONLY the generated content, no explanations, quotes, or additional text.
+The content must be specifically relevant to the business described in the context.`;
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -149,15 +256,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are a professional marketing copywriter specializing in service business websites. 
-Generate concise, engaging content that:
-- Is clear and easy to read
-- Focuses on customer benefits
-- Uses active voice
-- Avoids jargon unless industry-specific
-- Creates trust and professionalism
-
-IMPORTANT: Return ONLY the generated content, no explanations, quotes, or additional text.`
+            content: systemPrompt
           },
           {
             role: 'user',

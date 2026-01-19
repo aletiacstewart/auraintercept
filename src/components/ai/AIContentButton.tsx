@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-
+import { useAuth } from '@/contexts/AuthContext';
 export type ContentType = 
   | 'hero_headline' | 'hero_subheadline' | 'cta_text'
   | 'night_headline' | 'night_subheadline' | 'emergency_cta'
@@ -45,6 +45,7 @@ export function AIContentButton({
   size = 'sm',
 }: AIContentButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const { companyId } = useAuth();
 
   const handleAction = async (action: 'generate' | 'reword') => {
     if (action === 'reword' && !existingContent?.trim()) {
@@ -60,6 +61,7 @@ export function AIContentButton({
           action,
           existingContent: existingContent?.trim(),
           context,
+          companyId, // Pass companyId to fetch AI Content Profile
         },
       });
 
