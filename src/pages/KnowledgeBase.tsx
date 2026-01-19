@@ -7,7 +7,8 @@ import { BusinessHoursManager } from '@/components/knowledge/BusinessHoursManage
 import { DocumentsManager } from '@/components/knowledge/DocumentsManager';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
-import { Briefcase, HelpCircle, Clock, FileText, Package, Shield, BookOpen } from 'lucide-react';
+import { AIContentProfileManager } from '@/components/knowledge/AIContentProfileManager';
+import { Briefcase, HelpCircle, Clock, FileText, Package, Shield, BookOpen, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
@@ -21,8 +22,8 @@ export default function KnowledgeBase() {
   
   // Determine grid columns based on whether platform admin tabs are shown
   const gridColsClass = isPlatformAdmin 
-    ? 'grid-cols-2 lg:grid-cols-6' 
-    : 'grid-cols-2 lg:grid-cols-4';
+    ? 'grid-cols-3 lg:grid-cols-7' 
+    : 'grid-cols-3 lg:grid-cols-5';
   
   return (
     <DashboardLayout>
@@ -37,6 +38,10 @@ export default function KnowledgeBase() {
 
         <Tabs defaultValue={defaultTab} className="space-y-6">
           <TabsList className={`grid w-full ${gridColsClass} lg:w-auto lg:inline-grid`}>
+            <TabsTrigger value="ai-profile" className="gap-2">
+              <Sparkles className="w-4 h-4 hidden sm:block" />
+              AI Profile
+            </TabsTrigger>
             <TabsTrigger value="services" className="gap-2">
               <Briefcase className="w-4 h-4 hidden sm:block" />
               Services
@@ -66,6 +71,10 @@ export default function KnowledgeBase() {
               </TabsTrigger>
             )}
           </TabsList>
+
+          <TabsContent value="ai-profile">
+            <AIContentProfileManager />
+          </TabsContent>
 
           <TabsContent value="services">
             <ServicesManager />

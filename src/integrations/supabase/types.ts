@@ -1070,6 +1070,72 @@ export type Database = {
         }
         Relationships: []
       }
+      company_ai_content_profiles: {
+        Row: {
+          avoid_keywords: string[] | null
+          avoid_topics: string[] | null
+          brand_voice: string | null
+          business_description: string | null
+          company_id: string
+          created_at: string
+          id: string
+          keywords: string[] | null
+          primary_industry: string | null
+          secondary_industries: string[] | null
+          target_audience: string | null
+          tone: string | null
+          unique_selling_points: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          avoid_keywords?: string[] | null
+          avoid_topics?: string[] | null
+          brand_voice?: string | null
+          business_description?: string | null
+          company_id: string
+          created_at?: string
+          id?: string
+          keywords?: string[] | null
+          primary_industry?: string | null
+          secondary_industries?: string[] | null
+          target_audience?: string | null
+          tone?: string | null
+          unique_selling_points?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          avoid_keywords?: string[] | null
+          avoid_topics?: string[] | null
+          brand_voice?: string | null
+          business_description?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          keywords?: string[] | null
+          primary_industry?: string | null
+          secondary_industries?: string[] | null
+          target_audience?: string | null
+          tone?: string | null
+          unique_selling_points?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_ai_content_profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_ai_content_profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_role_agent_access: {
         Row: {
           agent_type: string
