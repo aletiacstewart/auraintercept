@@ -795,7 +795,7 @@ const PlatformDocumentPDF = () => (
       </View>
       
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>Business Management Console</Text>
+        <Text style={styles.agentName}>Business Mgt Ops Console</Text>
         <Text style={styles.agentDescription}>
           Financial and administrative hub. Quick actions include: Create Quote, Generate Invoice, 
           New Lead, Appointments, Inventory, and Warranties. Integrates with payment processing 

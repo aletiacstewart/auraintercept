@@ -723,7 +723,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.featureList}>
         <FeatureItem>Customer Portal Console - Complete self-service experience</FeatureItem>
         <FeatureItem>Field Operations Console - Full dispatch and routing capabilities</FeatureItem>
-        <FeatureItem>Business Management Console - Invoicing, inventory, and warranties</FeatureItem>
+        <FeatureItem>Business Mgt Ops Console - Invoicing, inventory, and warranties</FeatureItem>
         <FeatureItem>Marketing & Sales Console - Campaigns, leads, and referrals</FeatureItem>
         <FeatureItem>Analytics & Reports Console - KPIs, forecasting, and performance tracking</FeatureItem>
       </View>

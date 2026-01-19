@@ -25,7 +25,7 @@ export default function DemandForecastPage() {
           {companyId ? (
             <ForecastForm
               companyId={companyId}
-              onCancel={() => navigate('/dashboard/ai-consoles/business-management')}
+              onCancel={() => navigate('/dashboard/ai-consoles/business-mgt-ops')}
             />
           ) : (
             <div className="flex items-center justify-center h-64">
