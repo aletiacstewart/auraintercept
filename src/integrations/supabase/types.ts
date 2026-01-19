@@ -4108,10 +4108,12 @@ export type Database = {
           emergency_cta_text: string | null
           emergency_cta_url: string | null
           enable_night_mode: boolean | null
+          gallery_images: string[] | null
           hero_headline: string | null
           hero_subheadline: string | null
           id: string
           is_published: boolean
+          logo_transparency_mode: string | null
           monthly_visitor_limit: number
           night_end_hour: number | null
           night_header: string | null
@@ -4160,10 +4162,12 @@ export type Database = {
           emergency_cta_text?: string | null
           emergency_cta_url?: string | null
           enable_night_mode?: boolean | null
+          gallery_images?: string[] | null
           hero_headline?: string | null
           hero_subheadline?: string | null
           id?: string
           is_published?: boolean
+          logo_transparency_mode?: string | null
           monthly_visitor_limit?: number
           night_end_hour?: number | null
           night_header?: string | null
@@ -4212,10 +4216,12 @@ export type Database = {
           emergency_cta_text?: string | null
           emergency_cta_url?: string | null
           enable_night_mode?: boolean | null
+          gallery_images?: string[] | null
           hero_headline?: string | null
           hero_subheadline?: string | null
           id?: string
           is_published?: boolean
+          logo_transparency_mode?: string | null
           monthly_visitor_limit?: number
           night_end_hour?: number | null
           night_header?: string | null
@@ -5252,7 +5258,7 @@ export type Database = {
           company_name: string
           cta_text: string
           cta_url: string
-          gallery_images: Json
+          gallery_images: string[]
           hero_headline: string
           hero_subheadline: string
           id: string

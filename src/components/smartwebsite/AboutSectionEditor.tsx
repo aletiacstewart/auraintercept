@@ -192,6 +192,7 @@ export function AboutSectionEditor({ website, companyId, companyName, onUpdate, 
               />
             </div>
             <Input
+              key={`about_header_${website.about_header}`}
               defaultValue={website.about_header || ''}
               onBlur={(e) => onUpdate({ about_header: e.target.value })}
               placeholder="About Our Company"
@@ -211,6 +212,7 @@ export function AboutSectionEditor({ website, companyId, companyName, onUpdate, 
               />
             </div>
             <Input
+              key={`about_subheader_${website.about_subheader}`}
               defaultValue={website.about_subheader || ''}
               onBlur={(e) => onUpdate({ about_subheader: e.target.value })}
               placeholder="Quality service since 2010"
@@ -230,6 +232,7 @@ export function AboutSectionEditor({ website, companyId, companyName, onUpdate, 
               />
             </div>
             <Textarea
+              key={`about_paragraph_${website.about_paragraph}`}
               defaultValue={website.about_paragraph || ''}
               onBlur={(e) => onUpdate({ about_paragraph: e.target.value })}
               placeholder="Tell visitors about your company, your mission, and what makes you stand out..."
