@@ -3,13 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { X, Target, TrendingUp, TrendingDown, CheckCircle, Clock, DollarSign, Users, Calendar } from 'lucide-react';
-import { format, subDays, startOfMonth, endOfMonth } from 'date-fns';
+import { TrendingUp, CheckCircle, Clock, DollarSign, Users, Calendar } from 'lucide-react';
+import { subDays, startOfMonth, endOfMonth } from 'date-fns';
 
 interface KpiDashboardFormProps {
   companyId: string;
@@ -127,132 +125,119 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
   };
 
   return (
-    <div className="bg-background rounded-lg border border-border shadow-sm">
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold text-foreground">KPI Dashboard</h3>
-          </div>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-muted">
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
+    <div className="space-y-4">
+      {/* Filters */}
+      <div className="space-y-2">
+        <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
+          <Calendar className="h-3 w-3" />
+          Period
+        </Label>
+        <Select value={dateRange} onValueChange={setDateRange}>
+          <SelectTrigger className="h-9 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="week">This Week</SelectItem>
+            <SelectItem value="month">This Month</SelectItem>
+            <SelectItem value="quarter">This Quarter</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <div className="p-4 space-y-4">
-        {/* Filters */}
-        <div className="space-y-2">
-          <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
-            <Calendar className="h-3 w-3" />
-            Period
-          </Label>
-          <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="h-9 text-sm">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="week">This Week</SelectItem>
-              <SelectItem value="month">This Month</SelectItem>
-              <SelectItem value="quarter">This Quarter</SelectItem>
-            </SelectContent>
-          </Select>
+
+      {/* KPI Grid */}
+      {isLoading ? (
+        <div className="space-y-3">
+          {[1, 2, 3, 4, 5].map(i => (
+            <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-20" />
+          ))}
         </div>
-
-        {/* KPI Grid */}
-        {isLoading ? (
-          <div className="space-y-3">
-            {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-20" />
-            ))}
+      ) : (
+        <div className="space-y-3">
+          {/* Completion Rate */}
+          <div className="p-4 rounded-lg bg-muted/50 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-foreground">Job Completion Rate</span>
+              </div>
+              <span className={`font-bold ${getProgressColor(kpis?.completionRate.value || 0, kpis?.completionRate.target || 90)}`}>
+                {(kpis?.completionRate.value || 0).toFixed(1)}%
+              </span>
+            </div>
+            <Progress value={getProgressValue(kpis?.completionRate.value || 0, kpis?.completionRate.target || 90)} className="h-2" />
+            <p className="text-xs text-muted-foreground mt-1">Target: {kpis?.completionRate.target}%</p>
           </div>
-        ) : (
-          <div className="space-y-3">
-            {/* Completion Rate */}
-            <div className="p-4 rounded-lg bg-muted/50 border border-border">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-foreground">Job Completion Rate</span>
-                </div>
-                <span className={`font-bold ${getProgressColor(kpis?.completionRate.value || 0, kpis?.completionRate.target || 90)}`}>
-                  {(kpis?.completionRate.value || 0).toFixed(1)}%
-                </span>
-              </div>
-              <Progress value={getProgressValue(kpis?.completionRate.value || 0, kpis?.completionRate.target || 90)} className="h-2" />
-              <p className="text-xs text-muted-foreground mt-1">Target: {kpis?.completionRate.target}%</p>
-            </div>
 
-            {/* Revenue */}
-            <div className="p-4 rounded-lg bg-muted/50 border border-border">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-foreground">Revenue</span>
-                </div>
-                <span className={`font-bold ${getProgressColor(kpis?.revenue.value || 0, kpis?.revenue.target || 10000)}`}>
-                  ${(kpis?.revenue.value || 0).toLocaleString()}
-                </span>
+          {/* Revenue */}
+          <div className="p-4 rounded-lg bg-muted/50 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-foreground">Revenue</span>
               </div>
-              <Progress value={getProgressValue(kpis?.revenue.value || 0, kpis?.revenue.target || 10000)} className="h-2" />
-              <p className="text-xs text-muted-foreground mt-1">Target: ${(kpis?.revenue.target || 0).toLocaleString()}</p>
+              <span className={`font-bold ${getProgressColor(kpis?.revenue.value || 0, kpis?.revenue.target || 10000)}`}>
+                ${(kpis?.revenue.value || 0).toLocaleString()}
+              </span>
             </div>
-
-            {/* Jobs Completed */}
-            <div className="p-4 rounded-lg bg-muted/50 border border-border">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-foreground">Jobs Completed</span>
-                </div>
-                <span className={`font-bold ${getProgressColor(kpis?.jobsCompleted.value || 0, kpis?.jobsCompleted.target || 50)}`}>
-                  {kpis?.jobsCompleted.value || 0}
-                </span>
-              </div>
-              <Progress value={getProgressValue(kpis?.jobsCompleted.value || 0, kpis?.jobsCompleted.target || 50)} className="h-2" />
-              <p className="text-xs text-muted-foreground mt-1">Target: {kpis?.jobsCompleted.target}</p>
-            </div>
-
-            {/* Response Time */}
-            <div className="p-4 rounded-lg bg-muted/50 border border-border">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-foreground">Avg Response Time</span>
-                </div>
-                <span className={`font-bold ${getProgressColor(kpis?.responseTime.value || 0, kpis?.responseTime.target || 30, true)}`}>
-                  {(kpis?.responseTime.value || 0).toFixed(0)} min
-                </span>
-              </div>
-              <Progress value={getProgressValue(kpis?.responseTime.value || 0, kpis?.responseTime.target || 30, true)} className="h-2" />
-              <p className="text-xs text-muted-foreground mt-1">Target: ≤{kpis?.responseTime.target} min</p>
-            </div>
-
-            {/* Customer Satisfaction */}
-            <div className="p-4 rounded-lg bg-muted/50 border border-border">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-foreground">Customer Satisfaction</span>
-                </div>
-                <span className={`font-bold ${getProgressColor((kpis?.satisfaction.value || 0) * 20, (kpis?.satisfaction.target || 4.5) * 20)}`}>
-                  {(kpis?.satisfaction.value || 0).toFixed(1)} / 5
-                </span>
-              </div>
-              <Progress value={(kpis?.satisfaction.value || 0) * 20} className="h-2" />
-              <p className="text-xs text-muted-foreground mt-1">Target: {kpis?.satisfaction.target}</p>
-            </div>
+            <Progress value={getProgressValue(kpis?.revenue.value || 0, kpis?.revenue.target || 10000)} className="h-2" />
+            <p className="text-xs text-muted-foreground mt-1">Target: ${(kpis?.revenue.target || 0).toLocaleString()}</p>
           </div>
-        )}
 
-        {/* Actions */}
-        <div className="flex gap-2 pt-2">
-          <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Custom KPIs coming soon!')}>
-            Configure KPIs
-          </Button>
-          <Button variant="outline" onClick={onCancel}>
-            Close
-          </Button>
+          {/* Jobs Completed */}
+          <div className="p-4 rounded-lg bg-muted/50 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-foreground">Jobs Completed</span>
+              </div>
+              <span className={`font-bold ${getProgressColor(kpis?.jobsCompleted.value || 0, kpis?.jobsCompleted.target || 50)}`}>
+                {kpis?.jobsCompleted.value || 0}
+              </span>
+            </div>
+            <Progress value={getProgressValue(kpis?.jobsCompleted.value || 0, kpis?.jobsCompleted.target || 50)} className="h-2" />
+            <p className="text-xs text-muted-foreground mt-1">Target: {kpis?.jobsCompleted.target}</p>
+          </div>
+
+          {/* Response Time */}
+          <div className="p-4 rounded-lg bg-muted/50 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-foreground">Avg Response Time</span>
+              </div>
+              <span className={`font-bold ${getProgressColor(kpis?.responseTime.value || 0, kpis?.responseTime.target || 30, true)}`}>
+                {(kpis?.responseTime.value || 0).toFixed(0)} min
+              </span>
+            </div>
+            <Progress value={getProgressValue(kpis?.responseTime.value || 0, kpis?.responseTime.target || 30, true)} className="h-2" />
+            <p className="text-xs text-muted-foreground mt-1">Target: ≤{kpis?.responseTime.target} min</p>
+          </div>
+
+          {/* Customer Satisfaction */}
+          <div className="p-4 rounded-lg bg-muted/50 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-foreground">Customer Satisfaction</span>
+              </div>
+              <span className={`font-bold ${getProgressColor((kpis?.satisfaction.value || 0) * 20, (kpis?.satisfaction.target || 4.5) * 20)}`}>
+                {(kpis?.satisfaction.value || 0).toFixed(1)} / 5
+              </span>
+            </div>
+            <Progress value={(kpis?.satisfaction.value || 0) * 20} className="h-2" />
+            <p className="text-xs text-muted-foreground mt-1">Target: {kpis?.satisfaction.target}</p>
+          </div>
         </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex gap-2 pt-2">
+        <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Custom KPIs coming soon!')}>
+          Configure KPIs
+        </Button>
+        <Button variant="outline" onClick={onCancel}>
+          Close
+        </Button>
       </div>
     </div>
   );

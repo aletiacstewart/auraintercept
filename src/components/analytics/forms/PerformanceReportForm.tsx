@@ -3,11 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { X, BarChart3, TrendingUp, TrendingDown, Minus, Calendar, Users, Clock, CheckCircle, Target, Award, AlertTriangle } from 'lucide-react';
+import { BarChart3, TrendingUp, TrendingDown, Minus, Calendar, Users, CheckCircle, Target, Award, AlertTriangle } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 
 interface PerformanceReportFormProps {
@@ -422,127 +422,114 @@ export const PerformanceReportForm: React.FC<PerformanceReportFormProps> = ({
   );
 
   return (
-    <div className="bg-background rounded-lg border border-border shadow-sm">
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold text-foreground">Performance Report</h3>
-          </div>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-muted">
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
+    <div className="space-y-4">
+      {/* Report Type Selector */}
+      <div className="space-y-2">
+        <Label className="text-sm font-medium text-muted-foreground">Report View</Label>
+        <Select value={reportView} onValueChange={(v) => setReportView(v as ReportView)}>
+          <SelectTrigger className="h-9 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="team">Team Overview</SelectItem>
+            <SelectItem value="top_performers">Top Performers</SelectItem>
+            <SelectItem value="goals">Goal Progress</SelectItem>
+            <SelectItem value="improvements">Improvement Areas</SelectItem>
+            <SelectItem value="individual">Individual Metrics</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <div className="p-4 space-y-4">
-        {/* Report Type Selector */}
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-muted-foreground">Report View</Label>
-          <Select value={reportView} onValueChange={(v) => setReportView(v as ReportView)}>
-            <SelectTrigger className="h-9 text-sm">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="team">Team Overview</SelectItem>
-              <SelectItem value="top_performers">Top Performers</SelectItem>
-              <SelectItem value="goals">Goal Progress</SelectItem>
-              <SelectItem value="improvements">Improvement Areas</SelectItem>
-              <SelectItem value="individual">Individual Metrics</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
 
-        {/* Filters */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
-              <Calendar className="h-3 w-3" />
-              Date Range
-            </Label>
-            <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="h-9 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Last 7 days</SelectItem>
-                <SelectItem value="30">Last 30 days</SelectItem>
-                <SelectItem value="90">Last 90 days</SelectItem>
-                <SelectItem value="365">Last year</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-muted-foreground">Compare To</Label>
-            <Select value={compareRange} onValueChange={setCompareRange}>
-              <SelectTrigger className="h-9 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="previous">Previous period</SelectItem>
-                <SelectItem value="none">No comparison</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Department Filter */}
+      {/* Filters */}
+      <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
-            <Users className="h-3 w-3" />
-            Department / Team
+            <Calendar className="h-3 w-3" />
+            Date Range
           </Label>
-          <Select value={department} onValueChange={setDepartment}>
+          <Select value={dateRange} onValueChange={setDateRange}>
             <SelectTrigger className="h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Teams</SelectItem>
-              <SelectItem value="technicians">Technicians</SelectItem>
-              <SelectItem value="dispatch">Dispatch</SelectItem>
-              <SelectItem value="sales">Sales</SelectItem>
-              <SelectItem value="support">Customer Support</SelectItem>
+              <SelectItem value="7">Last 7 days</SelectItem>
+              <SelectItem value="30">Last 30 days</SelectItem>
+              <SelectItem value="90">Last 90 days</SelectItem>
+              <SelectItem value="365">Last year</SelectItem>
             </SelectContent>
           </Select>
         </div>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-muted-foreground">Compare To</Label>
+          <Select value={compareRange} onValueChange={setCompareRange}>
+            <SelectTrigger className="h-9 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="previous">Previous period</SelectItem>
+              <SelectItem value="none">No comparison</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
-        {/* Period Badge */}
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-foreground border-border">
-            {format(startDate, 'MMM d')} - {format(endDate, 'MMM d, yyyy')}
+      {/* Department Filter */}
+      <div className="space-y-2">
+        <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
+          <Users className="h-3 w-3" />
+          Department / Team
+        </Label>
+        <Select value={department} onValueChange={setDepartment}>
+          <SelectTrigger className="h-9 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Teams</SelectItem>
+            <SelectItem value="technicians">Technicians</SelectItem>
+            <SelectItem value="dispatch">Dispatch</SelectItem>
+            <SelectItem value="sales">Sales</SelectItem>
+            <SelectItem value="support">Customer Support</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Period Badge */}
+      <div className="flex items-center gap-2">
+        <Badge variant="outline" className="text-foreground border-border">
+          {format(startDate, 'MMM d')} - {format(endDate, 'MMM d, yyyy')}
+        </Badge>
+        {compareRange === 'previous' && previousMetrics && (
+          <Badge variant="secondary" className="text-xs">
+            vs {format(prevStartDate, 'MMM d')} - {format(prevEndDate, 'MMM d')}
           </Badge>
-          {compareRange === 'previous' && previousMetrics && (
-            <Badge variant="secondary" className="text-xs">
-              vs {format(prevStartDate, 'MMM d')} - {format(prevEndDate, 'MMM d')}
-            </Badge>
-          )}
-        </div>
-
-        {/* Dynamic Content Based on Report View */}
-        {isLoading ? (
-          <div className="grid grid-cols-2 gap-3">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-24" />
-            ))}
-          </div>
-        ) : (
-          <>
-            {reportView === 'team' && renderTeamOverview()}
-            {reportView === 'top_performers' && renderTopPerformers()}
-            {reportView === 'goals' && renderGoalProgress()}
-            {reportView === 'improvements' && renderImprovementAreas()}
-            {reportView === 'individual' && renderIndividualMetrics()}
-          </>
         )}
+      </div>
 
-        {/* Actions */}
-        <div className="flex gap-2 pt-2">
-          <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={handleExport}>
-            Export Report
-          </Button>
-          <Button variant="outline" onClick={onCancel}>
-            Close
-          </Button>
+      {/* Dynamic Content Based on Report View */}
+      {isLoading ? (
+        <div className="grid grid-cols-2 gap-3">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-24" />
+          ))}
         </div>
+      ) : (
+        <>
+          {reportView === 'team' && renderTeamOverview()}
+          {reportView === 'top_performers' && renderTopPerformers()}
+          {reportView === 'goals' && renderGoalProgress()}
+          {reportView === 'improvements' && renderImprovementAreas()}
+          {reportView === 'individual' && renderIndividualMetrics()}
+        </>
+      )}
+
+      {/* Actions */}
+      <div className="flex gap-2 pt-2">
+        <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={handleExport}>
+          Export Report
+        </Button>
+        <Button variant="outline" onClick={onCancel}>
+          Close
+        </Button>
       </div>
     </div>
   );
