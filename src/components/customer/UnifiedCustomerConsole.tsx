@@ -45,13 +45,13 @@ interface CompanyConfig {
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const QUICK_ACTIONS = [
-  { id: 'schedule', label: 'Appt', icon: Calendar, message: "I'd like to request an appointment" },
-  { id: 'quote', label: 'Quote', icon: DollarSign, message: "I need a quote for your services" },
-  { id: 'services', label: 'Services', icon: Sparkles, message: "What services do you offer?" },
-  { id: 'hours', label: 'Hours', icon: Clock, message: "What are your business hours?" },
+  { id: 'schedule', label: 'Appt', icon: Calendar, message: "I'd like to request an appointment", featureColor: 'text-feature-appointments' },
+  { id: 'quote', label: 'Quote', icon: DollarSign, message: "I need a quote for your services", featureColor: 'text-feature-quotes' },
+  { id: 'services', label: 'Services', icon: Sparkles, message: "What services do you offer?", featureColor: 'text-feature-customers' },
+  { id: 'hours', label: 'Hours', icon: Clock, message: "What are your business hours?", featureColor: 'text-feature-overview' },
   { id: 'emergency', label: 'Emergency', icon: AlertTriangle, message: "I have an urgent emergency situation", variant: 'destructive' as const },
-  { id: 'track', label: 'Track', icon: MapPin, message: "I want to track my appointment status" },
-  { id: 'feedback', label: 'Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
+  { id: 'track', label: 'Track', icon: MapPin, message: "I want to track my appointment status", featureColor: 'text-feature-fieldops' },
+  { id: 'feedback', label: 'Feedback', icon: Star, message: "I'd like to leave feedback about my service", featureColor: 'text-feature-customers' },
 ];
 
 interface UnifiedCustomerConsoleProps {
@@ -341,28 +341,28 @@ export function UnifiedCustomerConsole({
             value="schedule" 
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
           >
-            <Calendar className="h-4 w-4 mr-1" />
+            <Calendar className="h-4 w-4 mr-1 text-feature-appointments" />
             <span className="text-xs">Appt</span>
           </TabsTrigger>
           <TabsTrigger 
             value="quote" 
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
           >
-            <DollarSign className="h-4 w-4 mr-1" />
+            <DollarSign className="h-4 w-4 mr-1 text-feature-quotes" />
             <span className="text-xs">Quote</span>
           </TabsTrigger>
           <TabsTrigger 
             value="services"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
           >
-            <Sparkles className="h-4 w-4 mr-1" />
+            <Sparkles className="h-4 w-4 mr-1 text-feature-customers" />
             <span className="text-xs">Services</span>
           </TabsTrigger>
           <TabsTrigger 
             value="hours"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
           >
-            <Clock className="h-4 w-4 mr-1" />
+            <Clock className="h-4 w-4 mr-1 text-feature-overview" />
             <span className="text-xs">Hours</span>
           </TabsTrigger>
         </TabsList>
@@ -394,7 +394,7 @@ export function UnifiedCustomerConsole({
                         className="justify-start gap-2"
                         onClick={() => handleSendMessage(action.message)}
                       >
-                        <action.icon className="h-4 w-4" />
+                        <action.icon className={cn("h-4 w-4", action.featureColor)} />
                         <span className="truncate">{action.label}</span>
                       </Button>
                     ))}

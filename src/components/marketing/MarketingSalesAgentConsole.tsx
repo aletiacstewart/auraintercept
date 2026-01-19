@@ -21,15 +21,15 @@ import {
 
 // Quick actions for Marketing & Sales - consolidated campaign creation
 const QUICK_ACTIONS = [
-  { id: 'campaign', label: 'Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign' },
-  { id: 'customers', label: 'Segments', icon: Users, message: 'Show me customer segments' },
-  { id: 'social', label: 'Social', icon: Share2, message: 'Show me pending social media content' },
+  { id: 'campaign', label: 'Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign', featureColor: 'text-feature-marketing' },
+  { id: 'customers', label: 'Segments', icon: Users, message: 'Show me customer segments', featureColor: 'text-feature-customers' },
+  { id: 'social', label: 'Social', icon: Share2, message: 'Show me pending social media content', featureColor: 'text-feature-marketing' },
 ];
 
 // Tab configuration - includes quick actions as tabs
 const TABS = [
-  { id: 'chat', label: 'Home', icon: Megaphone },
-  ...QUICK_ACTIONS.map(action => ({ id: action.id, label: action.label, icon: action.icon })),
+  { id: 'chat', label: 'Home', icon: Megaphone, featureColor: 'text-feature-marketing' },
+  ...QUICK_ACTIONS.map(action => ({ id: action.id, label: action.label, icon: action.icon, featureColor: action.featureColor })),
 ];
 
 interface MarketingSalesAgentConsoleProps {

@@ -7,6 +7,7 @@ interface Tab {
   label: string;
   icon: LucideIcon;
   variant?: 'default' | 'destructive';
+  featureColor?: string;
 }
 
 interface MobileTabNavProps {
@@ -49,7 +50,7 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
                 tab.variant === 'destructive' && isActive && 'text-destructive'
               )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className={cn("h-4 w-4", !isActive && tab.featureColor)} />
               <span className="truncate max-w-[48px]">{tab.label}</span>
               
               {/* Active indicator */}

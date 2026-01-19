@@ -76,15 +76,15 @@ const FIELD_OPS_AGENTS = [
 
 // Tabs for the console - include all quick action icons
 const TABS = [
-  { id: 'chat', label: 'Home', icon: MessageSquare },
-  { id: 'accept', label: 'Accept', icon: UserCheck },
-  { id: 'directions', label: 'Directions', icon: Navigation },
-  { id: 'enroute', label: 'En Route', icon: Truck },
-  { id: 'eta', label: 'ETA', icon: Clock },
-  { id: 'arrive_start', label: 'Arrive', icon: Play },
-  { id: 'complete', label: 'Complete', icon: CheckCircle, variant: 'destructive' as const },
-  { id: 'quote', label: 'Quote', icon: FileText },
-  { id: 'invoice', label: 'Invoice', icon: Receipt },
+  { id: 'chat', label: 'Home', icon: MessageSquare, featureColor: 'text-feature-fieldops' },
+  { id: 'accept', label: 'Accept', icon: UserCheck, featureColor: 'text-feature-fieldops' },
+  { id: 'directions', label: 'Directions', icon: Navigation, featureColor: 'text-feature-fieldops' },
+  { id: 'enroute', label: 'En Route', icon: Truck, featureColor: 'text-feature-fieldops' },
+  { id: 'eta', label: 'ETA', icon: Clock, featureColor: 'text-feature-appointments' },
+  { id: 'arrive_start', label: 'Arrive', icon: Play, featureColor: 'text-feature-fieldops' },
+  { id: 'complete', label: 'Complete', icon: CheckCircle, variant: 'destructive' as const, featureColor: 'text-feature-fieldops' },
+  { id: 'quote', label: 'Quote', icon: FileText, featureColor: 'text-feature-quotes' },
+  { id: 'invoice', label: 'Invoice', icon: Receipt, featureColor: 'text-feature-invoices' },
 ];
 
 interface FieldOpsQuickAction {
@@ -93,6 +93,7 @@ interface FieldOpsQuickAction {
   icon: LucideIcon;
   message: string;
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  featureColor?: string;
 }
 
 // Job action IDs that require employee role (not available to company/platform admins for execution)
@@ -100,15 +101,15 @@ const EMPLOYEE_ONLY_ACTIONS = ['accept', 'enroute', 'eta', 'eta-agent', 'arrive_
 
 // Field Operations AI Agent quick actions - optimized workflow
 const QUICK_ACTIONS: FieldOpsQuickAction[] = [
-  { id: 'accept', label: 'Accept Job', icon: UserCheck, message: "I want to accept my next assigned job." },
-  { id: 'directions', label: 'Get Directions', icon: Navigation, message: "Get directions to my next job" },
-  { id: 'enroute', label: 'Mark En Route', icon: Truck, message: "I'm ready to head out. Mark me as en route to my next job and notify the customer." },
-  { id: 'eta', label: 'Update ETA', icon: Clock, message: "I need to update my ETA for my current job." },
-  { id: 'arrive_start', label: 'Arrive & Start', icon: Play, message: "I have arrived at the customer's location and I'm ready to start the job." },
-  { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: "I have finished the job. Please mark it as completed and notify the customer.", variant: 'destructive' },
-  { id: 'quote', label: 'Generate Quote', icon: FileText, message: "I need to create a quote for this job." },
-  { id: 'invoice', label: 'Generate Invoice', icon: Receipt, message: "I need to create an invoice for this completed job." },
-  { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: "Contact dispatch" },
+  { id: 'accept', label: 'Accept Job', icon: UserCheck, message: "I want to accept my next assigned job.", featureColor: 'text-feature-fieldops' },
+  { id: 'directions', label: 'Get Directions', icon: Navigation, message: "Get directions to my next job", featureColor: 'text-feature-fieldops' },
+  { id: 'enroute', label: 'Mark En Route', icon: Truck, message: "I'm ready to head out. Mark me as en route to my next job and notify the customer.", featureColor: 'text-feature-fieldops' },
+  { id: 'eta', label: 'Update ETA', icon: Clock, message: "I need to update my ETA for my current job.", featureColor: 'text-feature-appointments' },
+  { id: 'arrive_start', label: 'Arrive & Start', icon: Play, message: "I have arrived at the customer's location and I'm ready to start the job.", featureColor: 'text-feature-fieldops' },
+  { id: 'complete', label: 'Complete Job', icon: CheckCircle, message: "I have finished the job. Please mark it as completed and notify the customer.", variant: 'destructive', featureColor: 'text-feature-fieldops' },
+  { id: 'quote', label: 'Generate Quote', icon: FileText, message: "I need to create a quote for this job.", featureColor: 'text-feature-quotes' },
+  { id: 'invoice', label: 'Generate Invoice', icon: Receipt, message: "I need to create an invoice for this completed job.", featureColor: 'text-feature-invoices' },
+  { id: 'dispatch', label: 'Contact Dispatch', icon: Phone, message: "Contact dispatch", featureColor: 'text-feature-fieldops' },
 ];
 
 interface JobAssignment {
