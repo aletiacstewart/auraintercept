@@ -32,7 +32,7 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
 
   return (
     <div className="shrink-0 border-b border-slate-600/50 bg-slate-700/80">
-      <div className="flex">
+      <div className="flex overflow-x-auto scrollbar-hide">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
@@ -42,7 +42,7 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
               key={tab.id}
               onClick={() => handleTabClick(tab.id)}
               className={cn(
-                'flex-1 flex flex-col items-center gap-0.5 py-2 px-1 text-[10px] font-medium transition-all relative',
+                'flex flex-col items-center gap-0.5 py-2 px-3 min-w-[56px] text-[9px] font-medium transition-all relative whitespace-nowrap',
                 isActive 
                   ? 'text-white' 
                   : 'text-white/60 hover:text-white',
@@ -50,7 +50,7 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
               )}
             >
               <Icon className="h-4 w-4" />
-              <span className="truncate">{tab.label}</span>
+              <span className="truncate max-w-[48px]">{tab.label}</span>
               
               {/* Active indicator */}
               {isActive && (

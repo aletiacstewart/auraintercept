@@ -45,13 +45,13 @@ interface CompanyConfig {
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const QUICK_ACTIONS = [
-  { id: 'schedule', label: 'Request Appointment', icon: Calendar, message: "I'd like to request an appointment" },
+  { id: 'schedule', label: 'Appt', icon: Calendar, message: "I'd like to request an appointment" },
+  { id: 'quote', label: 'Quote', icon: DollarSign, message: "I need a quote for your services" },
+  { id: 'services', label: 'Services', icon: Sparkles, message: "What services do you offer?" },
+  { id: 'hours', label: 'Hours', icon: Clock, message: "What are your business hours?" },
   { id: 'emergency', label: 'Emergency', icon: AlertTriangle, message: "I have an urgent emergency situation", variant: 'destructive' as const },
-  { id: 'quote', label: 'Get Quote', icon: DollarSign, message: "I need a quote for your services" },
-  { id: 'hours', label: 'Business Hours', icon: Clock, message: "What are your business hours?" },
-  { id: 'services', label: 'View Services', icon: Sparkles, message: "What services do you offer?" },
-  { id: 'track', label: 'Track Appointment', icon: MapPin, message: "I want to track my appointment status" },
-  { id: 'feedback', label: 'Leave Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
+  { id: 'track', label: 'Track', icon: MapPin, message: "I want to track my appointment status" },
+  { id: 'feedback', label: 'Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
 ];
 
 interface UnifiedCustomerConsoleProps {
@@ -318,28 +318,52 @@ export function UnifiedCustomerConsole({
       </header>
 
       {/* Navigation Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col max-w-2xl mx-auto w-full">
-        <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-auto p-0">
+      <Tabs value={activeTab} onValueChange={(tab) => {
+        if (tab === 'schedule' || tab === 'quote') {
+          const action = QUICK_ACTIONS.find(a => a.id === tab);
+          if (action) {
+            handleSendMessage(action.message);
+            setActiveTab('chat');
+          }
+        } else {
+          setActiveTab(tab);
+        }
+      }} className="flex-1 flex flex-col max-w-2xl mx-auto w-full">
+        <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-auto p-0 overflow-x-auto scrollbar-hide">
           <TabsTrigger 
             value="chat" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
           >
-            <MessageSquare className="h-4 w-4 mr-1.5" />
-            Chat
+            <MessageSquare className="h-4 w-4 mr-1" />
+            <span className="text-xs">Chat</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="schedule" 
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
+          >
+            <Calendar className="h-4 w-4 mr-1" />
+            <span className="text-xs">Appt</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="quote" 
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
+          >
+            <DollarSign className="h-4 w-4 mr-1" />
+            <span className="text-xs">Quote</span>
           </TabsTrigger>
           <TabsTrigger 
             value="services"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
           >
-            <Sparkles className="h-4 w-4 mr-1.5" />
-            Services
+            <Sparkles className="h-4 w-4 mr-1" />
+            <span className="text-xs">Services</span>
           </TabsTrigger>
           <TabsTrigger 
             value="hours"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-3"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
           >
-            <Clock className="h-4 w-4 mr-1.5" />
-            Hours
+            <Clock className="h-4 w-4 mr-1" />
+            <span className="text-xs">Hours</span>
           </TabsTrigger>
         </TabsList>
 
