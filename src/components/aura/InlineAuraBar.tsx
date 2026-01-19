@@ -94,10 +94,15 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
         {/* Clear button when there's input */}
         {inputValue && (
           <Button
+            type="button"
             variant="ghost"
             size="icon"
-            className="h-8 w-8 flex-shrink-0"
-            onClick={() => setInputValue('')}
+            className="h-8 w-8 flex-shrink-0 relative z-10"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              clearInput();
+            }}
           >
             <X className="h-4 w-4 text-muted-foreground" />
           </Button>
@@ -106,13 +111,20 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
         {/* Voice Toggle */}
         {isSupported && (
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             className={cn(
-              "h-8 w-8 flex-shrink-0 transition-colors",
+              "h-8 w-8 flex-shrink-0 transition-colors relative z-10",
               isVoiceModeEnabled && isListening && "bg-aura-emerald/20 text-aura-emerald"
             )}
-            onClick={toggleVoiceMode}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              // Focus the input first to ensure proper context for voice
+              inputRef.current?.focus();
+              toggleVoiceMode();
+            }}
           >
             <Mic className={cn(
               "h-4 w-4",
