@@ -7,7 +7,7 @@ import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AuraCommandBar } from '@/components/aura/AuraCommandBar';
+
 import { AuraCommandModal } from '@/components/aura/AuraCommandModal';
 import { AuraTabs } from '@/components/aura/AuraTabs';
 import { AuraSummary } from '@/components/aura/AuraSummary';
@@ -20,7 +20,7 @@ import { Cpu, ShieldAlert } from 'lucide-react';
 export default function AskAura() {
   const { companyId, userRole, user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [inputValue, setInputValue] = useState('');
+  
   const [activeTab, setActiveTab] = useState('revenue');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
@@ -73,7 +73,7 @@ export default function AskAura() {
     const parsed = parseAuraQuery(query);
     setActiveTab(getTabFromIntent(parsed.intent));
     
-    setInputValue('');
+    
     await sendMessage(query);
   };
 
@@ -126,14 +126,6 @@ export default function AskAura() {
             showAuraBar
           />
 
-          {/* Command Bar */}
-          <AuraCommandBar
-            value={inputValue}
-            onChange={setInputValue}
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
-            autoFocus
-          />
 
           {/* Chat Messages */}
           {messages.length > 0 && (
