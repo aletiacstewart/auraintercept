@@ -46,7 +46,7 @@ export function AuraQuickResponsePopup({ response, onDismiss }: AuraQuickRespons
         {/* Response Content */}
         <div className="flex-1 min-w-0">
           <ScrollArea className="max-h-32">
-            <p className="text-sm text-foreground whitespace-pre-wrap">{truncatedResponse}</p>
+            <p className="text-sm text-card-foreground whitespace-pre-wrap">{truncatedResponse}</p>
           </ScrollArea>
           
           {/* Actions */}
