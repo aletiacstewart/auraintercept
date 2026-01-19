@@ -18,46 +18,43 @@ interface BusinessOpsHubTabsProps {
 export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsProps) {
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
-      {/* Dark pill-based navigation container */}
-      <div className="bg-card rounded-[2rem] p-6 border border-border/30">
-        <TabsList className="flex flex-wrap gap-3 bg-transparent h-auto p-0 justify-start">
-          <TabsTrigger 
-            value="sales" 
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-card-foreground/10 border border-card-foreground/30 text-card-foreground/80 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:border-primary/50 data-[state=active]:shadow-md transition-all hover:bg-card-foreground/15"
-          >
-            <DollarSign className="h-4 w-4" />
-            <span>Sales</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="operations" 
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-card-foreground/10 border border-card-foreground/30 text-card-foreground/80 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:border-primary/50 data-[state=active]:shadow-md transition-all hover:bg-card-foreground/15"
-          >
-            <Calendar className="h-4 w-4" />
-            <span>Operations</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="inventory" 
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-card-foreground/10 border border-card-foreground/30 text-card-foreground/80 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:border-primary/50 data-[state=active]:shadow-md transition-all hover:bg-card-foreground/15"
-          >
-            <Package className="h-4 w-4" />
-            <span>Inventory</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="people" 
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-card-foreground/10 border border-card-foreground/30 text-card-foreground/80 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:border-primary/50 data-[state=active]:shadow-md transition-all hover:bg-card-foreground/15"
-          >
-            <UsersRound className="h-4 w-4" />
-            <span>People</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="all" 
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-card-foreground/10 border border-card-foreground/30 text-card-foreground/80 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:border-primary/50 data-[state=active]:shadow-md transition-all hover:bg-card-foreground/15"
-          >
-            <Briefcase className="h-4 w-4" />
-            <span>All Business Ops</span>
-          </TabsTrigger>
-        </TabsList>
-      </div>
+      <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 flex-wrap">
+        <TabsTrigger 
+          value="sales" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 data-[state=active]:text-primary transition-all"
+        >
+          <DollarSign className="h-4 w-4" />
+          <span>Sales</span>
+        </TabsTrigger>
+        <TabsTrigger 
+          value="operations" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
+          <Calendar className="h-4 w-4" />
+          <span>Operations</span>
+        </TabsTrigger>
+        <TabsTrigger 
+          value="inventory" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
+          <Package className="h-4 w-4" />
+          <span>Inventory</span>
+        </TabsTrigger>
+        <TabsTrigger 
+          value="people" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
+          <UsersRound className="h-4 w-4" />
+          <span>People</span>
+        </TabsTrigger>
+        <TabsTrigger 
+          value="all" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
+          <Briefcase className="h-4 w-4" />
+          <span>All Business Ops</span>
+        </TabsTrigger>
+      </TabsList>
 
       {/* Sales Tab */}
       <TabsContent value="sales" className="mt-6">
