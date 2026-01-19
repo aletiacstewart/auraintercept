@@ -20,10 +20,26 @@ export type VoiceCommand =
   | 'stop listening'
   | 'navigate';
 
-// Page routes for voice navigation
+// Comprehensive page routes for voice navigation - matches sidebar labels exactly
 export const PAGE_ROUTES: Record<string, string> = {
+  // Overview Section
   'dashboard': '/dashboard',
   'home': '/dashboard',
+  'quick setup': '/dashboard/quick-setup',
+  'settings': '/dashboard/quick-setup',
+  'setup': '/dashboard/quick-setup',
+  'smart website': '/dashboard/smart-website',
+  'my schedule': '/dashboard/appointments',
+  'ai console': '/technician/ai-console',
+  'my jobs': '/technician/jobs',
+  'calendar': '/technician/calendar',
+  'job history': '/technician/history',
+  'availability': '/technician/availability',
+  
+  // Business Management Section (exact sidebar labels)
+  'business ops overview': '/dashboard/business-operations',
+  'business operations': '/dashboard/business-operations',
+  'business ops': '/dashboard/business-operations',
   'companies': '/dashboard/companies',
   'employees': '/dashboard/employees',
   'customers': '/dashboard/customers',
@@ -33,41 +49,125 @@ export const PAGE_ROUTES: Record<string, string> = {
   'invoices': '/dashboard/invoices',
   'inventory': '/dashboard/inventory',
   'warranties': '/dashboard/warranties',
-  'settings': '/dashboard/settings',
-  'help': '/dashboard/help',
-  'analytics': '/dashboard/ask-aura',
+  
+  // Analytics & Reports Section
   'ask aura': '/dashboard/ask-aura',
   'aura': '/dashboard/ask-aura',
-  'campaigns': '/dashboard/campaigns',
-  'field operations': '/dashboard/field-operations',
-  'field ops': '/dashboard/field-operations',
+  'analytics': '/dashboard/ask-aura',
+  'subscription analytics': '/dashboard/subscription-analytics',
+  
+  // Business Consoles & Apps Section
+  'business management ops': '/dashboard/ai-consoles/business-management',
+  'analytics & reports ops': '/dashboard/ai-consoles/analytics',
+  'analytics and reports ops': '/dashboard/ai-consoles/analytics',
+  'marketing & sales ops': '/dashboard/ai-consoles/marketing-sales',
+  'marketing and sales ops': '/dashboard/ai-consoles/marketing-sales',
+  'marketing ops': '/dashboard/ai-consoles/marketing-sales',
+  'sales ops': '/dashboard/ai-consoles/marketing-sales',
+  'business mgt ops install': '/dashboard/business-mgt-ops-install',
+  
+  // Field Ops Consoles & Apps Section
+  'technician-field ops': '/dashboard/ai-consoles/field-ops',
+  'technician field ops': '/dashboard/ai-consoles/field-ops',
+  'field ops': '/dashboard/ai-consoles/field-ops',
+  'field operations': '/dashboard/ai-consoles/field-ops',
+  'dispatch-field ops': '/dashboard/dispatch-field-ops',
+  'dispatch field ops': '/dashboard/dispatch-field-ops',
+  'dispatch': '/dashboard/dispatch-field-ops',
+  'technician field ops install': '/dashboard/field-ops-install',
+  'dispatch field ops install': '/dashboard/dispatch-field-ops-install',
+  
+  // Customer Consoles & Apps Section
+  'customer portal': '/dashboard/ai-consoles/customer-portal',
+  'customer website app': '/dashboard/customer-website-app',
+  'customer portal app install': '/dashboard/customer-portal-app-install',
+  
+  // Configuration Section
+  'ai agents hub': '/dashboard/ai-agents',
+  'ai agents': '/dashboard/ai-agents',
+  'knowledge base': '/dashboard/knowledge',
+  'knowledge': '/dashboard/knowledge',
+  'calculators': '/dashboard/calculators',
+  'profile': '/technician/profile',
+  'install app': '/technician/install',
+  
+  // 3rd Party Integrations Section
+  'overview': '/dashboard/integrations',
   'integrations': '/dashboard/integrations',
-  'quick setup': '/dashboard/quick-setup',
-  'setup': '/dashboard/quick-setup',
+  'integrations overview': '/dashboard/integrations',
+  'voice agent': '/dashboard/integrations/voice',
+  'sms & text': '/dashboard/integrations/sms',
+  'sms and text': '/dashboard/integrations/sms',
+  'sms': '/dashboard/integrations/sms',
+  'text': '/dashboard/integrations/sms',
+  'email': '/dashboard/integrations/email',
+  'email integration': '/dashboard/integrations/email',
+  'crm': '/dashboard/integrations/crm',
+  'crm integration': '/dashboard/integrations/crm',
+  'calendar integration': '/dashboard/integrations/calendar',
+  
+  // Platform Resources Section
+  'platform issues': '/dashboard/platform-issues',
+  'platform guides': '/dashboard/platform-guides',
+  'help': '/dashboard/help',
+  'architecture': '/dashboard/architecture',
+  'export docs': '/dashboard/export-docs',
+  
+  // Other pages
+  'campaigns': '/dashboard/campaigns',
 };
 
-// Parse navigation command and extract destination
+// Parse navigation command and extract destination with fuzzy matching
 export function parseNavigationCommand(text: string): string | null {
   const normalizedText = text.toLowerCase().trim();
   
   // Match patterns like "go to companies", "open invoices", "show leads"
   const navigationPatterns = [
-    /\b(?:go to|navigate to|open|show|take me to)\s+(.+)/i,
+    /\b(?:go to|navigate to|open|show|take me to|switch to)\s+(.+)/i,
   ];
   
   for (const pattern of navigationPatterns) {
     const match = normalizedText.match(pattern);
     if (match) {
       const destination = match[1].trim();
-      // Check if destination exists in routes
+      
+      // 1. Exact match
       if (PAGE_ROUTES[destination]) {
         return destination;
       }
-      // Try partial match
+      
+      // 2. Try with common word replacements
+      const normalized = destination
+        .replace(/&/g, 'and')
+        .replace(/-/g, ' ')
+        .replace(/\s+/g, ' ');
+      if (PAGE_ROUTES[normalized]) {
+        return normalized;
+      }
+      
+      // 3. Partial match (find best match)
+      const matches = Object.keys(PAGE_ROUTES).filter(key => 
+        key.includes(destination) || destination.includes(key)
+      );
+      if (matches.length > 0) {
+        // Return the shortest match (most specific)
+        return matches.sort((a, b) => a.length - b.length)[0];
+      }
+      
+      // 4. Word overlap matching
+      const destWords = destination.split(' ').filter(w => w.length > 2);
+      let bestMatch: string | null = null;
+      let bestScore = 0;
       for (const key of Object.keys(PAGE_ROUTES)) {
-        if (key.includes(destination) || destination.includes(key)) {
-          return key;
+        const keyWords = key.split(' ');
+        const overlap = destWords.filter(w => keyWords.some(kw => kw.includes(w) || w.includes(kw))).length;
+        if (overlap > bestScore) {
+          bestScore = overlap;
+          bestMatch = key;
         }
+      }
+      if (bestMatch && bestScore >= 1) {
+        return bestMatch;
       }
     }
   }
@@ -105,6 +205,16 @@ export function parseSearchIntent(text: string): SearchIntent | null {
 export interface CommandResult {
   success: boolean;
   action: string;
+  message?: string;
+}
+
+// AI-interpreted action from the voice-navigator edge function
+export interface AIAction {
+  action: 'navigate' | 'click_button' | 'click_card' | 'search' | 'fill_field' | 'open_form' | 'scroll' | 'unknown';
+  target?: string;
+  value?: string;
+  route?: string;
+  confidence?: number;
   message?: string;
 }
 
@@ -161,8 +271,14 @@ export function clearCurrentField(): CommandResult {
   const current = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
   
   if (current && ('value' in current)) {
-    current.value = '';
-    // Trigger input event for React controlled components
+    // Use native setter to properly trigger React state updates
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype, 'value'
+    )?.set || Object.getOwnPropertyDescriptor(
+      window.HTMLTextAreaElement.prototype, 'value'
+    )?.set;
+    
+    nativeInputValueSetter?.call(current, '');
     const event = new Event('input', { bubbles: true });
     current.dispatchEvent(event);
     return { success: true, action: 'clear_field', message: 'Field cleared' };
@@ -195,6 +311,190 @@ export function submitForm(): CommandResult {
   }
   
   return { success: false, action: 'submit', message: 'No form to submit' };
+}
+
+// Find and click a button by its text content
+export function clickButtonByText(text: string): CommandResult {
+  const normalizedText = text.toLowerCase().trim();
+  const buttons = document.querySelectorAll('button');
+  
+  // First try exact match
+  for (const button of buttons) {
+    const buttonText = button.textContent?.toLowerCase().trim() || '';
+    if (buttonText === normalizedText || buttonText.includes(normalizedText)) {
+      (button as HTMLButtonElement).click();
+      return { success: true, action: 'click_button', message: `Clicked "${text}"` };
+    }
+  }
+  
+  // Try matching by aria-label or data-voice-label
+  for (const button of buttons) {
+    const ariaLabel = button.getAttribute('aria-label')?.toLowerCase() || '';
+    const voiceLabel = button.getAttribute('data-voice-label')?.toLowerCase() || '';
+    if (ariaLabel.includes(normalizedText) || voiceLabel.includes(normalizedText)) {
+      (button as HTMLButtonElement).click();
+      return { success: true, action: 'click_button', message: `Clicked "${text}"` };
+    }
+  }
+  
+  // Try matching links styled as buttons
+  const links = document.querySelectorAll('a');
+  for (const link of links) {
+    const linkText = link.textContent?.toLowerCase().trim() || '';
+    if (linkText.includes(normalizedText)) {
+      (link as HTMLAnchorElement).click();
+      return { success: true, action: 'click_button', message: `Clicked "${text}"` };
+    }
+  }
+  
+  return { success: false, action: 'click_button', message: `Button "${text}" not found` };
+}
+
+// Find and click a card by its label
+export function clickCardByLabel(label: string): CommandResult {
+  const normalizedLabel = label.toLowerCase().trim();
+  
+  // Look for clickable cards with matching text
+  const clickableElements = document.querySelectorAll('[class*="cursor-pointer"], [role="button"], [data-voice-label]');
+  
+  for (const element of clickableElements) {
+    const elementText = element.textContent?.toLowerCase() || '';
+    const voiceLabel = element.getAttribute('data-voice-label')?.toLowerCase() || '';
+    
+    if (elementText.includes(normalizedLabel) || voiceLabel.includes(normalizedLabel)) {
+      (element as HTMLElement).click();
+      return { success: true, action: 'click_card', message: `Opened "${label}"` };
+    }
+  }
+  
+  // Also check for Card components specifically
+  const cards = document.querySelectorAll('[class*="Card"], .card');
+  for (const card of cards) {
+    const cardText = card.textContent?.toLowerCase() || '';
+    if (cardText.includes(normalizedLabel)) {
+      // Try to find and click the card or its first clickable child
+      const clickableChild = card.querySelector('button, a, [role="button"]') as HTMLElement;
+      if (clickableChild) {
+        clickableChild.click();
+      } else {
+        (card as HTMLElement).click();
+      }
+      return { success: true, action: 'click_card', message: `Opened "${label}"` };
+    }
+  }
+  
+  return { success: false, action: 'click_card', message: `Card "${label}" not found` };
+}
+
+// Fill a form field by its label
+export function fillFieldByLabel(label: string, value: string): CommandResult {
+  const normalizedLabel = label.toLowerCase().trim();
+  
+  // Find label element
+  const labels = document.querySelectorAll('label');
+  for (const labelEl of labels) {
+    if (labelEl.textContent?.toLowerCase().includes(normalizedLabel)) {
+      const forId = labelEl.getAttribute('for');
+      let input: HTMLInputElement | HTMLTextAreaElement | null = null;
+      
+      if (forId) {
+        input = document.getElementById(forId) as HTMLInputElement | HTMLTextAreaElement;
+      } else {
+        // Try to find input within or after the label
+        input = labelEl.querySelector('input, textarea') || 
+                labelEl.nextElementSibling?.querySelector('input, textarea') as HTMLInputElement | HTMLTextAreaElement;
+      }
+      
+      if (input) {
+        input.focus();
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype, 'value'
+        )?.set || Object.getOwnPropertyDescriptor(
+          window.HTMLTextAreaElement.prototype, 'value'
+        )?.set;
+        
+        nativeInputValueSetter?.call(input, value);
+        const event = new Event('input', { bubbles: true });
+        input.dispatchEvent(event);
+        
+        return { success: true, action: 'fill_field', message: `Set "${label}" to "${value}"` };
+      }
+    }
+  }
+  
+  // Try by placeholder
+  const inputs = document.querySelectorAll('input, textarea');
+  for (const input of inputs) {
+    const placeholder = (input as HTMLInputElement).placeholder?.toLowerCase() || '';
+    if (placeholder.includes(normalizedLabel)) {
+      (input as HTMLInputElement).focus();
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype, 'value'
+      )?.set;
+      
+      nativeInputValueSetter?.call(input, value);
+      const event = new Event('input', { bubbles: true });
+      input.dispatchEvent(event);
+      
+      return { success: true, action: 'fill_field', message: `Set "${label}" to "${value}"` };
+    }
+  }
+  
+  return { success: false, action: 'fill_field', message: `Field "${label}" not found` };
+}
+
+// Get visible button labels for AI context
+export function getVisibleButtonLabels(): string[] {
+  const buttons = document.querySelectorAll('button:not([disabled])');
+  const labels: string[] = [];
+  
+  buttons.forEach(button => {
+    const text = button.textContent?.trim();
+    if (text && text.length > 0 && text.length < 50) {
+      labels.push(text);
+    }
+  });
+  
+  return [...new Set(labels)].slice(0, 20); // Limit to 20 unique labels
+}
+
+// Get visible card labels for AI context
+export function getVisibleCardLabels(): string[] {
+  const cards = document.querySelectorAll('[data-voice-label], [class*="Card"] h3, [class*="Card"] h4');
+  const labels: string[] = [];
+  
+  cards.forEach(card => {
+    const voiceLabel = card.getAttribute('data-voice-label');
+    const text = voiceLabel || card.textContent?.trim();
+    if (text && text.length > 0 && text.length < 100) {
+      labels.push(text);
+    }
+  });
+  
+  return [...new Set(labels)].slice(0, 20); // Limit to 20 unique labels
+}
+
+// Inject text into search input
+export function injectSearchQuery(query: string): CommandResult {
+  const searchInput = document.querySelector<HTMLInputElement>(
+    'input[placeholder*="Search"], input[placeholder*="search"], input[type="search"], input[name="search"]'
+  );
+  
+  if (searchInput) {
+    searchInput.focus();
+    
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype, 'value'
+    )?.set;
+    
+    nativeInputValueSetter?.call(searchInput, query);
+    const event = new Event('input', { bubbles: true });
+    searchInput.dispatchEvent(event);
+    
+    return { success: true, action: 'search', message: `Searching for "${query}"` };
+  }
+  
+  return { success: false, action: 'search', message: 'No search field found on this page' };
 }
 
 // Execute a voice command

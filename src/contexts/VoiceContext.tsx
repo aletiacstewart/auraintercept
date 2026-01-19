@@ -1,9 +1,25 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
-import { executeCommand, parseCommand, VoiceCommand, CommandResult, parseNavigationCommand, parseSearchIntent, PAGE_ROUTES } from '@/lib/voiceNavigation';
-import { useNavigate } from 'react-router-dom';
+import { 
+  executeCommand, 
+  parseCommand, 
+  VoiceCommand, 
+  CommandResult, 
+  parseNavigationCommand, 
+  parseSearchIntent, 
+  PAGE_ROUTES,
+  AIAction,
+  clickButtonByText,
+  clickCardByLabel,
+  fillFieldByLabel,
+  injectSearchQuery,
+  getVisibleButtonLabels,
+  getVisibleCardLabels,
+} from '@/lib/voiceNavigation';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface VoiceContextType {
   // State
@@ -15,6 +31,7 @@ interface VoiceContextType {
   error: string | null;
   lastCommand: CommandResult | null;
   activeFieldId: string | null;
+  isProcessing: boolean;
   
   // Actions
   enableVoiceMode: () => void;
@@ -35,9 +52,142 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
   });
   const [activeFieldId, setActiveFieldId] = useState<string | null>(null);
   const [lastCommand, setLastCommand] = useState<CommandResult | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const navigate = useNavigate();
+  const location = useLocation();
   const { signOut } = useAuth();
+
+  // Execute AI-interpreted action
+  const executeAIAction = useCallback((action: AIAction) => {
+    let result: CommandResult = { success: false, action: 'unknown', message: action.message };
+
+    switch (action.action) {
+      case 'navigate':
+        if (action.route) {
+          navigate(action.route);
+          result = { success: true, action: 'navigate', message: action.message || `Navigating to ${action.target || action.route}` };
+        }
+        break;
+        
+      case 'click_button':
+        if (action.target) {
+          result = clickButtonByText(action.target);
+          if (!result.success && action.message) {
+            result.message = action.message;
+          }
+        }
+        break;
+        
+      case 'click_card':
+        if (action.target) {
+          result = clickCardByLabel(action.target);
+          // If clicking the card didn't work but we have a route, navigate instead
+          if (!result.success && action.route) {
+            navigate(action.route);
+            result = { success: true, action: 'navigate', message: action.message || `Opening ${action.target}` };
+          }
+        }
+        break;
+        
+      case 'search':
+        if (action.value) {
+          result = injectSearchQuery(action.value);
+        }
+        break;
+        
+      case 'fill_field':
+        if (action.target && action.value) {
+          result = fillFieldByLabel(action.target, action.value);
+        }
+        break;
+        
+      case 'open_form':
+        // Try to click "New X" or "+ New X" button
+        if (action.target) {
+          result = clickButtonByText(`New ${action.target}`);
+          if (!result.success) {
+            result = clickButtonByText(`+ New ${action.target}`);
+          }
+          if (!result.success) {
+            result = clickButtonByText(`Add ${action.target}`);
+          }
+          if (!result.success) {
+            result = clickButtonByText(`Create ${action.target}`);
+          }
+        }
+        break;
+        
+      case 'scroll':
+        if (action.target === 'up') {
+          window.scrollBy({ top: -300, behavior: 'smooth' });
+          result = { success: true, action: 'scroll', message: 'Scrolled up' };
+        } else if (action.target === 'down') {
+          window.scrollBy({ top: 300, behavior: 'smooth' });
+          result = { success: true, action: 'scroll', message: 'Scrolled down' };
+        }
+        break;
+        
+      default:
+        result = { success: false, action: 'unknown', message: action.message || 'Command not understood' };
+    }
+
+    setLastCommand(result);
+    
+    if (result.success) {
+      toast.success(result.message, {
+        duration: 1500,
+        className: 'voice-command-toast',
+      });
+    } else {
+      toast.error(result.message || 'Could not execute command', {
+        duration: 2000,
+      });
+    }
+    
+    return result;
+  }, [navigate]);
+
+  // Process voice command through AI
+  const processWithAI = useCallback(async (text: string): Promise<boolean> => {
+    setIsProcessing(true);
+    
+    try {
+      const response = await supabase.functions.invoke('voice-navigator', {
+        body: { 
+          command: text,
+          currentPage: location.pathname,
+          visibleButtons: getVisibleButtonLabels(),
+          visibleCards: getVisibleCardLabels(),
+        }
+      });
+      
+      if (response.error) {
+        console.error('Voice navigator error:', response.error);
+        // Handle specific error codes
+        if (response.error.message?.includes('429') || response.error.message?.includes('rate limit')) {
+          toast.error('Voice AI rate limited. Try again in a moment.', { duration: 3000 });
+        } else if (response.error.message?.includes('402') || response.error.message?.includes('payment')) {
+          toast.error('Voice AI credits depleted. Please add credits.', { duration: 3000 });
+        }
+        return false;
+      }
+      
+      const aiAction = response.data as AIAction;
+      
+      if (aiAction && aiAction.action && aiAction.action !== 'unknown') {
+        executeAIAction(aiAction);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Voice AI processing error:', error);
+      return false;
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [location.pathname, executeAIAction]);
 
   const handleCommand = useCallback((command: string) => {
     const parsedCommand = parseCommand(command) || command as VoiceCommand;
@@ -71,80 +221,68 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
     }
   }, [navigate, signOut]);
 
-  const handleTranscript = useCallback((text: string, isFinal: boolean) => {
+  const handleTranscript = useCallback(async (text: string, isFinal: boolean) => {
     if (!isFinal) return;
     
-    // Check if it's a command first
+    // Check if it's a simple command first (fast path)
     const command = parseCommand(text);
     if (command) {
       handleCommand(command);
       return;
     }
     
-    // Check for navigation command (e.g., "go to companies")
+    // Check for local navigation command (fast path for common patterns)
     const navigationDestination = parseNavigationCommand(text);
-    if (navigationDestination) {
+    if (navigationDestination && PAGE_ROUTES[navigationDestination]) {
       const route = PAGE_ROUTES[navigationDestination];
-      if (route) {
-        navigate(route);
-        toast.success(`Navigating to ${navigationDestination}`, {
-          duration: 1500,
-          className: 'voice-command-toast',
-        });
-        return;
-      }
+      navigate(route);
+      setLastCommand({ success: true, action: 'navigate', message: `Navigating to ${navigationDestination}` });
+      toast.success(`Navigating to ${navigationDestination}`, {
+        duration: 1500,
+        className: 'voice-command-toast',
+      });
+      return;
     }
     
-    // Check for search command (e.g., "search for demo company")
+    // Check for search command (fast path)
     const searchIntent = parseSearchIntent(text);
     if (searchIntent) {
-      // Find search input on the page and inject the query
-      const searchInput = document.querySelector<HTMLInputElement>(
-        'input[placeholder*="Search"], input[placeholder*="search"], input[type="search"], input[name="search"]'
-      );
-      
-      if (searchInput) {
-        searchInput.focus();
-        
-        // Inject the search query
-        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-          window.HTMLInputElement.prototype, 'value'
-        )?.set;
-        
-        nativeInputValueSetter?.call(searchInput, searchIntent.query);
-        
-        const event = new Event('input', { bubbles: true });
-        searchInput.dispatchEvent(event);
-        
-        toast.success(`Searching for "${searchIntent.query}"`, {
-          duration: 1500,
-          className: 'voice-command-toast',
-        });
-        return;
+      const result = injectSearchQuery(searchIntent.query);
+      setLastCommand(result);
+      if (result.success) {
+        toast.success(result.message, { duration: 1500, className: 'voice-command-toast' });
       } else {
-        toast.info(`No search field found on this page`, { duration: 2000 });
+        toast.info(result.message, { duration: 2000 });
       }
+      return;
     }
     
-    // Otherwise, inject text into the active field
-    const activeElement = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
-    if (activeElement && ('value' in activeElement)) {
-      const currentValue = activeElement.value;
-      const newValue = currentValue ? `${currentValue} ${text}` : text;
-      
-      // Create a native input event for React
-      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-        window.HTMLInputElement.prototype, 'value'
-      )?.set || Object.getOwnPropertyDescriptor(
-        window.HTMLTextAreaElement.prototype, 'value'
-      )?.set;
-      
-      nativeInputValueSetter?.call(activeElement, newValue);
-      
-      const event = new Event('input', { bubbles: true });
-      activeElement.dispatchEvent(event);
+    // For complex commands, use AI interpretation
+    const aiHandled = await processWithAI(text);
+    
+    // If AI couldn't handle it, fall back to text injection
+    if (!aiHandled) {
+      const activeElement = document.activeElement as HTMLInputElement | HTMLTextAreaElement;
+      if (activeElement && ('value' in activeElement)) {
+        const currentValue = activeElement.value;
+        const newValue = currentValue ? `${currentValue} ${text}` : text;
+        
+        // Create a native input event for React
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype, 'value'
+        )?.set || Object.getOwnPropertyDescriptor(
+          window.HTMLTextAreaElement.prototype, 'value'
+        )?.set;
+        
+        nativeInputValueSetter?.call(activeElement, newValue);
+        
+        const event = new Event('input', { bubbles: true });
+        activeElement.dispatchEvent(event);
+        
+        setLastCommand({ success: true, action: 'dictate', message: 'Text entered' });
+      }
     }
-  }, [handleCommand, navigate]);
+  }, [handleCommand, navigate, processWithAI]);
 
   const handleError = useCallback((error: string) => {
     toast.error(error, { duration: 3000 });
@@ -222,6 +360,7 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
     error,
     lastCommand,
     activeFieldId,
+    isProcessing,
     enableVoiceMode,
     disableVoiceMode,
     toggleVoiceMode,
