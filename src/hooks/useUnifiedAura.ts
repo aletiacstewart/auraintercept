@@ -213,7 +213,9 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
    */
   const clearInput = useCallback(() => {
     setState(prev => ({ ...prev, inputValue: '', lastIntent: null }));
-  }, []);
+    clearTranscript(); // Also clear the voice transcript
+    lastProcessedTranscriptRef.current = ''; // Reset the processed ref
+  }, [clearTranscript]);
   
   // Auto-populate input from voice transcript when voice mode is active
   useEffect(() => {

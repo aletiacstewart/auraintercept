@@ -18,6 +18,7 @@ import {
   getVisibleCardLabels,
   getVisibleFieldLabels,
   isLikelyDictationText,
+  sanitizeVoiceTextForField,
 } from '@/lib/voiceNavigation';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -278,9 +279,15 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
       const isTextAreaElement = activeElement instanceof HTMLTextAreaElement;
       
       if ((isInputElement || isTextAreaElement) && isLikelyDictationText(trimmedText)) {
+        // Get field type for context-aware sanitization
+        const fieldType = isInputElement 
+          ? (activeElement.type || activeElement.getAttribute('data-field-type') || '')
+          : '';
+        const sanitizedText = sanitizeVoiceTextForField(trimmedText, fieldType);
+        
         // This looks like dictation content, inject directly without AI processing
         const currentValue = activeElement.value;
-        const newValue = currentValue ? `${currentValue} ${trimmedText}` : trimmedText;
+        const newValue = currentValue ? `${currentValue} ${sanitizedText}` : sanitizedText;
         
         const nativeInputValueSetter = isInputElement
           ? Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set
@@ -334,8 +341,14 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
         const isTextAreaElement = activeElement instanceof HTMLTextAreaElement;
         
         if (isInputElement || isTextAreaElement) {
+          // Get field type for context-aware sanitization
+          const fieldType = isInputElement 
+            ? (activeElement.type || activeElement.getAttribute('data-field-type') || '')
+            : '';
+          const sanitizedText = sanitizeVoiceTextForField(trimmedText, fieldType);
+          
           const currentValue = activeElement.value;
-          const newValue = currentValue ? `${currentValue} ${trimmedText}` : trimmedText;
+          const newValue = currentValue ? `${currentValue} ${sanitizedText}` : sanitizedText;
           
           // Create a native input event for React - use the correct setter for element type
           const nativeInputValueSetter = isInputElement

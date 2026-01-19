@@ -20,6 +20,45 @@ export type VoiceCommand =
   | 'stop listening'
   | 'navigate';
 
+/**
+ * Sanitize voice dictation text based on field type
+ * - Removes trailing punctuation added by speech recognition
+ * - Cleans phone numbers (removes spaces, keeps only digits)
+ * - Normalizes email addresses (converts "at" to @, "dot" to .)
+ */
+export function sanitizeVoiceTextForField(text: string, fieldType?: string): string {
+  let sanitized = text.trim();
+  
+  // Remove trailing punctuation (periods, commas added by speech recognition)
+  sanitized = sanitized.replace(/[.,!?]+$/, '');
+  
+  // Detect field type from context
+  const lowerFieldType = (fieldType || '').toLowerCase();
+  const isPhone = lowerFieldType === 'tel' || 
+                  /phone|mobile|cell|tel/i.test(fieldType || '') ||
+                  /^\d[\d\s.\-()]+$/.test(sanitized.replace(/\s/g, ''));
+  
+  const isEmail = lowerFieldType === 'email' || 
+                  /email/i.test(fieldType || '') ||
+                  sanitized.toLowerCase().includes('@') || 
+                  sanitized.toLowerCase().includes(' at ');
+  
+  if (isPhone) {
+    // Remove all non-digit characters for phone numbers (keep + for international)
+    sanitized = sanitized.replace(/[^\d+]/g, '');
+  } else if (isEmail) {
+    // Convert spoken "at" to @ and "dot" to .
+    sanitized = sanitized
+      .replace(/\s+at\s+/gi, '@')
+      .replace(/\s+dot\s+/gi, '.')
+      .replace(/\s/g, '') // Remove all spaces from email
+      .replace(/\.+$/, '') // Remove trailing dots
+      .toLowerCase();
+  }
+  
+  return sanitized;
+}
+
 // Comprehensive page routes for voice navigation - matches sidebar labels exactly
 export const PAGE_ROUTES: Record<string, string> = {
   // Overview Section
@@ -433,17 +472,22 @@ export function fillFieldByLabel(label: string, value: string): CommandResult {
       
       if (input) {
         input.focus();
+        
+        // Sanitize the value based on input type
+        const fieldType = input.type || input.getAttribute('data-field-type') || '';
+        const sanitizedValue = sanitizeVoiceTextForField(value, fieldType);
+        
         const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
           window.HTMLInputElement.prototype, 'value'
         )?.set || Object.getOwnPropertyDescriptor(
           window.HTMLTextAreaElement.prototype, 'value'
         )?.set;
         
-        nativeInputValueSetter?.call(input, value);
+        nativeInputValueSetter?.call(input, sanitizedValue);
         const event = new Event('input', { bubbles: true });
         input.dispatchEvent(event);
         
-        return { success: true, action: 'fill_field', message: `Set "${label}" to "${value}"` };
+        return { success: true, action: 'fill_field', message: `Set "${label}" to "${sanitizedValue}"` };
       }
     }
   }
@@ -454,15 +498,20 @@ export function fillFieldByLabel(label: string, value: string): CommandResult {
     const placeholder = (input as HTMLInputElement).placeholder?.toLowerCase() || '';
     if (placeholder.includes(normalizedLabel)) {
       (input as HTMLInputElement).focus();
+      
+      // Sanitize the value based on input type
+      const fieldType = (input as HTMLInputElement).type || input.getAttribute('data-field-type') || '';
+      const sanitizedValue = sanitizeVoiceTextForField(value, fieldType);
+      
       const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
         window.HTMLInputElement.prototype, 'value'
       )?.set;
       
-      nativeInputValueSetter?.call(input, value);
+      nativeInputValueSetter?.call(input, sanitizedValue);
       const event = new Event('input', { bubbles: true });
       input.dispatchEvent(event);
       
-      return { success: true, action: 'fill_field', message: `Set "${label}" to "${value}"` };
+      return { success: true, action: 'fill_field', message: `Set "${label}" to "${sanitizedValue}"` };
     }
   }
   

@@ -46,10 +46,18 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
     }
   }, [messages]);
 
+  // Clear response when messages are cleared
+  useEffect(() => {
+    if (messages.length === 0 && lastResponse) {
+      setLastResponse(null);
+      setShowResponse(false);
+    }
+  }, [messages.length, lastResponse]);
+
   const onSubmit = async () => {
     if (inputValue.trim()) {
       await handleInput(inputValue, false);
-      setInputValue('');
+      clearInput(); // Use clearInput to also reset voice state
     }
   };
 
