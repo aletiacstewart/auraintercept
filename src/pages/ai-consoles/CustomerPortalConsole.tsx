@@ -63,12 +63,12 @@ export default function CustomerPortalConsole() {
                   )}
                   {userRole !== 'employee' && (
                     <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'customer' | 'debug')}>
-                      <TabsList className="h-8">
-                        <TabsTrigger value="customer" className="text-xs h-7 px-3">
+                      <TabsList className="inline-flex h-auto p-1 bg-muted/30 rounded-full border border-border/50 gap-0.5">
+                        <TabsTrigger value="customer" className="text-xs px-3 py-1.5 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                           <Monitor className="h-3 w-3 mr-1" />
                           Customer View
                         </TabsTrigger>
-                        <TabsTrigger value="debug" className="text-xs h-7 px-3">
+                        <TabsTrigger value="debug" className="text-xs px-3 py-1.5 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                           <Code className="h-3 w-3 mr-1" />
                           Debug
                         </TabsTrigger>

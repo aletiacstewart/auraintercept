@@ -219,12 +219,12 @@ export function ROICalculator() {
         </div>
 
         <Tabs defaultValue="comparison" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="comparison" className="flex items-center gap-1">
+          <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
+            <TabsTrigger value="comparison" className="flex items-center gap-1 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <BarChart3 className="w-4 h-4" />
               Strategy Comparison
             </TabsTrigger>
-            <TabsTrigger value="breakdown" className="flex items-center gap-1">
+            <TabsTrigger value="breakdown" className="flex items-center gap-1 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <Percent className="w-4 h-4" />
               ROI Breakdown
             </TabsTrigger>

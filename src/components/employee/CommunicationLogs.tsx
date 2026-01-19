@@ -188,17 +188,17 @@ export function CommunicationLogs() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="calls" className="gap-1">
+          <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
+            <TabsTrigger value="all" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">All</TabsTrigger>
+            <TabsTrigger value="calls" className="flex items-center gap-1 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <Phone className="w-3 h-3" />
               Calls
             </TabsTrigger>
-            <TabsTrigger value="sms" className="gap-1">
+            <TabsTrigger value="sms" className="flex items-center gap-1 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <MessageSquare className="w-3 h-3" />
               SMS
             </TabsTrigger>
-            <TabsTrigger value="email" className="gap-1">
+            <TabsTrigger value="email" className="flex items-center gap-1 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <Mail className="w-3 h-3" />
               Email
             </TabsTrigger>

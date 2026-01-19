@@ -24,20 +24,32 @@ export function AuraTabs({ companyId, defaultTab = 'revenue', onAnalyze }: AuraT
 
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1">
-        <TabsTrigger value="revenue" className="flex items-center gap-2 data-[state=active]:bg-background">
+      <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
+        <TabsTrigger 
+          value="revenue" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
           <DollarSign className="h-4 w-4" />
           <span className="hidden sm:inline">Revenue</span>
         </TabsTrigger>
-        <TabsTrigger value="performance" className="flex items-center gap-2 data-[state=active]:bg-background">
+        <TabsTrigger 
+          value="performance" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
           <TrendingUp className="h-4 w-4" />
           <span className="hidden sm:inline">Performance</span>
         </TabsTrigger>
-        <TabsTrigger value="insights" className="flex items-center gap-2 data-[state=active]:bg-background">
+        <TabsTrigger 
+          value="insights" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
           <Lightbulb className="h-4 w-4" />
           <span className="hidden sm:inline">Insights</span>
         </TabsTrigger>
-        <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=active]:bg-background">
+        <TabsTrigger 
+          value="analytics" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
           <BarChart3 className="h-4 w-4" />
           <span className="hidden sm:inline">All Insights & Reports</span>
         </TabsTrigger>

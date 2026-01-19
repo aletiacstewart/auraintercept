@@ -213,21 +213,21 @@ export default function Help() {
 
         {/* Main Tabs */}
         <Tabs value={mainTab} onValueChange={(v) => handleMainTabChange(v as MainTabType)}>
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="ai-agents">
-              <Bot className="h-4 w-4 mr-2" />
+          <TabsList className="inline-flex flex-wrap h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
+            <TabsTrigger value="ai-agents" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <Bot className="h-4 w-4" />
               AI Agents
             </TabsTrigger>
-            <TabsTrigger value="voice">
-              <Mic className="h-4 w-4 mr-2" />
+            <TabsTrigger value="voice" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <Mic className="h-4 w-4" />
               Aura Voice
             </TabsTrigger>
-            <TabsTrigger value="company-employee">
-              <Building2 className="h-4 w-4 mr-2" />
+            <TabsTrigger value="company-employee" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <Building2 className="h-4 w-4" />
               Company & Employees
             </TabsTrigger>
-            <TabsTrigger value="faq">
-              <HelpCircle className="h-4 w-4 mr-2" />
+            <TabsTrigger value="faq" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <HelpCircle className="h-4 w-4" />
               FAQs
             </TabsTrigger>
           </TabsList>

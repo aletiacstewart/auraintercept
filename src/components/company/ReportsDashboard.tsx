@@ -337,12 +337,12 @@ export function ReportsDashboard() {
   return (
     <Tabs defaultValue="overview" className="space-y-6">
       <div className="guide-card p-4">
-        <TabsList className="flex flex-wrap h-auto gap-2">
-          <TabsTrigger value="overview" className="gap-1">
+        <TabsList className="inline-flex flex-wrap h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
+          <TabsTrigger value="overview" className="flex items-center gap-1 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
             <Activity className="h-4 w-4" />
             All Automations
           </TabsTrigger>
-          <TabsTrigger value="scheduled" className="gap-1">
+          <TabsTrigger value="scheduled" className="flex items-center gap-1 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
             <FileText className="h-4 w-4" />
             Digest Reports
           </TabsTrigger>

@@ -199,20 +199,20 @@ export default function CustomerCompanyPortal() {
 
       <main className="max-w-4xl mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4 mb-6">
-            <TabsTrigger value="chat" className="flex items-center gap-2">
+          <TabsList className="inline-flex flex-wrap h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 mb-6">
+            <TabsTrigger value="chat" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <Bot className="w-4 h-4" />
               <span className="hidden sm:inline">AI Assistant</span>
             </TabsTrigger>
-            <TabsTrigger value="services" className="flex items-center gap-2">
+            <TabsTrigger value="services" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <FileText className="w-4 h-4" />
               <span className="hidden sm:inline">Services</span>
             </TabsTrigger>
-            <TabsTrigger value="appointments" className="flex items-center gap-2">
+            <TabsTrigger value="appointments" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <Calendar className="w-4 h-4" />
               <span className="hidden sm:inline">Appointments</span>
             </TabsTrigger>
-            <TabsTrigger value="contact" className="flex items-center gap-2">
+            <TabsTrigger value="contact" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <Phone className="w-4 h-4" />
               <span className="hidden sm:inline">Contact</span>
             </TabsTrigger>

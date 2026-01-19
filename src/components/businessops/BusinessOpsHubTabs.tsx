@@ -15,20 +15,32 @@ interface BusinessOpsHubTabsProps {
 export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsProps) {
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1">
-        <TabsTrigger value="sales" className="flex items-center gap-2 data-[state=active]:bg-background">
+      <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
+        <TabsTrigger 
+          value="sales" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
           <DollarSign className="h-4 w-4" />
           <span className="hidden sm:inline">Sales</span>
         </TabsTrigger>
-        <TabsTrigger value="operations" className="flex items-center gap-2 data-[state=active]:bg-background">
+        <TabsTrigger 
+          value="operations" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
           <Calendar className="h-4 w-4" />
           <span className="hidden sm:inline">Operations</span>
         </TabsTrigger>
-        <TabsTrigger value="inventory" className="flex items-center gap-2 data-[state=active]:bg-background">
+        <TabsTrigger 
+          value="inventory" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
           <Package className="h-4 w-4" />
           <span className="hidden sm:inline">Inventory</span>
         </TabsTrigger>
-        <TabsTrigger value="all" className="flex items-center gap-2 data-[state=active]:bg-background">
+        <TabsTrigger 
+          value="all" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
           <Briefcase className="h-4 w-4" />
           <span className="hidden sm:inline">All Business Ops</span>
         </TabsTrigger>

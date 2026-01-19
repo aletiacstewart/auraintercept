@@ -18,24 +18,24 @@ const IntegrationDocs = () => {
           />
 
           <Tabs defaultValue="wordpress" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
-              <TabsTrigger value="wordpress" className="gap-2">
+            <TabsList className="inline-flex flex-wrap h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
+              <TabsTrigger value="wordpress" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <Globe className="h-4 w-4" />
                 WordPress
               </TabsTrigger>
-              <TabsTrigger value="wix" className="gap-2">
+              <TabsTrigger value="wix" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <Puzzle className="h-4 w-4" />
                 Wix
               </TabsTrigger>
-              <TabsTrigger value="squarespace" className="gap-2">
+              <TabsTrigger value="squarespace" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <FileCode className="h-4 w-4" />
                 Squarespace
               </TabsTrigger>
-              <TabsTrigger value="shopify" className="gap-2">
+              <TabsTrigger value="shopify" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <Code className="h-4 w-4" />
                 Shopify
               </TabsTrigger>
-              <TabsTrigger value="html" className="gap-2">
+              <TabsTrigger value="html" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <Code className="h-4 w-4" />
                 HTML
               </TabsTrigger>

@@ -932,9 +932,9 @@ export default function Auth() {
                     </form>
                   ) : (
                   <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'login' | 'signup')}>
-                    <TabsList className="grid w-full grid-cols-2 mb-6">
-                      <TabsTrigger value="signup">Sign Up</TabsTrigger>
-                      <TabsTrigger value="login">Sign In</TabsTrigger>
+                    <TabsList className="inline-flex w-full h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 mb-6">
+                      <TabsTrigger value="signup" className="flex-1 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Sign Up</TabsTrigger>
+                      <TabsTrigger value="login" className="flex-1 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Sign In</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="login">
