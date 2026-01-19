@@ -31,7 +31,7 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
   const { companyId, userId, onActionExecuted } = options;
   const navigate = useNavigate();
   const location = useLocation();
-  const { injectText, isVoiceModeEnabled, transcript, isListening } = useVoice();
+  const { injectText, isVoiceModeEnabled, transcript, isListening, clearTranscript } = useVoice();
   
   const [state, setState] = useState<UnifiedAuraState>({
     isProcessing: false,
@@ -48,6 +48,9 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
   
   // Track if we're waiting for voice input to auto-submit
   const voiceSubmitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  // Track the last processed transcript to avoid reprocessing
+  const lastProcessedTranscriptRef = useRef<string>('');
   
   /**
    * Classify intent using local detection first, then AI if needed
@@ -215,6 +218,11 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
   // Auto-populate input from voice transcript when voice mode is active
   useEffect(() => {
     if (isVoiceModeEnabled && isListening && transcript) {
+      // Skip if we already processed this transcript
+      if (transcript === lastProcessedTranscriptRef.current) {
+        return;
+      }
+      
       setState(prev => ({ ...prev, inputValue: transcript }));
       
       // Clear any existing timer
@@ -225,8 +233,14 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
       // Auto-submit after 2 second pause in speech
       voiceSubmitTimerRef.current = setTimeout(() => {
         if (transcript.trim()) {
+          // Mark this transcript as processed
+          lastProcessedTranscriptRef.current = transcript;
+          
           handleInput(transcript.trim(), true);
+          
+          // Clear the input and the voice transcript
           setState(prev => ({ ...prev, inputValue: '' }));
+          clearTranscript();
         }
       }, 2000);
     }
@@ -236,7 +250,7 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
         clearTimeout(voiceSubmitTimerRef.current);
       }
     };
-  }, [transcript, isVoiceModeEnabled, isListening, handleInput]);
+  }, [transcript, isVoiceModeEnabled, isListening, handleInput, clearTranscript]);
   
   return {
     // State
