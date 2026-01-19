@@ -3,6 +3,9 @@
  * Provides fast local pattern matching before falling back to AI classification
  */
 
+// Business entity keywords for matching
+const BUSINESS_ENTITIES = /customers?|leads?|appointments?|quotes?|invoices?|warranties?|campaigns?|inventory|items?|jobs?|technicians?|employees?|feedback|services?/i;
+
 // Analytics/data query patterns
 const ANALYTICS_PATTERNS = [
   /what('?s| is| are| was| were)?\s+(my |our |the )?.*?(revenue|sales|income|profit|earnings)/i,
@@ -22,11 +25,17 @@ const ANALYTICS_PATTERNS = [
   /invoices? (pending|paid|overdue|total)/i,
   /leads? (conversion|status|count|new)/i,
   /bookings? (rate|count|today|this week)/i,
+  // NEW: Natural question patterns with business entities
+  /how many\s+(customers?|leads?|appointments?|quotes?|invoices?|warranties?|campaigns?|items?)/i,
+  /what('?s| is| are)?\s+(my |our |the )?(customer|lead|appointment|quote|invoice|warranty|campaign|inventory)\s*(count|total|number)?/i,
+  /(count|number|total|amount)\s+of\s+(customers?|leads?|appointments?|quotes?|invoices?|warranties?)/i,
+  /do i have\s+.*(customers?|leads?|appointments?|quotes?|invoices?)/i,
+  /(active|pending|open|new|overdue|expired|expiring)\s+(customers?|leads?|quotes?|invoices?|warranties?)/i,
 ];
 
 // Navigation/action command patterns
 const ACTION_PATTERNS = [
-  /^(go to|navigate to|open|show|take me to|bring up)\s+/i,
+  /^(go to|navigate to|open|take me to|bring up)\s+/i,
   /^(click|press|tap|select|choose|pick)\s+/i,
   /^(create|add|new|make)\s+(a |an )?(new )?(quote|appointment|customer|lead|invoice|job)/i,
   /^(fill|enter|type|input|set)\s+/i,
@@ -36,7 +45,8 @@ const ACTION_PATTERNS = [
   /^(next|previous|prev|forward|backward)/i,
   /^(scroll|up|down)\s*(page)?/i,
   /^(logout|log out|sign out|signout)/i,
-  /\b(page|screen|section|tab|menu|button|form)\b/i,
+  // Only match "page/screen" if preceded by navigation verb
+  /^(go to|open|show)\s+.*(page|screen|section|tab|menu)/i,
 ];
 
 // Hybrid patterns (both data and action)
@@ -61,6 +71,33 @@ export interface LocalIntentResult {
  */
 export function detectLocalIntent(text: string): LocalIntentResult {
   const normalizedText = text.trim().toLowerCase();
+  
+  // PRIORITY CHECK 1: Questions starting with "how many" are ALWAYS data queries
+  if (/^how many\b/i.test(normalizedText)) {
+    return {
+      intent: 'data_query',
+      confidence: 0.95,
+      matchedPattern: 'how_many_question',
+    };
+  }
+  
+  // PRIORITY CHECK 2: Questions with "do I have" pattern about entities are data queries
+  if (/\bdo i have\b/i.test(normalizedText) && BUSINESS_ENTITIES.test(normalizedText)) {
+    return {
+      intent: 'data_query',
+      confidence: 0.95,
+      matchedPattern: 'do_i_have_question',
+    };
+  }
+  
+  // PRIORITY CHECK 3: "What is/are my X" questions about entities are data queries
+  if (/^what('?s| is| are)?\s+(my |our |the )?/i.test(normalizedText) && BUSINESS_ENTITIES.test(normalizedText)) {
+    return {
+      intent: 'data_query',
+      confidence: 0.9,
+      matchedPattern: 'what_is_my_question',
+    };
+  }
   
   // Check for hybrid first (more specific)
   for (const pattern of HYBRID_PATTERNS) {
