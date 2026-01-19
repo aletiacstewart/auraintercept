@@ -785,6 +785,27 @@
     }
   }
 
+  /* Aura Pulse Ring Feature - dynamic ring using CSS custom property */
+  .aura-pulse-ring-feature {
+    animation: aura-pulse-ring-feature 2s ease-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes aura-pulse-ring-feature {
+    0% {
+      box-shadow: 0 0 0 0 var(--ring-color, hsl(199 60% 55% / 0.5));
+      opacity: 0.6;
+    }
+    70% {
+      box-shadow: 0 0 0 10px var(--ring-color, hsl(199 60% 55% / 0));
+      opacity: 0;
+    }
+    100% {
+      box-shadow: 0 0 0 0 var(--ring-color, hsl(199 60% 55% / 0));
+      opacity: 0;
+    }
+  }
+
   /* Aura Sparkle Burst - celebration effect for high-value events */
   .aura-sparkle-burst {
     position: relative;
