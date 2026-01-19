@@ -58,6 +58,7 @@ import Warranties from "./pages/Warranties";
 import Referrals from "./pages/Referrals";
 import Campaigns from "./pages/Campaigns";
 import Leads from "./pages/Leads";
+import BusinessOpsHub from "./pages/BusinessOpsHub";
 import Help from "./pages/Help";
 import Architecture from "./pages/Architecture";
 import Calculators from "./pages/Calculators";
@@ -170,6 +171,7 @@ const App = () => (
               <Route path="/dashboard/referrals" element={<Referrals />} />
               <Route path="/dashboard/campaigns" element={<Campaigns />} />
               <Route path="/dashboard/leads" element={<Leads />} />
+              <Route path="/dashboard/business-ops-hub" element={<BusinessOpsHub />} />
               <Route path="/dashboard/help" element={<Help />} />
               <Route path="/dashboard/architecture" element={<Architecture />} />
               <Route path="/dashboard/calculators" element={<Calculators />} />
