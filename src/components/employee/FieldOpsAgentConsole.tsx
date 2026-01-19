@@ -74,9 +74,17 @@ const FIELD_OPS_AGENTS = [
   { id: 'dispatch', name: 'Contact Dispatch', color: 'bg-blue-100', textColor: 'text-blue-700' },
 ];
 
-// Tabs for the console - include all functional tabs
+// Tabs for the console - include all quick action icons
 const TABS = [
   { id: 'chat', label: 'Home', icon: MessageSquare },
+  { id: 'accept', label: 'Accept', icon: UserCheck },
+  { id: 'directions', label: 'Directions', icon: Navigation },
+  { id: 'enroute', label: 'En Route', icon: Truck },
+  { id: 'eta', label: 'ETA', icon: Clock },
+  { id: 'arrive_start', label: 'Arrive', icon: Play },
+  { id: 'complete', label: 'Complete', icon: CheckCircle, variant: 'destructive' as const },
+  { id: 'quote', label: 'Quote', icon: FileText },
+  { id: 'invoice', label: 'Invoice', icon: Receipt },
 ];
 
 interface FieldOpsQuickAction {
@@ -802,7 +810,15 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
       <MobileTabNav
         tabs={TABS}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={(tabId) => {
+          setActiveTab(tabId);
+          if (tabId !== 'chat' && tabId !== 'directions') {
+            const action = QUICK_ACTIONS.find(a => a.id === tabId);
+            if (action) {
+              handleQuickAction(action);
+            }
+          }
+        }}
         onHomeClick={() => {
           clearMessages();
           setInputValue('');

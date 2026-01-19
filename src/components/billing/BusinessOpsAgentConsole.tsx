@@ -27,19 +27,20 @@ import {
   Calendar
 } from 'lucide-react';
 
-// Tab configuration - just Home for this console
-const TABS = [
-  { id: 'chat', label: 'Home', icon: Briefcase },
-];
-
 // Quick actions for Business Operations
 const BASE_QUICK_ACTIONS = [
-  { id: 'quote', label: 'Create Quote', icon: FileText, message: 'I need to create a new quote for a customer' },
-  { id: 'invoice', label: 'Generate Invoice', icon: Receipt, message: 'I need to generate an invoice' },
-  { id: 'lead', label: 'New Lead', icon: UserPlus, message: 'I need to add a new lead' },
-  { id: 'appointments', label: 'Appointments', icon: Calendar, message: 'I need to manage appointments' },
+  { id: 'quote', label: 'Quote', icon: FileText, message: 'I need to create a new quote for a customer' },
+  { id: 'invoice', label: 'Invoice', icon: Receipt, message: 'I need to generate an invoice' },
+  { id: 'lead', label: 'Lead', icon: UserPlus, message: 'I need to add a new lead' },
+  { id: 'appointments', label: 'Appts', icon: Calendar, message: 'I need to manage appointments' },
   { id: 'inventory', label: 'Inventory', icon: Package, message: 'Manage inventory items' },
-  { id: 'warranties', label: 'Warranties', icon: Shield, message: 'Manage warranties' },
+  { id: 'warranties', label: 'Warranty', icon: Shield, message: 'Manage warranties' },
+];
+
+// Tab configuration - includes quick actions as tabs
+const TABS = [
+  { id: 'chat', label: 'Home', icon: Briefcase },
+  ...BASE_QUICK_ACTIONS.map(action => ({ id: action.id, label: action.label, icon: action.icon })),
 ];
 
 interface BusinessOpsAgentConsoleProps {
@@ -205,7 +206,15 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       <MobileTabNav
         tabs={TABS}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={(tabId) => {
+          setActiveTab(tabId);
+          if (tabId !== 'chat') {
+            const action = BASE_QUICK_ACTIONS.find(a => a.id === tabId);
+            if (action) {
+              handleQuickAction(action.message, action.id);
+            }
+          }
+        }}
         onHomeClick={handleHome}
       />
 

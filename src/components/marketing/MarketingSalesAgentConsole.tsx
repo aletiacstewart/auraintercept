@@ -19,17 +19,17 @@ import {
   Share2, 
 } from 'lucide-react';
 
-// Tab configuration
-const TABS = [
-  { id: 'chat', label: 'Home', icon: Megaphone },
-  { id: 'social', label: 'Social Feed', icon: Share2 },
-];
-
 // Quick actions for Marketing & Sales - consolidated campaign creation
 const QUICK_ACTIONS = [
-  { id: 'campaign', label: 'Create Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign' },
-  { id: 'customers', label: 'Customer Segments', icon: Users, message: 'Show me customer segments' },
-  { id: 'social', label: 'Social Feed', icon: Share2, message: 'Show me pending social media content' },
+  { id: 'campaign', label: 'Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign' },
+  { id: 'customers', label: 'Segments', icon: Users, message: 'Show me customer segments' },
+  { id: 'social', label: 'Social', icon: Share2, message: 'Show me pending social media content' },
+];
+
+// Tab configuration - includes quick actions as tabs
+const TABS = [
+  { id: 'chat', label: 'Home', icon: Megaphone },
+  ...QUICK_ACTIONS.map(action => ({ id: action.id, label: action.label, icon: action.icon })),
 ];
 
 interface MarketingSalesAgentConsoleProps {
@@ -175,7 +175,15 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       <MobileTabNav
         tabs={TABS}
         activeTab={activeTab}
-        onTabChange={handleTabChange}
+        onTabChange={(tabId) => {
+          handleTabChange(tabId);
+          if (tabId !== 'chat') {
+            const action = QUICK_ACTIONS.find(a => a.id === tabId);
+            if (action) {
+              handleQuickAction(action.message, action.id);
+            }
+          }
+        }}
         onHomeClick={handleHome}
       />
 

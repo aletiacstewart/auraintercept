@@ -30,21 +30,21 @@ import {
   Bell
 } from 'lucide-react';
 
-// Tab configuration
-const TABS = [
-  { id: 'chat', label: 'Home', icon: BarChart3 },
-];
-
 // Quick actions for Analytics & Optimization
 const QUICK_ACTIONS = [
-  { id: 'performance', label: 'Performance Report', icon: BarChart3, message: 'I need a performance report' },
-  { id: 'revenue', label: 'Revenue Analysis', icon: DollarSign, message: 'Show me revenue analysis' },
-  { id: 'customers', label: 'Customer Insights', icon: Users, message: 'I need customer insights' },
-  { id: 'insights', label: 'Business Insights', icon: Target, message: 'Show me business insights' },
-  { id: 'forecast', label: 'Revenue Forecast', icon: TrendingUp, message: 'Show me revenue forecasts' },
-  { id: 'kpi', label: 'KPI Dashboard', icon: Target, message: 'Show KPI dashboard' },
-  { id: 'reminders', label: 'Reminder Insights', icon: Bell, message: 'Show me reminder analytics' },
-  { id: 'export', label: 'Export Report', icon: Download, message: 'I need to export a report' },
+  { id: 'performance', label: 'Report', icon: BarChart3, message: 'I need a performance report' },
+  { id: 'revenue', label: 'Revenue', icon: DollarSign, message: 'Show me revenue analysis' },
+  { id: 'customers', label: 'Insights', icon: Users, message: 'I need customer insights' },
+  { id: 'forecast', label: 'Forecast', icon: TrendingUp, message: 'Show me revenue forecasts' },
+  { id: 'kpi', label: 'KPIs', icon: Target, message: 'Show KPI dashboard' },
+  { id: 'reminders', label: 'Reminders', icon: Bell, message: 'Show me reminder analytics' },
+  { id: 'export', label: 'Export', icon: Download, message: 'I need to export a report' },
+];
+
+// Tab configuration - includes quick actions as tabs
+const TABS = [
+  { id: 'chat', label: 'Home', icon: BarChart3 },
+  ...QUICK_ACTIONS.map(action => ({ id: action.id, label: action.label, icon: action.icon })),
 ];
 
 interface AnalyticsAgentConsoleProps {
@@ -253,7 +253,15 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       <MobileTabNav
         tabs={TABS}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={(tabId) => {
+          setActiveTab(tabId);
+          if (tabId !== 'chat') {
+            const action = QUICK_ACTIONS.find(a => a.id === tabId);
+            if (action) {
+              handleQuickAction(action.message, action.id);
+            }
+          }
+        }}
         onHomeClick={handleHome}
       />
 
