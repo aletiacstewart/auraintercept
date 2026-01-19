@@ -39,11 +39,49 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
     inputValue: '',
   });
   
-  // Use the multi-agent chat for analytics queries
+  /**
+   * Generate page context description based on current route
+   */
+  const getPageContext = useCallback((): string => {
+    const path = location.pathname;
+    
+    // Map routes to context descriptions
+    const pageContextMap: Record<string, string> = {
+      '/dashboard/business-ops': 'Business Ops Overview page showing: leads count, quotes total, invoices total, inventory alerts, upcoming appointments, active warranties, campaign stats, recent activity stream.',
+      '/dashboard/business-ops-hub': 'Business Ops Hub page with tabs for: Sales (leads, quotes), Operations (appointments, invoices), Inventory (items, warranties).',
+      '/dashboard/leads': 'Leads management page showing all leads with status, priority, source, and contact info.',
+      '/dashboard/appointments': 'Appointments management page showing scheduled, confirmed, and completed appointments.',
+      '/dashboard/calendar': 'Calendar view showing appointments by day/week/month.',
+      '/dashboard/quotes': 'Quotes management page showing draft, sent, accepted, and rejected quotes with totals.',
+      '/dashboard/invoices': 'Invoices management page showing draft, sent, paid, and overdue invoices with totals.',
+      '/dashboard/inventory': 'Inventory management page showing items, stock levels, and low stock alerts.',
+      '/dashboard/warranties': 'Warranties management page showing active, expiring soon, and expired warranties.',
+      '/dashboard/customers': 'Customer profiles page showing customer list with contact info and history.',
+      '/dashboard/campaigns': 'Marketing campaigns page showing active, scheduled, and completed campaigns.',
+      '/dashboard/analytics': 'Analytics dashboard showing performance metrics, revenue trends, and forecasts.',
+      '/dashboard/ask-aura': 'Ask Aura analytics page for deep-dive data queries and business intelligence.',
+      '/dashboard/knowledge': 'Knowledge Base page with services catalog, FAQs, business hours, and documents.',
+      '/dashboard/field-ops': 'Field Ops console for technician management, job assignments, and dispatch.',
+      '/dashboard/marketing': 'Marketing & Sales console for campaigns, promotions, and lead management.',
+    };
+    
+    // Find matching context or generate generic one
+    for (const [route, context] of Object.entries(pageContextMap)) {
+      if (path.startsWith(route)) {
+        return context;
+      }
+    }
+    
+    // Generic context for unknown pages
+    return `Dashboard page at ${path}. User can ask about any business data including leads, appointments, quotes, invoices, inventory, warranties, campaigns, customers, and feedback.`;
+  }, [location.pathname]);
+  
+  // Use the multi-agent chat for analytics queries with page context
   const multiAgent = useMultiAgentChat({
     companyId,
     userId,
     initialAgent: 'analytics',
+    pageContext: getPageContext(),
   });
   
   // Track if we're waiting for voice input to auto-submit
