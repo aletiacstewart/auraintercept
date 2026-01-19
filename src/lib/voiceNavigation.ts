@@ -318,20 +318,46 @@ export function clickButtonByText(text: string): CommandResult {
   const normalizedText = text.toLowerCase().trim();
   const buttons = document.querySelectorAll('button');
   
-  // First try exact match
+  // FIRST: Try matching by data-voice-label (highest priority - exact match)
   for (const button of buttons) {
-    const buttonText = button.textContent?.toLowerCase().trim() || '';
-    if (buttonText === normalizedText || buttonText.includes(normalizedText)) {
+    const voiceLabel = button.getAttribute('data-voice-label')?.toLowerCase().trim() || '';
+    if (voiceLabel === normalizedText) {
       (button as HTMLButtonElement).click();
       return { success: true, action: 'click_button', message: `Clicked "${text}"` };
     }
   }
   
-  // Try matching by aria-label or data-voice-label
+  // SECOND: Try matching by data-voice-label (partial match)
+  for (const button of buttons) {
+    const voiceLabel = button.getAttribute('data-voice-label')?.toLowerCase().trim() || '';
+    if (voiceLabel && (voiceLabel.includes(normalizedText) || normalizedText.includes(voiceLabel))) {
+      (button as HTMLButtonElement).click();
+      return { success: true, action: 'click_button', message: `Clicked "${text}"` };
+    }
+  }
+  
+  // THIRD: Try exact text match
+  for (const button of buttons) {
+    const buttonText = button.textContent?.toLowerCase().trim() || '';
+    if (buttonText === normalizedText) {
+      (button as HTMLButtonElement).click();
+      return { success: true, action: 'click_button', message: `Clicked "${text}"` };
+    }
+  }
+  
+  // FOURTH: Try partial text match
+  for (const button of buttons) {
+    const buttonText = button.textContent?.toLowerCase().trim() || '';
+    if (buttonText.includes(normalizedText) || normalizedText.includes(buttonText)) {
+      (button as HTMLButtonElement).click();
+      return { success: true, action: 'click_button', message: `Clicked "${text}"` };
+    }
+  }
+  
+  // FIFTH: Try matching by aria-label
   for (const button of buttons) {
     const ariaLabel = button.getAttribute('aria-label')?.toLowerCase() || '';
-    const voiceLabel = button.getAttribute('data-voice-label')?.toLowerCase() || '';
-    if (ariaLabel.includes(normalizedText) || voiceLabel.includes(normalizedText)) {
+    if (ariaLabel.includes(normalizedText)) {
       (button as HTMLButtonElement).click();
       return { success: true, action: 'click_button', message: `Clicked "${text}"` };
     }
@@ -446,16 +472,25 @@ export function fillFieldByLabel(label: string, value: string): CommandResult {
 // Get visible button labels for AI context
 export function getVisibleButtonLabels(): string[] {
   const buttons = document.querySelectorAll('button:not([disabled])');
-  const labels: string[] = [];
+  const priorityLabels: string[] = [];  // Voice-labeled buttons first (action buttons)
+  const regularLabels: string[] = [];
   
   buttons.forEach(button => {
+    // Check for data-voice-label first (highest priority)
+    const voiceLabel = button.getAttribute('data-voice-label')?.trim();
+    if (voiceLabel && voiceLabel.length > 0 && voiceLabel.length < 50) {
+      priorityLabels.push(voiceLabel);
+    }
+    
     const text = button.textContent?.trim();
     if (text && text.length > 0 && text.length < 50) {
-      labels.push(text);
+      regularLabels.push(text);
     }
   });
   
-  return [...new Set(labels)].slice(0, 20); // Limit to 20 unique labels
+  // Combine: priority (voice-labeled) buttons first, then regular
+  const combined = [...priorityLabels, ...regularLabels];
+  return [...new Set(combined)].slice(0, 30); // Increased limit to 30
 }
 
 // Get visible card labels for AI context
