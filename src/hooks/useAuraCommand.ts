@@ -33,8 +33,8 @@ export function useAuraCommand(options: UseAuraCommandOptions = {}) {
   const submitQuery = useCallback((searchQuery: string) => {
     if (!searchQuery.trim()) return;
     
-    // Navigate to Ask Aura with the query
-    navigate(`/dashboard/ask-aura?q=${encodeURIComponent(searchQuery.trim())}`);
+    // Navigate to Analytics & Reports with the query
+    navigate(`/dashboard/analytics-reports?q=${encodeURIComponent(searchQuery.trim())}`);
     close();
   }, [navigate, close]);
 

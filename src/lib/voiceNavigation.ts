@@ -90,9 +90,11 @@ export const PAGE_ROUTES: Record<string, string> = {
   'warranties': '/dashboard/warranties',
   
   // Analytics & Reports Section
-  'ask aura': '/dashboard/ask-aura',
-  'aura': '/dashboard/ask-aura',
-  'analytics': '/dashboard/ask-aura',
+  'ask aura': '/dashboard/analytics-reports',
+  'aura': '/dashboard/analytics-reports',
+  'analytics': '/dashboard/analytics-reports',
+  'analytics and reports': '/dashboard/analytics-reports',
+  'analytics reports': '/dashboard/analytics-reports',
   'subscription analytics': '/dashboard/subscription-analytics',
   
   // Business Consoles & Apps Section

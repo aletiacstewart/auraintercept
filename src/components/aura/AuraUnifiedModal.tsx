@@ -67,7 +67,7 @@ export function AuraUnifiedModal({ open, onOpenChange }: AuraUnifiedModalProps) 
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
-            <span>Ask Aura</span>
+            <span>Analytics & Reports</span>
             {currentAgent && (
               <Badge variant="outline" className="ml-2 text-xs">
                 {currentAgent}

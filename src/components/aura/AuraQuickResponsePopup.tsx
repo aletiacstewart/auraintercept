@@ -25,7 +25,7 @@ export function AuraQuickResponsePopup({ response, onDismiss }: AuraQuickRespons
     : response;
   
   const handleViewFull = () => {
-    navigate('/dashboard/ask-aura');
+    navigate('/dashboard/analytics-reports');
     onDismiss();
   };
 
