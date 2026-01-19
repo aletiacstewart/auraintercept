@@ -104,15 +104,15 @@ export function WarrantiesManager() {
       </div>
 
       <Tabs defaultValue="warranties" className="space-y-4">
-        <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 flex-wrap">
-          <TabsTrigger value="warranties" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+        <TabsList className="inline-flex h-auto p-1 bg-muted/30 rounded-full border border-border/50 gap-0.5 flex-wrap">
+          <TabsTrigger value="warranties" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
             Warranties ({warranties?.length || 0})
           </TabsTrigger>
-          <TabsTrigger value="claims" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+          <TabsTrigger value="claims" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
             Claims ({claims?.length || 0})
           </TabsTrigger>
-          <TabsTrigger value="policies" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-            <BookOpen className="h-3.5 w-3.5" />
+          <TabsTrigger value="policies" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+            <BookOpen className="h-3 w-3" />
             Policies ({policies?.length || 0})
           </TabsTrigger>
         </TabsList>

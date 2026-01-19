@@ -348,19 +348,19 @@ export default function AIAgentsHub() {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 flex-wrap">
-            <TabsTrigger value="agents" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-              <Bot className="h-4 w-4" />
+          <TabsList className="inline-flex h-auto p-1 bg-muted/30 rounded-full border border-border/50 gap-0.5 flex-wrap">
+            <TabsTrigger value="agents" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <Bot className="h-3.5 w-3.5" />
               Agents
             </TabsTrigger>
             {canManageAgents && (
-              <TabsTrigger value="activate" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-                <Rocket className="h-4 w-4" />
+              <TabsTrigger value="activate" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+                <Rocket className="h-3.5 w-3.5" />
                 Quick Start
               </TabsTrigger>
             )}
-            <TabsTrigger value="monitor" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-              <Activity className="h-4 w-4" />
+            <TabsTrigger value="monitor" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <Activity className="h-3.5 w-3.5" />
               Monitor
             </TabsTrigger>
           </TabsList>
