@@ -152,6 +152,7 @@ export default function Leads() {
           title="Leads"
           description="Manage and follow up on potential customers"
           featureColor="leads"
+          showAuraBar
           action={
             <Dialog open={isAddLeadOpen} onOpenChange={setIsAddLeadOpen}>
               <DialogTrigger asChild>

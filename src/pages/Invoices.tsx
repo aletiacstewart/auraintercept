@@ -148,6 +148,7 @@ export default function Invoices() {
           title="Invoices"
           description="Create and manage customer invoices"
           featureColor="invoices"
+          showAuraBar
           action={
             <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
               <DialogTrigger asChild>
