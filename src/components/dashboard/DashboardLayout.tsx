@@ -102,9 +102,9 @@ const navGroups: NavGroup[] = [
     label: 'Business Consoles & Apps',
     items: [
       { label: 'Business Mgt Ops Console', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform' },
+      { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform' },
       { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
       { label: 'Marketing & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
-      { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform' },
     ],
   },
   {
