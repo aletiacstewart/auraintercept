@@ -344,6 +344,7 @@ export default function SmartWebsiteManager() {
                         />
                       </div>
                       <Input
+                        key={`hero_headline_${website.hero_headline}`}
                         defaultValue={website.hero_headline || ''}
                         onBlur={(e) => updateWebsite.mutate({ hero_headline: e.target.value })}
                         placeholder="Welcome to Your Business"
@@ -360,6 +361,7 @@ export default function SmartWebsiteManager() {
                         />
                       </div>
                       <Textarea
+                        key={`hero_subheadline_${website.hero_subheadline}`}
                         defaultValue={website.hero_subheadline || ''}
                         onBlur={(e) => updateWebsite.mutate({ hero_subheadline: e.target.value })}
                         placeholder="Professional service you can trust"
@@ -376,6 +378,7 @@ export default function SmartWebsiteManager() {
                         />
                       </div>
                       <Input
+                        key={`cta_button_text_${website.cta_button_text}`}
                         defaultValue={website.cta_button_text || 'Book Now'}
                         onBlur={(e) => updateWebsite.mutate({ cta_button_text: e.target.value })}
                       />
@@ -487,6 +490,7 @@ export default function SmartWebsiteManager() {
                             />
                           </div>
                           <Input
+                            key={`night_header_${website.night_header}`}
                             defaultValue={website.night_header || ''}
                             onBlur={(e) => updateWebsite.mutate({ night_header: e.target.value })}
                             placeholder="Need help after hours?"
@@ -503,6 +507,7 @@ export default function SmartWebsiteManager() {
                             />
                           </div>
                           <Textarea
+                            key={`night_subheadline_${website.night_subheadline}`}
                             defaultValue={website.night_subheadline || ''}
                             onBlur={(e) => updateWebsite.mutate({ night_subheadline: e.target.value })}
                             placeholder="Our emergency team is standing by 24/7..."
@@ -519,6 +524,7 @@ export default function SmartWebsiteManager() {
                             />
                           </div>
                           <Input
+                            key={`emergency_cta_text_${website.emergency_cta_text}`}
                             defaultValue={website.emergency_cta_text || ''}
                             onBlur={(e) => updateWebsite.mutate({ emergency_cta_text: e.target.value })}
                             placeholder="24/7 Emergency Line"
