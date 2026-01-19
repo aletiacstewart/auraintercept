@@ -229,7 +229,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'business_operations',
     phase: 4,
     icon: Briefcase,
-    color: 'text-purple-500',
+    color: 'text-feature-quotes',
     capabilities: [
       'Dynamic pricing',
       'Parts estimation',
@@ -253,7 +253,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'business_operations',
     phase: 5,
     icon: Briefcase,
-    color: 'text-purple-500',
+    color: 'text-feature-invoices',
     capabilities: [
       'Invoice generation',
       'Payment links',
@@ -278,7 +278,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'business_operations',
     phase: 4,
     icon: Briefcase,
-    color: 'text-purple-500',
+    color: 'text-feature-inventory',
     capabilities: [
       'Stock tracking',
       'Low stock alerts',
@@ -298,7 +298,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'business_operations',
     phase: 5,
     icon: Briefcase,
-    color: 'text-purple-500',
+    color: 'text-feature-warranties',
     capabilities: [
       'Coverage verification',
       'Claim submission',
@@ -318,7 +318,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'business_operations',
     phase: 1,
     icon: Briefcase,
-    color: 'text-purple-500',
+    color: 'text-feature-config',
     capabilities: [
       'User management',
       'Company settings',
@@ -338,7 +338,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'marketing_sales',
     phase: 1,
     icon: Megaphone,
-    color: 'text-orange-500',
+    color: 'text-feature-marketing',
     capabilities: [
       'Promotional campaigns',
       'Referral program management',
@@ -389,7 +389,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'business_operations',
     phase: 2,
     icon: BarChart3,
-    color: 'text-cyan-500',
+    color: 'text-feature-analytics',
     capabilities: [
       'Trend analysis',
       'Anomaly detection',
@@ -413,7 +413,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'business_operations',
     phase: 7,
     icon: BarChart3,
-    color: 'text-cyan-500',
+    color: 'text-feature-analytics',
     capabilities: [
       'Demand forecasting',
       'Revenue prediction',
@@ -437,7 +437,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'business_operations',
     phase: 6,
     icon: BarChart3,
-    color: 'text-cyan-500',
+    color: 'text-feature-invoices',
     capabilities: [
       'Revenue tracking',
       'Profitability analysis',
@@ -464,7 +464,7 @@ const AGENT_DEFINITIONS: Record<string, {
     category: 'business_operations',
     phase: 3,
     icon: BarChart3,
-    color: 'text-cyan-500',
+    color: 'text-feature-analytics',
     capabilities: [
       'Team performance tracking',
       'Individual metrics',
