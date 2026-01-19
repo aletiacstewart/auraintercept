@@ -1,12 +1,15 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { DollarSign, Calendar, FileText, Receipt, Package, ShieldCheck, Briefcase, Users } from 'lucide-react';
+import { DollarSign, Calendar, FileText, Receipt, Package, ShieldCheck, Briefcase, Users, Building2, UserCheck, UsersRound } from 'lucide-react';
 import { LeadsManager } from '@/components/leads/LeadsManager';
 import { AppointmentsManager } from '@/components/appointments/AppointmentsManager';
 import { QuotesManager } from '@/components/quotes/QuotesManager';
 import { InvoicesManager } from '@/components/invoices/InvoicesManager';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
+import { CompaniesManager } from '@/components/businessops/CompaniesManager';
+import { EmployeeManagement } from '@/components/company/EmployeeManagement';
+import { CustomersManager } from '@/components/businessops/CustomersManager';
 
 interface BusinessOpsHubTabsProps {
   defaultTab?: string;
@@ -15,7 +18,7 @@ interface BusinessOpsHubTabsProps {
 export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsProps) {
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
-      <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
+      <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 flex-wrap">
         <TabsTrigger 
           value="sales" 
           className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
@@ -36,6 +39,13 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
         >
           <Package className="h-4 w-4" />
           <span className="hidden sm:inline">Inventory</span>
+        </TabsTrigger>
+        <TabsTrigger 
+          value="people" 
+          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+        >
+          <UsersRound className="h-4 w-4" />
+          <span className="hidden sm:inline">People</span>
         </TabsTrigger>
         <TabsTrigger 
           value="all" 
@@ -125,6 +135,45 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
             </AccordionTrigger>
             <AccordionContent className="pb-4">
               <WarrantiesManager />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </TabsContent>
+
+      {/* People Tab */}
+      <TabsContent value="people" className="mt-6">
+        <Accordion type="single" collapsible defaultValue="companies" className="space-y-4">
+          <AccordionItem value="companies" className="border border-border rounded-lg bg-background px-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
+              <div className="flex items-center gap-3">
+                <Building2 className="h-5 w-5 text-feature-companies" />
+                <span className="font-semibold text-foreground">Companies</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <CompaniesManager />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="employees" className="border border-border rounded-lg bg-background px-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
+              <div className="flex items-center gap-3">
+                <UserCheck className="h-5 w-5 text-feature-employees" />
+                <span className="font-semibold text-foreground">Employees</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <EmployeeManagement />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="customers" className="border border-border rounded-lg bg-background px-4">
+            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
+              <div className="flex items-center gap-3">
+                <UsersRound className="h-5 w-5 text-feature-customers" />
+                <span className="font-semibold text-foreground">Customers</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <CustomersManager />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
