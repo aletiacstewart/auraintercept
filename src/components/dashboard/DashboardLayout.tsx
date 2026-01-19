@@ -55,6 +55,7 @@ import logo from '@/assets/aura-intercept-logo.png';
 import { differenceInDays, parseISO } from 'date-fns';
 import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 import { AuraVoicePanel } from '@/components/voice/AuraVoicePanel';
+import { AuraFloatingButton } from '@/components/aura/AuraFloatingButton';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
@@ -470,6 +471,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </main>
+      
+      {/* Unified Aura Floating Button */}
+      <AuraFloatingButton />
     </div>
   );
 }
