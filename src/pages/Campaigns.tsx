@@ -166,6 +166,7 @@ export default function Campaigns() {
           icon={Megaphone}
           title="Marketing Campaigns"
           description="Create and track marketing campaigns"
+          showAuraBar
           action={
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>

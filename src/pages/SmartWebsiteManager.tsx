@@ -271,6 +271,7 @@ export default function SmartWebsiteManager() {
             title="Smart Website"
             description="Manage your company's 1-page website"
             featureColor="config"
+            showAuraBar
             action={
               websiteUrl ? (
                 <div className="flex gap-2">

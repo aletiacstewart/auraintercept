@@ -23,6 +23,7 @@ export default function Analytics() {
           icon={BarChart3}
           title="Analytics"
           description="View insights and performance metrics"
+          showAuraBar
         />
         {showCompanyView ? (
           <CompanyAnalytics companyId={selectedCompanyId} showCompanyName />

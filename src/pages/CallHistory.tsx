@@ -157,6 +157,7 @@ export default function CallHistory() {
           icon={Phone}
           title="Call History"
           description="View and analyze all AI agent call activity"
+          showAuraBar
         />
 
         {/* Stats Cards */}

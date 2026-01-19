@@ -137,6 +137,7 @@ export default function Quotes() {
           title="Quotes"
           description="Create and manage service quotes"
           featureColor="quotes"
+          showAuraBar
           action={
             <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
               <DialogTrigger asChild>

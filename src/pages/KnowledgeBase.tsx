@@ -34,6 +34,7 @@ export default function KnowledgeBase() {
           title="Knowledge Base"
           description="Train your AI agent with your business information"
           featureColor="config"
+          showAuraBar
         />
 
         <Tabs defaultValue={defaultTab} className="space-y-6">

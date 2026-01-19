@@ -19,6 +19,7 @@ export default function RevenueAnalysisPage() {
             title="Revenue Analysis"
             description="Analyze revenue, invoices, and paid performance"
             featureColor="invoices"
+            showAuraBar
           />
 
           {companyId ? (

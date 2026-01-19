@@ -18,6 +18,7 @@ export default function Employees() {
           title="Employees"
           description="Manage team members and their roles"
           featureColor="employees"
+          showAuraBar
         />
         <EmployeeManagement />
         {(userRole === 'platform_admin' || userRole === 'company_admin') && companyId && (

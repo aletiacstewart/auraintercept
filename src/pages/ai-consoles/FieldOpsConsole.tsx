@@ -24,6 +24,7 @@ export default function FieldOpsConsole() {
               title="Technician-Field Ops"
               description="Your intelligent field operations assistant"
               featureColor="fieldops"
+              showAuraBar
               action={
                 canManageSettings ? (
                   <Button

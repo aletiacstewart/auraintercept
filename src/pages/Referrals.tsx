@@ -115,6 +115,7 @@ export default function Referrals() {
             icon={Gift}
             title="Referral Program"
             description="Manage customer referrals and rewards"
+            showAuraBar
             action={
               <Button onClick={() => setDialogOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" /> New Referral Code

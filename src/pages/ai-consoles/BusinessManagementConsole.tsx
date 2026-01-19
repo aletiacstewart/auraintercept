@@ -24,6 +24,7 @@ export default function BusinessManagementConsole() {
               title="Business Management Console"
               description="AI-powered business operations and management tools"
               featureColor="platform"
+              showAuraBar
               action={
                 canManageSettings ? (
                   <Button

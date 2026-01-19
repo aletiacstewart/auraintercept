@@ -24,6 +24,7 @@ export default function AnalyticsConsole() {
               title="Analytics & Reports Console"
               description="AI-powered analytics, reporting, and business insights"
               featureColor="platform"
+              showAuraBar
               action={
                 canManageSettings ? (
                   <Button
