@@ -202,7 +202,7 @@ export function VoiceOnboardingSettings() {
             ].map((tip, index) => (
               <li key={index} className="flex items-start gap-3">
                 <CheckCircle2 className="w-4 h-4 text-aura-emerald mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-muted-foreground">{tip}</span>
+                <span className="text-sm text-card-foreground/80">{tip}</span>
               </li>
             ))}
           </ul>
@@ -220,29 +220,29 @@ export function VoiceOnboardingSettings() {
         <CardContent className="space-y-4">
           <div>
             <p className="font-medium">Microphone not working?</p>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-card-foreground/70 mt-1">
               Check that your browser has microphone permissions. Click the lock icon in your browser's address bar and ensure microphone access is allowed.
             </p>
           </div>
           <Separator />
           <div>
             <p className="font-medium">Commands not recognized?</p>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-card-foreground/70 mt-1">
               Speak slightly slower and ensure you're using the exact command phrases. Check the commands reference above for the correct wording.
             </p>
           </div>
           <Separator />
           <div>
             <p className="font-medium">Voice Mode toggle not appearing?</p>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-card-foreground/70 mt-1">
               Aura Voice requires a browser that supports the Web Speech API. Please use Chrome, Edge, or Safari. Firefox is not supported.
             </p>
           </div>
           <Separator />
           <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
-            <Chrome className="w-5 h-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
-              Best experience: <strong className="text-foreground">Google Chrome</strong> or <strong className="text-foreground">Microsoft Edge</strong>
+            <Chrome className="w-5 h-5 text-card-foreground/80" />
+            <span className="text-sm text-card-foreground/80">
+              Best experience: <strong className="text-card-foreground">Google Chrome</strong> or <strong className="text-card-foreground">Microsoft Edge</strong>
             </span>
           </div>
         </CardContent>
