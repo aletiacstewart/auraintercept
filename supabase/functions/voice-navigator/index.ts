@@ -69,10 +69,11 @@ Available Actions:
 2. click_button - Click a button by its visible text (e.g., "New Quote", "Add Customer", "Save", "Submit")
 3. click_card - Click a dashboard card by its label (e.g., "Pending Quotes", "New Leads", "Unpaid Invoices")
 4. search - Search for something on the current page
-5. fill_field - Fill a specific form field with a value
-6. open_form - Open a new item form (e.g., "new quote", "new customer", "new appointment")
-7. scroll - Scroll up or down on the page
-8. unknown - Command was not understood
+5. fill_field - Fill a specific form field with a value (requires BOTH field name AND value)
+6. focus_field - Navigate to/focus a specific form field by its label WITHOUT filling it (e.g., "name field", "go to email", "phone field")
+7. open_form - Open a new item form (e.g., "new quote", "new customer", "new appointment")
+8. scroll - Scroll up or down on the page
+9. unknown - Command was not understood
 
 ${PAGE_ROUTES_CONTEXT}
 
@@ -105,9 +106,20 @@ IMPORTANT RULES:
 7. "Create new X" or "add new X" means open_form action
 8. If the user says something like "new quote", interpret as open_form unless context suggests otherwise
 
+FIELD NAVIGATION RULES (focus_field vs fill_field):
+9. "Go to X field", "X field", "focus X", "move to X" = focus_field action (just focus, no value)
+10. When user says just a field name like "name", "email", "phone", "address" WITHOUT providing a value, use focus_field
+11. "Set X to Y", "enter Y in X", "put Y in X field", "X is Y" = fill_field action (field AND value)
+12. Examples:
+    - "name field" → focus_field with target "name"
+    - "go to email" → focus_field with target "email"  
+    - "phone" → focus_field with target "phone"
+    - "set name to John" → fill_field with target "name" and value "John"
+    - "enter test@email.com in email" → fill_field with target "email" and value "test@email.com"
+
 Respond with ONLY valid JSON in this format:
 {
-  "action": "navigate|click_button|click_card|search|fill_field|open_form|scroll|unknown",
+  "action": "navigate|click_button|click_card|search|fill_field|focus_field|open_form|scroll|unknown",
   "target": "button text, card label, field name, or page name",
   "value": "value for search or fill_field",
   "route": "/path/to/page (for navigate action only)",
@@ -121,7 +133,7 @@ serve(async (req) => {
   }
 
   try {
-    const { command, currentPage, visibleButtons, visibleCards } = await req.json();
+    const { command, currentPage, visibleButtons, visibleCards, visibleFields } = await req.json();
     
     if (!command) {
       return new Response(
@@ -150,10 +162,13 @@ serve(async (req) => {
     if (visibleCards && visibleCards.length > 0) {
       contextMessage += `\nVisible cards: ${visibleCards.join(', ')}`;
     }
+    if (visibleFields && visibleFields.length > 0) {
+      contextMessage += `\nVisible form fields: ${visibleFields.join(', ')}`;
+    }
     contextMessage += `\n\nInterpret this command and return the appropriate action JSON.`;
 
     console.log("Processing voice command:", command);
-    console.log("Context:", { currentPage, visibleButtons, visibleCards });
+    console.log("Context:", { currentPage, visibleButtons, visibleCards, visibleFields });
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
