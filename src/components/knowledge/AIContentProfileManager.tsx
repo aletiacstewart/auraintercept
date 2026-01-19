@@ -9,9 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { X, Plus, Save, Sparkles, Building2, Tags, Target, MessageSquare, Ban } from 'lucide-react';
+import { X, Plus, Save, Sparkles, Building2, Tags, Target, MessageSquare, Ban, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-
 // Common industry categories (similar to Google My Business)
 const INDUSTRY_OPTIONS = [
   // Home Services
@@ -117,6 +116,10 @@ export function AIContentProfileManager() {
   const [avoidKeywords, setAvoidKeywords] = useState<string[]>([]);
   const [avoidKeywordInput, setAvoidKeywordInput] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
+  
+  // Keyword suggestions state
+  const [suggestedKeywords, setSuggestedKeywords] = useState<string[]>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
 
   // Fetch existing profile
   const { data: profile, isLoading } = useQuery({
@@ -251,6 +254,87 @@ export function AIContentProfileManager() {
     markChanged();
   };
 
+  // Suggest keywords based on selected industries
+  const suggestKeywords = async () => {
+    if (!primaryIndustry) {
+      toast.error('Please select a primary industry first');
+      return;
+    }
+    
+    setIsLoadingSuggestions(true);
+    setSuggestedKeywords([]);
+    
+    try {
+      const industries = [primaryIndustry, ...secondaryIndustries].filter(Boolean).join(', ');
+      
+      const response = await supabase.functions.invoke('generate-website-content', {
+        body: {
+          contentType: 'keywords_suggestion',
+          action: 'generate',
+          companyId,
+          context: {
+            industries,
+            existingKeywords: keywords,
+          }
+        }
+      });
+      
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to generate suggestions');
+      }
+      
+      const suggestionsText = response.data?.content || '';
+      
+      // Parse the JSON array from the response
+      let parsed: string[] = [];
+      try {
+        // Try to extract JSON array from response
+        const jsonMatch = suggestionsText.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          parsed = JSON.parse(jsonMatch[0]);
+        }
+      } catch (e) {
+        // If JSON parsing fails, try splitting by comma or newline
+        parsed = suggestionsText
+          .split(/[,\n]/)
+          .map((s: string) => s.trim().replace(/^["'\-\d.]+\s*/, '').replace(/["']$/g, ''))
+          .filter((s: string) => s.length > 0 && s.length < 50);
+      }
+      
+      // Filter out keywords already added
+      const newSuggestions = parsed.filter(
+        (k: string) => !keywords.includes(k) && k.trim().length > 0
+      );
+      
+      if (newSuggestions.length === 0) {
+        toast.info('No new keyword suggestions found');
+      } else {
+        setSuggestedKeywords(newSuggestions.slice(0, 15));
+        toast.success(`Generated ${newSuggestions.length} keyword suggestions`);
+      }
+    } catch (error) {
+      console.error('Error getting keyword suggestions:', error);
+      toast.error('Failed to generate suggestions');
+    } finally {
+      setIsLoadingSuggestions(false);
+    }
+  };
+
+  const addSuggestedKeyword = (keyword: string) => {
+    if (!keywords.includes(keyword)) {
+      setKeywords([...keywords, keyword]);
+      setSuggestedKeywords(suggestedKeywords.filter(k => k !== keyword));
+      markChanged();
+    }
+  };
+
+  const addAllSuggestions = () => {
+    const newKeywords = [...keywords, ...suggestedKeywords.filter(k => !keywords.includes(k))];
+    setKeywords(newKeywords);
+    setSuggestedKeywords([]);
+    markChanged();
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -350,15 +434,31 @@ export function AIContentProfileManager() {
       {/* Keywords */}
       <Card>
         <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Tags className="h-4 w-4 text-muted-foreground" />
-            <CardTitle className="text-base">Keywords & Terms</CardTitle>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Tags className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-base">Keywords & Terms</CardTitle>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={suggestKeywords}
+              disabled={!primaryIndustry || isLoadingSuggestions}
+            >
+              {isLoadingSuggestions ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4 mr-2" />
+              )}
+              {isLoadingSuggestions ? 'Generating...' : 'Suggest Keywords'}
+            </Button>
           </div>
           <CardDescription>
             Add keywords that should be incorporated into generated content
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Current keywords */}
           <div className="flex flex-wrap gap-2">
             {keywords.map(keyword => (
               <Badge key={keyword} variant="outline" className="gap-1">
@@ -368,7 +468,39 @@ export function AIContentProfileManager() {
                 </button>
               </Badge>
             ))}
+            {keywords.length === 0 && (
+              <span className="text-sm text-muted-foreground">No keywords added yet</span>
+            )}
           </div>
+
+          {/* Suggested keywords section */}
+          {suggestedKeywords.length > 0 && (
+            <div className="p-3 bg-muted/50 rounded-lg space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm text-muted-foreground">
+                  Suggested keywords (click to add)
+                </Label>
+                <Button variant="ghost" size="sm" onClick={addAllSuggestions}>
+                  Add All
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {suggestedKeywords.map(keyword => (
+                  <Badge
+                    key={keyword}
+                    variant="secondary"
+                    className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                    onClick={() => addSuggestedKeyword(keyword)}
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    {keyword}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Manual keyword input */}
           <div className="flex gap-2">
             <Input
               placeholder="Add a keyword (e.g., 'emergency service', '24/7 support')..."

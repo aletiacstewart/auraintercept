@@ -74,6 +74,10 @@ const CONTENT_PROMPTS: Record<string, { generate: string; reword: string }> = {
   social_content: {
     generate: "Create engaging social media content. Include relevant emojis. Adapt length for the platform.",
     reword: "Improve this social media content. Make it more engaging while maintaining the core message. Include appropriate emojis."
+  },
+  keywords_suggestion: {
+    generate: "Generate 15 highly relevant SEO keywords for this business based on the industries provided. Focus on: services, solutions, customer pain points, local search terms, and industry-specific terminology. Return ONLY a JSON array of keyword strings with no explanation. Example format: [\"keyword1\", \"keyword2\", \"keyword3\"]",
+    reword: "Suggest alternative keywords based on the existing ones provided."
   }
 };
 
