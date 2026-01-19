@@ -285,6 +285,12 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
     lastProcessedTranscriptRef.current = ''; // Reset the processed ref
   }, [clearTranscript]);
   
+  // Ref to store the latest handleInput to avoid dependency issues
+  const handleInputRef = useRef(handleInput);
+  useEffect(() => {
+    handleInputRef.current = handleInput;
+  }, [handleInput]);
+  
   // Auto-populate input from voice transcript when voice mode is active
   useEffect(() => {
     if (isVoiceModeEnabled && isListening && transcript) {
@@ -306,7 +312,7 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
           // Mark this transcript as processed
           lastProcessedTranscriptRef.current = transcript;
           
-          handleInput(transcript.trim(), true);
+          handleInputRef.current(transcript.trim(), true);
           
           // Clear the input and the voice transcript
           setState(prev => ({ ...prev, inputValue: '' }));
@@ -320,7 +326,7 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
         clearTimeout(voiceSubmitTimerRef.current);
       }
     };
-  }, [transcript, isVoiceModeEnabled, isListening, handleInput, clearTranscript]);
+  }, [transcript, isVoiceModeEnabled, isListening, clearTranscript]);
   
   return {
     // State

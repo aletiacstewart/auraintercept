@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Search, Command, Mic, MicOff } from 'lucide-react';
+import { Sparkles, Search, Command, Mic, MicOff, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useVoice } from '@/contexts/VoiceContext';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -10,6 +10,7 @@ interface AuraCommandBarProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit: (query: string) => void;
+  onClear?: () => void;
   placeholder?: string;
   isLoading?: boolean;
   autoFocus?: boolean;
@@ -20,6 +21,7 @@ export function AuraCommandBar({
   value,
   onChange,
   onSubmit,
+  onClear,
   placeholder = "Ask Aura anything about your data... (e.g., 'What is my projected revenue next month?')",
   isLoading = false,
   autoFocus = false,
@@ -73,6 +75,23 @@ export function AuraCommandBar({
             disabled={isLoading}
             className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-muted-foreground/60"
           />
+          
+          {/* Clear button */}
+          {value && onClear && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 flex-shrink-0"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onClear();
+              }}
+            >
+              <X className="h-4 w-4 text-muted-foreground" />
+            </Button>
+          )}
           
           {/* Voice input toggle */}
           {isSupported && (
