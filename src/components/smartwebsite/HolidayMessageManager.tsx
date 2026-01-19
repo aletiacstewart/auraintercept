@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
+import { AIContentButton } from '@/components/ai/AIContentButton';
 
 interface Holiday {
   id: string;
@@ -31,6 +32,7 @@ interface Holiday {
 interface HolidayMessageManagerProps {
   websiteId: string;
   companyId: string;
+  companyName?: string;
 }
 
 const PRESET_HOLIDAYS = [
@@ -48,7 +50,7 @@ const PRESET_HOLIDAYS = [
   { name: "New Year's Eve", date: "12-31" },
 ];
 
-export function HolidayMessageManager({ websiteId, companyId }: HolidayMessageManagerProps) {
+export function HolidayMessageManager({ websiteId, companyId, companyName }: HolidayMessageManagerProps) {
   const queryClient = useQueryClient();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingHoliday, setEditingHoliday] = useState<Holiday | null>(null);
@@ -262,7 +264,15 @@ export function HolidayMessageManager({ websiteId, companyId }: HolidayMessageMa
       </div>
 
       <div className="space-y-2">
-        <Label>Custom Headline *</Label>
+        <div className="flex items-center justify-between">
+          <Label>Custom Headline *</Label>
+          <AIContentButton
+            contentType="holiday_headline"
+            existingContent={formData.custom_headline}
+            context={{ companyName, holidayName: formData.holiday_name }}
+            onGenerate={(content) => setFormData(prev => ({ ...prev, custom_headline: content }))}
+          />
+        </div>
         <Input
           value={formData.custom_headline}
           onChange={(e) => setFormData(prev => ({ ...prev, custom_headline: e.target.value }))}
@@ -271,7 +281,15 @@ export function HolidayMessageManager({ websiteId, companyId }: HolidayMessageMa
       </div>
 
       <div className="space-y-2">
-        <Label>Custom Subheadline</Label>
+        <div className="flex items-center justify-between">
+          <Label>Custom Subheadline</Label>
+          <AIContentButton
+            contentType="holiday_subheadline"
+            existingContent={formData.custom_subheadline}
+            context={{ companyName, holidayName: formData.holiday_name }}
+            onGenerate={(content) => setFormData(prev => ({ ...prev, custom_subheadline: content }))}
+          />
+        </div>
         <Textarea
           value={formData.custom_subheadline}
           onChange={(e) => setFormData(prev => ({ ...prev, custom_subheadline: e.target.value }))}

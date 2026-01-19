@@ -167,3 +167,6 @@ verify_jwt = false
 
 [functions.publish-social-content]
 verify_jwt = true
+
+[functions.generate-website-content]
+verify_jwt = true

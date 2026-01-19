@@ -52,6 +52,7 @@ import { HeroBackgroundUpload } from '@/components/smartwebsite/HeroBackgroundUp
 import { SmartWebsiteServicesEditor } from '@/components/smartwebsite/SmartWebsiteServicesEditor';
 import { SmartWebsiteHoursEditor } from '@/components/smartwebsite/SmartWebsiteHoursEditor';
 import { SmartWebsiteContactEditor } from '@/components/smartwebsite/SmartWebsiteContactEditor';
+import { AIContentButton } from '@/components/ai/AIContentButton';
 
 // Extended type for website data with new night mode fields
 interface ExtendedWebsiteData {
@@ -333,7 +334,15 @@ export default function SmartWebsiteManager() {
                 <CollapsibleContent>
                   <CardContent className="space-y-4 pt-0">
                     <div className="space-y-2">
-                      <Label className="text-card-foreground">Hero Headline</Label>
+                      <div className="flex items-center justify-between">
+                        <Label className="text-card-foreground">Hero Headline</Label>
+                        <AIContentButton
+                          contentType="hero_headline"
+                          existingContent={website.hero_headline || ''}
+                          context={{ companyName: company?.name }}
+                          onGenerate={(content) => updateWebsite.mutate({ hero_headline: content })}
+                        />
+                      </div>
                       <Input
                         defaultValue={website.hero_headline || ''}
                         onBlur={(e) => updateWebsite.mutate({ hero_headline: e.target.value })}
@@ -341,7 +350,15 @@ export default function SmartWebsiteManager() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-card-foreground">Hero Subheadline</Label>
+                      <div className="flex items-center justify-between">
+                        <Label className="text-card-foreground">Hero Subheadline</Label>
+                        <AIContentButton
+                          contentType="hero_subheadline"
+                          existingContent={website.hero_subheadline || ''}
+                          context={{ companyName: company?.name }}
+                          onGenerate={(content) => updateWebsite.mutate({ hero_subheadline: content })}
+                        />
+                      </div>
                       <Textarea
                         defaultValue={website.hero_subheadline || ''}
                         onBlur={(e) => updateWebsite.mutate({ hero_subheadline: e.target.value })}
@@ -349,7 +366,15 @@ export default function SmartWebsiteManager() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-card-foreground">CTA Button Text</Label>
+                      <div className="flex items-center justify-between">
+                        <Label className="text-card-foreground">CTA Button Text</Label>
+                        <AIContentButton
+                          contentType="cta_text"
+                          existingContent={website.cta_button_text || ''}
+                          context={{ companyName: company?.name }}
+                          onGenerate={(content) => updateWebsite.mutate({ cta_button_text: content })}
+                        />
+                      </div>
                       <Input
                         defaultValue={website.cta_button_text || 'Book Now'}
                         onBlur={(e) => updateWebsite.mutate({ cta_button_text: e.target.value })}
@@ -452,7 +477,15 @@ export default function SmartWebsiteManager() {
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-card-foreground">Night Headline</Label>
+                          <div className="flex items-center justify-between">
+                            <Label className="text-card-foreground">Night Headline</Label>
+                            <AIContentButton
+                              contentType="night_headline"
+                              existingContent={website.night_header || ''}
+                              context={{ companyName: company?.name }}
+                              onGenerate={(content) => updateWebsite.mutate({ night_header: content })}
+                            />
+                          </div>
                           <Input
                             defaultValue={website.night_header || ''}
                             onBlur={(e) => updateWebsite.mutate({ night_header: e.target.value })}
@@ -460,7 +493,15 @@ export default function SmartWebsiteManager() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-card-foreground">Night Subheadline</Label>
+                          <div className="flex items-center justify-between">
+                            <Label className="text-card-foreground">Night Subheadline</Label>
+                            <AIContentButton
+                              contentType="night_subheadline"
+                              existingContent={website.night_subheadline || ''}
+                              context={{ companyName: company?.name }}
+                              onGenerate={(content) => updateWebsite.mutate({ night_subheadline: content })}
+                            />
+                          </div>
                           <Textarea
                             defaultValue={website.night_subheadline || ''}
                             onBlur={(e) => updateWebsite.mutate({ night_subheadline: e.target.value })}
@@ -468,7 +509,15 @@ export default function SmartWebsiteManager() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-card-foreground">Emergency CTA Text</Label>
+                          <div className="flex items-center justify-between">
+                            <Label className="text-card-foreground">Emergency CTA Text</Label>
+                            <AIContentButton
+                              contentType="emergency_cta"
+                              existingContent={website.emergency_cta_text || ''}
+                              context={{ companyName: company?.name }}
+                              onGenerate={(content) => updateWebsite.mutate({ emergency_cta_text: content })}
+                            />
+                          </div>
                           <Input
                             defaultValue={website.emergency_cta_text || ''}
                             onBlur={(e) => updateWebsite.mutate({ emergency_cta_text: e.target.value })}

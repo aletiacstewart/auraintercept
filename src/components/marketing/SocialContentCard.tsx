@@ -24,6 +24,7 @@ import {
   Image as ImageIcon,
   Hash,
 } from 'lucide-react';
+import { AIContentButton } from '@/components/ai/AIContentButton';
 
 export interface SocialContentDraft {
   id: string;
@@ -175,6 +176,14 @@ export function SocialContentCard({
           <div className="p-3 space-y-3">
             {isEditing ? (
               <div className="space-y-2">
+                <div className="flex items-center justify-end mb-1">
+                  <AIContentButton
+                    contentType="social_content"
+                    existingContent={editContent}
+                    context={{ platform: draft.platform }}
+                    onGenerate={(content) => setEditContent(content)}
+                  />
+                </div>
                 <Textarea
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
