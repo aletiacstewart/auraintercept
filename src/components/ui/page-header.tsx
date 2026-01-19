@@ -59,7 +59,7 @@ export function PageHeader({
   action,
   className,
   featureColor,
-  pulse = false
+  pulse = true
 }: PageHeaderProps) {
   const colorClasses = featureColor ? featureColorClasses[featureColor] : { bg: 'bg-accent/20', text: 'text-accent', ringColor: 'var(--accent)' };
   
