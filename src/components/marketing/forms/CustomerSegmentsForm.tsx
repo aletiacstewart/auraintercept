@@ -217,9 +217,9 @@ export const CustomerSegmentsForm: React.FC<CustomerSegmentsFormProps> = ({ comp
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="browse">Browse Segments</TabsTrigger>
-            <TabsTrigger value="create">Create New</TabsTrigger>
+          <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 mb-4">
+            <TabsTrigger value="browse" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Browse Segments</TabsTrigger>
+            <TabsTrigger value="create" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Create New</TabsTrigger>
           </TabsList>
 
           <TabsContent value="browse" className="space-y-4">

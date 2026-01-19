@@ -43,20 +43,20 @@ export default function EmployeeAppointments() {
           />
 
           <Tabs defaultValue="calendar" className="w-full">
-            <TabsList>
-              <TabsTrigger value="calendar" className="flex items-center gap-2">
+            <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
+              <TabsTrigger value="calendar" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <Calendar className="h-4 w-4" />
                 Calendar
               </TabsTrigger>
-              <TabsTrigger value="jobs" className="flex items-center gap-2">
+              <TabsTrigger value="jobs" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <ClipboardList className="h-4 w-4" />
                 Job Queue
               </TabsTrigger>
-              <TabsTrigger value="history" className="flex items-center gap-2">
+              <TabsTrigger value="history" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <History className="h-4 w-4" />
                 History
               </TabsTrigger>
-              <TabsTrigger value="all-jobs" className="flex items-center gap-2">
+              <TabsTrigger value="all-jobs" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <Briefcase className="h-4 w-4" />
                 All Jobs
               </TabsTrigger>

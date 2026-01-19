@@ -132,9 +132,9 @@ export function InventoryUploadDialog({ companyId }: InventoryUploadDialogProps)
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="upload">Upload / Paste Data</TabsTrigger>
-            <TabsTrigger value="format">Sample Format</TabsTrigger>
+          <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
+            <TabsTrigger value="upload" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Upload / Paste Data</TabsTrigger>
+            <TabsTrigger value="format" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Sample Format</TabsTrigger>
           </TabsList>
 
           <TabsContent value="upload" className="space-y-4">
