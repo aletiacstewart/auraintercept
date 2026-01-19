@@ -228,12 +228,12 @@ export function EmailTemplatesEditor() {
       </CardHeader>
       <CardContent className="space-y-6">
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 flex-wrap">
             {(Object.keys(TEMPLATE_INFO) as Array<keyof typeof TEMPLATE_INFO>).map((type) => {
               const typeInfo = TEMPLATE_INFO[type];
               const TypeIcon = typeInfo.icon;
               return (
-                <TabsTrigger key={type} value={type} className="flex items-center gap-2">
+                <TabsTrigger key={type} value={type} className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                   <TypeIcon className={`w-4 h-4 ${typeInfo.color}`} />
                   {typeInfo.label}
                   {(hasChanges(type) || isCustomized(type)) && (

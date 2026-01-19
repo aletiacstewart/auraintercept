@@ -54,20 +54,20 @@ export const AppointmentsManager: React.FC<AppointmentsManagerProps> = ({ onClos
       </div>
 
       <Tabs defaultValue="calendar" className="w-full">
-        <TabsList className="bg-muted">
-          <TabsTrigger value="calendar" className="flex items-center gap-2 text-xs text-foreground/70 data-[state=active]:text-foreground">
+        <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 flex-wrap">
+          <TabsTrigger value="calendar" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
             <Calendar className="h-3.5 w-3.5" />
             Calendar
           </TabsTrigger>
-          <TabsTrigger value="jobs" className="flex items-center gap-2 text-xs text-foreground/70 data-[state=active]:text-foreground">
+          <TabsTrigger value="jobs" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
             <ClipboardList className="h-3.5 w-3.5" />
             Job Queue
           </TabsTrigger>
-          <TabsTrigger value="history" className="flex items-center gap-2 text-xs text-foreground/70 data-[state=active]:text-foreground">
+          <TabsTrigger value="history" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
             <History className="h-3.5 w-3.5" />
             History
           </TabsTrigger>
-          <TabsTrigger value="all-jobs" className="flex items-center gap-2 text-xs text-foreground/70 data-[state=active]:text-foreground">
+          <TabsTrigger value="all-jobs" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
             <Briefcase className="h-3.5 w-3.5" />
             All Jobs
           </TabsTrigger>

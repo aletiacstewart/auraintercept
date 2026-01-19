@@ -170,26 +170,26 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
         {/* View Tabs */}
         <div className="flex items-center justify-between mt-4">
           <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'map' | 'agenda' | 'jobs')}>
-            <TabsList className="bg-muted">
+            <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 flex-wrap">
               <TabsTrigger 
                 value="map" 
-                className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
+                className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
               >
-                <Map className="h-4 w-4 mr-2" />
+                <Map className="h-4 w-4" />
                 Map View
               </TabsTrigger>
               <TabsTrigger 
                 value="agenda"
-                className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
+                className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
               >
-                <List className="h-4 w-4 mr-2" />
+                <List className="h-4 w-4" />
                 Agenda View
               </TabsTrigger>
               <TabsTrigger 
                 value="jobs"
-                className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
+                className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
               >
-                <ClipboardList className="h-4 w-4 mr-2" />
+                <ClipboardList className="h-4 w-4" />
                 Job Status
               </TabsTrigger>
             </TabsList>
