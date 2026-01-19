@@ -19,6 +19,7 @@ export default function KpiDashboardPage() {
             title="KPI Dashboard"
             description="Build and export KPI dashboards for your business"
             featureColor="analytics"
+            showAuraBar
           />
 
           {companyId ? (

@@ -17,6 +17,7 @@ export default function Calculators() {
             title="Cost & ROI Calculator"
             description="Estimate costs and calculate potential savings from AI-powered reminders"
             featureColor="analytics"
+            showAuraBar
           />
 
           {/* Calculator Card */}

@@ -19,6 +19,7 @@ export default function PerformanceReportPage() {
             title="Performance Report"
             description="Review team output, goals, and trends"
             featureColor="analytics"
+            showAuraBar
           />
 
           {companyId ? (

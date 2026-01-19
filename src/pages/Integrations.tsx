@@ -263,6 +263,7 @@ export default function Integrations() {
             title="Integrations Overview"
             description="Connect services to power your AI agents"
             featureColor="integrations"
+            showAuraBar
           />
           <Button onClick={() => setShowQuickStart(true)} className="gap-2">
             <Rocket className="w-4 h-4" />

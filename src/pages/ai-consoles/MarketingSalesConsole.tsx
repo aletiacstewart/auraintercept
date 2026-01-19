@@ -24,6 +24,7 @@ export default function MarketingSalesConsole() {
               title="Marketing & Sales Console"
               description="AI-powered marketing automation and sales intelligence"
               featureColor="platform"
+              showAuraBar
               action={
                 canManageSettings ? (
                   <Button

@@ -94,6 +94,7 @@ export default function EmailLogs() {
           icon={Mail}
           title="Email Logs"
           description="View email communication history with customers"
+          showAuraBar
         />
 
         {/* Stats Cards */}

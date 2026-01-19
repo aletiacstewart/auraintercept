@@ -14,6 +14,7 @@ export default function Warranties() {
           title="Warranties"
           description="Manage warranty records, claims, and policies"
           featureColor="warranties"
+          showAuraBar
         />
         <WarrantiesManager />
       </div>

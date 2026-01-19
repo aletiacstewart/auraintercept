@@ -50,6 +50,7 @@ export default function Settings() {
             title="Quick Setup"
             description="Configure your company settings and preferences"
             featureColor="config"
+            showAuraBar
           />
           
           <SetupProgressBar />
@@ -131,6 +132,7 @@ export default function Settings() {
               icon={SettingsIcon}
               title="Quick Setup"
               description="Manage your account settings"
+              showAuraBar
             />
             <ProfileSettings />
           </div>

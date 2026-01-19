@@ -14,6 +14,7 @@ export default function Inventory() {
           title="Inventory"
           description="Manage parts, supplies, and stock levels"
           featureColor="inventory"
+          showAuraBar
         />
         <InventoryManager />
       </div>

@@ -13,6 +13,7 @@ export default function Messages() {
           icon={MessageSquare}
           title="Messages & Calls"
           description="View your communication history with customers"
+          showAuraBar
         />
 
         <CommunicationLogs />

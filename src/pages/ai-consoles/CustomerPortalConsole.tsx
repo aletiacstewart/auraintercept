@@ -41,6 +41,7 @@ export default function CustomerPortalConsole() {
               title="Customer Portal Console"
               description="AI-powered customer service portal"
               featureColor="customers"
+              showAuraBar
               badge={
                 canManageSettings ? (
                   <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700">

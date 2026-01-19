@@ -78,6 +78,7 @@ export default function SMSLogs() {
           icon={MessageSquare}
           title="SMS / Text Logs"
           description="View SMS and text message history with customers"
+          showAuraBar
         />
 
         {/* Stats Cards */}

@@ -255,6 +255,7 @@ export default function Subscription() {
           icon={Crown}
           title="Subscription"
           description={isInTrial ? 'Subscribe to continue after your trial' : 'Choose the plan that fits your business'}
+          showAuraBar
           action={
             isSubscribed ? (
               <Button 

@@ -19,6 +19,7 @@ export default function DemandForecastPage() {
             title="Revenue Forecast"
             description="Forecast revenue and staffing needs"
             featureColor="invoices"
+            showAuraBar
           />
 
           {companyId ? (

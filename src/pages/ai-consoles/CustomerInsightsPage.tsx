@@ -19,6 +19,7 @@ export default function CustomerInsightsPage() {
             title="Customer Insights"
             description="Understand behavior, segments, and retention"
             featureColor="customers"
+            showAuraBar
           />
 
           {companyId ? (
