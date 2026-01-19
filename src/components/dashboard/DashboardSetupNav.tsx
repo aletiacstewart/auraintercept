@@ -220,7 +220,7 @@ export function DashboardSetupNav() {
               key={section.id}
               to={section.href}
               className={cn(
-                'flex items-center gap-2 px-4 py-2.5 rounded-full border transition-all text-sm font-medium',
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all text-sm font-medium',
                 isActive
                   ? 'bg-secondary/20 border-secondary text-secondary'
                   : section.completed
