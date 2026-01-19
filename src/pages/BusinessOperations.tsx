@@ -14,6 +14,7 @@ export default function BusinessOperations() {
             title="Business Ops Overview"
             description="Monitor financial metrics, payments, and inventory at a glance"
             featureColor="analytics"
+            showAuraBar
           />
           <BusinessOpsConsole />
         </div>

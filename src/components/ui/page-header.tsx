@@ -1,6 +1,7 @@
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VoiceStatusIndicator } from '@/components/voice/VoiceStatusIndicator';
+import { InlineAuraBar } from '@/components/aura/InlineAuraBar';
 
 export type FeatureColor = 
   | 'companies' 
@@ -30,6 +31,8 @@ interface PageHeaderProps {
   featureColor?: FeatureColor;
   /** Enable pulsing animation on the icon when true */
   pulse?: boolean;
+  /** Show inline Ask Aura bar below the header */
+  showAuraBar?: boolean;
 }
 
 const featureColorClasses: Record<FeatureColor, { bg: string; text: string; ringColor: string }> = {
@@ -59,41 +62,49 @@ export function PageHeader({
   action,
   className,
   featureColor,
-  pulse = true
+  pulse = true,
+  showAuraBar = false
 }: PageHeaderProps) {
   const colorClasses = featureColor ? featureColorClasses[featureColor] : { bg: 'bg-accent/20', text: 'text-accent', ringColor: 'var(--accent)' };
   
   return (
-    <div className={cn("flex items-center justify-between", className)}>
-      <div className="flex items-center gap-3">
-        <div className="relative">
-          {/* Round container with breathing animation */}
-          <div className={cn(
-            "w-11 h-11 rounded-full flex items-center justify-center transition-all",
-            colorClasses.bg,
-            pulse && "aura-breathing"
-          )}>
-            <Icon className={cn("h-5 w-5", colorClasses.text)} />
+    <div className={cn("space-y-4", className)}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            {/* Round container with breathing animation */}
+            <div className={cn(
+              "w-11 h-11 rounded-full flex items-center justify-center transition-all",
+              colorClasses.bg,
+              pulse && "aura-breathing"
+            )}>
+              <Icon className={cn("h-5 w-5", colorClasses.text)} />
+            </div>
+            
+            {/* Pulse ring effect when pulsing is enabled */}
+            {pulse && (
+              <div 
+                className="absolute inset-0 rounded-full aura-pulse-ring-feature"
+                style={{ '--ring-color': `hsl(${colorClasses.ringColor})` } as React.CSSProperties}
+              />
+            )}
           </div>
-          
-          {/* Pulse ring effect when pulsing is enabled */}
-          {pulse && (
-            <div 
-              className="absolute inset-0 rounded-full aura-pulse-ring-feature"
-              style={{ '--ring-color': `hsl(${colorClasses.ringColor})` } as React.CSSProperties}
-            />
-          )}
-        </div>
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-foreground">{title}</h1>
-            {badge}
-            <VoiceStatusIndicator size="sm" />
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold text-foreground">{title}</h1>
+              {badge}
+              <VoiceStatusIndicator size="sm" />
+            </div>
+            <p className="text-sm text-muted-foreground">{description}</p>
           </div>
-          <p className="text-sm text-muted-foreground">{description}</p>
         </div>
+        {action}
       </div>
-      {action}
+      
+      {/* Inline Ask Aura Bar */}
+      {showAuraBar && (
+        <InlineAuraBar placeholder={`Ask about ${title.toLowerCase()}...`} />
+      )}
     </div>
   );
 }

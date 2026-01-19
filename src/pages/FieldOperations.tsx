@@ -40,6 +40,7 @@ export default function FieldOperations() {
             title="Dispatch-Field Ops"
             description="Real-time dispatch console for managing field technicians"
             featureColor="fieldops"
+            showAuraBar
           />
           <div className="h-[calc(100vh-14rem)]">
             <FieldOpsManager companyId={companyId} />
