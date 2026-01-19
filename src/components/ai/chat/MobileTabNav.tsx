@@ -51,7 +51,7 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
               )}
             >
               <Icon className={cn("h-4 w-4", !isActive && tab.featureColor)} />
-              <span className="truncate max-w-[48px]">{tab.label}</span>
+              <span className={cn("truncate max-w-[48px]", !isActive && tab.featureColor)}>{tab.label}</span>
               
               {/* Active indicator */}
               {isActive && (
