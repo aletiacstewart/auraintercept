@@ -15,7 +15,7 @@ import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { useAuraCommand } from '@/hooks/useAuraCommand';
 import { parseAuraQuery, getTabFromIntent } from '@/lib/auraQueryParser';
 import { getAgentStyle } from '@/lib/agentStyles';
-import { Sparkles, ShieldAlert } from 'lucide-react';
+import { Cpu, ShieldAlert } from 'lucide-react';
 
 export default function AskAura() {
   const { companyId, userRole, user } = useAuth();
@@ -120,7 +120,7 @@ export default function AskAura() {
       <PageContainer>
         <div className="space-y-6">
           <PageHeader
-            icon={Sparkles}
+            icon={Cpu}
             title="Analytics & Reports"
             description="Your AI-powered analytics assistant. Ask anything about your business data."
             showAuraBar
