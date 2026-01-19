@@ -128,7 +128,7 @@ export const LeadsManager: React.FC<LeadsManagerProps> = ({ onClose }) => {
         <div className="flex items-center gap-2">
           <Dialog open={isAddLeadOpen} onOpenChange={setIsAddLeadOpen}>
             <DialogTrigger asChild>
-              <Button size="sm">
+              <Button size="sm" data-voice-label="New Lead">
                 <Plus className="w-4 h-4 mr-2" />
                 New Lead
               </Button>

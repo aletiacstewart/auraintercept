@@ -155,7 +155,7 @@ export default function Leads() {
           action={
             <Dialog open={isAddLeadOpen} onOpenChange={setIsAddLeadOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button data-voice-label="New Lead">
                   <Plus className="w-4 h-4 mr-2" />
                   New Lead
                 </Button>
