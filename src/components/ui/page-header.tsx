@@ -32,23 +32,23 @@ interface PageHeaderProps {
   pulse?: boolean;
 }
 
-const featureColorClasses: Record<FeatureColor, { bg: string; text: string }> = {
-  companies: { bg: 'bg-feature-companies/15', text: 'text-feature-companies' },
-  employees: { bg: 'bg-feature-employees/15', text: 'text-feature-employees' },
-  customers: { bg: 'bg-feature-customers/15', text: 'text-feature-customers' },
-  leads: { bg: 'bg-feature-leads/15', text: 'text-feature-leads' },
-  appointments: { bg: 'bg-feature-appointments/15', text: 'text-feature-appointments' },
-  quotes: { bg: 'bg-feature-quotes/15', text: 'text-feature-quotes' },
-  invoices: { bg: 'bg-feature-invoices/15', text: 'text-feature-invoices' },
-  inventory: { bg: 'bg-feature-inventory/15', text: 'text-feature-inventory' },
-  warranties: { bg: 'bg-feature-warranties/15', text: 'text-feature-warranties' },
-  analytics: { bg: 'bg-feature-analytics/15', text: 'text-feature-analytics' },
-  marketing: { bg: 'bg-feature-marketing/15', text: 'text-feature-marketing' },
-  fieldops: { bg: 'bg-feature-fieldops/15', text: 'text-feature-fieldops' },
-  platform: { bg: 'bg-feature-platform/15', text: 'text-feature-platform' },
-  config: { bg: 'bg-feature-config/15', text: 'text-feature-config' },
-  overview: { bg: 'bg-feature-overview/15', text: 'text-feature-overview' },
-  integrations: { bg: 'bg-feature-integrations/15', text: 'text-feature-integrations' },
+const featureColorClasses: Record<FeatureColor, { bg: string; text: string; ringColor: string }> = {
+  companies: { bg: 'bg-feature-companies/20', text: 'text-feature-companies', ringColor: 'var(--feature-companies)' },
+  employees: { bg: 'bg-feature-employees/20', text: 'text-feature-employees', ringColor: 'var(--feature-employees)' },
+  customers: { bg: 'bg-feature-customers/20', text: 'text-feature-customers', ringColor: 'var(--feature-customers)' },
+  leads: { bg: 'bg-feature-leads/20', text: 'text-feature-leads', ringColor: 'var(--feature-leads)' },
+  appointments: { bg: 'bg-feature-appointments/20', text: 'text-feature-appointments', ringColor: 'var(--feature-appointments)' },
+  quotes: { bg: 'bg-feature-quotes/20', text: 'text-feature-quotes', ringColor: 'var(--feature-quotes)' },
+  invoices: { bg: 'bg-feature-invoices/20', text: 'text-feature-invoices', ringColor: 'var(--feature-invoices)' },
+  inventory: { bg: 'bg-feature-inventory/20', text: 'text-feature-inventory', ringColor: 'var(--feature-inventory)' },
+  warranties: { bg: 'bg-feature-warranties/20', text: 'text-feature-warranties', ringColor: 'var(--feature-warranties)' },
+  analytics: { bg: 'bg-feature-analytics/20', text: 'text-feature-analytics', ringColor: 'var(--feature-analytics)' },
+  marketing: { bg: 'bg-feature-marketing/20', text: 'text-feature-marketing', ringColor: 'var(--feature-marketing)' },
+  fieldops: { bg: 'bg-feature-fieldops/20', text: 'text-feature-fieldops', ringColor: 'var(--feature-fieldops)' },
+  platform: { bg: 'bg-feature-platform/20', text: 'text-feature-platform', ringColor: 'var(--feature-platform)' },
+  config: { bg: 'bg-feature-config/20', text: 'text-feature-config', ringColor: 'var(--feature-config)' },
+  overview: { bg: 'bg-feature-overview/20', text: 'text-feature-overview', ringColor: 'var(--feature-overview)' },
+  integrations: { bg: 'bg-feature-integrations/20', text: 'text-feature-integrations', ringColor: 'var(--feature-integrations)' },
 };
 
 export function PageHeader({ 
@@ -61,17 +61,28 @@ export function PageHeader({
   featureColor,
   pulse = false
 }: PageHeaderProps) {
-  const colorClasses = featureColor ? featureColorClasses[featureColor] : { bg: 'bg-accent/20', text: 'text-accent' };
+  const colorClasses = featureColor ? featureColorClasses[featureColor] : { bg: 'bg-accent/20', text: 'text-accent', ringColor: 'var(--accent)' };
   
   return (
     <div className={cn("flex items-center justify-between", className)}>
       <div className="flex items-center gap-3">
-        <div className={cn(
-          "p-2 rounded-lg transition-all",
-          colorClasses.bg,
-          pulse && "feature-pulse-active"
-        )}>
-          <Icon className={cn("h-6 w-6", colorClasses.text)} />
+        <div className="relative">
+          {/* Round container with breathing animation */}
+          <div className={cn(
+            "w-11 h-11 rounded-full flex items-center justify-center transition-all",
+            colorClasses.bg,
+            pulse && "aura-breathing"
+          )}>
+            <Icon className={cn("h-5 w-5", colorClasses.text)} />
+          </div>
+          
+          {/* Pulse ring effect when pulsing is enabled */}
+          {pulse && (
+            <div 
+              className="absolute inset-0 rounded-full aura-pulse-ring-feature"
+              style={{ '--ring-color': `hsl(${colorClasses.ringColor})` } as React.CSSProperties}
+            />
+          )}
         </div>
         <div>
           <div className="flex items-center gap-2">
