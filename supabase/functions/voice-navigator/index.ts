@@ -37,7 +37,7 @@ Dashboard Pages (use these exact routes):
 - AI Agents Hub: /dashboard/ai-agents
 - Knowledge Base: /dashboard/knowledge
 - Calculators: /dashboard/calculators
-- Integrations Overview: /dashboard/integrations
+- 3rd Party Overview: /dashboard/3rd-party-overview
 - Voice Agent: /dashboard/integrations/voice
 - SMS & Text: /dashboard/integrations/sms
 - Email Integration: /dashboard/integrations/email

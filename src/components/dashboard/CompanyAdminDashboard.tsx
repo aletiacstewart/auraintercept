@@ -240,7 +240,7 @@ export function CompanyAdminDashboard() {
     { label: 'Warranties', icon: Shield, colorClass: 'bg-feature-warranties/15 text-feature-warranties', href: '/dashboard/warranties' },
     { label: 'Campaigns', icon: Megaphone, colorClass: 'bg-feature-marketing/15 text-feature-marketing', href: '/dashboard/campaigns' },
     { label: 'Calculators', icon: DollarSign, colorClass: 'bg-feature-analytics/15 text-feature-analytics', href: '/dashboard/calculators' },
-    { label: 'Integrations', icon: Puzzle, colorClass: 'bg-muted text-muted-foreground', href: '/dashboard/integrations' },
+    { label: 'Integrations', icon: Puzzle, colorClass: 'bg-muted text-muted-foreground', href: '/dashboard/3rd-party-overview' },
   ];
 
   return (

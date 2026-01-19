@@ -134,9 +134,10 @@ export const PAGE_ROUTES: Record<string, string> = {
   'install app': '/technician/install',
   
   // 3rd Party Integrations Section
-  'overview': '/dashboard/integrations',
-  'integrations': '/dashboard/integrations',
-  'integrations overview': '/dashboard/integrations',
+  'overview': '/dashboard/3rd-party-overview',
+  'integrations': '/dashboard/3rd-party-overview',
+  'integrations overview': '/dashboard/3rd-party-overview',
+  '3rd party overview': '/dashboard/3rd-party-overview',
   'voice agent': '/dashboard/integrations/voice',
   'sms & text': '/dashboard/integrations/sms',
   'sms and text': '/dashboard/integrations/sms',

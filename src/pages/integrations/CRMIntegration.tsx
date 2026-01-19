@@ -19,7 +19,7 @@ export default function CRMIntegration() {
             featureColor="integrations"
             action={
               <Button variant="ghost" size="icon" asChild>
-                <Link to="/dashboard/integrations">
+                <Link to="/dashboard/3rd-party-overview">
                   <ArrowLeft className="w-4 h-4" />
                 </Link>
               </Button>
