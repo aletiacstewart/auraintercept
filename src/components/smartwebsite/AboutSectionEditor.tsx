@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { Upload, X, Loader2, Image as ImageIcon } from 'lucide-react';
+import { AIContentButton } from '@/components/ai/AIContentButton';
 
 interface AboutSectionEditorProps {
   website: {
@@ -19,6 +20,7 @@ interface AboutSectionEditorProps {
     about_paragraph: string | null;
   };
   companyId: string;
+  companyName?: string;
   onUpdate: (updates: any) => void;
   isUpdating: boolean;
 }
@@ -26,7 +28,7 @@ interface AboutSectionEditorProps {
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-export function AboutSectionEditor({ website, companyId, onUpdate, isUpdating }: AboutSectionEditorProps) {
+export function AboutSectionEditor({ website, companyId, companyName, onUpdate, isUpdating }: AboutSectionEditorProps) {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -179,7 +181,16 @@ export function AboutSectionEditor({ website, companyId, onUpdate, isUpdating }:
 
           {/* Text Fields */}
           <div className="space-y-2">
-            <Label>Header</Label>
+            <div className="flex items-center justify-between">
+              <Label>Header</Label>
+              <AIContentButton
+                contentType="about_header"
+                existingContent={website.about_header || ''}
+                context={{ companyName }}
+                onGenerate={(content) => onUpdate({ about_header: content })}
+                disabled={isUpdating}
+              />
+            </div>
             <Input
               defaultValue={website.about_header || ''}
               onBlur={(e) => onUpdate({ about_header: e.target.value })}
@@ -189,7 +200,16 @@ export function AboutSectionEditor({ website, companyId, onUpdate, isUpdating }:
           </div>
 
           <div className="space-y-2">
-            <Label>Sub-header</Label>
+            <div className="flex items-center justify-between">
+              <Label>Sub-header</Label>
+              <AIContentButton
+                contentType="about_subheader"
+                existingContent={website.about_subheader || ''}
+                context={{ companyName }}
+                onGenerate={(content) => onUpdate({ about_subheader: content })}
+                disabled={isUpdating}
+              />
+            </div>
             <Input
               defaultValue={website.about_subheader || ''}
               onBlur={(e) => onUpdate({ about_subheader: e.target.value })}
@@ -199,7 +219,16 @@ export function AboutSectionEditor({ website, companyId, onUpdate, isUpdating }:
           </div>
 
           <div className="space-y-2">
-            <Label>Paragraph</Label>
+            <div className="flex items-center justify-between">
+              <Label>Paragraph</Label>
+              <AIContentButton
+                contentType="about_paragraph"
+                existingContent={website.about_paragraph || ''}
+                context={{ companyName }}
+                onGenerate={(content) => onUpdate({ about_paragraph: content })}
+                disabled={isUpdating}
+              />
+            </div>
             <Textarea
               defaultValue={website.about_paragraph || ''}
               onBlur={(e) => onUpdate({ about_paragraph: e.target.value })}

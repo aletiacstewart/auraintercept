@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Mail, Save, RotateCcw, Loader2, CheckCircle, XCircle, Bell } from 'lucide-react';
 import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
+import { AIContentButton } from '@/components/ai/AIContentButton';
 
 interface EmailTemplate {
   id?: string;
@@ -255,7 +256,15 @@ export function EmailTemplatesEditor() {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="subject" className="text-card-foreground">Email Subject</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="subject" className="text-card-foreground">Email Subject</Label>
+                    <AIContentButton
+                      contentType="email_subject"
+                      existingContent={currentTemplate.subject}
+                      context={{ templateType: activeTab }}
+                      onGenerate={(content) => updateField('subject', content)}
+                    />
+                  </div>
                   <Input
                     id="subject"
                     value={currentTemplate.subject}
@@ -265,7 +274,15 @@ export function EmailTemplatesEditor() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="heading" className="text-card-foreground">Email Heading</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="heading" className="text-card-foreground">Email Heading</Label>
+                    <AIContentButton
+                      contentType="email_heading"
+                      existingContent={currentTemplate.heading}
+                      context={{ templateType: activeTab }}
+                      onGenerate={(content) => updateField('heading', content)}
+                    />
+                  </div>
                   <Input
                     id="heading"
                     value={currentTemplate.heading}
@@ -275,7 +292,15 @@ export function EmailTemplatesEditor() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="message" className="text-card-foreground">Email Message</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="message" className="text-card-foreground">Email Message</Label>
+                    <AIContentButton
+                      contentType="email_message"
+                      existingContent={currentTemplate.message}
+                      context={{ templateType: activeTab }}
+                      onGenerate={(content) => updateField('message', content)}
+                    />
+                  </div>
                   <Textarea
                     id="message"
                     value={currentTemplate.message}

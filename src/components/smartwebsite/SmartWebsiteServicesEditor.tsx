@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, ExternalLink, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AIContentButton } from '@/components/ai/AIContentButton';
 
 interface Service {
   id: string;
@@ -293,7 +294,15 @@ export function SmartWebsiteServicesEditor() {
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label>Service Name *</Label>
+              <div className="flex items-center justify-between">
+                <Label>Service Name *</Label>
+                <AIContentButton
+                  contentType="service_name"
+                  existingContent={formData.name}
+                  context={{ serviceType: formData.service_type }}
+                  onGenerate={(content) => setFormData({ ...formData, name: content })}
+                />
+              </div>
               <Input
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -302,7 +311,15 @@ export function SmartWebsiteServicesEditor() {
             </div>
             
             <div className="space-y-2">
-              <Label>Description</Label>
+              <div className="flex items-center justify-between">
+                <Label>Description</Label>
+                <AIContentButton
+                  contentType="service_description"
+                  existingContent={formData.description}
+                  context={{ serviceType: formData.service_type }}
+                  onGenerate={(content) => setFormData({ ...formData, description: content })}
+                />
+              </div>
               <Textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
