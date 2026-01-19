@@ -18,40 +18,40 @@ interface BusinessOpsHubTabsProps {
 export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsProps) {
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
-      <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1 flex-wrap">
+      <TabsList className="inline-flex h-auto p-1 bg-muted/30 rounded-full border border-border/50 gap-0.5 flex-wrap">
         <TabsTrigger 
           value="sales" 
-          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 data-[state=active]:text-primary transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 data-[state=active]:text-primary transition-all"
         >
-          <DollarSign className="h-4 w-4" />
+          <DollarSign className="h-3.5 w-3.5" />
           <span>Sales</span>
         </TabsTrigger>
         <TabsTrigger 
           value="appointments" 
-          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
         >
-          <Calendar className="h-4 w-4" />
+          <Calendar className="h-3.5 w-3.5" />
           <span>Appointments</span>
         </TabsTrigger>
         <TabsTrigger 
           value="inventory" 
-          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
         >
-          <Package className="h-4 w-4" />
+          <Package className="h-3.5 w-3.5" />
           <span>Inventory</span>
         </TabsTrigger>
         <TabsTrigger 
           value="people" 
-          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
         >
-          <UsersRound className="h-4 w-4" />
+          <UsersRound className="h-3.5 w-3.5" />
           <span>People</span>
         </TabsTrigger>
         <TabsTrigger 
           value="all" 
-          className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
         >
-          <Briefcase className="h-4 w-4" />
+          <Briefcase className="h-3.5 w-3.5" />
           <span>All Business Ops</span>
         </TabsTrigger>
       </TabsList>
