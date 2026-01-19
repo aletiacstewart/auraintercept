@@ -150,12 +150,19 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
 
   // Process voice command through AI
   const processWithAI = useCallback(async (text: string): Promise<boolean> => {
+    // Skip empty or whitespace-only commands
+    const trimmedText = text?.trim();
+    if (!trimmedText) {
+      console.log('Voice: Skipping empty command');
+      return false;
+    }
+    
     setIsProcessing(true);
     
     try {
       const response = await supabase.functions.invoke('voice-navigator', {
         body: { 
-          command: text,
+          command: trimmedText,
           currentPage: location.pathname,
           visibleButtons: getVisibleButtonLabels(),
           visibleCards: getVisibleCardLabels(),
