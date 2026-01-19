@@ -158,3 +158,6 @@ verify_jwt = true
 
 [functions.create-demo-accounts]
 verify_jwt = true
+
+[functions.voice-navigator]
+verify_jwt = true
