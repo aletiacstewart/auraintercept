@@ -173,7 +173,7 @@ export function VoiceOnboardingSettings() {
                   </div>
                   <div className="flex-1">
                     <p className="font-mono text-sm font-medium">{cmd.command}</p>
-                    <p className="text-sm text-muted-foreground">{cmd.action}</p>
+                    <p className={cn("text-sm", cmd.color)}>{cmd.action}</p>
                   </div>
                 </div>
               );
