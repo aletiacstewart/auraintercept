@@ -209,7 +209,7 @@ export function DashboardSetupNav() {
       </div>
 
       {/* Section Navigation */}
-      <div className="flex flex-wrap gap-2">
+      <div className="inline-flex flex-wrap p-2 bg-muted/30 rounded-2xl border border-border gap-1">
         {sections.map((section) => {
           const isActive = location.pathname === section.href || 
             (section.href !== '/dashboard' && location.pathname.startsWith(section.href));
