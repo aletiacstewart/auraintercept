@@ -114,7 +114,15 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
       case 'open_form':
         // Try to click "New X" or "+ New X" button
         if (action.target) {
-          result = clickButtonByText(`New ${action.target}`);
+          // First try exact match (handles "New Lead", "new lead", etc.)
+          result = clickButtonByText(action.target);
+          if (!result.success) {
+            // Only prepend "New " if target doesn't already start with it
+            const normalized = action.target.toLowerCase().trim();
+            if (!normalized.startsWith('new ')) {
+              result = clickButtonByText(`New ${action.target}`);
+            }
+          }
           if (!result.success) {
             result = clickButtonByText(`+ New ${action.target}`);
           }
