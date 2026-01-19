@@ -4296,6 +4296,79 @@ export type Database = {
           },
         ]
       }
+      social_content_drafts: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          company_id: string
+          created_at: string
+          edited_content: string | null
+          generated_content: string
+          hashtags: string[] | null
+          id: string
+          image_url: string | null
+          job_assignment_id: string | null
+          platform: string
+          published_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          company_id: string
+          created_at?: string
+          edited_content?: string | null
+          generated_content: string
+          hashtags?: string[] | null
+          id?: string
+          image_url?: string | null
+          job_assignment_id?: string | null
+          platform: string
+          published_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          company_id?: string
+          created_at?: string
+          edited_content?: string | null
+          generated_content?: string
+          hashtags?: string[] | null
+          id?: string
+          image_url?: string | null
+          job_assignment_id?: string | null
+          platform?: string
+          published_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_content_drafts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "social_content_drafts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "social_content_drafts_job_assignment_id_fkey"
+            columns: ["job_assignment_id"]
+            isOneToOne: false
+            referencedRelation: "job_assignments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscription_events: {
         Row: {
           action: string
