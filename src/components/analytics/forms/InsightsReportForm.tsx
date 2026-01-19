@@ -3,12 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { X, Lightbulb, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Calendar, BarChart3 } from 'lucide-react';
-import { subDays, format } from 'date-fns';
+import { Lightbulb, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Calendar, BarChart3 } from 'lucide-react';
+import { subDays } from 'date-fns';
 
 interface InsightsReportFormProps {
   companyId: string;
@@ -243,76 +241,63 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
   );
 
   return (
-    <div className="bg-background rounded-lg border border-border shadow-sm">
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Lightbulb className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold text-foreground">Business Insights</h3>
-          </div>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-muted">
-            <X className="h-5 w-5" />
-          </Button>
+    <div className="space-y-4">
+      {/* Filters */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-muted-foreground">Date Range</Label>
+          <Select value={dateRange} onValueChange={setDateRange}>
+            <SelectTrigger className="h-9 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7">Last 7 days</SelectItem>
+              <SelectItem value="14">Last 14 days</SelectItem>
+              <SelectItem value="30">Last 30 days</SelectItem>
+              <SelectItem value="90">Last quarter</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-muted-foreground">View</Label>
+          <Select value={insightView} onValueChange={(v) => setInsightView(v as InsightView)}>
+            <SelectTrigger className="h-9 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="summary">Summary</SelectItem>
+              <SelectItem value="trends">Trends</SelectItem>
+              <SelectItem value="anomalies">Anomalies</SelectItem>
+              <SelectItem value="recommendations">Recommendations</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
-      <div className="p-4 space-y-4">
-        {/* Filters */}
+
+      {/* Content */}
+      {isLoading ? (
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-muted-foreground">Date Range</Label>
-            <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="h-9 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Last 7 days</SelectItem>
-                <SelectItem value="14">Last 14 days</SelectItem>
-                <SelectItem value="30">Last 30 days</SelectItem>
-                <SelectItem value="90">Last quarter</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-muted-foreground">View</Label>
-            <Select value={insightView} onValueChange={(v) => setInsightView(v as InsightView)}>
-              <SelectTrigger className="h-9 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="summary">Summary</SelectItem>
-                <SelectItem value="trends">Trends</SelectItem>
-                <SelectItem value="anomalies">Anomalies</SelectItem>
-                <SelectItem value="recommendations">Recommendations</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-20" />
+          ))}
         </div>
+      ) : (
+        <>
+          {insightView === 'summary' && renderSummary()}
+          {insightView === 'trends' && renderTrends()}
+          {insightView === 'anomalies' && renderAnomalies()}
+          {insightView === 'recommendations' && renderRecommendations()}
+        </>
+      )}
 
-        {/* Content */}
-        {isLoading ? (
-          <div className="grid grid-cols-2 gap-3">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-20" />
-            ))}
-          </div>
-        ) : (
-          <>
-            {insightView === 'summary' && renderSummary()}
-            {insightView === 'trends' && renderTrends()}
-            {insightView === 'anomalies' && renderAnomalies()}
-            {insightView === 'recommendations' && renderRecommendations()}
-          </>
-        )}
-
-        {/* Actions */}
-        <div className="flex gap-2 pt-2">
-          <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Detailed insights coming soon!')}>
-            View Full Report
-          </Button>
-          <Button variant="outline" onClick={onCancel}>
-            Close
-          </Button>
-        </div>
+      {/* Actions */}
+      <div className="flex gap-2 pt-2">
+        <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Detailed insights coming soon!')}>
+          View Full Report
+        </Button>
+        <Button variant="outline" onClick={onCancel}>
+          Close
+        </Button>
       </div>
     </div>
   );

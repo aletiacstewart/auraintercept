@@ -3,13 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { X, DollarSign, TrendingUp, CreditCard, Receipt, Calendar } from 'lucide-react';
-import { format, subDays, startOfMonth, endOfMonth, subMonths } from 'date-fns';
+import { DollarSign, TrendingUp, CreditCard, Receipt, Calendar } from 'lucide-react';
+import { subDays } from 'date-fns';
 
 interface RevenueAnalysisFormProps {
   companyId: string;
@@ -102,130 +100,117 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
   });
 
   return (
-    <div className="bg-background rounded-lg border border-border shadow-sm">
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold text-foreground">Revenue Analysis</h3>
-          </div>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-muted">
-            <X className="h-5 w-5" />
-          </Button>
+    <div className="space-y-4">
+      {/* Filters */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-2">
+          <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
+            <Calendar className="h-3 w-3" />
+            Date Range
+          </Label>
+          <Select value={dateRange} onValueChange={setDateRange}>
+            <SelectTrigger className="h-9 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7">Last 7 days</SelectItem>
+              <SelectItem value="30">Last 30 days</SelectItem>
+              <SelectItem value="90">Last 90 days</SelectItem>
+              <SelectItem value="365">Last year</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-muted-foreground">Group By</Label>
+          <Select value={groupBy} onValueChange={setGroupBy}>
+            <SelectTrigger className="h-9 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="service">Service Type</SelectItem>
+              <SelectItem value="month">Month</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
-      <div className="p-4 space-y-4">
-        {/* Filters */}
+
+      {/* Summary Cards */}
+      {isLoading ? (
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-2">
-            <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
-              <Calendar className="h-3 w-3" />
-              Date Range
-            </Label>
-            <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="h-9 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Last 7 days</SelectItem>
-                <SelectItem value="30">Last 30 days</SelectItem>
-                <SelectItem value="90">Last 90 days</SelectItem>
-                <SelectItem value="365">Last year</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-muted-foreground">Group By</Label>
-            <Select value={groupBy} onValueChange={setGroupBy}>
-              <SelectTrigger className="h-9 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="service">Service Type</SelectItem>
-                <SelectItem value="month">Month</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-20" />
+          ))}
         </div>
-
-        {/* Summary Cards */}
-        {isLoading ? (
+      ) : (
+        <>
           <div className="grid grid-cols-2 gap-3">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-20" />
-            ))}
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <TrendingUp className="h-4 w-4" />
-                  <span className="text-sm">Total Revenue</span>
-                </div>
-                <p className="text-2xl font-bold text-secondary">
-                  ${(revenueData?.totalRevenue || 0).toLocaleString()}
-                </p>
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                <TrendingUp className="h-4 w-4" />
+                <span className="text-sm">Total Revenue</span>
               </div>
-
-              <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <CreditCard className="h-4 w-4" />
-                  <span className="text-sm">Pending</span>
-                </div>
-                <p className="text-2xl font-bold text-warning">
-                  ${(pendingData || 0).toLocaleString()}
-                </p>
-              </div>
-
-              <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <Receipt className="h-4 w-4" />
-                  <span className="text-sm">Invoices Paid</span>
-                </div>
-                <p className="text-2xl font-bold text-foreground">{revenueData?.invoiceCount || 0}</p>
-              </div>
-
-              <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <DollarSign className="h-4 w-4" />
-                  <span className="text-sm">Avg Invoice</span>
-                </div>
-                <p className="text-2xl font-bold text-foreground">
-                  ${(revenueData?.avgInvoice || 0).toFixed(0)}
-                </p>
-              </div>
+              <p className="text-2xl font-bold text-secondary">
+                ${(revenueData?.totalRevenue || 0).toLocaleString()}
+              </p>
             </div>
 
-            {/* Revenue by Service */}
-            {revenueData?.serviceBreakdown && revenueData.serviceBreakdown.length > 0 && (
-              <div className="space-y-3 p-4 rounded-lg bg-muted/50 border border-border">
-                <h4 className="font-medium text-sm text-foreground">Top Revenue Sources</h4>
-                <div className="space-y-3">
-                  {revenueData.serviceBreakdown.map((item, idx) => (
-                    <div key={idx} className="space-y-1">
-                      <div className="flex items-center justify-between text-sm text-foreground">
-                        <span className="truncate max-w-[60%]">{item.service}</span>
-                        <span className="font-medium">${item.revenue.toLocaleString()}</span>
-                      </div>
-                      <Progress value={item.percentage} className="h-2" />
-                    </div>
-                  ))}
-                </div>
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                <CreditCard className="h-4 w-4" />
+                <span className="text-sm">Pending</span>
               </div>
-            )}
-          </>
-        )}
+              <p className="text-2xl font-bold text-warning">
+                ${(pendingData || 0).toLocaleString()}
+              </p>
+            </div>
 
-        {/* Actions */}
-        <div className="flex gap-2 pt-2">
-          <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Detailed report coming soon!')}>
-            View Details
-          </Button>
-          <Button variant="outline" onClick={onCancel}>
-            Close
-          </Button>
-        </div>
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                <Receipt className="h-4 w-4" />
+                <span className="text-sm">Invoices Paid</span>
+              </div>
+              <p className="text-2xl font-bold text-foreground">{revenueData?.invoiceCount || 0}</p>
+            </div>
+
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                <DollarSign className="h-4 w-4" />
+                <span className="text-sm">Avg Invoice</span>
+              </div>
+              <p className="text-2xl font-bold text-foreground">
+                ${(revenueData?.avgInvoice || 0).toFixed(0)}
+              </p>
+            </div>
+          </div>
+
+          {/* Revenue by Service */}
+          {revenueData?.serviceBreakdown && revenueData.serviceBreakdown.length > 0 && (
+            <div className="space-y-3 p-4 rounded-lg bg-muted/50 border border-border">
+              <h4 className="font-medium text-sm text-foreground">Top Revenue Sources</h4>
+              <div className="space-y-3">
+                {revenueData.serviceBreakdown.map((item, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <div className="flex items-center justify-between text-sm text-foreground">
+                      <span className="truncate max-w-[60%]">{item.service}</span>
+                      <span className="font-medium">${item.revenue.toLocaleString()}</span>
+                    </div>
+                    <Progress value={item.percentage} className="h-2" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Actions */}
+      <div className="flex gap-2 pt-2">
+        <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Detailed report coming soon!')}>
+          View Details
+        </Button>
+        <Button variant="outline" onClick={onCancel}>
+          Close
+        </Button>
       </div>
     </div>
   );

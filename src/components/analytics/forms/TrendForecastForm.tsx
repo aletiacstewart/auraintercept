@@ -3,12 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { X, TrendingUp, TrendingDown, Calendar, ArrowRight, Sparkles, Loader2 } from 'lucide-react';
-import { format, subDays, addDays, subMonths } from 'date-fns';
+import { TrendingUp, TrendingDown, ArrowRight, Sparkles, Loader2 } from 'lucide-react';
+import { subDays } from 'date-fns';
 
 interface TrendForecastFormProps {
   companyId: string;
@@ -120,145 +119,132 @@ export const TrendForecastForm: React.FC<TrendForecastFormProps> = ({ companyId,
   };
 
   return (
-    <div className="bg-background rounded-lg border border-border shadow-sm">
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold text-foreground">Trend Forecast</h3>
-          </div>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-muted">
-            <X className="h-5 w-5" />
-          </Button>
+    <div className="space-y-4">
+      {/* Filters */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-muted-foreground">Metric</Label>
+          <Select value={metric} onValueChange={setMetric}>
+            <SelectTrigger className="h-9 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="appointments">Appointments</SelectItem>
+              <SelectItem value="revenue">Revenue</SelectItem>
+              <SelectItem value="jobs">Completed Jobs</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label className="text-sm font-medium text-muted-foreground">Forecast Period</Label>
+          <Select value={forecastDays} onValueChange={setForecastDays}>
+            <SelectTrigger className="h-9 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7">Next 7 days</SelectItem>
+              <SelectItem value="30">Next 30 days</SelectItem>
+              <SelectItem value="90">Next 90 days</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
-      <div className="p-4 space-y-4">
-        {/* Filters */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-muted-foreground">Metric</Label>
-            <Select value={metric} onValueChange={setMetric}>
-              <SelectTrigger className="h-9 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="appointments">Appointments</SelectItem>
-                <SelectItem value="revenue">Revenue</SelectItem>
-                <SelectItem value="jobs">Completed Jobs</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-muted-foreground">Forecast Period</Label>
-            <Select value={forecastDays} onValueChange={setForecastDays}>
-              <SelectTrigger className="h-9 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">Next 7 days</SelectItem>
-                <SelectItem value="30">Next 30 days</SelectItem>
-                <SelectItem value="90">Next 90 days</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+
+      {/* Trend Display */}
+      {isLoading ? (
+        <div className="space-y-3">
+          {[1, 2].map(i => (
+            <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-20" />
+          ))}
         </div>
-
-        {/* Trend Display */}
-        {isLoading ? (
-          <div className="space-y-3">
-            {[1, 2].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-muted animate-pulse h-20" />
-            ))}
-          </div>
-        ) : (
-          <>
-            {/* Historical Trend */}
-            <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
-              <h4 className="font-medium text-sm text-foreground">Historical Trend (90 days)</h4>
-              <div className="flex items-center justify-between gap-2">
-                <div className="text-center flex-1">
-                  <p className="text-xs text-muted-foreground">60-90 days ago</p>
-                  <p className="font-semibold text-foreground">{formatValue(trendData?.olderPeriod || 0)}</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                <div className="text-center flex-1">
-                  <p className="text-xs text-muted-foreground">30-60 days ago</p>
-                  <p className="font-semibold text-foreground">{formatValue(trendData?.previousPeriod || 0)}</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                <div className="text-center flex-1">
-                  <p className="text-xs text-muted-foreground">Last 30 days</p>
-                  <p className="font-semibold text-foreground">{formatValue(trendData?.currentPeriod || 0)}</p>
-                </div>
+      ) : (
+        <>
+          {/* Historical Trend */}
+          <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
+            <h4 className="font-medium text-sm text-foreground">Historical Trend (90 days)</h4>
+            <div className="flex items-center justify-between gap-2">
+              <div className="text-center flex-1">
+                <p className="text-xs text-muted-foreground">60-90 days ago</p>
+                <p className="font-semibold text-foreground">{formatValue(trendData?.olderPeriod || 0)}</p>
               </div>
-              <div className="flex items-center justify-center gap-2 pt-2">
-                {trendData?.trend === 'up' ? (
-                  <Badge className="bg-secondary/10 text-secondary">
-                    <TrendingUp className="h-3 w-3 mr-1" />
-                    +{(trendData?.recentChange || 0).toFixed(1)}% growth
-                  </Badge>
-                ) : trendData?.trend === 'down' ? (
-                  <Badge className="bg-destructive/10 text-destructive">
-                    <TrendingDown className="h-3 w-3 mr-1" />
-                    {(trendData?.recentChange || 0).toFixed(1)}% decline
-                  </Badge>
-                ) : (
-                  <Badge variant="secondary">Stable</Badge>
-                )}
+              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              <div className="text-center flex-1">
+                <p className="text-xs text-muted-foreground">30-60 days ago</p>
+                <p className="font-semibold text-foreground">{formatValue(trendData?.previousPeriod || 0)}</p>
+              </div>
+              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              <div className="text-center flex-1">
+                <p className="text-xs text-muted-foreground">Last 30 days</p>
+                <p className="font-semibold text-foreground">{formatValue(trendData?.currentPeriod || 0)}</p>
               </div>
             </div>
-
-            {/* Projection */}
-            <div className="p-4 rounded-lg bg-muted/50 border border-border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Projected {metricLabels[metric as keyof typeof metricLabels]}</p>
-                  <p className="text-xs text-muted-foreground">Next {forecastDays} days</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-primary">
-                    {formatValue(Math.round(trendData?.projectedValue || 0))}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Based on {(trendData?.avgGrowth || 0).toFixed(1)}% avg trend
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* AI Forecast */}
-            <Button
-              variant="outline"
-              className="w-full gap-2"
-              onClick={generateAIForecast}
-              disabled={isGeneratingForecast}
-            >
-              {isGeneratingForecast ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+            <div className="flex items-center justify-center gap-2 pt-2">
+              {trendData?.trend === 'up' ? (
+                <Badge className="bg-secondary/10 text-secondary">
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  +{(trendData?.recentChange || 0).toFixed(1)}% growth
+                </Badge>
+              ) : trendData?.trend === 'down' ? (
+                <Badge className="bg-destructive/10 text-destructive">
+                  <TrendingDown className="h-3 w-3 mr-1" />
+                  {(trendData?.recentChange || 0).toFixed(1)}% decline
+                </Badge>
               ) : (
-                <Sparkles className="h-4 w-4" />
+                <Badge variant="secondary">Stable</Badge>
               )}
-              Generate AI Insights
-            </Button>
+            </div>
+          </div>
 
-            {aiForecast && (
-              <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  <span className="font-medium text-sm text-foreground">AI Analysis</span>
-                </div>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{aiForecast}</p>
+          {/* Projection */}
+          <div className="p-4 rounded-lg bg-muted/50 border border-border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Projected {metricLabels[metric as keyof typeof metricLabels]}</p>
+                <p className="text-xs text-muted-foreground">Next {forecastDays} days</p>
               </div>
-            )}
-          </>
-        )}
+              <div className="text-right">
+                <p className="text-2xl font-bold text-primary">
+                  {formatValue(Math.round(trendData?.projectedValue || 0))}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Based on {(trendData?.avgGrowth || 0).toFixed(1)}% avg trend
+                </p>
+              </div>
+            </div>
+          </div>
 
-        {/* Actions */}
-        <div className="flex gap-2 pt-2">
-          <Button variant="outline" onClick={onCancel}>
-            Close
+          {/* AI Forecast */}
+          <Button
+            variant="outline"
+            className="w-full gap-2"
+            onClick={generateAIForecast}
+            disabled={isGeneratingForecast}
+          >
+            {isGeneratingForecast ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Sparkles className="h-4 w-4" />
+            )}
+            Generate AI Insights
           </Button>
-        </div>
+
+          {aiForecast && (
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <span className="font-medium text-sm text-foreground">AI Analysis</span>
+              </div>
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap">{aiForecast}</p>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Actions */}
+      <div className="flex gap-2 pt-2">
+        <Button variant="outline" onClick={onCancel}>
+          Close
+        </Button>
       </div>
     </div>
   );

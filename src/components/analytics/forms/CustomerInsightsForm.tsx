@@ -3,13 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { X, Users, UserPlus, UserMinus, Star, TrendingUp, Calendar } from 'lucide-react';
-import { format, subDays, subMonths } from 'date-fns';
+import { Users, UserPlus, UserMinus, Star, TrendingUp, Calendar } from 'lucide-react';
+import { subDays } from 'date-fns';
 
 interface CustomerInsightsFormProps {
   companyId: string;
@@ -113,124 +112,111 @@ export const CustomerInsightsForm: React.FC<CustomerInsightsFormProps> = ({ comp
   });
 
   return (
-    <div className="bg-background rounded-lg border border-border shadow-sm">
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold text-foreground">Customer Insights</h3>
-          </div>
-          <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-muted">
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
+    <div className="space-y-4">
+      {/* Filters */}
+      <div className="space-y-2">
+        <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
+          <Calendar className="h-3 w-3" />
+          Analysis Period
+        </Label>
+        <Select value={dateRange} onValueChange={setDateRange}>
+          <SelectTrigger className="h-9 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="30">Last 30 days</SelectItem>
+            <SelectItem value="90">Last 90 days</SelectItem>
+            <SelectItem value="180">Last 6 months</SelectItem>
+            <SelectItem value="365">Last year</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <div className="p-4 space-y-4">
-        {/* Filters */}
-        <div className="space-y-2">
-          <Label className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
-            <Calendar className="h-3 w-3" />
-            Analysis Period
-          </Label>
-          <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="h-9 text-sm">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="30">Last 30 days</SelectItem>
-              <SelectItem value="90">Last 90 days</SelectItem>
-              <SelectItem value="180">Last 6 months</SelectItem>
-              <SelectItem value="365">Last year</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
 
-        {/* Metrics */}
-        {isLoading ? (
+      {/* Metrics */}
+      {isLoading ? (
+        <div className="grid grid-cols-2 gap-3">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="p-4 rounded-lg bg-muted/50 animate-pulse h-20" />
+          ))}
+        </div>
+      ) : (
+        <>
           <div className="grid grid-cols-2 gap-3">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="p-4 rounded-lg bg-muted/50 animate-pulse h-20" />
-            ))}
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center gap-2 text-foreground/70 mb-1">
+                <Users className="h-4 w-4" />
+                <span className="text-sm">Total Customers</span>
+              </div>
+              <p className="text-2xl font-bold text-foreground">{insights?.totalCustomers || 0}</p>
+            </div>
+
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center gap-2 text-foreground/70 mb-1">
+                <UserPlus className="h-4 w-4 text-secondary" />
+                <span className="text-sm">New Customers</span>
+              </div>
+              <p className="text-2xl font-bold text-secondary">{insights?.newCustomers || 0}</p>
+            </div>
+
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center gap-2 text-foreground/70 mb-1">
+                <TrendingUp className="h-4 w-4 text-secondary" />
+                <span className="text-sm">Returning</span>
+              </div>
+              <p className="text-2xl font-bold text-secondary">{insights?.returningCustomers || 0}</p>
+            </div>
+
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center gap-2 text-foreground/70 mb-1">
+                <UserMinus className="h-4 w-4 text-warning" />
+                <span className="text-sm">Inactive</span>
+              </div>
+              <p className="text-2xl font-bold text-warning">{insights?.inactiveCustomers || 0}</p>
+            </div>
           </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 text-foreground/70 mb-1">
-                  <Users className="h-4 w-4" />
-                  <span className="text-sm">Total Customers</span>
-                </div>
-                <p className="text-2xl font-bold text-foreground">{insights?.totalCustomers || 0}</p>
-              </div>
 
-              <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 text-foreground/70 mb-1">
-                  <UserPlus className="h-4 w-4 text-secondary" />
-                  <span className="text-sm">New Customers</span>
-                </div>
-                <p className="text-2xl font-bold text-secondary">{insights?.newCustomers || 0}</p>
+          {/* Retention & Satisfaction */}
+          <div className="space-y-3 p-4 rounded-lg bg-muted/50 border border-border">
+            <h4 className="font-medium text-sm text-foreground">Customer Health</h4>
+            
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm text-foreground">
+                <span>Retention Rate</span>
+                <span className="font-medium">{(insights?.retentionRate || 0).toFixed(1)}%</span>
               </div>
-
-              <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 text-foreground/70 mb-1">
-                  <TrendingUp className="h-4 w-4 text-secondary" />
-                  <span className="text-sm">Returning</span>
-                </div>
-                <p className="text-2xl font-bold text-secondary">{insights?.returningCustomers || 0}</p>
-              </div>
-
-              <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                <div className="flex items-center gap-2 text-foreground/70 mb-1">
-                  <UserMinus className="h-4 w-4 text-warning" />
-                  <span className="text-sm">Inactive</span>
-                </div>
-                <p className="text-2xl font-bold text-warning">{insights?.inactiveCustomers || 0}</p>
-              </div>
+              <Progress value={insights?.retentionRate || 0} className="h-2" />
             </div>
 
-            {/* Retention & Satisfaction */}
-            <div className="space-y-3 p-4 rounded-lg bg-muted/50 border border-border">
-              <h4 className="font-medium text-sm text-foreground">Customer Health</h4>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm text-foreground">
-                  <span>Retention Rate</span>
-                  <span className="font-medium">{(insights?.retentionRate || 0).toFixed(1)}%</span>
-                </div>
-                <Progress value={insights?.retentionRate || 0} className="h-2" />
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm text-foreground">
+                <span className="flex items-center gap-1">
+                  <Star className="h-4 w-4 text-yellow-500" />
+                  Satisfaction Rate
+                </span>
+                <span className="font-medium">{(insights?.satisfactionRate || 0).toFixed(1)}%</span>
               </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm text-foreground">
-                  <span className="flex items-center gap-1">
-                    <Star className="h-4 w-4 text-yellow-500" />
-                    Satisfaction Rate
-                  </span>
-                  <span className="font-medium">{(insights?.satisfactionRate || 0).toFixed(1)}%</span>
-                </div>
-                <Progress value={insights?.satisfactionRate || 0} className="h-2" />
-              </div>
-
-              <div className="flex items-center justify-between text-sm pt-2 border-t border-border text-foreground">
-                <span>Average Rating</span>
-                <Badge variant="outline" className="flex items-center gap-1 border-border">
-                  <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                  {(insights?.avgRating || 0).toFixed(1)} / 5
-                </Badge>
-              </div>
+              <Progress value={insights?.satisfactionRate || 0} className="h-2" />
             </div>
-          </>
-        )}
 
-        {/* Actions */}
-        <div className="flex gap-2 pt-2">
-          <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Customer list coming soon!')}>
-            View Customers
-          </Button>
-          <Button variant="outline" onClick={onCancel}>
-            Close
-          </Button>
-        </div>
+            <div className="flex items-center justify-between text-sm pt-2 border-t border-border text-foreground">
+              <span>Average Rating</span>
+              <Badge variant="outline" className="flex items-center gap-1 border-border">
+                <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                {(insights?.avgRating || 0).toFixed(1)} / 5
+              </Badge>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Actions */}
+      <div className="flex gap-2 pt-2">
+        <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Customer list coming soon!')}>
+          View Customers
+        </Button>
+        <Button variant="outline" onClick={onCancel}>
+          Close
+        </Button>
       </div>
     </div>
   );
