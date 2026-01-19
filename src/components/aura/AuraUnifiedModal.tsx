@@ -191,6 +191,7 @@ export function AuraUnifiedModal({ open, onOpenChange }: AuraUnifiedModalProps) 
             value={inputValue}
             onChange={setInputValue}
             onSubmit={handleSubmit}
+            onClear={() => setInputValue('')}
             isLoading={isLoading || isProcessing}
             placeholder="Ask about data, or say what you want to do..."
             autoFocus
