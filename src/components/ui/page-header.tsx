@@ -28,6 +28,8 @@ interface PageHeaderProps {
   action?: React.ReactNode;
   className?: string;
   featureColor?: FeatureColor;
+  /** Enable pulsing animation on the icon when true */
+  pulse?: boolean;
 }
 
 const featureColorClasses: Record<FeatureColor, { bg: string; text: string }> = {
@@ -56,14 +58,19 @@ export function PageHeader({
   badge, 
   action,
   className,
-  featureColor
+  featureColor,
+  pulse = false
 }: PageHeaderProps) {
   const colorClasses = featureColor ? featureColorClasses[featureColor] : { bg: 'bg-accent/20', text: 'text-accent' };
   
   return (
     <div className={cn("flex items-center justify-between", className)}>
       <div className="flex items-center gap-3">
-        <div className={cn("p-2 rounded-lg", colorClasses.bg)}>
+        <div className={cn(
+          "p-2 rounded-lg transition-all",
+          colorClasses.bg,
+          pulse && "feature-pulse-active"
+        )}>
           <Icon className={cn("h-6 w-6", colorClasses.text)} />
         </div>
         <div>

@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { useAIAgentOrchestrator, AgentInfo } from '@/hooks/useAIAgentOrchestrator';
+import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useQuery } from '@tanstack/react-query';
@@ -42,12 +43,42 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { hasFullAccess, canManageAIAgents } from '@/lib/accessControl';
 
-const CATEGORY_INFO: Record<string, { label: string; icon: React.ElementType; color: string }> = {
-  customer_engagement: { label: 'Customer Portal', icon: Users, color: 'text-blue-500' },
-  field_operations: { label: 'Field Operations', icon: Truck, color: 'text-green-500' },
-  business_operations: { label: 'Business Operations', icon: Briefcase, color: 'text-purple-500' },
-  marketing_sales: { label: 'Marketing & Sales', icon: Megaphone, color: 'text-orange-500' },
-  analytics_reports: { label: 'Analytics & Reports', icon: BarChart3, color: 'text-cyan-500' },
+const CATEGORY_INFO: Record<string, { 
+  label: string; 
+  icon: React.ElementType; 
+  colorClass: string;
+  cssVar: string;
+}> = {
+  customer_engagement: { 
+    label: 'Customer Portal', 
+    icon: Users, 
+    colorClass: 'text-feature-customers',
+    cssVar: '--feature-customers'
+  },
+  field_operations: { 
+    label: 'Field Operations', 
+    icon: Truck, 
+    colorClass: 'text-feature-fieldops',
+    cssVar: '--feature-fieldops'
+  },
+  business_operations: { 
+    label: 'Business Operations', 
+    icon: Briefcase, 
+    colorClass: 'text-feature-analytics',
+    cssVar: '--feature-analytics'
+  },
+  marketing_sales: { 
+    label: 'Marketing & Sales', 
+    icon: Megaphone, 
+    colorClass: 'text-feature-marketing',
+    cssVar: '--feature-marketing'
+  },
+  analytics_reports: { 
+    label: 'Analytics & Reports', 
+    icon: BarChart3, 
+    colorClass: 'text-feature-overview',
+    cssVar: '--feature-overview'
+  },
 };
 
 
@@ -338,7 +369,7 @@ export default function AIAgentsHub() {
           <TabsContent value="agents" className="space-y-6">
             {/* Quick Stats */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {Object.entries(CATEGORY_INFO).map(([key, { label, icon: Icon, color }]) => {
+              {Object.entries(CATEGORY_INFO).map(([key, { label, icon: Icon, colorClass }]) => {
                 const categoryAgents = accessibleAgents.filter(a => a.category === key);
                 if (categoryAgents.length === 0) return null;
                 const enabled = categoryAgents.filter(a => a.is_enabled).length;
@@ -350,7 +381,15 @@ export default function AIAgentsHub() {
                   >
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3">
-                        <Icon className={`h-5 w-5 ${color}`} />
+                        <div className={cn(
+                          "p-1.5 rounded-lg",
+                          enabled > 0 && "feature-pulse-active"
+                        )}
+                        style={{ 
+                          backgroundColor: `hsl(var(${CATEGORY_INFO[key].cssVar}) / 0.15)` 
+                        }}>
+                          <Icon className={`h-5 w-5 ${colorClass}`} />
+                        </div>
                         <div>
                           <p className="text-sm font-medium">{label}</p>
                           <p className="text-xs text-muted-foreground">
@@ -500,8 +539,16 @@ function AgentCard({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg bg-muted`}>
-              <Icon className={`h-5 w-5 ${categoryInfo?.color || 'text-primary'}`} />
+            <div 
+              className={cn(
+                "p-2 rounded-lg",
+                agent.is_enabled && "feature-pulse-active"
+              )}
+              style={{ 
+                backgroundColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.15)` 
+              }}
+            >
+              <Icon className={`h-5 w-5 ${categoryInfo?.colorClass || 'text-primary'}`} />
             </div>
             <div>
               <CardTitle className="text-lg tracking-wide">{agent.name}</CardTitle>
@@ -533,7 +580,15 @@ function AgentCard({
       <CardContent>
         <div className="space-y-3">
           <div className="flex items-center gap-2 flex-wrap">
-            <Badge variant={agent.is_enabled ? 'default' : 'secondary'}>
+            <Badge 
+              variant={agent.is_enabled ? 'default' : 'secondary'}
+              style={agent.is_enabled ? {
+                backgroundColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.15)`,
+                color: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}))`,
+                borderColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.3)`,
+              } : undefined}
+              className={agent.is_enabled ? 'border' : ''}
+            >
               {agent.is_enabled ? (
                 <>
                   <Zap className="h-3 w-3 mr-1" />
@@ -561,7 +616,7 @@ function AgentCard({
               variant="ghost" 
               size="sm" 
               onClick={onClick}
-              className="text-primary"
+              className={categoryInfo?.colorClass || 'text-primary'}
               disabled={!isAvailableInTier}
             >
               Configure
