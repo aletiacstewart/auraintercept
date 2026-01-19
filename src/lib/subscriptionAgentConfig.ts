@@ -41,12 +41,13 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Customer + Field operations + Online booking',
   },
   command: {
+    // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
     agents: [
       'triage', 'booking', 'followup', 'review',
       'dispatch', 'route', 'eta', 'checkin',
       'admin', 'quoting', 'invoice', 'inventory', 'warranty',
-      'campaign',
-      'insights', 'performance', 'revenue', 'forecast'
+      'campaign', 'marketing',
+      'insights', 'performance', 'revenue', 'forecast', 'analytics'
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'analytics_reports'],
     label: 'Command',
