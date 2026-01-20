@@ -101,7 +101,9 @@ export function SetupProgressBar() {
           {
             id: 'default-prefs',
             label: 'Default Prefs',
-            completed: company?.default_email_enabled !== null || company?.default_sms_enabled !== null,
+            // Only count as completed once the defaults have been explicitly changed from the initial defaults.
+            // (Initial defaults are true/true/true)
+            completed: company?.default_email_enabled === false || company?.default_sms_enabled === false || company?.default_call_enabled === false,
           },
           {
             id: 'reports',

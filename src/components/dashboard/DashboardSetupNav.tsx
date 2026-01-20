@@ -53,6 +53,8 @@ export function DashboardSetupNav() {
           businessHoursRes,
           agentConfigsRes,
           smartWebsiteRes,
+          crmConnectionsRes,
+          googleCalendarConnectionsRes,
         ] = await Promise.all([
           supabase.from('companies').select('*').eq('id', companyId).single(),
           supabase.from('reminder_settings').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
@@ -66,6 +68,8 @@ export function DashboardSetupNav() {
           supabase.from('business_hours').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
           supabase.from('ai_agent_configs').select('id, is_enabled', { count: 'exact' }).eq('company_id', companyId),
           supabase.from('smart_websites').select('*').eq('company_id', companyId).maybeSingle(),
+          supabase.from('crm_connections').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
+          supabase.from('google_calendar_connections').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         ]);
 
         const company = companyRes.data;
@@ -77,7 +81,8 @@ export function DashboardSetupNav() {
           !!company?.public_app_url, // App URL
           (reminderSettingsRes.count || 0) > 0 || !!company?.callback_delay_seconds, // Reminders
           !!company?.missed_call_action, // Missed Calls
-          company?.default_email_enabled !== null || company?.default_sms_enabled !== null, // Default Prefs
+          // Only count as completed once defaults are changed from initial defaults (true/true/true)
+          company?.default_email_enabled === false || company?.default_sms_enabled === false || company?.default_call_enabled === false, // Default Prefs
           !!(company?.weekly_digest_enabled || company?.monthly_digest_enabled || company?.quarterly_digest_enabled), // Reports
           !!(company?.cost_alert_enabled || company?.bounce_alert_enabled || company?.unsubscribe_alert_enabled), // Alerts
           company?.customer_prefs_enabled === true || company?.customer_prefs_enabled === false, // Customer Prefs
@@ -103,10 +108,10 @@ export function DashboardSetupNav() {
         ];
         const knowledgeProgress = (knowledgeSteps.filter(Boolean).length / knowledgeSteps.length) * 100;
 
-        // Overview (Dashboard) - considered complete if company exists with basic info
+        // 3rd Party Overview progress (connections)
         const overviewSteps = [
-          !!company?.name,
-          !!company?.email || !!company?.phone,
+          (crmConnectionsRes.count || 0) > 0, // CRM connected
+          (googleCalendarConnectionsRes.count || 0) > 0, // Calendar connected
         ];
         const overviewProgress = (overviewSteps.filter(Boolean).length / overviewSteps.length) * 100;
 
