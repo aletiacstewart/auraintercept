@@ -287,9 +287,10 @@ export default function Integrations() {
         {/* Setup Progress */}
         {(() => {
           const isTTSConfigured = !!integrations?.elevenlabs_api_key;
+          const isStripeConfigured = !!(integrations?.stripe_publishable_key && integrations?.stripe_secret_key);
           
           const statuses = [
-            { name: 'Stripe', connected: true, icon: CreditCard, color: 'bg-purple-500' },
+            { name: 'Stripe', connected: isStripeConfigured, icon: CreditCard, color: 'bg-purple-500' },
             { name: 'Email', connected: !!integrations?.resend_api_key, icon: Mail, color: 'bg-emerald-500' },
             { name: 'SMS', connected: !!(integrations?.twilio_account_sid && integrations?.twilio_auth_token && integrations?.twilio_phone_number), icon: Phone, color: 'bg-red-500' },
             { name: 'Voice', connected: isTTSConfigured, icon: Mic, color: 'bg-blue-500' },
