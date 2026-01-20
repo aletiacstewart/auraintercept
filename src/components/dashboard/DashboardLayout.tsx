@@ -94,7 +94,6 @@ const navGroups: NavGroup[] = [
       { label: 'Business Ops Overview', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
       { label: 'Business Ops Hub', icon: Briefcase, href: '/dashboard/business-ops-hub', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform' },
       { label: 'Analytics & Reports', icon: Cpu, href: '/dashboard/analytics-reports', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
-      { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-overview' },
     ],
   },
   // Analytics & Reports moved under Business Management
@@ -149,6 +148,7 @@ const navGroups: NavGroup[] = [
   {
     label: 'Platform Resources',
     items: [
+      { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-overview' },
       { label: 'Platform Issues', icon: AlertTriangle, href: '/dashboard/platform-issues', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Platform Guides', icon: FileText, href: '/dashboard/platform-guides', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-overview' },
