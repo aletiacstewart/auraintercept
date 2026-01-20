@@ -80,7 +80,7 @@ export default function CustomerPortalConsole() {
             />
             
             {viewMode === 'customer' ? (
-              <AIAgentConsole allowCompanySelection={userRole === 'platform_admin'} />
+              <AIAgentConsole allowCompanySelection={userRole === 'platform_admin' || userRole === 'company_admin'} />
             ) : (
               <AIAgentChat />
             )}
