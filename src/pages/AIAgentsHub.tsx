@@ -633,13 +633,13 @@ function AgentCard({
                   ? "text-amber-500"
                   : "text-muted-foreground"
               )} />
-              <p className={cn(
-                "text-xs",
-                isAvailableInTier && missingDependencies.length > 0
-                  ? "text-amber-200"
-                  : "text-muted-foreground"
-              )}>
-                <span className="font-medium">Requires:</span> {allDependencyNames.join(', ')}
+              <p className="text-xs text-card-foreground">
+                <span className={cn(
+                  "font-medium",
+                  isAvailableInTier && missingDependencies.length > 0
+                    ? "text-amber-400"
+                    : "text-primary"
+                )}>Requires:</span> {allDependencyNames.join(', ')}
               </p>
             </div>
           )}
