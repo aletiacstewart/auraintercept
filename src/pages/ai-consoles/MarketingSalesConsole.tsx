@@ -17,7 +17,7 @@ export default function MarketingSalesConsole() {
   return (
     <DashboardLayout>
       <PageContainer>
-        <FeatureGate requiredTier="enterprise">
+        <FeatureGate requiredTier="command">
           <div className="space-y-6">
             <PageHeader
               icon={Megaphone}
