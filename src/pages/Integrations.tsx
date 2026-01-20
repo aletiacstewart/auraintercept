@@ -89,9 +89,13 @@ const INTEGRATIONS: Integration[] = [
     icon: CreditCard,
     color: 'bg-purple-500',
     docsUrl: 'https://dashboard.stripe.com/apikeys',
-    fields: [],
-    checkConnection: () => true,
-    note: '💡 Platform managed. 2.9% + $0.30 per transaction. No setup needed for your reminders.',
+    fields: [
+      { key: 'stripe_publishable_key', label: 'Publishable Key', placeholder: 'pk_live_... or pk_test_...', type: 'text', required: true },
+      { key: 'stripe_secret_key', label: 'Secret Key', placeholder: 'sk_live_... or sk_test_...', type: 'password', required: true },
+      { key: 'stripe_webhook_secret', label: 'Webhook Secret (Optional)', placeholder: 'whsec_...', type: 'password', required: false },
+    ],
+    checkConnection: (data) => !!(data.stripe_publishable_key && data.stripe_secret_key),
+    note: '💡 Set up your own Stripe account. 2.9% + $0.30 per transaction. Required for invoice payments.',
   },
   {
     id: 'twilio',
