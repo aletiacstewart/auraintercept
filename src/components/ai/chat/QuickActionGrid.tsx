@@ -41,9 +41,10 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
           size="sm"
           className={cn(
             'h-auto flex-col gap-1.5 py-3 px-2 text-xs',
-            'bg-slate-700/80 border-slate-600/50 text-white hover:bg-slate-600 hover:border-primary/50 transition-colors',
+            'border-border/50 text-white hover:opacity-90 hover:border-primary/50 transition-colors',
             action.variant === 'destructive' && 'bg-destructive text-white hover:bg-destructive/90 border-destructive'
           )}
+          style={{ background: 'hsl(208 30% 18%)' }}
           onClick={() => onAction(action.message, action.id)}
         >
           <action.icon className={cn("h-5 w-5", action.featureColor)} />
@@ -64,7 +65,7 @@ export const QuickActionBar: React.FC<QuickActionBarProps> = ({
   onAction,
 }) => {
   return (
-    <div className="shrink-0 border-t border-slate-600/50 bg-slate-700/80 p-2 overflow-hidden">
+    <div className="shrink-0 border-t border-border/50 p-2 overflow-hidden" style={{ background: 'hsl(208 30% 18%)' }}>
       <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {actions.map((action) => (
           <Button
