@@ -40,14 +40,14 @@
 
     --radius: 0.75rem;
 
-    /* Sidebar - Dark Navy #2a3d4e */
-    --sidebar-background: 208 30% 24%;
+    /* Sidebar - Dark Navy matching navigation */
+    --sidebar-background: 208 30% 18%;
     --sidebar-foreground: 189 45% 95%;
     --sidebar-primary: 199 60% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 208 30% 30%;
+    --sidebar-accent: 208 30% 24%;
     --sidebar-accent-foreground: 189 45% 95%;
-    --sidebar-border: 208 30% 32%;
+    --sidebar-border: 208 30% 28%;
     --sidebar-ring: 199 60% 55%;
 
     /* Custom gradients - Royal Blue → Sky Blue */
