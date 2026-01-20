@@ -99,7 +99,7 @@ const navGroups: NavGroup[] = [
   },
   // Analytics & Reports moved under Business Management
   {
-    label: 'Business Mobile Consoles',
+    label: 'Business Mobile Apps',
     items: [
       { label: 'Business Mgt Ops Console', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform' },
       { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform' },
