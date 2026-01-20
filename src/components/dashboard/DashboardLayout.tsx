@@ -66,11 +66,13 @@ interface NavItem {
   requiredJobTypes?: string[];
   external?: boolean;
   featureColor?: string;
+  requiredTier?: 'single_point' | 'multi_track' | 'command';
 }
 
 interface NavGroup {
   label: string;
   items: NavItem[];
+  requiredTier?: 'single_point' | 'multi_track' | 'command';
 }
 
 const navGroups: NavGroup[] = [
@@ -90,29 +92,31 @@ const navGroups: NavGroup[] = [
   },
   {
     label: 'Business Management',
+    requiredTier: 'command',
     items: [
-      { label: 'Business Ops Overview', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
-      { label: 'Business Ops Hub', icon: Briefcase, href: '/dashboard/business-ops-hub', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform' },
-      { label: 'Analytics & Reports', icon: Cpu, href: '/dashboard/analytics-reports', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
+      { label: 'Business Ops Overview', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics', requiredTier: 'command' },
+      { label: 'Business Ops Hub', icon: Briefcase, href: '/dashboard/business-ops-hub', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+      { label: 'Analytics & Reports', icon: Cpu, href: '/dashboard/analytics-reports', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics', requiredTier: 'command' },
     ],
   },
-  // Analytics & Reports moved under Business Management
   {
     label: 'Business Mobile Apps',
+    requiredTier: 'command',
     items: [
-      { label: 'Business Mgt Ops Console', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform' },
-      { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform' },
-      { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
-      { label: 'Marketing & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'], featureColor: 'text-feature-platform' },
+      { label: 'Business Mgt Ops Console', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+      { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+      { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+      { label: 'Marketing & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
     ],
   },
   {
     label: 'Field-Dispatch Mobile Apps',
+    requiredTier: 'multi_track',
     items: [
-      { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'], featureColor: 'text-feature-fieldops' },
-      { label: 'Technician Field Ops Install', icon: Smartphone, href: '/dashboard/field-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops' },
-      { label: 'Dispatch-Field Ops', icon: Map, href: '/dashboard/dispatch-field-ops', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops' },
-      { label: 'Dispatch Field Ops Install', icon: Smartphone, href: '/dashboard/dispatch-field-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops' },
+      { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'], featureColor: 'text-feature-fieldops', requiredTier: 'multi_track' },
+      { label: 'Technician Field Ops Install', icon: Smartphone, href: '/dashboard/field-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'multi_track' },
+      { label: 'Dispatch-Field Ops', icon: Map, href: '/dashboard/dispatch-field-ops', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'multi_track' },
+      { label: 'Dispatch Field Ops Install', icon: Smartphone, href: '/dashboard/dispatch-field-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-fieldops', requiredTier: 'multi_track' },
     ],
   },
   {
@@ -126,7 +130,6 @@ const navGroups: NavGroup[] = [
   {
     label: 'Configuration',
     items: [
-      
       { label: 'AI Agents Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'Calculators', icon: BarChart3, href: '/dashboard/calculators', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
@@ -244,11 +247,23 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const userHasFullAccess = userRole === 'platform_admin' || userRole === 'company_admin' || 
     (userRole === 'employee' && jobTypes.some(jt => ['manager', 'customer_service'].includes(jt)));
 
-  // Filter groups and items based on user role and job types
+  // Get subscription tier for tier-based filtering
+  const { isAtLeastTier, inTrial } = useSubscription();
+
+  // Platform admin always sees everything
+  const isPlatformAdmin = userRole === 'platform_admin';
+
+  // Filter groups and items based on user role, job types, and subscription tier
   const filteredNavGroups = navGroups
     .filter(group => {
       // Filter out restricted sections for employees without full access
       if (restrictedSections.includes(group.label) && !userHasFullAccess) {
+        return false;
+      }
+      // Platform admin sees everything, skip tier check
+      if (isPlatformAdmin) return true;
+      // Check group-level tier requirement (skip if in trial)
+      if (group.requiredTier && !inTrial && !isAtLeastTier(group.requiredTier)) {
         return false;
       }
       return true;
@@ -258,6 +273,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       items: group.items.filter(item => {
         // Check basic role permission
         if (!userRole || !item.roles.includes(userRole as UserRole)) return false;
+        
+        // Platform admin sees all items
+        if (isPlatformAdmin) return true;
+        
+        // Check item-level tier requirement (skip if in trial)
+        if (item.requiredTier && !inTrial && !isAtLeastTier(item.requiredTier)) {
+          return false;
+        }
         
         // For employees, check job type requirements if specified
         if (userRole === 'employee' && item.requiredJobTypes) {

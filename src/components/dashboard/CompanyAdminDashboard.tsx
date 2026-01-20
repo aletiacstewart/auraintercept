@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSubscription, SubscriptionTier } from '@/hooks/useSubscription';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageContainer } from '@/components/ui/page-container';
 import { Button } from '@/components/ui/button';
@@ -17,8 +18,12 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import { CompanyGuidesPDF } from '@/components/documentation/CompanyGuidesPDF';
 
 export function CompanyAdminDashboard() {
-  const { companyId } = useAuth();
+  const { companyId, userRole } = useAuth();
+  const { isAtLeastTier, inTrial } = useSubscription();
   const navigate = useNavigate();
+  
+  // Platform admin sees everything
+  const isPlatformAdmin = userRole === 'platform_admin';
 
   const { data: company, isLoading: companyLoading } = useQuery({
     queryKey: ['company', companyId],
@@ -139,7 +144,15 @@ export function CompanyAdminDashboard() {
 
   const isLoading = companyLoading || statsLoading;
 
-  const statCards = [
+  // Helper to check tier access
+  const hasTierAccess = (requiredTier?: SubscriptionTier) => {
+    if (!requiredTier) return true;
+    if (isPlatformAdmin) return true;
+    if (inTrial) return true;
+    return isAtLeastTier(requiredTier);
+  };
+
+  const allStatCards = [
     { 
       title: 'Employees', 
       value: stats?.employees ?? 0, 
@@ -162,7 +175,8 @@ export function CompanyAdminDashboard() {
       icon: Target, 
       description: `${stats?.newLeads ?? 0} new`,
       colorClass: 'bg-feature-leads/15 text-feature-leads',
-      href: '/dashboard/leads'
+      href: '/dashboard/leads',
+      requiredTier: 'multi_track' as SubscriptionTier
     },
     {
       title: 'Appointments', 
@@ -186,7 +200,8 @@ export function CompanyAdminDashboard() {
       icon: Receipt, 
       description: `$${(stats?.outstandingTotal ?? 0).toLocaleString()} unpaid`,
       colorClass: 'bg-feature-invoices/15 text-feature-invoices',
-      href: '/dashboard/invoices'
+      href: '/dashboard/invoices',
+      requiredTier: 'multi_track' as SubscriptionTier
     },
     { 
       title: 'Revenue (Month)', 
@@ -211,7 +226,8 @@ export function CompanyAdminDashboard() {
       icon: Package, 
       description: stats?.lowStockItems ? `${stats.lowStockItems} low stock` : 'Items tracked',
       colorClass: 'bg-feature-inventory/15 text-feature-inventory',
-      href: '/dashboard/inventory'
+      href: '/dashboard/inventory',
+      requiredTier: 'multi_track' as SubscriptionTier
     },
     { 
       title: 'Warranties', 
@@ -219,7 +235,8 @@ export function CompanyAdminDashboard() {
       icon: Shield, 
       description: 'Active policies',
       colorClass: 'bg-feature-warranties/15 text-feature-warranties',
-      href: '/dashboard/warranties'
+      href: '/dashboard/warranties',
+      requiredTier: 'command' as SubscriptionTier
     },
     { 
       title: 'Campaigns', 
@@ -227,21 +244,28 @@ export function CompanyAdminDashboard() {
       icon: Megaphone, 
       description: `${stats?.totalCampaigns ?? 0} total campaigns`,
       colorClass: 'bg-feature-marketing/15 text-feature-marketing',
-      href: '/dashboard/campaigns'
+      href: '/dashboard/campaigns',
+      requiredTier: 'command' as SubscriptionTier
     },
   ];
 
-  const quickActions = [
+  // Filter stat cards by tier
+  const statCards = allStatCards.filter(card => hasTierAccess(card.requiredTier));
+
+  const allQuickActions = [
     { label: 'Appointments', icon: Calendar, colorClass: 'bg-feature-appointments/15 text-feature-appointments', href: '/dashboard/appointments' },
     { label: 'Analytics', icon: TrendingUp, colorClass: 'bg-feature-analytics/15 text-feature-analytics', href: '/dashboard/analytics' },
     { label: 'Communication Logs', icon: MessageSquare, colorClass: 'bg-channel-sms/15 text-channel-sms', href: '/dashboard/messages' },
     { label: 'Knowledge Base', icon: FileText, colorClass: 'bg-primary/15 text-primary', href: '/dashboard/knowledge' },
-    { label: 'Inventory', icon: Package, colorClass: 'bg-feature-inventory/15 text-feature-inventory', href: '/dashboard/inventory' },
-    { label: 'Warranties', icon: Shield, colorClass: 'bg-feature-warranties/15 text-feature-warranties', href: '/dashboard/warranties' },
-    { label: 'Campaigns', icon: Megaphone, colorClass: 'bg-feature-marketing/15 text-feature-marketing', href: '/dashboard/campaigns' },
+    { label: 'Inventory', icon: Package, colorClass: 'bg-feature-inventory/15 text-feature-inventory', href: '/dashboard/inventory', requiredTier: 'multi_track' as SubscriptionTier },
+    { label: 'Warranties', icon: Shield, colorClass: 'bg-feature-warranties/15 text-feature-warranties', href: '/dashboard/warranties', requiredTier: 'command' as SubscriptionTier },
+    { label: 'Campaigns', icon: Megaphone, colorClass: 'bg-feature-marketing/15 text-feature-marketing', href: '/dashboard/campaigns', requiredTier: 'command' as SubscriptionTier },
     { label: 'Calculators', icon: DollarSign, colorClass: 'bg-feature-analytics/15 text-feature-analytics', href: '/dashboard/calculators' },
     { label: 'Integrations', icon: Puzzle, colorClass: 'bg-muted text-muted-foreground', href: '/dashboard/3rd-party-overview' },
   ];
+
+  // Filter quick actions by tier
+  const quickActions = allQuickActions.filter(action => hasTierAccess(action.requiredTier));
 
   return (
     <PageContainer>
