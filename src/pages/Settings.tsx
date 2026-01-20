@@ -16,17 +16,18 @@ import { PublicAppUrlSettings } from '@/components/company/PublicAppUrlSettings'
 import { ContactInfoSettings } from '@/components/company/ContactInfoSettings';
 import { SetupProgressBar } from '@/components/company/SetupProgressBar';
 import { VoiceOnboardingSettings } from '@/components/settings/VoiceOnboardingSettings';
+import { SystemSettings } from '@/components/settings/SystemSettings';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
-import { Settings as SettingsIcon, Mic } from 'lucide-react';
+import { Settings as SettingsIcon, Mic, HardDrive } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
 const VALID_TABS = [
   'branding', 'contact', 'app-url', 'reminders', 'missed-calls', 
   'default-prefs', 'reports', 'alerts', 'customer-prefs', 
-  'emails', 'sms', 'reviews', 'warranties', 'campaigns', 'voice'
+  'emails', 'sms', 'reviews', 'warranties', 'campaigns', 'voice', 'system'
 ];
 
 export default function Settings() {
@@ -75,6 +76,10 @@ export default function Settings() {
                 <Mic className="w-3 h-3" />
                 Ask Aura
               </TabsTrigger>
+              <TabsTrigger value="system" className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+                <HardDrive className="w-3 h-3" />
+                System
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="branding">
               <BrandingSettings />
@@ -120,6 +125,9 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="voice">
               <VoiceOnboardingSettings />
+            </TabsContent>
+            <TabsContent value="system">
+              <SystemSettings />
             </TabsContent>
           </Tabs>
           </div>
