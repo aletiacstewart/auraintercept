@@ -17,7 +17,7 @@ export default function DispatchFieldOpsInstall() {
         <div className="space-y-6">
           <PageHeader
             icon={MapPin}
-            title="Dispatch-Field Ops App Installation"
+            title="Dispatch Field Ops Install"
             description="Deploy the Dispatch Field Ops mobile app to your dispatchers' and managers' devices"
             featureColor="fieldops"
           />
