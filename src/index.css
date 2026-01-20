@@ -403,10 +403,10 @@
   }
 
   .glass-primary {
-    background: linear-gradient(135deg, hsl(223 73% 43% / 0.15) 0%, hsl(199 60% 55% / 0.15) 100%);
+    background: hsl(208 30% 18%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid hsl(223 73% 43% / 0.2);
+    border: 1px solid hsl(208 30% 28% / 0.5);
   }
 
   /* Glow effects - Royal Blue to Sky Blue */
