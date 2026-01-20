@@ -144,7 +144,7 @@ export default function EmailIntegration() {
         <div className="space-y-6 animate-fade-in">
           <PageHeader
             icon={Mail}
-            title="Email Integration"
+            title="Email"
             description="Configure email notifications and reminders"
             featureColor="integrations"
             action={

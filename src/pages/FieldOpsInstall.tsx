@@ -17,7 +17,7 @@ export default function FieldOpsInstall() {
         <div className="space-y-6">
           <PageHeader
             icon={Truck}
-            title="Field Ops App Installation"
+            title="Technician Field Ops Install"
             description="Deploy the Field Ops mobile app to your technicians' devices"
             featureColor="fieldops"
           />

@@ -160,7 +160,7 @@ export default function VoiceIntegration() {
         <div className="space-y-6 animate-fade-in">
           <PageHeader
             icon={Mic}
-            title="Voice Integration"
+            title="Voice Agent"
             description="Configure AI voice synthesis for calls and reminders"
             featureColor="integrations"
             action={
