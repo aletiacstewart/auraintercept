@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -6,19 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
 import { 
   CreditCard, 
   Key, 
   Check, 
-  AlertCircle,
   ArrowLeft,
   Shield,
   ExternalLink,
   Eye,
-  EyeOff
+  EyeOff,
+  Loader2
 } from 'lucide-react';
 
 interface PaymentConnectionsSettingsProps {
@@ -32,11 +31,62 @@ export function PaymentConnectionsSettings({ companyId, onBack }: PaymentConnect
   const [publishableKey, setPublishableKey] = useState('');
   const [secretKey, setSecretKey] = useState('');
   const [webhookSecret, setWebhookSecret] = useState('');
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
-  // In a real implementation, you'd fetch existing settings from a tenant_integrations table
-  // For now, we'll use local state as a demonstration
+  // Fetch existing Stripe credentials
+  const { data: integrations, isLoading } = useQuery({
+    queryKey: ['stripe-integration', companyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tenant_integrations')
+        .select('stripe_publishable_key, stripe_secret_key, stripe_webhook_secret')
+        .eq('company_id', companyId)
+        .maybeSingle();
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  // Initialize form with existing data
+  useEffect(() => {
+    if (integrations) {
+      setPublishableKey(integrations.stripe_publishable_key || '');
+      setSecretKey(integrations.stripe_secret_key || '');
+      setWebhookSecret(integrations.stripe_webhook_secret || '');
+    }
+  }, [integrations]);
+
+  const isEnabled = !!(integrations?.stripe_publishable_key && integrations?.stripe_secret_key);
+
+  const saveMutation = useMutation({
+    mutationFn: async (data: { 
+      stripe_publishable_key: string; 
+      stripe_secret_key: string; 
+      stripe_webhook_secret: string | null;
+    }) => {
+      const { error } = await supabase
+        .from('tenant_integrations')
+        .upsert({
+          company_id: companyId,
+          stripe_publishable_key: data.stripe_publishable_key,
+          stripe_secret_key: data.stripe_secret_key,
+          stripe_webhook_secret: data.stripe_webhook_secret || null,
+          updated_at: new Date().toISOString(),
+        }, {
+          onConflict: 'company_id',
+        });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['stripe-integration', companyId] });
+      queryClient.invalidateQueries({ queryKey: ['integrations', companyId] });
+      toast.success('Stripe settings saved successfully');
+    },
+    onError: (error) => {
+      console.error('Failed to save Stripe settings:', error);
+      toast.error('Failed to save Stripe settings');
+    },
+  });
 
   const handleSave = async () => {
     if (!publishableKey.startsWith('pk_')) {
@@ -48,35 +98,31 @@ export function PaymentConnectionsSettings({ companyId, onBack }: PaymentConnect
       return;
     }
 
-    setIsSaving(true);
-    try {
-      // In production, save to tenant_integrations table with encrypted secrets
-      // For demo purposes, show success
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success('Payment settings saved successfully');
-      setIsEnabled(true);
-    } catch (error) {
-      toast.error('Failed to save payment settings');
-    } finally {
-      setIsSaving(false);
-    }
+    saveMutation.mutate({
+      stripe_publishable_key: publishableKey,
+      stripe_secret_key: secretKey,
+      stripe_webhook_secret: webhookSecret || null,
+    });
   };
 
   const handleDisconnect = async () => {
-    setIsSaving(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setPublishableKey('');
-      setSecretKey('');
-      setWebhookSecret('');
-      setIsEnabled(false);
-      toast.success('Payment gateway disconnected');
-    } catch (error) {
-      toast.error('Failed to disconnect');
-    } finally {
-      setIsSaving(false);
-    }
+    saveMutation.mutate({
+      stripe_publishable_key: '',
+      stripe_secret_key: '',
+      stripe_webhook_secret: '',
+    });
+    setPublishableKey('');
+    setSecretKey('');
+    setWebhookSecret('');
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -91,7 +137,7 @@ export function PaymentConnectionsSettings({ companyId, onBack }: PaymentConnect
           </div>
           <div>
             <h2 className="text-lg font-bold text-foreground">Payment Connections</h2>
-            <p className="text-xs text-muted-foreground">Configure payment gateway for invoicing</p>
+            <p className="text-xs text-muted-foreground">Configure your Stripe account for invoicing</p>
           </div>
         </div>
       </div>
@@ -105,7 +151,7 @@ export function PaymentConnectionsSettings({ companyId, onBack }: PaymentConnect
                 <CreditCard className={`h-5 w-5 ${isEnabled ? 'text-green-500' : 'text-muted-foreground'}`} />
               </div>
               <div>
-                <h3 className="font-medium">Stripe Integration</h3>
+                <h3 className="font-medium">Your Stripe Account</h3>
                 <p className="text-sm text-muted-foreground">
                   Accept payments directly on invoices
                 </p>
@@ -207,7 +253,7 @@ export function PaymentConnectionsSettings({ companyId, onBack }: PaymentConnect
           <Alert className="bg-accent/5 border-accent/20">
             <Shield className="h-4 w-4 text-accent" />
             <AlertDescription className="text-xs text-muted-foreground">
-              Your API keys are encrypted and securely stored. They are never exposed in client-side code.
+              Your API keys are securely stored. Payments go directly to your Stripe account.
             </AlertDescription>
           </Alert>
 
@@ -217,26 +263,26 @@ export function PaymentConnectionsSettings({ companyId, onBack }: PaymentConnect
                 <Button 
                   variant="outline" 
                   onClick={handleDisconnect}
-                  disabled={isSaving}
+                  disabled={saveMutation.isPending}
                   className="flex-1"
                 >
                   Disconnect
                 </Button>
                 <Button 
                   onClick={handleSave}
-                  disabled={isSaving}
+                  disabled={saveMutation.isPending}
                   className="flex-1 bg-accent hover:bg-accent/90"
                 >
-                  {isSaving ? 'Saving...' : 'Update Settings'}
+                  {saveMutation.isPending ? 'Saving...' : 'Update Settings'}
                 </Button>
               </>
             ) : (
               <Button 
                 onClick={handleSave}
-                disabled={isSaving || !publishableKey || !secretKey}
+                disabled={saveMutation.isPending || !publishableKey || !secretKey}
                 className="w-full bg-accent hover:bg-accent/90"
               >
-                {isSaving ? 'Connecting...' : 'Connect Stripe'}
+                {saveMutation.isPending ? 'Connecting...' : 'Connect Stripe'}
               </Button>
             )}
           </div>
