@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -16,6 +16,9 @@ import { QuotesManager } from '@/components/quotes/QuotesManager';
 import { InvoicesManager } from '@/components/invoices/InvoicesManager';
 import { LeadsManager } from '@/components/leads';
 import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
+import { CompaniesManager } from '@/components/businessops/CompaniesManager';
+import { EmployeeManagement } from '@/components/company/EmployeeManagement';
+import { CustomersManager } from '@/components/businessops/CustomersManager';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   FileText, 
@@ -24,7 +27,10 @@ import {
   UserPlus,
   Package,
   Shield,
-  Calendar
+  Calendar,
+  Building2,
+  UserCheck,
+  UsersRound
 } from 'lucide-react';
 
 // Quick actions for Business Operations
@@ -35,6 +41,9 @@ const BASE_QUICK_ACTIONS = [
   { id: 'appointments', label: 'Appts', icon: Calendar, message: 'I need to manage appointments', featureColor: 'text-feature-appointments' },
   { id: 'inventory', label: 'Inventory', icon: Package, message: 'Manage inventory items', featureColor: 'text-feature-inventory' },
   { id: 'warranties', label: 'Warranty', icon: Shield, message: 'Manage warranties', featureColor: 'text-feature-warranties' },
+  { id: 'companies', label: 'Companies', icon: Building2, message: 'Manage companies', featureColor: 'text-feature-platform' },
+  { id: 'employees', label: 'Employees', icon: UserCheck, message: 'Manage employees', featureColor: 'text-feature-employees' },
+  { id: 'customers', label: 'Customers', icon: UsersRound, message: 'Manage customers', featureColor: 'text-feature-customers' },
 ];
 
 // Tab configuration - includes quick actions as tabs
@@ -49,7 +58,6 @@ interface BusinessOpsAgentConsoleProps {
 
 export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = ({ companyId: propCompanyId }) => {
   const { companyId: authCompanyId, user, userRole } = useAuth();
-  const navigate = useNavigate();
   const effectiveCompanyId = propCompanyId || authCompanyId;
   const isPlatformAdmin = userRole === 'platform_admin';
   
@@ -60,7 +68,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [lastAgent, setLastAgent] = useState<string>('quoting');
   const [activeFormType, setActiveFormType] = useState<
-    'quote' | 'invoice' | 'lead' | 'inventory' | 'appointments' | 'warranties' | null
+    'quote' | 'invoice' | 'lead' | 'inventory' | 'appointments' | 'warranties' | 'companies' | 'employees' | 'customers' | null
   >(null);
   
   // Form visibility states
@@ -70,6 +78,9 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const [showInventoryManager, setShowInventoryManager] = useState(false);
   const [showAppointmentsManager, setShowAppointmentsManager] = useState(false);
   const [showWarrantiesManager, setShowWarrantiesManager] = useState(false);
+  const [showCompaniesManager, setShowCompaniesManager] = useState(false);
+  const [showEmployeesManager, setShowEmployeesManager] = useState(false);
+  const [showCustomersManager, setShowCustomersManager] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -108,6 +119,9 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setShowInventoryManager(false);
     setShowAppointmentsManager(false);
     setShowWarrantiesManager(false);
+    setShowCompaniesManager(false);
+    setShowEmployeesManager(false);
+    setShowCustomersManager(false);
     setActiveFormType(null);
   };
 
@@ -158,6 +172,24 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       setActiveFormType('warranties');
       return;
     }
+    if (actionId === 'companies') {
+      hideAllForms();
+      setShowCompaniesManager(true);
+      setActiveFormType('companies');
+      return;
+    }
+    if (actionId === 'employees') {
+      hideAllForms();
+      setShowEmployeesManager(true);
+      setActiveFormType('employees');
+      return;
+    }
+    if (actionId === 'customers') {
+      hideAllForms();
+      setShowCustomersManager(true);
+      setActiveFormType('customers');
+      return;
+    }
     
     // Default: send message to AI
     hideAllForms();
@@ -172,7 +204,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setLastAgent('quoting');
   };
 
-  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showInventoryManager || showAppointmentsManager || showWarrantiesManager;
+  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showInventoryManager || showAppointmentsManager || showWarrantiesManager || showCompaniesManager || showEmployeesManager || showCustomersManager;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -184,6 +216,9 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     if (activeFormType === 'inventory') return 'Inventory';
     if (activeFormType === 'appointments') return 'Appointments';
     if (activeFormType === 'warranties') return 'Warranties';
+    if (activeFormType === 'companies') return 'Companies';
+    if (activeFormType === 'employees') return 'Employees';
+    if (activeFormType === 'customers') return 'Customers';
     if (messages.length > 0) return agentStyle.label; // Show agent label during chat
     return 'Home';
   };
@@ -191,7 +226,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const activeLabel = getActiveLabel();
 
   return (
-    <Card className="h-[600px] flex flex-col overflow-hidden shadow-xl border-slate-600/50 bg-slate-800">
+    <Card className="h-[600px] flex flex-col overflow-hidden shadow-xl border-border/50 console-surface">
       {/* Glass Header */}
       <GlassHeader
         logoUrl={company?.logo_url}
@@ -270,7 +305,23 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
                 </div>
               )}
 
-              {/* Chat Messages */}
+              {showCompaniesManager && (
+                <div className="bg-muted/50 rounded-lg border border-border p-4">
+                  <CompaniesManager />
+                </div>
+              )}
+
+              {showEmployeesManager && (
+                <div className="bg-muted/50 rounded-lg border border-border p-4">
+                  <EmployeeManagement />
+                </div>
+              )}
+
+              {showCustomersManager && (
+                <div className="bg-muted/50 rounded-lg border border-border p-4">
+                  <CustomersManager />
+                </div>
+              )}
               {!isShowingForm && messages.map((msg, idx) => {
                 const msgAgentStyle = msg.agent ? getAgentStyle(msg.agent) : agentStyle;
                 const prevAgent = idx > 0 ? messages[idx - 1].agent : null;
