@@ -32,7 +32,7 @@ export const MobileTabNav: React.FC<MobileTabNavProps> = ({
   };
 
   return (
-    <div className="shrink-0 border-b border-border/50 bg-card">
+    <div className="shrink-0 border-b border-border/50" style={{ background: 'hsl(208 30% 18%)' }}>
       <div className="flex overflow-x-auto scrollbar-hide">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
