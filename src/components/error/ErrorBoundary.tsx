@@ -1,5 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Home, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
@@ -85,6 +85,28 @@ class ErrorBoundary extends Component<Props, State> {
     window.location.reload();
   };
 
+  private handleClearCacheAndRefresh = async () => {
+    try {
+      // Unregister service workers
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map(reg => reg.unregister()));
+      }
+      
+      // Clear all caches
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+      }
+      
+      // Hard reload
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to clear cache:', error);
+      window.location.reload();
+    }
+  };
+
   private handleGoHome = () => {
     window.location.href = '/';
   };
@@ -110,10 +132,14 @@ class ErrorBoundary extends Component<Props, State> {
                 </div>
               )}
               
-              <div className="flex gap-3 justify-center">
+              <div className="flex flex-wrap gap-3 justify-center">
                 <Button onClick={this.handleRefresh} variant="default">
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Try Again
+                </Button>
+                <Button onClick={this.handleClearCacheAndRefresh} variant="secondary">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Clear Cache & Reload
                 </Button>
                 <Button onClick={this.handleGoHome} variant="outline">
                   <Home className="mr-2 h-4 w-4" />
