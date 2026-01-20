@@ -14,7 +14,6 @@ import { CampaignSettings } from '@/components/settings/CampaignSettings';
 import { MissedCallSettings } from '@/components/company/MissedCallSettings';
 import { PublicAppUrlSettings } from '@/components/company/PublicAppUrlSettings';
 import { ContactInfoSettings } from '@/components/company/ContactInfoSettings';
-import { SetupProgressBar } from '@/components/company/SetupProgressBar';
 import { VoiceOnboardingSettings } from '@/components/settings/VoiceOnboardingSettings';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -52,8 +51,7 @@ export default function Settings() {
             featureColor="config"
             showAuraBar
           />
-          
-          <SetupProgressBar />
+
           <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
             <TabsList className="inline-flex flex-wrap h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1">
               <TabsTrigger value="branding" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 data-[state=active]:text-primary transition-all">Branding</TabsTrigger>
