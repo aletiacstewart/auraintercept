@@ -318,7 +318,7 @@ export default function SmartWebsiteManager() {
 
           <TabsContent value="content" className="space-y-6">
             {/* Hero Section */}
-            <Collapsible defaultOpen>
+            <Collapsible>
               <Card>
                 <CollapsibleTrigger className="w-full">
                   <CardHeader className="flex flex-row items-center justify-between">
