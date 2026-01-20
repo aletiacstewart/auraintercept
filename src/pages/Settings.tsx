@@ -72,7 +72,7 @@ export default function Settings() {
               <TabsTrigger value="campaigns" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Campaigns</TabsTrigger>
               <TabsTrigger value="voice" className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
                 <Mic className="w-3 h-3" />
-                Aura Voice
+                Ask Aura
               </TabsTrigger>
             </TabsList>
             <TabsContent value="branding">

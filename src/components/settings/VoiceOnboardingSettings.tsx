@@ -52,7 +52,7 @@ export function VoiceOnboardingSettings() {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <CardTitle className="text-xl">Aura Voice</CardTitle>
+                <CardTitle className="text-xl">Ask Aura</CardTitle>
                 <Badge className="bg-aura-emerald/20 text-aura-emerald border-aura-emerald/30">
                   <Sparkles className="w-3 h-3 mr-1" />
                   Hands-Free Mode
@@ -100,7 +100,7 @@ export function VoiceOnboardingSettings() {
               <div>
                 <p className="font-medium text-destructive">Browser Not Supported</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Aura Voice requires the Web Speech API. Please use Chrome, Edge, or Safari for voice features.
+                  Ask Aura requires the Web Speech API. Please use Chrome, Edge, or Safari for voice features.
                 </p>
               </div>
             </div>
@@ -126,7 +126,7 @@ export function VoiceOnboardingSettings() {
             <CheckCircle2 className="w-5 h-5 text-aura-emerald" />
             Quick Start Guide
           </CardTitle>
-          <CardDescription>Get started with Aura Voice in 4 simple steps</CardDescription>
+          <CardDescription>Get started with Ask Aura in 4 simple steps</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
@@ -235,7 +235,7 @@ export function VoiceOnboardingSettings() {
           <div>
             <p className="font-medium">Voice Mode toggle not appearing?</p>
             <p className="text-sm text-card-foreground/70 mt-1">
-              Aura Voice requires a browser that supports the Web Speech API. Please use Chrome, Edge, or Safari. Firefox is not supported.
+              Ask Aura requires a browser that supports the Web Speech API. Please use Chrome, Edge, or Safari. Firefox is not supported.
             </p>
           </div>
           <Separator />
