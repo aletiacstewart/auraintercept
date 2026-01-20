@@ -190,7 +190,7 @@ export function SmartWebsiteAnalytics({
     : 0;
 
   return (
-    <Collapsible defaultOpen>
+    <Collapsible>
       <Card>
         <CollapsibleTrigger className="w-full">
           <CardHeader className="flex flex-row items-center justify-between">
