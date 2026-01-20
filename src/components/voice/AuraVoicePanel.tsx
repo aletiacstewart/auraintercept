@@ -72,7 +72,7 @@ export function AuraVoicePanel({ collapsed = false }: AuraVoicePanelProps) {
             "text-sm font-semibold",
             isVoiceModeEnabled ? "text-aura-emerald" : "text-sidebar-foreground"
           )}>
-            Aura Voice
+            Ask Aura
           </span>
         </div>
         <Badge 

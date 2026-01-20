@@ -220,7 +220,7 @@ export default function Help() {
             </TabsTrigger>
             <TabsTrigger value="voice" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <Mic className="h-4 w-4" />
-              Aura Voice
+              Ask Aura
             </TabsTrigger>
             <TabsTrigger value="company-employee" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <Building2 className="h-4 w-4" />
@@ -331,7 +331,7 @@ export default function Help() {
                     <Mic className="w-5 h-5 text-aura-emerald" />
                   </div>
                   <div>
-                    <CardTitle>Aura Voice - Hands-Free Mode</CardTitle>
+                    <CardTitle>Ask Aura - Hands-Free Mode</CardTitle>
                     <CardDescription className="text-card-foreground/70">Control the platform with your voice using the Web Speech API</CardDescription>
                   </div>
                 </div>
@@ -348,7 +348,7 @@ export default function Help() {
                       <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center flex-shrink-0">1</Badge>
                       <div>
                         <p className="font-medium text-card-foreground">Toggle in Sidebar</p>
-                        <p className="text-sm text-card-foreground/70">Look for the <strong className="text-aura-emerald">Aura Voice</strong> panel at the top of the sidebar and flip the switch.</p>
+                        <p className="text-sm text-card-foreground/70">Look for the <strong className="text-aura-emerald">Ask Aura</strong> panel at the top of the sidebar and flip the switch.</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
@@ -456,7 +456,7 @@ export default function Help() {
                     <AccordionItem value="browser-support">
                       <AccordionTrigger>Voice toggle not appearing?</AccordionTrigger>
                       <AccordionContent>
-                        <p className="text-card-foreground/70">Aura Voice requires the Web Speech API. Please use <strong className="text-card-foreground">Chrome</strong>, <strong className="text-card-foreground">Edge</strong>, or <strong className="text-card-foreground">Safari</strong>. Firefox is not supported.</p>
+                        <p className="text-card-foreground/70">Ask Aura requires the Web Speech API. Please use <strong className="text-card-foreground">Chrome</strong>, <strong className="text-card-foreground">Edge</strong>, or <strong className="text-card-foreground">Safari</strong>. Firefox is not supported.</p>
                       </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="commands-not-recognized">

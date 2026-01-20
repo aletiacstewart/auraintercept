@@ -57,7 +57,7 @@ export function VoiceModeToggle({ className, showLabel = false, size = 'default'
       </TooltipTrigger>
       <TooltipContent side="bottom" className="flex flex-col gap-1">
         <span className="font-medium">
-          {isVoiceModeEnabled ? 'Disable Aura Voice' : 'Enable Aura Voice'}
+          {isVoiceModeEnabled ? 'Disable Ask Aura' : 'Enable Ask Aura'}
         </span>
         <span className="text-xs text-muted-foreground">
           Ctrl+Shift+V
