@@ -200,16 +200,18 @@ export default function AIAgentsHub() {
   const HIDDEN_CATEGORIES_FOR_NON_PLATFORM_ADMIN = ['marketing_sales'];
 
   // Filter agents based on job roles for employees
+  // For company_admin, show ALL agents (tier locking handled in UI)
+  // Only filter for employees based on job roles
   const accessibleAgents = useMemo(() => {
     // Platform admins see all agents
     if (userRole === 'platform_admin') {
       return agents;
     }
     
-    // Company admins see all agents except hidden ones (including marketing_sales category)
+    // Company admins see ALL agents (including locked ones for visibility)
+    // Only hide marketing_sales category which is platform-only
     if (userRole === 'company_admin') {
       return agents.filter(a => 
-        !HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN.includes(a.type) &&
         !HIDDEN_CATEGORIES_FOR_NON_PLATFORM_ADMIN.includes(a.category)
       );
     }
@@ -507,57 +509,50 @@ function AgentCard({
   const categoryInfo = CATEGORY_INFO[agent.category];
   const Icon = categoryInfo?.icon || Bot;
   const navigate = useNavigate();
+  const { getAgentDependencies } = useSubscription();
 
   const tierInfo = requiredTier ? getTierInfo(requiredTier) : null;
+  
+  // Get ALL dependencies for this agent (not just missing ones)
+  const allDependencies = getAgentDependencies(agent.type);
+  const allDependencyNames = allDependencies.map(dep => AGENT_NAMES[dep] || dep);
 
   return (
-    <Card className={`hover:shadow-lg transition-all relative ${!isAvailableInTier ? 'opacity-75' : ''}`}>
-      {/* Locked Overlay */}
-      {!isAvailableInTier && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-10 rounded-lg">
-          <div className="text-center p-4">
-            <Lock className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-            <p className="text-sm font-medium mb-1">Upgrade Required</p>
-            <p className="text-xs text-muted-foreground mb-3">
-              Upgrade to {tierInfo?.label || 'a higher plan'} to access
-            </p>
-            <Button 
-              size="sm" 
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate('/dashboard/subscription');
-              }}
-              className="gap-1"
-            >
-              <Sparkles className="h-3 w-3" />
-              Upgrade
-            </Button>
-          </div>
-        </div>
-      )}
-
+    <Card className={cn(
+      "hover:shadow-lg transition-all relative",
+      !isAvailableInTier && "opacity-80 border-dashed border-muted-foreground/30"
+    )}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div 
               className={cn(
                 "p-2 rounded-lg",
-                agent.is_enabled && "feature-pulse-active"
+                agent.is_enabled && isAvailableInTier && "feature-pulse-active",
+                !isAvailableInTier && "opacity-50"
               )}
               style={{ 
                 backgroundColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.15)` 
               }}
             >
-              <Icon className={`h-5 w-5 ${categoryInfo?.colorClass || 'text-primary'}`} />
+              <Icon className={cn(
+                `h-5 w-5 ${categoryInfo?.colorClass || 'text-primary'}`,
+                !isAvailableInTier && "opacity-50"
+              )} />
             </div>
             <div>
-              <CardTitle className="text-lg tracking-wide">{agent.name}</CardTitle>
+              <CardTitle className={cn(
+                "text-lg tracking-wide",
+                !isAvailableInTier && "opacity-70"
+              )}>{agent.name}</CardTitle>
               <CardDescription className="text-xs text-white/70">
                 {PHASE_LABELS[agent.phase]}
               </CardDescription>
             </div>
           </div>
-          {canManage && isAvailableInTier ? (
+          
+          {/* Toggle or Lock */}
+          {isAvailableInTier && canManage ? (
             <Switch 
               checked={agent.is_enabled} 
               onCheckedChange={onToggle}
@@ -566,12 +561,27 @@ function AgentCard({
           ) : (
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Lock className="h-4 w-4" />
+                <div className={cn(
+                  "flex items-center gap-1.5 px-2 py-1 rounded",
+                  !isAvailableInTier 
+                    ? "bg-amber-500/10 border border-amber-500/30" 
+                    : "text-muted-foreground"
+                )}>
+                  <Lock className={cn(
+                    "h-4 w-4",
+                    !isAvailableInTier ? "text-amber-500" : "text-muted-foreground"
+                  )} />
+                  {!isAvailableInTier && (
+                    <span className="text-xs font-medium text-amber-500">Locked</span>
+                  )}
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{!isAvailableInTier ? 'Upgrade required' : 'Only admins can toggle agents'}</p>
+                <p className="text-sm">
+                  {!isAvailableInTier 
+                    ? `Upgrade to ${tierInfo?.label || 'a higher plan'} to access this agent`
+                    : 'Only admins can toggle agents'}
+                </p>
               </TooltipContent>
             </Tooltip>
           )}
@@ -579,53 +589,93 @@ function AgentCard({
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
+          {/* Status badges */}
           <div className="flex items-center gap-2 flex-wrap">
-            <Badge 
-              variant={agent.is_enabled ? 'default' : 'secondary'}
-              style={agent.is_enabled ? {
-                backgroundColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.15)`,
-                color: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}))`,
-                borderColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.3)`,
-              } : undefined}
-              className={agent.is_enabled ? 'border' : ''}
-            >
-              {agent.is_enabled ? (
-                <>
-                  <Zap className="h-3 w-3 mr-1" />
-                  Active
-                </>
-              ) : (
-                'Disabled'
-              )}
-            </Badge>
+            {isAvailableInTier ? (
+              <Badge 
+                variant={agent.is_enabled ? 'default' : 'secondary'}
+                style={agent.is_enabled ? {
+                  backgroundColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.15)`,
+                  color: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}))`,
+                  borderColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.3)`,
+                } : undefined}
+                className={agent.is_enabled ? 'border' : ''}
+              >
+                {agent.is_enabled ? (
+                  <>
+                    <Zap className="h-3 w-3 mr-1" />
+                    Active
+                  </>
+                ) : (
+                  'Disabled'
+                )}
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/30">
+                <Lock className="h-3 w-3 mr-1" />
+                Upgrade to {tierInfo?.label}
+              </Badge>
+            )}
             <Badge variant="outline" className="text-white/70 border-white/30">{agent.category.replace('_', ' ')}</Badge>
           </div>
 
-          {/* Dependency Warning */}
-          {missingDependencies.length > 0 && isAvailableInTier && (
-            <div className="flex items-start gap-2 p-2 rounded bg-amber-500/10 border border-amber-500/20">
-              <AlertCircle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-200">
-                Requires: {missingDependencies.map(dep => AGENT_NAMES[dep] || dep).join(', ')}
+          {/* Always show dependencies if any exist */}
+          {allDependencyNames.length > 0 && (
+            <div className={cn(
+              "flex items-start gap-2 p-2 rounded border",
+              isAvailableInTier && missingDependencies.length > 0
+                ? "bg-amber-500/10 border-amber-500/20"
+                : "bg-muted/30 border-border/50"
+            )}>
+              <Info className={cn(
+                "h-4 w-4 flex-shrink-0 mt-0.5",
+                isAvailableInTier && missingDependencies.length > 0
+                  ? "text-amber-500"
+                  : "text-muted-foreground"
+              )} />
+              <p className={cn(
+                "text-xs",
+                isAvailableInTier && missingDependencies.length > 0
+                  ? "text-amber-200"
+                  : "text-muted-foreground"
+              )}>
+                <span className="font-medium">Requires:</span> {allDependencyNames.join(', ')}
               </p>
             </div>
           )}
           
+          {/* Action buttons */}
           <div className="flex items-center justify-between pt-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onClick}
-              className={categoryInfo?.colorClass || 'text-primary'}
-              disabled={!isAvailableInTier}
-            >
-              Configure
-              <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
-            {agent.is_enabled && isAvailableInTier && (
-              <Button variant="outline" size="sm" onClick={onClick}>
-                <Play className="h-3 w-3 mr-1" />
-                Test
+            {isAvailableInTier ? (
+              <>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={onClick}
+                  className={categoryInfo?.colorClass || 'text-primary'}
+                >
+                  Configure
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+                {agent.is_enabled && (
+                  <Button variant="outline" size="sm" onClick={onClick}>
+                    <Play className="h-3 w-3 mr-1" />
+                    Test
+                  </Button>
+                )}
+              </>
+            ) : (
+              <Button 
+                size="sm"
+                variant="outline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate('/dashboard/subscription');
+                }}
+                className="w-full"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Upgrade to Access
               </Button>
             )}
           </div>
