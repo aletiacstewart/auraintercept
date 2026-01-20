@@ -475,10 +475,6 @@ export default function Integrations() {
                   )}
                   {isLoading ? (
                     <Skeleton className="h-9 w-full" />
-                  ) : integration.id === 'stripe' ? (
-                    <Button variant="outline" size="sm" className="w-full" asChild>
-                      <a href="/dashboard/subscription">Manage Billing</a>
-                    </Button>
                   ) : (
                     <div className="flex gap-2">
                       <Button
