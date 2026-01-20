@@ -9,7 +9,6 @@ import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, 
 import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
-import { OnboardingChecklist } from '@/components/company/OnboardingChecklist';
 import { TrialBanner } from '@/components/dashboard/TrialBanner';
 import { DashboardSetupNav } from './DashboardSetupNav';
 
@@ -456,8 +455,6 @@ export function CompanyAdminDashboard() {
         </Card>
       </div>
 
-      {/* Onboarding Checklist */}
-      <OnboardingChecklist />
     </div>
     </PageContainer>
   );
