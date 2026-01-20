@@ -788,7 +788,7 @@ export function FieldOpsAgentConsole({ companyId, onNavigateRequest, className }
   const selectorConfig = getSelectorConfig();
 
   return (
-    <Card className={cn('h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden shadow-xl border-slate-600/50 bg-slate-800', className)}>
+    <Card className={cn('h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden shadow-xl border-border/50 console-surface', className)}>
       {/* Header - matching AIAgentConsole glass style */}
       <GlassHeader
         companyName={companyData?.name || "Field Ops Assistant"}
