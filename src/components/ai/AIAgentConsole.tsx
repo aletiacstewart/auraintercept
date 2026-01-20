@@ -533,7 +533,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
   }
 
   return (
-    <Card className="h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden shadow-xl border-slate-600/50 bg-slate-800">
+    <Card className="h-[calc(100vh-200px)] sm:h-[600px] flex flex-col overflow-hidden shadow-xl border-border/50 console-surface">
       {/* Header */}
       <GlassHeader
         companyName={company?.name || 'AI Assistant'}

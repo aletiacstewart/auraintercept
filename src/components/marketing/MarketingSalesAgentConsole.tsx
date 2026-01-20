@@ -160,7 +160,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const activeLabel = getActiveLabel();
 
   return (
-    <Card className="h-[600px] flex flex-col overflow-hidden shadow-xl border-slate-600/50 bg-slate-800">
+    <Card className="h-[600px] flex flex-col overflow-hidden shadow-xl border-border/50 console-surface">
       {/* Glass Header */}
       <GlassHeader
         logoUrl={company?.logo_url}
