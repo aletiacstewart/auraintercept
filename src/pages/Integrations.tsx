@@ -337,50 +337,8 @@ export default function Integrations() {
           );
         })()}
 
-        {/* CRM & Calendar Setup Progress */}
-        <div className={cn("grid gap-4", userRole === 'platform_admin' ? "md:grid-cols-2" : "md:grid-cols-1")}>
-          {/* CRM Setup Progress - Platform Admin Only */}
-          {userRole === 'platform_admin' && (
-            <Card className="guide-card guide-card-crm">
-              <CardContent className="py-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-card-foreground/70" />
-                        <span className="text-sm font-medium text-card-foreground">CRM Integration</span>
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 border-card-foreground/30 text-card-foreground">Optional</Badge>
-                      </div>
-                      <span className={cn(
-                        "text-sm font-bold",
-                        crmConnection ? "text-green-400" : "text-card-foreground/50"
-                      )}>
-                        {crmConnection ? '100%' : '0%'}
-                      </span>
-                    </div>
-                    <Progress value={crmConnection ? 100 : 0} className="h-2" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {crmConnection ? (
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400">
-                        <Users className="w-3 h-3" />
-                        {CRM_PROVIDER_NAMES[crmConnection.provider] || crmConnection.provider}
-                        <Check className="w-3 h-3" />
-                      </div>
-                    ) : (
-                      <Button variant="outline-card" size="sm" asChild>
-                        <Link to="/dashboard/integrations/crm">
-                          Connect CRM <ArrowRight className="w-3 h-3 ml-1" />
-                        </Link>
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Calendar Setup Progress */}
+        {/* Calendar Setup Progress */}
+        <div className="grid gap-4 md:grid-cols-1">
           <Card className="guide-card guide-card-calendar">
             <CardContent className="py-4">
               <div className="flex items-center gap-4">
@@ -498,8 +456,8 @@ export default function Integrations() {
           })}
         </div>
 
-        {/* CRM Integrations - Platform Admin Only */}
-        {userRole === 'platform_admin' && <CRMConnectionSettings />}
+        {/* CRM Integrations - Temporarily hidden, may revisit later */}
+        {/* {userRole === 'platform_admin' && <CRMConnectionSettings />} */}
 
         {/* Calendar Integrations */}
         <div className="space-y-4">
