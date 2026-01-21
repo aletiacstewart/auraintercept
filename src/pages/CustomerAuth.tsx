@@ -15,6 +15,7 @@ import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthInd
 import { TermsAgreementCheckbox } from '@/components/auth/TermsAgreementCheckbox';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
+import { type ServerValidationResult } from '@/lib/password-validation';
 
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
@@ -31,6 +32,12 @@ export default function CustomerAuth() {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [termsAgreed, setTermsAgreed] = useState(false);
+  const [passwordValidation, setPasswordValidation] = useState<ServerValidationResult | null>(null);
+
+  // Callback for password validation changes
+  const handlePasswordValidationChange = useCallback((result: ServerValidationResult) => {
+    setPasswordValidation(result);
+  }, []);
 
   // Check if already logged in as customer
   useEffect(() => {
@@ -106,6 +113,14 @@ export default function CustomerAuth() {
       passwordSchema.parse(password);
       if (!fullName.trim()) throw new Error('Full name is required');
       if (!termsAgreed) throw new Error('You must agree to the Terms of Service and Privacy Policy');
+      
+      // Check for breached password
+      if (passwordValidation?.breached) {
+        throw new Error('This password has been exposed in data breaches. Please choose a different password.');
+      }
+      if (passwordValidation && !passwordValidation.valid) {
+        throw new Error('Please choose a stronger password before continuing.');
+      }
     } catch (err) {
       const message = err instanceof z.ZodError ? err.errors[0].message : (err as Error).message;
       toast({ title: 'Validation Error', description: message, variant: 'destructive' });
@@ -284,7 +299,10 @@ export default function CustomerAuth() {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                     />
-                    <PasswordStrengthIndicator password={password} />
+                    <PasswordStrengthIndicator 
+                      password={password} 
+                      onValidationChange={handlePasswordValidationChange}
+                    />
                   </div>
                   <TermsAgreementCheckbox 
                     checked={termsAgreed} 
