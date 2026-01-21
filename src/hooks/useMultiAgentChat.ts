@@ -103,12 +103,12 @@ export const useMultiAgentChat = (options: UseMultiAgentChatOptions = {}) => {
 
       setMessages((prev) => [...prev, assistantMsg]);
 
-      // If there was a handoff, make a follow-up call to the new agent
+      // If there was a handoff, make a follow-up call to the new agent (minimal delay)
       if (data.handoff_to) {
         console.log(`[MultiAgentChat] Handoff detected: ${currentAgent} -> ${data.handoff_to}`);
         
-        // Brief delay before follow-up call
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Minimal delay for handoff transition
+        await new Promise(resolve => setTimeout(resolve, 100));
         
         // Call the new agent with handoff context
         const followUpResponse = await supabase.functions.invoke('ai-agent-chat', {

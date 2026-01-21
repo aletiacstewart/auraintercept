@@ -607,33 +607,33 @@ GUIDELINES:
         },
       ];
 
-      // First, make a non-streaming request to check for tool calls
-      const initialResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      // Single-pass streaming with tool support - uses faster model
+      const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${LOVABLE_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: "google/gemini-3-flash-preview",
           messages: [{ role: "system", content: systemPrompt }, ...messages],
           tools,
-          stream: false,
+          stream: true,
         }),
       });
 
-      if (!initialResponse.ok) {
-        const errorText = await initialResponse.text();
-        console.error('AI Gateway error:', initialResponse.status, errorText);
+      if (!aiResponse.ok) {
+        const errorText = await aiResponse.text();
+        console.error('AI Gateway error:', aiResponse.status, errorText);
         
-        if (initialResponse.status === 429) {
+        if (aiResponse.status === 429) {
           return new Response(JSON.stringify({ error: 'Service busy, please try again' }), {
             status: 429,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
         }
         
-        if (initialResponse.status === 402) {
+        if (aiResponse.status === 402) {
           return new Response(JSON.stringify({ error: 'Service temporarily unavailable' }), {
             status: 402,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -646,16 +646,73 @@ GUIDELINES:
         });
       }
 
-      const aiResult = await initialResponse.json();
-      const assistantMessage = aiResult.choices?.[0]?.message;
+      // Check if we need to handle tool calls by consuming the stream
+      const reader = aiResponse.body!.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let fullContent = '';
+      let toolCalls: any[] = [];
+      let hasToolCalls = false;
+
+      // Collect chunks to detect tool calls
+      const chunks: Uint8Array[] = [];
       
-      // Check if AI wants to call tools
-      if (assistantMessage?.tool_calls && assistantMessage.tool_calls.length > 0) {
-        console.log('Processing tool calls:', assistantMessage.tool_calls);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        buffer += decoder.decode(value, { stream: true });
+        
+        // Quick check for tool_calls in buffer
+        if (buffer.includes('"tool_calls"') || buffer.includes('"function"')) {
+          hasToolCalls = true;
+        }
+        
+        // Parse content for streaming
+        let newlineIndex: number;
+        while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
+          let line = buffer.slice(0, newlineIndex);
+          buffer = buffer.slice(newlineIndex + 1);
+          
+          if (line.endsWith('\r')) line = line.slice(0, -1);
+          if (!line.startsWith('data: ')) continue;
+          
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === '[DONE]') continue;
+          
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const delta = parsed.choices?.[0]?.delta;
+            
+            if (delta?.content) {
+              fullContent += delta.content;
+            }
+            
+            if (delta?.tool_calls) {
+              hasToolCalls = true;
+              for (const tc of delta.tool_calls) {
+                const idx = tc.index ?? 0;
+                if (!toolCalls[idx]) {
+                  toolCalls[idx] = { id: tc.id, function: { name: '', arguments: '' } };
+                }
+                if (tc.id) toolCalls[idx].id = tc.id;
+                if (tc.function?.name) toolCalls[idx].function.name += tc.function.name;
+                if (tc.function?.arguments) toolCalls[idx].function.arguments += tc.function.arguments;
+              }
+            }
+          } catch { /* ignore parse errors */ }
+        }
+      }
+
+      // If tool calls detected, process them and make follow-up request
+      if (hasToolCalls && toolCalls.length > 0) {
+        console.log('Processing tool calls:', toolCalls);
         
         const toolResults: any[] = [];
         
-        for (const toolCall of assistantMessage.tool_calls) {
+        for (const toolCall of toolCalls) {
+          if (!toolCall.function?.name) continue;
+          
           const funcName = toolCall.function.name;
           let args: any = {};
           try {
@@ -667,24 +724,14 @@ GUIDELINES:
           let result = '';
           
           if (funcName === 'book_appointment') {
-            // Validate booking input
             const validation = validateBookingInput(args);
             if (!validation.valid) {
-              result = JSON.stringify({ 
-                success: false, 
-                error: 'Invalid booking data', 
-                details: validation.errors 
-              });
+              result = JSON.stringify({ success: false, error: 'Invalid booking data', details: validation.errors });
             } else {
-              // Additional rate limit check for bookings
               const bookingRateCheck = checkRateLimit(clientIP, 'book');
               if (!bookingRateCheck.allowed) {
-                result = JSON.stringify({ 
-                  success: false, 
-                  error: 'Too many booking attempts. Please try again later.' 
-                });
+                result = JSON.stringify({ success: false, error: 'Too many booking attempts. Please try again later.' });
               } else {
-                // Execute booking with sanitized data
                 const { data: service } = await supabase
                   .from('services')
                   .select('*')
@@ -711,10 +758,8 @@ GUIDELINES:
                   .single();
 
                 if (bookError) {
-                  console.error('Booking error:', bookError);
                   result = JSON.stringify({ success: false, error: 'Failed to book appointment' });
                 } else {
-                  // Create job assignment for emergency
                   if (validation.sanitized.is_emergency && appointment) {
                     await supabase.from('job_assignments').insert({
                       company_id: company.id,
@@ -723,23 +768,19 @@ GUIDELINES:
                       status: 'pending_acceptance',
                     });
                   }
-                  console.log(`Appointment booked: ${appointment.id} for ${validation.sanitized.customer_name}`);
                   result = JSON.stringify({ success: true, appointment_id: appointment.id, message: 'Appointment booked successfully' });
                 }
               }
             }
           } else if (funcName === 'check_availability') {
-            // Return available slots based on business hours
             const { data: hours } = await supabase
               .from('business_hours')
               .select('*')
               .eq('company_id', company.id)
               .eq('is_closed', false);
-            
             const slots = hours?.length ? ['9:00 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:00 PM', '4:00 PM'] : [];
             result = JSON.stringify({ available_slots: slots, date: args.date });
           } else if (funcName === 'get_quote') {
-            // Generate quote based on services
             const servicesList = args.services || [];
             const { data: dbServices } = await supabase
               .from('services')
@@ -754,10 +795,8 @@ GUIDELINES:
               total += price;
               return { service: s, price };
             });
-            
             result = JSON.stringify({ items, total, note: 'Final price may vary based on inspection' });
           } else if (funcName === 'check_tech_availability') {
-            // Find available technicians
             const { data: techs } = await supabase
               .from('profiles')
               .select('id, full_name, availability_json')
@@ -765,12 +804,8 @@ GUIDELINES:
               .not('availability_json', 'is', null);
             
             const available = (techs || []).filter(t => t.availability_json).slice(0, 3);
-            result = JSON.stringify({ 
-              available_technicians: available.map(t => ({ id: t.id, name: t.full_name })),
-              count: available.length 
-            });
+            result = JSON.stringify({ available_technicians: available.map(t => ({ id: t.id, name: t.full_name })), count: available.length });
           } else if (funcName === 'assign_technician') {
-            // Assign technician to job
             const { data: techs } = await supabase
               .from('profiles')
               .select('id, full_name')
@@ -784,11 +819,9 @@ GUIDELINES:
                 .update({ employee_id: techId, status: 'assigned', assigned_at: new Date().toISOString() })
                 .eq('appointment_id', args.appointment_id);
               
-              if (assignError) {
-                result = JSON.stringify({ success: false, error: 'Failed to assign technician' });
-              } else {
-                result = JSON.stringify({ success: true, technician_name: techs?.[0]?.full_name, message: 'Technician assigned' });
-              }
+              result = assignError 
+                ? JSON.stringify({ success: false, error: 'Failed to assign technician' })
+                : JSON.stringify({ success: true, technician_name: techs?.[0]?.full_name, message: 'Technician assigned' });
             } else {
               result = JSON.stringify({ success: false, error: 'No technician available' });
             }
@@ -801,7 +834,7 @@ GUIDELINES:
           });
         }
         
-        // Make follow-up request with tool results
+        // Make follow-up streaming request with tool results
         const followUpResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: {
@@ -809,11 +842,11 @@ GUIDELINES:
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
+            model: "google/gemini-3-flash-preview",
             messages: [
               { role: "system", content: systemPrompt },
               ...messages,
-              assistantMessage,
+              { role: "assistant", content: fullContent || null, tool_calls: toolCalls },
               ...toolResults,
             ],
             stream: true,
@@ -821,7 +854,6 @@ GUIDELINES:
         });
 
         if (!followUpResponse.ok) {
-          console.error('Follow-up AI error:', followUpResponse.status);
           return new Response(JSON.stringify({ error: 'AI service error' }), {
             status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -833,21 +865,17 @@ GUIDELINES:
         });
       }
       
-      // No tool calls - stream the response
-      const streamResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: [{ role: "system", content: systemPrompt }, ...messages],
-          stream: true,
-        }),
+      // No tool calls - reconstruct the stream from collected chunks
+      const reconstructedStream = new ReadableStream({
+        start(controller) {
+          for (const chunk of chunks) {
+            controller.enqueue(chunk);
+          }
+          controller.close();
+        }
       });
 
-      return new Response(streamResponse.body, {
+      return new Response(reconstructedStream, {
         headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
       });
     }
