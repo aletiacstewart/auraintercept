@@ -32,21 +32,15 @@ export function PWAUpdatePrompt() {
           }
         });
       });
-
-      // Handle controller change (after skipWaiting)
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
-          refreshing = true;
-          window.location.reload();
-        }
-      });
     }
   }, []);
 
   const handleUpdate = () => {
     if (waitingWorker) {
       waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+      // Reload once to pick up the new bundle. We intentionally don't listen to
+      // serviceWorker 'controllerchange' because it can cause reload loops in preview.
+      setTimeout(() => window.location.reload(), 250);
     }
   };
 
