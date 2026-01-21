@@ -121,17 +121,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       // Only synchronous state updates in callback
-      setLoading(true);
       setSession(session);
       setUser(session?.user ?? null);
 
+      // Only set loading=true for identity-changing events to avoid UI flicker
+      const isIdentityChange = event === 'SIGNED_IN' || event === 'SIGNED_OUT';
+
       if (session?.user) {
+        if (isIdentityChange) {
+          setLoading(true);
+        }
         // Defer Supabase calls with setTimeout to prevent deadlock
         setTimeout(async () => {
           try {
             await fetchUserData(session.user.id);
           } finally {
-            setLoading(false);
+            if (isIdentityChange) {
+              setLoading(false);
+            }
           }
         }, 0);
       } else {
@@ -142,7 +149,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSubscriptionEnd(null);
         setInTrial(false);
         setTrialEndsAt(null);
-        setLoading(false);
+        if (isIdentityChange) {
+          setLoading(false);
+        }
       }
     });
 

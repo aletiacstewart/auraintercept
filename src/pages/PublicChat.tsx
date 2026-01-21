@@ -60,17 +60,6 @@ export default function PublicChat() {
   const [searchParams] = useSearchParams();
   const isEmbedMode = searchParams.get('embed') === 'true';
 
-  useEffect(() => {
-    console.log('[PublicChat] mount', Date.now(), 'search=', window.location.search);
-    const onBeforeUnload = () => {
-      console.log('[PublicChat] beforeunload', Date.now());
-    };
-    window.addEventListener('beforeunload', onBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', onBeforeUnload);
-      console.log('[PublicChat] unmount', Date.now());
-    };
-  }, []);
   const [config, setConfig] = useState<CompanyConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,8 +79,13 @@ export default function PublicChat() {
   // Emergency phone dialog state
   const [showEmergencyPhone, setShowEmergencyPhone] = useState(false);
   
-  // Check for existing session on mount
+  // Check for existing session on mount - skip in embed mode to prevent cross-context auth events
   useEffect(() => {
+    if (isEmbedMode) {
+      // In embed mode, skip auth to prevent dashboard reload loops
+      return;
+    }
+    
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
@@ -109,7 +103,7 @@ export default function PublicChat() {
     });
     
     return () => subscription.unsubscribe();
-  }, []);
+  }, [isEmbedMode]);
 
   // Communicate with parent window in embed mode
   useEffect(() => {
