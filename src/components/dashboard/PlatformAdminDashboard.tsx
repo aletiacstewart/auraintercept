@@ -289,26 +289,26 @@ export function PlatformAdminDashboard() {
       <DashboardSetupNav />
 
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat, index) => (
           <Card key={stat.title} className="relative overflow-hidden border-border/50">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-white">
+            <CardHeader className="flex flex-row items-center justify-between pb-1 pt-3 px-3">
+              <CardTitle className="text-xs font-medium text-white">
                 {stat.title}
               </CardTitle>
-              <div className={`w-10 h-10 rounded-lg ${stat.colorClass.replace('text-', 'bg-')}/15 flex items-center justify-center`}>
-                <stat.icon className={`w-5 h-5 ${stat.colorClass}`} />
+              <div className={`w-8 h-8 rounded-lg ${stat.colorClass.replace('text-', 'bg-')}/15 flex items-center justify-center`}>
+                <stat.icon className={`w-4 h-4 ${stat.colorClass}`} />
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-1 pb-3 px-3">
               {isLoading ? (
-                <Skeleton className="h-8 w-20" />
+                <Skeleton className="h-6 w-16" />
               ) : (
-                <div className="text-3xl font-bold">
+                <div className="text-2xl font-bold">
                   {stat.isString ? stat.value : (stat.value as number).toLocaleString()}
                 </div>
               )}
-              <p className="text-xs text-white/70 mt-1">{stat.description}</p>
+              <p className="text-[10px] text-white/70 mt-0.5">{stat.description}</p>
             </CardContent>
           </Card>
         ))}
