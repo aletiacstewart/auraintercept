@@ -201,7 +201,7 @@ const App = () => (
               
               {/* Smart Website Routes */}
               <Route path="/site/:subdomain" element={<SmartWebsite />} />
-              <Route path="/dashboard/smart-website" element={<SmartWebsiteManager />} />
+              <Route path="/dashboard/smart-website" element={<ProtectedRoute><SmartWebsiteManager /></ProtectedRoute>} />
               
               {/* Technician Dashboard Routes - Protected */}
               <Route path="/technician" element={<ProtectedRoute><TechnicianDashboard /></ProtectedRoute>} />
