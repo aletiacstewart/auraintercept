@@ -3,17 +3,14 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 
 export function PWAUpdatePrompt() {
+  // Never run PWA update logic inside an iframe (prevents controllerchange -> reload loops in embeds)
+  const isIframe = typeof window !== 'undefined' && window.self !== window.top;
+
   const [showUpdate, setShowUpdate] = useState(false);
   const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
-  const [isIframe, setIsIframe] = useState(false);
 
   useEffect(() => {
-    // Detect if running inside an iframe (embed mode) - skip PWA logic entirely
-    if (typeof window !== 'undefined' && window.self !== window.top) {
-      setIsIframe(true);
-      return;
-    }
-
+    if (isIframe) return;
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.ready.then((registration) => {
         // Check if there's already a waiting worker
@@ -53,8 +50,9 @@ export function PWAUpdatePrompt() {
     }
   };
 
-  // Don't render anything in iframe context or if no update
-  if (isIframe || !showUpdate) return null;
+  // Nothing should render in iframe context.
+  if (isIframe) return null;
+  if (!showUpdate) return null;
 
   return (
     <div className="fixed bottom-20 left-4 right-4 md:left-auto md:right-4 md:w-80 z-50 animate-fade-in">

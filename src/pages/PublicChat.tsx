@@ -59,6 +59,18 @@ export default function PublicChat() {
   const { companySlug } = useParams<{ companySlug: string }>();
   const [searchParams] = useSearchParams();
   const isEmbedMode = searchParams.get('embed') === 'true';
+
+  useEffect(() => {
+    console.log('[PublicChat] mount', Date.now(), 'search=', window.location.search);
+    const onBeforeUnload = () => {
+      console.log('[PublicChat] beforeunload', Date.now());
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload);
+      console.log('[PublicChat] unmount', Date.now());
+    };
+  }, []);
   const [config, setConfig] = useState<CompanyConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
