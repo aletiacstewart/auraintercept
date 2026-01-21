@@ -62,6 +62,7 @@ export default function CustomerPortalInstall() {
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showInstallInfo, setShowInstallInfo] = useState(true);
+  const [hasCheckedRole, setHasCheckedRole] = useState(false);
 
   useEffect(() => {
     // Detect iOS devices
@@ -71,10 +72,16 @@ export default function CustomerPortalInstall() {
 
   // Check if user is a customer and show appropriate view
   useEffect(() => {
+    // Prevent re-running if already checked or still loading
+    if (authLoading || hasCheckedRole) return;
+    
     const checkCustomerRole = async () => {
-      if (authLoading) return;
+      if (!user) {
+        setHasCheckedRole(true);
+        return;
+      }
       
-      if (user) {
+      try {
         // Check if user is a customer
         const { data: roleData } = await supabase
           .from('user_roles')
@@ -89,11 +96,21 @@ export default function CustomerPortalInstall() {
           // Customer is logged in, hide install info and show portal
           setShowInstallInfo(false);
         }
+      } finally {
+        setHasCheckedRole(true);
       }
     };
 
     checkCustomerRole();
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, hasCheckedRole]);
+  
+  // Reset role check when user signs out
+  useEffect(() => {
+    if (!user && hasCheckedRole) {
+      setHasCheckedRole(false);
+      setShowInstallInfo(true);
+    }
+  }, [user, hasCheckedRole]);
 
   // Fetch customer's company associations
   const { data: associations } = useQuery({
