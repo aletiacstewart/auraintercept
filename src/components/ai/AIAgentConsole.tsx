@@ -754,24 +754,59 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
               </div>
             )}
 
-            <Button 
-              className="w-full mt-4 glass-primary text-white glow-primary" 
-              onClick={() => setActiveTab('book')}
-            >
-              <Calendar className="h-4 w-4 mr-2" />
-              Schedule an Appointment
-            </Button>
+            {/* Tier-aware scheduling button */}
+            {effectiveTier !== 'single_point' ? (
+              <Button 
+                className="w-full mt-4 glass-primary text-white glow-primary" 
+                onClick={() => setActiveTab('book')}
+              >
+                <Calendar className="h-4 w-4 mr-2" />
+                Schedule an Appointment
+              </Button>
+            ) : company?.dispatch_phone ? (
+              <Button 
+                className="w-full mt-4 glass-primary text-white glow-primary" 
+                onClick={() => window.location.href = `tel:${company.dispatch_phone}`}
+              >
+                <Phone className="h-4 w-4 mr-2" />
+                Call to Book: {company.dispatch_phone}
+              </Button>
+            ) : (
+              <div className="mt-4 p-3 text-center text-sm text-muted-foreground bg-muted rounded-lg">
+                <Phone className="h-4 w-4 inline mr-2" />
+                Contact us directly to schedule an appointment
+              </div>
+            )}
           </div>
         )}
 
-        {/* Book Tab */}
-        {activeTab === 'book' && (
+        {/* Book Tab - Only accessible for Multi-Track+ tiers */}
+        {activeTab === 'book' && effectiveTier !== 'single_point' && (
           <div className="flex-1 overflow-y-auto p-4">
             <BookingForm
               services={services || []}
               onSubmit={handleBookingSubmit}
               isLoading={isLoading}
             />
+          </div>
+        )}
+
+        {/* Book Tab fallback for Single-Point tier */}
+        {activeTab === 'book' && effectiveTier === 'single_point' && (
+          <div className="flex-1 overflow-y-auto p-4 text-center">
+            <div className="py-8">
+              <Phone className="h-12 w-12 mx-auto text-primary mb-4" />
+              <h3 className="font-bold text-lg mb-2">Call to Schedule</h3>
+              <p className="text-muted-foreground mb-4">
+                Online booking is not available for this plan. Please call us to schedule your appointment.
+              </p>
+              {company?.dispatch_phone && (
+                <Button onClick={() => window.location.href = `tel:${company.dispatch_phone}`}>
+                  <Phone className="h-4 w-4 mr-2" />
+                  Call {company.dispatch_phone}
+                </Button>
+              )}
+            </div>
           </div>
         )}
 
