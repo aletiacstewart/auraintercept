@@ -312,47 +312,129 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
   },
 ];
 
-// Business Operations Guides - Base guides for all roles
+// Business Operations Guides - Updated to match console features
 const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
   {
     id: 'quote',
-    label: 'Create Quote',
+    label: 'Quote',
     icon: FileText,
     description: 'Generate professional quotes for customers',
     steps: [
-      { step: 1, title: 'Enter Customer', description: 'Add customer name and contact info' },
-      { step: 2, title: 'Add Line Items', description: 'Select services and set quantities' },
-      { step: 3, title: 'Apply Discounts', description: 'Add any applicable discounts' },
-      { step: 4, title: 'Send Quote', description: 'Email or print the quote for customer' },
+      { step: 1, title: 'Click Quote Tab', description: 'Select the Quote button to open the quote form' },
+      { step: 2, title: 'Add Customer', description: 'Enter customer name and contact details' },
+      { step: 3, title: 'Add Line Items', description: 'Select services, set quantities and pricing' },
+      { step: 4, title: 'Send Quote', description: 'Email or SMS the quote directly to customer' },
     ],
-    tips: ['Include detailed descriptions', 'Set appropriate validity period']
+    tips: ['Convert quotes to invoices with one click', 'Set validity period for time-sensitive offers']
   },
   {
     id: 'invoice',
-    label: 'Generate Invoice',
+    label: 'Invoice',
     icon: Receipt,
     description: 'Create and send invoices for services',
     steps: [
-      { step: 1, title: 'Select Customer', description: 'Choose customer or enter new details' },
-      { step: 2, title: 'Add Services', description: 'List all services provided' },
-      { step: 3, title: 'Set Terms', description: 'Configure payment terms and due date' },
-      { step: 4, title: 'Send Invoice', description: 'Email invoice to customer' },
+      { step: 1, title: 'Click Invoice Tab', description: 'Select the Invoice button to open the form' },
+      { step: 2, title: 'Select Customer', description: 'Choose existing customer or add new' },
+      { step: 3, title: 'Add Services', description: 'List all services and parts provided' },
+      { step: 4, title: 'Send with Payment', description: 'Include Stripe payment link for instant pay' },
     ],
-    tips: ['Convert quotes to invoices easily', 'Set up recurring invoices for regulars']
+    tips: ['Add payment links for faster collection', 'Set up recurring invoices for regulars']
   },
   {
     id: 'lead',
-    label: 'New Lead',
+    label: 'Lead',
     icon: UserPlus,
     description: 'Add and track new sales leads',
     steps: [
-      { step: 1, title: 'Enter Details', description: 'Add lead contact information' },
-      { step: 2, title: 'Set Source', description: 'Tag where the lead came from' },
-      { step: 3, title: 'Assign Follow-up', description: 'Schedule initial contact' },
-      { step: 4, title: 'Track Progress', description: 'Update lead status as they progress' },
+      { step: 1, title: 'Click Lead Tab', description: 'Select Lead button to open lead form' },
+      { step: 2, title: 'Enter Details', description: 'Add lead name, contact, and source' },
+      { step: 3, title: 'Set Priority', description: 'Mark lead as hot, warm, or cold' },
+      { step: 4, title: 'Schedule Follow-up', description: 'Set reminder for initial contact' },
     ],
-    tips: ['Follow up within 24 hours', 'Log all interactions']
+    tips: ['Follow up within 24 hours for best conversion', 'Log all interactions for context']
   },
+  {
+    id: 'appointments',
+    label: 'Appts',
+    icon: Calendar,
+    description: 'Manage appointments and scheduling',
+    steps: [
+      { step: 1, title: 'Click Appts Tab', description: 'Open the appointments manager' },
+      { step: 2, title: 'View Schedule', description: 'See all upcoming appointments' },
+      { step: 3, title: 'Create New', description: 'Add new appointment with customer details' },
+      { step: 4, title: 'Assign Tech', description: 'Assign available technician to the job' },
+    ],
+    tips: ['Check technician availability before booking', 'Send confirmation reminders automatically']
+  },
+  {
+    id: 'inventory',
+    label: 'Inventory',
+    icon: Package,
+    description: 'View and manage inventory levels',
+    steps: [
+      { step: 1, title: 'Click Inventory Tab', description: 'Open inventory management' },
+      { step: 2, title: 'Search Items', description: 'Find parts by name or SKU' },
+      { step: 3, title: 'Check Stock', description: 'View quantity and reorder points' },
+      { step: 4, title: 'Update Stock', description: 'Adjust quantities or add new items' },
+    ],
+    tips: ['Set low-stock alerts to avoid shortages', 'Track inventory usage per job']
+  },
+  {
+    id: 'warranty',
+    label: 'Warranty',
+    icon: Shield,
+    description: 'Manage warranty records and claims',
+    steps: [
+      { step: 1, title: 'Click Warranty Tab', description: 'Open warranty management' },
+      { step: 2, title: 'Search Records', description: 'Find by serial number or customer' },
+      { step: 3, title: 'View Coverage', description: 'Check warranty terms and expiration' },
+      { step: 4, title: 'Process Claim', description: 'Submit or review warranty claims' },
+    ],
+    tips: ['Register products promptly after installation', 'Keep warranty documentation updated']
+  },
+  {
+    id: 'companies',
+    label: 'Companies',
+    icon: ClipboardList,
+    description: 'Manage company accounts and settings',
+    steps: [
+      { step: 1, title: 'Click Companies Tab', description: 'Open company management' },
+      { step: 2, title: 'View Company', description: 'See company details and configuration' },
+      { step: 3, title: 'Edit Settings', description: 'Update company information' },
+      { step: 4, title: 'Manage Branding', description: 'Configure logo and colors' },
+    ],
+    tips: ['Keep company details current for invoices', 'Set up branding for professional quotes']
+  },
+  {
+    id: 'employees',
+    label: 'Employees',
+    icon: Users,
+    description: 'Manage team members and assignments',
+    steps: [
+      { step: 1, title: 'Click Employees Tab', description: 'Open employee management' },
+      { step: 2, title: 'View Team', description: 'See all employees and their roles' },
+      { step: 3, title: 'Add Employee', description: 'Invite new team members' },
+      { step: 4, title: 'Set Permissions', description: 'Configure role and access levels' },
+    ],
+    tips: ['Assign appropriate roles for security', 'Set up employee availability schedules']
+  },
+  {
+    id: 'customers',
+    label: 'Customers',
+    icon: UserPlus,
+    description: 'Manage customer profiles and history',
+    steps: [
+      { step: 1, title: 'Click Customers Tab', description: 'Open customer management' },
+      { step: 2, title: 'Search Customer', description: 'Find by name, email, or phone' },
+      { step: 3, title: 'View History', description: 'See service history and notes' },
+      { step: 4, title: 'Edit Profile', description: 'Update contact and preference info' },
+    ],
+    tips: ['Keep customer notes updated', 'Track communication preferences']
+  },
+];
+
+// Platform admin only Business Ops guides (Analytics features)
+const BUSINESS_OPS_ADMIN_GUIDES: AgentGuide[] = [
   {
     id: 'performance',
     label: 'Performance Report',
@@ -364,7 +446,7 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
       { step: 3, title: 'Generate Report', description: 'Create comprehensive report' },
       { step: 4, title: 'Review Insights', description: 'Analyze trends and patterns' },
     ],
-    tips: ['Compare to previous periods', 'Set up weekly automated reports']
+    tips: ['Compare to previous periods', 'Set up automated weekly reports']
   },
   {
     id: 'insights',
@@ -372,66 +454,12 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
     icon: Lightbulb,
     description: 'Get AI-powered business recommendations',
     steps: [
-      { step: 1, title: 'Select Focus', description: 'Choose area to analyze' },
-      { step: 2, title: 'Set Parameters', description: 'Configure analysis settings' },
-      { step: 3, title: 'Generate Insights', description: 'AI analyzes your data' },
-      { step: 4, title: 'Review Recommendations', description: 'Act on actionable insights' },
+      { step: 1, title: 'Ask Aura', description: 'Type your business question' },
+      { step: 2, title: 'Get Analysis', description: 'AI analyzes your data in real-time' },
+      { step: 3, title: 'View Results', description: 'See charts, metrics, and insights' },
+      { step: 4, title: 'Take Action', description: 'Implement recommendations' },
     ],
-    tips: ['Review insights weekly', 'Implement top recommendations first']
-  },
-  {
-    id: 'revenue',
-    label: 'Revenue Analysis',
-    icon: DollarSign,
-    description: 'Deep dive into revenue streams',
-    steps: [
-      { step: 1, title: 'View Breakdown', description: 'See revenue by service type' },
-      { step: 2, title: 'Analyze Trends', description: 'Track month-over-month growth' },
-      { step: 3, title: 'Identify Top Performers', description: 'Find highest revenue services' },
-      { step: 4, title: 'Spot Opportunities', description: 'Discover growth areas' },
-    ],
-    tips: ['Track recurring vs one-time revenue', 'Monitor seasonal patterns']
-  },
-  {
-    id: 'forecast',
-    label: 'Demand Forecast',
-    icon: TrendingUp,
-    description: 'Predict future business trends',
-    steps: [
-      { step: 1, title: 'Select Metric', description: 'Choose what to forecast' },
-      { step: 2, title: 'Set Timeframe', description: 'Define forecast period' },
-      { step: 3, title: 'View Predictions', description: 'See AI-generated forecasts' },
-      { step: 4, title: 'Plan Actions', description: 'Prepare for predicted trends' },
-    ],
-    tips: ['Consider seasonal factors', 'Update forecasts monthly']
-  },
-];
-
-// Platform admin only Business Ops guides
-const BUSINESS_OPS_ADMIN_GUIDES: AgentGuide[] = [
-  {
-    id: 'inventory',
-    label: 'Inventory Search',
-    icon: Package,
-    description: 'View and manage inventory levels',
-    steps: [
-      { step: 1, title: 'Search Items', description: 'Find parts by name or SKU' },
-      { step: 2, title: 'Check Stock', description: 'View current quantity and location' },
-      { step: 3, title: 'Reorder', description: 'Create purchase orders for low stock' },
-    ],
-    tips: ['Set minimum stock alerts', 'Track inventory usage per job']
-  },
-  {
-    id: 'warranty',
-    label: 'Warranty Lookup',
-    icon: Shield,
-    description: 'Verify warranty status for products',
-    steps: [
-      { step: 1, title: 'Enter Details', description: 'Input serial number or customer info' },
-      { step: 2, title: 'View Coverage', description: 'See warranty terms and expiration' },
-      { step: 3, title: 'Check Claims', description: 'Review any previous claims' },
-    ],
-    tips: ['Keep warranty cards updated', 'Register products promptly']
+    tips: ['Ask specific questions for better insights', 'Review insights weekly for trends']
   },
 ];
 
