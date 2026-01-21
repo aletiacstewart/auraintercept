@@ -40,13 +40,13 @@ export function MetricCard({
       )}
       onClick={onClick}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
-          <Icon className={cn("h-5 w-5", iconColor)} />
+          <Icon className={cn("h-4 w-4", iconColor)} />
           {badge}
         </div>
-        <p className={cn("text-2xl font-bold mt-2", valueColors[valueColor])}>{value}</p>
-        <p className="text-xs text-white/70">{label}</p>
+        <p className={cn("text-xl font-bold mt-1.5", valueColors[valueColor])}>{value}</p>
+        <p className="text-[10px] text-white/70">{label}</p>
       </CardContent>
     </Card>
   );

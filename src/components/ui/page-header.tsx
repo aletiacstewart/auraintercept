@@ -68,17 +68,17 @@ export function PageHeader({
   const colorClasses = featureColor ? featureColorClasses[featureColor] : { bg: 'bg-accent/20', text: 'text-accent', ringColor: 'var(--accent)' };
   
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("space-y-3", className)}>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <div className="relative">
             {/* Round container with breathing animation */}
             <div className={cn(
-              "w-11 h-11 rounded-full flex items-center justify-center transition-all",
+              "w-9 h-9 rounded-full flex items-center justify-center transition-all",
               colorClasses.bg,
               pulse && "aura-breathing"
             )}>
-              <Icon className={cn("h-5 w-5", colorClasses.text)} />
+              <Icon className={cn("h-4 w-4", colorClasses.text)} />
             </div>
             
             {/* Pulse ring effect when pulsing is enabled */}
@@ -90,12 +90,12 @@ export function PageHeader({
             )}
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-foreground">{title}</h1>
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-lg font-bold text-foreground">{title}</h1>
               {badge}
               <VoiceStatusIndicator size="sm" />
             </div>
-            <p className="text-sm text-muted-foreground">{description}</p>
+            <p className="text-xs text-muted-foreground">{description}</p>
           </div>
         </div>
         {action}
