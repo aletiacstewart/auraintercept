@@ -346,58 +346,58 @@ export function CompanyAdminDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
           <Card 
             key={stat.title} 
             className="relative overflow-hidden border-border/50 cursor-pointer hover:bg-slate-700/70 transition-colors"
             onClick={() => navigate(stat.href)}
           >
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-white">
+            <CardHeader className="flex flex-row items-center justify-between pb-1 pt-3 px-3">
+              <CardTitle className="text-xs font-medium text-white">
                 {stat.title}
               </CardTitle>
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${stat.colorClass}`}>
-                <stat.icon className="w-5 h-5" />
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${stat.colorClass}`}>
+                <stat.icon className="w-4 h-4" />
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-1 pb-3 px-3">
               {isLoading ? (
-                <Skeleton className="h-8 w-20" />
+                <Skeleton className="h-6 w-16" />
               ) : (
-                <div className="text-3xl font-bold">
+                <div className="text-2xl font-bold">
                   {stat.isString ? stat.value : (stat.value as number).toLocaleString()}
                 </div>
               )}
-              <p className="text-xs text-white/70 mt-1">{stat.description}</p>
+              <p className="text-[10px] text-white/70 mt-0.5">{stat.description}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
       {/* Quick Actions & Activity Cards */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3 md:grid-cols-2">
         <Card className="border-border/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-primary" />
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-sm">
+              <Activity className="w-4 h-4 text-primary" />
               Quick Actions
             </CardTitle>
-            <CardDescription className="text-white/70">Common tasks to manage your business</CardDescription>
+            <CardDescription className="text-white/70 text-xs">Common tasks to manage your business</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid gap-3 grid-cols-2 lg:grid-cols-3">
+          <CardContent className="pt-0">
+            <div className="grid gap-2 grid-cols-2 lg:grid-cols-3">
               {quickActions.map((action) => (
                 <Button
                   key={action.label}
                   variant="outline"
-                  className="h-auto py-4 px-2 flex flex-col items-center gap-2 hover:border-primary whitespace-normal"
+                  className="h-auto py-2.5 px-1.5 flex flex-col items-center gap-1.5 hover:border-primary whitespace-normal"
                   onClick={() => navigate(action.href)}
                 >
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${action.colorClass}`}>
-                    <action.icon className="w-5 h-5" />
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${action.colorClass}`}>
+                    <action.icon className="w-3.5 h-3.5" />
                   </div>
-                  <span className="font-medium text-xs text-center leading-tight">{action.label}</span>
+                  <span className="font-medium text-[10px] text-center leading-tight">{action.label}</span>
                 </Button>
               ))}
             </div>
