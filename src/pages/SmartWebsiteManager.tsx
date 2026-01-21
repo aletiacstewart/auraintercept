@@ -274,12 +274,12 @@ export default function SmartWebsiteManager() {
             showAuraBar
             action={
               websiteUrl ? (
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => window.open(websiteUrl, '_blank')}>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Button variant="outline" className="w-full sm:w-auto" onClick={() => window.open(websiteUrl, '_blank')}>
                     <Eye className="w-4 h-4 mr-2" />
                     Preview
                   </Button>
-                  <Button variant="outline" onClick={() => copyToClipboard(websiteUrl)}>
+                  <Button variant="outline" className="w-full sm:w-auto" onClick={() => copyToClipboard(websiteUrl)}>
                     <Copy className="w-4 h-4 mr-2" />
                     Copy URL
                   </Button>
@@ -290,30 +290,31 @@ export default function SmartWebsiteManager() {
 
         {/* Status Card */}
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
+          <CardContent className="pt-4 pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="flex items-center gap-4">
-                <div className={`w-3 h-3 rounded-full ${website.is_published ? 'bg-green-500' : 'bg-yellow-500'}`} />
-                <div>
+                <div className={`w-3 h-3 rounded-full flex-shrink-0 ${website.is_published ? 'bg-green-500' : 'bg-yellow-500'}`} />
+                <div className="min-w-0">
                   <p className="font-medium">{website.is_published ? 'Published' : 'Draft'}</p>
-                  <p className="text-sm text-muted-foreground">{websiteUrl}</p>
+                  <p className="text-sm text-muted-foreground break-all">{websiteUrl}</p>
                 </div>
               </div>
               <Switch
                 checked={website.is_published}
                 onCheckedChange={(checked) => updateWebsite.mutate({ is_published: checked })}
+                className="flex-shrink-0"
               />
             </div>
           </CardContent>
         </Card>
 
         <Tabs defaultValue="content" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="content">Content</TabsTrigger>
-            <TabsTrigger value="media">Media</TabsTrigger>
-            <TabsTrigger value="sections">Content Section Visibility</TabsTrigger>
-            <TabsTrigger value="analytics">Smart Website Analytics</TabsTrigger>
-            <TabsTrigger value="domain">Custom Domain</TabsTrigger>
+          <TabsList className="w-full flex overflow-x-auto scrollbar-hide">
+            <TabsTrigger value="content" className="flex-shrink-0">Content</TabsTrigger>
+            <TabsTrigger value="media" className="flex-shrink-0">Media</TabsTrigger>
+            <TabsTrigger value="sections" className="flex-shrink-0 whitespace-nowrap">Visibility</TabsTrigger>
+            <TabsTrigger value="analytics" className="flex-shrink-0">Analytics</TabsTrigger>
+            <TabsTrigger value="domain" className="flex-shrink-0">Domain</TabsTrigger>
           </TabsList>
 
           <TabsContent value="content" className="space-y-6">
@@ -446,7 +447,7 @@ export default function SmartWebsiteManager() {
 
                     {website.enable_night_mode && (
                       <>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div className="space-y-2">
                             <Label className="text-card-foreground">Night Starts At</Label>
                             <Select

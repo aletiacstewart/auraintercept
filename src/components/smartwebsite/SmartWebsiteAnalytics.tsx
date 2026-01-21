@@ -221,81 +221,81 @@ export function SmartWebsiteAnalytics({
             </div>
 
       {/* Summary Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         <Card className="min-w-0">
-          <CardContent className="pt-6 px-4">
-            <div className="flex items-center gap-3">
+          <CardContent className="pt-4 px-3 pb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
               <div className="p-2 rounded-lg bg-primary/10 shrink-0">
-                <Eye className="w-5 h-5 text-primary" />
+                <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </div>
-              <div className="min-w-0">
-                <p className="text-2xl font-bold text-card-foreground">{metrics?.page_views || 0}</p>
-                <p className="text-sm text-card-foreground/70 truncate">Page Views</p>
+              <div className="min-w-0 w-full">
+                <p className="text-xl sm:text-2xl font-bold text-card-foreground">{metrics?.page_views || 0}</p>
+                <p className="text-xs sm:text-sm text-card-foreground/70 truncate">Page Views</p>
               </div>
             </div>
           </CardContent>
         </Card>
         <Card className="min-w-0">
-          <CardContent className="pt-6 px-4">
-            <div className="flex items-center gap-3">
+          <CardContent className="pt-4 px-3 pb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
               <div className="p-2 rounded-lg bg-chart-2/10 shrink-0">
-                <Users className="w-5 h-5 text-chart-2" />
+                <Users className="w-4 h-4 sm:w-5 sm:h-5 text-chart-2" />
               </div>
-              <div className="min-w-0">
-                <p className="text-2xl font-bold text-card-foreground">{metrics?.unique_visitors || 0}</p>
-                <p className="text-sm text-card-foreground/70 truncate">Unique Visitors</p>
+              <div className="min-w-0 w-full">
+                <p className="text-xl sm:text-2xl font-bold text-card-foreground">{metrics?.unique_visitors || 0}</p>
+                <p className="text-xs sm:text-sm text-card-foreground/70 truncate">Unique Visitors</p>
               </div>
             </div>
           </CardContent>
         </Card>
         <Card className="min-w-0">
-          <CardContent className="pt-6 px-4">
-            <div className="flex items-center gap-3">
+          <CardContent className="pt-4 px-3 pb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
               <div className="p-2 rounded-lg bg-chart-3/10 shrink-0">
-                <MessageSquare className="w-5 h-5 text-chart-3" />
+                <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-chart-3" />
               </div>
-              <div className="min-w-0">
-                <p className="text-2xl font-bold text-card-foreground">{metrics?.chat_interactions || 0}</p>
-                <p className="text-sm text-card-foreground/70 truncate">Chat Sessions</p>
+              <div className="min-w-0 w-full">
+                <p className="text-xl sm:text-2xl font-bold text-card-foreground">{metrics?.chat_interactions || 0}</p>
+                <p className="text-xs sm:text-sm text-card-foreground/70 truncate">Chat Sessions</p>
               </div>
             </div>
           </CardContent>
         </Card>
         <Card className="min-w-0">
-          <CardContent className="pt-6 px-4">
-            <div className="flex items-center gap-3">
+          <CardContent className="pt-4 px-3 pb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
               <div className="p-2 rounded-lg bg-chart-5/10 shrink-0">
-                <Mic className="w-5 h-5 text-chart-5" />
+                <Mic className="w-4 h-4 sm:w-5 sm:h-5 text-chart-5" />
               </div>
-              <div className="min-w-0">
-                <p className="text-2xl font-bold text-card-foreground">{metrics?.voice_interactions || 0}</p>
-                <p className="text-sm text-card-foreground/70 truncate">Voice Sessions</p>
+              <div className="min-w-0 w-full">
+                <p className="text-xl sm:text-2xl font-bold text-card-foreground">{metrics?.voice_interactions || 0}</p>
+                <p className="text-xs sm:text-sm text-card-foreground/70 truncate">Voice Sessions</p>
               </div>
             </div>
           </CardContent>
         </Card>
         <Card className="min-w-0">
-          <CardContent className="pt-6 px-4">
-            <div className="flex items-center gap-3">
+          <CardContent className="pt-4 px-3 pb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
               <div className="p-2 rounded-lg bg-chart-4/10 shrink-0">
-                <MousePointer className="w-5 h-5 text-chart-4" />
+                <MousePointer className="w-4 h-4 sm:w-5 sm:h-5 text-chart-4" />
               </div>
-              <div className="min-w-0">
-                <p className="text-2xl font-bold text-card-foreground">{metrics?.booking_clicks || 0}</p>
-                <p className="text-sm text-card-foreground/70 truncate">Booking Clicks</p>
+              <div className="min-w-0 w-full">
+                <p className="text-xl sm:text-2xl font-bold text-card-foreground">{metrics?.booking_clicks || 0}</p>
+                <p className="text-xs sm:text-sm text-card-foreground/70 truncate">Booking Clicks</p>
               </div>
             </div>
           </CardContent>
         </Card>
         <Card className="min-w-0">
-          <CardContent className="pt-6 px-4">
-            <div className="flex items-center gap-3">
+          <CardContent className="pt-4 px-3 pb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
               <div className="p-2 rounded-lg bg-secondary/10 shrink-0">
-                <Phone className="w-5 h-5 text-secondary" />
+                <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
               </div>
-              <div className="min-w-0">
-                <p className="text-2xl font-bold text-card-foreground">{avgVoiceDuration}s</p>
-                <p className="text-sm text-card-foreground/70 truncate">Avg Voice Duration</p>
+              <div className="min-w-0 w-full">
+                <p className="text-xl sm:text-2xl font-bold text-card-foreground">{avgVoiceDuration}s</p>
+                <p className="text-xs sm:text-sm text-card-foreground/70 truncate">Avg Voice</p>
               </div>
             </div>
           </CardContent>
