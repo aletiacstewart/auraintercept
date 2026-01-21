@@ -147,11 +147,21 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
   });
 
   // Check microphone permission (voice mode only)
+  // Skip eager permission request in embed mode to prevent state churn
   useEffect(() => {
     if (testMode) {
       setHasPermission(true);
       return;
     }
+    
+    // Defer permission check in embed mode - only request when user initiates
+    const isEmbed = typeof window !== 'undefined' && 
+      new URLSearchParams(window.location.search).get('embed') === 'true';
+    if (isEmbed) {
+      // Don't eagerly request permission in embed mode; will request on startConversation
+      return;
+    }
+    
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then(() => setHasPermission(true))

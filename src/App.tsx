@@ -98,16 +98,20 @@ import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
+// Check if running in embed/iframe mode
+const isEmbedMode = typeof window !== 'undefined' && 
+  new URLSearchParams(window.location.search).get('embed') === 'true';
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
         <ErrorBoundary>
           <Sonner />
-          <PWAUpdatePrompt />
+          {!isEmbedMode && <PWAUpdatePrompt />}
           <BrowserRouter>
             <VoiceProvider>
-              <AuraVoiceOverlay />
+              {!isEmbedMode && <AuraVoiceOverlay />}
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
