@@ -8,12 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { 
-  Bot, Send, User, Loader2, Calendar, Clock, DollarSign, 
-  AlertTriangle, Star, MessageSquare, Sparkles, Building2,
-  Phone, X, MapPin, Mic, Home
+  Bot, Send, User, Calendar, Clock, 
+  AlertTriangle, MessageSquare, Sparkles, Building2,
+  Phone, X, Mic, Home
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
+import { usePublicChatStream, StreamMessage } from '@/hooks/usePublicChatStream';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { supabase } from '@/integrations/supabase/client';
 import { EmbedAuthPrompt } from '@/components/widget/EmbedAuthPrompt';
@@ -113,16 +113,15 @@ export default function PublicChat() {
     }
   }, [isEmbedMode, companySlug]);
 
-  // Use multi-agent chat hook - pass userId when authenticated
+  // Use streaming chat hook for fast token-by-token responses
   const { 
     messages, 
     isLoading: isStreaming, 
     currentAgent, 
     sendMessage, 
     clearMessages 
-  } = useMultiAgentChat({
-    companyId: config?.company?.id,
-    userId: customerUserId || undefined,
+  } = usePublicChatStream({
+    companySlug: companySlug || '',
     onAgentChange: (agent) => {
       console.log('[PublicChat] Agent changed to:', agent);
     }
@@ -210,9 +209,7 @@ export default function PublicChat() {
     return getQuickActionsForTier(effectiveTier, hasPhone);
   }, [effectiveTier, config?.company?.dispatch_phone]);
 
-  const visibleTabs = useMemo(() => {
-    return getTabsForTier(effectiveTier);
-  }, [effectiveTier]);
+  // Note: visibleTabs is available from getTabsForTier(effectiveTier) if needed for dynamic tab filtering
 
   const handleQuickAction = useCallback((action: QuickActionConfig) => {
     if (action.isCallAction && config?.company?.dispatch_phone) {
@@ -478,22 +475,33 @@ export default function PublicChat() {
                             {msgAgentInfo.label}
                           </Badge>
                         )}
-                        <div className="whitespace-pre-wrap text-sm">{message.content}</div>
+                        <div className="whitespace-pre-wrap text-sm">
+                          {message.content}
+                          {/* Animated cursor for streaming messages */}
+                          {(message as any).isStreaming && (
+                            <span className="inline-block w-1.5 h-4 bg-primary/60 ml-0.5 animate-pulse" />
+                          )}
+                        </div>
                       </div>
                     </div>
                   </React.Fragment>
                 );
               })}
 
-              {isStreaming && messages[messages.length - 1]?.role !== 'assistant' && (
+              {/* Typing indicator - only show when loading and no streaming message yet */}
+              {isStreaming && (!messages.length || (messages[messages.length - 1]?.role === 'user')) && (
                 <div className="flex gap-3 p-3 rounded-lg bg-muted mr-8">
                   <div 
                     className="h-8 w-8 rounded-full flex items-center justify-center"
                     style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }}
                   >
-                    <Loader2 className="h-4 w-4 animate-spin text-white" />
+                    <Bot className="h-4 w-4 text-white" />
                   </div>
-                  <div className="flex-1 text-muted-foreground text-sm">Thinking...</div>
+                  <div className="flex-1 flex items-center gap-1 text-muted-foreground text-sm">
+                    <span className="animate-bounce" style={{ animationDelay: '0ms' }}>●</span>
+                    <span className="animate-bounce" style={{ animationDelay: '150ms' }}>●</span>
+                    <span className="animate-bounce" style={{ animationDelay: '300ms' }}>●</span>
+                  </div>
                 </div>
               )}
             </div>
