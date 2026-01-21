@@ -41,7 +41,7 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
           size="sm"
           className={cn(
             'h-auto flex-col gap-1 py-2 px-1.5 text-[10px]',
-            'border-border/50 text-card-foreground hover:opacity-90 hover:border-primary/50 transition-colors rounded-lg',
+            'border-border/50 text-white hover:opacity-90 hover:border-primary/50 transition-colors rounded-lg',
             action.variant === 'destructive' && 'bg-destructive text-white hover:bg-destructive/90 border-destructive'
           )}
           style={{ background: 'hsl(208 30% 18%)' }}
@@ -73,8 +73,8 @@ export const QuickActionBar: React.FC<QuickActionBarProps> = ({
             variant={action.variant || 'ghost'}
             size="sm"
             className={cn(
-              'text-[10px] shrink-0 rounded-full px-2.5 h-7 text-card-foreground/80',
-              'hover:bg-card-foreground/10 hover:text-card-foreground transition-colors',
+              'text-[10px] shrink-0 rounded-full px-2.5 h-7 text-white/80',
+              'hover:bg-white/10 hover:text-white transition-colors',
               action.variant === 'destructive' && 'bg-destructive text-white hover:bg-destructive/90'
             )}
             onClick={() => onAction(action.message, action.id)}
