@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useRef } from 'react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,8 +11,16 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
   const { user, loading, userRole } = useAuth();
   const location = useLocation();
+  
+  // Stability guard: once we've seen a user, don't unmount for transient loading states
+  const hasSeenUser = useRef(false);
+  if (user) {
+    hasSeenUser.current = true;
+  }
 
-  if (loading) {
+  // Only show skeleton if loading AND we've never seen a user
+  // This prevents iframe destruction during token refresh or background auth events
+  if (loading && !hasSeenUser.current) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="space-y-4 w-full max-w-md p-8">

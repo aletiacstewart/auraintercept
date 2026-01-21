@@ -155,9 +155,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    // Check for existing session
+    // Check for existing session - don't toggle loading since it's already true
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setLoading(true);
       setSession(session);
       setUser(session?.user ?? null);
 
