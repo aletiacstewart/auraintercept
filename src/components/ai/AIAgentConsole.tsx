@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
+import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { 
   Calendar, Clock, MessageSquare, Sparkles, ChevronRight,
-  AlertTriangle, DollarSign, MapPin, Star, ThumbsUp, Mic, Phone, TestTube2
+  AlertTriangle, DollarSign, MapPin, Star, Phone, TestTube2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getAgentStyle } from '@/lib/agentStyles';
@@ -33,12 +33,15 @@ import { FeedbackForm } from './FeedbackForm';
 import { ReviewForm } from './ReviewForm';
 import { BookingForm, BookingData } from './BookingForm';
 import { QuoteForm, QuoteData } from './QuoteForm';
-import { TrackAppointmentForm, TrackingData } from './TrackAppointmentForm';
+import { TrackingData } from './TrackAppointmentForm';
 import { AppointmentTrackingView } from './AppointmentTrackingView';
 import { BillingLookupForm } from '@/components/billing/forms/BillingLookupForm';
 import { InvoiceDetailView } from '@/components/billing/forms/InvoiceDetailView';
 import { CompanySelector } from './CompanySelector';
-import { format } from 'date-fns';
+import { 
+  getQuickActionsForTier, 
+  type SubscriptionTier 
+} from '@/lib/customerPortalConfig';
 
 // Customer Engagement agents definition
 const CUSTOMER_ENGAGEMENT_AGENTS = [
@@ -46,19 +49,6 @@ const CUSTOMER_ENGAGEMENT_AGENTS = [
   { type: 'booking', name: 'Scheduling Agent', description: 'Handles appointment scheduling' },
   { type: 'followup', name: 'Follow-up Agent', description: 'Post-service engagement' },
   { type: 'review', name: 'Social Media Review Agent', description: 'Collects customer reviews' },
-];
-
-// Quick actions matching customer-facing widget/public chat features
-// Note: Review is hidden from customers - it's only shown after 4+ star feedback via auto-handoff
-const QUICK_ACTIONS = [
-  { id: 'schedule', label: 'Book Appointment', icon: Calendar, message: "I'd like to request an appointment" },
-  { id: 'emergency', label: 'Emergency', icon: AlertTriangle, message: "I have an urgent emergency situation", variant: 'destructive' as const },
-  { id: 'quote', label: 'Get Quote', icon: DollarSign, message: "I need a quote for your services" },
-  { id: 'hours', label: 'Hours', icon: Clock, message: "What are your business hours?" },
-  { id: 'services', label: 'Services', icon: Sparkles, message: "What services do you offer?" },
-  { id: 'track', label: 'Track', icon: MapPin, message: "I want to track my appointment status" },
-  { id: 'billing', label: 'Billing', icon: DollarSign, message: "I need to look up my billing information" },
-  { id: 'feedback', label: 'Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
 ];
 
 interface Service {
@@ -75,6 +65,9 @@ interface Company {
   logo_url: string | null;
   primary_color: string | null;
   secondary_color: string | null;
+  dispatch_phone: string | null;
+  subscription_tier: string | null;
+  trial_ends_at: string | null;
 }
 
 interface BusinessHour {
@@ -171,20 +164,34 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
 
   const enabledAgentsCount = customerEngagementAgents.filter(a => a.isEnabled).length;
 
-  // Fetch company details including review links
+  // Fetch company details including review links and subscription tier
   const { data: company } = useQuery({
     queryKey: ['company-details', companyId],
     queryFn: async () => {
       if (!companyId) return null;
       const { data } = await supabase
         .from('companies')
-        .select('id, name, logo_url, primary_color, secondary_color, review_google_url, review_facebook_url, review_yelp_url')
+        .select('id, name, logo_url, primary_color, secondary_color, review_google_url, review_facebook_url, review_yelp_url, dispatch_phone, subscription_tier, trial_ends_at')
         .eq('id', companyId)
         .single();
       return data as (Company & { review_google_url?: string; review_facebook_url?: string; review_yelp_url?: string }) | null;
     },
     enabled: !!companyId,
   });
+
+  // Determine effective subscription tier (trial = command tier access)
+  const effectiveTier = React.useMemo((): SubscriptionTier => {
+    if (!company) return 'single_point';
+    const inTrial = company.trial_ends_at && new Date(company.trial_ends_at) > new Date();
+    if (inTrial) return 'command';
+    return (company.subscription_tier || 'single_point') as SubscriptionTier;
+  }, [company]);
+
+  // Filter quick actions based on subscription tier
+  const visibleQuickActions = React.useMemo(() => {
+    const hasPhone = !!company?.dispatch_phone;
+    return getQuickActionsForTier(effectiveTier, hasPhone);
+  }, [effectiveTier, company?.dispatch_phone]);
 
   // Build review links from company data
   const reviewLinks = React.useMemo(() => {
@@ -344,6 +351,13 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
     if (actionId === 'services') {
       setActiveFormType('services');
       setActiveTab('services');
+      return;
+    }
+    if (actionId === 'call_to_book') {
+      // Open phone dialer for Single-Point tier "Call to Book" action
+      if (company?.dispatch_phone) {
+        window.location.href = `tel:${company.dispatch_phone}`;
+      }
       return;
     }
     if (actionId === 'emergency') {
@@ -572,7 +586,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
                     ? `I'm ${company.name}'s virtual assistant. Select an option below or type a message to get started.`
                     : "I'm your AI assistant. How can I help you today?"
                   }
-                  actions={QUICK_ACTIONS}
+                  actions={visibleQuickActions}
                   onAction={handleQuickAction}
                   consoleType="customer"
                 />
@@ -678,7 +692,7 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
             {/* Quick Actions Bar */}
             {messages.length > 0 && !isShowingForm && (
               <QuickActionBar
-                actions={QUICK_ACTIONS}
+                actions={visibleQuickActions}
                 onAction={handleQuickAction}
               />
             )}
