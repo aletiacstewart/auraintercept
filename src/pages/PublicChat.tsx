@@ -21,7 +21,7 @@ import { VoiceChat } from '@/components/ai/VoiceChat';
 import { 
   getQuickActionsForTier, 
   getTabsForTier, 
-  type SubscriptionTier,
+  getEffectiveTier,
   type QuickActionConfig 
 } from '@/lib/customerPortalConfig';
 
@@ -199,10 +199,11 @@ export default function PublicChat() {
   const agentInfo = getAgentStyle(currentAgent);
 
   // Get tier-filtered quick actions and tabs
+  // Note: Backend already computes effective tier (trial companies get 'command')
   const effectiveTier = useMemo(() => {
-    const tier = config?.company?.subscription_tier || 'single_point';
-    return tier as SubscriptionTier;
-  }, [config?.company?.subscription_tier]);
+    const inTrial = config?.company?.in_trial || false;
+    return getEffectiveTier(config?.company?.subscription_tier, inTrial);
+  }, [config?.company?.subscription_tier, config?.company?.in_trial]);
 
   const visibleQuickActions = useMemo(() => {
     const hasPhone = !!config?.company?.dispatch_phone;
