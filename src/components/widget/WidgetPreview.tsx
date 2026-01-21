@@ -9,19 +9,6 @@ export const WidgetPreview = forwardRef<HTMLDivElement>((_, ref) => {
   const [companySlug, setCompanySlug] = useState<string>('');
 
   useEffect(() => {
-    console.log('[WidgetPreview] mounted');
-    return () => console.log('[WidgetPreview] unmounted');
-  }, []);
-
-  useEffect(() => {
-    console.log('[WidgetPreview] companyId', companyId);
-  }, [companyId]);
-
-  useEffect(() => {
-    console.log('[WidgetPreview] companySlug', companySlug);
-  }, [companySlug]);
-
-  useEffect(() => {
     const fetchCompany = async () => {
       if (!companyId) return;
       const { data } = await supabase
@@ -49,15 +36,13 @@ export const WidgetPreview = forwardRef<HTMLDivElement>((_, ref) => {
         <CardContent>
           <div className="relative bg-gradient-to-br from-muted/30 to-muted/60 rounded-lg overflow-hidden border">
             {companySlug ? (
-            <iframe
-              key="widget-preview-iframe"
-              src={`/chat/${companySlug}?embed=true`}
-              className="w-full h-[600px] border-0 rounded-lg"
-              title="Customer App Preview"
-              allow="microphone"
-              onLoad={() => console.log('[WidgetPreview] iframe onLoad', Date.now())}
-              onError={() => console.log('[WidgetPreview] iframe onError', Date.now())}
-            />
+              <iframe
+                key="widget-preview-iframe"
+                src={`/chat/${companySlug}?embed=true`}
+                className="w-full h-[600px] border-0 rounded-lg"
+                title="Customer App Preview"
+                allow="microphone"
+              />
             ) : (
               <div className="flex items-center justify-center h-[600px] text-muted-foreground">
                 Loading preview...
