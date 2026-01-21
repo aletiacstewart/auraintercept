@@ -47,9 +47,9 @@ export default function DispatchFieldOpsInstall() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="p-4 rounded-lg border border-border/50 bg-muted/30">
-                <h4 className="font-medium mb-1">Dispatch Console (Dashboard)</h4>
-                <p className="text-sm text-muted-foreground mb-3">
+              <div className="p-4 rounded-lg border border-border/50 bg-card">
+                <h4 className="font-medium mb-1 text-card-foreground">Dispatch Console (Dashboard)</h4>
+                <p className="text-sm text-card-foreground/70 mb-3">
                   Full dispatch experience within the main dashboard
                 </p>
                 <Button 
@@ -61,9 +61,9 @@ export default function DispatchFieldOpsInstall() {
                   Open Dispatch Console
                 </Button>
               </div>
-              <div className="p-4 rounded-lg border border-border/50 bg-muted/30">
-                <h4 className="font-medium mb-1">Standalone Dispatch App</h4>
-                <p className="text-sm text-muted-foreground mb-3">
+              <div className="p-4 rounded-lg border border-border/50 bg-card">
+                <h4 className="font-medium mb-1 text-card-foreground">Standalone Dispatch App</h4>
+                <p className="text-sm text-card-foreground/70 mb-3">
                   Lightweight dispatch console without dashboard navigation
                 </p>
                 <Button 

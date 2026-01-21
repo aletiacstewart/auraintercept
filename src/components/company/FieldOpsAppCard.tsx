@@ -139,46 +139,46 @@ export function FieldOpsAppCard() {
           {/* Installation Instructions */}
           <div className="flex-1 grid gap-4 md:grid-cols-2">
             {/* iOS Instructions */}
-            <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
+            <div className="p-4 rounded-lg bg-card border border-border/50">
               <div className="flex items-center gap-2 mb-3">
-                <Apple className="h-4 w-4 text-white" />
-                <span className="font-medium text-sm text-white">iPhone / iPad</span>
+                <Apple className="h-4 w-4 text-card-foreground" />
+                <span className="font-medium text-sm text-card-foreground">iPhone / iPad</span>
               </div>
-              <ol className="space-y-2 text-xs text-white/70">
+              <ol className="space-y-2 text-xs text-card-foreground/70">
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">1</span>
-                  <span>Open in <strong className="text-white">Safari</strong></span>
+                  <span>Open in <strong className="text-card-foreground">Safari</strong></span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">2</span>
                   <span className="flex items-center gap-1">
-                    Tap <Share className="h-3 w-3 text-white" /> Share
+                    Tap <Share className="h-3 w-3 text-card-foreground" /> Share
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">3</span>
                   <span className="flex items-center gap-1">
-                    Tap <Plus className="h-3 w-3 text-white" /> Add to Home Screen
+                    Tap <Plus className="h-3 w-3 text-card-foreground" /> Add to Home Screen
                   </span>
                 </li>
               </ol>
             </div>
 
             {/* Android Instructions */}
-            <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
+            <div className="p-4 rounded-lg bg-card border border-border/50">
               <div className="flex items-center gap-2 mb-3">
-                <Chrome className="h-4 w-4 text-white" />
-                <span className="font-medium text-sm text-white">Android</span>
+                <Chrome className="h-4 w-4 text-card-foreground" />
+                <span className="font-medium text-sm text-card-foreground">Android</span>
               </div>
-              <ol className="space-y-2 text-xs text-white/70">
+              <ol className="space-y-2 text-xs text-card-foreground/70">
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">1</span>
-                  <span>Open in <strong className="text-white">Chrome</strong></span>
+                  <span>Open in <strong className="text-card-foreground">Chrome</strong></span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs">2</span>
                   <span className="flex items-center gap-1">
-                    Tap <MoreVertical className="h-3 w-3 text-white" /> Menu
+                    Tap <MoreVertical className="h-3 w-3 text-card-foreground" /> Menu
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -194,21 +194,21 @@ export function FieldOpsAppCard() {
         <div className="grid gap-3 grid-cols-3 pt-2 border-t border-border/50">
           <div className="flex items-center gap-2 text-sm">
             <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <Smartphone className="h-4 w-4 text-white" />
+              <Smartphone className="h-4 w-4 text-primary" />
             </div>
-            <span className="text-xs text-white/70">Native Feel</span>
+            <span className="text-xs text-card-foreground/70">Native Feel</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <Download className="h-4 w-4 text-white" />
+              <Download className="h-4 w-4 text-primary" />
             </div>
-            <span className="text-xs text-white/70">Quick Access</span>
+            <span className="text-xs text-card-foreground/70">Quick Access</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <Check className="h-4 w-4 text-white" />
+              <Check className="h-4 w-4 text-primary" />
             </div>
-            <span className="text-xs text-white/70">Works Offline</span>
+            <span className="text-xs text-card-foreground/70">Works Offline</span>
           </div>
         </div>
       </CardContent>
