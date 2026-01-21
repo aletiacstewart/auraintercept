@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { PlatformInstallGuide } from './PlatformInstallGuide';
 
-export const WidgetPreview = () => {
+export const WidgetPreview = forwardRef<HTMLDivElement>((_, ref) => {
   const { companyId } = useAuth();
   const [companySlug, setCompanySlug] = useState<string>('');
 
@@ -22,7 +22,7 @@ export const WidgetPreview = () => {
   }, [companyId]);
 
   return (
-    <div className="space-y-6">
+    <div ref={ref} className="space-y-6">
       {/* Platform Installation Guide - Comprehensive embed code generators */}
       {companySlug && <PlatformInstallGuide companySlug={companySlug} />}
 
@@ -52,4 +52,6 @@ export const WidgetPreview = () => {
       </Card>
     </div>
   );
-};
+});
+
+WidgetPreview.displayName = 'WidgetPreview';
