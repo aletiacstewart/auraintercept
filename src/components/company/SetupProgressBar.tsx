@@ -101,9 +101,8 @@ export function SetupProgressBar() {
           {
             id: 'default-prefs',
             label: 'Default Prefs',
-            // Only count as completed once the defaults have been explicitly changed from the initial defaults.
-            // (Initial defaults are true/true/true)
-            completed: company?.default_email_enabled === false || company?.default_sms_enabled === false || company?.default_call_enabled === false,
+            // Default prefs are always set (NOT NULL with defaults), so mark as complete if company exists
+            completed: company?.default_email_enabled !== undefined,
           },
           {
             id: 'reports',

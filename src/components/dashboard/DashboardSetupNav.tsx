@@ -81,8 +81,8 @@ export function DashboardSetupNav() {
           !!company?.public_app_url, // App URL
           (reminderSettingsRes.count || 0) > 0 || !!company?.callback_delay_seconds, // Reminders
           !!company?.missed_call_action, // Missed Calls
-          // Only count as completed once defaults are changed from initial defaults (true/true/true)
-          company?.default_email_enabled === false || company?.default_sms_enabled === false || company?.default_call_enabled === false, // Default Prefs
+          // Default prefs are always set (NOT NULL with defaults), so mark as complete if company exists
+          company?.default_email_enabled !== undefined, // Default Prefs
           !!(company?.weekly_digest_enabled || company?.monthly_digest_enabled || company?.quarterly_digest_enabled), // Reports
           !!(company?.cost_alert_enabled || company?.bounce_alert_enabled || company?.unsubscribe_alert_enabled), // Alerts
           company?.customer_prefs_enabled === true || company?.customer_prefs_enabled === false, // Customer Prefs
