@@ -47,9 +47,9 @@ export default function FieldOpsInstall() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="p-4 rounded-lg border border-border/50 bg-muted/30">
-                <h4 className="font-medium mb-1">Technician Console</h4>
-                <p className="text-sm text-muted-foreground mb-3">
+              <div className="p-4 rounded-lg border border-border/50 bg-card">
+                <h4 className="font-medium mb-1 text-card-foreground">Technician Console</h4>
+                <p className="text-sm text-card-foreground/70 mb-3">
                   Full Field Ops experience for technicians accessing via web browser
                 </p>
                 <Button 
@@ -61,9 +61,9 @@ export default function FieldOpsInstall() {
                   Open Technician Console
                 </Button>
               </div>
-              <div className="p-4 rounded-lg border border-border/50 bg-muted/30">
-                <h4 className="font-medium mb-1">Dispatch Console</h4>
-                <p className="text-sm text-muted-foreground mb-3">
+              <div className="p-4 rounded-lg border border-border/50 bg-card">
+                <h4 className="font-medium mb-1 text-card-foreground">Dispatch Console</h4>
+                <p className="text-sm text-card-foreground/70 mb-3">
                   Admin view for dispatching and managing field operations
                 </p>
                 <Button 
