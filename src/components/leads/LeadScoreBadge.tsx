@@ -20,7 +20,7 @@ export function LeadScoreBadge({ score, scoreFactors, size = 'md' }: LeadScoreBa
     if (score >= 80) return 'bg-green-500/20 text-green-400 border-green-500/30';
     if (score >= 60) return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
     if (score >= 40) return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
-    return 'bg-muted text-muted-foreground border-border';
+    return 'bg-muted text-card-foreground border-border';
   };
 
   const getScoreLabel = (score: number) => {

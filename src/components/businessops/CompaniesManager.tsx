@@ -398,7 +398,7 @@ export function CompaniesManager() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="font-mono">{company.slug}</Badge>
+                      <Badge variant="outline-card" className="font-mono">{company.slug}</Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
