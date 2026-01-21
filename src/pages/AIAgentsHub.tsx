@@ -370,7 +370,7 @@ export default function AIAgentsHub() {
           {/* Agents Tab */}
           <TabsContent value="agents" className="space-y-6">
             {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
               {Object.entries(CATEGORY_INFO).map(([key, { label, icon: Icon, colorClass }]) => {
                 const categoryAgents = accessibleAgents.filter(a => a.category === key);
                 if (categoryAgents.length === 0) return null;
@@ -381,8 +381,8 @@ export default function AIAgentsHub() {
                     className={`cursor-pointer transition-all hover:shadow-md ${activeCategory === key ? 'ring-2 ring-primary' : ''}`}
                     onClick={() => setActiveCategory(activeCategory === key ? 'all' : key)}
                   >
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3">
+                    <CardContent className="p-3">
+                      <div className="flex items-center gap-2">
                         <div className={cn(
                           "p-1.5 rounded-lg",
                           enabled > 0 && "feature-pulse-active"
@@ -390,11 +390,11 @@ export default function AIAgentsHub() {
                         style={{ 
                           backgroundColor: `hsl(var(${CATEGORY_INFO[key].cssVar}) / 0.15)` 
                         }}>
-                          <Icon className={`h-5 w-5 ${colorClass}`} />
+                          <Icon className={`h-4 w-4 ${colorClass}`} />
                         </div>
-                        <div>
-                          <p className="text-sm font-medium">{label}</p>
-                          <p className="text-xs text-muted-foreground">
+                        <div className="min-w-0">
+                          <p className="text-xs font-medium truncate">{label}</p>
+                          <p className="text-[10px] text-muted-foreground">
                             {enabled}/{categoryAgents.length} active
                           </p>
                         </div>
@@ -417,7 +417,7 @@ export default function AIAgentsHub() {
               </TabsList>
 
               <TabsContent value={activeCategory} className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                   {filteredAgents.map((agent) => {
                     const isAvailableInTier = canAccessAgent(agent.type);
                     const requiredTier = getAgentRequiredTier(agent.type);
@@ -522,12 +522,12 @@ function AgentCard({
       "hover:shadow-lg transition-all relative",
       !isAvailableInTier && "opacity-80 border-dashed border-muted-foreground/30"
     )}>
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
+      <CardHeader className="p-3 pb-2">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
             <div 
               className={cn(
-                "p-2 rounded-lg",
+                "p-1.5 rounded-lg shrink-0",
                 agent.is_enabled && isAvailableInTier && "feature-pulse-active",
                 !isAvailableInTier && "opacity-50"
               )}
@@ -536,16 +536,16 @@ function AgentCard({
               }}
             >
               <Icon className={cn(
-                `h-5 w-5 ${categoryInfo?.colorClass || 'text-primary'}`,
+                `h-4 w-4 ${categoryInfo?.colorClass || 'text-primary'}`,
                 !isAvailableInTier && "opacity-50"
               )} />
             </div>
-            <div>
+            <div className="min-w-0">
               <CardTitle className={cn(
-                "text-lg tracking-wide",
+                "text-sm font-semibold leading-tight truncate",
                 !isAvailableInTier && "opacity-70"
               )}>{agent.name}</CardTitle>
-              <CardDescription className="text-xs text-white/70">
+              <CardDescription className="text-[10px] text-card-foreground/60">
                 {PHASE_LABELS[agent.phase]}
               </CardDescription>
             </div>
@@ -587,10 +587,10 @@ function AgentCard({
           )}
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
+      <CardContent className="p-3 pt-0">
+        <div className="space-y-2">
           {/* Status badges */}
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap">
             {isAvailableInTier ? (
               <Badge 
                 variant={agent.is_enabled ? 'default' : 'secondary'}
@@ -599,41 +599,41 @@ function AgentCard({
                   color: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}))`,
                   borderColor: `hsl(var(${categoryInfo?.cssVar || '--feature-platform'}) / 0.3)`,
                 } : undefined}
-                className={agent.is_enabled ? 'border' : ''}
+                className={cn("text-[10px] px-1.5 py-0", agent.is_enabled && 'border')}
               >
                 {agent.is_enabled ? (
                   <>
-                    <Zap className="h-3 w-3 mr-1" />
+                    <Zap className="h-2.5 w-2.5 mr-0.5" />
                     Active
                   </>
                 ) : (
-                  'Disabled'
+                  'Off'
                 )}
               </Badge>
             ) : (
-              <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/30">
-                <Lock className="h-3 w-3 mr-1" />
-                Upgrade to {tierInfo?.label}
+              <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/30 text-[10px] px-1.5 py-0">
+                <Lock className="h-2.5 w-2.5 mr-0.5" />
+                {tierInfo?.label}
               </Badge>
             )}
-            <Badge variant="outline" className="text-white/70 border-white/30">{agent.category.replace('_', ' ')}</Badge>
+            <Badge variant="outline" className="text-card-foreground/60 border-border/50 text-[10px] px-1.5 py-0">{agent.category.replace('_', ' ')}</Badge>
           </div>
 
           {/* Always show dependencies if any exist */}
           {allDependencyNames.length > 0 && (
             <div className={cn(
-              "flex items-start gap-2 p-2 rounded border",
+              "flex items-start gap-1.5 px-2 py-1.5 rounded border text-[10px]",
               isAvailableInTier && missingDependencies.length > 0
                 ? "bg-amber-500/10 border-amber-500/20"
                 : "bg-muted/30 border-border/50"
             )}>
               <Info className={cn(
-                "h-4 w-4 flex-shrink-0 mt-0.5",
+                "h-3 w-3 flex-shrink-0 mt-0.5",
                 isAvailableInTier && missingDependencies.length > 0
                   ? "text-amber-500"
                   : "text-muted-foreground"
               )} />
-              <p className="text-xs text-card-foreground">
+              <p className="text-card-foreground leading-tight">
                 <span className={cn(
                   "font-medium",
                   isAvailableInTier && missingDependencies.length > 0
@@ -645,21 +645,21 @@ function AgentCard({
           )}
           
           {/* Action buttons */}
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center justify-between pt-1">
             {isAvailableInTier ? (
               <>
                 <Button 
                   variant="ghost" 
                   size="sm" 
                   onClick={onClick}
-                  className={categoryInfo?.colorClass || 'text-primary'}
+                  className={cn("h-7 text-xs px-2", categoryInfo?.colorClass || 'text-primary')}
                 >
                   Configure
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <ChevronRight className="h-3 w-3 ml-0.5" />
                 </Button>
                 {agent.is_enabled && (
-                  <Button variant="outline" size="sm" onClick={onClick}>
-                    <Play className="h-3 w-3 mr-1" />
+                  <Button variant="outline" size="sm" onClick={onClick} className="h-7 text-xs px-2">
+                    <Play className="h-2.5 w-2.5 mr-1" />
                     Test
                   </Button>
                 )}
@@ -672,10 +672,10 @@ function AgentCard({
                   e.stopPropagation();
                   navigate('/dashboard/subscription');
                 }}
-                className="w-full"
+                className="w-full h-7 text-xs"
               >
-                <Sparkles className="h-4 w-4 mr-2" />
-                Upgrade to Access
+                <Sparkles className="h-3 w-3 mr-1" />
+                Upgrade
               </Button>
             )}
           </div>
