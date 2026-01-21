@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -21,7 +21,7 @@ const PRESET_COLORS = [
   { primary: '#6366F1', secondary: '#A855F7', name: 'Indigo Purple' },
 ];
 
-export function BrandingSettings() {
+export const BrandingSettings = forwardRef<HTMLDivElement, object>(function BrandingSettings(_props, ref) {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [uploading, setUploading] = useState(false);
@@ -140,7 +140,7 @@ export function BrandingSettings() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div ref={ref} className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Branding & Settings</h1>
         <p className="text-muted-foreground">
@@ -378,4 +378,4 @@ export function BrandingSettings() {
       </div>
     </div>
   );
-}
+});

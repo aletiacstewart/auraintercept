@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, forwardRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Progress } from '@/components/ui/progress';
@@ -12,7 +12,7 @@ interface SetupStep {
   completed: boolean;
 }
 
-export function SetupProgressBar() {
+export const SetupProgressBar = forwardRef<HTMLDivElement, object>(function SetupProgressBar(_props, ref) {
   const { companyId } = useAuth();
   const [steps, setSteps] = useState<SetupStep[]>([]);
   const [loading, setLoading] = useState(true);
@@ -175,7 +175,7 @@ export function SetupProgressBar() {
   }
 
   return (
-    <div className="guide-card rounded-lg p-4 space-y-4">
+    <div ref={ref} className="guide-card rounded-lg p-4 space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold text-card-foreground">Setup Progress</h3>
@@ -212,4 +212,4 @@ export function SetupProgressBar() {
       </div>
     </div>
   );
-}
+});
