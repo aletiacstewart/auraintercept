@@ -54,12 +54,6 @@ const PRICING = {
     creatorPrice: 22,
     creatorChars: 100000,
   },
-  googleTts: {
-    freeChars: 1000000,
-    standardPricePerMillion: 4,
-    wavenetPricePerMillion: 16,
-    neural2PricePerMillion: 16,
-  },
   resend: {
     freeEmails: 3000,
     proPrice: 20,
@@ -290,26 +284,17 @@ export function CostCalculator() {
       return twilioCost + elevenLabsCost;
     };
 
-    // Calculate voice costs for different TTS providers
-    const calculateVoiceCostByProvider = (reminders: number, provider: 'elevenlabs' | 'openai' | 'google') => {
+    // Calculate voice costs for ElevenLabs TTS
+    const calculateVoiceCostByProvider = (reminders: number) => {
       const totalMinutes = reminders * PRICING.twilio.avgCallDuration;
       const twilioCost = PRICING.twilio.phoneNumber + (totalMinutes * PRICING.twilio.voiceOutbound);
       const totalChars = totalMinutes * PRICING.elevenlabs.charsPerMinute;
 
       let ttsCost = 0;
-      switch (provider) {
-        case 'elevenlabs':
-          if (totalChars > PRICING.elevenlabs.freeChars) {
-            if (totalChars <= PRICING.elevenlabs.starterChars) ttsCost = PRICING.elevenlabs.starterPrice;
-            else if (totalChars <= PRICING.elevenlabs.creatorChars) ttsCost = PRICING.elevenlabs.creatorPrice;
-            else ttsCost = 99;
-          }
-          break;
-        case 'google':
-          if (totalChars > PRICING.googleTts.freeChars) {
-            ttsCost = ((totalChars - PRICING.googleTts.freeChars) / 1000000) * PRICING.googleTts.neural2PricePerMillion;
-          }
-          break;
+      if (totalChars > PRICING.elevenlabs.freeChars) {
+        if (totalChars <= PRICING.elevenlabs.starterChars) ttsCost = PRICING.elevenlabs.starterPrice;
+        else if (totalChars <= PRICING.elevenlabs.creatorChars) ttsCost = PRICING.elevenlabs.creatorPrice;
+        else ttsCost = 99;
       }
       return { twilioCost, ttsCost, total: twilioCost + ttsCost };
     };
@@ -329,10 +314,9 @@ export function CostCalculator() {
       voice: calculateVoiceCost(totalReminders),
     };
 
-    // TTS provider comparison
+    // TTS provider comparison (ElevenLabs only)
     const ttsComparison = channels.voice ? {
-      elevenlabs: calculateVoiceCostByProvider(totalReminders, 'elevenlabs'),
-      google: calculateVoiceCostByProvider(totalReminders, 'google'),
+      elevenlabs: calculateVoiceCostByProvider(totalReminders),
     } : null;
 
     const perAppointment = {
@@ -594,10 +578,7 @@ export function CostCalculator() {
                                 <p className="font-medium">Voice Calls (Twilio + TTS)</p>
                                 <p>• Phone number: $1.15/month</p>
                                 <p>• Twilio voice: ~$0.014/min</p>
-                                <p>• TTS cost varies by provider:</p>
-                                <p className="pl-2">- ElevenLabs: ~$0.30/1K chars</p>
-                                <p className="pl-2">- OpenAI: ~$0.015/1K chars</p>
-                                <p className="pl-2">- Google: $4-16/1M chars + 1M free</p>
+                                <p>• ElevenLabs TTS: ~$0.30/1K chars</p>
                                 <p className="text-muted-foreground mt-1">85% answer rate, 65% response rate</p>
                               </div>
                             )}

@@ -7,7 +7,6 @@ import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { ElevenLabsSetupGuide } from '@/components/integrations/ElevenLabsSetupGuide';
 import { ElevenLabsVoiceSetupGuide } from '@/components/integrations/ElevenLabsVoiceSetupGuide';
-import { GoogleTTSSetupGuide } from '@/components/integrations/GoogleTTSSetupGuide';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +21,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Mic, Volume2, Check, ExternalLink, Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
+import { Mic, Check, ExternalLink, Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 
@@ -61,19 +60,6 @@ const VOICE_INTEGRATIONS: Integration[] = [
     ],
     checkConnection: (data) => !!data.elevenlabs_api_key,
     note: '💡 Best for: High-quality, emotional voices. ~$0.30/1K chars. Choose if voice quality is priority.',
-  },
-  {
-    id: 'google-tts',
-    name: 'Google TTS',
-    description: 'Enterprise-grade WaveNet voices.',
-    icon: Volume2,
-    color: 'bg-amber-500',
-    docsUrl: 'https://console.cloud.google.com/apis/credentials',
-    fields: [
-      { key: 'google_tts_api_key', label: 'API Key', placeholder: 'Your Google Cloud API key', type: 'password', required: true, helpText: 'Enable Cloud Text-to-Speech API first' },
-    ],
-    checkConnection: (data) => !!data.google_tts_api_key,
-    note: '💡 Best for: Enterprise scale. $4-16/1M chars + 1M free/mo. Cheapest at high volume.',
   },
 ];
 
@@ -174,9 +160,6 @@ export default function VoiceIntegration() {
 
           {/* ElevenLabs Setup Guide */}
           <ElevenLabsVoiceSetupGuide />
-
-          {/* Google Cloud TTS Setup Guide */}
-          <GoogleTTSSetupGuide />
 
           {/* Integration Cards */}
           <div className="grid gap-4 md:grid-cols-2">
