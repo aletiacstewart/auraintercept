@@ -226,7 +226,7 @@ export function HolidayMessageManager({ websiteId, companyId, companyName }: Hol
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label>Holiday Name *</Label>
           <Input
@@ -297,7 +297,7 @@ export function HolidayMessageManager({ websiteId, companyId, companyName }: Hol
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <Label>Special CTA Text</Label>
           <Input
@@ -322,15 +322,15 @@ export function HolidayMessageManager({ websiteId, companyId, companyName }: Hol
     <Collapsible>
       <Card>
         <CollapsibleTrigger className="w-full">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Gift className="h-5 w-5 text-primary" />
-              <div className="text-left">
-                <CardTitle className="text-lg">Holiday Messages</CardTitle>
-                <CardDescription>Schedule special greetings for holidays and important dates</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <Gift className="h-5 w-5 text-primary flex-shrink-0" />
+              <div className="text-left min-w-0">
+                <CardTitle className="text-lg truncate">Holiday Messages</CardTitle>
+                <CardDescription className="truncate">Schedule special greetings for holidays</CardDescription>
               </div>
             </div>
-            <ChevronDown className="h-5 w-5 text-card-foreground/70" />
+            <ChevronDown className="h-5 w-5 text-card-foreground/70 flex-shrink-0" />
           </CardHeader>
         </CollapsibleTrigger>
         <CollapsibleContent>

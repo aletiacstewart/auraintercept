@@ -301,27 +301,30 @@ export function SmartWebsiteHoursEditor() {
         <div
           key={hour.day_of_week}
           className={cn(
-            'flex items-center gap-4 p-2 rounded-lg transition-colors',
+            'flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-2 rounded-lg transition-colors',
             hour.is_closed ? 'opacity-60' : ''
           )}
         >
-          <div className="w-28 flex items-center gap-2">
+          <div className="w-full sm:w-28 flex items-center gap-2">
             <Switch
               checked={!hour.is_closed}
               onCheckedChange={() => toggleDay(hours, setHours, hour.day_of_week)}
             />
-            <Label className="font-medium text-card-foreground">{DAYS[hour.day_of_week]}</Label>
+            <Label className="font-medium text-card-foreground text-sm sm:text-base">
+              <span className="sm:hidden">{DAYS[hour.day_of_week].slice(0, 3)}</span>
+              <span className="hidden sm:inline">{DAYS[hour.day_of_week]}</span>
+            </Label>
           </div>
 
           {hour.is_closed ? (
-            <span className="text-card-foreground/60 text-sm">Closed</span>
+            <span className="text-card-foreground/60 text-sm pl-8 sm:pl-0">Closed</span>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto pl-8 sm:pl-0">
               <Select
                 value={hour.open_time || '09:00:00'}
                 onValueChange={(value) => updateHour(hours, setHours, hour.day_of_week, 'open_time', value)}
               >
-                <SelectTrigger className="w-28">
+                <SelectTrigger className="w-[100px] sm:w-28">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -341,7 +344,7 @@ export function SmartWebsiteHoursEditor() {
                     value={hour.close_time || '17:00:00'}
                     onValueChange={(value) => updateHour(hours, setHours, hour.day_of_week, 'close_time', value)}
                   >
-                    <SelectTrigger className="w-28">
+                    <SelectTrigger className="w-[100px] sm:w-28">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

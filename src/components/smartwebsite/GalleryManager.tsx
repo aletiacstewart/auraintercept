@@ -286,7 +286,7 @@ export function GalleryManager({
             )}
 
             {/* Upload Button */}
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -298,6 +298,7 @@ export function GalleryManager({
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading || isUpdating}
                 variant="default"
+                className="w-full sm:w-auto"
               >
                 {isUploading ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -306,7 +307,7 @@ export function GalleryManager({
                 )}
                 {isUploading ? 'Uploading...' : 'Add Image'}
               </Button>
-              <p className="text-xs text-card-foreground/60">
+              <p className="text-xs text-card-foreground/60 text-center sm:text-left">
                 JPEG, PNG, or WebP • Max 2MB • Drag to reorder
               </p>
             </div>

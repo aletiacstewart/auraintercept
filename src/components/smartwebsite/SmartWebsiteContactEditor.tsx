@@ -185,15 +185,15 @@ export function SmartWebsiteContactEditor() {
   const canAddMore = !contact2 || !contact3;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {/* Primary Contact */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         <div className="flex items-center gap-2">
           <User className="h-4 w-4 text-primary" />
           <Label className="font-semibold text-card-foreground">Primary Contact</Label>
         </div>
         
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="sw-name" className="text-card-foreground">Name</Label>
             <Input
@@ -214,7 +214,7 @@ export function SmartWebsiteContactEditor() {
           </div>
         </div>
         
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="sw-phone" className="flex items-center gap-2 text-card-foreground">
               <Phone className="h-4 w-4" />
@@ -263,7 +263,7 @@ export function SmartWebsiteContactEditor() {
       {contact2 && (
         <>
           <Separator />
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4 text-blue-500" />
@@ -280,7 +280,7 @@ export function SmartWebsiteContactEditor() {
               </Button>
             </div>
             
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label className="text-card-foreground">Name</Label>
                 <Input
@@ -299,7 +299,7 @@ export function SmartWebsiteContactEditor() {
               </div>
             </div>
             
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label className="flex items-center gap-2 text-card-foreground">
                   <Phone className="h-4 w-4" />
@@ -333,7 +333,7 @@ export function SmartWebsiteContactEditor() {
       {contact3 && (
         <>
           <Separator />
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4 text-purple-500" />
@@ -350,7 +350,7 @@ export function SmartWebsiteContactEditor() {
               </Button>
             </div>
             
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label className="text-card-foreground">Name</Label>
                 <Input
