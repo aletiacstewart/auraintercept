@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -8,6 +8,11 @@ import {
   AlertTriangle, Star, MapPin, MessageSquare, Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { 
+  getQuickActionsForTier,
+  type SubscriptionTier,
+  type QuickActionConfig 
+} from '@/lib/customerPortalConfig';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -39,16 +44,9 @@ interface CustomerChatInterfaceProps {
   placeholder?: string;
   welcomeMessage?: string;
   className?: string;
+  subscriptionTier?: string;
+  dispatchPhone?: string | null;
 }
-
-const DEFAULT_QUICK_ACTIONS: QuickAction[] = [
-  { id: 'schedule', label: 'Request Appointment', icon: <Calendar className="h-4 w-4" />, message: "I'd like to request an appointment" },
-  { id: 'emergency', label: 'Emergency', icon: <AlertTriangle className="h-4 w-4" />, message: "I have an urgent emergency situation", variant: 'destructive' },
-  { id: 'quote', label: 'Get Quote', icon: <DollarSign className="h-4 w-4" />, message: "I need a quote for your services" },
-  { id: 'hours', label: 'Business Hours', icon: <Clock className="h-4 w-4" />, message: "What are your business hours?" },
-  { id: 'services', label: 'View Services', icon: <Sparkles className="h-4 w-4" />, message: "What services do you offer?" },
-  { id: 'feedback', label: 'Leave Feedback', icon: <Star className="h-4 w-4" />, message: "I'd like to leave feedback about my recent service" },
-];
 
 const AGENT_LABELS: Record<string, { label: string; color: string }> = {
   triage: { label: 'Assistant', color: 'bg-channel-chat' },
@@ -67,16 +65,44 @@ export const CustomerChatInterface: React.FC<CustomerChatInterfaceProps> = ({
   companyName = 'AI Assistant',
   companyLogo,
   primaryColor,
-  quickActions = DEFAULT_QUICK_ACTIONS,
+  quickActions,
   currentAgent,
   showAgentBadge = true,
   showTimestamps = false,
   placeholder = 'Type your message...',
   welcomeMessage,
   className,
+  subscriptionTier = 'single_point',
+  dispatchPhone,
 }) => {
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Get tier-filtered quick actions
+  const effectiveQuickActions = useMemo(() => {
+    if (quickActions) return quickActions; // Use custom actions if provided
+    
+    const tier = (subscriptionTier || 'single_point') as SubscriptionTier;
+    const tierActions = getQuickActionsForTier(tier, !!dispatchPhone);
+    
+    // Convert to the QuickAction format expected by this component
+    return tierActions.map(action => ({
+      id: action.id,
+      label: action.label,
+      icon: <action.icon className="h-4 w-4" />,
+      message: action.message,
+      variant: action.variant,
+      isCallAction: action.isCallAction,
+    }));
+  }, [quickActions, subscriptionTier, dispatchPhone]);
+
+  const handleQuickAction = (action: any) => {
+    if (action.isCallAction && dispatchPhone) {
+      window.location.href = `tel:${dispatchPhone}`;
+    } else if (action.message) {
+      onSendMessage(action.message);
+    }
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -89,10 +115,6 @@ export const CustomerChatInterface: React.FC<CustomerChatInterfaceProps> = ({
     if (!input.trim() || isLoading) return;
     onSendMessage(input.trim());
     setInput('');
-  };
-
-  const handleQuickAction = (action: QuickAction) => {
-    onSendMessage(action.message);
   };
 
   const getAgentInfo = (agent?: string) => {
@@ -126,9 +148,9 @@ export const CustomerChatInterface: React.FC<CustomerChatInterfaceProps> = ({
                 {welcomeMessage || `I'm your virtual assistant at ${companyName}. How can I help you today?`}
               </p>
               
-              {/* Quick Actions Grid */}
+              {/* Quick Actions Grid - filtered by subscription tier */}
               <div className="grid grid-cols-2 gap-2 mt-4 max-w-md mx-auto">
-                {quickActions.slice(0, 6).map((action) => (
+                {effectiveQuickActions.slice(0, 6).map((action) => (
                   <Button 
                     key={action.id}
                     variant={action.variant || 'outline'} 

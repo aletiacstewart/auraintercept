@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
@@ -17,6 +17,14 @@ import { cn } from '@/lib/utils';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { EmbedAuthPrompt } from '@/components/widget/EmbedAuthPrompt';
 import { VoiceChat } from '@/components/ai/VoiceChat';
+import { 
+  getQuickActionsForTier, 
+  getTabsForTier, 
+  getEffectiveTier,
+  MULTI_TRACK_ONLY_TABS,
+  type SubscriptionTier,
+  type QuickActionConfig 
+} from '@/lib/customerPortalConfig';
 
 interface CompanyConfig {
   company: {
@@ -26,6 +34,8 @@ interface CompanyConfig {
     primary_color: string;
     secondary_color: string;
     dispatch_phone: string | null;
+    subscription_tier?: string;
+    trial_ends_at?: string;
   };
   business_hours: Array<{
     day_of_week: number;
@@ -43,16 +53,6 @@ interface CompanyConfig {
 }
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-const QUICK_ACTIONS = [
-  { id: 'schedule', label: 'Appt', icon: Calendar, message: "I'd like to request an appointment", featureColor: 'text-feature-appointments' },
-  { id: 'quote', label: 'Quote', icon: DollarSign, message: "I need a quote for your services", featureColor: 'text-feature-quotes' },
-  { id: 'services', label: 'Services', icon: Sparkles, message: "What services do you offer?", featureColor: 'text-feature-customers' },
-  { id: 'hours', label: 'Hours', icon: Clock, message: "What are your business hours?", featureColor: 'text-feature-overview' },
-  { id: 'emergency', label: 'Emergency', icon: AlertTriangle, message: "I have an urgent emergency situation", variant: 'destructive' as const },
-  { id: 'track', label: 'Track', icon: MapPin, message: "I want to track my appointment status", featureColor: 'text-feature-fieldops' },
-  { id: 'feedback', label: 'Feedback', icon: Star, message: "I'd like to leave feedback about my service", featureColor: 'text-feature-customers' },
-];
 
 interface UnifiedCustomerConsoleProps {
   companyId?: string;
@@ -146,10 +146,10 @@ export function UnifiedCustomerConsole({
 
   const fetchConfigById = async () => {
     try {
-      // Fetch company details directly from Supabase
+      // Fetch company details directly from Supabase - include subscription tier
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
-        .select('id, name, logo_url, primary_color, secondary_color, dispatch_phone')
+        .select('id, name, logo_url, primary_color, secondary_color, dispatch_phone, subscription_tier, trial_ends_at')
         .eq('id', companyId)
         .single();
 
@@ -167,11 +167,14 @@ export function UnifiedCustomerConsole({
         .eq('company_id', companyId)
         .eq('is_active', true);
 
+      const inTrial = companyData.trial_ends_at && new Date(companyData.trial_ends_at) > new Date();
+
       setConfig({
         company: {
           ...companyData,
           primary_color: companyData.primary_color || '#6366f1',
           secondary_color: companyData.secondary_color || '#8b5cf6',
+          subscription_tier: inTrial ? 'command' : (companyData.subscription_tier || 'single_point'),
         },
         business_hours: hoursData || [],
         services: servicesData || [],
@@ -219,6 +222,29 @@ export function UnifiedCustomerConsole({
 
   const primaryColor = config?.company.primary_color || '#6366f1';
   const agentInfo = getAgentStyle(currentAgent);
+
+  // Get tier-filtered quick actions and tabs
+  const effectiveTier = useMemo(() => {
+    const tier = config?.company?.subscription_tier || 'single_point';
+    return tier as SubscriptionTier;
+  }, [config?.company?.subscription_tier]);
+
+  const visibleQuickActions = useMemo(() => {
+    const hasPhone = !!config?.company?.dispatch_phone;
+    return getQuickActionsForTier(effectiveTier, hasPhone);
+  }, [effectiveTier, config?.company?.dispatch_phone]);
+
+  const visibleTabs = useMemo(() => {
+    return getTabsForTier(effectiveTier);
+  }, [effectiveTier]);
+
+  const handleQuickAction = useCallback((action: QuickActionConfig) => {
+    if (action.isCallAction && config?.company?.dispatch_phone) {
+      window.location.href = `tel:${config.company.dispatch_phone}`;
+    } else if (action.message) {
+      handleSendMessage(action.message);
+    }
+  }, [config?.company?.dispatch_phone]);
 
   if (loading) {
     return (
@@ -317,19 +343,19 @@ export function UnifiedCustomerConsole({
         </div>
       </header>
 
-      {/* Navigation Tabs */}
+      {/* Navigation Tabs - filtered by subscription tier */}
       <Tabs value={activeTab} onValueChange={(tab) => {
-        if (tab === 'schedule' || tab === 'quote') {
-          const action = QUICK_ACTIONS.find(a => a.id === tab);
-          if (action) {
-            handleSendMessage(action.message);
-            setActiveTab('chat');
-          }
+        // Handle tabs that trigger chat (schedule, quote for Multi-Track+)
+        const tabConfig = visibleTabs.find(t => t.value === tab);
+        if (tabConfig?.triggersChat && tabConfig.chatMessage) {
+          handleSendMessage(tabConfig.chatMessage);
+          setActiveTab('chat');
         } else {
           setActiveTab(tab);
         }
       }} className="flex-1 flex flex-col max-w-2xl mx-auto w-full">
         <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-auto p-0 overflow-x-auto scrollbar-hide">
+          {/* Chat tab - always visible */}
           <TabsTrigger 
             value="chat" 
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
@@ -337,20 +363,30 @@ export function UnifiedCustomerConsole({
             <MessageSquare className="h-4 w-4 mr-1" />
             <span className="text-xs">Chat</span>
           </TabsTrigger>
-          <TabsTrigger 
-            value="schedule" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
-          >
-            <Calendar className="h-4 w-4 mr-1 text-feature-appointments" />
-            <span className="text-xs">Appt</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="quote" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
-          >
-            <DollarSign className="h-4 w-4 mr-1 text-feature-quotes" />
-            <span className="text-xs">Quote</span>
-          </TabsTrigger>
+          
+          {/* Schedule tab - only for Multi-Track+ */}
+          {visibleTabs.some(t => t.value === 'schedule') && (
+            <TabsTrigger 
+              value="schedule" 
+              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
+            >
+              <Calendar className="h-4 w-4 mr-1 text-feature-appointments" />
+              <span className="text-xs">Appt</span>
+            </TabsTrigger>
+          )}
+          
+          {/* Quote tab - only for Multi-Track+ */}
+          {visibleTabs.some(t => t.value === 'quote') && (
+            <TabsTrigger 
+              value="quote" 
+              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
+            >
+              <DollarSign className="h-4 w-4 mr-1 text-feature-quotes" />
+              <span className="text-xs">Quote</span>
+            </TabsTrigger>
+          )}
+          
+          {/* Services tab - always visible */}
           <TabsTrigger 
             value="services"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
@@ -358,6 +394,8 @@ export function UnifiedCustomerConsole({
             <Sparkles className="h-4 w-4 mr-1 text-feature-customers" />
             <span className="text-xs">Services</span>
           </TabsTrigger>
+          
+          {/* Hours tab - always visible */}
           <TabsTrigger 
             value="hours"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2.5 min-w-fit"
@@ -384,15 +422,15 @@ export function UnifiedCustomerConsole({
                     I'm the virtual assistant for {config.company.name}. How can I help you today?
                   </p>
                   
-                  {/* Quick Actions */}
+                  {/* Quick Actions - filtered by subscription tier */}
                   <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto">
-                    {QUICK_ACTIONS.filter(a => a.id !== 'emergency').map((action) => (
+                    {visibleQuickActions.filter(a => a.id !== 'emergency').map((action) => (
                       <Button 
                         key={action.id}
                         variant={action.variant || 'outline'} 
                         size="sm"
                         className="justify-start gap-2"
-                        onClick={() => handleSendMessage(action.message)}
+                        onClick={() => handleQuickAction(action)}
                       >
                         <action.icon className={cn("h-4 w-4", action.featureColor)} />
                         <span className="truncate">{action.label}</span>

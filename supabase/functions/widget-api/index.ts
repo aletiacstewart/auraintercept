@@ -271,6 +271,10 @@ serve(async (req) => {
       const { data: services } = await supabase
         .rpc('get_company_services', { p_company_id: company.id });
 
+      // Determine effective tier (trial gets full access)
+      const inTrial = company.trial_ends_at && new Date(company.trial_ends_at) > new Date();
+      const effectiveTier = inTrial ? 'command' : (company.subscription_tier || 'single_point');
+
       return new Response(JSON.stringify({
         company: {
           id: company.id,
@@ -281,6 +285,8 @@ serve(async (req) => {
           dispatch_phone: company.dispatch_phone || null,
           review_google_url: company.review_google_url || null,
           review_facebook_url: company.review_facebook_url || null,
+          subscription_tier: effectiveTier,
+          in_trial: inTrial,
         },
         business_hours: hours || [],
         services: services || [],
@@ -289,18 +295,50 @@ serve(async (req) => {
       });
     }
 
-    // Quick actions endpoint
+    // Quick actions endpoint - filtered by subscription tier
     if (action === 'quick-actions') {
+      // Determine effective tier
+      const inTrial = company.trial_ends_at && new Date(company.trial_ends_at) > new Date();
+      const effectiveTier = inTrial ? 'command' : (company.subscription_tier || 'single_point');
+      
+      // All available actions
+      const allActions = [
+        { id: 'schedule', label: 'Book Appointment', icon: 'calendar', message: "I'd like to schedule an appointment", requiresTier: 'multi_track' },
+        { id: 'emergency', label: 'Emergency', icon: 'alert-triangle', highlight: true, message: "I have an urgent emergency situation", requiresTier: 'single_point' },
+        { id: 'quote', label: 'Get Quote', icon: 'dollar-sign', message: "I need a quote for your services", requiresTier: 'multi_track' },
+        { id: 'hours', label: 'Business Hours', icon: 'clock', message: "What are your business hours?", requiresTier: 'single_point' },
+        { id: 'services', label: 'View Services', icon: 'sparkles', message: "What services do you offer?", requiresTier: 'single_point' },
+        { id: 'track', label: 'Track Appointment', icon: 'map-pin', message: "I want to track my appointment status", requiresTier: 'multi_track' },
+        { id: 'feedback', label: 'Leave Feedback', icon: 'star', message: "I'd like to leave feedback about my service", requiresTier: 'single_point' },
+      ];
+      
+      // Tier hierarchy for filtering
+      const tierLevels = { 'single_point': 1, 'multi_track': 2, 'command': 3 };
+      const companyLevel = tierLevels[effectiveTier as keyof typeof tierLevels] || 1;
+      
+      // Filter actions based on tier
+      let filteredActions = allActions.filter(action => {
+        const requiredLevel = tierLevels[action.requiresTier as keyof typeof tierLevels] || 1;
+        return companyLevel >= requiredLevel;
+      });
+      
+      // For single_point, replace schedule with call_to_book if company has phone
+      if (effectiveTier === 'single_point' && company.dispatch_phone) {
+        filteredActions = filteredActions.filter(a => a.id !== 'schedule');
+        filteredActions.unshift({
+          id: 'call_to_book',
+          label: 'Call to Book',
+          icon: 'phone',
+          message: '',
+          requiresTier: 'single_point',
+          isCallAction: true,
+          phoneNumber: company.dispatch_phone,
+        } as any);
+      }
+      
       return new Response(JSON.stringify({
-        actions: [
-          { id: 'schedule', label: 'Book Appointment', icon: 'calendar', message: "I'd like to schedule an appointment" },
-          { id: 'emergency', label: 'Emergency', icon: 'alert-triangle', highlight: true, message: "I have an urgent emergency situation" },
-          { id: 'quote', label: 'Get Quote', icon: 'dollar-sign', message: "I need a quote for your services" },
-          { id: 'hours', label: 'Business Hours', icon: 'clock', message: "What are your business hours?" },
-          { id: 'services', label: 'View Services', icon: 'sparkles', message: "What services do you offer?" },
-          { id: 'track', label: 'Track Appointment', icon: 'map-pin', message: "I want to track my appointment status" },
-          { id: 'feedback', label: 'Leave Feedback', icon: 'star', message: "I'd like to leave feedback about my service" },
-        ]
+        actions: filteredActions,
+        subscription_tier: effectiveTier,
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });

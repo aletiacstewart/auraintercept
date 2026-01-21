@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,12 @@ import { getAgentStyle } from '@/lib/agentStyles';
 import { supabase } from '@/integrations/supabase/client';
 import { EmbedAuthPrompt } from '@/components/widget/EmbedAuthPrompt';
 import { VoiceChat } from '@/components/ai/VoiceChat';
+import { 
+  getQuickActionsForTier, 
+  getTabsForTier, 
+  type SubscriptionTier,
+  type QuickActionConfig 
+} from '@/lib/customerPortalConfig';
 
 interface CompanyConfig {
   company: {
@@ -29,6 +35,8 @@ interface CompanyConfig {
     dispatch_phone: string | null;
     review_google_url: string | null;
     review_facebook_url: string | null;
+    subscription_tier?: string;
+    in_trial?: boolean;
   };
   business_hours: Array<{
     day_of_week: number;
@@ -46,17 +54,6 @@ interface CompanyConfig {
 }
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-// Quick actions without Review button - customers only get routed to review via Feedback Agent handoff
-const QUICK_ACTIONS = [
-  { id: 'schedule', label: 'Request Appointment', icon: Calendar, message: "I'd like to request an appointment" },
-  { id: 'emergency', label: 'Emergency', icon: AlertTriangle, message: "I have an urgent emergency situation", variant: 'destructive' as const },
-  { id: 'quote', label: 'Get Quote', icon: DollarSign, message: "I need a quote for your services" },
-  { id: 'hours', label: 'Business Hours', icon: Clock, message: "What are your business hours?" },
-  { id: 'services', label: 'View Services', icon: Sparkles, message: "What services do you offer?" },
-  { id: 'track', label: 'Track Appointment', icon: MapPin, message: "I want to track my appointment status" },
-  { id: 'feedback', label: 'Leave Feedback', icon: Star, message: "I'd like to leave feedback about my service" },
-];
 
 export default function PublicChat() {
   const { companySlug } = useParams<{ companySlug: string }>();
@@ -194,6 +191,29 @@ export default function PublicChat() {
 
   const primaryColor = config?.company.primary_color || '#6366f1';
   const agentInfo = getAgentStyle(currentAgent);
+
+  // Get tier-filtered quick actions and tabs
+  const effectiveTier = useMemo(() => {
+    const tier = config?.company?.subscription_tier || 'single_point';
+    return tier as SubscriptionTier;
+  }, [config?.company?.subscription_tier]);
+
+  const visibleQuickActions = useMemo(() => {
+    const hasPhone = !!config?.company?.dispatch_phone;
+    return getQuickActionsForTier(effectiveTier, hasPhone);
+  }, [effectiveTier, config?.company?.dispatch_phone]);
+
+  const visibleTabs = useMemo(() => {
+    return getTabsForTier(effectiveTier);
+  }, [effectiveTier]);
+
+  const handleQuickAction = useCallback((action: QuickActionConfig) => {
+    if (action.isCallAction && config?.company?.dispatch_phone) {
+      window.location.href = `tel:${config.company.dispatch_phone}`;
+    } else if (action.message) {
+      handleSendMessage(action.message);
+    }
+  }, [config?.company?.dispatch_phone]);
 
   if (loading) {
     return (
@@ -342,17 +362,17 @@ export default function PublicChat() {
                     I'm the virtual assistant for {config.company.name}. How can I help you today?
                   </p>
                   
-                  {/* Quick Actions */}
+                  {/* Quick Actions - filtered by subscription tier */}
                   <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto overflow-hidden">
-                    {QUICK_ACTIONS.filter(a => a.id !== 'emergency').map((action) => (
+                    {visibleQuickActions.filter(a => a.id !== 'emergency').map((action) => (
                       <Button 
                         key={action.id}
                         variant={action.variant || 'outline'} 
                         size="sm"
                         className="justify-start gap-2"
-                        onClick={() => handleSendMessage(action.message)}
+                        onClick={() => handleQuickAction(action)}
                       >
-                        <action.icon className="h-4 w-4" />
+                        <action.icon className={cn("h-4 w-4", action.featureColor)} />
                         <span className="truncate">{action.label}</span>
                       </Button>
                     ))}
