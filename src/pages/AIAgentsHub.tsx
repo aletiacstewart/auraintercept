@@ -616,7 +616,7 @@ function AgentCard({
                 {tierInfo?.label}
               </Badge>
             )}
-            <Badge variant="outline" className="text-card-foreground/60 border-border/50 text-[10px] px-1.5 py-0">{agent.category.replace('_', ' ')}</Badge>
+            <Badge variant="outline" className="text-card-foreground border-border/50 text-[10px] px-1.5 py-0">{agent.category.replace('_', ' ')}</Badge>
           </div>
 
           {/* Always show dependencies if any exist */}

@@ -96,7 +96,7 @@ export function CalendarSyncBadge({
               <Badge 
                 variant="outline" 
                 className={cn(
-                  "gap-1 text-muted-foreground border-border/50",
+                  "gap-1 text-card-foreground border-border/50",
                   compact && "px-1.5"
                 )}
               >

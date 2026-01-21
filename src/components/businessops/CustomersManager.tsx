@@ -294,17 +294,17 @@ export function CustomersManager() {
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1">
                       {customer.email_opt_out && (
-                        <Badge variant="outline" className="text-xs gap-1">
+                        <Badge variant="outline-card" className="text-xs gap-1">
                           <Ban className="h-3 w-3" /> Email
                         </Badge>
                       )}
                       {customer.sms_opt_out && (
-                        <Badge variant="outline" className="text-xs gap-1">
+                        <Badge variant="outline-card" className="text-xs gap-1">
                           <Ban className="h-3 w-3" /> SMS
                         </Badge>
                       )}
                       {customer.call_opt_out && (
-                        <Badge variant="outline" className="text-xs gap-1">
+                        <Badge variant="outline-card" className="text-xs gap-1">
                           <Ban className="h-3 w-3" /> Call
                         </Badge>
                       )}
