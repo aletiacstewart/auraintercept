@@ -50,6 +50,8 @@ export default defineConfig(({ mode }) => ({
         cleanupOutdatedCaches: true,
         skipWaiting: true,
         clientsClaim: true,
+        // Prevent service worker from controlling dashboard/chat/auth routes
+        navigateFallbackDenylist: [/^\/dashboard/, /^\/chat/, /^\/auth/, /^\/customer/, /^\/feedback/],
         runtimeCaching: [
           {
             urlPattern: /\.html$/,

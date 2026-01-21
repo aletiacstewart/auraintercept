@@ -7,6 +7,7 @@ import { VoiceProvider } from "@/contexts/VoiceContext";
 import { PWAUpdatePrompt } from "@/components/pwa/PWAUpdatePrompt";
 import { AuraVoiceOverlay } from "@/components/voice/AuraVoiceOverlay";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
+import { useEffect } from "react";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CustomerAuth from "./pages/CustomerAuth";
@@ -99,6 +100,30 @@ import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 const queryClient = new QueryClient();
 
 const App = () => {
+  // Self-healing: unregister service workers on non-technician routes to prevent stale cached versions
+  useEffect(() => {
+    const path = window.location.pathname;
+    const isTechnicianRoute = path.startsWith('/technician');
+    
+    if (!isTechnicianRoute && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((registration) => {
+          registration.unregister();
+        });
+      });
+      // Also clear workbox caches
+      if ('caches' in window) {
+        caches.keys().then((names) => {
+          names.forEach((name) => {
+            if (name.includes('workbox') || name.includes('assets') || name.includes('html')) {
+              caches.delete(name);
+            }
+          });
+        });
+      }
+    }
+  }, []);
+
   // Embed mode must be true in an iframe (preview widgets) OR when explicitly requested via ?embed=true
   // NOTE: computed inside the component to avoid stale module-scope evaluation.
   const isEmbedMode = (() => {
