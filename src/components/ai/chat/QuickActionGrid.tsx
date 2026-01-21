@@ -33,22 +33,22 @@ export const QuickActionGrid: React.FC<QuickActionGridProps> = ({
   };
 
   return (
-    <div className={cn('grid gap-2', gridClass[columns])}>
+    <div className={cn('grid gap-1.5', gridClass[columns])}>
       {actions.map((action) => (
         <Button
           key={action.id}
           variant={action.variant || 'outline'}
           size="sm"
           className={cn(
-            'h-auto flex-col gap-1.5 py-3 px-2 text-xs',
-            'border-border/50 text-white hover:opacity-90 hover:border-primary/50 transition-colors',
+            'h-auto flex-col gap-1 py-2 px-1.5 text-[10px]',
+            'border-border/50 text-card-foreground hover:opacity-90 hover:border-primary/50 transition-colors rounded-lg',
             action.variant === 'destructive' && 'bg-destructive text-white hover:bg-destructive/90 border-destructive'
           )}
           style={{ background: 'hsl(208 30% 18%)' }}
           onClick={() => onAction(action.message, action.id)}
         >
-          <action.icon className={cn("h-5 w-5", action.featureColor)} />
-          <span className="text-center leading-tight">{action.label}</span>
+          <action.icon className={cn("h-4 w-4", action.featureColor)} />
+          <span className="text-center leading-tight font-medium">{action.label}</span>
         </Button>
       ))}
     </div>
@@ -65,21 +65,21 @@ export const QuickActionBar: React.FC<QuickActionBarProps> = ({
   onAction,
 }) => {
   return (
-    <div className="shrink-0 border-t border-border/50 p-2 overflow-hidden" style={{ background: 'hsl(208 30% 18%)' }}>
-      <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+    <div className="shrink-0 border-t border-border/50 p-1.5 overflow-hidden" style={{ background: 'hsl(208 30% 18%)' }}>
+      <div className="flex gap-1 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {actions.map((action) => (
           <Button
             key={action.id}
             variant={action.variant || 'ghost'}
             size="sm"
             className={cn(
-              'text-xs shrink-0 rounded-full px-3 h-8 text-white/80',
-              'hover:bg-white/10 hover:text-white transition-colors',
+              'text-[10px] shrink-0 rounded-full px-2.5 h-7 text-card-foreground/80',
+              'hover:bg-card-foreground/10 hover:text-card-foreground transition-colors',
               action.variant === 'destructive' && 'bg-destructive text-white hover:bg-destructive/90'
             )}
             onClick={() => onAction(action.message, action.id)}
           >
-            <action.icon className={cn("h-3 w-3 mr-1.5", action.featureColor)} />
+            <action.icon className={cn("h-3 w-3 mr-1", action.featureColor)} />
             {action.label}
           </Button>
         ))}
