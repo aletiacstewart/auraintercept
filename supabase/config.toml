@@ -106,7 +106,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.reset-user-password]
-verify_jwt = false
+verify_jwt = true
 
 [functions.cost-alerts]
 verify_jwt = false
@@ -115,7 +115,7 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.manage-user]
-verify_jwt = false
+verify_jwt = true
 
 [functions.parse-faq-document]
 verify_jwt = true
@@ -139,7 +139,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.create-platform-admin]
-verify_jwt = false
+verify_jwt = true
 
 [functions.lead-follow-up-reminders]
 verify_jwt = false
@@ -163,7 +163,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.generate-social-content]
-verify_jwt = false
+verify_jwt = true
 
 [functions.publish-social-content]
 verify_jwt = true

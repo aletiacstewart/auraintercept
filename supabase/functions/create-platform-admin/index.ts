@@ -14,6 +14,65 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+
+    // ============ AUTHORIZATION CHECK ============
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Missing or invalid authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Verify the caller's JWT
+    const supabaseClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
+    
+    if (claimsError || !claimsData?.claims) {
+      console.error('JWT verification failed:', claimsError);
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Invalid token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const callerId = claimsData.claims.sub;
+    
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    });
+
+    // Verify caller has platform_admin role (only platform admins can create the initial admin)
+    const { data: roles, error: rolesError } = await supabaseAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', callerId)
+      .eq('role', 'platform_admin');
+
+    // Allow if no platform_admin exists yet (first-time setup) or if caller is platform_admin
+    const { count: adminCount } = await supabaseAdmin
+      .from('user_roles')
+      .select('*', { count: 'exact', head: true })
+      .eq('role', 'platform_admin');
+
+    const isFirstTimeSetup = adminCount === 0;
+    const isExistingAdmin = roles && roles.length > 0;
+
+    if (!isFirstTimeSetup && !isExistingAdmin) {
+      console.error('Unauthorized platform admin creation attempt by:', callerId);
+      return new Response(
+        JSON.stringify({ error: 'Forbidden - Only platform admins can create new platform admins' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(isFirstTimeSetup ? 'First-time platform admin setup' : `Platform admin action by ${callerId}`);
+    // ============ END AUTHORIZATION CHECK ============
     
     // Security: Get credentials from environment secrets instead of hardcoding
     const adminEmail = Deno.env.get('PLATFORM_ADMIN_EMAIL');
@@ -51,10 +110,6 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
-    
-    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
-      auth: { autoRefreshToken: false, persistSession: false }
-    });
 
     const companyName = 'Aura Intercept Platform';
     const companySlug = 'aura-intercept';
