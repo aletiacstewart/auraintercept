@@ -11,10 +11,12 @@ export interface StreamMessage {
 interface UsePublicChatStreamOptions {
   companySlug: string;
   onAgentChange?: (agent: string) => void;
+  onStreamStart?: () => void;    // Triggered when first token arrives
+  onStreamComplete?: () => void; // Triggered when streaming finishes
 }
 
 export const usePublicChatStream = (options: UsePublicChatStreamOptions) => {
-  const { companySlug, onAgentChange } = options;
+  const { companySlug, onAgentChange, onStreamStart, onStreamComplete } = options;
   const [messages, setMessages] = useState<StreamMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentAgent, setCurrentAgent] = useState<string>('triage');
@@ -110,6 +112,7 @@ export const usePublicChatStream = (options: UsePublicChatStreamOptions) => {
       const decoder = new TextDecoder();
       let buffer = '';
       let fullContent = '';
+      let hasTriggeredStreamStart = false;
       let detectedAgent = currentAgent;
 
       while (true) {
@@ -143,6 +146,12 @@ export const usePublicChatStream = (options: UsePublicChatStreamOptions) => {
 
             const content = parsed.choices?.[0]?.delta?.content as string | undefined;
             if (content) {
+              // Trigger onStreamStart on first token
+              if (!hasTriggeredStreamStart) {
+                hasTriggeredStreamStart = true;
+                onStreamStart?.();
+              }
+              
               fullContent += content;
               
               // Update the last message with new content
@@ -186,7 +195,8 @@ export const usePublicChatStream = (options: UsePublicChatStreamOptions) => {
         }
       }
 
-      // Mark streaming complete
+      // Mark streaming complete and trigger callback
+      onStreamComplete?.();
       setMessages(prev => {
         const updated = [...prev];
         const lastIdx = updated.length - 1;
@@ -221,7 +231,7 @@ export const usePublicChatStream = (options: UsePublicChatStreamOptions) => {
     } finally {
       setIsLoading(false);
     }
-  }, [companySlug, messages, currentAgent, isLoading, onAgentChange, API_BASE]);
+  }, [companySlug, messages, currentAgent, isLoading, onAgentChange, onStreamStart, onStreamComplete, API_BASE]);
 
   const clearMessages = useCallback(() => {
     if (abortControllerRef.current) {

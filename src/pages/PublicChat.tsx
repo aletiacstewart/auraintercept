@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { 
   Bot, Send, User, Calendar, Clock, 
   AlertTriangle, MessageSquare, Sparkles, Building2,
-  Phone, X, Mic, Home
+  Phone, X, Mic, Home, Volume2, VolumeX
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePublicChatStream, StreamMessage } from '@/hooks/usePublicChatStream';
@@ -18,6 +18,12 @@ import { getAgentStyle } from '@/lib/agentStyles';
 import { supabase } from '@/integrations/supabase/client';
 import { EmbedAuthPrompt } from '@/components/widget/EmbedAuthPrompt';
 import { VoiceChat } from '@/components/ai/VoiceChat';
+import { 
+  onAIStreamStart, 
+  onAIStreamComplete, 
+  isSoundEnabled, 
+  toggleSound 
+} from '@/lib/chatFeedback';
 import { 
   getQuickActionsForTier, 
   getTabsForTier, 
@@ -79,6 +85,9 @@ export default function PublicChat() {
   // Emergency phone dialog state
   const [showEmergencyPhone, setShowEmergencyPhone] = useState(false);
   
+  // Sound feedback state
+  const [soundEnabled, setSoundEnabled] = useState(() => isSoundEnabled());
+  
   // Check for existing session on mount - skip in embed mode to prevent cross-context auth events
   useEffect(() => {
     if (isEmbedMode) {
@@ -124,7 +133,9 @@ export default function PublicChat() {
     companySlug: companySlug || '',
     onAgentChange: (agent) => {
       console.log('[PublicChat] Agent changed to:', agent);
-    }
+    },
+    onStreamStart: onAIStreamStart,
+    onStreamComplete: onAIStreamComplete,
   });
   
   // Show auth prompt after first user interaction if not signed in
@@ -301,6 +312,16 @@ export default function PublicChat() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {/* Sound Toggle Button */}
+            <Button 
+              size="sm" 
+              variant="ghost" 
+              className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full"
+              onClick={() => setSoundEnabled(toggleSound())}
+              title={soundEnabled ? 'Mute sounds' : 'Enable sounds'}
+            >
+              {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+            </Button>
             {/* Voice Chat Button */}
             <Button 
               size="sm" 
@@ -446,10 +467,13 @@ export default function PublicChat() {
 
                     <div
                       className={cn(
-                        'flex gap-3 p-3 rounded-lg',
+                        'flex gap-3 p-3 rounded-lg transition-all duration-300',
+                        'animate-in fade-in-0 slide-in-from-bottom-2',
                         message.role === 'user' 
                           ? 'bg-primary/10 ml-8' 
-                          : 'bg-muted mr-8'
+                          : 'bg-muted mr-8',
+                        // Subtle glow while streaming
+                        (message as StreamMessage).isStreaming && 'ring-2 ring-primary/20 ring-offset-1 ring-offset-background'
                       )}
                     >
                       <div 
