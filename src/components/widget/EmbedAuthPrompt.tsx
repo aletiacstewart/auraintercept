@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,6 +8,8 @@ import { toast } from 'sonner';
 import { Loader2, User, X, LogIn, UserPlus, Globe, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CustomerPortalInstallPrompt } from './CustomerPortalInstallPrompt';
+import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
+import { type ServerValidationResult } from '@/lib/password-validation';
 
 interface EmbedAuthPromptProps {
   companyId: string;
@@ -37,6 +39,12 @@ export function EmbedAuthPrompt({
   const [isLoading, setIsLoading] = useState(false);
   const [existingUser, setExistingUser] = useState<ExistingUser | null>(null);
   const [checkingSession, setCheckingSession] = useState(true);
+  const [passwordValidation, setPasswordValidation] = useState<ServerValidationResult | null>(null);
+
+  // Callback for password validation changes
+  const handlePasswordValidationChange = useCallback((result: ServerValidationResult) => {
+    setPasswordValidation(result);
+  }, []);
 
   // Check for existing session on mount
   useEffect(() => {
@@ -144,6 +152,16 @@ export function EmbedAuthPrompt({
     // Validate terms agreement
     if (!termsAgreed) {
       toast.error('You must agree to the Terms of Service and Privacy Policy');
+      return;
+    }
+
+    // Check for breached password
+    if (passwordValidation?.breached) {
+      toast.error('This password has been exposed in data breaches. Please choose a different password.');
+      return;
+    }
+    if (passwordValidation && !passwordValidation.valid) {
+      toast.error('Please choose a stronger password before continuing.');
       return;
     }
 
@@ -379,11 +397,18 @@ export function EmbedAuthPrompt({
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder={mode === 'signup' ? 'Create password (6+ chars)' : 'Your password'}
+            placeholder={mode === 'signup' ? 'Create password (8+ chars)' : 'Your password'}
             required
-            minLength={6}
+            minLength={8}
             className="h-9 text-sm"
           />
+          {mode === 'signup' && (
+            <PasswordStrengthIndicator 
+              password={password} 
+              showIssues={false}
+              onValidationChange={handlePasswordValidationChange}
+            />
+          )}
         </div>
 
         {mode === 'signup' && (

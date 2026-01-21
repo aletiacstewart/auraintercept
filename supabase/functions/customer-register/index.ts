@@ -107,6 +107,39 @@ serve(async (req) => {
       });
     }
 
+    // Server-side password strength validation with HIBP check
+    try {
+      const validatePasswordUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/validate-password`;
+      const validationResponse = await fetch(validatePasswordUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password, checkHibp: true }),
+      });
+
+      if (validationResponse.ok) {
+        const validation = await validationResponse.json();
+        if (validation.breached) {
+          return new Response(JSON.stringify({ 
+            error: 'This password has been exposed in data breaches. Please choose a different password.' 
+          }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        if (!validation.valid) {
+          return new Response(JSON.stringify({ 
+            error: `Password is too weak: ${validation.issues?.join(', ') || 'Please choose a stronger password'}` 
+          }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+    } catch (validationError) {
+      // Log but don't block registration if validation service is unavailable
+      console.warn('Password validation service error:', validationError);
+    }
+
     // Rate limit per email to prevent abuse
     const emailRateCheck = checkRegistrationRateLimit(email.toLowerCase());
     if (!emailRateCheck.allowed) {
