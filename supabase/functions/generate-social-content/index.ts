@@ -21,8 +21,68 @@ serve(async (req) => {
   }
 
   try {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY")!;
+
+    // ============ AUTHORIZATION CHECK ============
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized - Missing or invalid authorization header" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Verify the caller's JWT
+    const supabaseClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
+    
+    if (claimsError || !claimsData?.claims) {
+      console.error("[generate-social-content] JWT verification failed:", claimsError);
+      return new Response(
+        JSON.stringify({ error: "Unauthorized - Invalid token" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const callerId = claimsData.claims.sub;
+    // ============ END AUTHORIZATION CHECK ============
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Verify user has access to this company (via profile or admin role)
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("company_id")
+      .eq("id", callerId)
+      .single();
+
     const { jobAssignmentId, afterPhotos, companyId, serviceType, customerName, employeeName } = 
       await req.json() as GenerateSocialContentRequest;
+
+    // Check if user belongs to the company or is an admin
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", callerId)
+      .in("role", ["platform_admin", "company_admin"]);
+
+    const isAdmin = roles && roles.length > 0;
+    const belongsToCompany = profile?.company_id === companyId;
+
+    if (!isAdmin && !belongsToCompany) {
+      console.error("[generate-social-content] Access denied for user:", callerId);
+      return new Response(
+        JSON.stringify({ error: "Forbidden - Access denied to this company" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     console.log("[generate-social-content] Processing job:", jobAssignmentId);
     console.log("[generate-social-content] Photos:", afterPhotos?.length || 0);
@@ -33,12 +93,6 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY")!;
-
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get company info for branding
     const { data: company } = await supabase
