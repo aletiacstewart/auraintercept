@@ -309,11 +309,7 @@ export function SubscriptionAnalytics() {
   return (
     <div className="space-y-6">
       {/* Header with Date Filter and Export Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h3 className="text-lg font-semibold">Subscription Analytics</h3>
-          <p className="text-sm text-muted-foreground">Track customer opt-in and opt-out trends</p>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-4">
         <div className="flex items-center gap-2 flex-wrap">
           {/* Date Range Preset Select */}
           <Select value={datePreset} onValueChange={(value: DatePreset) => setDatePreset(value)}>
