@@ -258,6 +258,18 @@ export default function PublicChat() {
       >
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
+            {/* Home button - shows when there are messages */}
+            {messages.length > 0 && (
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="h-8 w-8 p-0 text-white/90 hover:text-white hover:bg-white/20 rounded-full"
+                onClick={() => clearMessages()}
+                title="Home"
+              >
+                <Home className="h-4 w-4" />
+              </Button>
+            )}
             {config.company.logo_url ? (
               <img 
                 src={config.company.logo_url} 
@@ -507,12 +519,13 @@ export default function PublicChat() {
               <Button 
                 type="button" 
                 variant="outline" 
-                size="icon"
+                size="sm"
                 onClick={() => clearMessages()}
-                title="Back to main menu"
-                className="shrink-0"
+                title="End Chat"
+                className="shrink-0 gap-1.5 text-muted-foreground hover:text-destructive"
               >
-                <Home className="h-4 w-4" />
+                <X className="h-4 w-4" />
+                <span className="hidden sm:inline">End Chat</span>
               </Button>
             )}
             <Input
