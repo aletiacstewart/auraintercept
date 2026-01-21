@@ -98,11 +98,17 @@ import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
-// Check if running in embed/iframe mode
-const isEmbedMode = typeof window !== 'undefined' && 
-  new URLSearchParams(window.location.search).get('embed') === 'true';
+const App = () => {
+  // Embed mode must be true in an iframe (preview widgets) OR when explicitly requested via ?embed=true
+  // NOTE: computed inside the component to avoid stale module-scope evaluation.
+  const isEmbedMode = (() => {
+    if (typeof window === 'undefined') return false;
+    const isIframe = window.self !== window.top;
+    const hasEmbedParam = new URLSearchParams(window.location.search).get('embed') === 'true';
+    return isIframe || hasEmbedParam;
+  })();
 
-const App = () => (
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
@@ -224,6 +230,7 @@ const App = () => (
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
