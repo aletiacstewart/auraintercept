@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { 
   Bot, Send, User, Loader2, Calendar, Clock, DollarSign, 
   AlertTriangle, Star, MessageSquare, Sparkles, Building2,
-  Phone, X, MapPin, Mic
+  Phone, X, MapPin, Mic, Home
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMultiAgentChat, ChatMessage } from '@/hooks/useMultiAgentChat';
@@ -503,6 +503,18 @@ export default function PublicChat() {
           )}
 
           <form onSubmit={handleSubmit} className="flex gap-2 p-4 border-t">
+            {messages.length > 0 && (
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="icon"
+                onClick={() => clearMessages()}
+                title="Back to main menu"
+                className="shrink-0"
+              >
+                <Home className="h-4 w-4" />
+              </Button>
+            )}
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -513,12 +525,13 @@ export default function PublicChat() {
             <Button 
               type="button" 
               variant="outline" 
+              size="icon"
               onClick={() => setShowVoiceDialog(true)}
               className="shrink-0"
             >
               <Mic className="h-4 w-4" />
             </Button>
-            <Button type="submit" disabled={isStreaming || !input.trim()}>
+            <Button type="submit" size="icon" disabled={isStreaming || !input.trim()}>
               <Send className="h-4 w-4" />
             </Button>
           </form>
