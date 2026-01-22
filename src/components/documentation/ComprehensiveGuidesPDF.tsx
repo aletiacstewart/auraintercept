@@ -181,7 +181,7 @@ const Footer = () => (
   </View>
 );
 
-// All guide data
+// All guide data - synchronized with PlatformGuides.tsx
 const guideCategories = [
   {
     title: 'Getting Started',
@@ -192,24 +192,36 @@ const guideCategories = [
         steps: [
           'Log in to your admin dashboard at /auth',
           'Explore the main navigation sidebar on the left',
-          'Review your subscription status in the bottom left',
-          'Navigate to Dashboard for your company overview',
-          'Check the Help section for additional resources'
+          'Review your subscription tier (Single-Point, Multi-Track, or Command)',
+          'Navigate to Dashboard for company overview and KPIs',
+          'Check the DashboardSetupNav bar for Quick Setup progress'
         ],
-        tips: ['Bookmark the dashboard URL for quick access']
+        tips: ['Use Ask Aura voice navigation with Ctrl+Shift+V']
       },
       {
-        title: 'Initial Setup Checklist',
+        title: 'Quick Setup Wizard',
         duration: '15 min',
         steps: [
-          'Complete company profile in Settings → Branding',
-          'Upload your company logo (200x200px PNG recommended)',
-          'Configure business hours in Knowledge Base',
-          'Add your services catalog',
-          'Set up employee accounts',
-          'Configure notification preferences'
+          'Access Quick Setup from Dashboard → DashboardSetupNav bar',
+          'Complete company branding (logo, colors) in Settings → Branding',
+          'Configure business hours in Knowledge Base → Hours',
+          'Add your services catalog in Knowledge Base → Services',
+          'Set up FAQs for AI agent accuracy',
+          'Create employee accounts with job type assignments'
         ],
-        tips: ['Use the Onboarding Wizard for guided setup']
+        tips: ['Track progress in the DashboardSetupNav progress bars']
+      },
+      {
+        title: 'Subscription Tiers',
+        duration: '8 min',
+        steps: [
+          'Single-Point ($497/mo): AI Receptionist, Follow-up, Review + Call to Book',
+          'Multi-Track ($897/mo): Adds Scheduling, Dispatch, ETA, Quoting, Invoicing',
+          'Command ($1,497/mo): Full 22+ agent suite including Social Media & Analytics',
+          'All tiers include AI Voice Chat powered by ElevenLabs',
+          'Employee limits: 5 (Single-Point), 10 (Multi-Track), Unlimited (Command)'
+        ],
+        tips: ['Trial users get full Command tier access']
       },
       {
         title: 'User Roles & Permissions',
@@ -217,11 +229,23 @@ const guideCategories = [
         steps: [
           'Platform Admin: Full system access across all companies',
           'Company Admin: Full access to their company features',
-          'Employee: Access based on assigned job types',
-          'Technician: Mobile-optimized field operations access',
-          'Assign roles when creating user accounts'
+          'Manager: Operations management without system settings',
+          'Dispatch: Field operations and technician management',
+          'Technician: Mobile app access for field jobs'
         ],
         tips: ['Follow principle of least privilege']
+      },
+      {
+        title: 'Customer Portal Setup',
+        duration: '8 min',
+        steps: [
+          'Customers access portal at /customer-portal or via widget',
+          'Single-Point: Call to Book, Emergency, Services, Hours, Feedback',
+          'Multi-Track+: Book Appointment, Get Quote, Track, Billing',
+          'Portal supports multi-company access',
+          'AI Voice Chat included for all paid tiers'
+        ],
+        tips: ['Widget works on WordPress, Wix, and any HTML site']
       }
     ]
   },
@@ -233,63 +257,108 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to AI Agents Hub from the sidebar',
-          'View all 18 specialized agents organized by 5 consoles',
-          'Click an agent card for detailed settings',
-          'Use batch activation for multiple agents',
-          'Monitor agent activity in event logs'
+          'View all 22 specialized agents organized by 6 consoles',
+          'Agents locked by tier show "Locked" badge',
+          'Click any agent card to view settings and dependencies',
+          'Enable/disable agents with the toggle switch'
         ],
         tips: ['Start with Customer Portal agents first']
       },
       {
-        title: 'Enabling & Configuring Agents',
-        duration: '12 min',
-        steps: [
-          'Select an agent from the AI Agents Hub',
-          'Toggle the enable switch to activate',
-          'Configure agent-specific settings',
-          'Set up handoff rules for transfers',
-          'Test agent behavior in Test Console',
-          'Monitor agent logs for issues'
-        ],
-        tips: ['Configure during low-traffic periods']
-      },
-      {
-        title: 'AI Receptionist (Triage Agent)',
-        duration: '8 min',
-        steps: [
-          'Enable the AI Receptionist in Hub',
-          'Configure the initial greeting message',
-          'Set up inquiry classification rules',
-          'Define handoff triggers for specialists',
-          'Test with sample customer inquiries'
-        ],
-        tips: ['Entry point for all customer interactions']
-      },
-      {
-        title: 'Scheduling Agent Setup',
+        title: 'AI Receptionist (Triage)',
         duration: '10 min',
         steps: [
-          'Enable the Scheduling Agent',
-          'Ensure business hours are configured',
-          'Set up service duration defaults',
-          'Configure employee availability',
-          'Enable calendar sync (Google optional)',
-          'Test booking flow end-to-end'
+          'Primary entry point for all customer interactions',
+          'Collects customer name, phone, and intent before handoff',
+          'Routes to specialized agents based on inquiry type',
+          'Configure greeting in AI Agents Hub',
+          'Works across Voice, SMS, Email, and Widget channels'
         ],
-        tips: ['Sync external calendars for accuracy']
+        tips: ['Required for all other customer-facing agents']
+      },
+      {
+        title: 'Scheduling Agent',
+        duration: '10 min',
+        steps: [
+          'Enable in AI Agents Hub (requires Multi-Track+ tier)',
+          'Checks business hours and employee availability',
+          'Presents available time slots to customers',
+          'Creates confirmed appointments in the system',
+          'Hands off to Dispatch Agent for technician assignment'
+        ],
+        tips: ['Ensure business hours are configured accurately']
+      },
+      {
+        title: 'Follow-up & Review Agents',
+        duration: '8 min',
+        steps: [
+          'Follow-up Agent: Automated post-service check-ins',
+          'Review Agent: Collects ratings and routes to review sites',
+          'Both depend on AI Receptionist being enabled',
+          'Configure templates in Settings → Email Templates',
+          'Negative feedback routes internally first'
+        ],
+        tips: ['Both agents included in Single-Point tier']
       },
       {
         title: 'Field Operations Agents',
-        duration: '15 min',
+        duration: '12 min',
         steps: [
-          'Enable Dispatch, Route, ETA, Check-in agents',
-          'Configure dispatch rules (skills, zones)',
-          'Set up route optimization preferences',
-          'Configure ETA notification triggers',
-          'Enable photo documentation',
-          'Test complete field operations workflow'
+          'Dispatch Agent: Assigns technicians based on skills/zones',
+          'Route Agent: Optimizes travel routes',
+          'ETA Agent: Sends real-time arrival updates',
+          'Check-in Agent: On-site status with photo documentation',
+          'All require Multi-Track+ tier'
         ],
-        tips: ['Train technicians on mobile check-in']
+        tips: ['Enable GPS on technician mobile devices']
+      },
+      {
+        title: 'Business Operations Agents',
+        duration: '10 min',
+        steps: [
+          'Quoting Agent: Generates quotes from service catalog',
+          'Invoice Agent: Creates invoices and tracks payments',
+          'Inventory Agent: Monitors stock levels (Command)',
+          'Warranty Agent: Manages warranty policies (Command)',
+          'Quoting/Invoice: Multi-Track+; Inventory/Warranty: Command'
+        ],
+        tips: ['Link Quote Forge to your service catalog']
+      },
+      {
+        title: 'Social Media Agents',
+        duration: '12 min',
+        steps: [
+          'Social Content Agent: Creates posts for 6 platforms',
+          'Social Scheduler Agent: Queues and publishes content',
+          'Social Analytics Agent: Tracks engagement metrics',
+          'Uses 3-step Content Wizard: Template → Customize → Schedule',
+          'All social agents require Command tier'
+        ],
+        tips: ['Respects platform character limits automatically']
+      },
+      {
+        title: 'Analytics Agents',
+        duration: '10 min',
+        steps: [
+          'Insights Agent: Natural language business queries',
+          'Performance Agent: Tracks KPIs and operational metrics',
+          'Revenue Agent: Analyzes financial trends and forecasts',
+          'Forecast Agent: Predicts demand and capacity needs',
+          'All analytics agents require Command tier'
+        ],
+        tips: ['Use form-based interfaces for structured reports']
+      },
+      {
+        title: 'AI Voice Chat (ElevenLabs)',
+        duration: '8 min',
+        steps: [
+          'AI Voice powered by ElevenLabs included in all paid tiers',
+          'Customers can speak naturally with AI agents',
+          'Supports inbound and outbound voice interactions',
+          'Configure voice settings in Integrations → Voice Agent',
+          'Voice cloning available with ElevenLabs account'
+        ],
+        tips: ['Choose a voice matching your brand personality']
       }
     ]
   },
@@ -297,72 +366,78 @@ const guideCategories = [
     title: 'Integrations Setup',
     guides: [
       {
-        title: 'Voice Integration (Twilio)',
-        duration: '20 min',
+        title: 'Twilio Voice & SMS',
+        duration: '15 min',
         steps: [
-          'Navigate to Integrations → Voice Agent',
+          'Navigate to Integrations → Voice Agent or SMS & Text',
           'Create Twilio account at twilio.com',
           'Obtain Account SID and Auth Token',
-          'Purchase a phone number from Twilio',
-          'Enter credentials in Voice settings',
-          'Configure voice agent prompts',
-          'Test with a phone call'
+          'Purchase a phone number with Voice and SMS',
+          'Enter credentials in integration settings',
+          'Configure call handling and SMS templates'
         ],
-        tips: ['Use local number for better answer rates']
+        tips: ['Use a local number for better answer rates']
       },
       {
-        title: 'SMS Integration (Twilio)',
-        duration: '15 min',
+        title: 'ElevenLabs Voice Setup',
+        duration: '12 min',
         steps: [
-          'Navigate to Integrations → SMS & Text',
-          'Ensure Twilio account is set up',
-          'Enable SMS on your Twilio number',
-          'Configure SMS templates in Settings',
-          'Set up reminder schedules',
-          'Test SMS to your number'
+          'Navigate to Integrations → Voice Agent → TTS Settings',
+          'Create ElevenLabs account at elevenlabs.io',
+          'Generate API key from ElevenLabs dashboard',
+          'Enter API key in Voice Integration settings',
+          'Select a pre-built voice or clone your own',
+          'Test voice output with sample greeting'
         ],
-        tips: ['Keep messages under 160 characters']
+        tips: ['Higher stability = more consistent voice']
       },
       {
-        title: 'Email Integration (Resend)',
-        duration: '15 min',
+        title: 'Resend Email Integration',
+        duration: '12 min',
         steps: [
           'Navigate to Integrations → Email',
           'Create Resend account at resend.com',
-          'Verify your sending domain',
-          'Obtain your Resend API key',
-          'Enter key in Email settings',
-          'Configure email templates',
-          'Send a test email'
+          'Verify your sending domain with DNS records',
+          'Obtain Resend API key',
+          'Configure email templates in Settings'
         ],
-        tips: ['Set up SPF and DKIM records']
+        tips: ['Set up SPF and DKIM for deliverability']
       },
       {
-        title: 'Calendar Integration (Google)',
-        duration: '12 min',
+        title: 'Google Calendar Sync',
+        duration: '10 min',
         steps: [
           'Navigate to Integrations → Calendar',
-          'Click "Connect Google Calendar"',
-          'Sign in with Google account',
-          'Grant calendar permissions',
-          'Select calendar to sync',
-          'Enable two-way sync',
-          'Verify appointments appear'
+          'Click Connect Google Calendar button',
+          'Sign in with your Google account',
+          'Grant calendar read/write permissions',
+          'Select calendar to sync appointments'
         ],
-        tips: ['Use dedicated calendar for business']
+        tips: ['Use dedicated business calendar']
+      },
+      {
+        title: 'Stripe Payments',
+        duration: '15 min',
+        steps: [
+          'Navigate to Integrations → Payment Connections',
+          'Click Connect Stripe Account',
+          'Create or link existing Stripe account',
+          'Complete Stripe verification requirements',
+          'Enable payment links on invoices'
+        ],
+        tips: ['Stripe handles all PCI compliance']
       },
       {
         title: 'Website Widget Embed',
         duration: '10 min',
         steps: [
           'Navigate to Integrations → Website Embed',
-          'Choose embed method (JS, iframe, link)',
-          'Copy embed code',
+          'Choose embed method (JavaScript or iframe)',
+          'Copy embed code for your method',
           'Paste into your website',
-          'Customize widget appearance',
-          'Test on live website'
+          'Customize widget position and colors'
         ],
-        tips: ['Use iframe for WordPress/Wix']
+        tips: ['Iframe works on most website builders']
       }
     ]
   },
@@ -370,60 +445,76 @@ const guideCategories = [
     title: 'Operations Management',
     guides: [
       {
+        title: 'Field Operations Console',
+        duration: '12 min',
+        steps: [
+          'Navigate to Field Operations from sidebar',
+          'Quick Action Tabs: Map View, Schedule, Dispatch, Check-in',
+          'Map View shows real-time technician GPS locations',
+          'Dispatch tab for job assignment and routing',
+          'Schedule tab for daily/weekly planning'
+        ],
+        tips: ['Map View ideal for dispatchers']
+      },
+      {
         title: 'Managing Appointments',
         duration: '10 min',
         steps: [
           'Navigate to Appointments from sidebar',
-          'View calendar or list view',
-          'Click appointment for details',
-          'Use filters to find specific ones',
-          'Assign/reassign technicians',
-          'Update status as needed',
-          'Send reminders to customers'
+          'Toggle between Calendar and List view',
+          'Click appointment for details and actions',
+          'Use filters by status, technician, or date range',
+          'Send reminders via Email/SMS'
         ],
-        tips: ['Set up automatic reminders 24h and 1h before']
-      },
-      {
-        title: 'Technician Management',
-        duration: '12 min',
-        steps: [
-          'Navigate to Employees section',
-          'Add technicians with Add Employee button',
-          'Assign job types',
-          'Configure availability schedules',
-          'Set skill tags for dispatch',
-          'Enable mobile app access',
-          'Monitor performance metrics'
-        ],
-        tips: ['Verify mobile app installation']
+        tips: ['Set up 24h and 1h automatic reminders']
       },
       {
         title: 'Technician Mobile App',
         duration: '8 min',
         steps: [
-          'Technicians access /technician on mobile',
-          'Click "Install App" or use banner',
-          'Add to home screen',
-          'Log in with credentials',
+          'Technicians access app at /technician on mobile browser',
+          'Click Install App banner for PWA installation',
+          'Add to home screen for native app experience',
           'View assigned jobs in Jobs tab',
-          'Check in/out with photos',
-          'Update job status in real-time'
+          'Check in/out with status updates and photos'
         ],
-        tips: ['Enable location services for ETAs']
+        tips: ['PWA works offline for basic features']
       },
       {
-        title: 'Dispatch & Routing',
-        duration: '15 min',
+        title: 'Technician Check-In Process',
+        duration: '8 min',
         steps: [
-          'Navigate to Dispatch-Field Ops',
-          'View dispatch map with locations',
-          'New jobs appear in unassigned queue',
-          'Auto-dispatch suggests optimal tech',
-          'Manually override if needed',
-          'Monitor real-time ETA updates',
-          'Track job progress on map'
+          'Technician taps Check-In button on job card',
+          'Select status: En Route, On Site, or Completed',
+          'Upload before photos when arriving on site',
+          'Customer receives automatic status notification',
+          'Complete work and upload after photos'
         ],
-        tips: ['Consider traffic patterns']
+        tips: ['GPS location captured with each status update']
+      },
+      {
+        title: 'Dispatch & Route Optimization',
+        duration: '10 min',
+        steps: [
+          'Access Field Operations Console → Dispatch tab',
+          'View unassigned jobs in the queue',
+          'Auto-dispatch suggests optimal technician match',
+          'Route Agent optimizes travel between jobs',
+          'Monitor real-time ETA updates on map'
+        ],
+        tips: ['Use skill tags for specialized job matching']
+      },
+      {
+        title: 'Employee Management',
+        duration: '10 min',
+        steps: [
+          'Navigate to Employees section from sidebar',
+          'Add new employees with Add Employee button',
+          'Assign job types (Technician, Dispatch, Manager)',
+          'Configure individual availability schedules',
+          'Generate registration codes for self-onboarding'
+        ],
+        tips: ['Registration codes simplify onboarding']
       }
     ]
   },
@@ -431,60 +522,76 @@ const guideCategories = [
     title: 'Business & Finance',
     guides: [
       {
-        title: 'Creating Quotes',
-        duration: '8 min',
+        title: 'Business Ops Console',
+        duration: '10 min',
         steps: [
-          'Navigate to Quotes from sidebar',
-          'Click "New Quote" button',
-          'Enter customer information',
-          'Add line items from catalog',
-          'Apply discounts if applicable',
-          'Preview quote before sending',
-          'Email quote to customer'
+          'Navigate to Business Ops Hub from sidebar',
+          'Quick Action Tabs: Companies, Employees, Customers, Inventory, Warranties',
+          'View real-time KPIs for quotes, invoices, and revenue',
+          'Access Quote Forge for AI-powered quote generation',
+          'Inventory and Warranty tabs require Command tier'
         ],
-        tips: ['Save templates for common services']
+        tips: ['Use Business Ops Overview for executive dashboard']
       },
       {
-        title: 'Managing Invoices',
+        title: 'Creating & Managing Quotes',
+        duration: '10 min',
+        steps: [
+          'Navigate to Quotes from sidebar',
+          'Click New Quote to create manually',
+          'Or use Quote Forge for AI-generated quotes',
+          'Add line items from service catalog',
+          'Generate branded PDF quote'
+        ],
+        tips: ['Quote templates speed up common services']
+      },
+      {
+        title: 'Invoice Management',
         duration: '10 min',
         steps: [
           'Navigate to Invoices from sidebar',
-          'Create from quote or manually',
+          'Convert accepted quotes to invoices automatically',
           'Add payment terms and due date',
-          'Send invoice via email',
-          'Track payment status',
-          'Record payments when received',
-          'Generate payment receipts'
+          'Enable Stripe payment links for online payment',
+          'Track payment status and send reminders'
         ],
-        tips: ['Convert quotes to invoices automatically']
+        tips: ['Payment link invoices get paid 2x faster']
       },
       {
         title: 'Inventory Tracking',
-        duration: '12 min',
+        duration: '10 min',
         steps: [
-          'Navigate to Resources → Inventory',
-          'Add items with SKUs',
+          'Navigate to Knowledge Base → Inventory (Command tier)',
+          'Add inventory items with SKU codes',
           'Set minimum quantity thresholds',
-          'Track parts usage per job',
-          'Receive low-stock alerts',
-          'Record adjustments',
-          'Generate inventory reports'
+          'Configure low-stock alert notifications',
+          'Inventory Agent monitors and alerts automatically'
         ],
-        tips: ['Assign common parts to service types']
+        tips: ['Link common parts to service types']
       },
       {
         title: 'Warranty Management',
+        duration: '8 min',
+        steps: [
+          'Navigate to Knowledge Base → Warranties (Command tier)',
+          'Create warranty policy templates',
+          'Define coverage terms and durations',
+          'Link warranties to completed jobs automatically',
+          'Warranty Agent sends expiration reminders'
+        ],
+        tips: ['Auto-assign warranties on job completion']
+      },
+      {
+        title: 'Payment Connections',
         duration: '10 min',
         steps: [
-          'Navigate to Resources → Warranties',
-          'Create warranty policies',
-          'Set durations and terms',
-          'Link warranties to completed jobs',
-          'Customers look up warranty status',
-          'Process warranty claims',
-          'Track expiration dates'
+          'Navigate to Integrations → Payment Connections',
+          'Connect Stripe account for payment processing',
+          'Enable payment links on invoices',
+          'Customers pay via any device with link',
+          'Payments automatically recorded'
         ],
-        tips: ['Automate registration on job completion']
+        tips: ['Stripe handles all security compliance']
       }
     ]
   },
@@ -492,46 +599,129 @@ const guideCategories = [
     title: 'Marketing & Campaigns',
     guides: [
       {
-        title: 'Creating Campaigns',
-        duration: '15 min',
+        title: 'Marketing & Sales Console',
+        duration: '10 min',
         steps: [
-          'Navigate to Campaigns from sidebar',
-          'Click "New Campaign" button',
-          'Choose type (email, SMS, both)',
-          'Define target audience with filters',
-          'Create content (use AI assistance)',
-          'Schedule or send immediately',
-          'Monitor performance metrics'
+          'Navigate to Marketing & Sales Ops (Command tier)',
+          'Quick Action Tabs: Campaigns, Promos, Leads, Segments, Referrals',
+          'Create and manage marketing campaigns',
+          'Configure promo codes and discounts',
+          'Manage lead pipeline and segmentation'
+        ],
+        tips: ['Focus on Campaigns and Segments first']
+      },
+      {
+        title: 'Creating Campaigns',
+        duration: '12 min',
+        steps: [
+          'Navigate to Campaigns tab in Marketing Console',
+          'Click New Campaign button',
+          'Choose channel: Email, SMS, or multi-channel',
+          'Select target segment or create new',
+          'Create content with AI generation assistance'
         ],
         tips: ['A/B test subject lines']
       },
       {
-        title: 'Referral Program',
-        duration: '10 min',
+        title: 'Customer Segmentation',
+        duration: '8 min',
         steps: [
-          'Navigate to Referrals from sidebar',
-          'Configure reward structure',
-          'Set values for referrer/referee',
-          'Generate referral codes',
-          'Track conversions',
-          'Process rewards',
-          'Promote via automated emails'
+          'Navigate to Segments tab in Marketing Console',
+          'Create new segment with filter criteria',
+          'Filter by service history, location, or spend',
+          'Preview segment size before saving',
+          'Segments update dynamically'
         ],
-        tips: ['Make rewards attractive to motivate sharing']
+        tips: ['Create segment for repeat customers']
+      },
+      {
+        title: 'Promo Codes & Discounts',
+        duration: '8 min',
+        steps: [
+          'Navigate to Promos tab in Marketing Console',
+          'Create promo code with unique identifier',
+          'Set discount type (percentage or fixed)',
+          'Define usage limits and expiration',
+          'Track redemption in analytics'
+        ],
+        tips: ['Use memorable codes for better recall']
+      },
+      {
+        title: 'Referral Program',
+        duration: '8 min',
+        steps: [
+          'Navigate to Referrals tab in Marketing Console',
+          'Configure reward structure for referrer and referee',
+          'Set reward values (discount or credit)',
+          'Generate unique referral codes per customer',
+          'Track referral conversions'
+        ],
+        tips: ['Remind customers post-service']
       },
       {
         title: 'Review Collection',
         duration: '8 min',
         steps: [
-          'Enable Social Media Review Agent',
-          'Configure request timing',
-          'Set up review site links',
-          'Customize request templates',
-          'Collect feedback first',
-          'Monitor incoming reviews',
-          'Respond promptly'
+          'Navigate to Review tab in Marketing Console',
+          'Review Agent sends requests post-service',
+          'Collects rating before directing to review sites',
+          'Negative feedback routes internally first',
+          'Monitor review analytics'
         ],
-        tips: ['Ask satisfied customers immediately']
+        tips: ['Ask immediately after positive service']
+      }
+    ]
+  },
+  {
+    title: 'Social Media Ops',
+    guides: [
+      {
+        title: 'Social Media Console',
+        duration: '10 min',
+        steps: [
+          'Navigate to Social Media Ops from sidebar (Command tier)',
+          'Quick Action Tabs: Home, Templates, Compose, Schedule, Analytics',
+          'Supports 6 platforms: IG, FB, LI, TT, GMB, SMS',
+          'AI-powered content generation and scheduling',
+          'Cross-platform analytics tracking'
+        ],
+        tips: ['Start with content templates']
+      },
+      {
+        title: '3-Step Content Wizard',
+        duration: '12 min',
+        steps: [
+          'Step 1 - Template: Choose from pre-built templates',
+          'Step 2 - Customize: Edit content, add images, apply brand voice',
+          'Step 3 - Schedule: Select platforms and set publish times',
+          'AI auto-adjusts content for platform limits',
+          'Preview posts before scheduling'
+        ],
+        tips: ['Templates maintain brand consistency']
+      },
+      {
+        title: 'Platform Configuration',
+        duration: '10 min',
+        steps: [
+          'Navigate to Social Media Ops → Settings',
+          'Connect social accounts via OAuth',
+          'Configure default hashtags and mentions',
+          'Set brand voice guidelines',
+          'Enable/disable specific platforms'
+        ],
+        tips: ['Use consistent branding across platforms']
+      },
+      {
+        title: 'Social Analytics',
+        duration: '8 min',
+        steps: [
+          'Navigate to Analytics tab in Social Media Console',
+          'View engagement metrics per platform',
+          'Track post performance (likes, shares, comments)',
+          'Compare platform performance',
+          'Export social reports to PDF/CSV'
+        ],
+        tips: ['Track trends over time']
       }
     ]
   },
@@ -539,46 +729,64 @@ const guideCategories = [
     title: 'Analytics & Reports',
     guides: [
       {
-        title: 'Dashboard Analytics',
-        duration: '8 min',
+        title: 'Analytics Console',
+        duration: '10 min',
         steps: [
-          'Navigate to Dashboard for overview',
-          'View appointment trends',
-          'Monitor revenue and invoices',
-          'Check satisfaction scores',
-          'Review technician utilization',
-          'Identify peak booking times',
-          'Export data for analysis'
+          'Navigate to Analytics & Reports Ops (Command tier)',
+          'Tabs: Home, Performance, Revenue, Customers, Trends, KPI, Export',
+          'Form-based interfaces for structured reporting',
+          'AI Insights Agent for natural language queries',
+          'Export capabilities for all report types'
         ],
-        tips: ['Check dashboard daily']
+        tips: ['Use structured forms for consistent reports']
       },
       {
-        title: 'Analytics Console',
-        duration: '12 min',
+        title: 'Performance Reports',
+        duration: '8 min',
         steps: [
-          'Navigate to Resources → Analytics',
-          'Use AI-powered insights',
-          'Generate custom reports',
-          'Analyze revenue trends',
-          'Review acquisition costs',
-          'Compare time periods',
-          'Schedule automated delivery'
+          'Navigate to Performance tab in Analytics Console',
+          'Select date range and metrics to analyze',
+          'View appointment completion rates',
+          'Track technician utilization and efficiency',
+          'Export performance reports to PDF/CSV'
         ],
-        tips: ['Use Analytics Agent for natural language']
+        tips: ['Weekly reviews catch issues early']
+      },
+      {
+        title: 'Revenue Analysis',
+        duration: '10 min',
+        steps: [
+          'Navigate to Revenue tab in Analytics Console',
+          'View revenue breakdown by service type',
+          'Identify top-performing services',
+          'Forecast Agent predicts future revenue',
+          'Export financial reports'
+        ],
+        tips: ['Compare seasonal trends year over year']
+      },
+      {
+        title: 'Export Reports',
+        duration: '8 min',
+        steps: [
+          'Navigate to Export tab in Analytics Console',
+          'Select data sets to include (Jobs, Revenue, Social)',
+          'Choose field categories (Financials, Marketing)',
+          'Select export format (CSV or PDF)',
+          'Download report immediately'
+        ],
+        tips: ['CSV for data analysis, PDF for presentations']
       },
       {
         title: 'Setting Up Digests',
         duration: '8 min',
         steps: [
           'Navigate to Settings → Digests',
-          'Enable weekly/monthly digests',
-          'Configure recipients',
+          'Enable weekly and/or monthly digests',
+          'Configure recipient email addresses',
           'Select metrics to include',
-          'Choose delivery schedule',
-          'Preview format',
-          'Review delivery history'
+          'Digests sent automatically on schedule'
         ],
-        tips: ['Include key stakeholders']
+        tips: ['Include key stakeholders as recipients']
       }
     ]
   },
@@ -590,14 +798,13 @@ const guideCategories = [
         duration: '15 min',
         steps: [
           'Navigate to Knowledge Base → Services',
-          'Click "Add Service" button',
-          'Enter name and description',
-          'Set pricing (fixed or range)',
+          'Click Add Service button',
+          'Enter service name and detailed description',
+          'Set pricing (fixed price or range)',
           'Define estimated duration',
-          'Add categories for organization',
-          'Enable/disable as needed'
+          'Services used by Quoting Agent and Customer Portal'
         ],
-        tips: ['Include detailed descriptions for AI accuracy']
+        tips: ['Detailed descriptions improve AI accuracy']
       },
       {
         title: 'FAQ Management',
@@ -606,25 +813,58 @@ const guideCategories = [
           'Navigate to Knowledge Base → FAQs',
           'Add frequently asked questions',
           'Provide clear, helpful answers',
-          'Organize by category',
-          'AI agents use FAQs for responses',
-          'Update based on inquiries',
-          'Upload document for bulk import'
+          'AI agents reference FAQs for customer responses',
+          'Bulk import from document upload'
         ],
-        tips: ['Use inquiry patterns to identify new FAQs']
+        tips: ['Use real customer questions']
+      },
+      {
+        title: 'Document Uploads',
+        duration: '8 min',
+        steps: [
+          'Navigate to Knowledge Base → Documents',
+          'Click Upload Document button',
+          'Supports PDF, CSV, and markdown files',
+          'AI parses content automatically',
+          'Documents enhance AI agent knowledge'
+        ],
+        tips: ['Upload service manuals for better support']
       },
       {
         title: 'Business Hours Configuration',
         duration: '5 min',
         steps: [
           'Navigate to Knowledge Base → Hours',
-          'Set operating hours for each day',
-          'Mark closed days',
-          'Add holiday closures',
+          'Set operating hours for each day of week',
+          'Add holiday closures in advance',
           'Configure after-hours messaging',
-          'AI respects hours for scheduling'
+          'Scheduling Agent respects these hours'
         ],
-        tips: ['Update for holidays in advance']
+        tips: ['Update hours before holidays']
+      },
+      {
+        title: 'Inventory Management',
+        duration: '12 min',
+        steps: [
+          'Navigate to Knowledge Base → Inventory (Command tier)',
+          'Add parts and supplies with SKU codes',
+          'Set stock quantities and minimum levels',
+          'Configure low-stock alert thresholds',
+          'Inventory Agent monitors and sends alerts'
+        ],
+        tips: ['Regular audits ensure accuracy']
+      },
+      {
+        title: 'Warranty Policies',
+        duration: '8 min',
+        steps: [
+          'Navigate to Knowledge Base → Warranties (Command tier)',
+          'Create warranty policy templates',
+          'Define coverage terms and durations',
+          'Set up automatic warranty assignment',
+          'Warranty Agent sends expiration reminders'
+        ],
+        tips: ['Clear terms reduce disputes']
       }
     ]
   }
@@ -660,7 +900,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
               <Text style={{ fontSize: 10, color: '#a5b4fc' }}>Guides</Text>
             </View>
             <View style={{ alignItems: 'center' }}>
-              <Text style={{ fontSize: 28, fontWeight: 700, color: colors.accent }}>18</Text>
+              <Text style={{ fontSize: 28, fontWeight: 700, color: colors.accent }}>22</Text>
               <Text style={{ fontSize: 10, color: '#a5b4fc' }}>AI Agents</Text>
             </View>
           </View>
@@ -743,7 +983,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         <Header title="Quick Reference" />
         <Text style={styles.sectionTitle}>Quick Reference</Text>
         
-        <Text style={styles.categoryTitle}>AI Agent Categories (18 Total)</Text>
+        <Text style={styles.categoryTitle}>AI Agent Categories (22 Total)</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
           <Text style={styles.bulletText}>Customer Portal (4 agents): AI Receptionist, Scheduling, Follow-up, Review</Text>
@@ -758,11 +998,29 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Marketing & Sales (1 agent): Campaign Agent (handles all campaign types)</Text>
+          <Text style={styles.bulletText}>Marketing & Sales (2 agents): Campaign, Marketing</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bulletText}>Social Media (3 agents): Social Content, Social Scheduler, Social Analytics</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
           <Text style={styles.bulletText}>Analytics & Reports (4 agents): Insights, Performance, Revenue, Forecast</Text>
+        </View>
+
+        <Text style={styles.categoryTitle}>Subscription Tiers</Text>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bulletText}>Single-Point ($497/mo): AI Receptionist, Follow-up, Review + AI Voice</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bulletText}>Multi-Track ($897/mo): Adds Scheduling, Dispatch, ETA, Quoting, Invoicing</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bulletText}>Command ($1,497/mo): Full 22+ agent suite including Social Media & Analytics</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>
@@ -780,17 +1038,17 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Public Chat: /chat/[company-slug]</Text>
+          <Text style={styles.bulletText}>Public Chat Widget: /chat/[company-slug]</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Keyboard Shortcuts</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Ctrl/Cmd + K: Quick search</Text>
+          <Text style={styles.bulletText}>Ctrl/Cmd + Shift + V: Toggle Ask Aura Voice Mode</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Ctrl/Cmd + N: New appointment</Text>
+          <Text style={styles.bulletText}>Ctrl/Cmd + K: Quick search</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
@@ -800,15 +1058,15 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         <Text style={styles.categoryTitle}>Support Resources</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Help Center: /dashboard/help</Text>
+          <Text style={styles.bulletText}>Help & Documentation: /dashboard/help</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bulletText}>Platform Guides: /dashboard/platform-guides</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
           <Text style={styles.bulletText}>Architecture Docs: /dashboard/architecture</Text>
-        </View>
-        <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Integration Guides: /dashboard/integrations/embed</Text>
         </View>
 
         <Footer />
