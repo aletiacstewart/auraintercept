@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { useAuth } from '@/contexts/AuthContext';
@@ -23,9 +24,63 @@ import {
   CheckCircle2,
   Lightbulb,
   Clock,
-  Globe
+  Globe,
+  ExternalLink
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
+
+// Route mapping for interactive navigation
+const NAVIGATION_ROUTES: Record<string, string> = {
+  'Dashboard': '/dashboard',
+  'AI Agents Hub': '/dashboard/ai-agents-hub',
+  'Knowledge Base': '/dashboard/knowledge',
+  'Appointments': '/dashboard/appointments',
+  'Calendar': '/dashboard/calendar',
+  'Customers': '/dashboard/customers',
+  'Employees': '/dashboard/employees',
+  'Quotes': '/dashboard/quotes',
+  'Invoices': '/dashboard/invoices',
+  'Settings': '/dashboard/settings',
+  'Help': '/dashboard/help',
+  'Integrations': '/dashboard/settings/integrations',
+  'Integrations → Voice Agent': '/dashboard/settings/integrations',
+  'Integrations → SMS & Text': '/dashboard/settings/integrations',
+  'Integrations → Calendar': '/dashboard/settings/integrations',
+  'Integrations → Email': '/dashboard/settings/integrations',
+  'Integrations → Payment Connections': '/dashboard/settings/integrations',
+  'Integrations → Website Embed': '/dashboard/settings/integrations',
+  'Integrations → CRM': '/dashboard/settings/integrations',
+  'Field Operations': '/dashboard/ai-consoles/field-ops',
+  'Field Operations Console': '/dashboard/ai-consoles/field-ops',
+  'Business Ops Hub': '/dashboard/ai-consoles/business-ops',
+  'Business Ops Console': '/dashboard/ai-consoles/business-ops',
+  'Marketing & Sales Ops': '/dashboard/ai-consoles/marketing',
+  'Marketing Console': '/dashboard/ai-consoles/marketing',
+  'Social Media Ops': '/dashboard/ai-consoles/social-media',
+  'Social Media Console': '/dashboard/ai-consoles/social-media',
+  'Analytics & Reports Ops': '/dashboard/ai-consoles/analytics',
+  'Analytics Console': '/dashboard/ai-consoles/analytics',
+  'Customer Portal Console': '/dashboard/ai-consoles/customer-portal',
+  'Knowledge Base → Services': '/dashboard/knowledge',
+  'Knowledge Base → FAQs': '/dashboard/knowledge',
+  'Knowledge Base → Hours': '/dashboard/knowledge',
+  'Knowledge Base → Documents': '/dashboard/knowledge',
+  'Knowledge Base → Inventory': '/dashboard/knowledge',
+  'Knowledge Base → Warranties': '/dashboard/knowledge',
+  'Settings → Branding': '/dashboard/settings',
+  'Settings → Email Templates': '/dashboard/settings',
+  'Settings → Role Permissions': '/dashboard/settings',
+  'Settings → Digests': '/dashboard/settings',
+  'Settings → Subscription': '/dashboard/subscription',
+  'Platform Resources → AI Agent Guide': '/dashboard/ai-agent-guide',
+  'AI Agent Guide': '/dashboard/ai-agent-guide',
+  'Platform Guides': '/dashboard/platform-guides',
+  'Quick Setup': '/dashboard/quick-setup',
+  'Dashboard → DashboardSetupNav': '/dashboard',
+  '/auth': '/auth',
+  '/customer-portal': '/customer-portal',
+  '/technician': '/technician',
+};
 
 
 const guideCategories = [
@@ -957,8 +1012,64 @@ const RESTRICTED_GUIDE_TITLES = [
 // Categories hidden from non-platform-admin (Command tier only)
 const RESTRICTED_CATEGORIES = ['marketing', 'analytics', 'social-media'];
 
+// Helper component to render interactive steps with clickable links
+const InteractiveStep: React.FC<{ text: string; navigate: (path: string) => void }> = ({ text, navigate }) => {
+  // Sort routes by length (longest first) to match more specific routes first
+  const sortedRoutes = Object.entries(NAVIGATION_ROUTES).sort((a, b) => b[0].length - a[0].length);
+  
+  // Find all navigation references in the text
+  const parts: { text: string; isLink: boolean; route?: string }[] = [];
+  let remainingText = text;
+  
+  while (remainingText.length > 0) {
+    let foundMatch = false;
+    
+    for (const [label, route] of sortedRoutes) {
+      const index = remainingText.indexOf(label);
+      if (index !== -1) {
+        // Add text before the match
+        if (index > 0) {
+          parts.push({ text: remainingText.slice(0, index), isLink: false });
+        }
+        // Add the matched link
+        parts.push({ text: label, isLink: true, route });
+        // Continue with remaining text
+        remainingText = remainingText.slice(index + label.length);
+        foundMatch = true;
+        break;
+      }
+    }
+    
+    if (!foundMatch) {
+      // No more matches, add remaining text
+      parts.push({ text: remainingText, isLink: false });
+      break;
+    }
+  }
+  
+  return (
+    <span>
+      {parts.map((part, idx) => 
+        part.isLink ? (
+          <button
+            key={idx}
+            onClick={() => navigate(part.route!)}
+            className="text-primary hover:text-primary/80 hover:underline font-medium inline-flex items-center gap-0.5 transition-colors"
+          >
+            {part.text}
+            <ExternalLink className="h-3 w-3 inline" />
+          </button>
+        ) : (
+          <span key={idx}>{part.text}</span>
+        )
+      )}
+    </span>
+  );
+};
+
 const PlatformGuides: React.FC = () => {
   const { userRole } = useAuth();
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('getting-started');
 
   // Filter out restricted guides and categories for non-platform-admin users
@@ -1168,7 +1279,9 @@ const PlatformGuides: React.FC = () => {
                               <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium">
                                 {stepIndex + 1}
                               </div>
-                               <p className="text-sm text-card-foreground/70 pt-0.5">{step}</p>
+                              <p className="text-sm text-card-foreground/70 pt-0.5">
+                                <InteractiveStep text={step} navigate={navigate} />
+                              </p>
                             </div>
                           ))}
                         </div>
@@ -1184,7 +1297,7 @@ const PlatformGuides: React.FC = () => {
                               {guide.tips.map((tip, tipIndex) => (
                                  <li key={tipIndex} className="text-sm text-card-foreground/70 flex items-start gap-2">
                                    <CheckCircle2 className="h-4 w-4 text-warning flex-shrink-0 mt-0.5" />
-                                   {tip}
+                                   <InteractiveStep text={tip} navigate={navigate} />
                                  </li>
                               ))}
                             </ul>
