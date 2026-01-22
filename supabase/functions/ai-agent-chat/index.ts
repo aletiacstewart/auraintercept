@@ -2273,14 +2273,15 @@ serve(async (req) => {
       single_point: ['triage', 'followup', 'review'],
       // Multi-Track (10): Adds booking, field ops, quoting/invoice
       multi_track: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice'],
-      // Command (23): Full suite - 4 Customer Portal + 4 Field Ops + 5 Business Ops + 3 Marketing + 3 Social Media + 4 Analytics
+      // Command (23): Full suite - 4 Customer Portal + 4 Field Ops + 5 Business Ops + 3 Marketing + 3 Social Media + 4 Analytics + 1 Analytics Router
       command: [
         'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
         'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
         'admin', 'quoting', 'invoice', 'inventory', 'warranty', // Business Operations (5)
         'campaign', 'lead', 'promo',                         // Marketing & Sales (3)
         'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
-        'insights', 'performance', 'revenue', 'forecast'     // Analytics & Reports (4)
+        'insights', 'performance', 'revenue', 'forecast',    // Analytics & Reports (4)
+        'analytics'                                          // Analytics Router Agent
       ]
     };
 
