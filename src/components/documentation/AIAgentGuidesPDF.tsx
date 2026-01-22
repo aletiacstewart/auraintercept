@@ -700,8 +700,8 @@ const TIERS = [
     price: '$1,497/month',
     annualPrice: '$14,970/year',
     consoles: ['All 5 Consoles'],
-    agentCount: 18,
-    agents: ['All 18 AI Agents'],
+    agentCount: 19,
+    agents: ['All 19 AI Agents'],
     voiceIncluded: true,
   },
 ];
@@ -741,7 +741,7 @@ const AIAgentGuidesPDF = () => (
           <Text style={styles.coverStatLabel}>Consoles</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>18</Text>
+          <Text style={styles.coverStatNumber}>19</Text>
           <Text style={styles.coverStatLabel}>AI Agents</Text>
         </View>
         <View style={styles.coverStat}>
@@ -1140,7 +1140,7 @@ const AIAgentGuidesPDF = () => (
       <Text style={styles.sectionTitle}>Complete Agent Summary</Text>
       
       <Text style={styles.paragraph}>
-        Quick reference of all 18 AI Agents, organized by console. Use this table to see at a glance 
+        Quick reference of all 19 AI Agents, organized by console. Use this table to see at a glance 
         which agents work independently and which need other agents enabled.
       </Text>
 

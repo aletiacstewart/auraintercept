@@ -520,11 +520,11 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.coverTagline}>"Your Business. Always On. Always Growing."</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>22</Text>
+          <Text style={styles.coverStatNumber}>19</Text>
           <Text style={styles.coverStatLabel}>AI Agents</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>6</Text>
+          <Text style={styles.coverStatNumber}>5</Text>
           <Text style={styles.coverStatLabel}>Consoles</Text>
         </View>
         <View style={styles.coverStat}>
@@ -581,7 +581,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.highlightTitle}>The 30-Second Elevator Pitch</Text>
         <Text style={styles.highlightText}>
           Aura Intercept is an AI-powered automation platform that runs your service business 24/7. 
-          With 22 specialized AI agents, we handle everything from answering calls and booking appointments 
+          With 19 specialized AI agents, we handle everything from answering calls and booking appointments 
           to dispatching technicians and collecting payments. Our clients save 10+ hours per week and 
           see a 40% reduction in missed appointments within 30 days.
         </Text>
@@ -623,7 +623,7 @@ const PlatformDocumentPDF = () => (
       
       <Text style={styles.subsectionTitle}>Key Differentiator</Text>
       <Text style={styles.paragraph}>
-        Unlike generic CRMs or answering services, Aura Intercept uses 22 specialized AI agents that 
+        Unlike generic CRMs or answering services, Aura Intercept uses 19 specialized AI agents that 
         work together intelligently. When a customer calls about a broken AC, our AI Receptionist 
         classifies the urgency, Scheduling Agent books the appointment, Dispatch Agent assigns the 
         best technician, and Follow-up Agent sends confirmation—all in seconds, all automatically.
@@ -683,7 +683,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.solutionCard}>
         <Text style={styles.solutionTitle}>✅ The Aura Intercept Solution</Text>
         <Text style={styles.solutionText}>
-          Our 22 AI agents work 24/7 to answer every call, book every appointment, remind every customer, 
+          Our 19 AI agents work 24/7 to answer every call, book every appointment, remind every customer, 
           dispatch every technician, and collect every payment—automatically. One platform. Zero missed opportunities.
         </Text>
       </View>
@@ -824,7 +824,7 @@ const PlatformDocumentPDF = () => (
     {/* AI Agent Ecosystem - Page 1 */}
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent Ecosystem" />
-      <Text style={styles.sectionTitle}>22 AI Agents Working Together</Text>
+      <Text style={styles.sectionTitle}>19 AI Agents Working Together</Text>
       <Text style={styles.paragraph}>
         Each agent is specialized for a specific task but seamlessly hands off to others when needed.
         This creates an intelligent, always-on workforce that handles your entire operation.
@@ -1157,8 +1157,8 @@ const PlatformDocumentPDF = () => (
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Command</Text>
         <Text style={styles.pricingPrice}>$1,497/month</Text>
-        <Text style={styles.pricingFeature}>• All 22 AI Agents</Text>
-        <Text style={styles.pricingFeature}>• All 6 Control Consoles</Text>
+        <Text style={styles.pricingFeature}>• All 19 AI Agents</Text>
+        <Text style={styles.pricingFeature}>• All 5 Control Consoles</Text>
         <Text style={styles.pricingFeature}>• Email + SMS + Voice</Text>
         <Text style={styles.pricingFeature}>• Unlimited employees</Text>
         <Text style={styles.pricingFeature}>• Social Media + Analytics + Marketing automation</Text>
@@ -1278,7 +1278,7 @@ const PlatformDocumentPDF = () => (
           Follow a business owner through a typical day.{"\n"}
           Show Aura handling: morning calls, scheduling, dispatch, reminders, reviews.{"\n"}
           Owner checks dashboard, sees everything running smoothly.{"\n"}
-          "22 AI agents. Zero stress. All day, every day."
+          "19 AI agents. Zero stress. All day, every day."
         </Text>
       </View>
 
@@ -1337,13 +1337,13 @@ const PlatformDocumentPDF = () => (
           "Still missing customer calls? 🚫📞{"\n\n"}
           Your competitors aren't.{"\n\n"}
           Aura Intercept answers every call 24/7, books appointments instantly, and sends 
-          automatic reminders. 22 AI agents working for you around the clock.{"\n\n"}
+          automatic reminders. 19 AI agents working for you around the clock.{"\n\n"}
           Free 14-day trial. No credit card. Start now →"
         </Text>
       </View>
 
       <Text style={styles.subsectionTitle}>Carousel Post Ideas</Text>
-      <BulletPoint>Slide 1: "22 AI Agents for Your Service Business"</BulletPoint>
+      <BulletPoint>Slide 1: "19 AI Agents for Your Service Business"</BulletPoint>
       <BulletPoint>Slide 2-7: One agent per slide with icon and benefit</BulletPoint>
       <BulletPoint>Slide 8: "All working together 24/7"</BulletPoint>
       <BulletPoint>Slide 9: CTA with free trial offer</BulletPoint>
@@ -1394,7 +1394,7 @@ const PlatformDocumentPDF = () => (
 
       <Text style={styles.subsectionTitle}>Infographic Concepts</Text>
       <BulletPoint>"The Customer Journey with Aura" - flowchart showing AI touchpoints</BulletPoint>
-      <BulletPoint>"22 Agents, 1 Platform" - visual agent ecosystem</BulletPoint>
+      <BulletPoint>"19 Agents, 1 Platform" - visual agent ecosystem</BulletPoint>
       <BulletPoint>"Before vs After" - side-by-side metrics comparison</BulletPoint>
       <BulletPoint>"ROI Calculator" - interactive or static infographic</BulletPoint>
       <BulletPoint>"Industry Applications" - icons for each vertical</BulletPoint>
@@ -1407,7 +1407,7 @@ const PlatformDocumentPDF = () => (
       <BulletPoint>Dark: Deep Indigo (#1e1b4b) - Professional, sophisticated</BulletPoint>
 
       <Text style={styles.subsectionTitle}>Visual Elements to Create</Text>
-      <BulletPoint>Agent icons for each of the 22 AI agents</BulletPoint>
+      <BulletPoint>Agent icons for each of the 19 AI agents</BulletPoint>
       <BulletPoint>Console screenshots (anonymized demo data)</BulletPoint>
       <BulletPoint>Comparison tables (Before/After)</BulletPoint>
       <BulletPoint>Customer journey maps</BulletPoint>
@@ -1418,7 +1418,7 @@ const PlatformDocumentPDF = () => (
     {/* Final CTA Page */}
     <Page size="A4" style={styles.coverPage}>
       <Text style={styles.coverTitle}>Ready to Transform Your Business?</Text>
-      <Text style={styles.coverSubtitle}>22 AI Agents Working 24/7 For You</Text>
+      <Text style={styles.coverSubtitle}>19 AI Agents Working 24/7 For You</Text>
       
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
