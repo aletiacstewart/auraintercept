@@ -838,272 +838,272 @@ export default function Index() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-white/20 bg-slate-700/80">
-                          <th className="text-left p-4 font-semibold min-w-[200px] text-white">Feature</th>
-                          <th className="text-center p-4 font-semibold min-w-[150px] text-white">
+                          <th className="text-left py-2.5 px-3 font-semibold min-w-[180px] text-white text-sm">Feature</th>
+                          <th className="text-center py-2.5 px-2 font-semibold min-w-[120px] text-white text-sm">
                             <div>Aura Single-Point</div>
                             <div className="text-xs font-normal text-white/70">$497/mo</div>
                           </th>
-                          <th className="text-center p-4 font-semibold min-w-[150px] bg-sky-600/40 border-x border-sky-400/50">
+                          <th className="text-center py-2.5 px-2 font-semibold min-w-[120px] bg-sky-600/40 border-x border-sky-400/50 text-sm">
                             <div className="text-sky-300">Aura Multi-Track</div>
                             <div className="text-xs font-normal text-white/70">$897/mo</div>
                           </th>
-                          <th className="text-center p-4 font-semibold min-w-[150px] text-white">
+                          <th className="text-center py-2.5 px-2 font-semibold min-w-[120px] text-white text-sm">
                             <div>Aura Command</div>
                             <div className="text-xs font-normal text-white/70">$1,497/mo</div>
                           </th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody className="text-sm">
                         {/* AI Agents Section */}
                         <tr className="bg-slate-700/60">
-                          <td colSpan={4} className="p-3 font-semibold text-sky-300">AI Agents (3 / 10 / 19)</td>
+                          <td colSpan={4} className="py-1.5 px-3 font-semibold text-sky-300">AI Agents (3 / 10 / 19)</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">AI Receptionist (Triage)</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">AI Receptionist (Triage)</td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Follow-up Agent</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Follow-up Agent</td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Review Agent</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Review Agent</td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Scheduling Agent (Booking)</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Scheduling Agent (Booking)</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Dispatch Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Dispatch Agent</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Route Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Route Agent</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">ETA Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">ETA Agent</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Check-in Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Check-in Agent</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Quote Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Quote Agent</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Invoice Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Invoice Agent</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Social Media Agent</td>
-                          <td className="p-3 text-center text-xs text-amber-400">Add-on</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-amber-400">Add-on</td>
-                          <td className="p-3 text-center text-xs text-amber-400">Add-on</td>
+                          <td className="py-1.5 px-3 text-white">Social Media Agent</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-amber-400">Add-on</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-amber-400">Add-on</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-amber-400">Add-on</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">All 19 AI Agents</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">All 19 AI Agents</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
 
                         {/* Control Centers Section */}
                         <tr className="bg-slate-700/60">
-                          <td colSpan={4} className="p-3 font-semibold text-sky-300">Control Centers (Consoles)</td>
+                          <td colSpan={4} className="py-1.5 px-3 font-semibold text-sky-300">Control Centers (Consoles)</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Customer Portal Console</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Customer Portal Console</td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Field Operations Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Field Operations Console</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Business Management Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Business Management Console</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Marketing & Sales Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Marketing & Sales Console</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Analytics & Reports Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Analytics & Reports Console</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Social Media Console</td>
-                          <td className="p-3 text-center text-xs text-amber-400">Add-on</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-amber-400">Add-on</td>
-                          <td className="p-3 text-center text-xs text-amber-400">Add-on</td>
+                          <td className="py-1.5 px-3 text-white">Social Media Console</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-amber-400">Add-on</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-amber-400">Add-on</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-amber-400">Add-on</td>
                         </tr>
 
                         {/* Communication Channels Section */}
                         <tr className="bg-slate-700/60">
-                          <td colSpan={4} className="p-3 font-semibold text-sky-300">Communication Channels</td>
+                          <td colSpan={4} className="py-1.5 px-3 font-semibold text-sky-300">Communication Channels</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Email Reminders</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Email Reminders</td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">SMS Reminders</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">SMS Reminders</td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">AI Voice (Chat & Outbound Calls)</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">AI Voice (Chat & Outbound Calls)</td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
 
                         {/* Platform Limits Section */}
                         <tr className="bg-slate-700/60">
-                          <td colSpan={4} className="p-3 font-semibold text-sky-300">Platform Limits & Features</td>
+                          <td colSpan={4} className="py-1.5 px-3 font-semibold text-sky-300">Platform Limits & Features</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Appointments</td>
-                          <td className="p-3 text-center text-xs text-white">Unlimited</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">Unlimited</td>
-                          <td className="p-3 text-center text-xs text-white">Unlimited</td>
+                          <td className="py-1.5 px-3 text-white">Appointments</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">Unlimited</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">Unlimited</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">Unlimited</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Employee Accounts</td>
-                          <td className="p-3 text-center text-xs text-white">5 included</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">10 included</td>
-                          <td className="p-3 text-center text-xs text-white">Unlimited</td>
+                          <td className="py-1.5 px-3 text-white">Employee Accounts</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">5 included</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">10 included</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">Unlimited</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Additional Employees</td>
-                          <td className="p-3 text-center text-xs text-white">$25/mo per 10</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">$25/mo per 10</td>
-                          <td className="p-3 text-center text-xs text-white">Included</td>
+                          <td className="py-1.5 px-3 text-white">Additional Employees</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">$25/mo per 10</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">$25/mo per 10</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">Included</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">White-Label Branding</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">White-Label Branding</td>
+                          <td className="py-1.5 px-2 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Smart Website</td>
-                          <td className="p-3 text-center text-xs text-amber-400">+$150/mo</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-amber-400">+$150/mo</td>
-                          <td className="p-3 text-center text-xs text-amber-400">+$150/mo</td>
+                          <td className="py-1.5 px-3 text-white">Smart Website</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-amber-400">+$150/mo</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-amber-400">+$150/mo</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-amber-400">+$150/mo</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Social Media Integration</td>
-                          <td className="p-3 text-center text-xs text-amber-400">+$197/mo</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-amber-400">+$197/mo</td>
-                          <td className="p-3 text-center text-xs text-amber-400">+$197/mo</td>
+                          <td className="py-1.5 px-3 text-white">Social Media Integration</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-amber-400">+$197/mo</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-amber-400">+$197/mo</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-amber-400">+$197/mo</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Embeddable Chat Widget</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-3 text-white">Embeddable Chat Widget</td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="py-1.5 px-2 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
 
                         {/* 3rd Party Integrations Section */}
                         <tr className="bg-slate-700/60">
-                          <td colSpan={4} className="p-3 font-semibold text-sky-300">Required 3rd Party Integrations</td>
+                          <td colSpan={4} className="py-1.5 px-3 font-semibold text-sky-300">Required 3rd Party Integrations</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Resend (Email)</td>
-                          <td className="p-3 text-center text-xs text-white">Required</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">Required</td>
-                          <td className="p-3 text-center text-xs text-white">Required</td>
+                          <td className="py-1.5 px-3 text-white">Resend (Email)</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">Required</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">Required</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">Required</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Stripe (Payments)</td>
-                          <td className="p-3 text-center text-xs text-white">Required</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">Required</td>
-                          <td className="p-3 text-center text-xs text-white">Required</td>
+                          <td className="py-1.5 px-3 text-white">Stripe (Payments)</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">Required</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">Required</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">Required</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Twilio (SMS & Voice)</td>
-                          <td className="p-3 text-center text-xs text-white">Required</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">Required</td>
-                          <td className="p-3 text-center text-xs text-white">Required</td>
+                          <td className="py-1.5 px-3 text-white">Twilio (SMS & Voice)</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">Required</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">Required</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">Required</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">ElevenLabs (AI Voice)</td>
-                          <td className="p-3 text-center text-xs text-white">Required</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">Required</td>
-                          <td className="p-3 text-center text-xs text-white">Required</td>
+                          <td className="py-1.5 px-3 text-white">ElevenLabs (AI Voice)</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">Required</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">Required</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">Required</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Google Calendar (Sync)</td>
-                          <td className="p-3 text-center text-xs text-white/70">Optional</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white/70">Optional</td>
-                          <td className="p-3 text-center text-xs text-white/70">Optional</td>
+                          <td className="py-1.5 px-3 text-white">Google Calendar (Sync)</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white/70">Optional</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white/70">Optional</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white/70">Optional</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Social Media Accounts (FB/IG/LinkedIn/TikTok)</td>
-                          <td className="p-3 text-center text-xs text-white/70">Optional (Add-on)</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white/70">Optional (Add-on)</td>
-                          <td className="p-3 text-center text-xs text-white/70">Optional (Add-on)</td>
+                          <td className="py-1.5 px-3 text-white">Social Media Accounts (FB/IG/LinkedIn/TikTok)</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white/70">Optional (Add-on)</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white/70">Optional (Add-on)</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white/70">Optional (Add-on)</td>
                         </tr>
 
                         {/* Pricing Section */}
                         <tr className="bg-slate-700/60">
-                          <td colSpan={4} className="p-3 font-semibold text-sky-300">Pricing</td>
+                          <td colSpan={4} className="py-1.5 px-3 font-semibold text-sky-300">Pricing</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Monthly Price</td>
-                          <td className="p-3 text-center font-semibold text-white">$497</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 font-semibold text-sky-300">$897</td>
-                          <td className="p-3 text-center font-semibold text-white">$1,497</td>
+                          <td className="py-1.5 px-3 text-white">Monthly Price</td>
+                          <td className="py-1.5 px-2 text-center font-semibold text-white">$497</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 font-semibold text-sky-300">$897</td>
+                          <td className="py-1.5 px-2 text-center font-semibold text-white">$1,497</td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Annual Price</td>
-                          <td className="p-3 text-center text-xs text-white">$4,970/year</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">$8,970/year</td>
-                          <td className="p-3 text-center text-xs text-white">$14,970/year</td>
+                          <td className="py-1.5 px-3 text-white">Annual Price</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">$4,970/year</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-white">$8,970/year</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-white">$14,970/year</td>
                         </tr>
                         <tr className="hover:bg-slate-600/30">
-                          <td className="p-3 text-white">Annual Savings</td>
-                          <td className="p-3 text-center text-xs text-emerald-400">Save $994</td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-emerald-400">Save $1,794</td>
-                          <td className="p-3 text-center text-xs text-emerald-400">Save $2,994</td>
+                          <td className="py-1.5 px-3 text-white">Annual Savings</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-emerald-400">Save $994</td>
+                          <td className="py-1.5 px-2 text-center bg-sky-600/20 border-x border-sky-400/30 text-xs text-emerald-400">Save $1,794</td>
+                          <td className="py-1.5 px-2 text-center text-xs text-emerald-400">Save $2,994</td>
                         </tr>
                       </tbody>
                     </table>
