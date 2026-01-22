@@ -530,40 +530,41 @@ export default function Index() {
       </section>
 
       {/* AI Agents Showcase */}
-      <section className="py-20">
-        <div className="container max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">Aura AI Agents</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">18 Specialized AI Agents</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Each agent is purpose-built to handle specific business functions, 
-              working together seamlessly with intelligent handoffs and context preservation.
+      <section className="py-10">
+        <div className="container max-w-6xl mx-auto px-6">
+          <div className="text-center mb-6">
+            <Badge variant="secondary" className="mb-2">Aura AI Agents</Badge>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">18 Specialized AI Agents</h2>
+            <p className="text-muted-foreground text-sm max-w-xl mx-auto">
+              Purpose-built agents working together with intelligent handoffs.
             </p>
           </div>
 
-          <div className="space-y-10">
+          <div className="space-y-4">
             {agentCategories.map(category => <div key={category.id}>
                 {/* Category Subtitle */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${category.color} flex items-center justify-center`}>
-                    <category.icon className="w-4 h-4 text-white" />
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`w-6 h-6 rounded-md bg-gradient-to-br ${category.color} flex items-center justify-center`}>
+                    <category.icon className="w-3 h-3 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">{category.name}</h3>
+                  <h3 className="text-sm font-semibold text-foreground">{category.name}</h3>
                   <div className="flex-1 h-px bg-border" />
                 </div>
                 
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
                   {category.agents.map((agent, index) => (
                     <div 
                       key={agent.name}
-                      className="rounded-lg p-3 transition-all duration-300 hover:opacity-90 animate-fade-in"
-                      style={{ backgroundColor: '#2a3d4e', animationDelay: `${index * 50}ms` }}
+                      className="rounded-md p-2 transition-all duration-300 hover:scale-[1.02] animate-fade-in"
+                      style={{ backgroundColor: '#2a3d4e', animationDelay: `${index * 30}ms` }}
                     >
-                      <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${category.color} flex items-center justify-center mb-2`}>
-                        <agent.icon className="w-4 h-4 text-white" />
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <div className={`w-6 h-6 rounded bg-gradient-to-br ${category.color} flex items-center justify-center flex-shrink-0`}>
+                          <agent.icon className="w-3 h-3 text-white" />
+                        </div>
+                        <h4 className="font-semibold text-[10px] text-white leading-tight">{agent.name}</h4>
                       </div>
-                      <h4 className="font-semibold text-xs mb-0.5 text-white">{agent.name}</h4>
-                      <p className="text-[11px] text-white/70 leading-relaxed">{agent.description}</p>
+                      <p className="text-[9px] text-white/60 leading-snug line-clamp-2">{agent.description}</p>
                     </div>
                   ))}
                 </div>
