@@ -297,10 +297,10 @@ const companyGuideCategories = [
     title: 'AI Consoles',
     guides: [
       {
-        title: 'Customer Engagement Console',
+        title: 'Customer Portal Console',
         duration: '8 min',
         steps: [
-          'Access via AI Consoles → Customer Engagement',
+          'Access via AI Consoles → Customer Portal',
           'Interact with AI for booking and support',
           'Use quick actions: Book, Emergency, Quote, etc.',
           'Monitor conversation context and handoffs',
@@ -309,10 +309,10 @@ const companyGuideCategories = [
         tips: ['Practice common customer scenarios']
       },
       {
-        title: 'Technician-Field Ops',
+        title: 'Field Operations Console',
         duration: '10 min',
         steps: [
-          'Access via AI Consoles → Technician-Field Ops',
+          'Access via AI Consoles → Field Operations',
           'Manage dispatch and routing with AI assistance',
           'Check technician locations and ETAs',
           'Process check-ins and job updates',
@@ -321,16 +321,52 @@ const companyGuideCategories = [
         tips: ['Use map view for visual dispatch']
       },
       {
-        title: 'Business & Accounting Console',
+        title: 'Business Management Ops Console',
         duration: '10 min',
         steps: [
-          'Access via AI Consoles → Business & Accounting',
+          'Access via AI Consoles → Business Management Ops',
           'Create quotes and invoices with AI help',
           'Look up customer billing information',
           'Track outstanding payments',
           'Generate financial reports'
         ],
         tips: ['Use AI for quick price lookups']
+      },
+      {
+        title: 'Marketing & Sales Ops Console',
+        duration: '10 min',
+        steps: [
+          'Access via AI Consoles → Marketing & Sales Ops',
+          'Manage campaigns, leads, and promo codes',
+          'Create marketing campaigns with AI assistance',
+          'Track lead conversion and customer segments',
+          'Set up referral and loyalty programs'
+        ],
+        tips: ['Use AI to generate campaign content']
+      },
+      {
+        title: 'Analytics & Reports Ops Console',
+        duration: '12 min',
+        steps: [
+          'Access via AI Consoles → Analytics & Reports Ops',
+          'View performance dashboards and KPIs',
+          'Generate revenue reports and forecasts',
+          'Track customer trends and insights',
+          'Export reports to PDF or CSV'
+        ],
+        tips: ['Schedule automated report delivery']
+      },
+      {
+        title: 'Social Media Ops Console',
+        duration: '10 min',
+        steps: [
+          'Access via AI Consoles → Social Media Ops (Command tier)',
+          'Create AI-generated content for 6 platforms',
+          'Schedule posts using the Content Calendar',
+          'Track engagement metrics across channels',
+          'Use platform-specific templates and character limits'
+        ],
+        tips: ['AI handles IG, FB, LinkedIn, TikTok, GMB, SMS']
       }
     ]
   },
@@ -711,18 +747,26 @@ export function CompanyGuidesPDF() {
           <Text style={styles.bulletText}>Settings: /dashboard/aura-quick-start - Configuration</Text>
         </View>
 
-        <Text style={styles.categoryTitle}>Available AI Consoles</Text>
+        <Text style={styles.categoryTitle}>5 AI Control Centers</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Customer Engagement - Booking, support, communication</Text>
+          <Text style={styles.bulletText}>Customer Portal Console - Booking, support, communication</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Field Operations - Dispatch, routing, technician management</Text>
+          <Text style={styles.bulletText}>Field Operations Console - Dispatch, routing, technician management</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Business & Accounting - Quotes, invoices, billing</Text>
+          <Text style={styles.bulletText}>Business Management Ops Console - Quotes, invoices, inventory</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bulletText}>Marketing & Sales Ops Console - Campaigns, leads, referrals</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bulletText}>Analytics & Reports Ops Console - KPIs, performance, forecasting</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Support Resources</Text>

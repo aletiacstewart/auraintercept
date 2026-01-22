@@ -368,7 +368,7 @@ export const WebsiteCopyPDF: React.FC = () => (
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent Descriptions" pageNum={4} />
       
-      <Text style={styles.sectionTitle}>19 Agent Copy Blocks</Text>
+      <Text style={styles.sectionTitle}>19 AI Agent Copy Blocks</Text>
       <Text style={styles.sectionSubtitle}>Short descriptions for feature pages and marketing</Text>
 
       <View style={styles.twoColumn}>
@@ -384,10 +384,6 @@ export const WebsiteCopyPDF: React.FC = () => (
           <View style={styles.agentCard}>
             <Text style={styles.agentName}>Review Agent</Text>
             <Text style={styles.agentDesc}>Turn happy customers into 5-star reviews. Automated requests timed perfectly after every job.</Text>
-          </View>
-          <View style={styles.agentCard}>
-            <Text style={styles.agentName}>Triage Agent</Text>
-            <Text style={styles.agentDesc}>Smart routing for complex inquiries. Emergency calls get escalated; simple questions get instant answers.</Text>
           </View>
           <View style={styles.agentCard}>
             <Text style={styles.agentName}>Scheduling Agent</Text>
@@ -508,7 +504,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyLabel}>Command Tier - $1,497/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
-          Full command of your business. The complete 22-agent suite handles every operational task from marketing to analytics. For businesses ready to dominate their market.{'\n\n'}
+          Full command of your business. The complete 19-agent suite handles every operational task from marketing to analytics. For businesses ready to dominate their market.{'\n\n'}
           ✓ Everything in Multi-Track, plus:{'\n'}
           ✓ Lead scoring & Campaign automation{'\n'}
           ✓ Social media management (all 6 platforms){'\n'}

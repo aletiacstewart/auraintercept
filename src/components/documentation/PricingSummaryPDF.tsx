@@ -503,7 +503,7 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { feature: 'AI Agents', singlePoint: '3', multiTrack: '10', command: '18' },
+          { feature: 'AI Agents', singlePoint: '3', multiTrack: '10', command: '19' },
           { feature: 'Control Centers', singlePoint: '1', multiTrack: '2', command: '5' },
           { feature: 'Appointments/Month', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
           { feature: 'Reminder Channels', singlePoint: 'Email + SMS + Voice', multiTrack: 'Email + SMS + Voice', command: 'Email + SMS + Voice' },
@@ -551,7 +551,7 @@ const PricingSummaryPDF = () => (
           { category: 'Annual Price', singlePoint: '$4,970', multiTrack: '$8,970', command: '$14,970' },
           { category: 'Annual Savings', singlePoint: '~$1,000', multiTrack: '~$1,800', command: '~$3,000' },
           { category: '', singlePoint: '', multiTrack: '', command: '' },
-          { category: 'AI Agents Included', singlePoint: '3', multiTrack: '10', command: 'All 18' },
+          { category: 'AI Agents Included', singlePoint: '3', multiTrack: '10', command: 'All 19' },
           { category: 'Control Centers', singlePoint: '1', multiTrack: '2', command: 'All 5' },
           { category: 'Appointments/Month', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
           { category: '', singlePoint: '', multiTrack: '', command: '' },
@@ -713,10 +713,10 @@ const PricingSummaryPDF = () => (
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>Included AI Agents (All 18)</Text>
+      <Text style={styles.subsectionTitle}>Included AI Agents (All 19)</Text>
       <Text style={styles.paragraph}>
-        Full access to all AI agents including Customer Portal (4), Field Operations (4), 
-        Business Management (5), Marketing & Sales (1), and Analytics & Reports (4) agents.
+        Full access to all 19 AI agents including Customer Engagement (3), Field Operations (4), 
+        Business Management (4), Marketing & Sales (4), and Analytics & Reports (4) agents.
       </Text>
 
       <Text style={styles.subsectionTitle}>Control Centers (All 5)</Text>
