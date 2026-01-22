@@ -64,12 +64,12 @@ interface PlatformConfig {
 }
 
 const PLATFORMS: PlatformConfig[] = [
-  { id: 'instagram', label: 'Instagram', icon: Instagram, charLimit: 2200, color: 'text-pink-500', bgColor: 'bg-pink-500/10', hasHashtags: true },
-  { id: 'facebook', label: 'Facebook', icon: Facebook, charLimit: 500, color: 'text-blue-600', bgColor: 'bg-blue-600/10', hasHashtags: false },
-  { id: 'linkedin', label: 'LinkedIn', icon: Linkedin, charLimit: 3000, color: 'text-sky-600', bgColor: 'bg-sky-600/10', hasHashtags: false },
-  { id: 'tiktok', label: 'TikTok', icon: Video, charLimit: 2200, color: 'text-fuchsia-500', bgColor: 'bg-fuchsia-500/10', hasHashtags: true },
-  { id: 'google_business', label: 'Google Business', icon: MapPin, charLimit: 1500, color: 'text-teal-500', bgColor: 'bg-teal-500/10', hasHashtags: false },
-  { id: 'sms', label: 'SMS', icon: MessageSquare, charLimit: 160, color: 'text-emerald-500', bgColor: 'bg-emerald-500/10', hasHashtags: false },
+  { id: 'instagram', label: 'Instagram', icon: Instagram, charLimit: 2200, color: 'text-primary', bgColor: 'bg-primary/10', hasHashtags: true },
+  { id: 'facebook', label: 'Facebook', icon: Facebook, charLimit: 500, color: 'text-primary', bgColor: 'bg-primary/10', hasHashtags: false },
+  { id: 'linkedin', label: 'LinkedIn', icon: Linkedin, charLimit: 3000, color: 'text-primary', bgColor: 'bg-primary/10', hasHashtags: false },
+  { id: 'tiktok', label: 'TikTok', icon: Video, charLimit: 2200, color: 'text-primary', bgColor: 'bg-primary/10', hasHashtags: true },
+  { id: 'google_business', label: 'Google Business', icon: MapPin, charLimit: 1500, color: 'text-primary', bgColor: 'bg-primary/10', hasHashtags: false },
+  { id: 'sms', label: 'SMS', icon: MessageSquare, charLimit: 160, color: 'text-primary', bgColor: 'bg-primary/10', hasHashtags: false },
 ];
 
 interface PlatformVariation {
