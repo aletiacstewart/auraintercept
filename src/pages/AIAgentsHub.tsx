@@ -75,6 +75,12 @@ const CATEGORY_INFO: Record<string, {
     colorClass: 'text-pink-400',
     cssVar: '--feature-marketing'
   },
+  analytics_reports: { 
+    label: 'Analytics & Reports', 
+    icon: Activity, 
+    colorClass: 'text-feature-analytics',
+    cssVar: '--feature-analytics'
+  },
 };
 
 
@@ -92,14 +98,15 @@ const JOB_TYPE_TO_AGENTS: Record<string, string[]> = {
   booking_agent: ['triage', 'booking', 'followup', 'review'],
   dispatch: ['dispatch', 'route', 'eta', 'triage'],
   customer_service: ['triage', 'followup', 'review', 'booking'],
-  manager: ['triage', 'followup', 'review', 'booking'], // Same as customer_service
+  manager: ['triage', 'followup', 'review', 'booking', 'insights', 'performance', 'revenue', 'forecast'], // Includes analytics
   billing: ['quoting', 'invoice', 'warranty'],
   marketing: ['campaign', 'lead', 'promo', 'social_content', 'social_scheduler', 'social_analytics'],
+  analytics: ['insights', 'performance', 'revenue', 'forecast'], // Analytics role
   inventory: ['inventory', 'warranty'],
 };
 
 // Agent name mapping for display
-// 19 User-Facing Agents - Keep in sync with subscriptionAgentConfig.ts
+// 23 User-Facing Agents - Keep in sync with subscriptionAgentConfig.ts
 const AGENT_NAMES: Record<string, string> = {
   // Customer Portal (4)
   triage: 'AI Receptionist',
@@ -125,6 +132,11 @@ const AGENT_NAMES: Record<string, string> = {
   social_content: 'Social Content Agent',
   social_scheduler: 'Social Scheduler Agent',
   social_analytics: 'Social Analytics Agent',
+  // Analytics & Reports (4)
+  insights: 'Insights Agent',
+  performance: 'Performance Agent',
+  revenue: 'Revenue Agent',
+  forecast: 'Forecast Agent',
 };
 
 export default function AIAgentsHub() {
@@ -302,7 +314,7 @@ export default function AIAgentsHub() {
           icon={Bot}
           title="AI Agents Hub"
           description={canManageAgents 
-            ? '19 specialized AI agents powering your business automation'
+            ? '23 specialized AI agents powering your business automation'
             : `${totalCount} AI agents available based on your job roles`}
           featureColor="config"
           action={
@@ -328,7 +340,7 @@ export default function AIAgentsHub() {
                 {inTrial ? (
                   <>You're in trial mode with full access to all agents.</>
                 ) : subscriptionTier === 'command' ? (
-                  <>Your <strong>Command</strong> plan includes all 19 AI agents.</>
+                  <>Your <strong>Command</strong> plan includes all 23 AI agents.</>
                 ) : (
                   <>
                     Your <strong>{getTierInfo(subscriptionTier).label}</strong> plan includes {availableAgentTypes.length} AI agents.
