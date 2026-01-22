@@ -2266,20 +2266,21 @@ serve(async (req) => {
     // === SUBSCRIPTION TIER GATING ===
     // Define which agents are available in each subscription tier
     // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
-    // 19 Total Agents - Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
+    // 23 Total Agents - Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
       // Single-Point (3): NO booking (call to book), but has Voice AI
       single_point: ['triage', 'followup', 'review'],
       // Multi-Track (10): Adds booking, field ops, quoting/invoice
       multi_track: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice'],
-      // Command (19): Full suite - 4 Customer Portal + 4 Field Ops + 5 Business Ops + 3 Marketing + 3 Social Media
+      // Command (23): Full suite - 4 Customer Portal + 4 Field Ops + 5 Business Ops + 3 Marketing + 3 Social Media + 4 Analytics
       command: [
         'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
         'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
         'admin', 'quoting', 'invoice', 'inventory', 'warranty', // Business Operations (5)
         'campaign', 'lead', 'promo',                         // Marketing & Sales (3)
-        'social_content', 'social_scheduler', 'social_analytics' // Social Media (3)
+        'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
+        'insights', 'performance', 'revenue', 'forecast'     // Analytics & Reports (4)
       ]
     };
 
