@@ -152,7 +152,7 @@ export default function Help() {
             <TabsContent value="ai-agents" className="space-y-6 mt-6">
               {/* Console Type Selector */}
               <Tabs value={selectedConsoleId} onValueChange={handleConsoleChange}>
-                <TabsList className="flex-wrap h-auto gap-1">
+                <TabsList className="justify-start flex-wrap h-auto gap-1">
                   {availableConsoles.map((console) => {
                     const Icon = console.icon;
                     return (
@@ -188,7 +188,7 @@ export default function Help() {
                       </h3>
                       <div className="flex flex-wrap gap-2 ml-7">
                         {currentConsole.tabs.map((tab, index) => (
-                          <Badge key={index} variant="outline" className="text-xs px-2 py-1">
+                          <Badge key={index} variant="outline" className="text-xs px-2 py-1 text-foreground border-foreground/30">
                             {tab}
                           </Badge>
                         ))}
