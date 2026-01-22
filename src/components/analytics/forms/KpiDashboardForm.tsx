@@ -231,10 +231,7 @@ export const KpiDashboardForm: React.FC<KpiDashboardFormProps> = ({ companyId, o
       )}
 
       {/* Actions */}
-      <div className="flex gap-2 pt-2">
-        <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Custom KPIs coming soon!')}>
-          Configure KPIs
-        </Button>
+      <div className="flex justify-end pt-2">
         <Button variant="outline" onClick={onCancel}>
           Close
         </Button>

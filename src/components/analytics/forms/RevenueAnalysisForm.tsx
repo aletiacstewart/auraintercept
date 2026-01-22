@@ -204,10 +204,7 @@ export const RevenueAnalysisForm: React.FC<RevenueAnalysisFormProps> = ({ compan
       )}
 
       {/* Actions */}
-      <div className="flex gap-2 pt-2">
-        <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Detailed report coming soon!')}>
-          View Details
-        </Button>
+      <div className="flex justify-end pt-2">
         <Button variant="outline" onClick={onCancel}>
           Close
         </Button>
