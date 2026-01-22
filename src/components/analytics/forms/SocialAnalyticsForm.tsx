@@ -202,15 +202,15 @@ export function SocialAnalyticsForm({ companyId, onCancel, onAnalyze }: SocialAn
 
             {/* Actions */}
             <div className="flex gap-3 pt-2">
-              <Button variant="outline" onClick={onCancel} className="flex-1">
-                Cancel
-              </Button>
               <Button 
                 onClick={handleAnalyze} 
                 className="flex-1 bg-gradient-to-r from-pink-500 to-purple-500 text-white"
               >
                 <TrendingUp className="h-4 w-4 mr-2" />
                 Get AI Insights
+              </Button>
+              <Button variant="outline" onClick={onCancel}>
+                Close
               </Button>
             </div>
           </>
