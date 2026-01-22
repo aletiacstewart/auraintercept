@@ -3840,6 +3840,92 @@ export type Database = {
           },
         ]
       }
+      scheduled_posts: {
+        Row: {
+          company_id: string
+          content_json: Json
+          created_at: string | null
+          created_by: string | null
+          draft_id: string | null
+          id: string
+          last_error: string | null
+          max_retries: number | null
+          platforms: string[]
+          publish_results: Json | null
+          published_at: string | null
+          retry_count: number | null
+          scheduled_for: string
+          status: Database["public"]["Enums"]["scheduled_post_status"] | null
+          timezone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_id: string
+          content_json: Json
+          created_at?: string | null
+          created_by?: string | null
+          draft_id?: string | null
+          id?: string
+          last_error?: string | null
+          max_retries?: number | null
+          platforms: string[]
+          publish_results?: Json | null
+          published_at?: string | null
+          retry_count?: number | null
+          scheduled_for: string
+          status?: Database["public"]["Enums"]["scheduled_post_status"] | null
+          timezone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: string
+          content_json?: Json
+          created_at?: string | null
+          created_by?: string | null
+          draft_id?: string | null
+          id?: string
+          last_error?: string | null
+          max_retries?: number | null
+          platforms?: string[]
+          publish_results?: Json | null
+          published_at?: string | null
+          retry_count?: number | null
+          scheduled_for?: string
+          status?: Database["public"]["Enums"]["scheduled_post_status"] | null
+          timezone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_posts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_posts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_posts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_posts_draft_id_fkey"
+            columns: ["draft_id"]
+            isOneToOne: false
+            referencedRelation: "social_content_drafts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       services: {
         Row: {
           category: string | null
@@ -4368,6 +4454,88 @@ export type Database = {
           },
         ]
       }
+      social_accounts: {
+        Row: {
+          access_token: string
+          company_id: string
+          connected_at: string | null
+          connected_by: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          last_error: string | null
+          last_used_at: string | null
+          permissions_granted: string[] | null
+          platform: Database["public"]["Enums"]["social_platform"]
+          platform_account_id: string
+          platform_account_name: string | null
+          platform_page_id: string | null
+          refresh_token: string | null
+          token_expires_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          access_token: string
+          company_id: string
+          connected_at?: string | null
+          connected_by?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_error?: string | null
+          last_used_at?: string | null
+          permissions_granted?: string[] | null
+          platform: Database["public"]["Enums"]["social_platform"]
+          platform_account_id: string
+          platform_account_name?: string | null
+          platform_page_id?: string | null
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          access_token?: string
+          company_id?: string
+          connected_at?: string | null
+          connected_by?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_error?: string | null
+          last_used_at?: string | null
+          permissions_granted?: string[] | null
+          platform?: Database["public"]["Enums"]["social_platform"]
+          platform_account_id?: string
+          platform_account_name?: string | null
+          platform_page_id?: string | null
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_accounts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "social_accounts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "social_accounts_connected_by_fkey"
+            columns: ["connected_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_content_drafts: {
         Row: {
           api_metadata: Json | null
@@ -4376,6 +4544,8 @@ export type Database = {
           company_id: string
           created_at: string
           edited_content: string | null
+          external_post_id: string | null
+          external_post_url: string | null
           generated_content: string
           hashtags: string[] | null
           id: string
@@ -4384,6 +4554,7 @@ export type Database = {
           media_instructions: string | null
           platform: string
           published_at: string | null
+          scheduled_post_id: string | null
           status: string
           updated_at: string
         }
@@ -4394,6 +4565,8 @@ export type Database = {
           company_id: string
           created_at?: string
           edited_content?: string | null
+          external_post_id?: string | null
+          external_post_url?: string | null
           generated_content: string
           hashtags?: string[] | null
           id?: string
@@ -4402,6 +4575,7 @@ export type Database = {
           media_instructions?: string | null
           platform: string
           published_at?: string | null
+          scheduled_post_id?: string | null
           status?: string
           updated_at?: string
         }
@@ -4412,6 +4586,8 @@ export type Database = {
           company_id?: string
           created_at?: string
           edited_content?: string | null
+          external_post_id?: string | null
+          external_post_url?: string | null
           generated_content?: string
           hashtags?: string[] | null
           id?: string
@@ -4420,6 +4596,7 @@ export type Database = {
           media_instructions?: string | null
           platform?: string
           published_at?: string | null
+          scheduled_post_id?: string | null
           status?: string
           updated_at?: string
         }
@@ -4443,6 +4620,13 @@ export type Database = {
             columns: ["job_assignment_id"]
             isOneToOne: false
             referencedRelation: "job_assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "social_content_drafts_scheduled_post_id_fkey"
+            columns: ["scheduled_post_id"]
+            isOneToOne: false
+            referencedRelation: "scheduled_posts"
             referencedColumns: ["id"]
           },
         ]
@@ -5475,6 +5659,19 @@ export type Database = {
         | "api_error"
         | "user_reported"
         | "feature_request"
+      scheduled_post_status:
+        | "draft"
+        | "scheduled"
+        | "publishing"
+        | "published"
+        | "failed"
+        | "cancelled"
+      social_platform:
+        | "facebook"
+        | "instagram"
+        | "linkedin"
+        | "tiktok"
+        | "google_business"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -5653,6 +5850,21 @@ export const Constants = {
         "api_error",
         "user_reported",
         "feature_request",
+      ],
+      scheduled_post_status: [
+        "draft",
+        "scheduled",
+        "publishing",
+        "published",
+        "failed",
+        "cancelled",
+      ],
+      social_platform: [
+        "facebook",
+        "instagram",
+        "linkedin",
+        "tiktok",
+        "google_business",
       ],
     },
   },
