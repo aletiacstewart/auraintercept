@@ -835,269 +835,269 @@ export default function Index() {
               <Card className="overflow-hidden border-border/50">
                 <CardContent className="p-0">
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-sm text-card-foreground">
                       <thead>
                         <tr className="border-b bg-muted/50">
-                          <th className="text-left p-4 font-semibold min-w-[200px]">Feature</th>
-                          <th className="text-center p-4 font-semibold min-w-[150px]">
+                          <th className="text-left p-4 font-semibold min-w-[200px] text-card-foreground">Feature</th>
+                          <th className="text-center p-4 font-semibold min-w-[150px] text-card-foreground">
                             <div>Aura Single-Point</div>
-                            <div className="text-xs font-normal text-muted-foreground">$497/mo</div>
+                            <div className="text-xs font-normal text-white/60">$497/mo</div>
                           </th>
-                          <th className="text-center p-4 font-semibold min-w-[150px] bg-primary/5 border-x border-primary/20">
-                            <div className="text-primary">Aura Multi-Track</div>
-                            <div className="text-xs font-normal text-muted-foreground">$897/mo</div>
+                          <th className="text-center p-4 font-semibold min-w-[150px] bg-secondary/10 border-x border-secondary/30">
+                            <div className="text-secondary">Aura Multi-Track</div>
+                            <div className="text-xs font-normal text-white/60">$897/mo</div>
                           </th>
-                          <th className="text-center p-4 font-semibold min-w-[150px]">
+                          <th className="text-center p-4 font-semibold min-w-[150px] text-card-foreground">
                             <div>Aura Command</div>
-                            <div className="text-xs font-normal text-muted-foreground">$1,497/mo</div>
+                            <div className="text-xs font-normal text-white/60">$1,497/mo</div>
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         {/* AI Agents Section */}
-                        <tr className="bg-muted/30">
-                          <td colSpan={4} className="p-3 font-semibold text-primary">AI Agents (3 / 10 / 18)</td>
+                        <tr className="bg-muted/50">
+                          <td colSpan={4} className="p-3 font-semibold text-secondary">AI Agents (3 / 10 / 19)</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">AI Receptionist (Triage)</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">AI Receptionist (Triage)</td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Follow-up Agent</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Follow-up Agent</td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Review Agent</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Review Agent</td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Scheduling Agent (Booking)</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Scheduling Agent (Booking)</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Dispatch Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Dispatch Agent</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Route Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Route Agent</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">ETA Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">ETA Agent</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Check-in Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Check-in Agent</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Quote Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Quote Agent</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Invoice Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Invoice Agent</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Social Media Agent</td>
-                          <td className="p-3 text-center text-xs text-muted-foreground">Add-on</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs text-muted-foreground">Add-on</td>
-                          <td className="p-3 text-center text-xs text-muted-foreground">Add-on</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Social Media Agent</td>
+                          <td className="p-3 text-center text-xs text-white/60">Add-on</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/60">Add-on</td>
+                          <td className="p-3 text-center text-xs text-white/60">Add-on</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">All 19 AI Agents</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">All 19 AI Agents</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
 
                         {/* Control Centers Section */}
-                        <tr className="bg-muted/30">
-                          <td colSpan={4} className="p-3 font-semibold text-primary">Control Centers (Consoles)</td>
+                        <tr className="bg-muted/50">
+                          <td colSpan={4} className="p-3 font-semibold text-secondary">Control Centers (Consoles)</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Customer Portal Console</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Customer Portal Console</td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Field Operations Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Field Operations Console</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Business Management Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Business Management Console</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Marketing & Sales Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Marketing & Sales Console</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Analytics & Reports Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Analytics & Reports Console</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Social Media Console</td>
-                          <td className="p-3 text-center text-xs text-muted-foreground">Add-on</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs text-muted-foreground">Add-on</td>
-                          <td className="p-3 text-center text-xs text-muted-foreground">Add-on</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Social Media Console</td>
+                          <td className="p-3 text-center text-xs text-white/60">Add-on</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/60">Add-on</td>
+                          <td className="p-3 text-center text-xs text-white/60">Add-on</td>
                         </tr>
 
                         {/* Communication Channels Section */}
-                        <tr className="bg-muted/30">
-                          <td colSpan={4} className="p-3 font-semibold text-primary">Communication Channels</td>
+                        <tr className="bg-muted/50">
+                          <td colSpan={4} className="p-3 font-semibold text-secondary">Communication Channels</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Email Reminders</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Email Reminders</td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">SMS Reminders</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">SMS Reminders</td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">AI Voice (Chat & Outbound Calls)</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">AI Voice (Chat & Outbound Calls)</td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
 
                         {/* Platform Limits Section */}
-                        <tr className="bg-muted/30">
-                          <td colSpan={4} className="p-3 font-semibold text-primary">Platform Limits & Features</td>
+                        <tr className="bg-muted/50">
+                          <td colSpan={4} className="p-3 font-semibold text-secondary">Platform Limits & Features</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Appointments</td>
-                          <td className="p-3 text-center text-xs">Unlimited</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs">Unlimited</td>
-                          <td className="p-3 text-center text-xs">Unlimited</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Appointments</td>
+                          <td className="p-3 text-center text-xs text-white/80">Unlimited</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/80">Unlimited</td>
+                          <td className="p-3 text-center text-xs text-white/80">Unlimited</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Employee Accounts</td>
-                          <td className="p-3 text-center text-xs">5 included</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs">10 included</td>
-                          <td className="p-3 text-center text-xs">Unlimited</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Employee Accounts</td>
+                          <td className="p-3 text-center text-xs text-white/80">5 included</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/80">10 included</td>
+                          <td className="p-3 text-center text-xs text-white/80">Unlimited</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Additional Employees</td>
-                          <td className="p-3 text-center text-xs">$25/mo per 10</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs">$25/mo per 10</td>
-                          <td className="p-3 text-center text-xs">Included</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Additional Employees</td>
+                          <td className="p-3 text-center text-xs text-white/80">$25/mo per 10</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/80">$25/mo per 10</td>
+                          <td className="p-3 text-center text-xs text-white/80">Included</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">White-Label Branding</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">White-Label Branding</td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><X className="w-4 h-4 text-white/40 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Smart Website</td>
-                          <td className="p-3 text-center text-xs text-muted-foreground">+$150/mo</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs text-muted-foreground">+$150/mo</td>
-                          <td className="p-3 text-center text-xs text-muted-foreground">+$150/mo</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Smart Website</td>
+                          <td className="p-3 text-center text-xs text-white/60">+$150/mo</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/60">+$150/mo</td>
+                          <td className="p-3 text-center text-xs text-white/60">+$150/mo</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Social Media Integration</td>
-                          <td className="p-3 text-center text-xs text-muted-foreground">+$197/mo</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs text-muted-foreground">+$197/mo</td>
-                          <td className="p-3 text-center text-xs text-muted-foreground">+$197/mo</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Social Media Integration</td>
+                          <td className="p-3 text-center text-xs text-white/60">+$197/mo</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/60">+$197/mo</td>
+                          <td className="p-3 text-center text-xs text-white/60">+$197/mo</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Embeddable Chat Widget</td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
-                          <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Embeddable Chat Widget</td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
+                          <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
 
                         {/* 3rd Party Integrations Section */}
-                        <tr className="bg-muted/30">
-                          <td colSpan={4} className="p-3 font-semibold text-primary">Required 3rd Party Integrations</td>
+                        <tr className="bg-muted/50">
+                          <td colSpan={4} className="p-3 font-semibold text-secondary">Required 3rd Party Integrations</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Resend (Email)</td>
-                          <td className="p-3 text-center text-xs">Required</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs">Required</td>
-                          <td className="p-3 text-center text-xs">Required</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Resend (Email)</td>
+                          <td className="p-3 text-center text-xs text-white/80">Required</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/80">Required</td>
+                          <td className="p-3 text-center text-xs text-white/80">Required</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Stripe (Payments)</td>
-                          <td className="p-3 text-center text-xs">Required</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs">Required</td>
-                          <td className="p-3 text-center text-xs">Required</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Stripe (Payments)</td>
+                          <td className="p-3 text-center text-xs text-white/80">Required</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/80">Required</td>
+                          <td className="p-3 text-center text-xs text-white/80">Required</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Twilio (SMS & Voice)</td>
-                          <td className="p-3 text-center text-xs">Required</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs">Required</td>
-                          <td className="p-3 text-center text-xs">Required</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Twilio (SMS & Voice)</td>
+                          <td className="p-3 text-center text-xs text-white/80">Required</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/80">Required</td>
+                          <td className="p-3 text-center text-xs text-white/80">Required</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">ElevenLabs (AI Voice)</td>
-                          <td className="p-3 text-center text-xs">Required</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs">Required</td>
-                          <td className="p-3 text-center text-xs">Required</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">ElevenLabs (AI Voice)</td>
+                          <td className="p-3 text-center text-xs text-white/80">Required</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/80">Required</td>
+                          <td className="p-3 text-center text-xs text-white/80">Required</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Google Calendar (Sync)</td>
-                          <td className="p-3 text-center text-xs text-muted-foreground">Optional</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs text-muted-foreground">Optional</td>
-                          <td className="p-3 text-center text-xs text-muted-foreground">Optional</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Google Calendar (Sync)</td>
+                          <td className="p-3 text-center text-xs text-white/60">Optional</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/60">Optional</td>
+                          <td className="p-3 text-center text-xs text-white/60">Optional</td>
                         </tr>
 
                         {/* Pricing Section */}
-                        <tr className="bg-muted/30">
-                          <td colSpan={4} className="p-3 font-semibold text-primary">Pricing</td>
+                        <tr className="bg-muted/50">
+                          <td colSpan={4} className="p-3 font-semibold text-secondary">Pricing</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Monthly Price</td>
-                          <td className="p-3 text-center font-semibold">$497</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 font-semibold text-primary">$897</td>
-                          <td className="p-3 text-center font-semibold">$1,497</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Monthly Price</td>
+                          <td className="p-3 text-center font-semibold text-card-foreground">$497</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 font-semibold text-secondary">$897</td>
+                          <td className="p-3 text-center font-semibold text-card-foreground">$1,497</td>
                         </tr>
-                        <tr className="border-b hover:bg-muted/20">
-                          <td className="p-3">Annual Price</td>
-                          <td className="p-3 text-center text-xs">$4,970/year</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs">$8,970/year</td>
-                          <td className="p-3 text-center text-xs">$14,970/year</td>
+                        <tr className="border-b border-white/10 hover:bg-muted/20">
+                          <td className="p-3 text-card-foreground">Annual Price</td>
+                          <td className="p-3 text-center text-xs text-white/80">$4,970/year</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-white/80">$8,970/year</td>
+                          <td className="p-3 text-center text-xs text-white/80">$14,970/year</td>
                         </tr>
                         <tr className="hover:bg-muted/20">
-                          <td className="p-3">Annual Savings</td>
-                          <td className="p-3 text-center text-xs text-green-500">Save $994</td>
-                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs text-green-500">Save $1,794</td>
-                          <td className="p-3 text-center text-xs text-green-500">Save $2,994</td>
+                          <td className="p-3 text-card-foreground">Annual Savings</td>
+                          <td className="p-3 text-center text-xs text-emerald-400">Save $994</td>
+                          <td className="p-3 text-center bg-secondary/10 border-x border-secondary/20 text-xs text-emerald-400">Save $1,794</td>
+                          <td className="p-3 text-center text-xs text-emerald-400">Save $2,994</td>
                         </tr>
                       </tbody>
                     </table>
