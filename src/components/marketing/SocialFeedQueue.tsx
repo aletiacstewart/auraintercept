@@ -15,9 +15,10 @@ import {
   MapPin,
   Facebook,
   MessageSquare,
+  Linkedin,
+  Video,
   Inbox,
   CheckCircle,
-  X,
 } from 'lucide-react';
 
 interface SocialFeedQueueProps {
@@ -25,7 +26,7 @@ interface SocialFeedQueueProps {
 }
 
 type FilterStatus = 'all' | 'pending' | 'published';
-type FilterPlatform = 'all' | 'instagram' | 'google_business' | 'facebook' | 'sms';
+type FilterPlatform = 'all' | 'instagram' | 'google_business' | 'facebook' | 'sms' | 'tiktok' | 'linkedin';
 
 // Platform colors matching feature color system
 const PLATFORM_COLORS = {
@@ -33,6 +34,8 @@ const PLATFORM_COLORS = {
   google_business: { bg: 'bg-[hsl(210,80%,50%)]/15', text: 'text-[hsl(210,80%,60%)]', border: 'border-[hsl(210,80%,50%)]/30' },
   facebook: { bg: 'bg-[hsl(220,70%,50%)]/15', text: 'text-[hsl(220,70%,60%)]', border: 'border-[hsl(220,70%,50%)]/30' },
   sms: { bg: 'bg-[hsl(145,60%,45%)]/15', text: 'text-[hsl(145,60%,55%)]', border: 'border-[hsl(145,60%,45%)]/30' },
+  tiktok: { bg: 'bg-[hsl(340,82%,52%)]/15', text: 'text-[hsl(340,82%,60%)]', border: 'border-[hsl(340,82%,52%)]/30' },
+  linkedin: { bg: 'bg-[hsl(210,90%,45%)]/15', text: 'text-[hsl(210,90%,55%)]', border: 'border-[hsl(210,90%,45%)]/30' },
 };
 
 const PLATFORM_ICONS = {
@@ -40,6 +43,8 @@ const PLATFORM_ICONS = {
   google_business: MapPin,
   facebook: Facebook,
   sms: MessageSquare,
+  tiktok: Video,
+  linkedin: Linkedin,
 };
 
 export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
@@ -239,7 +244,7 @@ export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-card-foreground/50" />
             <div className="flex gap-1 p-1 rounded-lg bg-muted/30 border border-card-foreground/10">
-              {(['all', 'instagram', 'google_business', 'facebook', 'sms'] as const).map((platform) => {
+              {(['all', 'instagram', 'google_business', 'facebook', 'linkedin', 'tiktok', 'sms'] as const).map((platform) => {
                 const Icon = platform === 'all' ? null : PLATFORM_ICONS[platform];
                 const colors = platform === 'all' ? null : PLATFORM_COLORS[platform];
                 const isActive = platformFilter === platform;
@@ -267,13 +272,13 @@ export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
 
         {/* Content Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[1, 2, 3, 4].map((i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="h-64 rounded-xl bg-muted/30 animate-pulse" />
             ))}
           </div>
         ) : filteredDrafts && filteredDrafts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredDrafts.map((draft) => (
               <SocialContentCard
                 key={draft.id}
