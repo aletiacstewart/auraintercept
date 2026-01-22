@@ -819,11 +819,11 @@ export default function Auth() {
                     <div className="grid grid-cols-2 gap-1 text-xs text-card-foreground/70 ml-6">
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>19 AI Agents</span>
+                        <span>23 AI Agents</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>5 Consoles</span>
+                        <span>6 Control Centers</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />

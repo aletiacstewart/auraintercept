@@ -895,14 +895,14 @@ export const BrandAssetGuidePDF: React.FC = () => (
           <View style={styles.infographicCard}>
             <Text style={styles.infographicTitle}>Platform Stats</Text>
             <View style={styles.dataPoint}>
-              <Text style={styles.dataPointValue}>19</Text>
+              <Text style={styles.dataPointValue}>23</Text>
               <Text style={styles.dataPointLabel}>AI Agents</Text>
-              <Text style={styles.dataPointContext}>Specialized agents across 5 consoles</Text>
+              <Text style={styles.dataPointContext}>Specialized agents across 6 Control Centers</Text>
             </View>
             <View style={styles.dataPoint}>
-              <Text style={styles.dataPointValue}>5</Text>
-              <Text style={styles.dataPointLabel}>Command Consoles</Text>
-              <Text style={styles.dataPointContext}>Customer, Field, Business, Marketing, Analytics</Text>
+              <Text style={styles.dataPointValue}>6</Text>
+              <Text style={styles.dataPointLabel}>Control Centers</Text>
+              <Text style={styles.dataPointContext}>Customer, Field, Business, Marketing, Social, Analytics</Text>
             </View>
             <View style={styles.dataPoint}>
               <Text style={styles.dataPointValue}>6</Text>

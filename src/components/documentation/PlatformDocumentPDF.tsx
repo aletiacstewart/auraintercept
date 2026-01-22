@@ -521,12 +521,12 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.coverTagline}>"Your Business. Always On. Always Growing."</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>19</Text>
+          <Text style={styles.coverStatNumber}>23</Text>
           <Text style={styles.coverStatLabel}>AI Agents</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>5</Text>
-          <Text style={styles.coverStatLabel}>Consoles</Text>
+          <Text style={styles.coverStatNumber}>6</Text>
+          <Text style={styles.coverStatLabel}>Control Centers</Text>
         </View>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>80%</Text>

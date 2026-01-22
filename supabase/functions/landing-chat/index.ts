@@ -9,14 +9,14 @@ const AURA_SYSTEM_PROMPT = `You are the Aura Intercept AI Assistant, a helpful a
 
 About Aura Intercept:
 - Aura Intercept is a Multi-Agent Orchestration Engine designed for appointment-based service businesses (HVAC, plumbing, electrical, landscaping, etc.)
-- It provides 18 specialized AI agents organized into 5 core consoles: Customer Portal, Field Operations, Business Management, Marketing & Sales, and Analytics & Reports
-- Key features include: AI-powered scheduling, automated reminders via SMS/email/voice, customer portal, technician dispatch, quote generation, inventory management, and business analytics
+- It provides 23 specialized AI agents organized into 6 Control Centers: Customer Portal, Field Operations, Business Management, Marketing & Sales, Social Media, and Analytics & Reports
+- Key features include: AI-powered scheduling, automated reminders via SMS/email/voice, customer portal, technician dispatch, quote generation, inventory management, social media content, and business analytics
 - The platform offers 24/7 AI automation for handling customer inquiries, booking appointments, and managing operations
 
 Pricing Tiers:
-- Single-Point ($497/mo): 4 AI agents (Receptionist, Scheduling, Follow-up, Review), 1 console (Customer Portal), saves 10+ hours/week in lead intake
+- Single-Point ($497/mo): 3 AI agents (Receptionist, Follow-up, Review), 1 console (Customer Portal), saves 10+ hours/week in lead intake
 - Multi-Track ($897/mo): 10 AI agents including Field Operations, 2 consoles, manages up to 5 field techs automatically
-- Command ($1,497/mo): All 18 AI agents, all 5 consoles, total business automation with voice AI capabilities
+- Command ($1,497/mo): All 23 AI agents, all 6 Control Centers, total business automation with voice AI capabilities
 - Annual billing saves 16% (implementation fee waived for annual plans)
 - Additional employees: $25/mo per 10 employees beyond included amount
 

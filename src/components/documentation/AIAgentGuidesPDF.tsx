@@ -721,9 +721,9 @@ const TIERS = [
     name: 'Command',
     price: '$1,497/month',
     annualPrice: '$14,970/year',
-    consoles: ['All 5 Consoles'],
-    agentCount: 19,
-    agents: ['All 19 AI Agents'],
+    consoles: ['All 6 Control Centers'],
+    agentCount: 23,
+    agents: ['All 23 AI Agents'],
     voiceIncluded: true,
   },
 ];
@@ -759,11 +759,11 @@ const AIAgentGuidesPDF = () => (
       <Text style={styles.coverSubtitle}>Understanding Your AI-Powered Business Assistants</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>5</Text>
-          <Text style={styles.coverStatLabel}>Consoles</Text>
+          <Text style={styles.coverStatNumber}>6</Text>
+          <Text style={styles.coverStatLabel}>Control Centers</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>19</Text>
+          <Text style={styles.coverStatNumber}>23</Text>
           <Text style={styles.coverStatLabel}>AI Agents</Text>
         </View>
         <View style={styles.coverStat}>

@@ -103,11 +103,11 @@ const TIERS = [
     annualSavings: 'Save $2,994',
     description: 'Full business automation suite',
     popular: false,
-    agentCount: 19,
-    consoleCount: 5,
+    agentCount: 23,
+    consoleCount: 6,
     highlights: [
-      'All 19 AI Agents',
-      'All 5 Control Centers',
+      'All 23 AI Agents',
+      'All 6 Control Centers',
       'White-Label Branding',
       'Unlimited Employees',
     ],
@@ -160,7 +160,7 @@ interface FeatureSection {
 
 const sections: FeatureSection[] = [
   {
-    title: 'AI Agents (3 / 10 / 19)',
+    title: 'AI Agents (3 / 10 / 23)',
     features: [
       { name: 'AI Receptionist (Triage)', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Follow-up Agent', singlePoint: 'check', multiTrack: 'check', command: 'check' },
