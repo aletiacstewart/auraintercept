@@ -37,6 +37,7 @@ import {
   FieldOpsConsole,
   BusinessManagementConsole,
   MarketingSalesConsole,
+  SocialMediaConsole,
   AnalyticsConsole,
   NewLeadPage,
 } from "./pages/ai-consoles";
@@ -179,6 +180,7 @@ const App = () => {
               <Route path="/dashboard/ai-consoles/field-ops" element={<ProtectedRoute><FieldOpsConsole /></ProtectedRoute>} />
               <Route path="/dashboard/ai-consoles/business-mgt-ops" element={<ProtectedRoute><BusinessManagementConsole /></ProtectedRoute>} />
               <Route path="/dashboard/ai-consoles/marketing-sales" element={<ProtectedRoute><MarketingSalesConsole /></ProtectedRoute>} />
+              <Route path="/dashboard/ai-consoles/social-media" element={<ProtectedRoute><SocialMediaConsole /></ProtectedRoute>} />
               <Route path="/dashboard/ai-consoles/analytics" element={<ProtectedRoute><AnalyticsConsole /></ProtectedRoute>} />
               <Route path="/dashboard/ai-consoles/new-lead" element={<ProtectedRoute><NewLeadPage /></ProtectedRoute>} />
               <Route path="/dashboard/analytics-reports" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />

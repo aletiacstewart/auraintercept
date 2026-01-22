@@ -2153,8 +2153,8 @@ serve(async (req) => {
       single_point: ['triage', 'followup', 'review'],
       // Multi-Track: Adds booking, field ops, quoting/invoice
       multi_track: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice'],
-      // Command: Full suite
-      command: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'admin', 'quoting', 'invoice', 'inventory', 'warranty', 'campaign', 'insights', 'performance', 'revenue', 'forecast', 'analytics', 'marketing']
+      // Command: Full suite including social media agents
+      command: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'admin', 'quoting', 'invoice', 'inventory', 'warranty', 'campaign', 'insights', 'performance', 'revenue', 'forecast', 'analytics', 'marketing', 'social_content', 'social_scheduler', 'social_analytics']
     };
 
     // Helper to determine required tier for an agent

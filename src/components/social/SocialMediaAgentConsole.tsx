@@ -9,46 +9,48 @@ import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
-import { CampaignForm } from './forms/CampaignForm';
-import { CustomerSegmentsForm } from './forms/CustomerSegmentsForm';
+import { SocialPostForm } from '@/components/marketing/forms/SocialPostForm';
+import { SocialFeedQueue } from '@/components/marketing/SocialFeedQueue';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
-  Megaphone, 
-  Users,
-  Gift,
-  Target,
+  Share2, 
+  PenSquare,
+  FileText,
+  Calendar,
+  BarChart,
+  CalendarDays,
 } from 'lucide-react';
 
-// Quick actions for Marketing & Sales - focused on campaigns, promos, referrals
+// Quick actions for Social Media Ops
 const QUICK_ACTIONS = [
-  { id: 'campaign', label: 'Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign', featureColor: 'text-feature-marketing' },
-  { id: 'promo', label: 'Promo Code', icon: Gift, message: 'Generate a promotional code for customers', featureColor: 'text-feature-marketing' },
-  { id: 'customers', label: 'Segments', icon: Users, message: 'Show me customer segments', featureColor: 'text-feature-customers' },
-  { id: 'winback', label: 'Win-Back', icon: Target, message: 'Show me inactive customers for win-back campaigns', featureColor: 'text-feature-marketing' },
+  { id: 'create', label: 'New Post', icon: PenSquare, message: 'Create a new social media post', featureColor: 'text-pink-400' },
+  { id: 'drafts', label: 'Drafts', icon: FileText, message: 'Show me pending social media drafts', featureColor: 'text-pink-400' },
+  { id: 'scheduled', label: 'Scheduled', icon: Calendar, message: 'Show my scheduled posts', featureColor: 'text-pink-400' },
+  { id: 'calendar', label: 'Calendar', icon: CalendarDays, message: 'Open content calendar', featureColor: 'text-pink-400' },
+  { id: 'analytics', label: 'Analytics', icon: BarChart, message: 'Show social media analytics', featureColor: 'text-pink-400' },
 ];
 
 // Tab configuration
 const TABS = [
-  { id: 'chat', label: 'Home', icon: Megaphone, featureColor: 'text-feature-marketing' },
+  { id: 'chat', label: 'Home', icon: Share2, featureColor: 'text-pink-400' },
   ...QUICK_ACTIONS.map(action => ({ id: action.id, label: action.label, icon: action.icon, featureColor: action.featureColor })),
 ];
 
-interface MarketingSalesAgentConsoleProps {
+interface SocialMediaAgentConsoleProps {
   companyId?: string;
 }
 
-export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProps> = ({ companyId: propCompanyId }) => {
+export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = ({ companyId: propCompanyId }) => {
   const { companyId: authCompanyId, user } = useAuth();
   const effectiveCompanyId = propCompanyId || authCompanyId;
   
   const [activeTab, setActiveTab] = useState('chat');
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [lastAgent, setLastAgent] = useState<string>('marketing');
+  const [lastAgent, setLastAgent] = useState<string>('social_content');
   
   // Form visibility states
-  const [showCampaignForm, setShowCampaignForm] = useState(false);
-  const [showSegmentsForm, setShowSegmentsForm] = useState(false);
+  const [showPostForm, setShowPostForm] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -68,9 +70,9 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const { messages, isLoading, currentAgent, sendMessage, clearMessages } = useMultiAgentChat({
     companyId: effectiveCompanyId || undefined,
     userId: user?.id,
-    initialAgent: 'marketing',
+    initialAgent: 'social_content',
     onAgentChange: (agent) => {
-      console.log('[Marketing] Agent changed to:', agent);
+      console.log('[Social Media] Agent changed to:', agent);
       setLastAgent(agent);
     },
   });
@@ -81,8 +83,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   }, [messages]);
 
   const hideAllForms = () => {
-    setShowCampaignForm(false);
-    setShowSegmentsForm(false);
+    setShowPostForm(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,16 +97,27 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
 
   const handleQuickAction = async (message: string, actionId?: string) => {
     // Show appropriate form or switch tab based on action
-    if (actionId === 'campaign') {
+    if (actionId === 'create') {
       hideAllForms();
-      setShowCampaignForm(true);
+      setShowPostForm(true);
       setActiveTab('chat');
       return;
     }
-    if (actionId === 'customers') {
+    if (actionId === 'drafts' || actionId === 'scheduled') {
       hideAllForms();
-      setShowSegmentsForm(true);
+      setActiveTab('feed');
+      return;
+    }
+    if (actionId === 'calendar') {
+      hideAllForms();
       setActiveTab('chat');
+      await sendMessage('Show me the content calendar for this month');
+      return;
+    }
+    if (actionId === 'analytics') {
+      hideAllForms();
+      setActiveTab('chat');
+      await sendMessage('Show me social media analytics for the past 30 days');
       return;
     }
     
@@ -127,27 +139,17 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     hideAllForms();
     setInputValue('');
     setActiveTab('chat');
-    setLastAgent('marketing');
+    setLastAgent('social_content');
   };
 
-  const handleFormSuccess = async (formType: string, data: Record<string, unknown>) => {
-    hideAllForms();
-    const successMessages: Record<string, string> = {
-      campaign: `I just created a new ${data.type} campaign called "${data.name}". Can you help me optimize it and suggest the best channels and messaging?`,
-    };
-    if (successMessages[formType]) {
-      await sendMessage(successMessages[formType]);
-    }
-  };
-
-  const isShowingForm = showCampaignForm || showSegmentsForm;
+  const isShowingForm = showPostForm;
   const showWelcome = messages.length === 0 && !isShowingForm && activeTab === 'chat';
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
   // Get active label based on form type
   const getActiveLabel = () => {
-    if (showCampaignForm) return 'Campaign';
-    if (showSegmentsForm) return 'Segments';
+    if (activeTab === 'feed') return 'Content Queue';
+    if (showPostForm) return 'New Post';
     if (messages.length > 0) return agentStyle.label;
     return 'Home';
   };
@@ -159,10 +161,10 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       {/* Glass Header */}
       <GlassHeader
         logoUrl={company?.logo_url}
-        companyName={company?.name || 'Marketing & Sales'}
+        companyName={company?.name || 'Social Media'}
         agentLabel={activeLabel}
-        agentColor={agentStyle.color}
-        agentBgColor={agentStyle.bgColor}
+        agentColor="text-pink-400"
+        agentBgColor="bg-gradient-to-br from-pink-500/20 to-purple-500/20"
         useDefaultLogo={true}
       />
 
@@ -172,7 +174,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
         activeTab={activeTab}
         onTabChange={(tabId) => {
           handleTabChange(tabId);
-          if (tabId !== 'chat') {
+          if (tabId !== 'chat' && tabId !== 'feed') {
             const action = QUICK_ACTIONS.find(a => a.id === tabId);
             if (action) {
               handleQuickAction(action.message, action.id);
@@ -184,6 +186,13 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
 
       {/* Content Area */}
       <div className="flex-1 flex flex-col min-h-0 relative console-surface">
+        {/* Feed Tab */}
+        {activeTab === 'feed' && effectiveCompanyId && (
+          <div className="flex-1 overflow-y-auto p-4">
+            <SocialFeedQueue companyId={effectiveCompanyId} />
+          </div>
+        )}
+
         {/* Chat Tab */}
         {activeTab === 'chat' && (
           <>
@@ -191,28 +200,24 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
             <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
               {showWelcome ? (
                 <WelcomeScreen
-                  companyName={company?.name || 'Marketing & Sales'}
-                  title="Marketing & Sales"
-                  subtitle="I can help you with campaigns, promotions, referrals, and lead management. How can I assist you today?"
+                  companyName={company?.name || 'Social Media'}
+                  title="Social Media Ops"
+                  subtitle="I can help you create, schedule, and analyze social media content across all platforms. What would you like to do?"
                   actions={QUICK_ACTIONS}
                   onAction={handleQuickAction}
-                  consoleType="marketing"
+                  consoleType="social"
                 />
               ) : (
                 <div className="space-y-4">
                   {/* Forms */}
-                  {showCampaignForm && effectiveCompanyId && (
-                    <CampaignForm
+                  {showPostForm && effectiveCompanyId && (
+                    <SocialPostForm
                       companyId={effectiveCompanyId}
                       onCancel={handleHome}
-                      onSuccess={(data) => handleFormSuccess('campaign', data)}
-                    />
-                  )}
-                  
-                  {showSegmentsForm && effectiveCompanyId && (
-                    <CustomerSegmentsForm
-                      companyId={effectiveCompanyId}
-                      onCancel={handleHome}
+                      onSuccess={() => {
+                        hideAllForms();
+                        setActiveTab('feed');
+                      }}
                     />
                   )}
 
@@ -256,7 +261,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
               onSubmit={handleSubmit}
               onHome={handleHome}
               isLoading={isLoading}
-              placeholder="Ask about campaigns, promos, referrals..."
+              placeholder="Ask about posts, scheduling, analytics..."
             />
           </>
         )}

@@ -734,7 +734,7 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
   },
 ];
 
-export type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'businessops_admin' | 'marketing' | 'analytics' | 'dispatch';
+export type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'businessops_admin' | 'marketing' | 'analytics' | 'dispatch' | 'social';
 
 const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
   customer: CUSTOMER_ENGAGEMENT_GUIDES,
@@ -744,6 +744,7 @@ const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
   marketing: MARKETING_SALES_GUIDES,
   analytics: ANALYTICS_GUIDES,
   dispatch: DISPATCH_FIELD_OPS_GUIDES,
+  social: MARKETING_SALES_GUIDES, // Use marketing guides as base for social media
 };
 
 const CONSOLE_TITLES: Record<ConsoleType, string> = {
@@ -754,6 +755,7 @@ const CONSOLE_TITLES: Record<ConsoleType, string> = {
   marketing: 'How to use Marketing & Sales AI',
   analytics: 'How to use Analytics & Optimization AI',
   dispatch: 'How to use Dispatch-Field Ops Console',
+  social: 'How to use Social Media Ops AI',
 };
 
 interface AgentHowToGuideProps {

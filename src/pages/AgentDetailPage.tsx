@@ -383,6 +383,79 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'repeat_annually', label: 'Repeat Annually', type: 'switch', defaultValue: true }
     ]
   },
+  // Social Media Agents
+  social_content: {
+    name: 'Social Content Agent',
+    description: 'Creates engaging social media content optimized for each platform.',
+    category: 'social_media',
+    phase: 1,
+    icon: Megaphone,
+    color: 'text-pink-400',
+    capabilities: [
+      'Multi-platform content creation',
+      'Hashtag optimization',
+      'Caption generation',
+      'Image suggestions',
+      'Content repurposing'
+    ],
+    configFields: [
+      { key: 'default_platforms', label: 'Default Platforms', type: 'textarea', placeholder: 'instagram\nfacebook\nlinkedin', description: 'Default platforms for new posts (one per line)' },
+      { key: 'brand_voice', label: 'Brand Voice', type: 'textarea', placeholder: 'Friendly, professional, engaging', description: 'Describe your brand tone and style' },
+      { key: 'hashtag_count', label: 'Default Hashtag Count', type: 'number', min: 0, max: 30, defaultValue: 10 },
+      { key: 'require_approval', label: 'Require Approval Before Publishing', type: 'switch', defaultValue: true }
+    ]
+  },
+  social_scheduler: {
+    name: 'Social Scheduler Agent',
+    description: 'Optimizes posting times and manages the content queue across platforms.',
+    category: 'social_media',
+    phase: 2,
+    icon: Megaphone,
+    color: 'text-pink-400',
+    capabilities: [
+      'Optimal time scheduling',
+      'Queue management',
+      'Cross-platform coordination',
+      'Calendar overview',
+      'Rescheduling'
+    ],
+    configFields: [
+      { key: 'auto_schedule', label: 'Auto-Schedule for Optimal Times', type: 'switch', defaultValue: true },
+      { key: 'timezone', label: 'Timezone', type: 'select', options: [
+        { value: 'America/New_York', label: 'Eastern Time' },
+        { value: 'America/Chicago', label: 'Central Time' },
+        { value: 'America/Denver', label: 'Mountain Time' },
+        { value: 'America/Los_Angeles', label: 'Pacific Time' }
+      ]},
+      { key: 'posts_per_day', label: 'Max Posts Per Day', type: 'number', min: 1, max: 10, defaultValue: 3 },
+      { key: 'weekend_posting', label: 'Enable Weekend Posting', type: 'switch', defaultValue: true }
+    ]
+  },
+  social_analytics: {
+    name: 'Social Analytics Agent',
+    description: 'Tracks social media performance and provides actionable insights.',
+    category: 'social_media',
+    phase: 3,
+    icon: BarChart3,
+    color: 'text-pink-400',
+    capabilities: [
+      'Engagement tracking',
+      'Reach analysis',
+      'Content performance',
+      'Audience insights',
+      'Competitor benchmarking'
+    ],
+    configFields: [
+      { key: 'report_frequency', label: 'Report Frequency', type: 'select', options: [
+        { value: 'daily', label: 'Daily' },
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'monthly', label: 'Monthly' }
+      ]},
+      { key: 'track_competitors', label: 'Track Competitors', type: 'switch', defaultValue: false },
+      { key: 'alert_viral_content', label: 'Alert on Viral Content', type: 'switch', defaultValue: true, description: 'Get notified when content performs exceptionally well' },
+      { key: 'engagement_goal', label: 'Engagement Rate Goal (%)', type: 'slider', min: 1, max: 10, step: 0.5, defaultValue: 3 }
+    ]
+  },
   insights: {
     name: 'Insights Agent',
     description: 'Analyzes business data and provides actionable recommendations.',

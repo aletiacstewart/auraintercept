@@ -47,9 +47,10 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'dispatch', 'route', 'eta', 'checkin',
       'admin', 'quoting', 'invoice', 'inventory', 'warranty',
       'campaign', 'marketing',
+      'social_content', 'social_scheduler', 'social_analytics',
       'insights', 'performance', 'revenue', 'forecast', 'analytics'
     ],
-    consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'analytics_reports'],
+    consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports'],
     label: 'Command',
     price: '$1,497/mo',
     description: 'Full business automation suite',
@@ -70,6 +71,9 @@ export const AGENT_DEPENDENCIES: Record<string, string[]> = {
   performance: ['insights'],
   revenue: ['insights'],
   forecast: ['insights', 'revenue'],
+  // Social media agent dependencies
+  social_scheduler: ['social_content'],
+  social_analytics: ['social_content'],
 };
 
 // Console to required agents mapping - consoles need these agents enabled to work
@@ -78,6 +82,7 @@ export const CONSOLE_REQUIRED_AGENTS: Record<string, string[]> = {
   field_operations: ['dispatch'],
   business_management: ['admin', 'quoting'],
   marketing_sales: ['campaign'],
+  social_media: ['social_content'],
   analytics_reports: ['insights'],
 };
 
