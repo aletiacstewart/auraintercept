@@ -27,12 +27,12 @@ interface SocialAnalyticsFormProps {
 }
 
 const PLATFORM_CONFIG: Record<string, { icon: React.ElementType; color: string; label: string }> = {
-  instagram: { icon: Instagram, color: 'text-pink-400 bg-pink-500/15 border-pink-500/30', label: 'Instagram' },
-  google_business: { icon: MapPin, color: 'text-blue-400 bg-blue-500/15 border-blue-500/30', label: 'Google Business' },
-  facebook: { icon: Facebook, color: 'text-indigo-400 bg-indigo-500/15 border-indigo-500/30', label: 'Facebook' },
-  sms: { icon: MessageSquare, color: 'text-green-400 bg-green-500/15 border-green-500/30', label: 'SMS' },
-  tiktok: { icon: Video, color: 'text-rose-400 bg-rose-500/15 border-rose-500/30', label: 'TikTok' },
-  linkedin: { icon: Linkedin, color: 'text-sky-400 bg-sky-500/15 border-sky-500/30', label: 'LinkedIn' },
+  instagram: { icon: Instagram, color: 'text-pink-600 bg-white border-border', label: 'Instagram' },
+  google_business: { icon: MapPin, color: 'text-blue-600 bg-white border-border', label: 'Google Business' },
+  facebook: { icon: Facebook, color: 'text-indigo-600 bg-white border-border', label: 'Facebook' },
+  sms: { icon: MessageSquare, color: 'text-green-600 bg-white border-border', label: 'SMS' },
+  tiktok: { icon: Video, color: 'text-rose-600 bg-white border-border', label: 'TikTok' },
+  linkedin: { icon: Linkedin, color: 'text-sky-600 bg-white border-border', label: 'LinkedIn' },
 };
 
 export function SocialAnalyticsForm({ companyId, onCancel, onAnalyze }: SocialAnalyticsFormProps) {
@@ -99,16 +99,16 @@ export function SocialAnalyticsForm({ companyId, onCancel, onAnalyze }: SocialAn
   };
 
   return (
-    <Card className="border-card-foreground/20 bg-card">
+    <Card className="border-border bg-background shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-pink-500/15 border border-pink-500/30">
-              <Share2 className="h-5 w-5 text-pink-400" />
+            <div className="p-2.5 rounded-xl bg-primary/10 border border-border">
+              <Share2 className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-lg text-card-foreground">Social Media Analytics</CardTitle>
-              <p className="text-sm text-card-foreground/60">
+              <CardTitle className="text-lg text-foreground">Social Media Analytics</CardTitle>
+              <p className="text-sm text-muted-foreground">
                 Publishing activity over the last {dateRange} days
               </p>
             </div>
@@ -130,48 +130,48 @@ export function SocialAnalyticsForm({ companyId, onCancel, onAnalyze }: SocialAn
           <>
             {/* Key Metrics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-4 rounded-xl bg-muted/20 border border-card-foreground/10">
+              <div className="p-4 rounded-xl bg-white border border-border shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <FileText className="h-4 w-4 text-card-foreground/60" />
-                  <span className="text-xs text-card-foreground/60">Total Drafts</span>
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Total Drafts</span>
                 </div>
-                <p className="text-2xl font-bold text-card-foreground">{totalDrafts}</p>
+                <p className="text-2xl font-bold text-foreground">{totalDrafts}</p>
               </div>
 
-              <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+              <div className="p-4 rounded-xl bg-white border border-border shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="h-4 w-4 text-green-400" />
-                  <span className="text-xs text-green-400/80">Published</span>
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-xs text-muted-foreground">Published</span>
                 </div>
-                <p className="text-2xl font-bold text-green-400">{publishedCount}</p>
+                <p className="text-2xl font-bold text-foreground">{publishedCount}</p>
               </div>
 
-              <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+              <div className="p-4 rounded-xl bg-white border border-border shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <Clock className="h-4 w-4 text-amber-400" />
-                  <span className="text-xs text-amber-400/80">Pending</span>
+                  <Clock className="h-4 w-4 text-amber-600" />
+                  <span className="text-xs text-muted-foreground">Pending</span>
                 </div>
-                <p className="text-2xl font-bold text-amber-400">{pendingCount}</p>
+                <p className="text-2xl font-bold text-foreground">{pendingCount}</p>
               </div>
 
-              <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+              <div className="p-4 rounded-xl bg-white border border-border shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="h-4 w-4 text-blue-400" />
-                  <span className="text-xs text-blue-400/80">Scheduled</span>
+                  <TrendingUp className="h-4 w-4 text-blue-600" />
+                  <span className="text-xs text-muted-foreground">Scheduled</span>
                 </div>
-                <p className="text-2xl font-bold text-blue-400">{scheduledCount}</p>
+                <p className="text-2xl font-bold text-foreground">{scheduledCount}</p>
               </div>
             </div>
 
             {/* Publish Rate */}
-            <div className="p-4 rounded-xl bg-muted/20 border border-card-foreground/10">
+            <div className="p-4 rounded-xl bg-white border border-border shadow-sm">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-card-foreground/70">Publish Rate</span>
-                <span className="text-lg font-bold text-card-foreground">{publishRate}%</span>
+                <span className="text-sm text-muted-foreground">Publish Rate</span>
+                <span className="text-lg font-bold text-foreground">{publishRate}%</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-card-foreground/10">
+              <div className="w-full h-2 rounded-full bg-muted">
                 <div 
-                  className="h-full rounded-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all"
+                  className="h-full rounded-full bg-primary transition-all"
                   style={{ width: `${publishRate}%` }}
                 />
               </div>
@@ -179,21 +179,22 @@ export function SocialAnalyticsForm({ companyId, onCancel, onAnalyze }: SocialAn
 
             {/* Platform Breakdown */}
             <div>
-              <h4 className="text-sm font-medium text-card-foreground mb-3">Platform Distribution</h4>
+              <h4 className="text-sm font-medium text-foreground mb-3">Platform Distribution</h4>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {Object.entries(PLATFORM_CONFIG).map(([platform, config]) => {
                   const count = platformCounts[platform] || 0;
                   const Icon = config.icon;
+                  const iconColorClass = config.color.split(' ')[0]; // Extract just the text color
                   return (
                     <div 
                       key={platform}
-                      className={`p-3 rounded-lg border ${config.color}`}
+                      className="p-3 rounded-lg border border-border bg-white shadow-sm"
                     >
                       <div className="flex items-center gap-2">
-                        <Icon className="h-4 w-4" />
-                        <span className="text-sm font-medium">{config.label}</span>
+                        <Icon className={`h-4 w-4 ${iconColorClass}`} />
+                        <span className="text-sm font-medium text-foreground">{config.label}</span>
                       </div>
-                      <p className="text-xl font-bold mt-1">{count}</p>
+                      <p className="text-xl font-bold mt-1 text-foreground">{count}</p>
                     </div>
                   );
                 })}
@@ -204,7 +205,7 @@ export function SocialAnalyticsForm({ companyId, onCancel, onAnalyze }: SocialAn
             <div className="flex gap-3 pt-2">
               <Button 
                 onClick={handleAnalyze} 
-                className="flex-1 bg-gradient-to-r from-pink-500 to-purple-500 text-white"
+                className="flex-1"
               >
                 <TrendingUp className="h-4 w-4 mr-2" />
                 Get AI Insights
