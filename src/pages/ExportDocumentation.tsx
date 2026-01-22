@@ -4,13 +4,19 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown } from 'lucide-react';
+import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown, Share2, Video, BarChart3, Palette, Globe, Factory } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import PlatformDocumentPDF from '@/components/documentation/PlatformDocumentPDF';
 import PricingSummaryPDF from '@/components/documentation/PricingSummaryPDF';
 import AIAgentGuidesPDF from '@/components/documentation/AIAgentGuidesPDF';
 import { ComprehensiveGuidesPDF } from '@/components/documentation/ComprehensiveGuidesPDF';
 import CompanyGuidesPDF from '@/components/documentation/CompanyGuidesPDF';
+import SocialMediaContentPackPDF from '@/components/documentation/SocialMediaContentPackPDF';
+import VideoScriptsPDF from '@/components/documentation/VideoScriptsPDF';
+import SalesPitchDataPDF from '@/components/documentation/SalesPitchDataPDF';
+import BrandAssetGuidePDF from '@/components/documentation/BrandAssetGuidePDF';
+import WebsiteCopyPDF from '@/components/documentation/WebsiteCopyPDF';
+import IndustryMarketingKitPDF from '@/components/documentation/IndustryMarketingKitPDF';
 
 const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
 

@@ -113,6 +113,10 @@ const agentCategories = [{
     name: 'Campaign Agent',
     description: 'Unified marketing for promotions, referrals, win-back, and seasonal campaigns',
     icon: Megaphone
+  }, {
+    name: 'Social Media Agent',
+    description: 'AI-powered content creation and scheduling for all social platforms',
+    icon: Send
   }]
 }];
 const agentConsoles = [{
@@ -156,12 +160,20 @@ const agentConsoles = [{
   iconColor: 'text-indigo-500',
   features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
 }, {
-  name: 'Smart Website Console',
-  description: 'Branded 1-page website with AI chat and voice.',
-  icon: Globe,
+  name: 'Social Media Console',
+  description: 'AI content creation and scheduling across all platforms.',
+  icon: Send,
   gradient: 'from-pink-500 to-rose-500',
   iconBg: 'bg-pink-500/10',
   iconColor: 'text-pink-500',
+  features: ['AI content generation', 'Multi-platform scheduling', 'Analytics dashboard', 'Brand voice consistency']
+}, {
+  name: 'Smart Website Console',
+  description: 'Branded 1-page website with AI chat and voice.',
+  icon: Globe,
+  gradient: 'from-teal-500 to-cyan-500',
+  iconBg: 'bg-teal-500/10',
+  iconColor: 'text-teal-500',
   features: ['AI Chat & Voice', 'Content editor', 'Visitor analytics', 'Domain management']
 }];
 const platformFeatures = [{
@@ -196,6 +208,22 @@ const platformFeatures = [{
   icon: Lock,
   title: 'Enterprise Security',
   description: 'Row-level security and role-based access protect sensitive data.'
+}, {
+  icon: Send,
+  title: 'Social Media AI',
+  description: 'AI-powered content creation and scheduling across all major social platforms.'
+}, {
+  icon: FileText,
+  title: 'Quotes & Invoicing',
+  description: 'Generate professional quotes and invoices with automated payment tracking.'
+}, {
+  icon: Calendar,
+  title: 'Smart Scheduling',
+  description: 'AI-optimized appointment scheduling with calendar sync and availability management.'
+}, {
+  icon: MapPin,
+  title: 'Route Optimization',
+  description: 'Intelligent routing for field technicians to minimize drive time and maximize efficiency.'
 }];
 const communicationChannels = [{
   icon: Mic,
@@ -286,13 +314,9 @@ const industryCategories = [{
     icon: Hammer,
     description: 'Repair & Janitorial'
   }, {
-    name: 'Painting',
-    icon: PaintBucket,
-    description: 'Interior & Exterior'
-  }, {
-    name: 'Flooring & Tile',
-    icon: Grid3X3,
-    description: 'Hardwood & Stone'
+    name: 'Construction',
+    icon: HardHat,
+    description: 'Painting, Flooring, Tile & Trim'
   }]
 }, {
   category: 'Mobile & Commercial',
@@ -467,7 +491,7 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Aura Agent Consoles</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">5 Powerful Intercept Control Centers</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">6 Powerful Intercept Control Centers</h2>
             <p className="text-foreground max-w-2xl mx-auto">
               Purpose-built consoles give your team full control over AI agent operations with intuitive interfaces.
             </p>
@@ -1073,7 +1097,48 @@ export default function Index() {
             <p className="text-sm text-muted-foreground mb-2">30-day free trial • No credit card required</p>
             <p className="text-xs text-muted-foreground/80 mb-2">All we ask is your honest feedback on features and that you report any issues you find.</p>
             <p className="text-sm text-foreground mb-2">Additional employees (Starter/Professional): <span className="font-medium">$25/month per 10 employees</span></p>
-            <p className="text-sm text-foreground">One-Time Implementation Fee: <span className="font-medium">$499 - $999</span> <span className="text-muted-foreground">(based on plan)</span></p>
+            <p className="text-sm text-foreground mb-2">One-Time Implementation Fee: <span className="font-medium">$499 - $999</span> <span className="text-muted-foreground">(based on plan)</span></p>
+          </div>
+
+          {/* Add-On Services */}
+          <div className="mt-12 max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h3 className="text-xl font-bold mb-2">Premium Add-Ons</h3>
+              <p className="text-sm text-muted-foreground">
+                Enhance your subscription with specialized AI capabilities
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="rounded-lg p-4 border-2 border-pink-500/30 relative overflow-hidden" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 to-rose-500" />
+                <div className="flex items-center gap-2 mb-2">
+                  <Send className="w-4 h-4 text-pink-400" />
+                  <span className="font-semibold text-sm text-white">Social Media AI Content</span>
+                </div>
+                <p className="text-xs text-white/70 mb-2">AI-powered content creation & scheduling</p>
+                <p className="text-2xl font-bold text-white mb-1">$150<span className="text-sm font-normal text-white/70">/month</span></p>
+                <p className="text-xs text-white/70 mb-3">Add to any plan</p>
+                <ul className="space-y-1 text-xs text-white/80">
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3 h-3 text-pink-400" />
+                    6-platform content generation
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3 h-3 text-pink-400" />
+                    Automated scheduling
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3 h-3 text-pink-400" />
+                    Brand voice consistency
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3 h-3 text-pink-400" />
+                    Analytics dashboard
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
 
           {/* 3rd Party Integrations */}
@@ -1139,6 +1204,17 @@ export default function Index() {
                 <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-xs text-white/70">2.9% + $0.30 per successful transaction</p>
                 <p className="text-xs text-muted-foreground mt-1">Required for: Multi-Track, Command (Invoicing)</p>
+              </div>
+
+              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <Send className="w-4 h-4 text-pink-400" />
+                  <span className="font-semibold text-sm text-white">Social Media Accounts</span>
+                </div>
+                <p className="text-xs text-white/70 mb-2">Facebook, Instagram, LinkedIn, TikTok</p>
+                <p className="text-xs text-white/90 font-medium">Free - Your Business Pages</p>
+                <p className="text-xs text-white/70">OAuth connection to your existing accounts</p>
+                <p className="text-xs text-muted-foreground mt-1">Optional for: Social Media Add-On</p>
               </div>
             </div>
 
