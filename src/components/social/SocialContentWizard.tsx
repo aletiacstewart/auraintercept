@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { 
   X, 
@@ -30,8 +31,15 @@ import {
   RefreshCw,
   Check,
   Calendar,
+  FileText,
+  Eye,
+  Wand2,
 } from 'lucide-react';
 import { SchedulePostDialog } from '@/components/marketing/SchedulePostDialog';
+import { PostTemplates } from './PostTemplates';
+import { PlatformPreviewMockup } from './PlatformPreviewMockup';
+
+const STEP_LABELS = ['Topic & Platforms', 'AI Generation', 'Review & Publish'];
 
 const MAX_FILE_SIZE_MB = 2;
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -87,6 +95,10 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
   const [activeTab, setActiveTab] = useState<Platform>('instagram');
   const [generationProgress, setGenerationProgress] = useState<string>('');
   
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [isRewordingPlatform, setIsRewordingPlatform] = useState<Platform | null>(null);
+  
   const [state, setState] = useState<WizardState>({
     step: 1,
     topic: '',
@@ -99,6 +111,19 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
       tiktok: { ...initialVariation },
       google_business: { ...initialVariation },
       sms: { ...initialVariation },
+    },
+  });
+
+  // Fetch company name for preview
+  const { data: company } = useQuery({
+    queryKey: ['company-name', companyId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('companies')
+        .select('name')
+        .eq('id', companyId)
+        .single();
+      return data;
     },
   });
 
@@ -347,6 +372,57 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
     }
   };
 
+  // Reword content for a specific platform using AI
+  const rewordPlatformContent = async (platform: Platform) => {
+    const currentContent = state.variations[platform].content;
+    if (!currentContent.trim()) {
+      toast.error('No content to reword');
+      return;
+    }
+
+    setIsRewordingPlatform(platform);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-social-variations', {
+        body: {
+          topic: `Reword this content while keeping the same message and tone: "${currentContent}"`,
+          platforms: [platform],
+          companyId,
+          includeImage: !!state.imageUrl,
+        },
+      });
+
+      if (error) throw error;
+      
+      if (data.variations[platform]) {
+        setState(prev => ({
+          ...prev,
+          variations: {
+            ...prev.variations,
+            [platform]: {
+              content: data.variations[platform].content || currentContent,
+              hashtags: data.variations[platform].hashtags || prev.variations[platform].hashtags,
+            },
+          },
+        }));
+        toast.success(`${PLATFORMS.find(p => p.id === platform)?.label} content reworded`);
+      }
+    } catch {
+      toast.error('Failed to reword content');
+    } finally {
+      setIsRewordingPlatform(null);
+    }
+  };
+
+  // Apply template to topic
+  const handleTemplateSelect = (template: string) => {
+    if (template) {
+      setState(prev => ({ ...prev, topic: template }));
+      toast.success('Template applied! Customize the placeholders then generate.');
+    }
+    setShowTemplates(false);
+  };
+
   // Save all as drafts
   const saveDraftsMutation = useMutation({
     mutationFn: async () => {
@@ -434,9 +510,25 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
   // Render Step 1: Input
   const renderStep1 = () => (
     <div className="space-y-5">
-      {/* Topic Input */}
+      {/* Topic Input with Templates */}
       <div className="space-y-2">
-        <Label className="text-card-foreground/70">What would you like to post about?</Label>
+        <div className="flex items-center justify-between">
+          <Label className="text-card-foreground/70">What would you like to post about?</Label>
+          <Dialog open={showTemplates} onOpenChange={setShowTemplates}>
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-7 text-xs">
+                <FileText className="h-3.5 w-3.5 mr-1" />
+                Templates
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Post Templates</DialogTitle>
+              </DialogHeader>
+              <PostTemplates onSelect={handleTemplateSelect} onClose={() => setShowTemplates(false)} />
+            </DialogContent>
+          </Dialog>
+        </div>
         <Textarea
           value={state.topic}
           onChange={(e) => setState(prev => ({ ...prev, topic: e.target.value }))}
@@ -581,7 +673,7 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
 
   // Render Step 3: Review & Edit
   const renderStep3 = () => {
-    const activePlatform = PLATFORMS.find(p => p.id === activeTab);
+    const activePlatformConfig = PLATFORMS.find(p => p.id === activeTab);
 
     return (
       <div className="space-y-4">
@@ -611,13 +703,29 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
             
             return (
               <TabsContent key={platform} value={platform} className="mt-4 space-y-4">
-                {/* Content Editor */}
+                {/* Content Editor with Reword Button */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className="text-card-foreground/70">Content</Label>
-                    <span className={`text-xs ${getCharCountColor(state.variations[platform].content.length, config.charLimit)}`}>
-                      {state.variations[platform].content.length} / {config.charLimit}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 text-xs"
+                        onClick={() => rewordPlatformContent(platform)}
+                        disabled={isRewordingPlatform === platform}
+                      >
+                        {isRewordingPlatform === platform ? (
+                          <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+                        ) : (
+                          <Wand2 className="h-3.5 w-3.5 mr-1" />
+                        )}
+                        Reword
+                      </Button>
+                      <span className={`text-xs ${getCharCountColor(state.variations[platform].content.length, config.charLimit)}`}>
+                        {state.variations[platform].content.length} / {config.charLimit}
+                      </span>
+                    </div>
                   </div>
                   <Textarea
                     value={state.variations[platform].content}
@@ -681,6 +789,35 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
             <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
             Regenerate
           </Button>
+          <Dialog open={showPreview} onOpenChange={setShowPreview}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="flex-1">
+                <Eye className="h-3.5 w-3.5 mr-1.5" />
+                Preview
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-lg">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  {activePlatformConfig && (
+                    <>
+                      <activePlatformConfig.icon className={`h-5 w-5 ${activePlatformConfig.color}`} />
+                      {activePlatformConfig.label} Preview
+                    </>
+                  )}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="py-4">
+                <PlatformPreviewMockup
+                  platform={activeTab}
+                  content={state.variations[activeTab].content}
+                  hashtags={state.variations[activeTab].hashtags}
+                  imageUrl={state.imageUrl || undefined}
+                  companyName={company?.name}
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Action Buttons */}
@@ -735,21 +872,28 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
               <X className="h-4 w-4" />
             </Button>
           </div>
-          {/* Step Indicator */}
-          <div className="flex items-center gap-2 pt-2">
-            {[1, 2, 3].map((step) => (
-              <div key={step} className="flex items-center">
-                <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
-                    state.step >= step
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground'
-                  }`}
-                >
-                  {state.step > step ? <Check className="h-3 w-3" /> : step}
+          {/* Step Indicator with Labels */}
+          <div className="flex items-center justify-between pt-3">
+            {[1, 2, 3].map((step, idx) => (
+              <div key={step} className="flex items-center flex-1">
+                <div className="flex flex-col items-center gap-1">
+                  <div
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
+                      state.step >= step
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground'
+                    }`}
+                  >
+                    {state.step > step ? <Check className="h-3.5 w-3.5" /> : step}
+                  </div>
+                  <span className={`text-[10px] font-medium text-center ${
+                    state.step >= step ? 'text-primary' : 'text-muted-foreground'
+                  }`}>
+                    {STEP_LABELS[idx]}
+                  </span>
                 </div>
                 {step < 3 && (
-                  <div className={`w-8 h-0.5 mx-1 ${state.step > step ? 'bg-primary' : 'bg-muted'}`} />
+                  <div className={`flex-1 h-0.5 mx-2 ${state.step > step ? 'bg-primary' : 'bg-muted'}`} />
                 )}
               </div>
             ))}
