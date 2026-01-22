@@ -838,17 +838,17 @@ export default function Index() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-white/20 bg-slate-700/80">
-                          <th className="text-left py-2.5 px-3 font-semibold min-w-[180px] text-white text-sm">Feature</th>
-                          <th className="text-center py-2.5 px-2 font-semibold min-w-[120px] text-white text-sm">
-                            <div>Aura Single-Point</div>
+                          <th className="text-left py-2 px-2 font-semibold w-[140px] text-white text-sm">Feature</th>
+                          <th className="text-center py-2 px-1 font-semibold w-[100px] text-white text-sm">
+                            <div>Single-Point</div>
                             <div className="text-xs font-normal text-white/70">$497/mo</div>
                           </th>
-                          <th className="text-center py-2.5 px-2 font-semibold min-w-[120px] bg-sky-600/40 border-x border-sky-400/50 text-sm">
-                            <div className="text-sky-300">Aura Multi-Track</div>
+                          <th className="text-center py-2 px-1 font-semibold w-[100px] bg-sky-600/40 border-x border-sky-400/50 text-sm">
+                            <div className="text-sky-300">Multi-Track</div>
                             <div className="text-xs font-normal text-white/70">$897/mo</div>
                           </th>
-                          <th className="text-center py-2.5 px-2 font-semibold min-w-[120px] text-white text-sm">
-                            <div>Aura Command</div>
+                          <th className="text-center py-2 px-1 font-semibold w-[100px] text-white text-sm">
+                            <div>Command</div>
                             <div className="text-xs font-normal text-white/70">$1,497/mo</div>
                           </th>
                         </tr>
@@ -1208,7 +1208,7 @@ export default function Index() {
                 </div>
                 <p className="text-xs text-white/70 mb-2">Calendar Sync</p>
                 <p className="text-xs text-white/90 font-medium">Free - Unlimited</p>
-                <p className="text-xs text-muted-foreground mt-1">Optional for: Single-Point, Multi-Track, Command</p>
+                <p className="text-xs text-white/60 mt-1">Optional for: Single-Point, Multi-Track, Command</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1219,7 +1219,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">Email Notifications</p>
                 <p className="text-xs text-white/90 font-medium">Free: 3,000 emails/mo</p>
                 <p className="text-xs text-white/70">Then $20/mo for 50k emails ($0.0004/email over)</p>
-                <p className="text-xs text-muted-foreground mt-1">Required for: Single-Point, Multi-Track, Command</p>
+                <p className="text-xs text-white/60 mt-1">Required for: Single-Point, Multi-Track, Command</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1230,7 +1230,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">AI Voice Synthesis</p>
                 <p className="text-xs text-white/90 font-medium">Free: 10,000 chars/mo</p>
                 <p className="text-xs text-white/70">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
-                <p className="text-xs text-muted-foreground mt-1">Required for: Multi-Track, Command (Voice Features)</p>
+                <p className="text-xs text-white/60 mt-1">Required for: Multi-Track, Command (Voice Features)</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1241,7 +1241,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">SMS & Voice Calls</p>
                 <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-xs text-white/70">$1.15/number • $0.0079/SMS • $0.014/min calls</p>
-                <p className="text-xs text-muted-foreground mt-1">Required for: Multi-Track, Command (SMS & Calls)</p>
+                <p className="text-xs text-white/60 mt-1">Required for: Multi-Track, Command (SMS & Calls)</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1252,7 +1252,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">Invoice Payments</p>
                 <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-xs text-white/70">2.9% + $0.30 per successful transaction</p>
-                <p className="text-xs text-muted-foreground mt-1">Required for: Multi-Track, Command (Invoicing)</p>
+                <p className="text-xs text-white/60 mt-1">Required for: Multi-Track, Command (Invoicing)</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1263,7 +1263,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">Facebook, Instagram, LinkedIn, TikTok</p>
                 <p className="text-xs text-white/90 font-medium">Free - Your Business Pages</p>
                 <p className="text-xs text-white/70">OAuth connection to your existing accounts</p>
-                <p className="text-xs text-muted-foreground mt-1">Optional for: Social Media Add-On</p>
+                <p className="text-xs text-white/60 mt-1">Optional for: Social Media Add-On</p>
               </div>
             </div>
 
