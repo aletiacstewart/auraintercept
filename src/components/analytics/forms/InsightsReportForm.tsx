@@ -4,8 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
-import { Lightbulb, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Calendar, BarChart3 } from 'lucide-react';
+import { Lightbulb, TrendingUp, AlertTriangle, CheckCircle, Calendar, BarChart3 } from 'lucide-react';
 import { subDays } from 'date-fns';
 
 interface InsightsReportFormProps {
@@ -16,7 +15,7 @@ interface InsightsReportFormProps {
 
 type InsightView = 'summary' | 'trends' | 'anomalies' | 'recommendations';
 
-export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyId, onCancel, onAnalyze }) => {
+export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyId, onCancel, onAnalyze: _onAnalyze }) => {
   const [insightView, setInsightView] = useState<InsightView>('summary');
   const [dateRange, setDateRange] = useState('7');
 
@@ -292,10 +291,7 @@ export const InsightsReportForm: React.FC<InsightsReportFormProps> = ({ companyI
 
       {/* Actions */}
       <div className="flex gap-2 pt-2">
-        <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Detailed insights coming soon!')}>
-          View Full Report
-        </Button>
-        <Button variant="outline" onClick={onCancel}>
+        <Button variant="outline" onClick={onCancel} className="flex-1">
           Close
         </Button>
       </div>

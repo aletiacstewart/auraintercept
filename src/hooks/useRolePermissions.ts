@@ -127,11 +127,11 @@ export const PLATFORM_DEFAULT_AGENTS: Record<DbJobType, string[]> = {
   booking_agent: ['triage', 'booking', 'followup', 'review'],
   dispatch: ['dispatch', 'route', 'eta', 'triage', 'inventory'],
   customer_service: ['triage', 'followup', 'review', 'booking', 'quoting', 'warranty'],
-  manager: ['triage', 'booking', 'followup', 'review', 'quoting', 'warranty', 'dispatch', 'route', 'eta', 'insights', 'forecast'],
+  manager: ['triage', 'booking', 'followup', 'review', 'quoting', 'warranty', 'dispatch', 'route', 'eta', 'insights', 'forecast', 'social_content', 'social_scheduler', 'social_analytics', 'marketing'],
   billing: ['quoting', 'invoice', 'warranty'],
-  marketing: ['campaign', 'insights'],
+  marketing: ['campaign', 'insights', 'social_content', 'social_scheduler', 'social_analytics'],
   inventory: ['inventory', 'warranty'],
-  analytics: ['insights', 'forecast'],
+  analytics: ['insights', 'forecast', 'social_analytics'],
 };
 
 // All available AI agents

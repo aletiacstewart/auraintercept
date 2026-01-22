@@ -35,25 +35,31 @@ import {
   FileText
 } from 'lucide-react';
 
-// Agent display names
+// Agent display names - standardized with AIAgentsHub
 const AGENT_NAMES: Record<string, string> = {
-  triage: 'Triage Specialist',
-  booking: 'Booking Specialist',
-  dispatch: 'Emergency Dispatch',
-  quoting: 'Quote Specialist',
-  followup: 'Follow-up Specialist',
-  review: 'Review Specialist',
-  route: 'Route Optimizer',
-  eta: 'ETA Specialist',
-  checkin: 'Check-in Specialist',
-  invoice: 'Billing Specialist',
-  inventory: 'Inventory Specialist',
-  warranty: 'Warranty Specialist',
-  campaign: 'Campaign Specialist',
-  insights: 'Insights Analyst',
-  forecast: 'Forecast Analyst',
-  revenue: 'Revenue Analyst',
-  performance: 'Performance Analyst',
+  triage: 'AI Receptionist',
+  booking: 'Scheduling Agent',
+  followup: 'Follow-up Agent',
+  review: 'Review Agent',
+  dispatch: 'Dispatch Agent',
+  route: 'Route Agent',
+  eta: 'ETA Agent',
+  checkin: 'Check-in Agent',
+  admin: 'Admin Agent',
+  quoting: 'Quoting Agent',
+  invoice: 'Invoice Agent',
+  inventory: 'Inventory Agent',
+  warranty: 'Warranty Agent',
+  campaign: 'Campaign Agent',
+  marketing: 'Marketing Agent',
+  social_content: 'Social Content Agent',
+  social_scheduler: 'Social Scheduler Agent',
+  social_analytics: 'Social Analytics Agent',
+  insights: 'Insights Agent',
+  performance: 'Performance Agent',
+  revenue: 'Revenue Agent',
+  forecast: 'Forecast Agent',
+  analytics: 'Analytics Agent',
 };
 
 interface NextSteps {
@@ -402,7 +408,7 @@ export function AgentTestConsole({
   }, [activeAgent, companyId, addMessage, conversationHistory]);
 
   // Internal agents that serve company admins, not customers
-  const INTERNAL_AGENTS = ['insights', 'forecast', 'revenue', 'performance', 'analytics', 'admin', 'inventory', 'marketing'];
+  const INTERNAL_AGENTS = ['insights', 'forecast', 'revenue', 'performance', 'analytics', 'admin', 'inventory', 'marketing', 'social_content', 'social_scheduler', 'social_analytics'];
   
   const sendMessage = async (content: string) => {
     if (!content.trim() || !companyId || isTransitioning) return;
