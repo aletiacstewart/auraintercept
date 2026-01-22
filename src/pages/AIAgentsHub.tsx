@@ -14,7 +14,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AgentWorkflowMonitor } from '@/components/ai/agents/AgentWorkflowMonitor';
 import { BatchAgentActivation } from '@/components/ai/agents/BatchAgentActivation';
-import { JobStatusMonitor } from '@/components/ai/agents/JobStatusMonitor';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
@@ -23,17 +22,14 @@ import {
   Truck, 
   Briefcase, 
   Megaphone, 
-  BarChart3,
   Settings,
   Play,
   ChevronRight,
   Zap,
   Activity,
   Rocket,
-  ClipboardList,
   Lock,
   Sparkles,
-  AlertCircle,
   Info,
   Globe
 } from 'lucide-react';
@@ -79,12 +75,6 @@ const CATEGORY_INFO: Record<string, {
     colorClass: 'text-pink-400',
     cssVar: '--feature-marketing'
   },
-  analytics_reports: { 
-    label: 'Analytics & Reports', 
-    icon: BarChart3, 
-    colorClass: 'text-feature-overview',
-    cssVar: '--feature-overview'
-  },
 };
 
 
@@ -104,9 +94,8 @@ const JOB_TYPE_TO_AGENTS: Record<string, string[]> = {
   customer_service: ['triage', 'followup', 'review', 'booking'],
   manager: ['triage', 'followup', 'review', 'booking'], // Same as customer_service
   billing: ['quoting', 'invoice', 'warranty'],
-  marketing: ['campaign'],
+  marketing: ['campaign', 'lead', 'promo', 'social_content', 'social_scheduler', 'social_analytics'],
   inventory: ['inventory', 'warranty'],
-  analytics: ['insights', 'forecast'],
 };
 
 // Agent name mapping for display
@@ -330,14 +319,16 @@ export default function AIAgentsHub() {
           }
         />
 
-        {/* Subscription Tier Info Banner */}
-        {canManageAgents && (
+        {/* Subscription Tier Info Banner - hide for platform_admin who has full access */}
+        {canManageAgents && userRole !== 'platform_admin' && (
           <Alert className={subscriptionTier === 'free' ? 'border-amber-500/30 bg-amber-500/10' : 'border-primary/30 bg-primary/5'}>
             <Info className="h-4 w-4" />
             <AlertDescription className="flex items-center justify-between">
               <span>
                 {inTrial ? (
                   <>You're in trial mode with full access to all agents.</>
+                ) : subscriptionTier === 'command' ? (
+                  <>Your <strong>Command</strong> plan includes all 19 AI agents.</>
                 ) : (
                   <>
                     Your <strong>{getTierInfo(subscriptionTier).label}</strong> plan includes {availableAgentTypes.length} AI agents.

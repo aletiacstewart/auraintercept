@@ -44,7 +44,8 @@ export interface AgentEvent {
   created_at: string;
 }
 
-// Default agent definitions - 21 total agents across 6 categories
+// Default agent definitions - 19 total agents across 6 categories
+// IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
 const DEFAULT_AGENTS: AgentInfo[] = [
   // Customer Portal (Phases 1-4) - 4 agents
   { type: 'triage', name: 'AI Receptionist', category: 'customer_engagement', phase: 1, is_enabled: false, settings: {} },
@@ -62,17 +63,14 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'invoice', name: 'Invoice Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
   { type: 'inventory', name: 'Inventory Agent', category: 'business_operations', phase: 4, is_enabled: false, settings: {} },
   { type: 'warranty', name: 'Warranty Agent', category: 'business_operations', phase: 5, is_enabled: false, settings: {} },
-  // Marketing & Sales (Phase 1) - 1 unified campaign agent
+  // Marketing & Sales (Phases 1-3) - 3 agents
   { type: 'campaign', name: 'Campaign Agent', category: 'marketing_sales', phase: 1, is_enabled: false, settings: {} },
+  { type: 'lead', name: 'Lead Agent', category: 'marketing_sales', phase: 2, is_enabled: false, settings: {} },
+  { type: 'promo', name: 'Promo Agent', category: 'marketing_sales', phase: 3, is_enabled: false, settings: {} },
   // Social Media (Phases 1-3) - 3 agents
   { type: 'social_content', name: 'Social Content Agent', category: 'social_media', phase: 1, is_enabled: false, settings: {} },
   { type: 'social_scheduler', name: 'Social Scheduler Agent', category: 'social_media', phase: 2, is_enabled: false, settings: {} },
   { type: 'social_analytics', name: 'Social Analytics Agent', category: 'social_media', phase: 3, is_enabled: false, settings: {} },
-  // Analytics & Reports (Phases 1-4) - 4 agents
-  { type: 'insights', name: 'Insights Agent', category: 'analytics_reports', phase: 1, is_enabled: false, settings: {} },
-  { type: 'performance', name: 'Performance Agent', category: 'analytics_reports', phase: 2, is_enabled: false, settings: {} },
-  { type: 'revenue', name: 'Revenue Agent', category: 'analytics_reports', phase: 3, is_enabled: false, settings: {} },
-  { type: 'forecast', name: 'Forecast Agent', category: 'analytics_reports', phase: 4, is_enabled: false, settings: {} },
 ];
 
 function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo[]> {
