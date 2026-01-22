@@ -1018,6 +1018,12 @@ export default function Index() {
                           <td className="p-3 text-center text-xs text-muted-foreground">+$150/mo</td>
                         </tr>
                         <tr className="border-b hover:bg-muted/20">
+                          <td className="p-3">Social Media Integration</td>
+                          <td className="p-3 text-center text-xs text-muted-foreground">+$197/mo</td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs text-muted-foreground">+$197/mo</td>
+                          <td className="p-3 text-center text-xs text-muted-foreground">+$197/mo</td>
+                        </tr>
+                        <tr className="border-b hover:bg-muted/20">
                           <td className="p-3">Embeddable Chat Widget</td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
