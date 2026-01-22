@@ -42,13 +42,18 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
   },
   command: {
     // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
+    // 19 Total Agents: 4 Customer Portal + 4 Field Ops + 5 Business Ops + 3 Marketing + 3 Social Media
     agents: [
+      // Customer Portal (4)
       'triage', 'booking', 'followup', 'review',
+      // Field Operations (4)
       'dispatch', 'route', 'eta', 'checkin',
+      // Business Operations (5)
       'admin', 'quoting', 'invoice', 'inventory', 'warranty',
-      'campaign', 'marketing',
-      'social_content', 'social_scheduler', 'social_analytics',
-      'insights', 'performance', 'revenue', 'forecast', 'analytics'
+      // Marketing & Sales (3)
+      'campaign', 'lead', 'promo',
+      // Social Media (3)
+      'social_content', 'social_scheduler', 'social_analytics'
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports'],
     label: 'Command',

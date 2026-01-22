@@ -110,28 +110,32 @@ const JOB_TYPE_TO_AGENTS: Record<string, string[]> = {
 };
 
 // Agent name mapping for display
+// 19 User-Facing Agents - Keep in sync with subscriptionAgentConfig.ts
 const AGENT_NAMES: Record<string, string> = {
+  // Customer Portal (4)
   triage: 'AI Receptionist',
   booking: 'Scheduling Agent',
   followup: 'Follow-up Agent',
   review: 'Review Agent',
+  // Field Operations (4)
   dispatch: 'Dispatch Agent',
   route: 'Route Agent',
   eta: 'ETA Agent',
   checkin: 'Check-in Agent',
+  // Business Operations (5)
   admin: 'Admin Agent',
   quoting: 'Quoting Agent',
   invoice: 'Invoice Agent',
   inventory: 'Inventory Agent',
   warranty: 'Warranty Agent',
+  // Marketing & Sales (3)
   campaign: 'Campaign Agent',
+  lead: 'Lead Agent',
+  promo: 'Promo Agent',
+  // Social Media (3)
   social_content: 'Social Content Agent',
   social_scheduler: 'Social Scheduler Agent',
   social_analytics: 'Social Analytics Agent',
-  insights: 'Insights Agent',
-  performance: 'Performance Agent',
-  revenue: 'Revenue Agent',
-  forecast: 'Forecast Agent',
 };
 
 export default function AIAgentsHub() {
@@ -309,7 +313,7 @@ export default function AIAgentsHub() {
           icon={Bot}
           title="AI Agents Hub"
           description={canManageAgents 
-            ? '18 specialized AI agents powering your business automation'
+            ? '19 specialized AI agents powering your business automation'
             : `${totalCount} AI agents available based on your job roles`}
           featureColor="config"
           action={

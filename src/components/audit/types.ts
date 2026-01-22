@@ -237,13 +237,13 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     description: 'Complete business automation with analytics, marketing, and white-label',
     keyFeatures: [
       'All Multi-Track features',
-      '+8 Agents (Inventory, Warranty, Campaign, Insights, Performance, Revenue, Forecast)',
-      'All 5 Control Centers',
+      '+9 Agents (Admin, Inventory, Warranty, Campaign, Lead, Promo, Social Content, Social Scheduler, Social Analytics)',
+      'All 6 Control Centers',
       'White-Label Branding',
       'Unlimited employees',
     ],
-    agentCount: 18,
-    consoleCount: 5,
+    agentCount: 19,
+    consoleCount: 6,
   },
 };
 

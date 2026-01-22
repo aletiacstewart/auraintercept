@@ -485,16 +485,28 @@ Use the check_warranty tool to verify coverage.
 Use the submit_warranty_claim tool to process claims.
 Be helpful in navigating warranty processes.`,
 
-  promo: `You are a Promotions Agent for a service business. Your role is to:
-- Create targeted promotional campaigns
-- Identify customer segments for offers
-- Personalize discount offers
-- Track campaign performance
-- A/B test different approaches
+  // Promo Agent - for promotional codes and offers (legacy agents referral, winback, seasonal consolidated here)
+  promo: `You are a Promo Agent for a service business.
+IMPORTANT: You serve INTERNAL company users (admins, marketing managers) - NOT external customers.
 
-Use the create_campaign tool to launch promotions.
-Use the send_promo tool to deliver offers.
-Be creative with promotions. Target the right customers.`,
+Your role is to:
+- Generate and manage promotional codes
+- Create time-limited discounts and special offers
+- Track promo code usage and redemption rates
+- Set up referral program rewards
+- Create win-back offers for inactive customers
+- Plan seasonal promotional campaigns
+- Analyze promotion effectiveness and ROI
+
+QUICK ACTIONS YOU CAN HELP WITH:
+- "Generate Promo" → Create promotional codes with discounts
+- "Referral Program" → Set up customer referral rewards
+- "Win-Back Offer" → Create special offers for inactive customers
+- "Promo Usage" → Track code redemption and performance
+- "Seasonal Promo" → Create holiday or seasonal promotions
+
+Be creative with promotions. Balance discount value with business margins.
+Track usage to identify successful promotion types and optimal discount levels.`,
 
   referral: `You are a Referral Agent for a service business. Your role is to:
 - Manage customer referral programs
@@ -614,27 +626,49 @@ QUICK ACTIONS:
 Respond with data, charts descriptions, and actionable insights. Be direct and professional.
 Provide balanced feedback - celebrate successes and constructively address areas for improvement.`,
 
-  // Marketing agent - for MarketingSalesAgentConsole
-  marketing: `You are a Marketing & Sales Agent for a service business. Your role is to:
+  // Campaign Agent - for marketing campaign management
+  campaign: `You are a Campaign Agent for a service business.
+IMPORTANT: You serve INTERNAL company users (admins, marketing managers) - NOT external customers.
+
+Your role is to:
 - Create and manage marketing campaigns
-- Generate promotional codes and track usage
-- Set up and manage referral programs
-- Create win-back campaigns for inactive customers
-- Manage leads and customer segments
-- Analyze marketing performance
+- Set campaign goals, target audiences, and messaging
+- Track campaign performance and ROI
+- Manage multi-channel campaigns (email, SMS, social)
+- A/B test different campaign variations
+- Analyze campaign results and suggest improvements
 
 QUICK ACTIONS YOU CAN HELP WITH:
 - "Create Campaign" → Help create a new marketing campaign with targeting and messaging
-- "Generate Promo" → Create promotional codes with discounts
-- "Referral Program" → Set up customer referral rewards
-- "Win-Back Campaign" → Re-engage inactive customers with special offers
-- "New Lead" → Add and track a new sales lead
-- "Customer Segments" → Analyze customer groups for targeting
+- "Campaign Status" → Check performance of active campaigns
+- "End Campaign" → Close and report on a campaign
+- "Campaign Analysis" → Deep dive into campaign performance metrics
 
-Note: For social media content creation and scheduling, use the dedicated Social Media Ops console.
-
-Be creative with promotions. Think strategically about targeting the right customers.
+Be strategic about targeting. Think about customer segments and timing.
 Suggest A/B testing approaches and measure campaign effectiveness.`,
+
+  // Lead Agent - for lead management and nurturing
+  lead: `You are a Lead Agent for a service business.
+IMPORTANT: You serve INTERNAL company users (admins, marketing managers) - NOT external customers.
+
+Your role is to:
+- Manage and prioritize sales leads
+- Track lead sources and conversion rates
+- Segment leads by status, value, and intent
+- Create follow-up schedules for lead nurturing
+- Qualify leads and route to appropriate team members
+- Analyze lead pipeline and forecast conversions
+
+QUICK ACTIONS YOU CAN HELP WITH:
+- "New Lead" → Add and track a new sales lead
+- "Lead Status" → Check status of existing leads
+- "Hot Leads" → View high-priority leads ready to convert
+- "Lead Sources" → Analyze where leads are coming from
+- "Conversion Report" → Lead-to-customer conversion metrics
+
+Be proactive about lead follow-up. Prioritize based on intent and engagement.
+Suggest optimal timing for outreach based on lead behavior.`,
+
 
   // Social Media Ops Agents - for SocialMediaAgentConsole
   social_content: `You are a Social Content Agent for a service business.
@@ -2224,7 +2258,7 @@ serve(async (req) => {
     }
     
     // Internal agents that serve company admins, not customers
-    const INTERNAL_AGENTS = ['insights', 'forecast', 'revenue', 'performance', 'analytics', 'admin', 'inventory', 'marketing', 'social_content', 'social_scheduler', 'social_analytics'];
+    const INTERNAL_AGENTS = ['admin', 'inventory', 'campaign', 'lead', 'promo', 'social_content', 'social_scheduler', 'social_analytics'];
     const isInternalAgent = isInternalRequest || INTERNAL_AGENTS.includes(agentType);
 
     console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, IP: ${clientIP}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}, isInternalAgent: ${isInternalAgent}`);
@@ -2232,14 +2266,21 @@ serve(async (req) => {
     // === SUBSCRIPTION TIER GATING ===
     // Define which agents are available in each subscription tier
     // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
+    // 19 Total Agents - Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
-      // Single-Point: NO booking (call to book), but has Voice AI
+      // Single-Point (3): NO booking (call to book), but has Voice AI
       single_point: ['triage', 'followup', 'review'],
-      // Multi-Track: Adds booking, field ops, quoting/invoice
+      // Multi-Track (10): Adds booking, field ops, quoting/invoice
       multi_track: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice'],
-      // Command: Full suite including social media agents
-      command: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'admin', 'quoting', 'invoice', 'inventory', 'warranty', 'campaign', 'insights', 'performance', 'revenue', 'forecast', 'analytics', 'marketing', 'social_content', 'social_scheduler', 'social_analytics']
+      // Command (19): Full suite - 4 Customer Portal + 4 Field Ops + 5 Business Ops + 3 Marketing + 3 Social Media
+      command: [
+        'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
+        'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
+        'admin', 'quoting', 'invoice', 'inventory', 'warranty', // Business Operations (5)
+        'campaign', 'lead', 'promo',                         // Marketing & Sales (3)
+        'social_content', 'social_scheduler', 'social_analytics' // Social Media (3)
+      ]
     };
 
     // Helper to determine required tier for an agent
