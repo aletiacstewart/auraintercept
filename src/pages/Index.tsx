@@ -487,40 +487,41 @@ export default function Index() {
       </section>
 
       {/* Agent Consoles Preview */}
-      <section className="bg-muted/30 py-20">
-        <div className="container max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">Aura Agent Consoles</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">6 Powerful Intercept Control Centers</h2>
-            <p className="text-foreground max-w-2xl mx-auto">
-              Purpose-built consoles give your team full control over AI agent operations with intuitive interfaces.
+      <section className="bg-muted/30 py-12">
+        <div className="container max-w-6xl mx-auto px-6">
+          <div className="text-center mb-8">
+            <Badge variant="secondary" className="mb-3">Aura Agent Consoles</Badge>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">7 Powerful Intercept Control Centers</h2>
+            <p className="text-foreground/80 text-sm max-w-xl mx-auto">
+              Purpose-built consoles give your team full control over AI agent operations.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {agentConsoles.map((console, index) => (
               <div 
                 key={console.name}
-                className="rounded-lg overflow-hidden transition-all duration-300 hover:opacity-90"
+                className="rounded-lg overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group"
                 style={{ backgroundColor: '#2a3d4e' }}
               >
-                <div className={`h-1.5 bg-gradient-to-r ${console.gradient}`} />
-                <div className="p-4">
-                  <div className={`w-10 h-10 rounded-lg ${console.iconBg} flex items-center justify-center mb-3`}>
-                    <console.icon className={`w-5 h-5 ${console.iconColor}`} />
+                <div className={`h-1 bg-gradient-to-r ${console.gradient}`} />
+                <div className="p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className={`w-7 h-7 rounded-md ${console.iconBg} flex items-center justify-center flex-shrink-0`}>
+                      <console.icon className={`w-3.5 h-3.5 ${console.iconColor}`} />
+                    </div>
+                    <h3 className="text-xs font-semibold text-white leading-tight">{console.name.replace(' Console', '')}</h3>
                   </div>
-                  <h3 className="text-sm font-semibold mb-1 text-white">{console.name}</h3>
-                  <p className="text-white/70 text-xs mb-3 leading-relaxed">
+                  <p className="text-white/60 text-[10px] mb-2 leading-snug line-clamp-2">
                     {console.description}
                   </p>
-                  <ul className="space-y-1.5 text-xs">
-                    {console.features.slice(0, 4).map((feature, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3 h-3 text-green-500 flex-shrink-0" />
-                        <span className="text-white/80">{feature}</span>
-                      </li>
+                  <div className="flex flex-wrap gap-1">
+                    {console.features.slice(0, 2).map((feature, idx) => (
+                      <span key={idx} className="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-white/70">
+                        {feature}
+                      </span>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               </div>
             ))}
