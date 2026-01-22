@@ -40,15 +40,6 @@ const PLATFORM_COLORS = {
   linkedin: { bg: 'bg-[hsl(210,90%,45%)]/15', text: 'text-[hsl(210,90%,55%)]', border: 'border-[hsl(210,90%,45%)]/30' },
 };
 
-const PLATFORM_ICONS = {
-  instagram: Instagram,
-  google_business: MapPin,
-  facebook: Facebook,
-  sms: MessageSquare,
-  tiktok: Video,
-  linkedin: Linkedin,
-};
-
 export function SocialFeedQueue({ companyId, initialFilter = 'pending' }: SocialFeedQueueProps) {
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState<FilterStatus>(initialFilter);
@@ -231,7 +222,7 @@ export function SocialFeedQueue({ companyId, initialFilter = 'pending' }: Social
             <div>
               <CardTitle className="text-lg text-card-foreground">Social Feed Queue</CardTitle>
               <p className="text-sm text-card-foreground/60">
-                AI-generated content from job completions
+                AI-generated content for social media
               </p>
             </div>
           </div>
@@ -294,13 +285,20 @@ export function SocialFeedQueue({ companyId, initialFilter = 'pending' }: Social
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-card-foreground/50" />
             <div className="flex gap-1 p-1 rounded-lg bg-muted/30 border border-card-foreground/10">
-              {(['all', 'instagram', 'google_business', 'facebook', 'linkedin', 'tiktok', 'sms'] as const).map((platform) => {
-                const Icon = platform === 'all' ? null : PLATFORM_ICONS[platform];
-                const colors = platform === 'all' ? null : PLATFORM_COLORS[platform];
-                const isActive = platformFilter === platform;
+              {([
+                { id: 'all', label: 'All', icon: null },
+                { id: 'instagram', label: 'IG', icon: Instagram },
+                { id: 'google_business', label: 'GMB', icon: MapPin },
+                { id: 'facebook', label: 'FB', icon: Facebook },
+                { id: 'linkedin', label: 'LI', icon: Linkedin },
+                { id: 'tiktok', label: 'TT', icon: Video },
+                { id: 'sms', label: 'SMS', icon: MessageSquare },
+              ] as const).map((platform) => {
+                const colors = platform.id === 'all' ? null : PLATFORM_COLORS[platform.id];
+                const isActive = platformFilter === platform.id;
                 return (
                   <Button
-                    key={platform}
+                    key={platform.id}
                     variant="ghost"
                     size="sm"
                     className={`px-2.5 rounded-md transition-all ${
@@ -310,9 +308,10 @@ export function SocialFeedQueue({ companyId, initialFilter = 'pending' }: Social
                           : 'bg-card-foreground/15 text-card-foreground border border-card-foreground/20'
                         : 'text-card-foreground/50 hover:text-card-foreground hover:bg-card-foreground/10'
                     }`}
-                    onClick={() => setPlatformFilter(platform)}
+                    onClick={() => setPlatformFilter(platform.id)}
                   >
-                    {Icon ? <Icon className="h-4 w-4" /> : 'All'}
+                    {platform.icon && <platform.icon className="h-4 w-4 mr-1" />}
+                    <span className="text-xs">{platform.label}</span>
                   </Button>
                 );
               })}
