@@ -680,10 +680,6 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">1-Page Smart Website Included</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Unlimited Appointments</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -742,10 +738,6 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">1-Page Smart Website Included</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Unlimited Appointments</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -800,10 +792,6 @@ export default function Index() {
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">All 5 Control Centers</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">1-Page Smart Website Included</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
@@ -1117,7 +1105,7 @@ export default function Index() {
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
               <div className="rounded-lg p-4 border-2 border-pink-500/30 relative overflow-hidden" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 to-rose-500" />
                 <div className="flex items-center gap-2 mb-2">
@@ -1143,6 +1131,35 @@ export default function Index() {
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 className="w-3 h-3 text-pink-400" />
                     Analytics dashboard
+                  </li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg p-4 border-2 border-teal-500/30 relative overflow-hidden" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 to-cyan-500" />
+                <div className="flex items-center gap-2 mb-2">
+                  <Globe className="w-4 h-4 text-teal-400" />
+                  <span className="font-semibold text-sm text-white">1-Page Smart Website</span>
+                </div>
+                <p className="text-xs text-white/70 mb-2">AI-powered website with chat & voice</p>
+                <p className="text-2xl font-bold text-white mb-1">$150<span className="text-sm font-normal text-white/70">/month</span></p>
+                <p className="text-xs text-white/70 mb-3">Add to any plan</p>
+                <ul className="space-y-1 text-xs text-white/80">
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3 h-3 text-teal-400" />
+                    Branded 1-page website
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3 h-3 text-teal-400" />
+                    AI Chat & Voice integration
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3 h-3 text-teal-400" />
+                    Content editor
+                  </li>
+                  <li className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3 h-3 text-teal-400" />
+                    Visitor analytics
                   </li>
                 </ul>
               </div>
