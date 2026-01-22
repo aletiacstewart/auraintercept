@@ -164,7 +164,7 @@ export function SocialContentCalendar({ companyId, onClose }: SocialContentCalen
             variant="ghost" 
             size="sm" 
             onClick={() => setCurrentDate(subMonths(currentDate, 1))}
-            className="text-card-foreground/70 hover:text-card-foreground"
+            className="text-card-foreground hover:text-card-foreground hover:bg-card-foreground/10"
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
             Prev
@@ -176,7 +176,7 @@ export function SocialContentCalendar({ companyId, onClose }: SocialContentCalen
             variant="ghost" 
             size="sm" 
             onClick={() => setCurrentDate(addMonths(currentDate, 1))}
-            className="text-card-foreground/70 hover:text-card-foreground"
+            className="text-card-foreground hover:text-card-foreground hover:bg-card-foreground/10"
           >
             Next
             <ChevronRight className="h-4 w-4 ml-1" />

@@ -411,7 +411,7 @@ function AgendaJobCard({ job }: { job: JobAssignment }) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 text-muted-foreground hover:bg-muted"
+                  className="h-8 w-8 p-0 text-foreground hover:bg-muted hover:text-foreground"
                   onClick={() => window.open(`tel:${job.employee?.phone_number}`)}
                 >
                   <Users className="h-4 w-4" />
