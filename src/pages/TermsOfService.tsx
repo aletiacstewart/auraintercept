@@ -33,11 +33,11 @@ export default function TermsOfService() {
             <h2 className="text-2xl font-semibold mb-4">2. Description of Service</h2>
             <p>
               Aura Intercept is a multi-tenant, AI-powered customer service and appointment management platform designed 
-              for service-based businesses in the trades industry. The platform provides 14 specialized AI agents across 
-              three operational consoles (Business Management, Customer Portal, and Field Operations) that automate 
-              appointment scheduling, customer communications, field technician dispatch, invoicing, and business analytics. 
-              Services are delivered through multiple communication channels including AI voice calls, SMS, email, and an 
-              embeddable chat widget.
+              for service-based businesses in the trades industry. The platform provides 23 specialized AI agents across 
+              six Control Centers (Customer Portal, Field Operations, Business Management, Marketing & Sales, Social Media, 
+              and Analytics & Reports) that automate appointment scheduling, customer communications, field technician 
+              dispatch, invoicing, marketing campaigns, social media content, and business analytics. Services are delivered 
+              through multiple communication channels including AI voice calls, SMS, email, and an embeddable chat widget.
             </p>
             <p className="mt-4">
               The Service is currently hosted via the Lovable.dev platform. We reserve the right to withdraw or amend 

@@ -121,7 +121,7 @@ const guideCategories = [
         steps: [
           'Single-Point ($497/mo): 3 AI Agents (Receptionist, Follow-up, Review) + Call to Book',
           'Multi-Track ($897/mo): 10 AI Agents + 2 Control Centers + Online Booking',
-          'Command ($1,497/mo): All 19 AI Agents + 5 Control Centers + White-Label Branding',
+          'Command ($1,497/mo): All 23 AI Agents + 6 Control Centers + White-Label Branding',
           'All tiers include AI Voice Chat powered by ElevenLabs',
           'Employee limits: 5 (Single-Point), 10 (Multi-Track), Unlimited (Command)',
           'Premium Add-Ons: Social Media ($150/mo), Smart Website ($150/mo)',
@@ -168,7 +168,7 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to AI Agents Hub from the sidebar',
-          'View all 19 AI agents organized by 5 Control Centers',
+          'View all 23 AI agents organized by 6 Control Centers',
           'Agents locked by tier show "Locked" badge with upgrade path',
           'Click any agent card to view settings and dependencies',
           'Enable/disable agents with the toggle switch',

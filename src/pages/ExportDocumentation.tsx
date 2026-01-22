@@ -39,16 +39,16 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <Bot className="h-5 w-5 text-accent" />
                 AI Agent & Console Guide
               </CardTitle>
-              <CardDescription>
-                Complete guide to all 19 AI agents, 5 consoles, communication channels & integrations
+            <CardDescription>
+                Complete guide to all 23 AI agents, 6 Control Centers, communication channels & integrations
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2 text-sm text-card-foreground/70">
                 <p className="font-medium text-card-foreground">Document includes:</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li>5 Console Overviews</li>
-                  <li>19 AI Agent Descriptions</li>
+                  <li>6 Console Overviews</li>
+                  <li>23 AI Agent Descriptions</li>
                   <li>Communication Channels</li>
                   <li>Agent Dependencies & Requirements</li>
                   <li>3rd Party Integration Guide</li>
@@ -107,8 +107,8 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   <li>Executive Summary</li>
                   <li>Development Timeline (6 phases)</li>
                   <li>Project Complexity Score</li>
-                  <li>Complete AI Agents Catalog</li>
-                  <li>5 Control Center Descriptions</li>
+                  <li>Complete AI Agents Catalog (23 agents)</li>
+                  <li>6 Control Center Descriptions</li>
                   <li>Technical Architecture</li>
                 </ul>
               </div>

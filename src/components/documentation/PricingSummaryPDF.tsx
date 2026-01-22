@@ -360,8 +360,8 @@ const SUBSCRIPTION_TIERS = {
     monthlyPrice: 1497,
     annualPrice: 14970,
     annualSavings: 2994,
-    agents: 'All 19 AI Agents',
-    consoles: 'All 5 Control Centers',
+    agents: 'All 23 AI Agents',
+    consoles: 'All 6 Control Centers',
     appointments: 'Unlimited',
     reminders: 'Email + SMS + Voice',
     employees: 'Unlimited',
@@ -413,11 +413,11 @@ const PricingSummaryPDF = () => (
           <Text style={styles.coverStatLabel}>Pricing Tiers</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>19</Text>
+          <Text style={styles.coverStatNumber}>23</Text>
           <Text style={styles.coverStatLabel}>AI Agents</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>5</Text>
+          <Text style={styles.coverStatNumber}>6</Text>
           <Text style={styles.coverStatLabel}>Control Centers</Text>
         </View>
         <View style={styles.coverStat}>

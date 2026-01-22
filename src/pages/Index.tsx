@@ -345,7 +345,7 @@ const howItWorks = [{
 }, {
   step: 2,
   title: 'Activate AI Agents',
-  description: 'Enable 18 specialized AI agents and configure your knowledge base for your business.',
+  description: 'Enable 23 specialized AI agents and configure your knowledge base for your business.',
   icon: Bot
 }, {
   step: 3,
@@ -359,14 +359,14 @@ const howItWorks = [{
   icon: Zap
 }];
 const heroStats = [{
-  value: '18',
+  value: '23',
   label: 'AI Agents'
 }, {
   value: '24/7',
   label: 'Automation'
 }, {
-  value: '5',
-  label: 'Agent Consoles'
+  value: '6',
+  label: 'Control Centers'
 }, {
   value: '40%',
   label: 'Less No-Shows'

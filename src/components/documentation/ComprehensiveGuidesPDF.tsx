@@ -257,7 +257,7 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to AI Agents Hub from the sidebar',
-          'View all 19 specialized agents organized by 5 consoles',
+          'View all 23 specialized agents organized by 6 Control Centers',
           'Agents locked by tier show "Locked" badge',
           'Click any agent card to view settings and dependencies',
           'Enable/disable agents with the toggle switch'
