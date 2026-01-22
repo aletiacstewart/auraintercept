@@ -1,0 +1,270 @@
+import { Check, X } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+
+// Feature definitions with tooltips
+const featureDescriptions: Record<string, string> = {
+  // AI Agents
+  'AI Receptionist (Triage)': 'Your 24/7 virtual receptionist that answers calls, qualifies leads, and routes inquiries to the right team member or agent.',
+  'Follow-up Agent': 'Automatically follows up with leads and customers via email and SMS to ensure no opportunity is missed.',
+  'Review Agent': 'Requests reviews from satisfied customers and monitors your online reputation across platforms.',
+  'Scheduling Agent (Booking)': 'Handles appointment scheduling, rescheduling, and cancellations with smart calendar management.',
+  'Dispatch Agent': 'Intelligently assigns technicians to jobs based on skills, location, and availability.',
+  'Route Agent': 'Optimizes daily routes for field technicians to minimize drive time and maximize productivity.',
+  'ETA Agent': 'Provides real-time arrival estimates to customers and updates them automatically on delays.',
+  'Check-in Agent': 'Manages technician check-ins and check-outs, tracking job progress in real-time.',
+  'Quote Agent': 'Generates professional quotes instantly based on job requirements and pricing rules.',
+  'Invoice Agent': 'Creates and sends invoices automatically, with payment tracking and reminders.',
+  'Social Media Agent': 'Creates, schedules, and publishes social media content to grow your online presence.',
+  'All 19 AI Agents': 'Full access to all 19 specialized AI agents for complete business automation.',
+  
+  // Control Centers
+  'Customer Portal Console': 'Self-service portal where customers can book appointments, view history, and communicate with your team.',
+  'Field Operations Console': 'Real-time dashboard for dispatchers to manage technicians, routes, and job assignments.',
+  'Business Management Console': 'Central hub for quotes, invoices, inventory, and customer relationship management.',
+  'Marketing & Sales Console': 'Tools for campaigns, lead management, and sales pipeline tracking.',
+  'Analytics & Reports Console': 'Comprehensive dashboards with KPIs, performance metrics, and business insights.',
+  'Social Media Console': 'Unified dashboard to manage all your social media accounts and content calendar.',
+  
+  // Communication
+  'Email Reminders': 'Automated email reminders for appointments, follow-ups, and important updates.',
+  'SMS Reminders': 'Text message reminders to reduce no-shows and keep customers informed.',
+  'AI Voice (Chat & Outbound Calls)': 'Natural AI-powered voice conversations for customer calls and chat support.',
+  
+  // Platform features
+  'Calendar Sync (Google/iCal)': 'Sync appointments with Google Calendar or any iCal-compatible calendar.',
+  'CRM Integration': 'Connect with popular CRM systems to keep customer data synchronized.',
+  'API Access': 'Full API access for custom integrations and automation workflows.',
+};
+
+type FeatureValue = 'check' | 'x' | string;
+
+interface FeatureRow {
+  name: string;
+  singlePoint: FeatureValue;
+  multiTrack: FeatureValue;
+  command: FeatureValue;
+}
+
+interface FeatureSection {
+  title: string;
+  features: FeatureRow[];
+}
+
+const sections: FeatureSection[] = [
+  {
+    title: 'AI Agents (3 / 10 / 19)',
+    features: [
+      { name: 'AI Receptionist (Triage)', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Follow-up Agent', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Review Agent', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Scheduling Agent (Booking)', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Dispatch Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Route Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'ETA Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Check-in Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Quote Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Invoice Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Social Media Agent', singlePoint: 'Add-on', multiTrack: 'Add-on', command: 'Add-on' },
+      { name: 'All 19 AI Agents', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+    ],
+  },
+  {
+    title: 'Control Centers (Consoles)',
+    features: [
+      { name: 'Customer Portal Console', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Field Operations Console', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Business Management Console', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Marketing & Sales Console', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Analytics & Reports Console', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Social Media Console', singlePoint: 'Add-on', multiTrack: 'Add-on', command: 'Add-on' },
+    ],
+  },
+  {
+    title: 'Communication Channels',
+    features: [
+      { name: 'Email Reminders', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'SMS Reminders', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'AI Voice (Chat & Outbound Calls)', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+    ],
+  },
+  {
+    title: 'Platform Limits & Features',
+    features: [
+      { name: 'Appointments', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
+      { name: 'Employee Accounts', singlePoint: '5 included', multiTrack: '10 included', command: 'Unlimited' },
+      { name: 'Additional Employees', singlePoint: '$25/mo per 10', multiTrack: '$25/mo per 10', command: 'Included' },
+      { name: 'White-Label Branding', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Smart Website', singlePoint: '+$150/mo', multiTrack: '+$150/mo', command: '+$150/mo' },
+      { name: 'Social Media Integration', singlePoint: '+$197/mo', multiTrack: '+$197/mo', command: '+$197/mo' },
+      { name: 'Embeddable Chat Widget', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+    ],
+  },
+  {
+    title: 'Integration & Support',
+    features: [
+      { name: 'Calendar Sync (Google/iCal)', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'CRM Integration', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'API Access', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Priority Support', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Dedicated Account Manager', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+    ],
+  },
+  {
+    title: 'Required 3rd Party Integrations',
+    features: [
+      { name: 'Resend (Email)', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+      { name: 'Stripe (Payments)', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+      { name: 'Twilio (SMS & Voice)', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+      { name: 'ElevenLabs (AI Voice)', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+      { name: 'Google Calendar (Sync)', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
+      { name: 'Social Media Accounts', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
+    ],
+  },
+  {
+    title: 'Pricing',
+    features: [
+      { name: 'Monthly Price', singlePoint: '$497', multiTrack: '$897', command: '$1,497' },
+      { name: 'Annual Price', singlePoint: '$4,970/year', multiTrack: '$8,970/year', command: '$14,970/year' },
+      { name: 'Annual Savings', singlePoint: 'Save $994', multiTrack: 'Save $1,794', command: 'Save $2,994' },
+    ],
+  },
+];
+
+const renderValue = (value: FeatureValue, isHighlighted: boolean, featureName: string) => {
+  const baseClass = isHighlighted 
+    ? 'py-2 px-3 text-center bg-sky-600/20 border-x border-sky-400/30' 
+    : 'py-2 px-3 text-center';
+
+  if (value === 'check') {
+    return (
+      <td className={baseClass}>
+        <Check className="w-4 h-4 text-emerald-400 mx-auto" />
+      </td>
+    );
+  }
+  if (value === 'x') {
+    return (
+      <td className={baseClass}>
+        <X className="w-4 h-4 text-slate-400 mx-auto" />
+      </td>
+    );
+  }
+  
+  // Special styling for different value types
+  const isPricing = featureName === 'Monthly Price';
+  const isSavings = value.includes('Save');
+  const isAddon = value.includes('Add-on') || value.startsWith('+$');
+  const isOptional = value === 'Optional';
+  
+  let textClass = 'text-white text-xs';
+  if (isPricing) {
+    textClass = isHighlighted ? 'text-sky-300 font-semibold' : 'text-white font-semibold';
+  } else if (isSavings) {
+    textClass = 'text-emerald-400 text-xs';
+  } else if (isAddon) {
+    textClass = 'text-amber-400 text-xs';
+  } else if (isOptional) {
+    textClass = 'text-white/70 text-xs';
+  }
+  
+  return (
+    <td className={`${baseClass} ${textClass}`}>
+      {value}
+    </td>
+  );
+};
+
+const FeatureNameCell = ({ name, rowIndex }: { name: string; rowIndex: number }) => {
+  const description = featureDescriptions[name];
+  const isEven = rowIndex % 2 === 0;
+  const baseClass = `py-2 px-4 text-white ${isEven ? 'bg-slate-700/30' : ''}`;
+  
+  if (description) {
+    return (
+      <td className={baseClass}>
+        <TooltipTrigger asChild>
+          <span className="cursor-help border-b border-dotted border-white/40 hover:border-sky-400 hover:text-sky-300 transition-colors">
+            {name}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent 
+          side="right" 
+          className="max-w-xs bg-slate-800 text-white border-slate-600 z-50"
+        >
+          <p className="text-sm">{description}</p>
+        </TooltipContent>
+      </td>
+    );
+  }
+  
+  return <td className={baseClass}>{name}</td>;
+};
+
+export const PricingComparisonTable = () => {
+  let globalRowIndex = 0;
+  
+  return (
+    <TooltipProvider delayDuration={200}>
+      <table className="w-full text-sm table-fixed">
+        <colgroup>
+          <col className="w-[45%]" />
+          <col className="w-[18%]" />
+          <col className="w-[19%]" />
+          <col className="w-[18%]" />
+        </colgroup>
+        <thead>
+          <tr className="border-b border-white/20 bg-slate-700/80">
+            <th className="text-left py-2.5 px-4 font-semibold text-white text-sm">Feature</th>
+            <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
+              <div>Single-Point</div>
+              <div className="text-xs font-normal text-white/70">$497/mo</div>
+            </th>
+            <th className="text-center py-2.5 px-3 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-sm">
+              <div className="text-sky-300">Multi-Track</div>
+              <div className="text-xs font-normal text-white/70">$897/mo</div>
+            </th>
+            <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
+              <div>Command</div>
+              <div className="text-xs font-normal text-white/70">$1,497/mo</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody className="text-sm">
+          {sections.map((section) => (
+            <>
+              {/* Section Header */}
+              <tr key={`section-${section.title}`} className="bg-slate-700/60">
+                <td colSpan={4} className="py-1.5 px-4 font-semibold text-sky-300">
+                  {section.title}
+                </td>
+              </tr>
+              
+              {/* Section Rows */}
+              {section.features.map((feature) => {
+                const rowIndex = globalRowIndex++;
+                const isEven = rowIndex % 2 === 0;
+                const rowBg = isEven ? 'bg-slate-700/20' : '';
+                
+                return (
+                  <Tooltip key={feature.name}>
+                    <tr className={`border-b border-white/10 hover:bg-slate-600/30 ${rowBg}`}>
+                      <FeatureNameCell name={feature.name} rowIndex={rowIndex} />
+                      {renderValue(feature.singlePoint, false, feature.name)}
+                      {renderValue(feature.multiTrack, true, feature.name)}
+                      {renderValue(feature.command, false, feature.name)}
+                    </tr>
+                  </Tooltip>
+                );
+              })}
+            </>
+          ))}
+        </tbody>
+      </table>
+    </TooltipProvider>
+  );
+};
