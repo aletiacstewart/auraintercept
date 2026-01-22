@@ -349,12 +349,12 @@ export function SocialMediaSetupGuide({ platform }: SocialMediaSetupGuideProps) 
         </Accordion>
 
         <div className="mt-4 flex gap-2">
-          <Button variant="outline" size="sm" asChild>
+          <Button variant="outline-card" size="sm" asChild>
             <a href={config.consoleUrl} target="_blank" rel="noopener noreferrer" className="gap-1">
               Developer Console <ExternalLink className="w-3 h-3" />
             </a>
           </Button>
-          <Button variant="ghost" size="sm" asChild>
+          <Button variant="outline-card" size="sm" asChild>
             <a href={config.docsUrl} target="_blank" rel="noopener noreferrer" className="gap-1">
               API Docs <ExternalLink className="w-3 h-3" />
             </a>
