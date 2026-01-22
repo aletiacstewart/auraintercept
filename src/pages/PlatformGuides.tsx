@@ -826,7 +826,7 @@ const guideCategories = [
         tips: ['CSV for data analysis', 'PDF for stakeholder presentations']
       },
       {
-        title: 'Setting Up Digests',
+        title: 'Setting up Reports',
         duration: '8 min',
         steps: [
           'Navigate to Settings → Digests',
