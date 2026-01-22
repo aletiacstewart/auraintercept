@@ -108,9 +108,6 @@ serve(async (req) => {
         elevenlabs_voice_similarity,
         elevenlabs_voice_style,
         elevenlabs_voice_speed,
-        google_tts_api_key,
-        google_tts_voice,
-        google_tts_model,
         use_platform_tts,
         tts_monthly_limit
       `)
@@ -125,128 +122,75 @@ serve(async (req) => {
       );
     }
 
-    const provider = integration?.tts_provider || "elevenlabs";
-    console.log(`TTS Router: Using provider ${provider} for company ${company_id}`);
+    console.log(`TTS Router: Using ElevenLabs for company ${company_id}`);
 
-    let audioResponse: Response;
     let usingPlatformKey = false;
-
-    switch (provider) {
-
-      case "google":
-        if (!integration?.google_tts_api_key) {
+    let apiKey = integration?.elevenlabs_api_key;
+    
+    // Check if company has their own key
+    if (!apiKey) {
+      // Check if platform TTS is enabled
+      if (integration?.use_platform_tts) {
+        const platformKey = Deno.env.get('PLATFORM_ELEVENLABS_API_KEY');
+        if (!platformKey) {
           return new Response(
-            JSON.stringify({ error: "Google TTS not configured" }),
+            JSON.stringify({ error: "Platform TTS not available" }),
             { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
-        const googleVoice = integration.google_tts_voice || "en-US-Neural2-D";
-        const languageCode = googleVoice.split("-").slice(0, 2).join("-") || "en-US";
+
+        // Check usage limit
+        const monthlyLimit = integration.tts_monthly_limit || 10000;
+        const usageCheck = await checkUsageLimit(supabase, company_id, monthlyLimit);
         
-        const googleResponse = await fetch(
-          `https://texttospeech.googleapis.com/v1/text:synthesize?key=${integration.google_tts_api_key}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              input: { text },
-              voice: { languageCode, name: googleVoice },
-              audioConfig: { audioEncoding: "MP3", speakingRate: 1.0, pitch: 0 },
-            }),
-          }
-        );
-        
-        if (!googleResponse.ok) {
-          const errorText = await googleResponse.text();
-          console.error("Google TTS error:", errorText);
+        if (!usageCheck.allowed) {
+          console.log(`Company ${company_id} exceeded TTS limit: ${usageCheck.used}/${monthlyLimit}`);
           return new Response(
-            JSON.stringify({ error: "Google TTS failed" }),
-            { status: googleResponse.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            JSON.stringify({ 
+              error: `Monthly TTS limit exceeded. Used ${usageCheck.used} of ${monthlyLimit} characters. Limit resets next month.` 
+            }),
+            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
-        
-        const googleData = await googleResponse.json();
-        const binaryString = atob(googleData.audioContent);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-        
-        return new Response(bytes, {
-          headers: { ...corsHeaders, "Content-Type": "audio/mpeg" },
-        });
 
-      case "elevenlabs":
-      default: {
-        let apiKey = integration?.elevenlabs_api_key;
-        
-        // Check if company has their own key
-        if (!apiKey) {
-          // Check if platform TTS is enabled
-          if (integration?.use_platform_tts) {
-            const platformKey = Deno.env.get('PLATFORM_ELEVENLABS_API_KEY');
-            if (!platformKey) {
-              return new Response(
-                JSON.stringify({ error: "Platform TTS not available" }),
-                { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-              );
-            }
-
-            // Check usage limit
-            const monthlyLimit = integration.tts_monthly_limit || 10000;
-            const usageCheck = await checkUsageLimit(supabase, company_id, monthlyLimit);
-            
-            if (!usageCheck.allowed) {
-              console.log(`Company ${company_id} exceeded TTS limit: ${usageCheck.used}/${monthlyLimit}`);
-              return new Response(
-                JSON.stringify({ 
-                  error: `Monthly TTS limit exceeded. Used ${usageCheck.used} of ${monthlyLimit} characters. Limit resets next month.` 
-                }),
-                { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-              );
-            }
-
-            console.log(`Using platform ElevenLabs API key. Usage: ${usageCheck.used}/${monthlyLimit}`);
-            apiKey = platformKey;
-            usingPlatformKey = true;
-          } else {
-            return new Response(
-              JSON.stringify({ error: "ElevenLabs TTS not configured. Please add your own API key or contact admin to enable platform TTS." }),
-              { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
-          }
-        }
-
-        const voiceId = integration?.elevenlabs_voice_id || "JBFqnCBsd6RMkjVDRZzb";
-        audioResponse = await fetch(
-          `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
-          {
-            method: "POST",
-            headers: {
-              "xi-api-key": apiKey,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              text,
-              model_id: "eleven_multilingual_v2",
-              voice_settings: {
-                stability: integration?.elevenlabs_voice_stability || 0.5,
-                similarity_boost: integration?.elevenlabs_voice_similarity || 0.75,
-                style: integration?.elevenlabs_voice_style || 0.5,
-                use_speaker_boost: true,
-              },
-            }),
-          }
+        console.log(`Using platform ElevenLabs API key. Usage: ${usageCheck.used}/${monthlyLimit}`);
+        apiKey = platformKey;
+        usingPlatformKey = true;
+      } else {
+        return new Response(
+          JSON.stringify({ error: "ElevenLabs TTS not configured. Please add your own API key or contact admin to enable platform TTS." }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
-        break;
       }
     }
 
+    const voiceId = integration?.elevenlabs_voice_id || "JBFqnCBsd6RMkjVDRZzb";
+    const audioResponse = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
+      {
+        method: "POST",
+        headers: {
+          "xi-api-key": apiKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text,
+          model_id: "eleven_multilingual_v2",
+          voice_settings: {
+            stability: integration?.elevenlabs_voice_stability || 0.5,
+            similarity_boost: integration?.elevenlabs_voice_similarity || 0.75,
+            style: integration?.elevenlabs_voice_style || 0.5,
+            use_speaker_boost: true,
+          },
+        }),
+      }
+    );
+
     if (!audioResponse.ok) {
       const errorText = await audioResponse.text();
-      console.error(`${provider} TTS error:`, audioResponse.status, errorText);
+      console.error("ElevenLabs TTS error:", audioResponse.status, errorText);
       return new Response(
-        JSON.stringify({ error: `${provider} TTS failed: ${audioResponse.status}` }),
+        JSON.stringify({ error: `ElevenLabs TTS failed: ${audioResponse.status}` }),
         { status: audioResponse.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
