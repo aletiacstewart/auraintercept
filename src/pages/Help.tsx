@@ -28,7 +28,10 @@ import {
   Keyboard,
   AlertCircle,
   Lock,
-  Sparkles
+  Sparkles,
+  Share2,
+  Calendar,
+  BarChart3
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -176,6 +179,23 @@ export default function Help() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
+                  {/* Quick Action Tabs */}
+                  {currentConsole.tabs && currentConsole.tabs.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                        <Keyboard className="w-5 h-5 text-amber-500" />
+                        Quick Action Tabs
+                      </h3>
+                      <div className="flex flex-wrap gap-2 ml-7">
+                        {currentConsole.tabs.map((tab, index) => (
+                          <Badge key={index} variant="outline" className="text-xs px-2 py-1">
+                            {tab}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Agents */}
                   <div>
                     <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
@@ -621,98 +641,7 @@ export default function Help() {
                 </CardHeader>
                 <CardContent>
                   <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="chat-widget">
-                      <AccordionTrigger>
-                        <div className="flex items-center gap-2">
-                          <MessageCircle className="w-4 h-4" />
-                          How do my customers access the chat widget?
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="text-card-foreground/70 space-y-2">
-                          <p>There are two ways customers can interact with your AI agent:</p>
-                          <ul className="list-disc ml-5 space-y-1">
-                            <li><strong className="text-card-foreground">Embeddable Widget:</strong> Go to <strong className="text-card-foreground">Chat Widget</strong> in your dashboard to get the embed code. Add this to your website and customers can chat directly on your site.</li>
-                            <li><strong className="text-card-foreground">Public Chat Link:</strong> Share your public chat URL - customers can access this directly without visiting your website.</li>
-                          </ul>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="reset-password">
-                      <AccordionTrigger>
-                        <div className="flex items-center gap-2">
-                          <Key className="w-4 h-4" />
-                          How do I reset my password?
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <p className="text-card-foreground/70">
-                          On the login page, click "Forgot Password" below the sign-in button. Enter your email address and you'll receive a password reset link.
-                        </p>
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="ai-agents">
-                      <AccordionTrigger>
-                        <div className="flex items-center gap-2">
-                          <Bot className="w-4 h-4" />
-                          What AI agents are included in my plan?
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="text-card-foreground/70 space-y-3">
-                          <p>AI agents are included based on your subscription tier:</p>
-                          <ul className="space-y-2 text-sm">
-                            <li><strong className="text-card-foreground">Single-Point:</strong> AI Receptionist, Follow-up Agent, Review Agent + AI Voice</li>
-                            <li><strong className="text-card-foreground">Multi-Track:</strong> Everything in Single-Point + Scheduling, Dispatch, Route, ETA, Check-in, Quoting, Invoice</li>
-                            <li><strong className="text-card-foreground">Command:</strong> Full suite of 18+ agents including Marketing, Social Media, and Analytics</li>
-                          </ul>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="voice-calling">
-                      <AccordionTrigger>
-                        <div className="flex items-center gap-2">
-                          <Mic className="w-4 h-4" />
-                          How does AI Voice calling work?
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="text-card-foreground/70 space-y-2">
-                          <p>AI Voice is included in all paid tiers and provides:</p>
-                          <ul className="list-disc ml-5 space-y-1">
-                            <li><strong className="text-card-foreground">Voice Chat:</strong> Customers can speak with your AI agent via the chat widget</li>
-                            <li><strong className="text-card-foreground">Outbound Calls:</strong> AI can make reminder calls, follow-ups, and review requests</li>
-                            <li><strong className="text-card-foreground">Integration:</strong> Powered by ElevenLabs for natural-sounding voices</li>
-                          </ul>
-                          <p className="mt-2">Configure your AI voice settings in <strong className="text-card-foreground">Settings → Integrations</strong>.</p>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem value="knowledge-base">
-                      <AccordionTrigger>
-                        <div className="flex items-center gap-2">
-                          <Globe className="w-4 h-4" />
-                          How do I train my AI agents?
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="text-card-foreground/70 space-y-2">
-                          <p>Your AI agents learn from your Knowledge Base:</p>
-                          <ul className="list-disc ml-5 space-y-1">
-                            <li><strong className="text-card-foreground">Services:</strong> Add your service catalog with descriptions and pricing</li>
-                            <li><strong className="text-card-foreground">FAQs:</strong> Add common questions and answers</li>
-                            <li><strong className="text-card-foreground">Business Hours:</strong> Set your operating hours</li>
-                            <li><strong className="text-card-foreground">Documents:</strong> Upload PDFs and documents for AI to reference</li>
-                          </ul>
-                          <p className="mt-2">Access the Knowledge Base from <strong className="text-card-foreground">Settings → Knowledge Base</strong> or the sidebar.</p>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-
+                    {/* Getting Started */}
                     <AccordionItem value="trial">
                       <AccordionTrigger>
                         <div className="flex items-center gap-2">
@@ -722,8 +651,208 @@ export default function Help() {
                       </AccordionTrigger>
                       <AccordionContent>
                         <p className="text-card-foreground/70">
-                          Your 30-day free trial includes <strong className="text-card-foreground">full access to all Command tier features</strong>. This means all 18+ AI agents, all consoles, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
+                          Your 30-day free trial includes <strong className="text-card-foreground">full access to all Command tier features</strong>. This means all 18+ AI agents, all 6 consoles, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
                         </p>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="chat-widget">
+                      <AccordionTrigger>
+                        <div className="flex items-center gap-2">
+                          <MessageCircle className="w-4 h-4" />
+                          How do customers access my AI chat?
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="text-card-foreground/70 space-y-2">
+                          <p>There are three ways customers can interact with your AI agent:</p>
+                          <ul className="list-disc ml-5 space-y-1">
+                            <li><strong className="text-card-foreground">Embeddable Widget:</strong> Get the embed code from <strong>Chat Widget</strong> in your dashboard. Add this to your website.</li>
+                            <li><strong className="text-card-foreground">Public Chat Link:</strong> Share your unique public chat URL directly with customers.</li>
+                            <li><strong className="text-card-foreground">AI Voice:</strong> Customers can speak with your AI via the voice button in the chat widget.</li>
+                          </ul>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* AI Agents & Features */}
+                    <AccordionItem value="ai-agents">
+                      <AccordionTrigger>
+                        <div className="flex items-center gap-2">
+                          <Bot className="w-4 h-4" />
+                          What AI agents are included in each plan?
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="text-card-foreground/70 space-y-3">
+                          <ul className="space-y-3 text-sm">
+                            <li>
+                              <strong className="text-card-foreground">Single-Point ($497/mo):</strong>
+                              <p className="mt-1">AI Receptionist, Follow-up Agent, Review Agent + AI Voice Chat & Outbound Calls. Perfect for lead intake and reputation management.</p>
+                            </li>
+                            <li>
+                              <strong className="text-card-foreground">Multi-Track ($897/mo):</strong>
+                              <p className="mt-1">Everything in Single-Point + Scheduling Agent, Dispatch, Route, ETA, Check-in, Quoting, Invoice. Adds online booking and field operations.</p>
+                            </li>
+                            <li>
+                              <strong className="text-card-foreground">Command ($1,497/mo):</strong>
+                              <p className="mt-1">Full suite of 18+ agents including Marketing, Social Media (3 agents), Analytics (4 agents), Inventory, Warranty, and Admin.</p>
+                            </li>
+                          </ul>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="voice-calling">
+                      <AccordionTrigger>
+                        <div className="flex items-center gap-2">
+                          <Mic className="w-4 h-4" />
+                          How does AI Voice work?
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="text-card-foreground/70 space-y-2">
+                          <p>AI Voice is included in all paid tiers and provides:</p>
+                          <ul className="list-disc ml-5 space-y-1">
+                            <li><strong className="text-card-foreground">Voice Chat:</strong> Customers speak with your AI via the chat widget microphone</li>
+                            <li><strong className="text-card-foreground">Outbound Calls:</strong> AI makes reminder calls, follow-ups, and review requests automatically</li>
+                            <li><strong className="text-card-foreground">Natural Voice:</strong> Powered by ElevenLabs for human-like conversations</li>
+                          </ul>
+                          <p className="mt-2">Configure voice settings in <strong className="text-card-foreground">Settings → Integrations → ElevenLabs</strong>.</p>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Knowledge Base */}
+                    <AccordionItem value="knowledge-base">
+                      <AccordionTrigger>
+                        <div className="flex items-center gap-2">
+                          <Globe className="w-4 h-4" />
+                          How do I train my AI agents?
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="text-card-foreground/70 space-y-2">
+                          <p>Your AI agents learn from your Knowledge Base. Go to <strong className="text-card-foreground">Knowledge Base</strong> in the sidebar:</p>
+                          <ul className="list-disc ml-5 space-y-1">
+                            <li><strong className="text-card-foreground">Services:</strong> Add your service catalog with descriptions, pricing, and duration</li>
+                            <li><strong className="text-card-foreground">FAQs:</strong> Common questions your customers ask</li>
+                            <li><strong className="text-card-foreground">Business Hours:</strong> Your operating schedule</li>
+                            <li><strong className="text-card-foreground">Documents:</strong> Upload PDFs, manuals, or policies for AI reference</li>
+                            <li><strong className="text-card-foreground">AI Profile:</strong> Set your brand voice, industry, and target audience</li>
+                          </ul>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Social Media */}
+                    <AccordionItem value="social-media">
+                      <AccordionTrigger>
+                        <div className="flex items-center gap-2">
+                          <Share2 className="w-4 h-4" />
+                          What social platforms are supported?
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="text-card-foreground/70 space-y-2">
+                          <p>Social Media Ops (Command tier) supports 6 platforms:</p>
+                          <ul className="list-disc ml-5 space-y-1">
+                            <li><strong className="text-card-foreground">Instagram</strong> - Posts with character optimization</li>
+                            <li><strong className="text-card-foreground">Facebook</strong> - Posts and business updates</li>
+                            <li><strong className="text-card-foreground">LinkedIn</strong> - Professional content</li>
+                            <li><strong className="text-card-foreground">TikTok</strong> - With automatic AI disclosure</li>
+                            <li><strong className="text-card-foreground">Google My Business</strong> - Business posts and updates</li>
+                            <li><strong className="text-card-foreground">SMS</strong> - Marketing text messages</li>
+                          </ul>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Account Management */}
+                    <AccordionItem value="reset-password">
+                      <AccordionTrigger>
+                        <div className="flex items-center gap-2">
+                          <Key className="w-4 h-4" />
+                          How do I reset my password?
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <p className="text-card-foreground/70">
+                          On the login page, click "Forgot Password" below the sign-in button. Enter your email address and you'll receive a password reset link within a few minutes.
+                        </p>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Integrations */}
+                    <AccordionItem value="integrations">
+                      <AccordionTrigger>
+                        <div className="flex items-center gap-2">
+                          <Building2 className="w-4 h-4" />
+                          What integrations are available?
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="text-card-foreground/70 space-y-2">
+                          <p>The platform integrates with:</p>
+                          <ul className="list-disc ml-5 space-y-1">
+                            <li><strong className="text-card-foreground">Twilio:</strong> SMS and Voice calls</li>
+                            <li><strong className="text-card-foreground">ElevenLabs:</strong> AI Voice synthesis</li>
+                            <li><strong className="text-card-foreground">Stripe:</strong> Payment processing</li>
+                            <li><strong className="text-card-foreground">Resend:</strong> Email delivery</li>
+                            <li><strong className="text-card-foreground">Google Calendar:</strong> Calendar sync</li>
+                            <li><strong className="text-card-foreground">CRM:</strong> HubSpot and Salesforce (coming soon)</li>
+                          </ul>
+                          <p className="mt-2">Configure integrations in <strong className="text-card-foreground">Settings → Integrations</strong>.</p>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Booking Differences */}
+                    <AccordionItem value="booking-differences">
+                      <AccordionTrigger>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4" />
+                          What's the difference between "Call to Book" and "Online Booking"?
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="text-card-foreground/70 space-y-2">
+                          <ul className="space-y-2">
+                            <li>
+                              <strong className="text-card-foreground">Call to Book (Single-Point):</strong>
+                              <p>Customers click a button that opens their phone dialer to call your business. The AI handles questions but scheduling is done by phone.</p>
+                            </li>
+                            <li>
+                              <strong className="text-card-foreground">Online Booking (Multi-Track+):</strong>
+                              <p>Customers book appointments directly through the AI chat. The Scheduling Agent checks availability and confirms bookings automatically.</p>
+                            </li>
+                          </ul>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Reports */}
+                    <AccordionItem value="reports">
+                      <AccordionTrigger>
+                        <div className="flex items-center gap-2">
+                          <BarChart3 className="w-4 h-4" />
+                          What reports can I generate?
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="text-card-foreground/70 space-y-2">
+                          <p>The Analytics & Reports console (Command tier) includes:</p>
+                          <ul className="list-disc ml-5 space-y-1">
+                            <li><strong className="text-card-foreground">Performance:</strong> Team and service performance metrics</li>
+                            <li><strong className="text-card-foreground">Revenue:</strong> Income trends and projections</li>
+                            <li><strong className="text-card-foreground">Customer Insights:</strong> Behavior patterns and segments</li>
+                            <li><strong className="text-card-foreground">Forecasting:</strong> AI-powered demand predictions</li>
+                            <li><strong className="text-card-foreground">KPIs:</strong> Real-time business metrics</li>
+                            <li><strong className="text-card-foreground">Social:</strong> Engagement across all platforms</li>
+                            <li><strong className="text-card-foreground">Reminders:</strong> Delivery rates for SMS, Email, Voice</li>
+                            <li><strong className="text-card-foreground">Export:</strong> Download CSV or PDF reports</li>
+                          </ul>
+                        </div>
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>
