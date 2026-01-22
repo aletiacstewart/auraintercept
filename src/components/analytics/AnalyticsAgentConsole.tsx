@@ -18,6 +18,7 @@ import { TrendForecastForm } from './forms/TrendForecastForm';
 import { KpiDashboardForm } from './forms/KpiDashboardForm';
 import { ExportReportForm } from './forms/ExportReportForm';
 import { ReminderInsightsForm } from './forms/ReminderInsightsForm';
+import { SocialAnalyticsForm } from './forms/SocialAnalyticsForm';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   BarChart3, 
@@ -343,6 +344,14 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
                   companyId={effectiveCompanyId}
                   onCancel={handleHome}
                   onAnalyze={(data) => handleAnalyze('reminders', data)}
+                />
+              )}
+
+              {showSocialForm && effectiveCompanyId && (
+                <SocialAnalyticsForm
+                  companyId={effectiveCompanyId}
+                  onCancel={handleHome}
+                  onAnalyze={(data) => handleAnalyze('social', data)}
                 />
               )}
               
