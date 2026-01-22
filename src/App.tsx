@@ -29,7 +29,7 @@ import Messages from "./pages/Messages";
 import EmailLogs from "./pages/EmailLogs";
 import SMSLogs from "./pages/SMSLogs";
 import Integrations from "./pages/Integrations";
-import { VoiceIntegration, SMSIntegration, EmailIntegration, CRMIntegration, CalendarIntegration } from "./pages/integrations";
+import { VoiceIntegration, SMSIntegration, EmailIntegration, CRMIntegration, CalendarIntegration, SocialMediaIntegration } from "./pages/integrations";
 import KnowledgeBase from "./pages/KnowledgeBase";
 import AIAgent from "./pages/AIAgent";
 import {
@@ -172,6 +172,7 @@ const App = () => {
               <Route path="/dashboard/integrations/email" element={<ProtectedRoute><EmailIntegration /></ProtectedRoute>} />
               <Route path="/dashboard/integrations/crm" element={<ProtectedRoute><CRMIntegration /></ProtectedRoute>} />
               <Route path="/dashboard/integrations/calendar" element={<ProtectedRoute><CalendarIntegration /></ProtectedRoute>} />
+              <Route path="/dashboard/integrations/social" element={<ProtectedRoute><SocialMediaIntegration /></ProtectedRoute>} />
               <Route path="/dashboard/knowledge" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
               <Route path="/dashboard/ai-agent" element={<ProtectedRoute><AIAgent /></ProtectedRoute>} />
               <Route path="/dashboard/ai-consoles/customer-portal" element={<ProtectedRoute><CustomerPortalConsole /></ProtectedRoute>} />
