@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -23,8 +23,14 @@ import {
   Image as ImageIcon,
   Hash,
   Calendar,
+  Upload,
+  Trash2,
 } from 'lucide-react';
 import { SchedulePostDialog } from '../SchedulePostDialog';
+
+const MAX_FILE_SIZE_MB = 2;
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_WIDTH = 1200;
 
 interface SocialPostFormProps {
   companyId: string;
@@ -63,6 +69,8 @@ export const SocialPostForm: React.FC<SocialPostFormProps> = ({ companyId, onCan
   const { data: companyName } = useCompanyName(companyId);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [formData, setFormData] = useState({
     platforms: [] as Platform[],
@@ -70,6 +78,112 @@ export const SocialPostForm: React.FC<SocialPostFormProps> = ({ companyId, onCan
     hashtags: '',
     imageUrl: '',
   });
+
+  // Validate and resize image if needed
+  const validateAndResizeImage = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      
+      img.onload = () => {
+        URL.revokeObjectURL(img.src);
+        
+        // If image is within limits, use original
+        if (img.width <= MAX_WIDTH) {
+          resolve(file);
+          return;
+        }
+
+        // Resize image
+        const canvas = document.createElement('canvas');
+        const ratio = MAX_WIDTH / img.width;
+        canvas.width = MAX_WIDTH;
+        canvas.height = img.height * ratio;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('Failed to resize image'));
+            }
+          },
+          file.type,
+          0.9
+        );
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(img.src);
+        reject(new Error('Failed to load image'));
+      };
+    });
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      toast.error('Please upload a JPG, PNG, or WEBP image');
+      return;
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      toast.error(`Image must be less than ${MAX_FILE_SIZE_MB}MB`);
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const processedBlob = await validateAndResizeImage(file);
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${companyId}/social-post-${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('smart-website-images')
+        .upload(filePath, processedBlob, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('smart-website-images')
+        .getPublicUrl(filePath);
+
+      setFormData(prev => ({ ...prev, imageUrl: publicUrl }));
+      toast.success('Image uploaded successfully');
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast.error(error.message || 'Failed to upload image');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleRemoveImage = async () => {
+    if (formData.imageUrl) {
+      // Extract path from URL and delete from storage
+      const path = formData.imageUrl.split('/smart-website-images/')[1];
+      if (path) {
+        await supabase.storage.from('smart-website-images').remove([path]);
+      }
+    }
+    setFormData(prev => ({ ...prev, imageUrl: '' }));
+    toast.success('Image removed');
+  };
 
   const generateContent = async () => {
     if (formData.platforms.length === 0) {
@@ -341,29 +455,67 @@ export const SocialPostForm: React.FC<SocialPostFormProps> = ({ companyId, onCan
               />
             </div>
 
-            {/* Image URL */}
+            {/* Image Upload */}
             <div className="space-y-2">
               <Label className="text-card-foreground/70 flex items-center gap-1.5">
                 <ImageIcon className="h-3.5 w-3.5" />
-                Image URL (optional)
+                Post Image (optional)
               </Label>
-              <Input
-                value={formData.imageUrl}
-                onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
-                placeholder="https://example.com/image.jpg"
-                className="bg-muted/30 border-card-foreground/20 text-card-foreground"
+              <p className="text-xs text-card-foreground/50">
+                Max 2MB • JPG, PNG, or WEBP • Auto-resized to 1200px width
+              </p>
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleFileSelect}
+                className="hidden"
               />
-              {formData.imageUrl && (
-                <div className="relative w-full h-32 rounded-lg overflow-hidden bg-muted/30">
-                  <img 
-                    src={formData.imageUrl} 
-                    alt="Preview" 
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
+              
+              {formData.imageUrl ? (
+                <div className="relative">
+                  <div className="relative w-full h-32 rounded-lg overflow-hidden bg-muted/30 border border-card-foreground/20">
+                    <img 
+                      src={formData.imageUrl} 
+                      alt="Preview" 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 h-7 px-2"
+                  >
+                    <Trash2 className="h-3.5 w-3.5 mr-1" />
+                    Remove
+                  </Button>
                 </div>
+              ) : (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="w-full border-dashed border-card-foreground/30 text-card-foreground/70 hover:bg-muted/30"
+                >
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload Image
+                    </>
+                  )}
+                </Button>
               )}
             </div>
 
