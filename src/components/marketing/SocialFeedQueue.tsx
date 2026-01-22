@@ -19,13 +19,15 @@ import {
   Video,
   Inbox,
   CheckCircle,
+  Clock,
 } from 'lucide-react';
 
 interface SocialFeedQueueProps {
   companyId: string;
+  initialFilter?: 'pending' | 'scheduled' | 'published' | 'all';
 }
 
-type FilterStatus = 'all' | 'pending' | 'published';
+type FilterStatus = 'all' | 'pending' | 'published' | 'scheduled';
 type FilterPlatform = 'all' | 'instagram' | 'google_business' | 'facebook' | 'sms' | 'tiktok' | 'linkedin';
 
 // Platform colors matching feature color system
@@ -47,9 +49,9 @@ const PLATFORM_ICONS = {
   linkedin: Linkedin,
 };
 
-export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
+export function SocialFeedQueue({ companyId, initialFilter = 'pending' }: SocialFeedQueueProps) {
   const queryClient = useQueryClient();
-  const [statusFilter, setStatusFilter] = useState<FilterStatus>('pending');
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>(initialFilter);
   const [platformFilter, setPlatformFilter] = useState<FilterPlatform>('all');
   const [publishingId, setPublishingId] = useState<string | null>(null);
 
@@ -262,6 +264,13 @@ export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
                     {pendingCount}
                   </Badge>
                 )}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="scheduled" 
+                className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400 data-[state=active]:border data-[state=active]:border-blue-500/40"
+              >
+                <Clock className="h-4 w-4 mr-1.5" />
+                Scheduled
               </TabsTrigger>
               <TabsTrigger 
                 value="published" 

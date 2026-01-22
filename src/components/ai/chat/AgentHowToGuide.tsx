@@ -544,6 +544,62 @@ const MARKETING_SALES_GUIDES: AgentGuide[] = [
   },
 ];
 
+// Social Media Ops Guides
+const SOCIAL_MEDIA_GUIDES: AgentGuide[] = [
+  {
+    id: 'create-post',
+    label: 'Create Post',
+    icon: FileText,
+    description: 'Create new social media content for multiple platforms',
+    steps: [
+      { step: 1, title: 'Click New Post', description: 'Open the post creation form from the navigation' },
+      { step: 2, title: 'Select Platforms', description: 'Choose which platforms to create content for (Instagram, Facebook, LinkedIn, etc.)' },
+      { step: 3, title: 'Write Content', description: 'Enter your message or use AI to generate platform-optimized content' },
+      { step: 4, title: 'Add Hashtags', description: 'Include relevant hashtags for better reach' },
+    ],
+    tips: ['Each platform has character limits - AI will optimize automatically', 'Upload images for better engagement']
+  },
+  {
+    id: 'manage-drafts',
+    label: 'Manage Drafts',
+    icon: FileText,
+    description: 'Review and edit pending social media drafts',
+    steps: [
+      { step: 1, title: 'Click Drafts', description: 'Open the drafts queue to see all pending content' },
+      { step: 2, title: 'Review Content', description: 'Check AI-generated content from job completions' },
+      { step: 3, title: 'Edit if Needed', description: 'Make any adjustments to messaging or hashtags' },
+      { step: 4, title: 'Approve & Publish', description: 'Approve content to publish immediately or schedule for later' },
+    ],
+    tips: ['Job completion photos automatically generate social content', 'Filter by platform to focus on specific channels']
+  },
+  {
+    id: 'schedule-posts',
+    label: 'Schedule Posts',
+    icon: Calendar,
+    description: 'Schedule content for optimal publishing times',
+    steps: [
+      { step: 1, title: 'Click Scheduled', description: 'View your scheduled posts queue' },
+      { step: 2, title: 'Set Date & Time', description: 'Choose when to publish each post' },
+      { step: 3, title: 'Select Timezone', description: 'Ensure correct timezone for your audience' },
+      { step: 4, title: 'Confirm Schedule', description: 'Posts will automatically publish at scheduled time' },
+    ],
+    tips: ['Best times: Instagram 11am-1pm, LinkedIn 7-8am, Facebook 9am-12pm', 'Schedule posts ahead for consistent presence']
+  },
+  {
+    id: 'content-calendar',
+    label: 'Content Calendar',
+    icon: Calendar,
+    description: 'View your content publishing calendar',
+    steps: [
+      { step: 1, title: 'Click Calendar', description: 'Open the content calendar view' },
+      { step: 2, title: 'Navigate Months', description: 'Use arrows to view different months' },
+      { step: 3, title: 'View Day Details', description: 'Click any date to see scheduled and published content' },
+      { step: 4, title: 'Track Activity', description: 'Blue dots = scheduled, green dots = published' },
+    ],
+    tips: ['Plan content at least a week in advance', 'Maintain consistent posting frequency']
+  },
+];
+
 // Analytics & Optimization Guides
 const ANALYTICS_GUIDES: AgentGuide[] = [
   {
@@ -744,7 +800,7 @@ const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
   marketing: MARKETING_SALES_GUIDES,
   analytics: ANALYTICS_GUIDES,
   dispatch: DISPATCH_FIELD_OPS_GUIDES,
-  social: MARKETING_SALES_GUIDES, // Use marketing guides as base for social media
+  social: SOCIAL_MEDIA_GUIDES,
 };
 
 const CONSOLE_TITLES: Record<ConsoleType, string> = {

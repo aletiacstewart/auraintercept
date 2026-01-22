@@ -11,23 +11,22 @@ import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { SocialPostForm } from '@/components/marketing/forms/SocialPostForm';
 import { SocialFeedQueue } from '@/components/marketing/SocialFeedQueue';
+import { SocialContentCalendar } from './SocialContentCalendar';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Share2, 
   PenSquare,
   FileText,
   Calendar,
-  BarChart,
   CalendarDays,
 } from 'lucide-react';
 
-// Quick actions for Social Media Ops
+// Quick actions for Social Media Ops - removed Analytics (moved to Analytics console)
 const QUICK_ACTIONS = [
   { id: 'create', label: 'New Post', icon: PenSquare, message: 'Create a new social media post', featureColor: 'text-pink-400' },
   { id: 'drafts', label: 'Drafts', icon: FileText, message: 'Show me pending social media drafts', featureColor: 'text-pink-400' },
   { id: 'scheduled', label: 'Scheduled', icon: Calendar, message: 'Show my scheduled posts', featureColor: 'text-pink-400' },
   { id: 'calendar', label: 'Calendar', icon: CalendarDays, message: 'Open content calendar', featureColor: 'text-pink-400' },
-  { id: 'analytics', label: 'Analytics', icon: BarChart, message: 'Show social media analytics', featureColor: 'text-pink-400' },
 ];
 
 // Tab configuration
@@ -51,6 +50,10 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   
   // Form visibility states
   const [showPostForm, setShowPostForm] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+  
+  // Feed filter state
+  const [feedFilter, setFeedFilter] = useState<'pending' | 'scheduled'>('pending');
 
   // Company branding
   const { data: company } = useQuery({
@@ -84,6 +87,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
 
   const hideAllForms = () => {
     setShowPostForm(false);
+    setShowCalendar(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -103,21 +107,22 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
       setActiveTab('chat');
       return;
     }
-    if (actionId === 'drafts' || actionId === 'scheduled') {
+    if (actionId === 'drafts') {
       hideAllForms();
+      setFeedFilter('pending');
+      setActiveTab('feed');
+      return;
+    }
+    if (actionId === 'scheduled') {
+      hideAllForms();
+      setFeedFilter('scheduled');
       setActiveTab('feed');
       return;
     }
     if (actionId === 'calendar') {
       hideAllForms();
+      setShowCalendar(true);
       setActiveTab('chat');
-      await sendMessage('Show me the content calendar for this month');
-      return;
-    }
-    if (actionId === 'analytics') {
-      hideAllForms();
-      setActiveTab('chat');
-      await sendMessage('Show me social media analytics for the past 30 days');
       return;
     }
     
@@ -142,14 +147,15 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     setLastAgent('social_content');
   };
 
-  const isShowingForm = showPostForm;
+  const isShowingForm = showPostForm || showCalendar;
   const showWelcome = messages.length === 0 && !isShowingForm && activeTab === 'chat';
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
   // Get active label based on form type
   const getActiveLabel = () => {
-    if (activeTab === 'feed') return 'Content Queue';
+    if (activeTab === 'feed') return feedFilter === 'scheduled' ? 'Scheduled Posts' : 'Content Queue';
     if (showPostForm) return 'New Post';
+    if (showCalendar) return 'Content Calendar';
     if (messages.length > 0) return agentStyle.label;
     return 'Home';
   };
@@ -189,7 +195,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
         {/* Feed Tab */}
         {activeTab === 'feed' && effectiveCompanyId && (
           <div className="flex-1 overflow-y-auto p-4">
-            <SocialFeedQueue companyId={effectiveCompanyId} />
+            <SocialFeedQueue companyId={effectiveCompanyId} initialFilter={feedFilter} />
           </div>
         )}
 
@@ -202,7 +208,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                 <WelcomeScreen
                   companyName={company?.name || 'Social Media'}
                   title="Social Media Ops"
-                  subtitle="I can help you create, schedule, and analyze social media content across all platforms. What would you like to do?"
+                  subtitle="I can help you create, schedule, and manage social media content across all platforms. What would you like to do?"
                   actions={QUICK_ACTIONS}
                   onAction={handleQuickAction}
                   consoleType="social"
@@ -216,8 +222,17 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                       onCancel={handleHome}
                       onSuccess={() => {
                         hideAllForms();
+                        setFeedFilter('pending');
                         setActiveTab('feed');
                       }}
+                    />
+                  )}
+
+                  {/* Calendar View */}
+                  {showCalendar && effectiveCompanyId && (
+                    <SocialContentCalendar
+                      companyId={effectiveCompanyId}
+                      onClose={handleHome}
                     />
                   )}
 
@@ -261,7 +276,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
               onSubmit={handleSubmit}
               onHome={handleHome}
               isLoading={isLoading}
-              placeholder="Ask about posts, scheduling, analytics..."
+              placeholder="Ask about posts, scheduling..."
             />
           </>
         )}
