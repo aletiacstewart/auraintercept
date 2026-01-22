@@ -330,6 +330,10 @@ const industryCategories = [{
     name: 'Security Systems',
     icon: Camera,
     description: 'Cameras & Alarms'
+  }, {
+    name: 'Real Estate',
+    icon: Building2,
+    description: 'Residential & Commercial'
   }]
 }];
 const howItWorks = [{
@@ -574,26 +578,28 @@ export default function Index() {
       </section>
 
       {/* Platform Features */}
-      <section className="bg-muted/30 py-20">
-        <div className="container max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">Platform Features</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">The All-in-One Aura Intercept AI Center for Service Pros</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">Transform your service business software into a 24/7 revenue engine. Our Aura Intercept AI Center offers a multi-channel AI safety net that captures every customer inquiry through intelligent ai chat agents and voice agents. Manage your mobile workforce with ease using our technician consoles and provide your clients with a self-service appointment tracking portal. By automating smart reminders and office workflows, Aura Intercept eliminates manual tasks, and allows your team to focus on delivering expert onsite service.</p>
+      <section className="bg-muted/30 py-10">
+        <div className="container max-w-6xl mx-auto px-6">
+          <div className="text-center mb-6">
+            <Badge variant="secondary" className="mb-2">Platform Features</Badge>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">The All-in-One AI Center for Service Pros</h2>
+            <p className="text-muted-foreground text-sm max-w-xl mx-auto">Multi-channel AI captures every inquiry through chat and voice agents while automating smart reminders and workflows.</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
             {platformFeatures.map((feature, index) => (
               <div 
                 key={feature.title}
-                className="rounded-lg p-4 transition-all duration-300 hover:opacity-90 animate-fade-in"
-                style={{ backgroundColor: '#2a3d4e', animationDelay: `${index * 50}ms` }}
+                className="rounded-md p-2 transition-all duration-300 hover:scale-[1.02] animate-fade-in"
+                style={{ backgroundColor: '#2a3d4e', animationDelay: `${index * 30}ms` }}
               >
-                <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center mb-3">
-                  <feature.icon className="w-5 h-5 text-primary-foreground" />
+                <div className="flex items-center gap-1.5 mb-1">
+                  <div className="w-6 h-6 rounded bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
+                    <feature.icon className="w-3 h-3 text-primary-foreground" />
+                  </div>
+                  <h3 className="font-semibold text-[10px] text-white leading-tight">{feature.title}</h3>
                 </div>
-                <h3 className="font-semibold text-sm mb-1 text-white">{feature.title}</h3>
-                <p className="text-xs text-white/70 leading-relaxed">{feature.description}</p>
+                <p className="text-[9px] text-white/60 leading-snug line-clamp-2">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -601,29 +607,29 @@ export default function Index() {
       </section>
 
       {/* Industries */}
-      <section className="py-20">
-        <div className="container max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">Industries</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">AI Automation for Field Service Industries</h2>
-            <p className="text-foreground max-w-2xl mx-auto">In the fast-paced world of home and commercial services, responsiveness is the key to growth. Aura Intercept brings intelligent automation to the trades, providing a white-label AI workforce that intercepts every inquiry and books it directly into your calendar. Our platform is engineered for onsite service providers who need to eliminate manual office tasks, without losing the personal touch. We empower service-based businesses to automate their workflow and focus on the work that matters.</p>
+      <section className="py-10">
+        <div className="container max-w-5xl mx-auto px-6">
+          <div className="text-center mb-6">
+            <Badge variant="secondary" className="mb-2">Industries</Badge>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">AI Automation for Field Service Industries</h2>
+            <p className="text-foreground/80 text-sm max-w-xl mx-auto">White-label AI workforce that intercepts every inquiry and books directly into your calendar.</p>
           </div>
 
-          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 justify-items-center max-w-4xl mx-auto">
-            {industryCategories.flatMap(cat => cat.industries).map(industry => <div key={industry.name} className="rounded-xl p-3 text-center transition-all duration-300 hover:opacity-90 w-full" style={{
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2 justify-items-center">
+            {industryCategories.flatMap(cat => cat.industries).map(industry => <div key={industry.name} className="rounded-md p-2 text-center transition-all duration-300 hover:scale-[1.02] w-full" style={{
             backgroundColor: '#2a3d4e'
           }}>
-                <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center mx-auto mb-2">
-                  <industry.icon className="w-5 h-5 text-primary-foreground" />
+                <div className="w-7 h-7 rounded bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto mb-1">
+                  <industry.icon className="w-3.5 h-3.5 text-primary-foreground" />
                 </div>
-                <h4 className="font-medium text-xs mb-0.5 text-white">{industry.name}</h4>
-                <p className="text-[10px] text-white/70 leading-tight hidden sm:block">{industry.description}</p>
+                <h4 className="font-medium text-[10px] text-white leading-tight">{industry.name}</h4>
+                <p className="text-[8px] text-white/60 leading-tight hidden sm:block">{industry.description}</p>
               </div>)}
           </div>
 
-          <div className="text-center mt-12">
-            <Button size="lg" className="gradient-primary shadow-glow text-lg px-8 py-6" onClick={() => navigate('/auth?mode=company')}>
-              <Building2 className="w-5 h-5 mr-2" />
+          <div className="text-center mt-8">
+            <Button size="lg" className="gradient-primary shadow-glow text-base px-6 py-4" onClick={() => navigate('/auth?mode=company')}>
+              <Building2 className="w-4 h-4 mr-2" />
               Start Your Free Trial
             </Button>
           </div>
