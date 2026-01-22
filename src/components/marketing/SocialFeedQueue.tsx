@@ -46,6 +46,11 @@ export function SocialFeedQueue({ companyId, initialFilter = 'pending' }: Social
   const [platformFilter, setPlatformFilter] = useState<FilterPlatform>('all');
   const [publishingId, setPublishingId] = useState<string | null>(null);
 
+  // Sync statusFilter when initialFilter prop changes from parent
+  useEffect(() => {
+    setStatusFilter(initialFilter);
+  }, [initialFilter]);
+
   // Fetch drafts
   const { data: drafts, isLoading, refetch } = useQuery({
     queryKey: ['social-content-drafts', companyId, statusFilter],
