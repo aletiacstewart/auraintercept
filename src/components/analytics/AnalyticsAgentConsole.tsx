@@ -27,7 +27,8 @@ import {
   Target,
   Download,
   ShieldAlert,
-  Bell
+  Bell,
+  Share2
 } from 'lucide-react';
 
 // Quick actions for Analytics & Optimization
@@ -37,6 +38,7 @@ const QUICK_ACTIONS = [
   { id: 'customers', label: 'Insights', icon: Users, message: 'I need customer insights', featureColor: 'text-feature-customers' },
   { id: 'forecast', label: 'Forecast', icon: TrendingUp, message: 'Show me revenue forecasts', featureColor: 'text-feature-analytics' },
   { id: 'kpi', label: 'KPIs', icon: Target, message: 'Show KPI dashboard', featureColor: 'text-feature-analytics' },
+  { id: 'social', label: 'Social', icon: Share2, message: 'Show social media analytics', featureColor: 'text-pink-400' },
   { id: 'reminders', label: 'Reminders', icon: Bell, message: 'Show me reminder analytics', featureColor: 'text-feature-appointments' },
   { id: 'export', label: 'Export', icon: Download, message: 'I need to export a report', featureColor: 'text-feature-overview' },
 ];
@@ -74,6 +76,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
   const [showKpiForm, setShowKpiForm] = useState(false);
   const [showExportForm, setShowExportForm] = useState(false);
   const [showRemindersForm, setShowRemindersForm] = useState(false);
+  const [showSocialForm, setShowSocialForm] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -114,6 +117,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     setShowKpiForm(false);
     setShowExportForm(false);
     setShowRemindersForm(false);
+    setShowSocialForm(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -162,6 +166,11 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
       setShowRemindersForm(true);
       return;
     }
+    if (actionId === 'social') {
+      hideAllForms();
+      setShowSocialForm(true);
+      return;
+    }
     if (actionId === 'export') {
       hideAllForms();
       setShowExportForm(true);
@@ -199,7 +208,7 @@ export const AnalyticsAgentConsole: React.FC<AnalyticsAgentConsoleProps> = ({ co
     }
   };
 
-  const isShowingForm = showPerformanceForm || showRevenueForm || showCustomersForm || showInsightsForm || showForecastForm || showKpiForm || showExportForm || showRemindersForm;
+  const isShowingForm = showPerformanceForm || showRevenueForm || showCustomersForm || showInsightsForm || showForecastForm || showKpiForm || showExportForm || showRemindersForm || showSocialForm;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
