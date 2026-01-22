@@ -105,27 +105,106 @@ serve(async (req) => {
     const serviceCategories = company?.service_categories || [];
     const service = serviceType || "service";
 
-    // Generate content using Lovable AI
-    const systemPrompt = `You are an expert social media marketing specialist for service businesses. 
-You create engaging, professional content that showcases completed work and builds trust.
-Company: ${companyName}
-Industry: ${serviceCategories.join(", ") || "Home Services"}
+    // ============ FETCH KNOWLEDGE BASE CONTEXT ============
+    
+    // Fetch AI Content Profile for brand voice/tone
+    const { data: aiProfile } = await supabase
+      .from("company_ai_content_profiles")
+      .select("*")
+      .eq("company_id", companyId)
+      .maybeSingle();
 
-Generate platform-specific content that:
-- Highlights the quality of work completed
-- Uses a professional yet approachable tone
-- Includes relevant industry hashtags for Instagram
-- Is optimized for each platform's character limits and style`;
+    // Fetch active services for Knowledge Base context
+    const { data: services } = await supabase
+      .from("services")
+      .select("name, description, base_price")
+      .eq("company_id", companyId)
+      .eq("is_active", true)
+      .limit(10);
+
+    // Fetch FAQs for Knowledge Base
+    const { data: faqs } = await supabase
+      .from("faqs")
+      .select("question, answer")
+      .eq("company_id", companyId)
+      .limit(10);
+
+    // Fetch active campaign goals
+    const { data: activeCampaign } = await supabase
+      .from("marketing_campaigns")
+      .select("name, campaign_type, discount_type, discount_value, promo_code")
+      .eq("company_id", companyId)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    // Fetch CTA target from Smart Website
+    const { data: website } = await supabase
+      .from("smart_websites")
+      .select("cta_button_text, cta_button_url")
+      .eq("company_id", companyId)
+      .maybeSingle();
+
+    // Build Knowledge Base context
+    const knowledgeBase = {
+      services: services?.map(s => ({ name: s.name, description: s.description })) || [],
+      faqs: faqs?.map(f => ({ q: f.question, a: f.answer })) || [],
+    };
+
+    const campaignContext = activeCampaign 
+      ? `${activeCampaign.name} - ${activeCampaign.campaign_type} with ${activeCampaign.discount_value}${activeCampaign.discount_type === 'percentage' ? '%' : '$'} off (code: ${activeCampaign.promo_code || 'N/A'})`
+      : "No active campaign";
+
+    const brandTone = aiProfile?.tone || "professional";
+    const brandVoice = aiProfile?.brand_voice || "Friendly and approachable";
+    const avoidKeywords = aiProfile?.avoid_keywords?.join(", ") || "none specified";
+    const ctaTarget = website?.cta_button_text || "Contact Us";
+    const ctaUrl = website?.cta_button_url || "website";
+
+    // ============ BUILD ENHANCED SYSTEM PROMPT ============
+    const systemPrompt = `Role: You are the "Aura Intercept Content Strategist." Your purpose is to act as a specialized social media manager for the company: ${companyName}.
+
+Primary Context:
+- Knowledge Base: ${JSON.stringify(knowledgeBase)}
+- Active Campaign: ${campaignContext}
+- Brand Voice: ${brandTone} - ${brandVoice}
+- Industry: ${serviceCategories.join(", ") || "Home Services"}
+
+Task:
+Analyze the job completion details and generate high-engagement social media posts for multiple platforms.
+
+Output Requirements:
+For each platform, generate:
+1. "post_body": Platform-optimized text with appropriate tone and length
+2. "media_instructions": Which uploaded asset(s) should be used and how
+3. "api_metadata": Platform-specific publishing metadata
+
+Constraints:
+- Only use facts present in the Knowledge Base when mentioning services or capabilities
+- If content is AI-generated, include the 'is_aigc' flag for TikTok compliance
+- CTA must align with: ${ctaTarget} → ${ctaUrl}
+- Avoid these topics/words: ${avoidKeywords}
+- Match platform character limits:
+  * Instagram: 2200 chars max
+  * Google Business: 1500 chars max
+  * Facebook: 500 chars max
+  * LinkedIn: 3000 chars max
+  * TikTok: 2200 chars max (title)
+  * SMS: 160 chars max`;
 
     const userPrompt = `A technician${employeeName ? ` named ${employeeName}` : ""} just completed a ${service} job${customerName ? ` for a customer` : ""}.
-${afterPhotos?.length ? `They took ${afterPhotos.length} photo(s) of the completed work.` : ""}
+${afterPhotos?.length ? `They uploaded ${afterPhotos.length} photo(s) of the completed work.` : "No photos available."}
 
-Generate social media content for:
-1. Instagram (engaging caption with hashtags, 2200 char max)
-2. Google Business Profile (professional post, 1500 char max)
-3. Facebook (shareable post, 500 char max)
-4. SMS follow-up template (personalized thank you with review request, 160 char max)`;
+Generate social media content for all 6 platforms:
+1. Instagram (engaging caption with hashtags)
+2. Google Business Profile (professional post)
+3. Facebook (shareable community post)
+4. LinkedIn (professional industry insight)
+5. TikTok (hook-heavy, trending format)
+6. SMS (personalized thank you with review request)`;
 
+    // ============ CALL LOVABLE AI WITH ENHANCED TOOL ============
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -143,41 +222,103 @@ Generate social media content for:
             type: "function",
             function: {
               name: "generate_social_content",
-              description: "Generate social media content for multiple platforms",
+              description: "Generate social media content for multiple platforms with API-ready metadata",
               parameters: {
                 type: "object",
                 properties: {
                   instagram: {
                     type: "object",
                     properties: {
-                      caption: { type: "string", description: "Instagram caption text" },
-                      hashtags: { type: "array", items: { type: "string" }, description: "Array of hashtags without # symbol" },
+                      post_body: { type: "string", description: "Instagram caption text (max 2200 chars)" },
+                      media_instructions: { type: "string", description: "Which photo(s) to use and any editing suggestions" },
+                      api_metadata: {
+                        type: "object",
+                        properties: {
+                          caption: { type: "string" },
+                          hashtags: { type: "array", items: { type: "string" } },
+                        },
+                        required: ["caption", "hashtags"],
+                      },
                     },
-                    required: ["caption", "hashtags"],
+                    required: ["post_body", "media_instructions", "api_metadata"],
                   },
                   google_business: {
                     type: "object",
                     properties: {
-                      post: { type: "string", description: "Google Business Profile post" },
+                      post_body: { type: "string", description: "Google Business post (max 1500 chars)" },
+                      media_instructions: { type: "string" },
+                      api_metadata: {
+                        type: "object",
+                        properties: {
+                          summary: { type: "string" },
+                          call_to_action: { type: "string" },
+                        },
+                      },
                     },
-                    required: ["post"],
+                    required: ["post_body", "media_instructions"],
                   },
                   facebook: {
                     type: "object",
                     properties: {
-                      post: { type: "string", description: "Facebook post" },
+                      post_body: { type: "string", description: "Facebook post (max 500 chars)" },
+                      media_instructions: { type: "string" },
+                      api_metadata: {
+                        type: "object",
+                        properties: {
+                          message: { type: "string" },
+                        },
+                      },
                     },
-                    required: ["post"],
+                    required: ["post_body", "media_instructions"],
+                  },
+                  linkedin: {
+                    type: "object",
+                    properties: {
+                      post_body: { type: "string", description: "LinkedIn professional post (max 3000 chars)" },
+                      media_instructions: { type: "string" },
+                      api_metadata: {
+                        type: "object",
+                        properties: {
+                          commentary: { type: "string" },
+                          visibility: { type: "string", enum: ["PUBLIC", "CONNECTIONS"] },
+                        },
+                        required: ["commentary", "visibility"],
+                      },
+                    },
+                    required: ["post_body", "media_instructions", "api_metadata"],
+                  },
+                  tiktok: {
+                    type: "object",
+                    properties: {
+                      post_body: { type: "string", description: "TikTok caption/script (hook-heavy, max 2200 chars)" },
+                      media_instructions: { type: "string" },
+                      api_metadata: {
+                        type: "object",
+                        properties: {
+                          title: { type: "string", description: "TikTok video title" },
+                          is_aigc: { type: "boolean", description: "AI-generated content disclosure (always true)" },
+                        },
+                        required: ["title", "is_aigc"],
+                      },
+                    },
+                    required: ["post_body", "media_instructions", "api_metadata"],
                   },
                   sms: {
                     type: "object",
                     properties: {
-                      template: { type: "string", description: "SMS template with {customer_name} placeholder" },
+                      post_body: { type: "string", description: "SMS template with {customer_name} placeholder (max 160 chars)" },
+                      media_instructions: { type: "string" },
+                      api_metadata: {
+                        type: "object",
+                        properties: {
+                          template: { type: "string" },
+                        },
+                      },
                     },
-                    required: ["template"],
+                    required: ["post_body"],
                   },
                 },
-                required: ["instagram", "google_business", "facebook", "sms"],
+                required: ["instagram", "google_business", "facebook", "linkedin", "tiktok", "sms"],
               },
             },
           },
@@ -187,6 +328,18 @@ Generate social media content for:
     });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Rate limit exceeded, please try again later." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "Payment required, please add credits to your workspace." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
       const errorText = await response.text();
       console.error("[generate-social-content] AI error:", response.status, errorText);
       return new Response(
@@ -207,20 +360,22 @@ Generate social media content for:
     }
 
     const content = JSON.parse(toolCall.function.arguments);
-    console.log("[generate-social-content] Generated content:", content);
+    console.log("[generate-social-content] Generated content for platforms:", Object.keys(content));
 
     // Use the first photo as the image URL for all drafts
     const imageUrl = afterPhotos?.[0] || null;
 
-    // Create drafts for each platform
+    // Create drafts for each platform with enhanced metadata
     const drafts = [
       {
         company_id: companyId,
         job_assignment_id: jobAssignmentId,
         image_url: imageUrl,
         platform: "instagram",
-        generated_content: content.instagram.caption,
-        hashtags: content.instagram.hashtags,
+        generated_content: content.instagram.post_body,
+        hashtags: content.instagram.api_metadata?.hashtags || [],
+        media_instructions: content.instagram.media_instructions,
+        api_metadata: content.instagram.api_metadata,
         status: "pending",
       },
       {
@@ -228,8 +383,10 @@ Generate social media content for:
         job_assignment_id: jobAssignmentId,
         image_url: imageUrl,
         platform: "google_business",
-        generated_content: content.google_business.post,
+        generated_content: content.google_business.post_body,
         hashtags: null,
+        media_instructions: content.google_business.media_instructions,
+        api_metadata: content.google_business.api_metadata || {},
         status: "pending",
       },
       {
@@ -237,8 +394,32 @@ Generate social media content for:
         job_assignment_id: jobAssignmentId,
         image_url: imageUrl,
         platform: "facebook",
-        generated_content: content.facebook.post,
+        generated_content: content.facebook.post_body,
         hashtags: null,
+        media_instructions: content.facebook.media_instructions,
+        api_metadata: content.facebook.api_metadata || {},
+        status: "pending",
+      },
+      {
+        company_id: companyId,
+        job_assignment_id: jobAssignmentId,
+        image_url: imageUrl,
+        platform: "linkedin",
+        generated_content: content.linkedin.post_body,
+        hashtags: null,
+        media_instructions: content.linkedin.media_instructions,
+        api_metadata: content.linkedin.api_metadata,
+        status: "pending",
+      },
+      {
+        company_id: companyId,
+        job_assignment_id: jobAssignmentId,
+        image_url: imageUrl,
+        platform: "tiktok",
+        generated_content: content.tiktok.post_body,
+        hashtags: null,
+        media_instructions: content.tiktok.media_instructions,
+        api_metadata: content.tiktok.api_metadata,
         status: "pending",
       },
       {
@@ -246,8 +427,10 @@ Generate social media content for:
         job_assignment_id: jobAssignmentId,
         image_url: null,
         platform: "sms",
-        generated_content: content.sms.template,
+        generated_content: content.sms.post_body,
         hashtags: null,
+        media_instructions: content.sms.media_instructions || null,
+        api_metadata: content.sms.api_metadata || {},
         status: "pending",
       },
     ];

@@ -4370,6 +4370,7 @@ export type Database = {
       }
       social_content_drafts: {
         Row: {
+          api_metadata: Json | null
           approved_at: string | null
           approved_by: string | null
           company_id: string
@@ -4380,12 +4381,14 @@ export type Database = {
           id: string
           image_url: string | null
           job_assignment_id: string | null
+          media_instructions: string | null
           platform: string
           published_at: string | null
           status: string
           updated_at: string
         }
         Insert: {
+          api_metadata?: Json | null
           approved_at?: string | null
           approved_by?: string | null
           company_id: string
@@ -4396,12 +4399,14 @@ export type Database = {
           id?: string
           image_url?: string | null
           job_assignment_id?: string | null
+          media_instructions?: string | null
           platform: string
           published_at?: string | null
           status?: string
           updated_at?: string
         }
         Update: {
+          api_metadata?: Json | null
           approved_at?: string | null
           approved_by?: string | null
           company_id?: string
@@ -4412,6 +4417,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           job_assignment_id?: string | null
+          media_instructions?: string | null
           platform?: string
           published_at?: string | null
           status?: string

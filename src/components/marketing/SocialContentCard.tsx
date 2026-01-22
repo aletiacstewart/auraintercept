@@ -16,6 +16,8 @@ import {
   MapPin, 
   Facebook, 
   MessageSquare,
+  Linkedin,
+  Video,
   Edit2,
   Trash2,
   Send,
@@ -23,6 +25,8 @@ import {
   Clock,
   Image as ImageIcon,
   Hash,
+  Sparkles,
+  Camera,
 } from 'lucide-react';
 import { AIContentButton } from '@/components/ai/AIContentButton';
 
@@ -31,10 +35,23 @@ export interface SocialContentDraft {
   company_id: string;
   job_assignment_id: string | null;
   image_url: string | null;
-  platform: 'instagram' | 'google_business' | 'facebook' | 'sms';
+  platform: 'instagram' | 'google_business' | 'facebook' | 'sms' | 'tiktok' | 'linkedin';
   generated_content: string;
   edited_content: string | null;
   hashtags: string[] | null;
+  media_instructions: string | null;
+  api_metadata: {
+    caption?: string;
+    hashtags?: string[];
+    commentary?: string;
+    visibility?: string;
+    title?: string;
+    is_aigc?: boolean;
+    summary?: string;
+    call_to_action?: string;
+    message?: string;
+    template?: string;
+  } | null;
   status: 'pending' | 'approved' | 'published' | 'rejected';
   approved_by: string | null;
   approved_at: string | null;
@@ -92,6 +109,26 @@ const PLATFORM_CONFIG = {
     iconBg: 'bg-[hsl(145,60%,45%)]/15',
     charLimit: 160,
   },
+  tiktok: {
+    icon: Video,
+    label: 'TikTok',
+    color: 'hsl(340, 82%, 52%)',
+    bgClass: 'bg-[hsl(340,82%,52%)]/10',
+    borderClass: 'border-[hsl(340,82%,52%)]/25',
+    textClass: 'text-[hsl(340,82%,60%)]',
+    iconBg: 'bg-[hsl(340,82%,52%)]/15',
+    charLimit: 2200,
+  },
+  linkedin: {
+    icon: Linkedin,
+    label: 'LinkedIn',
+    color: 'hsl(210, 90%, 45%)',
+    bgClass: 'bg-[hsl(210,90%,45%)]/10',
+    borderClass: 'border-[hsl(210,90%,45%)]/25',
+    textClass: 'text-[hsl(210,90%,55%)]',
+    iconBg: 'bg-[hsl(210,90%,45%)]/15',
+    charLimit: 3000,
+  },
 };
 
 export function SocialContentCard({ 
@@ -136,6 +173,9 @@ export function SocialContentCard({
     }
   };
 
+  // Check if TikTok has AI-generated content flag
+  const isTikTokAIGC = draft.platform === 'tiktok' && draft.api_metadata?.is_aigc;
+
   return (
     <>
       <Card className={`overflow-hidden border ${config.borderClass} bg-card rounded-xl`}>
@@ -147,6 +187,19 @@ export function SocialContentCard({
                 <PlatformIcon className={`h-4 w-4 ${config.textClass}`} />
               </div>
               <span className="font-medium text-sm text-card-foreground">{config.label}</span>
+              {/* AI Generated Badge for TikTok */}
+              {isTikTokAIGC && (
+                <Badge variant="outline" className="text-xs bg-purple-500/15 text-purple-400 border-purple-500/30">
+                  <Sparkles className="h-2.5 w-2.5 mr-1" />
+                  AI Generated
+                </Badge>
+              )}
+              {/* LinkedIn Visibility Badge */}
+              {draft.platform === 'linkedin' && draft.api_metadata?.visibility && (
+                <Badge variant="outline" className="text-xs bg-blue-500/15 text-blue-400 border-blue-500/30">
+                  {draft.api_metadata.visibility}
+                </Badge>
+              )}
             </div>
             {getStatusBadge()}
           </div>
@@ -209,6 +262,16 @@ export function SocialContentCard({
                 <p className="text-sm text-card-foreground/80 line-clamp-4 whitespace-pre-wrap">
                   {content}
                 </p>
+                
+                {/* Media Instructions */}
+                {draft.media_instructions && (
+                  <div className="flex items-start gap-2 p-2 rounded-lg bg-muted/20 border border-card-foreground/10">
+                    <Camera className="h-3.5 w-3.5 text-card-foreground/50 mt-0.5 shrink-0" />
+                    <p className="text-xs text-card-foreground/60 italic">
+                      {draft.media_instructions}
+                    </p>
+                  </div>
+                )}
                 
                 {/* Hashtags */}
                 {draft.hashtags && draft.hashtags.length > 0 && (
