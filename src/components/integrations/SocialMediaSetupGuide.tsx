@@ -319,8 +319,8 @@ export function SocialMediaSetupGuide({ platform }: SocialMediaSetupGuideProps) 
             </AccordionTrigger>
             <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <p>Add this URL as your OAuth redirect/callback URI in the {config.name} developer console:</p>
-              <div className="bg-muted p-3 rounded-lg flex items-center justify-between gap-2">
-                <code className="text-xs break-all">{OAUTH_CALLBACK_URL}</code>
+              <div className="bg-primary/10 p-3 rounded-lg flex items-center justify-between gap-2 border border-primary/20">
+                <code className="text-xs break-all text-foreground font-mono">{OAUTH_CALLBACK_URL}</code>
                 <Button
                   variant="ghost"
                   size="sm"
