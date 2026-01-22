@@ -40,7 +40,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 AI Agent & Console Guide
               </CardTitle>
               <CardDescription>
-                Complete guide to all 18 AI agents, 5 consoles, communication channels & integrations
+                Complete guide to all 19 AI agents, 5 consoles, communication channels & integrations
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -48,7 +48,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <p className="font-medium text-card-foreground">Document includes:</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>5 Console Overviews</li>
-                  <li>18 AI Agent Descriptions</li>
+                  <li>19 AI Agent Descriptions</li>
                   <li>Communication Channels</li>
                   <li>Agent Dependencies & Requirements</li>
                   <li>3rd Party Integration Guide</li>
@@ -424,7 +424,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <div className="space-y-2 text-sm text-card-foreground/70">
                   <ul className="list-disc list-inside space-y-1 ml-2">
                     <li>Hex Color Palettes</li>
-                    <li>22 Agent Icon Concepts</li>
+                    <li>19 Agent Icon Concepts</li>
                     <li>Typography Guidelines</li>
                     <li>Template Specifications</li>
                   </ul>
@@ -453,7 +453,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <div className="space-y-2 text-sm text-card-foreground/70">
                   <ul className="list-disc list-inside space-y-1 ml-2">
                     <li>Homepage Hero Variations</li>
-                    <li>22 Agent Descriptions</li>
+                    <li>19 Agent Descriptions</li>
                     <li>Pricing Page Copy</li>
                     <li>SEO Metadata</li>
                   </ul>
@@ -512,7 +512,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
             <CardContent>
               <div className="space-y-3">
                 {[
-                  { page: 1, title: 'Cover Page', desc: 'Key stats: 5 consoles, 18 agents' },
+                  { page: 1, title: 'Cover Page', desc: 'Key stats: 5 consoles, 19 agents' },
                   { page: 2, title: 'Table of Contents', desc: 'Full document navigation' },
                   { page: 3, title: 'Introduction', desc: 'How to read the guide & legend' },
                   { page: 4, title: 'Communication Channels', desc: 'Voice, SMS, Email, Chat' },
@@ -521,7 +521,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   { page: 7, title: 'Business Management', desc: '5 agents with features' },
                   { page: 8, title: 'Marketing & Analytics', desc: 'Consoles 4 & 5 overview' },
                   { page: 9, title: 'Analytics Agents', desc: '4 agents + dependency info' },
-                  { page: 10, title: 'Agent Summary Table', desc: 'All 18 agents at a glance' },
+                  { page: 10, title: 'Agent Summary Table', desc: 'All 19 agents at a glance' },
                   { page: 11, title: 'Subscription Tiers', desc: 'Which agents per tier' },
                   { page: 12, title: '3rd Party Integrations', desc: 'Required & optional services' },
                   { page: 13, title: 'Glossary & FAQ', desc: 'Terms and common questions' },
@@ -555,7 +555,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   { page: 3, title: 'Executive Summary', desc: 'Platform overview and value proposition' },
                   { page: 4, title: 'Development Timeline', desc: '6 phases with 30+ milestones' },
                   { page: 5, title: 'Complexity Score', desc: '87/100 enterprise-grade rating' },
-                  { page: '6-8', title: 'AI Agents Catalog', desc: '18 agents across 5 consoles' },
+                  { page: '6-8', title: 'AI Agents Catalog', desc: '19 agents across 5 consoles' },
                   { page: 9, title: 'Control Centers', desc: '5 specialized consoles' },
                   { page: 10, title: 'Platform Features', desc: '8 key platform capabilities' },
                   { page: 11, title: 'Integrations', desc: 'Third-party services and APIs' },

@@ -732,7 +732,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierBullet}>• Need marketing automation</Text>
         <Text style={styles.tierBullet}>• Want comprehensive analytics</Text>
         <Text style={styles.tierBullet}>• Social media management</Text>
-        <Text style={styles.tierBullet}>• 22 AI Agents: Full suite including Marketing, Analytics, Social Media</Text>
+        <Text style={styles.tierBullet}>• 19 AI Agents: Full suite including Marketing, Analytics, Social Media</Text>
       </View>
 
       <View style={styles.closingCard}>

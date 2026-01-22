@@ -217,7 +217,7 @@ const guideCategories = [
         steps: [
           'Single-Point ($497/mo): AI Receptionist, Follow-up, Review + Call to Book',
           'Multi-Track ($897/mo): Adds Scheduling, Dispatch, ETA, Quoting, Invoicing',
-          'Command ($1,497/mo): Full 22+ agent suite including Social Media & Analytics',
+          'Command ($1,497/mo): Full 19 agent suite including Social Media & Analytics',
           'All tiers include AI Voice Chat powered by ElevenLabs',
           'Employee limits: 5 (Single-Point), 10 (Multi-Track), Unlimited (Command)'
         ],
@@ -257,7 +257,7 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to AI Agents Hub from the sidebar',
-          'View all 22 specialized agents organized by 6 consoles',
+          'View all 19 specialized agents organized by 5 consoles',
           'Agents locked by tier show "Locked" badge',
           'Click any agent card to view settings and dependencies',
           'Enable/disable agents with the toggle switch'
@@ -1020,7 +1020,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.bulletText}>Command ($1,497/mo): Full 22+ agent suite including Social Media & Analytics</Text>
+          <Text style={styles.bulletText}>Command ($1,497/mo): Full 19 agent suite including Social Media & Analytics</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>

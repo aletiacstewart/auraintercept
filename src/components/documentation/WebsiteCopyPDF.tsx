@@ -289,7 +289,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.copyCard}>
         <Text style={styles.copyLabel}>Hero Variation 2 - Solution-Focused</Text>
-        <Text style={styles.copyHeadline}>22 AI Agents. One Mission: Grow Your Business.</Text>
+        <Text style={styles.copyHeadline}>19 AI Agents. One Mission: Grow Your Business.</Text>
         <Text style={styles.copySubhead}>From answering calls to dispatching technicians, Aura Intercept handles every operational task while you focus on what matters.</Text>
       </View>
 
@@ -368,7 +368,7 @@ export const WebsiteCopyPDF: React.FC = () => (
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent Descriptions" pageNum={4} />
       
-      <Text style={styles.sectionTitle}>22 Agent Copy Blocks</Text>
+      <Text style={styles.sectionTitle}>19 Agent Copy Blocks</Text>
       <Text style={styles.sectionSubtitle}>Short descriptions for feature pages and marketing</Text>
 
       <View style={styles.twoColumn}>
@@ -573,7 +573,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Homepage</Text>
         <Text style={styles.seoText}>
           Title: Aura Intercept | AI Business Automation for Service Companies{'\n'}
-          Meta: 22 AI agents handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start growing revenue. Try free for 14 days.
+          Meta: 19 AI agents handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start growing revenue. Try free for 14 days.
         </Text>
       </View>
 
@@ -581,7 +581,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Features Page</Text>
         <Text style={styles.seoText}>
           Title: AI-Powered Features | Aura Intercept Business Automation{'\n'}
-          Meta: AI receptionist, smart scheduling, route optimization, automated invoicing & 18 more agents. See how Aura Intercept transforms operations.
+          Meta: AI receptionist, smart scheduling, route optimization, automated invoicing & 15 more agents. See how Aura Intercept transforms operations.
         </Text>
       </View>
 
@@ -589,7 +589,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Pricing Page</Text>
         <Text style={styles.seoText}>
           Title: Pricing Plans | Aura Intercept AI Business Automation{'\n'}
-          Meta: Plans from $497/mo. 22 AI agents, 24/7 call answering, scheduling automation & more. 23x average ROI. Start your free trial today.
+          Meta: Plans from $497/mo. 19 AI agents, 24/7 call answering, scheduling automation & more. 23x average ROI. Start your free trial today.
         </Text>
       </View>
 

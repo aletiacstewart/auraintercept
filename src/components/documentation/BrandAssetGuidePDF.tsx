@@ -617,7 +617,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent Icon Concepts" pageNum={5} />
       
-      <Text style={styles.sectionTitle}>22 Agent Icon System</Text>
+      <Text style={styles.sectionTitle}>19 Agent Icon System</Text>
       <Text style={styles.sectionSubtitle}>Visual concepts for agent identification</Text>
 
       <View style={styles.threeColumn}>
