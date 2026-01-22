@@ -878,43 +878,43 @@ export default function Index() {
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">Scheduling Agent (Booking)</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">Dispatch Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">Route Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">ETA Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">Check-in Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">Quote Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">Invoice Agent</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
@@ -926,8 +926,8 @@ export default function Index() {
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">All 19 AI Agents</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
 
@@ -943,26 +943,26 @@ export default function Index() {
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">Field Operations Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">Business Management Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">Marketing & Sales Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">Analytics & Reports Console</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
@@ -1019,8 +1019,8 @@ export default function Index() {
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
                           <td className="p-3 text-white">White-Label Branding</td>
-                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
-                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-500 mx-auto" /></td>
+                          <td className="p-3 text-center"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
+                          <td className="p-3 text-center bg-sky-600/20 border-x border-sky-400/30"><X className="w-4 h-4 text-slate-300 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-emerald-400 mx-auto" /></td>
                         </tr>
                         <tr className="border-b border-white/10 hover:bg-slate-600/30">
