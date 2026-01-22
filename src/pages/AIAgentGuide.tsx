@@ -113,19 +113,19 @@ const AIAgentGuide: React.FC = () => {
           <TabsContent value="diagram" className="space-y-6">
             <AgentDependencyDiagram />
             
-            <Card className="bg-slate-800/50 border-slate-700">
+            <Card className="bg-card border-border">
               <CardHeader className="pb-2">
                 <CardTitle className="text-base text-card-foreground">How to Read This Diagram</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted-foreground space-y-2">
+              <CardContent className="text-sm text-card-foreground/80 space-y-2">
                 <p>
                   <strong className="text-card-foreground">Arrows show dependencies:</strong> An arrow from Agent A to Agent B means Agent A must be active for Agent B to function.
                 </p>
                 <p>
-                  <strong className="text-card-foreground">Color coding:</strong> Agents are grouped by their minimum required tier. 
-                  <span className="text-amber-400"> Orange = Single-Point</span>, 
-                  <span className="text-sky-400"> Blue = Multi-Track</span>, 
-                  <span className="text-violet-400"> Purple = Command</span>.
+                  <strong className="text-card-foreground">Color coding:</strong> Agents are grouped by their minimum required tier.{' '}
+                  <Badge className="bg-amber-600 text-white ml-1">Orange = Single-Point</Badge>{' '}
+                  <Badge className="bg-sky-600 text-white">Blue = Multi-Track</Badge>{' '}
+                  <Badge className="bg-violet-600 text-white">Purple = Command</Badge>
                 </p>
                 <p>
                   <strong className="text-card-foreground">Dotted lines:</strong> Indicate optional/enhancing dependencies that improve functionality but aren't strictly required.
@@ -137,11 +137,11 @@ const AIAgentGuide: React.FC = () => {
           <TabsContent value="consoles" className="space-y-6">
             <ConsoleRequirementsDiagram />
             
-            <Card className="bg-slate-800/50 border-slate-700">
+            <Card className="bg-card border-border">
               <CardHeader className="pb-2">
                 <CardTitle className="text-base text-card-foreground">Understanding Control Centers</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted-foreground space-y-2">
+              <CardContent className="text-sm text-card-foreground/80 space-y-2">
                 <p>
                   Control Centers are unified interfaces that group related agents together. Each center requires an "anchor agent" to unlock.
                 </p>
