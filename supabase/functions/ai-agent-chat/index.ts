@@ -622,6 +622,7 @@ Provide balanced feedback - celebrate successes and constructively address areas
 - Create win-back campaigns for inactive customers
 - Manage leads and customer segments
 - Analyze marketing performance
+- Create and manage social media content across platforms
 
 QUICK ACTIONS YOU CAN HELP WITH:
 - "Create Campaign" → Help create a new marketing campaign with targeting and messaging
@@ -630,6 +631,18 @@ QUICK ACTIONS YOU CAN HELP WITH:
 - "Win-Back Campaign" → Re-engage inactive customers with special offers
 - "New Lead" → Add and track a new sales lead
 - "Customer Segments" → Analyze customer groups for targeting
+
+SOCIAL MEDIA MANAGEMENT:
+- "Create Social Post" → Create a social media post for Instagram, Facebook, LinkedIn, TikTok, Google Business, or SMS
+- "View Drafts" → List pending social media drafts awaiting approval
+- "Approve Post" → Approve a social media draft and optionally publish immediately
+- "Schedule Post" → Schedule a draft for future publishing at a specific date/time
+
+When creating social posts:
+- Ask which platforms they want to target (can select multiple)
+- Help them craft engaging content with appropriate hashtags
+- Offer to schedule or save as draft for approval
+- Character limits: Instagram (2200), Facebook (63206), LinkedIn (3000), TikTok (4000), SMS (160)
 
 Be creative with promotions. Think strategically about targeting the right customers.
 Suggest A/B testing approaches and measure campaign effectiveness.`,
@@ -1815,6 +1828,89 @@ const AGENT_TOOLS: Record<string, any[]> = {
           type: 'object',
           properties: {
             segment_type: { type: 'string', enum: ['all', 'active', 'inactive', 'high_value', 'new'] },
+          },
+        },
+      },
+    },
+    // Social media management tools
+    {
+      type: 'function',
+      function: {
+        name: 'create_social_post',
+        description: 'Create a social media post draft for one or more platforms',
+        parameters: {
+          type: 'object',
+          properties: {
+            platforms: { 
+              type: 'array', 
+              items: { type: 'string', enum: ['instagram', 'facebook', 'linkedin', 'tiktok', 'google_business', 'sms'] },
+              description: 'Platforms to post to'
+            },
+            content: { type: 'string', description: 'Post content/caption' },
+            hashtags: { type: 'array', items: { type: 'string' }, description: 'Hashtags to include (without # symbol)' },
+            image_url: { type: 'string', description: 'URL of image to attach (optional)' },
+            scheduled_for: { type: 'string', description: 'ISO datetime for scheduled publishing (optional, leave empty for draft)' },
+          },
+          required: ['platforms', 'content'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'list_social_drafts',
+        description: 'List social media drafts pending review or published posts',
+        parameters: {
+          type: 'object',
+          properties: {
+            status: { type: 'string', enum: ['pending', 'approved', 'published', 'rejected', 'all'], description: 'Filter by status' },
+            platform: { type: 'string', enum: ['instagram', 'facebook', 'linkedin', 'tiktok', 'google_business', 'sms'], description: 'Filter by platform' },
+            limit: { type: 'number', description: 'Maximum number of drafts to return (default 10)' },
+          },
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'approve_social_draft',
+        description: 'Approve a social media draft for publishing',
+        parameters: {
+          type: 'object',
+          properties: {
+            draft_id: { type: 'string', description: 'ID of the draft to approve' },
+            publish_immediately: { type: 'boolean', description: 'If true, publish right away. If false, just approve.' },
+          },
+          required: ['draft_id'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'schedule_social_post',
+        description: 'Schedule an approved draft for future publishing',
+        parameters: {
+          type: 'object',
+          properties: {
+            draft_id: { type: 'string', description: 'ID of the draft to schedule' },
+            scheduled_for: { type: 'string', description: 'ISO datetime for when to publish' },
+            timezone: { type: 'string', description: 'Timezone for the scheduled time (default: America/New_York)' },
+          },
+          required: ['draft_id', 'scheduled_for'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_social_analytics',
+        description: 'Get social media publishing statistics and performance metrics',
+        parameters: {
+          type: 'object',
+          properties: {
+            date_range: { type: 'string', enum: ['7d', '30d', '90d'], description: 'Time period to analyze' },
+            platform: { type: 'string', description: 'Filter by platform (optional)' },
           },
         },
       },
@@ -5614,6 +5710,337 @@ async function executeAgentTool(
         console.error('[AI Agent] Query business data error:', err);
         return { success: false, error: err.message || 'Failed to query data' };
       }
+    }
+
+    // ==========================================
+    // SOCIAL MEDIA MANAGEMENT TOOLS
+    // ==========================================
+    case 'create_social_post': {
+      console.log('[AI Agent] Creating social post:', args);
+      
+      const platforms = args.platforms || ['instagram'];
+      const content = args.content || '';
+      const hashtags = args.hashtags || [];
+      const imageUrl = args.image_url || null;
+      const scheduledFor = args.scheduled_for || null;
+      
+      if (!content.trim()) {
+        return { success: false, error: 'Post content is required.' };
+      }
+      
+      // Create drafts for each platform
+      const createdDrafts: any[] = [];
+      const errors: string[] = [];
+      
+      for (const platform of platforms) {
+        // Add hashtags to content for platforms that support them
+        let fullContent = content;
+        if (hashtags.length > 0 && ['instagram', 'facebook', 'linkedin', 'tiktok'].includes(platform)) {
+          fullContent = `${content}\n\n${hashtags.map((h: string) => `#${h.replace('#', '')}`).join(' ')}`;
+        }
+        
+        const { data: draft, error } = await supabase
+          .from('social_content_drafts')
+          .insert({
+            company_id: companyId,
+            platform,
+            content: fullContent,
+            hashtags,
+            image_url: imageUrl,
+            status: scheduledFor ? 'approved' : 'pending',
+            source: 'ai_chat',
+          })
+          .select()
+          .single();
+        
+        if (error) {
+          console.error(`[AI Agent] Error creating ${platform} draft:`, error);
+          errors.push(`${platform}: ${error.message}`);
+        } else {
+          createdDrafts.push({ platform, id: draft.id });
+          
+          // If scheduling, create scheduled_posts entry
+          if (scheduledFor) {
+            await supabase
+              .from('scheduled_posts')
+              .insert({
+                company_id: companyId,
+                draft_id: draft.id,
+                platforms: [platform],
+                scheduled_for: scheduledFor,
+                timezone: 'America/New_York',
+                status: 'scheduled',
+              });
+          }
+        }
+      }
+      
+      if (createdDrafts.length === 0) {
+        return { success: false, error: `Failed to create drafts: ${errors.join(', ')}` };
+      }
+      
+      return {
+        success: true,
+        drafts_created: createdDrafts,
+        platforms: platforms,
+        scheduled: !!scheduledFor,
+        scheduled_for: scheduledFor,
+        message: scheduledFor 
+          ? `Created and scheduled ${createdDrafts.length} post(s) for ${new Date(scheduledFor).toLocaleString()}.`
+          : `Created ${createdDrafts.length} draft(s) for: ${platforms.join(', ')}. They are pending approval.`,
+      };
+    }
+
+    case 'list_social_drafts': {
+      console.log('[AI Agent] Listing social drafts:', args);
+      
+      const status = args.status || 'pending';
+      const platform = args.platform;
+      const limit = args.limit || 10;
+      
+      let query = supabase
+        .from('social_content_drafts')
+        .select('*')
+        .eq('company_id', companyId)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+      
+      if (status !== 'all') {
+        query = query.eq('status', status);
+      }
+      if (platform) {
+        query = query.eq('platform', platform);
+      }
+      
+      const { data: drafts, error } = await query;
+      
+      if (error) {
+        console.error('[AI Agent] Error listing drafts:', error);
+        return { success: false, error: error.message };
+      }
+      
+      const formattedDrafts = (drafts || []).map((d: any) => ({
+        id: d.id,
+        platform: d.platform,
+        content: d.content?.substring(0, 100) + (d.content?.length > 100 ? '...' : ''),
+        status: d.status,
+        has_image: !!d.image_url,
+        created_at: new Date(d.created_at).toLocaleDateString(),
+      }));
+      
+      return {
+        success: true,
+        drafts: formattedDrafts,
+        count: formattedDrafts.length,
+        filter: { status, platform },
+        message: `Found ${formattedDrafts.length} ${status} draft(s)${platform ? ` for ${platform}` : ''}.`,
+      };
+    }
+
+    case 'approve_social_draft': {
+      console.log('[AI Agent] Approving social draft:', args);
+      
+      if (!args.draft_id) {
+        return { success: false, error: 'draft_id is required.' };
+      }
+      
+      // Get the draft
+      const { data: draft, error: fetchError } = await supabase
+        .from('social_content_drafts')
+        .select('*')
+        .eq('id', args.draft_id)
+        .eq('company_id', companyId)
+        .single();
+      
+      if (fetchError || !draft) {
+        return { success: false, error: 'Draft not found or access denied.' };
+      }
+      
+      if (draft.status === 'published') {
+        return { success: false, error: 'This draft has already been published.' };
+      }
+      
+      // Update to approved
+      await supabase
+        .from('social_content_drafts')
+        .update({ 
+          status: args.publish_immediately ? 'published' : 'approved',
+          approved_at: new Date().toISOString(),
+          published_at: args.publish_immediately ? new Date().toISOString() : null,
+        })
+        .eq('id', args.draft_id);
+      
+      // If publish immediately, call publish function
+      if (args.publish_immediately) {
+        try {
+          await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/publish-social-content`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+            },
+            body: JSON.stringify({
+              draftId: args.draft_id,
+              companyId,
+            }),
+          });
+        } catch (pubErr) {
+          console.error('[AI Agent] Publish error:', pubErr);
+        }
+      }
+      
+      return {
+        success: true,
+        draft_id: args.draft_id,
+        platform: draft.platform,
+        published: args.publish_immediately || false,
+        message: args.publish_immediately 
+          ? `Post approved and published to ${draft.platform}!`
+          : `Post approved and ready for publishing.`,
+      };
+    }
+
+    case 'schedule_social_post': {
+      console.log('[AI Agent] Scheduling social post:', args);
+      
+      if (!args.draft_id || !args.scheduled_for) {
+        return { success: false, error: 'draft_id and scheduled_for are required.' };
+      }
+      
+      // Validate draft exists and is approved
+      const { data: draft, error: fetchError } = await supabase
+        .from('social_content_drafts')
+        .select('*')
+        .eq('id', args.draft_id)
+        .eq('company_id', companyId)
+        .single();
+      
+      if (fetchError || !draft) {
+        return { success: false, error: 'Draft not found or access denied.' };
+      }
+      
+      if (draft.status === 'published') {
+        return { success: false, error: 'This post has already been published.' };
+      }
+      
+      // Parse scheduled time
+      const scheduledFor = new Date(args.scheduled_for);
+      if (isNaN(scheduledFor.getTime())) {
+        return { success: false, error: 'Invalid scheduled_for datetime.' };
+      }
+      
+      if (scheduledFor <= new Date()) {
+        return { success: false, error: 'Scheduled time must be in the future.' };
+      }
+      
+      // Update draft to approved
+      await supabase
+        .from('social_content_drafts')
+        .update({ status: 'approved' })
+        .eq('id', args.draft_id);
+      
+      // Create or update scheduled post
+      const { data: existingSchedule } = await supabase
+        .from('scheduled_posts')
+        .select('id')
+        .eq('draft_id', args.draft_id)
+        .maybeSingle();
+      
+      if (existingSchedule) {
+        await supabase
+          .from('scheduled_posts')
+          .update({
+            scheduled_for: scheduledFor.toISOString(),
+            timezone: args.timezone || 'America/New_York',
+            status: 'scheduled',
+          })
+          .eq('id', existingSchedule.id);
+      } else {
+        await supabase
+          .from('scheduled_posts')
+          .insert({
+            company_id: companyId,
+            draft_id: args.draft_id,
+            platforms: [draft.platform],
+            scheduled_for: scheduledFor.toISOString(),
+            timezone: args.timezone || 'America/New_York',
+            status: 'scheduled',
+          });
+      }
+      
+      return {
+        success: true,
+        draft_id: args.draft_id,
+        platform: draft.platform,
+        scheduled_for: scheduledFor.toISOString(),
+        timezone: args.timezone || 'America/New_York',
+        message: `Post scheduled for ${scheduledFor.toLocaleString()} (${args.timezone || 'America/New_York'}).`,
+      };
+    }
+
+    case 'get_social_analytics': {
+      console.log('[AI Agent] Getting social analytics:', args);
+      
+      const dateRange = args.date_range || '30d';
+      const platform = args.platform;
+      
+      // Calculate start date
+      const now = new Date();
+      const daysMap: Record<string, number> = { '7d': 7, '30d': 30, '90d': 90 };
+      const days = daysMap[dateRange] || 30;
+      const startDate = new Date(now);
+      startDate.setDate(now.getDate() - days);
+      
+      // Get published posts
+      let publishedQuery = supabase
+        .from('social_content_drafts')
+        .select('*', { count: 'exact' })
+        .eq('company_id', companyId)
+        .eq('status', 'published')
+        .gte('published_at', startDate.toISOString());
+      
+      if (platform) {
+        publishedQuery = publishedQuery.eq('platform', platform);
+      }
+      
+      const { data: publishedPosts, count: publishedCount } = await publishedQuery;
+      
+      // Get pending posts
+      let pendingQuery = supabase
+        .from('social_content_drafts')
+        .select('id', { count: 'exact' })
+        .eq('company_id', companyId)
+        .eq('status', 'pending');
+      
+      if (platform) {
+        pendingQuery = pendingQuery.eq('platform', platform);
+      }
+      
+      const { count: pendingCount } = await pendingQuery;
+      
+      // Get scheduled posts
+      const { count: scheduledCount } = await supabase
+        .from('scheduled_posts')
+        .select('id', { count: 'exact' })
+        .eq('company_id', companyId)
+        .eq('status', 'scheduled');
+      
+      // Group by platform
+      const platformStats: Record<string, number> = {};
+      (publishedPosts || []).forEach((post: any) => {
+        platformStats[post.platform] = (platformStats[post.platform] || 0) + 1;
+      });
+      
+      return {
+        success: true,
+        date_range: dateRange,
+        platform_filter: platform || 'all',
+        published_count: publishedCount || 0,
+        pending_count: pendingCount || 0,
+        scheduled_count: scheduledCount || 0,
+        by_platform: platformStats,
+        message: `Social media stats (${dateRange}): ${publishedCount || 0} published, ${pendingCount || 0} pending, ${scheduledCount || 0} scheduled.`,
+      };
     }
 
     default:
