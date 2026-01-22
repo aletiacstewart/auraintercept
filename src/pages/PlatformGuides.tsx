@@ -64,14 +64,15 @@ const guideCategories = [
         title: 'Subscription Tiers',
         duration: '8 min',
         steps: [
-          'Single-Point ($497/mo): AI Receptionist, Follow-up, Review agents + Call to Book',
-          'Multi-Track ($897/mo): Adds Scheduling, Dispatch, ETA, Quoting, Invoicing agents + Online Booking',
-          'Command ($1,497/mo): Full 22+ agent suite including Social Media, Analytics, and Marketing',
+          'Single-Point ($497/mo): 3 AI Agents (Receptionist, Follow-up, Review) + Call to Book',
+          'Multi-Track ($897/mo): 10 AI Agents + 2 Control Centers + Online Booking',
+          'Command ($1,497/mo): All 19 AI Agents + 5 Control Centers + White-Label Branding',
           'All tiers include AI Voice Chat powered by ElevenLabs',
           'Employee limits: 5 (Single-Point), 10 (Multi-Track), Unlimited (Command)',
+          'Premium Add-Ons: Social Media ($150/mo), Smart Website ($150/mo)',
           'View your tier status in the sidebar bottom section'
         ],
-        tips: ['Trial users get full Command tier access', 'Upgrade anytime from Settings → Subscription']
+        tips: ['Trial users get full Command tier access', 'Annual billing saves up to $2,994/year']
       },
       {
         title: 'User Roles & Permissions',
@@ -112,13 +113,27 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to AI Agents Hub from the sidebar',
-          'View all 22 specialized agents organized by 6 consoles',
+          'View all 19 AI agents organized by 5 Control Centers',
           'Agents locked by tier show "Locked" badge with upgrade path',
           'Click any agent card to view settings and dependencies',
           'Enable/disable agents with the toggle switch',
           'Monitor agent activity in console-specific event logs'
         ],
         tips: ['Start with Customer Portal agents', 'Locked agents show required tier for upgrade planning']
+      },
+      {
+        title: 'AI Agent Workflow Guide',
+        duration: '15 min',
+        steps: [
+          'Navigate to Platform Resources → AI Agent Guide in sidebar',
+          'View Agent Dependency Flow diagram showing handoff sequences',
+          'Explore Console Requirements to understand which consoles need which agents',
+          'Use the Calculator tab to determine which agents you need',
+          'Review Quick Reference for agent-to-console mappings',
+          'Compare subscription tiers in the Tier Comparison tab'
+        ],
+        tips: ['Use the Calculator for upgrade planning', 'Bookmark the guide for quick reference'],
+        link: '/dashboard/ai-agent-guide'
       },
       {
         title: 'AI Receptionist (Triage)',
@@ -302,6 +317,20 @@ const guideCategories = [
         tips: ['Use dedicated business calendar', 'Sync employee calendars for availability']
       },
       {
+        title: 'iCal / CalDAV Calendar Sync',
+        duration: '10 min',
+        steps: [
+          'Navigate to Integrations → Calendar',
+          'Select iCal/CalDAV option for non-Google calendars',
+          'Supports Apple Calendar, Outlook, and any iCal-compatible calendar',
+          'Copy the unique calendar feed URL generated for your account',
+          'Paste URL into your calendar app as a subscription',
+          'Appointments sync automatically (read-only from external calendars)',
+          'Use for viewing appointments in your preferred calendar app'
+        ],
+        tips: ['iCal is read-only; use Google Calendar for two-way sync', 'Share feed URL with team for visibility']
+      },
+      {
         title: 'Stripe Payments',
         duration: '15 min',
         steps: [
@@ -316,6 +345,20 @@ const guideCategories = [
         tips: ['Stripe handles all PCI compliance', 'Payment links work on any device']
       },
       {
+        title: 'Social Media Integration',
+        duration: '15 min',
+        steps: [
+          'Navigate to Social Media Ops → Settings (Command tier or Add-On)',
+          'Connect social accounts via OAuth for each platform',
+          'Supported platforms: Instagram, Facebook, LinkedIn, TikTok, GMB, SMS',
+          'Grant posting permissions when prompted',
+          'Configure brand voice and default hashtags',
+          'Set up content approval workflow if needed',
+          'Test with a draft post before scheduling'
+        ],
+        tips: ['Connect business accounts, not personal', 'Each platform requires separate OAuth authorization']
+      },
+      {
         title: 'Website Widget Embed',
         duration: '10 min',
         steps: [
@@ -328,6 +371,20 @@ const guideCategories = [
           'Verify messages reach your dashboard'
         ],
         tips: ['Iframe works on most website builders', 'Test on mobile devices too']
+      },
+      {
+        title: 'CRM Integration',
+        duration: '12 min',
+        steps: [
+          'Navigate to Integrations → CRM (Multi-Track+ tier)',
+          'Select your CRM provider from supported options',
+          'Authenticate with your CRM account credentials',
+          'Map customer fields between platforms',
+          'Configure sync direction (one-way or two-way)',
+          'Set sync frequency (real-time or scheduled)',
+          'Verify customer data appears in both systems'
+        ],
+        tips: ['Start with one-way sync to avoid conflicts', 'Review field mappings carefully before enabling']
       }
     ]
   },
@@ -995,7 +1052,7 @@ const PlatformGuides: React.FC = () => {
                   <Bot className="h-5 w-5 text-accent" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">22</p>
+                  <p className="text-2xl font-bold">19</p>
                   <p className="text-xs text-card-foreground/70">AI Agents</p>
                 </div>
               </div>
@@ -1008,7 +1065,7 @@ const PlatformGuides: React.FC = () => {
                   <Puzzle className="h-5 w-5 text-success" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">6</p>
+                  <p className="text-2xl font-bold">9</p>
                   <p className="text-xs text-card-foreground/70">Integrations</p>
                 </div>
               </div>
