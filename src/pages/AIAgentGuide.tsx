@@ -102,12 +102,12 @@ const AIAgentGuide: React.FC = () => {
         />
 
         <Tabs defaultValue="diagram" className="space-y-6">
-          <TabsList className="bg-slate-800/50">
-            <TabsTrigger value="diagram">Dependency Flow</TabsTrigger>
-            <TabsTrigger value="consoles">Console Requirements</TabsTrigger>
-            <TabsTrigger value="calculator">What Do I Need?</TabsTrigger>
-            <TabsTrigger value="reference">Quick Reference</TabsTrigger>
-            <TabsTrigger value="tiers">Tier Comparison</TabsTrigger>
+          <TabsList className="bg-card border border-border">
+            <TabsTrigger value="diagram" className="data-[state=inactive]:text-card-foreground">Dependency Flow</TabsTrigger>
+            <TabsTrigger value="consoles" className="data-[state=inactive]:text-card-foreground">Console Requirements</TabsTrigger>
+            <TabsTrigger value="calculator" className="data-[state=inactive]:text-card-foreground">What Do I Need?</TabsTrigger>
+            <TabsTrigger value="reference" className="data-[state=inactive]:text-card-foreground">Quick Reference</TabsTrigger>
+            <TabsTrigger value="tiers" className="data-[state=inactive]:text-card-foreground">Tier Comparison</TabsTrigger>
           </TabsList>
 
           <TabsContent value="diagram" className="space-y-6">
