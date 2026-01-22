@@ -34,7 +34,9 @@ import {
   Smartphone,
   Bell,
   AlertCircle,
-  Lightbulb
+  Lightbulb,
+  Share2,
+  Home
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -603,17 +605,30 @@ const SOCIAL_MEDIA_GUIDES: AgentGuide[] = [
 // Analytics & Optimization Guides
 const ANALYTICS_GUIDES: AgentGuide[] = [
   {
-    id: 'performance',
+    id: 'home',
+    label: 'Home Dashboard',
+    icon: Home,
+    description: 'Overview of your analytics dashboard',
+    steps: [
+      { step: 1, title: 'View Summary', description: 'See key metrics at a glance' },
+      { step: 2, title: 'Quick Actions', description: 'Access tabs for detailed analytics' },
+      { step: 3, title: 'Ask Aura', description: 'Type questions about your data' },
+      { step: 4, title: 'Get Insights', description: 'Receive AI-powered recommendations' },
+    ],
+    tips: ['Use the chat to ask about trends', 'Click any tab for detailed views']
+  },
+  {
+    id: 'report',
     label: 'Performance Report',
     icon: BarChart3,
     description: 'Analyze business performance metrics',
     steps: [
-      { step: 1, title: 'Select Period', description: 'Choose date range for analysis' },
-      { step: 2, title: 'Choose Metrics', description: 'Select KPIs to include' },
-      { step: 3, title: 'Generate Report', description: 'Create comprehensive report' },
-      { step: 4, title: 'Review Insights', description: 'Analyze trends and patterns' },
+      { step: 1, title: 'Click Report Tab', description: 'Open the performance report view' },
+      { step: 2, title: 'Select Period', description: 'Choose date range for analysis' },
+      { step: 3, title: 'View Metrics', description: 'See appointments, revenue, completion rates' },
+      { step: 4, title: 'Close When Done', description: 'Click Close to return to Home' },
     ],
-    tips: ['Compare to previous periods', 'Set up weekly automated reports']
+    tips: ['Compare to previous periods', 'Track month-over-month trends']
   },
   {
     id: 'revenue',
@@ -621,23 +636,23 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
     icon: DollarSign,
     description: 'Deep dive into revenue streams',
     steps: [
-      { step: 1, title: 'View Breakdown', description: 'See revenue by service type' },
-      { step: 2, title: 'Analyze Trends', description: 'Track month-over-month growth' },
-      { step: 3, title: 'Identify Top Performers', description: 'Find highest revenue services' },
-      { step: 4, title: 'Spot Opportunities', description: 'Discover growth areas' },
+      { step: 1, title: 'Click Revenue Tab', description: 'Open revenue analysis view' },
+      { step: 2, title: 'View Breakdown', description: 'See revenue by service type' },
+      { step: 3, title: 'Check Pending', description: 'Track outstanding payments' },
+      { step: 4, title: 'Close When Done', description: 'Click Close to return to Home' },
     ],
     tips: ['Track recurring vs one-time revenue', 'Monitor seasonal patterns']
   },
   {
-    id: 'customers',
+    id: 'insights',
     label: 'Customer Insights',
     icon: Users,
     description: 'Understand customer behavior and value',
     steps: [
-      { step: 1, title: 'View Demographics', description: 'Analyze customer profiles' },
-      { step: 2, title: 'Check Lifetime Value', description: 'See CLV by segment' },
-      { step: 3, title: 'Review Retention', description: 'Monitor churn rates' },
-      { step: 4, title: 'Identify Opportunities', description: 'Find upsell potential' },
+      { step: 1, title: 'Click Insights Tab', description: 'Open customer insights view' },
+      { step: 2, title: 'View Demographics', description: 'See total, new, and returning customers' },
+      { step: 3, title: 'Check Retention', description: 'Monitor retention and satisfaction rates' },
+      { step: 4, title: 'Close When Done', description: 'Click Close to return to Home' },
     ],
     tips: ['Focus on high-value segments', 'Track satisfaction scores']
   },
@@ -647,10 +662,10 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
     icon: TrendingUp,
     description: 'Predict future business trends',
     steps: [
-      { step: 1, title: 'Select Metric', description: 'Choose what to forecast' },
-      { step: 2, title: 'Set Timeframe', description: 'Define forecast period' },
+      { step: 1, title: 'Click Forecast Tab', description: 'Open trend forecasting view' },
+      { step: 2, title: 'Select Metric', description: 'Choose what to forecast' },
       { step: 3, title: 'View Predictions', description: 'See AI-generated forecasts' },
-      { step: 4, title: 'Plan Actions', description: 'Prepare for predicted trends' },
+      { step: 4, title: 'Close When Done', description: 'Click Close to return to Home' },
     ],
     tips: ['Consider seasonal factors', 'Update forecasts monthly']
   },
@@ -660,25 +675,51 @@ const ANALYTICS_GUIDES: AgentGuide[] = [
     icon: Target,
     description: 'Monitor key performance indicators',
     steps: [
-      { step: 1, title: 'View Dashboard', description: 'See all KPIs at a glance' },
-      { step: 2, title: 'Check Status', description: 'Green/yellow/red indicators' },
-      { step: 3, title: 'Drill Down', description: 'Click any KPI for details' },
-      { step: 4, title: 'Set Alerts', description: 'Configure threshold notifications' },
+      { step: 1, title: 'Click KPIs Tab', description: 'Open KPI dashboard view' },
+      { step: 2, title: 'Select Period', description: 'Choose week, month, or quarter' },
+      { step: 3, title: 'Review Metrics', description: 'See completion rate, revenue, jobs, response time' },
+      { step: 4, title: 'Close When Done', description: 'Click Close to return to Home' },
     ],
-    tips: ['Review KPIs daily', 'Set realistic targets']
+    tips: ['Review KPIs daily', 'Track progress toward targets']
+  },
+  {
+    id: 'social',
+    label: 'Social Analytics',
+    icon: Share2,
+    description: 'Track social media publishing activity',
+    steps: [
+      { step: 1, title: 'Click Social Tab', description: 'Open social media analytics view' },
+      { step: 2, title: 'View Platform Stats', description: 'See posts per platform (Instagram, Facebook, etc.)' },
+      { step: 3, title: 'Check Publish Rate', description: 'Monitor draft to published ratio' },
+      { step: 4, title: 'Get AI Insights', description: 'Click button for AI recommendations' },
+    ],
+    tips: ['Track which platforms perform best', 'Monitor publish rate consistency']
+  },
+  {
+    id: 'reminders',
+    label: 'Reminder Insights',
+    icon: Bell,
+    description: 'Analyze reminder effectiveness',
+    steps: [
+      { step: 1, title: 'Click Reminders Tab', description: 'Open reminder analytics view' },
+      { step: 2, title: 'View Delivery Stats', description: 'See SMS and email reminder metrics' },
+      { step: 3, title: 'Check Success Rates', description: 'Monitor delivery and confirmation rates' },
+      { step: 4, title: 'Close When Done', description: 'Click Close to return to Home' },
+    ],
+    tips: ['Track which reminder types work best', 'Monitor opt-out rates']
   },
   {
     id: 'export',
-    label: 'Export Report',
+    label: 'Export Reports',
     icon: Download,
-    description: 'Download reports in various formats',
+    description: 'Download reports in CSV or PDF format',
     steps: [
-      { step: 1, title: 'Select Report', description: 'Choose which report to export' },
-      { step: 2, title: 'Choose Format', description: 'Pick PDF, Excel, or CSV' },
-      { step: 3, title: 'Configure Options', description: 'Set date range and filters' },
-      { step: 4, title: 'Download', description: 'Save report to your device' },
+      { step: 1, title: 'Click Export Tab', description: 'Open export report view' },
+      { step: 2, title: 'Select Report Types', description: 'Check boxes for reports to include' },
+      { step: 3, title: 'Choose Format', description: 'Select CSV or PDF' },
+      { step: 4, title: 'Download', description: 'Click Download button to save' },
     ],
-    tips: ['Schedule automated exports', 'Share with stakeholders regularly']
+    tips: ['Export multiple reports at once', 'Share PDF reports with stakeholders']
   },
 ];
 
