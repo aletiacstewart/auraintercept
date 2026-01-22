@@ -613,11 +613,11 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
                 className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${
                   isSelected
                     ? `${platform.bgColor} border-current ${platform.color}`
-                    : 'bg-muted/30 border-card-foreground/10 text-card-foreground/60 hover:bg-muted/50'
+                    : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'
                 }`}
               >
                 <Checkbox checked={isSelected} className="pointer-events-none" />
-                <Icon className={`h-4 w-4 ${isSelected ? platform.color : 'opacity-70'}`} />
+                <Icon className={`h-4 w-4 ${isSelected ? platform.color : ''}`} />
                 <span className="text-sm font-medium">{platform.label}</span>
               </button>
             );

@@ -28,9 +28,9 @@ const TabsTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       "inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium border transition-colors",
-      // Default (inactive) state must be readable on both light and dark surfaces
-      "text-foreground/80 border-border bg-muted/30",
-      "hover:bg-muted/50 hover:text-foreground hover:border-border",
+      // Default (inactive) state - improved contrast for dark mode
+      "text-foreground border-border bg-muted/40",
+      "hover:bg-muted/60 hover:text-foreground hover:border-border",
       "data-[state=active]:bg-secondary/15 data-[state=active]:border-secondary/40 data-[state=active]:text-secondary",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
       "disabled:pointer-events-none disabled:opacity-50",

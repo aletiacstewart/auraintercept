@@ -983,7 +983,7 @@ function AgendaJobCard({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 px-2 text-muted-foreground hover:bg-muted"
+                  className="h-8 px-2 text-foreground hover:bg-muted hover:text-foreground"
                   onClick={() => window.open(`tel:${job.appointments?.customer_phone}`)}
                   title="Call Customer"
                 >

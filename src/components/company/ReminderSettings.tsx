@@ -376,16 +376,16 @@ export function ReminderSettings() {
         )}
         <div className="bg-white/5 rounded-lg p-4 border border-white/10">
           <h4 className="font-medium mb-2 text-card-foreground">Template Variables</h4>
-          <div className="grid grid-cols-2 gap-2 text-sm text-card-foreground/70">
-            <code className="text-card-foreground">{'{customer_name}'}</code>
+          <div className="grid grid-cols-2 gap-2 text-sm text-card-foreground">
+            <code className="text-primary">{'{customer_name}'}</code>
             <span>Customer's name</span>
-            <code className="text-card-foreground">{'{service_type}'}</code>
+            <code className="text-primary">{'{service_type}'}</code>
             <span>Service booked</span>
-            <code className="text-card-foreground">{'{company_name}'}</code>
+            <code className="text-primary">{'{company_name}'}</code>
             <span>Your company name</span>
-            <code className="text-card-foreground">{'{date}'}</code>
+            <code className="text-primary">{'{date}'}</code>
             <span>Appointment date</span>
-            <code className="text-card-foreground">{'{time}'}</code>
+            <code className="text-primary">{'{time}'}</code>
             <span>Appointment time</span>
           </div>
         </div>

@@ -311,7 +311,7 @@ export function SocialFeedQueue({ companyId, initialFilter = 'pending' }: Social
                         ? colors 
                           ? `${colors.bg} ${colors.text} ${colors.border} border` 
                           : 'bg-card-foreground/15 text-card-foreground border border-card-foreground/20'
-                        : 'text-card-foreground/50 hover:text-card-foreground hover:bg-card-foreground/10'
+                        : 'text-card-foreground hover:text-card-foreground hover:bg-card-foreground/10'
                     }`}
                     onClick={() => setPlatformFilter(platform.id)}
                   >
