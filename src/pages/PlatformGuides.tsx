@@ -1036,17 +1036,17 @@ const PlatformGuides: React.FC = () => {
                         className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-all ${
                           isSelected 
                             ? 'bg-primary text-primary-foreground' 
-                            : 'hover:bg-muted'
+                            : 'hover:bg-accent/50'
                         }`}
                       >
                         <div className={`p-2 rounded-lg shrink-0 ${isSelected ? 'bg-primary-foreground/20' : `bg-${category.featureColor}`}`}>
                           <Icon className={`h-4 w-4 ${isSelected ? 'text-primary-foreground' : 'text-white'}`} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`font-medium text-sm ${isSelected ? '' : 'text-card-foreground'}`}>
+                          <p className={`font-medium text-sm ${isSelected ? 'text-primary-foreground' : 'text-card-foreground'}`}>
                             {category.title}
                           </p>
-                          <p className={`text-xs ${isSelected ? 'text-primary-foreground/70' : 'text-card-foreground/70'}`}>
+                          <p className={`text-xs ${isSelected ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
                             {category.guides.length} guides
                           </p>
                         </div>
