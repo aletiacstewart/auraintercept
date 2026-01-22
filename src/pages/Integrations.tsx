@@ -388,7 +388,7 @@ export default function Integrations() {
                   <p className="text-sm text-muted-foreground">Detailed setup guides available on each integration page</p>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/dashboard/integrations/voice">Voice Setup</Link>
                 </Button>
@@ -397,6 +397,9 @@ export default function Integrations() {
                 </Button>
                 <Button variant="outline" size="sm" asChild>
                   <Link to="/dashboard/integrations/email">Email Setup</Link>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/dashboard/integrations/social">Social Media</Link>
                 </Button>
               </div>
             </div>

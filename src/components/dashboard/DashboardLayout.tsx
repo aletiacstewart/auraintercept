@@ -49,6 +49,7 @@ import {
   Smartphone,
   AlertTriangle,
   Bug,
+  Share2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import logo from '@/assets/aura-intercept-logo.png';
@@ -145,6 +146,7 @@ const navGroups: NavGroup[] = [
       { label: 'SMS & Text', icon: MessageSquare, href: '/dashboard/integrations/sms', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'Email', icon: Mail, href: '/dashboard/integrations/email', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       { label: 'Calendar', icon: Calendar, href: '/dashboard/integrations/calendar', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
+      { label: 'Social Media', icon: Share2, href: '/dashboard/integrations/social', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-integrations' },
       // CRM temporarily hidden - may revisit offering this setup later
       // { label: 'CRM', icon: Users, href: '/dashboard/integrations/crm', roles: ['platform_admin'], featureColor: 'text-feature-integrations' },
     ],
