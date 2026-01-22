@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
 import { X, Shield, CheckCircle, AlertTriangle, Clock, FileText } from 'lucide-react';
 import { format, addMonths, isAfter, isBefore } from 'date-fns';
 
@@ -18,7 +17,7 @@ interface WarrantyReportFormProps {
 
 type ReportView = 'overview' | 'expiring' | 'claims';
 
-export const WarrantyReportForm: React.FC<WarrantyReportFormProps> = ({ companyId, onCancel, onAnalyze }) => {
+export const WarrantyReportForm: React.FC<WarrantyReportFormProps> = ({ companyId, onCancel, onAnalyze: _onAnalyze }) => {
   const [reportView, setReportView] = useState<ReportView>('overview');
   const [equipmentFilter, setEquipmentFilter] = useState('all');
 
@@ -318,10 +317,7 @@ export const WarrantyReportForm: React.FC<WarrantyReportFormProps> = ({ companyI
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
-          <Button variant="outline" className="flex-1" onClick={() => toast.info('Export coming soon!')}>
-            Export Report
-          </Button>
-          <Button variant="outline" onClick={onCancel}>
+          <Button variant="outline" onClick={onCancel} className="flex-1">
             Close
           </Button>
         </div>

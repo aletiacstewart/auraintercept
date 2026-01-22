@@ -7,8 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { toast } from 'sonner';
-import { X, Package, AlertTriangle, CheckCircle, TrendingDown, RefreshCcw, Boxes } from 'lucide-react';
+import { X, Package, AlertTriangle, CheckCircle, RefreshCcw, Boxes } from 'lucide-react';
 
 interface InventoryReportFormProps {
   companyId: string;
@@ -18,7 +17,7 @@ interface InventoryReportFormProps {
 
 type ReportView = 'stock_levels' | 'low_stock' | 'reorder';
 
-export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ companyId, onCancel, onAnalyze }) => {
+export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ companyId, onCancel, onAnalyze: _onAnalyze }) => {
   const [reportView, setReportView] = useState<ReportView>('stock_levels');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
@@ -295,10 +294,7 @@ export const InventoryReportForm: React.FC<InventoryReportFormProps> = ({ compan
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
-          <Button variant="outline" className="flex-1" onClick={() => toast.info('Export coming soon!')}>
-            Export Report
-          </Button>
-          <Button variant="outline" onClick={onCancel}>
+          <Button variant="outline" onClick={onCancel} className="flex-1">
             Close
           </Button>
         </div>

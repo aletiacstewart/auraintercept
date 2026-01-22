@@ -3,11 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { toast } from 'sonner';
 import { X, TrendingUp, Calendar, DollarSign, Users, Target } from 'lucide-react';
 import { subDays } from 'date-fns';
 
@@ -19,7 +17,7 @@ interface ForecastFormProps {
 
 type ForecastType = 'demand' | 'revenue' | 'staffing';
 
-export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel, onAnalyze }) => {
+export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel, onAnalyze: _onAnalyze }) => {
   const [forecastType, setForecastType] = useState<ForecastType>('demand');
   const [forecastPeriod, setForecastPeriod] = useState('7');
 
@@ -272,10 +270,7 @@ export const ForecastForm: React.FC<ForecastFormProps> = ({ companyId, onCancel,
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
-          <Button className="flex-1 bg-primary/80 hover:bg-primary text-primary-foreground" onClick={() => toast.info('Advanced forecasting coming soon!')}>
-            Advanced Options
-          </Button>
-          <Button variant="outline" onClick={onCancel}>
+          <Button variant="outline" onClick={onCancel} className="flex-1">
             Close
           </Button>
         </div>
