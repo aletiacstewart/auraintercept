@@ -965,6 +965,12 @@ export default function Index() {
                           <td className="p-3 text-center bg-primary/5 border-x border-primary/10"><X className="w-4 h-4 text-slate-400 mx-auto" /></td>
                           <td className="p-3 text-center"><Check className="w-4 h-4 text-green-500 mx-auto" /></td>
                         </tr>
+                        <tr className="border-b hover:bg-muted/20">
+                          <td className="p-3">Social Media Console</td>
+                          <td className="p-3 text-center text-xs text-muted-foreground">Add-on</td>
+                          <td className="p-3 text-center bg-primary/5 border-x border-primary/10 text-xs text-muted-foreground">Add-on</td>
+                          <td className="p-3 text-center text-xs text-muted-foreground">Add-on</td>
+                        </tr>
 
                         {/* Communication Channels Section */}
                         <tr className="bg-muted/30">
