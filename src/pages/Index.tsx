@@ -835,25 +835,19 @@ export default function Index() {
               <Card className="overflow-hidden border-border/50">
                 <CardContent className="p-0">
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm table-fixed">
-                      <colgroup>
-                        <col className="w-[40%]" />
-                        <col className="w-[20%]" />
-                        <col className="w-[20%]" />
-                        <col className="w-[20%]" />
-                      </colgroup>
+                    <table className="text-sm mx-auto">
                       <thead>
                         <tr className="border-b border-white/20 bg-slate-700/80">
-                          <th className="text-left py-2 px-2 font-semibold text-white text-sm">Feature</th>
-                          <th className="text-center py-2 px-1 font-semibold text-white text-sm">
+                          <th className="text-left py-2 px-3 font-semibold text-white text-sm">Feature</th>
+                          <th className="text-center py-2 px-4 font-semibold text-white text-sm">
                             <div>Single-Point</div>
                             <div className="text-xs font-normal text-white/70">$497/mo</div>
                           </th>
-                          <th className="text-center py-2 px-1 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-sm">
+                          <th className="text-center py-2 px-4 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-sm">
                             <div className="text-sky-300">Multi-Track</div>
                             <div className="text-xs font-normal text-white/70">$897/mo</div>
                           </th>
-                          <th className="text-center py-2 px-1 font-semibold text-white text-sm">
+                          <th className="text-center py-2 px-4 font-semibold text-white text-sm">
                             <div>Command</div>
                             <div className="text-xs font-normal text-white/70">$1,497/mo</div>
                           </th>
