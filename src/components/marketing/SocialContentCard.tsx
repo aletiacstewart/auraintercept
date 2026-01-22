@@ -27,8 +27,10 @@ import {
   Hash,
   Sparkles,
   Camera,
+  Calendar,
 } from 'lucide-react';
 import { AIContentButton } from '@/components/ai/AIContentButton';
+import { SchedulePostDialog } from './SchedulePostDialog';
 
 export interface SocialContentDraft {
   id: string;
@@ -65,6 +67,7 @@ interface SocialContentCardProps {
   onEdit: (draft: SocialContentDraft, newContent: string) => void;
   onDelete: (id: string) => void;
   onApprove: (id: string) => void;
+  onSchedule?: (draft: SocialContentDraft, scheduledFor: Date, timezone: string) => void;
   isPublishing?: boolean;
 }
 
@@ -136,11 +139,13 @@ export function SocialContentCard({
   onEdit, 
   onDelete, 
   onApprove,
+  onSchedule,
   isPublishing = false,
 }: SocialContentCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(draft.edited_content || draft.generated_content);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showScheduleDialog, setShowScheduleDialog] = useState(false);
 
   const config = PLATFORM_CONFIG[draft.platform];
   const PlatformIcon = config.icon;
@@ -323,6 +328,17 @@ export function SocialContentCard({
                   <Trash2 className="h-3.5 w-3.5 mr-1.5" />
                   Delete
                 </Button>
+                {onSchedule && (
+                  <Button 
+                    size="sm" 
+                    variant="ghost"
+                    className="flex-1 text-card-foreground/60 hover:text-card-foreground hover:bg-card-foreground/10"
+                    onClick={() => setShowScheduleDialog(true)}
+                  >
+                    <Calendar className="h-3.5 w-3.5 mr-1.5" />
+                    Schedule
+                  </Button>
+                )}
                 <Button 
                   size="sm" 
                   className={`flex-1 ${config.iconBg} ${config.textClass} border ${config.borderClass} hover:opacity-90`}
@@ -337,7 +353,7 @@ export function SocialContentCard({
                   ) : (
                     <>
                       <Send className="h-3.5 w-3.5 mr-1.5" />
-                      Approve & Post
+                      Post
                     </>
                   )}
                 </Button>
@@ -378,6 +394,19 @@ export function SocialContentCard({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Schedule Dialog */}
+      {onSchedule && (
+        <SchedulePostDialog
+          open={showScheduleDialog}
+          onOpenChange={setShowScheduleDialog}
+          onSchedule={(scheduledFor, timezone) => {
+            onSchedule(draft, scheduledFor, timezone);
+            setShowScheduleDialog(false);
+          }}
+          platforms={[draft.platform]}
+        />
+      )}
     </>
   );
 }
