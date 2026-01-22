@@ -587,7 +587,7 @@ function ReminderCard({ setting, hasVoiceSupport, hasSmsReminders, hasVoiceRemin
           </div>
         ) : (
           <div
-            className="bg-muted/50 rounded p-2 text-sm cursor-pointer hover:bg-muted transition-colors"
+            className="bg-primary/10 rounded p-2 text-sm cursor-pointer hover:bg-primary/20 transition-colors text-foreground"
             onClick={() => setIsEditing(true)}
           >
             {setting.sms_template}
@@ -619,7 +619,7 @@ function ReminderCard({ setting, hasVoiceSupport, hasSmsReminders, hasVoiceRemin
             </div>
           ) : (
             <div
-              className="bg-muted/50 rounded p-2 text-sm cursor-pointer hover:bg-muted transition-colors whitespace-pre-wrap"
+              className="bg-primary/10 rounded p-2 text-sm cursor-pointer hover:bg-primary/20 transition-colors whitespace-pre-wrap text-foreground"
               onClick={() => setIsEditingEmail(true)}
             >
               {setting.email_template || 'Click to add an email template...'}
@@ -664,7 +664,7 @@ function ReminderCard({ setting, hasVoiceSupport, hasSmsReminders, hasVoiceRemin
                   </div>
                   <div className="space-y-2">
                     <Label>Preview Script</Label>
-                    <div className="bg-muted/50 rounded p-3 text-sm">
+                    <div className="bg-primary/10 rounded p-3 text-sm text-foreground">
                       {(setting.call_template || setting.sms_template)
                         .replace(/{customer_name}/g, 'Test Customer')
                         .replace(/{service_type}/g, 'Sample Service')
@@ -712,7 +712,7 @@ function ReminderCard({ setting, hasVoiceSupport, hasSmsReminders, hasVoiceRemin
             </div>
           ) : (
             <div
-              className="bg-muted/50 rounded p-2 text-sm cursor-pointer hover:bg-muted transition-colors"
+              className="bg-primary/10 rounded p-2 text-sm cursor-pointer hover:bg-primary/20 transition-colors text-foreground"
               onClick={() => setIsEditingCall(true)}
             >
               {setting.call_template || 'Click to add a voice call script...'}
