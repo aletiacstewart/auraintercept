@@ -10,7 +10,7 @@ import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { AgentHowToGuide } from '@/components/ai/chat/AgentHowToGuide';
-import { SocialPostForm } from '@/components/marketing/forms/SocialPostForm';
+import { SocialContentWizard } from './SocialContentWizard';
 import { SocialFeedQueue } from '@/components/marketing/SocialFeedQueue';
 import { SocialContentCalendar } from './SocialContentCalendar';
 import { getAgentStyle } from '@/lib/agentStyles';
@@ -222,7 +222,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                 <div className="space-y-4">
                   {/* Forms */}
                   {showPostForm && effectiveCompanyId && (
-                    <SocialPostForm
+                    <SocialContentWizard
                       companyId={effectiveCompanyId}
                       onCancel={handleHome}
                       onSuccess={() => {
