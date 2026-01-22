@@ -15,19 +15,28 @@ const AgentDependencyDiagram: React.FC<AgentDependencyDiagramProps> = ({
   useEffect(() => {
     mermaid.initialize({
       startOnLoad: false,
-      theme: 'dark',
+      theme: 'base',
       themeVariables: {
-        primaryColor: '#1e3a5f',
-        primaryTextColor: '#f8fafc',
-        primaryBorderColor: '#38bdf8',
-        lineColor: '#64748b',
+        primaryColor: '#1e40af',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#3b82f6',
+        lineColor: '#94a3b8',
         secondaryColor: '#1e293b',
         tertiaryColor: '#0f172a',
+        background: '#0f172a',
+        mainBkg: '#1e293b',
+        nodeBorder: '#3b82f6',
+        clusterBkg: '#1e293b',
+        clusterBorder: '#475569',
+        titleColor: '#f8fafc',
+        edgeLabelBackground: '#1e293b',
       },
       flowchart: {
         useMaxWidth: true,
         htmlLabels: true,
         curve: 'basis',
+        nodeSpacing: 50,
+        rankSpacing: 60,
       },
     });
 
@@ -37,38 +46,38 @@ const AgentDependencyDiagram: React.FC<AgentDependencyDiagramProps> = ({
         
         const diagram = `
 flowchart TB
-    subgraph SP["🟠 Single-Point Tier — $497/mo"]
+    subgraph SP["🟠 SINGLE-POINT — $497/mo"]
         direction TB
-        Triage["🎧 AI Receptionist<br/><i>Core intake & routing</i>"]
-        Followup["📞 Follow-up Agent<br/><i>Customer callbacks</i>"]
-        Review["⭐ Review Agent<br/><i>Reputation management</i>"]
+        Triage["🎧 AI Receptionist"]
+        Followup["📞 Follow-up Agent"]
+        Review["⭐ Review Agent"]
     end
     
-    subgraph MT["🔵 Multi-Track Tier — $897/mo"]
+    subgraph MT["🔵 MULTI-TRACK — $897/mo"]
         direction TB
-        Booking["📅 Scheduling Agent<br/><i>Online booking</i>"]
-        Dispatch["🚚 Dispatch Agent<br/><i>Job assignment</i>"]
-        Route["🗺️ Route Agent<br/><i>Optimal routing</i>"]
-        ETA["⏱️ ETA Agent<br/><i>Arrival tracking</i>"]
-        Checkin["✅ Check-in Agent<br/><i>Job status updates</i>"]
-        Quoting["💼 Quoting Agent<br/><i>Estimate creation</i>"]
-        Invoice["💳 Invoice Agent<br/><i>Billing automation</i>"]
+        Booking["📅 Scheduling Agent"]
+        Dispatch["🚚 Dispatch Agent"]
+        Route["🗺️ Route Agent"]
+        ETA["⏱️ ETA Agent"]
+        Checkin["✅ Check-in Agent"]
+        Quoting["💼 Quoting Agent"]
+        Invoice["💳 Invoice Agent"]
     end
     
-    subgraph CMD["🟣 Command Tier — $1,497/mo"]
+    subgraph CMD["🟣 COMMAND — $1,497/mo"]
         direction TB
-        Admin["👔 Admin Agent<br/><i>Business management</i>"]
-        Inventory["📦 Inventory Agent<br/><i>Stock tracking</i>"]
-        Warranty["🛡️ Warranty Agent<br/><i>Claims processing</i>"]
-        Campaign["📣 Campaign Agent<br/><i>Marketing automation</i>"]
-        Lead["🎯 Lead Agent<br/><i>Lead qualification</i>"]
-        SocialContent["✏️ Social Content<br/><i>Content creation</i>"]
-        SocialScheduler["📆 Social Scheduler<br/><i>Post scheduling</i>"]
-        SocialAnalytics["📊 Social Analytics<br/><i>Engagement metrics</i>"]
-        Insights["💡 Insights Agent<br/><i>Business intelligence</i>"]
-        Performance["📈 Performance Agent<br/><i>KPI tracking</i>"]
-        Revenue["💰 Revenue Agent<br/><i>Financial analysis</i>"]
-        Forecast["🔮 Forecast Agent<br/><i>Predictive analytics</i>"]
+        Admin["👔 Admin Agent"]
+        Inventory["📦 Inventory Agent"]
+        Warranty["🛡️ Warranty Agent"]
+        Campaign["📣 Campaign Agent"]
+        Lead["🎯 Lead Agent"]
+        SocialContent["✏️ Social Content"]
+        SocialScheduler["📆 Social Scheduler"]
+        SocialAnalytics["📊 Social Analytics"]
+        Insights["💡 Insights Agent"]
+        Performance["📈 Performance Agent"]
+        Revenue["💰 Revenue Agent"]
+        Forecast["🔮 Forecast Agent"]
     end
     
     %% Core Dependencies from Triage
@@ -94,12 +103,9 @@ flowchart TB
     SocialContent --> SocialScheduler
     SocialContent --> SocialAnalytics
 
-    classDef singlePoint fill:#d97706,stroke:#fbbf24,color:#fff
-    classDef multiTrack fill:#0284c7,stroke:#38bdf8,color:#fff
-    classDef command fill:#7c3aed,stroke:#a78bfa,color:#fff
-    classDef subgraphSP fill:#451a03,stroke:#d97706,color:#fbbf24
-    classDef subgraphMT fill:#0c4a6e,stroke:#0284c7,color:#38bdf8
-    classDef subgraphCMD fill:#2e1065,stroke:#7c3aed,color:#a78bfa
+    classDef singlePoint fill:#b45309,stroke:#f59e0b,color:#ffffff,font-weight:bold
+    classDef multiTrack fill:#0369a1,stroke:#0ea5e9,color:#ffffff,font-weight:bold
+    classDef command fill:#6d28d9,stroke:#a78bfa,color:#ffffff,font-weight:bold
     
     class Triage,Followup,Review singlePoint
     class Booking,Dispatch,Route,ETA,Checkin,Quoting,Invoice multiTrack
@@ -125,7 +131,7 @@ flowchart TB
           <GitBranch className="h-5 w-5 text-primary" />
           Agent Dependency Flow
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-card-foreground/80">
           Arrows show which agents must be active for others to function. Follow the flow to understand prerequisites.
         </p>
       </CardHeader>
@@ -137,15 +143,15 @@ flowchart TB
         <div className="flex flex-wrap gap-4 mt-4 justify-center">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-amber-600" />
-            <span className="text-sm text-muted-foreground">Single-Point ($497/mo)</span>
+            <span className="text-sm text-card-foreground">Single-Point ($497/mo)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-sky-600" />
-            <span className="text-sm text-muted-foreground">Multi-Track ($897/mo)</span>
+            <span className="text-sm text-card-foreground">Multi-Track ($897/mo)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-violet-600" />
-            <span className="text-sm text-muted-foreground">Command ($1,497/mo)</span>
+            <span className="text-sm text-card-foreground">Command ($1,497/mo)</span>
           </div>
         </div>
       </CardContent>
