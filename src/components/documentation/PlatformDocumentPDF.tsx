@@ -473,22 +473,21 @@ const BulletPoint = ({ children }: { children: string }) => (
   </View>
 );
 
-// Marketing-focused AI Agent Categories
+// Marketing-focused AI Agent Categories (19 Core Agents)
 const agents = {
-  customerPortal: [
-    { name: 'AI Receptionist', desc: 'First point of contact - greets customers 24/7 and routes them to the right AI agent. Never misses a call.' },
-    { name: 'Scheduling Agent', desc: 'Natural language appointment scheduling with real-time availability checks and instant confirmations.' },
+  customerEngagement: [
+    { name: 'AI Receptionist (Triage)', desc: 'First point of contact - greets customers 24/7 and routes them to the right AI agent. Never misses a call.' },
     { name: 'Follow-up Agent', desc: 'Automated reminders via email, SMS, and voice calls. Reduces no-shows by up to 80%.' },
     { name: 'Review Agent', desc: 'Collects customer feedback and drives reviews to Google, Yelp, and Facebook automatically.' },
   ],
   fieldOperations: [
+    { name: 'Scheduling Agent', desc: 'Natural language appointment scheduling with real-time availability checks and instant confirmations.' },
     { name: 'Dispatch Agent', desc: 'Smart job assignment based on skills, location, and availability. Optimizes technician utilization.' },
     { name: 'Route Agent', desc: 'Real-time route optimization saves fuel and increases daily job capacity by 20%.' },
     { name: 'ETA Agent', desc: 'Accurate arrival predictions with automatic customer notifications. Improves satisfaction scores.' },
     { name: 'Check-in Agent', desc: 'Digital job tracking with photo documentation. Creates audit trails automatically.' },
   ],
   businessManagement: [
-    { name: 'Admin Agent', desc: 'Business administration and operations tasks handled autonomously.' },
     { name: 'Quoting Agent', desc: 'Instant professional quotes from service catalog. Increases close rates.' },
     { name: 'Invoice Agent', desc: 'Automated invoice creation with one-click payment links. Faster collections.' },
     { name: 'Inventory Agent', desc: 'Parts and inventory tracking with low-stock alerts. Prevents service delays.' },
@@ -496,18 +495,20 @@ const agents = {
   ],
   marketingSales: [
     { name: 'Campaign Agent', desc: 'Creates and manages promotional, referral, win-back, seasonal, and loyalty campaigns.' },
-    { name: 'Lead Segmentation Agent', desc: 'AI-powered customer segmentation for targeted marketing with higher conversion rates.' },
-  ],
-  socialMedia: [
-    { name: 'Content Strategist', desc: 'AI-generated platform-specific content for Instagram, Facebook, LinkedIn, TikTok, and Google Business.' },
-    { name: 'Social Scheduler', desc: 'Optimal posting times and automated queue management across all platforms.' },
-    { name: 'Social Analytics Agent', desc: 'Performance tracking and engagement insights for continuous improvement.' },
+    { name: 'Lead Agent', desc: 'AI-powered lead scoring and customer segmentation for targeted marketing with higher conversion rates.' },
+    { name: 'Promo Agent', desc: 'Creates promotional codes, seasonal discounts, and special offers. Tracks redemption and ROI.' },
   ],
   analytics: [
     { name: 'Insights Agent', desc: 'Business data analysis and trend identification for strategic decisions.' },
     { name: 'Performance Agent', desc: 'Team and technician performance metrics. Identifies top performers and training needs.' },
     { name: 'Revenue Agent', desc: 'Financial trend tracking and analysis. Spots revenue opportunities.' },
     { name: 'Forecast Agent', desc: 'AI-powered demand and revenue predictions. Plan with confidence.' },
+  ],
+  // Social Media agents are premium add-ons (not included in core 19)
+  socialMediaAddons: [
+    { name: 'Social Content Agent', desc: 'AI-generated platform-specific content for Instagram, Facebook, LinkedIn, TikTok, GMB, and SMS.' },
+    { name: 'Social Scheduler Agent', desc: 'Optimal posting times and automated queue management across all 6 platforms.' },
+    { name: 'Social Analytics Agent', desc: 'Performance tracking and engagement insights for continuous improvement.' },
   ],
 };
 
@@ -830,15 +831,15 @@ const PlatformDocumentPDF = () => (
         This creates an intelligent, always-on workforce that handles your entire operation.
       </Text>
       
-      <Text style={styles.categoryHeader}>Customer Portal (4 Agents)</Text>
-      {agents.customerPortal.map((agent, i) => (
+      <Text style={styles.categoryHeader}>Customer Engagement (3 Agents)</Text>
+      {agents.customerEngagement.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>
           <Text style={styles.agentDescription}>{agent.desc}</Text>
         </View>
       ))}
       
-      <Text style={styles.categoryHeader}>Field Operations (4 Agents)</Text>
+      <Text style={styles.categoryHeader}>Field Operations (5 Agents)</Text>
       {agents.fieldOperations.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>
@@ -851,7 +852,7 @@ const PlatformDocumentPDF = () => (
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent Ecosystem" />
       
-      <Text style={styles.categoryHeader}>Business Management (5 Agents)</Text>
+      <Text style={styles.categoryHeader}>Business Management (4 Agents)</Text>
       {agents.businessManagement.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>
@@ -859,7 +860,7 @@ const PlatformDocumentPDF = () => (
         </View>
       ))}
       
-      <Text style={styles.categoryHeader}>Marketing & Sales (2 Agents)</Text>
+      <Text style={styles.categoryHeader}>Marketing & Sales (3 Agents)</Text>
       {agents.marketingSales.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>
@@ -867,8 +868,17 @@ const PlatformDocumentPDF = () => (
         </View>
       ))}
 
-      <Text style={styles.categoryHeader}>Social Media (3 Agents)</Text>
-      {agents.socialMedia.map((agent, i) => (
+      <Text style={styles.categoryHeader}>Analytics & Reporting (4 Agents)</Text>
+      {agents.analytics.map((agent, i) => (
+        <View key={i} style={styles.agentCard}>
+          <Text style={styles.agentName}>{agent.name}</Text>
+          <Text style={styles.agentDescription}>{agent.desc}</Text>
+        </View>
+      ))}
+
+      <Text style={styles.categoryHeader}>Social Media Add-ons (3 Agents)</Text>
+      <Text style={styles.paragraph}>Premium add-on available for Command tier ($150/mo)</Text>
+      {agents.socialMediaAddons.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>
           <Text style={styles.agentDescription}>{agent.desc}</Text>

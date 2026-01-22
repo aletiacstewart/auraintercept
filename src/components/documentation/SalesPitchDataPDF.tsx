@@ -719,7 +719,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierBullet}>• Multiple technicians to dispatch</Text>
         <Text style={styles.tierBullet}>• Need route optimization</Text>
         <Text style={styles.tierBullet}>• Want automated quoting/invoicing</Text>
-        <Text style={styles.tierBullet}>• 11 AI Agents: All Single-Point + Scheduling, Dispatch, Route, ETA, Check-in, Quoting, Invoicing, Inventory</Text>
+        <Text style={styles.tierBullet}>• 10 AI Agents: All Single-Point + Scheduling, Dispatch, Route, ETA, Check-in, Quoting, Invoicing</Text>
       </View>
 
       <View style={styles.tierCard}>
