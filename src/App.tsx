@@ -43,6 +43,7 @@ import {
 } from "./pages/ai-consoles";
 import AskAura from "./pages/AskAura";
 import AIAgentsHub from "./pages/AIAgentsHub";
+import AIAgentGuide from "./pages/AIAgentGuide";
 import AgentDetailPage from "./pages/AgentDetailPage";
 import Widget from "./pages/Widget";
 import CallHistory from "./pages/CallHistory";
@@ -193,6 +194,7 @@ const App = () => {
               <Route path="/dashboard/ai-consoles/customer-insights" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
               <Route path="/dashboard/ai-consoles/kpi-dashboard" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
               <Route path="/dashboard/ai-agents" element={<ProtectedRoute><AIAgentsHub /></ProtectedRoute>} />
+              <Route path="/dashboard/ai-agent-guide" element={<ProtectedRoute><AIAgentGuide /></ProtectedRoute>} />
               <Route path="/dashboard/ai-agents/:agentId" element={<ProtectedRoute><AgentDetailPage /></ProtectedRoute>} />
               <Route path="/dashboard/customer-website-app" element={<ProtectedRoute><Widget /></ProtectedRoute>} />
               <Route path="/dashboard/calls" element={<ProtectedRoute><CallHistory /></ProtectedRoute>} />
