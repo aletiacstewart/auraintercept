@@ -15,16 +15,13 @@ import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Megaphone, 
   Users,
-  Gift,
-  Target,
 } from 'lucide-react';
 
-// Quick actions for Marketing & Sales - focused on campaigns, promos, referrals
+// Quick actions for Marketing & Sales - focused on campaigns and segments
+// Promo Code and Win-Back are accessible within Campaign form dropdown
 const QUICK_ACTIONS = [
   { id: 'campaign', label: 'Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign', featureColor: 'text-feature-marketing' },
-  { id: 'promo', label: 'Promo Code', icon: Gift, message: 'Generate a promotional code for customers', featureColor: 'text-feature-marketing' },
   { id: 'customers', label: 'Segments', icon: Users, message: 'Show me customer segments', featureColor: 'text-feature-customers' },
-  { id: 'winback', label: 'Win-Back', icon: Target, message: 'Show me inactive customers for win-back campaigns', featureColor: 'text-feature-marketing' },
 ];
 
 // Tab configuration
