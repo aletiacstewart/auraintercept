@@ -312,6 +312,188 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
           </Card>
         </div>
 
+        {/* Marketing & Sales Documents Section */}
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-foreground mb-4">Marketing & Sales Toolkit</h2>
+          <p className="text-muted-foreground mb-6">Content generation resources for digital marketing, video production, and graphic design</p>
+          
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {/* Social Media Content Pack */}
+            <Card className="border-pink-500/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Share2 className="h-5 w-5 text-pink-500" />
+                  Social Media Content Pack
+                </CardTitle>
+                <CardDescription>60+ ready-to-post templates for all 6 platforms with hashtags and AI prompts</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2 text-sm text-card-foreground/70">
+                  <ul className="list-disc list-inside space-y-1 ml-2">
+                    <li>IG, FB, LinkedIn, TikTok, GMB, SMS</li>
+                    <li>30-Day Content Calendar</li>
+                    <li>Hashtag Libraries</li>
+                    <li>AI Generation Prompts</li>
+                  </ul>
+                </div>
+                <PDFDownloadLink document={<SocialMediaContentPackPDF />} fileName={`social-media-content-pack-${new Date().toISOString().split('T')[0]}.pdf`}>
+                  {({ loading, error }) => (
+                    <Button className="w-full" variant="outline" disabled={loading}>
+                      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+                      {loading ? 'Generating...' : 'Download Social Pack'}
+                    </Button>
+                  )}
+                </PDFDownloadLink>
+              </CardContent>
+            </Card>
+
+            {/* Video Scripts Library */}
+            <Card className="border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Video className="h-5 w-5 text-purple-500" />
+                  Video Script Library
+                </CardTitle>
+                <CardDescription>25+ production-ready scripts from 15s hooks to 5-min demos</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2 text-sm text-card-foreground/70">
+                  <ul className="list-disc list-inside space-y-1 ml-2">
+                    <li>Short-Form (15-30s) Hooks</li>
+                    <li>Medium-Form (60-90s) Explainers</li>
+                    <li>Long-Form Demo Scripts</li>
+                    <li>B-Roll Shot Lists</li>
+                  </ul>
+                </div>
+                <PDFDownloadLink document={<VideoScriptsPDF />} fileName={`video-scripts-library-${new Date().toISOString().split('T')[0]}.pdf`}>
+                  {({ loading, error }) => (
+                    <Button className="w-full" variant="outline" disabled={loading}>
+                      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+                      {loading ? 'Generating...' : 'Download Video Scripts'}
+                    </Button>
+                  )}
+                </PDFDownloadLink>
+              </CardContent>
+            </Card>
+
+            {/* Sales Pitch Data */}
+            <Card className="border-emerald-500/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-emerald-500" />
+                  Sales Pitch Data Pack
+                </CardTitle>
+                <CardDescription>Visual data, ROI calculators, objection handling, and case studies</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2 text-sm text-card-foreground/70">
+                  <ul className="list-disc list-inside space-y-1 ml-2">
+                    <li>Visual Bar Charts & Data</li>
+                    <li>Competitor Comparisons</li>
+                    <li>Objection Handling Scripts</li>
+                    <li>Closing Techniques</li>
+                  </ul>
+                </div>
+                <PDFDownloadLink document={<SalesPitchDataPDF />} fileName={`sales-pitch-data-${new Date().toISOString().split('T')[0]}.pdf`}>
+                  {({ loading, error }) => (
+                    <Button className="w-full" variant="outline" disabled={loading}>
+                      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+                      {loading ? 'Generating...' : 'Download Sales Data'}
+                    </Button>
+                  )}
+                </PDFDownloadLink>
+              </CardContent>
+            </Card>
+
+            {/* Brand Asset Guide */}
+            <Card className="border-blue-500/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Palette className="h-5 w-5 text-blue-500" />
+                  Brand Asset Guide
+                </CardTitle>
+                <CardDescription>Complete visual identity with colors, typography, and icon concepts</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2 text-sm text-card-foreground/70">
+                  <ul className="list-disc list-inside space-y-1 ml-2">
+                    <li>Hex Color Palettes</li>
+                    <li>22 Agent Icon Concepts</li>
+                    <li>Typography Guidelines</li>
+                    <li>Template Specifications</li>
+                  </ul>
+                </div>
+                <PDFDownloadLink document={<BrandAssetGuidePDF />} fileName={`brand-asset-guide-${new Date().toISOString().split('T')[0]}.pdf`}>
+                  {({ loading, error }) => (
+                    <Button className="w-full" variant="outline" disabled={loading}>
+                      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+                      {loading ? 'Generating...' : 'Download Brand Guide'}
+                    </Button>
+                  )}
+                </PDFDownloadLink>
+              </CardContent>
+            </Card>
+
+            {/* Website Copy Pack */}
+            <Card className="border-cyan-500/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-cyan-500" />
+                  Website Copy Pack
+                </CardTitle>
+                <CardDescription>SEO-optimized headlines, feature blocks, FAQs, and metadata</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2 text-sm text-card-foreground/70">
+                  <ul className="list-disc list-inside space-y-1 ml-2">
+                    <li>Homepage Hero Variations</li>
+                    <li>22 Agent Descriptions</li>
+                    <li>Pricing Page Copy</li>
+                    <li>SEO Metadata</li>
+                  </ul>
+                </div>
+                <PDFDownloadLink document={<WebsiteCopyPDF />} fileName={`website-copy-pack-${new Date().toISOString().split('T')[0]}.pdf`}>
+                  {({ loading, error }) => (
+                    <Button className="w-full" variant="outline" disabled={loading}>
+                      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+                      {loading ? 'Generating...' : 'Download Website Copy'}
+                    </Button>
+                  )}
+                </PDFDownloadLink>
+              </CardContent>
+            </Card>
+
+            {/* Industry Marketing Kits */}
+            <Card className="border-amber-500/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Factory className="h-5 w-5 text-amber-500" />
+                  Industry Marketing Kits
+                </CardTitle>
+                <CardDescription>Targeted content for HVAC, Plumbing, Electrical, and General Contracting</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2 text-sm text-card-foreground/70">
+                  <ul className="list-disc list-inside space-y-1 ml-2">
+                    <li>Industry Pain Points</li>
+                    <li>Seasonal Marketing Angles</li>
+                    <li>Email Campaign Templates</li>
+                    <li>Competitor Positioning</li>
+                  </ul>
+                </div>
+                <PDFDownloadLink document={<IndustryMarketingKitPDF />} fileName={`industry-marketing-kits-${new Date().toISOString().split('T')[0]}.pdf`}>
+                  {({ loading, error }) => (
+                    <Button className="w-full" variant="outline" disabled={loading}>
+                      {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+                      {loading ? 'Generating...' : 'Download Industry Kits'}
+                    </Button>
+                  )}
+                </PDFDownloadLink>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
         {/* Document Contents Cards */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Card>
