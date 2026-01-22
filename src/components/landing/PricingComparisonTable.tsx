@@ -8,10 +8,12 @@ import {
 
 // Feature definitions with tooltips
 const featureDescriptions: Record<string, string> = {
-  // AI Agents
+  // AI Agents - Single-Point (3)
   'AI Receptionist (Triage)': 'Your 24/7 virtual receptionist that answers calls, qualifies leads, and routes inquiries to the right team member or agent.',
   'Follow-up Agent': 'Automatically follows up with leads and customers via email and SMS to ensure no opportunity is missed.',
   'Review Agent': 'Requests reviews from satisfied customers and monitors your online reputation across platforms.',
+  
+  // AI Agents - Multi-Track adds (7 more = 10 total)
   'Scheduling Agent (Booking)': 'Handles appointment scheduling, rescheduling, and cancellations with smart calendar management.',
   'Dispatch Agent': 'Intelligently assigns technicians to jobs based on skills, location, and availability.',
   'Route Agent': 'Optimizes daily routes for field technicians to minimize drive time and maximize productivity.',
@@ -19,6 +21,19 @@ const featureDescriptions: Record<string, string> = {
   'Check-in Agent': 'Manages technician check-ins and check-outs, tracking job progress in real-time.',
   'Quote Agent': 'Generates professional quotes instantly based on job requirements and pricing rules.',
   'Invoice Agent': 'Creates and sends invoices automatically, with payment tracking and reminders.',
+  
+  // AI Agents - Command adds (9 more = 19 total)
+  'Inventory Agent': 'Tracks parts and materials, manages stock levels, and alerts on low inventory.',
+  'Warranty Agent': 'Manages warranty claims, tracks coverage periods, and automates claim processing.',
+  'Campaign Agent': 'Creates and manages marketing campaigns with automated targeting and scheduling.',
+  'Lead Agent': 'Qualifies and scores leads, assigns to sales reps, and tracks conversion progress.',
+  'Promo Agent': 'Manages promotional codes, discounts, and special offers across channels.',
+  'Performance Agent': 'Analyzes team and individual performance metrics with actionable insights.',
+  'Revenue Agent': 'Tracks revenue trends, forecasts income, and identifies growth opportunities.',
+  'Insights Agent': 'Generates business intelligence reports and identifies patterns in your data.',
+  'Forecast Agent': 'Predicts demand, resource needs, and revenue based on historical data.',
+  
+  // Add-on Agents
   'Social Media Agent': 'Creates, schedules, and publishes social media content to grow your online presence.',
   'All 19 AI Agents': 'Full access to all 19 specialized AI agents for complete business automation.',
   
@@ -36,7 +51,7 @@ const featureDescriptions: Record<string, string> = {
   'AI Voice (Chat & Outbound Calls)': 'Natural AI-powered voice conversations for customer calls and chat support.',
   
   // Platform features
-  'Calendar Sync (Google/iCal)': 'Sync appointments with Google Calendar or any iCal-compatible calendar.',
+  'Calendar Sync': 'Sync appointments with Google Calendar or any iCal-compatible calendar.',
   'CRM Integration': 'Connect with popular CRM systems to keep customer data synchronized.',
   'API Access': 'Full API access for custom integrations and automation workflows.',
 };
@@ -59,9 +74,11 @@ const sections: FeatureSection[] = [
   {
     title: 'AI Agents (3 / 10 / 19)',
     features: [
+      // Single-Point tier (3 agents)
       { name: 'AI Receptionist (Triage)', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Follow-up Agent', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Review Agent', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      // Multi-Track tier adds (7 more = 10 total)
       { name: 'Scheduling Agent (Booking)', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Dispatch Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Route Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
@@ -69,8 +86,18 @@ const sections: FeatureSection[] = [
       { name: 'Check-in Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Quote Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Invoice Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      // Command tier adds (9 more = 19 total)
+      { name: 'Inventory Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Warranty Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Campaign Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Lead Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Promo Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Performance Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Revenue Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Insights Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Forecast Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      // Add-on
       { name: 'Social Media Agent', singlePoint: 'Add-on', multiTrack: 'Add-on', command: 'Add-on' },
-      { name: 'All 19 AI Agents', singlePoint: 'x', multiTrack: 'x', command: 'check' },
     ],
   },
   {
@@ -107,7 +134,7 @@ const sections: FeatureSection[] = [
   {
     title: 'Integration & Support',
     features: [
-      { name: 'Calendar Sync (Google/iCal)', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Calendar Sync', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'CRM Integration', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'API Access', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Priority Support', singlePoint: 'x', multiTrack: 'check', command: 'check' },
@@ -121,7 +148,7 @@ const sections: FeatureSection[] = [
       { name: 'Stripe (Payments)', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
       { name: 'Twilio (SMS & Voice)', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
       { name: 'ElevenLabs (AI Voice)', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-      { name: 'Google Calendar (Sync)', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
+      { name: 'Calendar Sync', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
       { name: 'Social Media Accounts', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
     ],
   },
