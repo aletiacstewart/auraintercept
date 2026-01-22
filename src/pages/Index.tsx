@@ -516,7 +516,7 @@ export default function Index() {
                     {console.description}
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    {console.features.slice(0, 2).map((feature, idx) => (
+                    {console.features.map((feature, idx) => (
                       <span key={idx} className="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-white/70">
                         {feature}
                       </span>
