@@ -262,11 +262,6 @@ export const AIAgentConsole: React.FC<AIAgentConsoleProps> = ({
         isConfigured: !!integrations?.elevenlabs_api_key || !!integrations?.use_platform_tts,
         voiceName: integrations?.elevenlabs_voice_id || 'Default voice',
       },
-      google: {
-        name: 'Google TTS',
-        isConfigured: !!integrations?.google_tts_api_key,
-        voiceName: integrations?.google_tts_voice || 'en-US-Neural2-D',
-      }
     };
     return providerConfig[provider] || providerConfig.elevenlabs;
   };
