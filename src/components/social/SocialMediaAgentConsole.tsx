@@ -9,6 +9,7 @@ import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
+import { AgentHowToGuide } from '@/components/ai/chat/AgentHowToGuide';
 import { SocialPostForm } from '@/components/marketing/forms/SocialPostForm';
 import { SocialFeedQueue } from '@/components/marketing/SocialFeedQueue';
 import { SocialContentCalendar } from './SocialContentCalendar';
@@ -174,7 +175,11 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
         useDefaultLogo={true}
       />
 
-      {/* Tab Navigation */}
+      {/* How To Guide + Tab Navigation */}
+      <div className="px-4 pt-2 space-y-2">
+        <AgentHowToGuide consoleType="social" />
+      </div>
+
       <MobileTabNav
         tabs={TABS}
         activeTab={activeTab}
