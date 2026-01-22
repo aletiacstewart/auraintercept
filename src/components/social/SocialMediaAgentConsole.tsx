@@ -175,10 +175,6 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
         useDefaultLogo={true}
       />
 
-      {/* How To Guide + Tab Navigation */}
-      <div className="px-4 pt-2 space-y-2">
-        <AgentHowToGuide consoleType="social" />
-      </div>
 
       <MobileTabNav
         tabs={TABS}
