@@ -108,6 +108,7 @@ const navGroups: NavGroup[] = [
       { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
       { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
       { label: 'Marketing & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+      { label: 'Social Media Ops', icon: Share2, href: '/dashboard/ai-consoles/social-media', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
     ],
   },
   {

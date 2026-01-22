@@ -73,6 +73,12 @@ const CATEGORY_INFO: Record<string, {
     colorClass: 'text-feature-marketing',
     cssVar: '--feature-marketing'
   },
+  social_media: { 
+    label: 'Social Media', 
+    icon: Globe, 
+    colorClass: 'text-pink-400',
+    cssVar: '--feature-marketing'
+  },
   analytics_reports: { 
     label: 'Analytics & Reports', 
     icon: BarChart3, 
@@ -119,6 +125,9 @@ const AGENT_NAMES: Record<string, string> = {
   inventory: 'Inventory Agent',
   warranty: 'Warranty Agent',
   campaign: 'Campaign Agent',
+  social_content: 'Social Content Agent',
+  social_scheduler: 'Social Scheduler Agent',
+  social_analytics: 'Social Analytics Agent',
   insights: 'Insights Agent',
   performance: 'Performance Agent',
   revenue: 'Revenue Agent',
