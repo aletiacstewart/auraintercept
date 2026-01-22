@@ -134,7 +134,7 @@ export const PostTemplates: React.FC<PostTemplatesProps> = ({ onSelect, onClose 
             return (
               <Card
                 key={template.id}
-                className="p-3 cursor-pointer hover:bg-muted/50 transition-colors border-card-foreground/10"
+                className="p-3 cursor-pointer hover:bg-primary/10 transition-colors border-card-foreground/10 group"
                 onClick={() => {
                   if (template.id === 'ai-generated') {
                     onSelect('');
@@ -145,12 +145,12 @@ export const PostTemplates: React.FC<PostTemplatesProps> = ({ onSelect, onClose 
                 }}
               >
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10">
+                  <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
                     <Icon className="h-4 w-4 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium text-card-foreground">{template.name}</h4>
-                    <p className="text-xs text-muted-foreground line-clamp-2">{template.description}</p>
+                    <h4 className="text-sm font-medium text-foreground">{template.name}</h4>
+                    <p className="text-xs text-muted-foreground group-hover:text-foreground/70 transition-colors line-clamp-2">{template.description}</p>
                   </div>
                 </div>
               </Card>
