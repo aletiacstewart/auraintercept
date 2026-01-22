@@ -184,7 +184,7 @@ const AIAgentGuide: React.FC = () => {
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
                             {row.requires.map(req => (
-                              <Badge key={req} variant="outline" className="text-xs">
+                              <Badge key={req} variant="secondary" className="text-xs bg-slate-700 text-card-foreground border-slate-600">
                                 {req}
                               </Badge>
                             ))}
@@ -198,7 +198,7 @@ const AIAgentGuide: React.FC = () => {
                         <TableCell className="text-primary font-semibold">
                           {row.cost}
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
+                        <TableCell className="text-card-foreground/70 text-sm">
                           {row.notes}
                         </TableCell>
                       </TableRow>
