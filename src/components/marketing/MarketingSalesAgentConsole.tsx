@@ -10,18 +10,21 @@ import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { CampaignForm } from './forms/CampaignForm';
+import { SocialPostForm } from './forms/SocialPostForm';
 import { CustomerSegmentsForm } from './forms/CustomerSegmentsForm';
 import { SocialFeedQueue } from './SocialFeedQueue';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Megaphone, 
   Users,
-  Share2, 
+  Share2,
+  PenSquare,
 } from 'lucide-react';
 
 // Quick actions for Marketing & Sales - consolidated campaign creation
 const QUICK_ACTIONS = [
   { id: 'campaign', label: 'Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign', featureColor: 'text-feature-marketing' },
+  { id: 'social-post', label: 'New Post', icon: PenSquare, message: 'Create a new social media post', featureColor: 'text-feature-marketing' },
   { id: 'customers', label: 'Segments', icon: Users, message: 'Show me customer segments', featureColor: 'text-feature-customers' },
   { id: 'social', label: 'Social', icon: Share2, message: 'Show me pending social media content', featureColor: 'text-feature-marketing' },
 ];
@@ -47,6 +50,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   
   // Form visibility states
   const [showCampaignForm, setShowCampaignForm] = useState(false);
+  const [showSocialPostForm, setShowSocialPostForm] = useState(false);
   const [showSegmentsForm, setShowSegmentsForm] = useState(false);
 
   // Company branding
@@ -81,6 +85,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
 
   const hideAllForms = () => {
     setShowCampaignForm(false);
+    setShowSocialPostForm(false);
     setShowSegmentsForm(false);
   };
 
@@ -98,6 +103,12 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     if (actionId === 'campaign') {
       hideAllForms();
       setShowCampaignForm(true);
+      setActiveTab('chat');
+      return;
+    }
+    if (actionId === 'social-post') {
+      hideAllForms();
+      setShowSocialPostForm(true);
       setActiveTab('chat');
       return;
     }
@@ -144,7 +155,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     }
   };
 
-  const isShowingForm = showCampaignForm || showSegmentsForm;
+  const isShowingForm = showCampaignForm || showSocialPostForm || showSegmentsForm;
   const showWelcome = messages.length === 0 && !isShowingForm && activeTab === 'chat';
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -152,6 +163,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const getActiveLabel = () => {
     if (activeTab === 'social') return 'Social Feed';
     if (showCampaignForm) return 'Campaign';
+    if (showSocialPostForm) return 'New Post';
     if (showSegmentsForm) return 'Segments';
     if (messages.length > 0) return agentStyle.label; // Show agent label during chat
     return 'Home';
@@ -218,6 +230,17 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
                       companyId={effectiveCompanyId}
                       onCancel={handleHome}
                       onSuccess={(data) => handleFormSuccess('campaign', data)}
+                    />
+                  )}
+                  
+                  {showSocialPostForm && effectiveCompanyId && (
+                    <SocialPostForm
+                      companyId={effectiveCompanyId}
+                      onCancel={handleHome}
+                      onSuccess={() => {
+                        hideAllForms();
+                        setActiveTab('social');
+                      }}
                     />
                   )}
                   

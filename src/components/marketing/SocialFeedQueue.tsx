@@ -154,6 +154,43 @@ export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
     },
   });
 
+  // Schedule mutation
+  const scheduleMutation = useMutation({
+    mutationFn: async ({ draft, scheduledFor, timezone }: { draft: SocialContentDraft; scheduledFor: Date; timezone: string }) => {
+      const contentJson = {
+        content: draft.edited_content || draft.generated_content,
+        hashtags: draft.hashtags,
+        imageUrl: draft.image_url,
+      };
+
+      const { data, error } = await supabase
+        .from('scheduled_posts')
+        .insert({
+          company_id: companyId,
+          draft_id: draft.id,
+          content_json: contentJson,
+          scheduled_for: scheduledFor.toISOString(),
+          timezone,
+          platforms: [draft.platform],
+          status: 'scheduled',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['social-content-drafts'] });
+      queryClient.invalidateQueries({ queryKey: ['scheduled-posts'] });
+      toast.success('Post scheduled successfully!');
+    },
+    onError: (error) => {
+      console.error('Schedule error:', error);
+      toast.error('Failed to schedule post');
+    },
+  });
+
   const handleEdit = (draft: SocialContentDraft, newContent: string) => {
     editMutation.mutate({ id: draft.id, content: newContent });
   };
@@ -165,6 +202,10 @@ export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
   const handleApprove = (id: string) => {
     setPublishingId(id);
     publishMutation.mutate(id);
+  };
+
+  const handleSchedule = (draft: SocialContentDraft, scheduledFor: Date, timezone: string) => {
+    scheduleMutation.mutate({ draft, scheduledFor, timezone });
   };
 
   // Filter drafts by platform
@@ -286,6 +327,7 @@ export function SocialFeedQueue({ companyId }: SocialFeedQueueProps) {
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 onApprove={handleApprove}
+                onSchedule={handleSchedule}
                 isPublishing={publishingId === draft.id}
               />
             ))}
