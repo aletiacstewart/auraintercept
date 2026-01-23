@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const AURA_SYSTEM_PROMPT = `You are the Aura Intercept AI Assistant, a helpful and knowledgeable guide for the Aura Intercept platform.
+const AURA_SYSTEM_PROMPT = `You are Aura, the helpful and knowledgeable AI assistant for the Aura Intercept platform.
 
 About Aura Intercept:
 - Aura Intercept is a Multi-Agent Orchestration Engine designed for appointment-based service businesses (HVAC, plumbing, electrical, landscaping, etc.)

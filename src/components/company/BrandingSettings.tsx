@@ -29,6 +29,8 @@ export const BrandingSettings = forwardRef<HTMLDivElement, object>(function Bran
   const [primaryColor, setPrimaryColor] = useState('#0EA5E9');
   const [secondaryColor, setSecondaryColor] = useState('#8B5CF6');
   const [companyName, setCompanyName] = useState('');
+  const [chatWidgetTitle, setChatWidgetTitle] = useState('AI Assistant');
+  const [chatWidgetSubtitle, setChatWidgetSubtitle] = useState('Always available to help');
 
   // Fetch company data
   const { data: company, isLoading } = useQuery({
@@ -54,6 +56,8 @@ export const BrandingSettings = forwardRef<HTMLDivElement, object>(function Bran
       setPrimaryColor(company.primary_color || '#0EA5E9');
       setSecondaryColor(company.secondary_color || '#8B5CF6');
       setCompanyName(company.name);
+      setChatWidgetTitle((company as any).chat_widget_title || 'AI Assistant');
+      setChatWidgetSubtitle((company as any).chat_widget_subtitle || 'Always available to help');
     }
   }, [company]);
 
@@ -68,7 +72,9 @@ export const BrandingSettings = forwardRef<HTMLDivElement, object>(function Bran
           logo_url: logoUrl,
           primary_color: primaryColor,
           secondary_color: secondaryColor,
-        })
+          chat_widget_title: chatWidgetTitle,
+          chat_widget_subtitle: chatWidgetSubtitle,
+        } as any)
         .eq('id', companyId);
 
       if (error) throw error;
@@ -165,6 +171,26 @@ export const BrandingSettings = forwardRef<HTMLDivElement, object>(function Bran
               onChange={(e) => setCompanyName(e.target.value)}
               placeholder="Your Company Name"
             />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="chat-widget-title">Chat Widget Title</Label>
+              <Input
+                id="chat-widget-title"
+                value={chatWidgetTitle}
+                onChange={(e) => setChatWidgetTitle(e.target.value)}
+                placeholder="e.g., Talk to Aura"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="chat-widget-subtitle">Chat Widget Subtitle</Label>
+              <Input
+                id="chat-widget-subtitle"
+                value={chatWidgetSubtitle}
+                onChange={(e) => setChatWidgetSubtitle(e.target.value)}
+                placeholder="e.g., Always available to help"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -340,8 +366,8 @@ export const BrandingSettings = forwardRef<HTMLDivElement, object>(function Bran
                   )}
                 </div>
                 <div>
-                  <p className="font-semibold">{companyName || 'Your Company'}</p>
-                  <p className="text-sm text-muted-foreground">AI Assistant</p>
+                  <p className="font-semibold">{chatWidgetTitle || 'AI Assistant'}</p>
+                  <p className="text-sm text-muted-foreground">{chatWidgetSubtitle || 'Always available to help'}</p>
                 </div>
               </div>
               <div className="mt-3 flex gap-2">
