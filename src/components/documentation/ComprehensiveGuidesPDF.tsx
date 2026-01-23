@@ -217,7 +217,7 @@ const guideCategories = [
         steps: [
           'Single-Point ($497/mo): AI Receptionist, Follow-up, Review + Call to Book',
           'Multi-Track ($897/mo): Adds Scheduling, Dispatch, ETA, Quoting, Invoicing',
-          'Command ($1,497/mo): Full 23 operative suite including Social Signal & Analytics',
+          'Pro Command ($1,497/mo): Full 23 operative suite including Social Media Signal & Analytics',
           'All tiers include AI Voice Chat powered by ElevenLabs',
           'Employee limits: 5 (Single-Point), 10 (Multi-Track), Unlimited (Command)'
         ],
@@ -325,14 +325,14 @@ const guideCategories = [
         tips: ['Link Quote Forge to your service catalog']
       },
       {
-        title: 'Social Signal Agents',
+        title: 'Social Media Signal Agents',
         duration: '12 min',
         steps: [
-          'Social Signal Agent: Creates posts for 6 platforms',
+          'Social Media Signal Agent: Creates posts for 6 platforms',
           'Signal Scheduler: Queues and publishes content',
           'Signal Analytics: Tracks engagement metrics',
           'Uses 3-step Content Wizard: Template → Customize → Schedule',
-          'All Social Signal agents require Command tier'
+          'All Social Media Signal agents require Pro Command tier'
         ],
         tips: ['Respects platform character limits automatically']
       },

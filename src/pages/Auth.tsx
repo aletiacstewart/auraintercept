@@ -846,7 +846,7 @@ export default function Auth() {
                           {selectedTier === 'enterprise' && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-sm text-card-foreground">Aura Command (Enterprise)</h3>
+                          <h3 className="font-semibold text-sm text-card-foreground">Aura Pro Command (Enterprise)</h3>
                           <p className="text-xs text-card-foreground/70">Full AI automation suite</p>
                         </div>
                       </div>

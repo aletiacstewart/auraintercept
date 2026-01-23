@@ -111,6 +111,8 @@ export const PAGE_ROUTES: Record<string, string> = {
   'sales ops': '/dashboard/ai-consoles/marketing-sales',
   'social signal': '/dashboard/ai-consoles/social-media',
   'social signal ops': '/dashboard/ai-consoles/social-media',
+  'social media signal': '/dashboard/ai-consoles/social-media',
+  'social media signal ops': '/dashboard/ai-consoles/social-media',
   'aura social signal': '/dashboard/ai-consoles/social-media',
   'aura social signal ops': '/dashboard/ai-consoles/social-media',
   'business mgt ops install': '/dashboard/business-mgt-ops-install',
