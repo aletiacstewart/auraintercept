@@ -137,7 +137,7 @@ export function AgentWorkflowMonitor({ companyId }: AgentWorkflowMonitorProps) {
               <Activity className="h-5 w-5 text-primary" />
               Workflow Monitor
             </CardTitle>
-            <CardDescription>Real-time agent events and handoffs</CardDescription>
+            <CardDescription>Real-time operative events and handoffs</CardDescription>
           </div>
           <Button variant="outline" size="sm" onClick={fetchEvents}>
             <RefreshCw className="h-4 w-4 mr-2" />

@@ -14,6 +14,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AgentWorkflowMonitor } from '@/components/ai/agents/AgentWorkflowMonitor';
 import { BatchAgentActivation } from '@/components/ai/agents/BatchAgentActivation';
+import { AgentAnalyticsDashboard } from '@/components/ai/agents/AgentAnalyticsDashboard';
+import { ConversationHistoryBrowser } from '@/components/ai/agents/ConversationHistoryBrowser';
+import { OperativeDependencyGraph } from '@/components/ai/agents/OperativeDependencyGraph';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
@@ -28,6 +31,8 @@ import {
   Zap,
   Activity,
   Rocket,
+  BarChart3,
+  MessageSquare,
   Lock,
   Sparkles,
   Info,
@@ -70,7 +75,7 @@ const CATEGORY_INFO: Record<string, {
     cssVar: '--feature-marketing'
   },
   social_media: { 
-    label: 'Aura Social Signal', 
+    label: 'Social Signal', 
     icon: Globe, 
     colorClass: 'text-pink-400',
     cssVar: '--feature-marketing'
@@ -128,10 +133,10 @@ const AGENT_NAMES: Record<string, string> = {
   campaign: 'Campaign Agent',
   lead: 'Lead Agent',
   promo: 'Promo Agent',
-  // Aura Social Signal (3)
-  social_content: 'Aura Social Signal Agent',
-  social_scheduler: 'Aura Signal Scheduler',
-  social_analytics: 'Aura Signal Analytics',
+  // Social Signal (3)
+  social_content: 'Social Signal Agent',
+  social_scheduler: 'Signal Scheduler',
+  social_analytics: 'Signal Analytics',
   // Analytics & Reports (4)
   insights: 'Insights Agent',
   performance: 'Performance Agent',
@@ -312,16 +317,16 @@ export default function AIAgentsHub() {
         {/* Header */}
         <PageHeader
           icon={Bot}
-          title="AI Agents Hub"
+          title="AI Operatives Hub"
           description={canManageAgents 
-            ? '23 specialized AI agents powering your business automation'
-            : `${totalCount} AI agents available based on your job roles`}
+            ? '23 specialized AI operatives powering your business automation'
+            : `${totalCount} AI operatives available based on your job roles`}
           featureColor="config"
           action={
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <p className="text-2xl font-bold text-foreground">{enabledCount}/{totalCount}</p>
-                <p className="text-sm text-muted-foreground">Agents Active</p>
+                <p className="text-sm text-muted-foreground">Operatives Active</p>
               </div>
               <Button variant="outline" onClick={() => navigate('/dashboard/ai-agent')}>
                 <Settings className="h-4 w-4 mr-2" />
@@ -369,7 +374,7 @@ export default function AIAgentsHub() {
           <TabsList className="inline-flex h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1 flex-wrap">
             <TabsTrigger value="agents" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <Bot className="h-3.5 w-3.5" />
-              Agents
+              Operatives
             </TabsTrigger>
             {canManageAgents && (
               <TabsTrigger value="activate" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
@@ -380,6 +385,14 @@ export default function AIAgentsHub() {
             <TabsTrigger value="monitor" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
               <Activity className="h-3.5 w-3.5" />
               Monitor
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <BarChart3 className="h-3.5 w-3.5" />
+              Analytics
+            </TabsTrigger>
+            <TabsTrigger value="history" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <MessageSquare className="h-3.5 w-3.5" />
+              History
             </TabsTrigger>
           </TabsList>
 
@@ -424,7 +437,7 @@ export default function AIAgentsHub() {
             {/* Category Filter Tabs */}
             <Tabs value={activeCategory} onValueChange={setActiveCategory}>
               <TabsList>
-                <TabsTrigger value="all">All Agents</TabsTrigger>
+                <TabsTrigger value="all">All Operatives</TabsTrigger>
                 {Object.entries(CATEGORY_INFO).map(([key, { label }]) => {
                   const hasAgentsInCategory = accessibleAgents.some(a => a.category === key);
                   if (!hasAgentsInCategory) return null;
@@ -464,23 +477,24 @@ export default function AIAgentsHub() {
             {filteredAgents.length === 0 && (
               <Card className="p-12 text-center">
                 <Bot className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Agents Available</h3>
+                <h3 className="text-lg font-semibold mb-2">No Operatives Available</h3>
                 <p className="text-muted-foreground">
                   {userRole === 'employee' 
-                    ? 'No AI agents are assigned to your job roles. Contact your admin to get access.'
-                    : 'Select a different category to view available agents.'}
+                    ? 'No AI operatives are assigned to your job roles. Contact your admin to get access.'
+                    : 'Select a different category to view available operatives.'}
                 </p>
               </Card>
             )}
           </TabsContent>
 
           {/* Quick Start Tab */}
-          <TabsContent value="activate">
+          <TabsContent value="activate" className="space-y-6">
             <BatchAgentActivation
               agents={agents}
               onActivatePhase={handleActivatePhase}
               onActivateAll={handleActivateAll}
             />
+            <OperativeDependencyGraph agents={agents} />
           </TabsContent>
 
           {/* Monitor Tab */}
@@ -490,6 +504,30 @@ export default function AIAgentsHub() {
             ) : (
               <Card className="p-12 text-center">
                 <Activity className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Loading...</h3>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Analytics Tab */}
+          <TabsContent value="analytics" className="space-y-4">
+            {companyId ? (
+              <AgentAnalyticsDashboard companyId={companyId} />
+            ) : (
+              <Card className="p-12 text-center">
+                <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Loading...</h3>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* History Tab */}
+          <TabsContent value="history" className="space-y-4">
+            {companyId ? (
+              <ConversationHistoryBrowser companyId={companyId} />
+            ) : (
+              <Card className="p-12 text-center">
+                <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold mb-2">Loading...</h3>
               </Card>
             )}

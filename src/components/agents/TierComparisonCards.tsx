@@ -23,9 +23,9 @@ const AGENT_NAMES: Record<string, string> = {
   campaign: 'Campaign Agent',
   lead: 'Lead Agent',
   promo: 'Promo Agent',
-  social_content: 'Aura Signal Creator',
-  social_scheduler: 'Aura Signal Scheduler',
-  social_analytics: 'Aura Signal Analytics',
+  social_content: 'Signal Creator',
+  social_scheduler: 'Signal Scheduler',
+  social_analytics: 'Signal Analytics',
   insights: 'Insights Agent',
   performance: 'Performance Agent',
   revenue: 'Revenue Agent',
@@ -38,7 +38,7 @@ const CONSOLE_NAMES: Record<string, string> = {
   field_operations: 'Field Operations',
   business_management: 'Business Management',
   marketing_sales: 'Marketing & Sales',
-  social_media: 'Aura Social Signal',
+  social_media: 'Social Signal',
   analytics_reports: 'Analytics & Reports',
 };
 
@@ -110,7 +110,7 @@ const TierCard: React.FC<TierCardProps> = ({
           <div>
             <h4 className="text-sm font-semibold text-card-foreground mb-2 flex items-center gap-1">
               <Zap className="h-4 w-4" />
-              AI Agents ({config.agents.length})
+              AI Operatives ({config.agents.length})
             </h4>
             <div className="grid grid-cols-2 gap-1">
               {config.agents.slice(0, 8).map(agent => (
@@ -121,7 +121,7 @@ const TierCard: React.FC<TierCardProps> = ({
               ))}
               {config.agents.length > 8 && (
                 <div className="text-xs text-primary">
-                  +{config.agents.length - 8} more agents
+                  +{config.agents.length - 8} more operatives
                 </div>
               )}
             </div>
@@ -175,9 +175,9 @@ const TierComparisonCards: React.FC = () => {
           bgColor="bg-emerald-950/30"
           borderColor="border-emerald-600/50"
           additionalFeatures={[
-            'AI Chat Widget',
-            'Aura Social Signal',
-            'Aura Web Presence (1pg)',
+            'Talk to Aura',
+            'Social Signal',
+            'Web Presence (1pg)',
             '2 Employee Accounts',
           ]}
         />
@@ -199,8 +199,8 @@ const TierComparisonCards: React.FC = () => {
           borderColor="border-sky-600/50"
           upgradeFrom={{ tier: 'Single-Point', priceDiff: 2497 }}
           additionalFeatures={[
-            'Aura Social Signal',
-            '1-Page Smart Website',
+            'Social Signal',
+            'Web Presence (1pg)',
           ]}
         />
         
@@ -212,8 +212,8 @@ const TierComparisonCards: React.FC = () => {
           borderColor="border-violet-600/50"
           upgradeFrom={{ tier: 'Multi-Track', priceDiff: 3000 }}
           additionalFeatures={[
-            'Aura Social Signal',
-            '1-Page Smart Website',
+            'Social Signal',
+            'Web Presence (1pg)',
           ]}
         />
       </div>
