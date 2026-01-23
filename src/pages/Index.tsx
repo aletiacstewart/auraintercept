@@ -560,10 +560,10 @@ export default function Index() {
       <section className="py-10">
         <div className="container max-w-6xl mx-auto px-6">
           <div className="text-center mb-6">
-            <Badge variant="secondary" className="mb-2">Aura AI Agents</Badge>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">23 Specialized AI Agents</h2>
+            <Badge variant="secondary" className="mb-2">Aura Intelligence Network</Badge>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">23 Specialized AI Operatives</h2>
             <p className="text-muted-foreground text-sm max-w-xl mx-auto">
-              Purpose-built agents working together with intelligent handoffs.
+              All working together via smart handoffs to intercept every opportunity for your business.
             </p>
           </div>
 
