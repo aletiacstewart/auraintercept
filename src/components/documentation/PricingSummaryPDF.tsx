@@ -626,7 +626,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>AI Voice Chat and Outbound Calling (requires Twilio + ElevenLabs)</FeatureItem>
         <FeatureItem>5 employees included ($25/month per 10 additional)</FeatureItem>
         <FeatureItem>Embeddable chat widget</FeatureItem>
-        <FeatureItem>1-Page Smart Website Included</FeatureItem>
+        <FeatureItem>Aura Web Presence Included</FeatureItem>
       </View>
 
       <Text style={styles.subsectionTitle}>Key Benefits</Text>

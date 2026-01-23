@@ -250,7 +250,7 @@ const Header = ({ title, pageNum }: { title: string; pageNum: number }) => (
 
 const Footer = () => (
   <View style={styles.footer}>
-    <Text style={styles.footerText}>Aura Intercept Website Copy Pack</Text>
+    <Text style={styles.footerText}>Aura Web Presence Copy Pack</Text>
     <Text style={styles.footerText}>© 2025 Aura Intercept</Text>
   </View>
 );
@@ -259,7 +259,7 @@ export const WebsiteCopyPDF: React.FC = () => (
   <Document>
     {/* Cover Page */}
     <Page size="A4" style={styles.coverPage}>
-      <Text style={styles.coverTitle}>Website{'\n'}Copy Pack</Text>
+      <Text style={styles.coverTitle}>Aura Web Presence{'\n'}Copy Pack</Text>
       <Text style={styles.coverSubtitle}>
         SEO-Optimized Headlines & Content Blocks{'\n'}
         Homepage • Features • Pricing • FAQ{'\n'}

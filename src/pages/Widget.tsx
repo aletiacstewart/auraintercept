@@ -12,7 +12,7 @@ const Widget = () => {
           <PageHeader
             icon={Globe}
             title="Customer Website App"
-            description="Embed the AI Agent Virtual Assistant on your website"
+            description="Embed the AI Agent Virtual Assistant on your Aura Web Presence or external website"
             featureColor="customers"
           />
           <WidgetPreview />

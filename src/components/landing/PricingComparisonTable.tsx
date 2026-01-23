@@ -47,7 +47,7 @@ const featureDescriptions: Record<string, string> = {
   'Marketing & Sales Console': 'Tools for campaigns, lead management, and sales pipeline tracking.',
   'Analytics & Reports Console': 'Comprehensive dashboards with KPIs, performance metrics, and business insights.',
   'Aura Social Signal Console': 'Unified dashboard to manage all your social media accounts and content calendar.',
-  'Smart Website Console': 'AI-powered 1-page website builder with chat, voice, and booking integration.',
+  'Aura Web Presence Console': 'AI-powered Aura Web Presence builder with chat, voice, and booking integration.',
   'All 7 Control Centers': 'Full access to all 7 specialized control consoles.',
   
   // Communication Channels - Chat vs Voice distinction
@@ -122,7 +122,7 @@ const sections: FeatureSection[] = [
       { name: 'Marketing & Sales Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Analytics & Reports Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Aura Social Signal Console', core: 'check', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
-      { name: 'Smart Website Console', core: 'check', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
+      { name: 'Aura Web Presence Console', core: 'check', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
     ],
   },
   {
@@ -141,7 +141,7 @@ const sections: FeatureSection[] = [
       { name: 'Employee Accounts', core: '2 included', singlePoint: '5 included', multiTrack: '10 included', command: '25 included' },
       { name: 'Additional Employees', core: '$10/employee', singlePoint: '$10/employee', multiTrack: '$10/employee', command: '$10/employee' },
       { name: 'White-Label Branding', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Smart Website', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
+      { name: 'Aura Web Presence', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
       { name: 'Aura Social Signal', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
       { name: 'Embeddable Chat Widget', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
     ],

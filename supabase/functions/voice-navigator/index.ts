@@ -10,7 +10,7 @@ const PAGE_ROUTES_CONTEXT = `
 Dashboard Pages (use these exact routes):
 - Dashboard/Home: /dashboard
 - Quick Setup/Settings: /dashboard/quick-setup
-- Smart Website: /dashboard/smart-website
+- Aura Web Presence: /dashboard/smart-website
 - Business Ops Overview/Business Operations: /dashboard/business-operations
 - Companies: /dashboard/companies
 - Employees: /dashboard/employees

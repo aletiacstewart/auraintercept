@@ -124,7 +124,7 @@ const guideCategories = [
           'Command ($1,497/mo): All 23 AI Agents + 6 Control Centers + White-Label Branding',
           'All tiers include AI Voice Chat powered by ElevenLabs',
           'Employee limits: 5 (Single-Point), 10 (Multi-Track), Unlimited (Command)',
-          'Premium Add-Ons: Social Media ($150/mo), Smart Website ($150/mo)',
+          'Premium Add-Ons: Aura Social Signal ($150/mo), Aura Web Presence ($150/mo)',
           'View your tier status in the sidebar bottom section'
         ],
         tips: ['Trial users get full Command tier access', 'Annual billing saves up to $2,994/year']
