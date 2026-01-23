@@ -255,7 +255,7 @@ function getEmailHtml(reminderType: string, companyName: string, daysRemaining: 
           <div class="feature-item"><span class="check">✓</span> Unlimited AI-powered appointments</div>
           <div class="feature-item"><span class="check">✓</span> Email, SMS & Voice reminders</div>
           <div class="feature-item"><span class="check">✓</span> Custom AI voice assistant</div>
-          <div class="feature-item"><span class="check">✓</span> Embeddable chat widget</div>
+          <div class="feature-item"><span class="check">✓</span> Talk to Aura chat</div>
           <div class="feature-item"><span class="check">✓</span> Full analytics & reports</div>
         </div>
         

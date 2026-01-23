@@ -450,7 +450,7 @@ export const VideoScriptsPDF: React.FC = () => (
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>0:15-0:25</Text>
-          <Text style={styles.timestampContent}>[Solution Intro] "Aura Intercept is your AI-powered business command center. 23 specialized AI agents working 24/7 to capture every lead and keep your business running."</Text>
+          <Text style={styles.timestampContent}>[Solution Intro] "Aura Intercept is your AI-powered business command center. 23 specialized AI operatives working 24/7 to capture every lead and keep your business running."</Text>
         </View>
         <View style={styles.timestampRow}>
           <Text style={styles.timestamp}>0:25-0:45</Text>
@@ -557,7 +557,7 @@ export const VideoScriptsPDF: React.FC = () => (
           <Text style={styles.scriptText}>
             "I'm going to show you something that's going to change how you think about running a service business.{'\n\n'}
             Most businesses we talk to are dealing with the same challenges: missed calls, scheduling chaos, inconsistent follow-up, and no visibility into what's actually happening.{'\n\n'}
-            Aura Intercept solves all of that with 22 AI agents working as your virtual operations team."
+            Aura Intercept solves all of that with 23 AI operatives working as your virtual operations team."
           </Text>
         </View>
 

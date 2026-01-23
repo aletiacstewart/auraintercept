@@ -21,7 +21,7 @@ export default function SocialMediaConsole() {
           <div className="space-y-6">
             <PageHeader
               icon={Share2}
-              title="Aura Social Signal Ops"
+              title="Social Signal Ops"
               description="AI-powered social signal creation, scheduling, and analytics"
               featureColor="platform"
               showAuraBar

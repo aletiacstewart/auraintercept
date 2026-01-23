@@ -200,7 +200,7 @@ export const BrandingSettings = forwardRef<HTMLDivElement, object>(function Bran
         <CardHeader>
           <CardTitle>Logo</CardTitle>
           <CardDescription>
-            Your logo appears on your AI chat widget and communications
+            Your logo appears on Talk to Aura and communications
           </CardDescription>
         </CardHeader>
         <CardContent>

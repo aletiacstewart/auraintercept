@@ -217,7 +217,7 @@ const guideCategories = [
         steps: [
           'Single-Point ($497/mo): AI Receptionist, Follow-up, Review + Call to Book',
           'Multi-Track ($897/mo): Adds Scheduling, Dispatch, ETA, Quoting, Invoicing',
-          'Command ($1,497/mo): Full 19 agent suite including Social Media & Analytics',
+          'Command ($1,497/mo): Full 23 operative suite including Social Signal & Analytics',
           'All tiers include AI Voice Chat powered by ElevenLabs',
           'Employee limits: 5 (Single-Point), 10 (Multi-Track), Unlimited (Command)'
         ],
@@ -243,7 +243,7 @@ const guideCategories = [
           'Single-Point: Call to Book, Emergency, Services, Hours, Feedback',
           'Multi-Track+: Book Appointment, Get Quote, Track, Billing',
           'Portal supports multi-company access',
-          'AI Voice Chat included for all paid tiers'
+          'Proxy Voice Chat included for Single-Point+ tiers'
         ],
         tips: ['Widget works on WordPress, Wix, and any HTML site']
       }

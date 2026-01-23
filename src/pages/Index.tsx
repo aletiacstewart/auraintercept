@@ -269,7 +269,7 @@ const communicationChannels = [{
 }, {
   icon: Headphones,
   title: 'Aura Chat AI',
-  description: 'Embeddable chat widget for website visitor engagement.',
+  description: 'Talk to Aura chat for website visitor engagement.',
   color: 'bg-channel-chat',
   gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(270,67%,48%)]'
 }];
@@ -366,13 +366,13 @@ const howItWorks = [{
   icon: Building2
 }, {
   step: 2,
-  title: 'Activate AI Agents',
-  description: 'Enable 23 specialized AI agents and configure your knowledge base for your business.',
+  title: 'Activate AI Operatives',
+  description: 'Enable 23 specialized AI operatives and configure your knowledge base for your business.',
   icon: Bot
 }, {
   step: 3,
   title: 'Connect Customers',
-  description: 'Share your customer portal link or embed the chat widget on your website.',
+  description: 'Share your customer portal link or embed Talk to Aura on your website.',
   icon: Users
 }, {
   step: 4,

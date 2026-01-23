@@ -809,8 +809,8 @@ export default function SmartWebsiteManager() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-card-foreground">AI Chat Widget</p>
-                    <p className="text-sm text-card-foreground/70">Enable AI assistant chat</p>
+                    <p className="font-medium text-card-foreground">Talk to Aura</p>
+                    <p className="text-sm text-card-foreground/70">Enable Talk to Aura chat</p>
                   </div>
                   <Switch
                     checked={website.show_chat_widget}
@@ -819,7 +819,7 @@ export default function SmartWebsiteManager() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-card-foreground">AI Voice Widget</p>
+                    <p className="font-medium text-card-foreground">Proxy Voice Chat</p>
                     <p className="text-sm text-card-foreground/70">Enable voice chat for visitors</p>
                   </div>
                   <Switch
@@ -844,7 +844,7 @@ export default function SmartWebsiteManager() {
             <Card>
               <CardHeader>
                 <CardTitle>Custom Domain</CardTitle>
-                <CardDescription>Connect your own domain to your Smart Website</CardDescription>
+                <CardDescription>Connect your own domain to your Aura Web Presence</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">

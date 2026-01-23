@@ -35,7 +35,7 @@ export const AGENT_STYLES: Record<string, AgentStyle> = {
   winback: { label: 'Win-Back', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
   seasonal: { label: 'Seasonal', color: 'text-accent', bgColor: 'bg-accent/10' },
   
-  // Aura Social Signal Agents
+  // Social Signal Agents
   social_content: { label: 'Signal Creator', color: 'text-pink-400', bgColor: 'bg-pink-500/10' },
   social_scheduler: { label: 'Signal Scheduler', color: 'text-pink-400', bgColor: 'bg-pink-500/10' },
   social_analytics: { label: 'Signal Analytics', color: 'text-pink-400', bgColor: 'bg-pink-500/10' },
