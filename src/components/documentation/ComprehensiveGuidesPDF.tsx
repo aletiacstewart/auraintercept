@@ -428,7 +428,7 @@ const guideCategories = [
         tips: ['Stripe handles all PCI compliance']
       },
       {
-        title: 'Aura Web Presence Widget Embed',
+        title: 'Web Presence Widget Embed',
         duration: '10 min',
         steps: [
           'Navigate to Integrations → Website Embed',

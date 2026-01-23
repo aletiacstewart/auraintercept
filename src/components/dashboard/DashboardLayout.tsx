@@ -82,7 +82,7 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-overview' },
       { label: 'Quick Setup', icon: Settings, href: '/dashboard/quick-setup', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
-      { label: 'Aura Web Presence', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
+      { label: 'Web Presence', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'My Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['employee'] },
       { label: 'AI Console', icon: Bot, href: '/technician/ai-console', roles: ['employee'] },
       { label: 'My Jobs', icon: ClipboardList, href: '/technician/jobs', roles: ['employee'] },

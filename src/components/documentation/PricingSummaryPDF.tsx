@@ -626,7 +626,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Proxy Voice Chat and Outbound Calling (requires Twilio + ElevenLabs)</FeatureItem>
         <FeatureItem>5 employees included ($25/month per 10 additional)</FeatureItem>
         <FeatureItem>Talk to Aura chat widget</FeatureItem>
-        <FeatureItem>Aura Web Presence Included</FeatureItem>
+        <FeatureItem>Web Presence Included</FeatureItem>
       </View>
 
       <Text style={styles.subsectionTitle}>Key Benefits</Text>

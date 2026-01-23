@@ -21,12 +21,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access - upgrade to unlock AI agents',
   },
   core: {
-    // Core: Talk to Aura only (no agents), Social Signal + Aura Web Presence included
+    // Core: Talk to Aura only (no agents), Social Signal + Web Presence included
     agents: [],
     consoles: [],
     label: 'Core',
     price: '$500/mo',
-    description: 'Talk to Aura + Social Signal + Aura Web Presence',
+    description: 'Talk to Aura + Social Signal + Web Presence',
   },
   single_point: {
     // Voice AI (chat + outbound calling) included, but NO booking (call to book)
