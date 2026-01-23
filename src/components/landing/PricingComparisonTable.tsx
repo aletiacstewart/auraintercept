@@ -131,8 +131,8 @@ const sections: FeatureSection[] = [
     title: 'Platform Limits & Features',
     features: [
       { name: 'Appointments', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
-      { name: 'Employee Accounts', singlePoint: '5 included', multiTrack: '10 included', command: 'Unlimited' },
-      { name: 'Additional Employees', singlePoint: '$25/mo per 10', multiTrack: '$25/mo per 10', command: 'Included' },
+      { name: 'Employee Accounts', singlePoint: '5 included', multiTrack: '10 included', command: '25 included' },
+      { name: 'Additional Employees', singlePoint: '$25/mo per 10', multiTrack: '$25/mo per 10', command: '$25/mo per 10' },
       { name: 'White-Label Branding', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Smart Website', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
       { name: 'Social Media AI Content', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },

@@ -844,7 +844,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Unlimited Employees</span>
+                    <span className="text-sm">25 Employee Accounts</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
