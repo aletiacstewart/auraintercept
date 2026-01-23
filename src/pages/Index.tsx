@@ -443,7 +443,7 @@ export default function Index() {
                   Start Free Trial
                 </Button>
                 <Button size="lg" className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-lg px-8 py-6 w-full sm:w-auto" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}>
-                  Choose Your Plan
+                  Deploy Your AI Workforce
                 </Button>
               </div>
             </div>
