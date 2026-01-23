@@ -40,6 +40,7 @@ const AGENT_INFO: Record<string, { name: string; description: string; icon: stri
 
 const TIER_COLORS: Record<SubscriptionTier, string> = {
   free: 'bg-slate-600',
+  core: 'bg-emerald-600',
   single_point: 'bg-amber-600',
   multi_track: 'bg-sky-600',
   command: 'bg-violet-600',
@@ -47,9 +48,10 @@ const TIER_COLORS: Record<SubscriptionTier, string> = {
 
 const TIER_PRICES: Record<SubscriptionTier, number> = {
   free: 0,
-  single_point: 497,
-  multi_track: 897,
-  command: 1497,
+  core: 500,
+  single_point: 1500,
+  multi_track: 3997,
+  command: 6997,
 };
 
 const AgentRequirementCalculator: React.FC = () => {
@@ -84,7 +86,7 @@ const AgentRequirementCalculator: React.FC = () => {
     calculateRequirements.forEach(agent => {
       const tierNeeded = getRequiredTierForAgent(agent);
       if (tierNeeded) {
-        const tierOrder: SubscriptionTier[] = ['free', 'single_point', 'multi_track', 'command'];
+        const tierOrder: SubscriptionTier[] = ['free', 'core', 'single_point', 'multi_track', 'command'];
         if (tierOrder.indexOf(tierNeeded) > tierOrder.indexOf(maxTier)) {
           maxTier = tierNeeded;
         }
@@ -109,6 +111,7 @@ const AgentRequirementCalculator: React.FC = () => {
   const agentsByTier = useMemo(() => {
     const grouped: Record<SubscriptionTier, string[]> = {
       free: [],
+      core: [],
       single_point: [],
       multi_track: [],
       command: [],

@@ -278,9 +278,10 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
 export function getConsolesForTier(tier: SubscriptionTier): ConsoleHelpConfig[] {
   const tierHierarchy: Record<SubscriptionTier, number> = {
     free: 0,
-    single_point: 1,
-    multi_track: 2,
-    command: 3,
+    core: 1,
+    single_point: 2,
+    multi_track: 3,
+    command: 4,
   };
   
   const currentTierLevel = tierHierarchy[tier];
@@ -295,9 +296,10 @@ export function getConsolesForTier(tier: SubscriptionTier): ConsoleHelpConfig[] 
 export function getFilteredFeatures(console: ConsoleHelpConfig, tier: SubscriptionTier): string[] {
   const tierHierarchy: Record<SubscriptionTier, number> = {
     free: 0,
-    single_point: 1,
-    multi_track: 2,
-    command: 3,
+    core: 1,
+    single_point: 2,
+    multi_track: 3,
+    command: 4,
   };
   
   const currentTierLevel = tierHierarchy[tier];
@@ -314,9 +316,10 @@ export function getFilteredFeatures(console: ConsoleHelpConfig, tier: Subscripti
 export function getFilteredAgents(console: ConsoleHelpConfig, tier: SubscriptionTier): string[] {
   const tierHierarchy: Record<SubscriptionTier, number> = {
     free: 0,
-    single_point: 1,
-    multi_track: 2,
-    command: 3,
+    core: 1,
+    single_point: 2,
+    multi_track: 3,
+    command: 4,
   };
   
   const currentTierLevel = tierHierarchy[tier];
@@ -332,6 +335,17 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     title: 'Free Plan',
     description: 'Limited access to platform features.',
     highlights: [],
+  },
+  core: {
+    title: 'Aura Core',
+    description: 'Entry-level plan with AI Chat, Social Media, and Smart Website.',
+    highlights: [
+      'AI Chat Widget for customer conversations',
+      'Social Media AI Content (6 platforms)',
+      '1-Page Smart Website',
+      '2 Employee Accounts',
+      'No AI agents included',
+    ],
   },
   single_point: {
     title: 'Aura Single-Point',
@@ -377,7 +391,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
       'Employee and customer database',
       'Campaign and promo code tools',
       'AI content generation',
-      'Unlimited employees',
+      '25 Employee Accounts',
     ],
   },
 };
