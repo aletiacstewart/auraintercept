@@ -198,8 +198,7 @@ export default function CustomerAuth() {
             <div className="flex-1">
               <h3 className="font-semibold text-sm text-primary">One Account, Unlimited Access</h3>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                Your account works with any service provider powered by Aura Intercept. 
-                Book, track, and manage all your appointments in one place.
+                After you create an account, install the Aura Customer App to your phone and access all your service providers in one place.
               </p>
               <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
                 <span className="text-xs text-muted-foreground flex items-center gap-1">
