@@ -1,14 +1,58 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { AuditQuestion } from "./AuditQuestion";
 import { AuditResults } from "./AuditResults";
 import { QUESTIONS, SECTION_ORDER, TierType, TierScores } from "./types";
 
+const STORAGE_KEY = 'aura_audit_progress';
+
+interface SavedProgress {
+  currentStep: number;
+  answers: Record<string, string>;
+  savedAt: number;
+}
+
 export function AgentOpportunityAudit() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
+
+  // Load saved progress on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const progress: SavedProgress = JSON.parse(saved);
+        // Only restore if saved within last 24 hours
+        const dayInMs = 24 * 60 * 60 * 1000;
+        if (Date.now() - progress.savedAt < dayInMs) {
+          setCurrentStep(progress.currentStep);
+          setAnswers(progress.answers);
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load audit progress:', e);
+    }
+  }, []);
+
+  // Save progress on change
+  useEffect(() => {
+    if (Object.keys(answers).length > 0 && !showResults) {
+      try {
+        const progress: SavedProgress = {
+          currentStep,
+          answers,
+          savedAt: Date.now(),
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+      } catch (e) {
+        console.error('Failed to save audit progress:', e);
+      }
+    }
+  }, [currentStep, answers, showResults]);
 
   const handleSelect = (option: string) => {
     setAnswers((prev) => ({
@@ -22,6 +66,8 @@ export function AgentOpportunityAudit() {
       setCurrentStep((prev) => prev + 1);
     } else {
       setShowResults(true);
+      // Clear saved progress when complete
+      localStorage.removeItem(STORAGE_KEY);
     }
   };
 
@@ -35,11 +81,12 @@ export function AgentOpportunityAudit() {
     setCurrentStep(0);
     setAnswers({});
     setShowResults(false);
+    localStorage.removeItem(STORAGE_KEY);
   };
 
-  // Calculate tier fit percentages
+  // Calculate tier fit percentages for all 4 tiers
   const tierPercentages = useMemo((): TierScores => {
-    const totals: TierScores = { SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
+    const totals: TierScores = { CORE: 0, SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
     let answeredCount = 0;
 
     QUESTIONS.forEach((question) => {
@@ -49,6 +96,7 @@ export function AgentOpportunityAudit() {
           (opt) => opt.label === selectedLabel
         );
         if (selectedOption) {
+          totals.CORE += selectedOption.tierScores.CORE;
           totals.SINGLE_POINT += selectedOption.tierScores.SINGLE_POINT;
           totals.MULTI_TRACK += selectedOption.tierScores.MULTI_TRACK;
           totals.COMMAND += selectedOption.tierScores.COMMAND;
@@ -59,29 +107,33 @@ export function AgentOpportunityAudit() {
 
     // Calculate average percentage for each tier
     if (answeredCount === 0) {
-      return { SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
+      return { CORE: 0, SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
     }
 
     return {
+      CORE: Math.round(totals.CORE / answeredCount),
       SINGLE_POINT: Math.round(totals.SINGLE_POINT / answeredCount),
       MULTI_TRACK: Math.round(totals.MULTI_TRACK / answeredCount),
       COMMAND: Math.round(totals.COMMAND / answeredCount),
     };
   }, [answers]);
 
-  // Determine recommended tier
+  // Determine recommended tier based on highest fit
   const recommendedTier = useMemo((): TierType => {
-    const { SINGLE_POINT, MULTI_TRACK, COMMAND } = tierPercentages;
+    const { CORE, SINGLE_POINT, MULTI_TRACK, COMMAND } = tierPercentages;
     
-    // If Command has highest fit, recommend it
-    if (COMMAND >= MULTI_TRACK && COMMAND >= SINGLE_POINT) {
-      return 'COMMAND';
-    }
-    // If Multi-Track has highest fit
-    if (MULTI_TRACK >= SINGLE_POINT) {
-      return 'MULTI_TRACK';
-    }
-    return 'SINGLE_POINT';
+    // Find the tier with highest score
+    const scores: { tier: TierType; score: number }[] = [
+      { tier: 'CORE', score: CORE },
+      { tier: 'SINGLE_POINT', score: SINGLE_POINT },
+      { tier: 'MULTI_TRACK', score: MULTI_TRACK },
+      { tier: 'COMMAND', score: COMMAND },
+    ];
+    
+    // Sort by score descending
+    scores.sort((a, b) => b.score - a.score);
+    
+    return scores[0].tier;
   }, [tierPercentages]);
 
   const currentQuestion = QUESTIONS[currentStep];
@@ -141,6 +193,13 @@ export function AgentOpportunityAudit() {
           isFirst={currentStep === 0}
           isLast={currentStep === QUESTIONS.length - 1}
         />
+
+        {/* Resume indicator */}
+        {Object.keys(answers).length > 0 && currentStep > 0 && (
+          <p className="text-xs text-muted-foreground text-center mt-6">
+            Your progress is saved automatically
+          </p>
+        )}
       </div>
     </div>
   );
