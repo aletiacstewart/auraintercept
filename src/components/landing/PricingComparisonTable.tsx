@@ -50,10 +50,15 @@ const featureDescriptions: Record<string, string> = {
   'Smart Website Console': 'AI-powered 1-page website builder with chat, voice, and booking integration.',
   'All 7 Control Centers': 'Full access to all 7 specialized control consoles.',
   
-  // Communication
+  // Communication Channels - Chat vs Voice distinction
+  'AI Chat Widget (Text-Based)': 'Text-based chat interface using keyboard input. Available on ALL tiers including Core. No external dependencies required (no ElevenLabs or Twilio needed). Customers type questions and receive text responses.',
+  'AI Voice (Chat & Outbound Calls)': 'Speech-based AI conversations using microphone and speakers. Available on Single-Point and above. Requires ElevenLabs for natural voice synthesis and Twilio for telephony. Different from the text-based AI Chat Widget.',
   'Email Reminders': 'Automated email reminders for appointments, follow-ups, and important updates.',
   'SMS Reminders': 'Text message reminders to reduce no-shows and keep customers informed.',
-  'AI Voice (Chat & Outbound Calls)': 'Natural AI-powered voice conversations for customer calls and chat support.',
+  
+  // 3rd Party Integrations - Clarify voice-only requirements
+  'ElevenLabs (AI Voice)': 'Required for AI Voice features only (speech-based conversations). NOT required for the text-based AI Chat Widget which works on all tiers without any external dependencies.',
+  'Twilio (SMS & Voice)': 'Required for SMS reminders and AI Voice calls. NOT required for the text-based AI Chat Widget.',
   
   // Platform features
   'Calendar Sync': 'Sync appointments with Google Calendar or any iCal-compatible calendar.',
@@ -123,10 +128,10 @@ const sections: FeatureSection[] = [
   {
     title: 'Communication Channels',
     features: [
-      { name: 'AI Chat Widget', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'AI Chat Widget (Text-Based)', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'AI Voice (Chat & Outbound Calls)', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Email Reminders', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'SMS Reminders', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'AI Voice (Chat & Outbound Calls)', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
     ],
   },
   {

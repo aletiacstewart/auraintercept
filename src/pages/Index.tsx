@@ -693,7 +693,7 @@ export default function Index() {
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">AI Chat Widget</span>
+                    <span className="text-xs">AI Chat Widget (Text-Based)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
@@ -708,8 +708,12 @@ export default function Index() {
                     <span className="text-xs">2 Employee Accounts</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">No AI Agents</span>
+                    <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                    <span className="text-xs text-muted-foreground">No AI Voice (text chat only)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                    <span className="text-xs text-muted-foreground">No AI Agents</span>
                   </div>
                 </div>
 
@@ -745,7 +749,11 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">AI Voice (Chat + Outbound)</span>
+                    <span className="text-xs">AI Chat Widget (Text-Based)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">AI Voice Chat (Speech-Based)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -753,7 +761,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Email + SMS + Voice</span>
+                    <span className="text-xs">Email + SMS + Voice Outbound</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -943,10 +951,10 @@ export default function Index() {
                   <Mic className="w-4 h-4 text-purple-400" />
                   <span className="font-semibold text-sm text-white">ElevenLabs</span>
                 </div>
-                <p className="text-xs text-white/70 mb-2">AI Voice Synthesis</p>
+                <p className="text-xs text-white/70 mb-2">AI Voice Synthesis (Voice features only)</p>
                 <p className="text-xs text-white/90 font-medium">Free: 10,000 chars/mo</p>
                 <p className="text-xs text-white/70">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
-                <p className="text-xs text-white/60 mt-1">Required for: Single-Point, Multi-Track, Command (Voice Features)</p>
+                <p className="text-xs text-white/60 mt-1">Required for: AI Voice features (not needed for Text Chat Widget)</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -957,7 +965,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">SMS & Voice Calls</p>
                 <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-xs text-white/70">$1.15/number • $0.0079/SMS • $0.014/min calls</p>
-                <p className="text-xs text-white/60 mt-1">Required for: Single-Point, Multi-Track, Command (SMS & Calls)</p>
+                <p className="text-xs text-white/60 mt-1">Required for: SMS & Voice calls (not needed for Text Chat Widget)</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
