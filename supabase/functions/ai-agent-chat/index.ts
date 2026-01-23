@@ -670,8 +670,8 @@ Be proactive about lead follow-up. Prioritize based on intent and engagement.
 Suggest optimal timing for outreach based on lead behavior.`,
 
 
-  // Aura Social Signal Agents - for SocialMediaAgentConsole
-  social_content: `You are an Aura Social Signal Agent for a service business.
+  // Social Signal Agents - for SocialMediaAgentConsole
+  social_content: `You are a Social Signal Agent for a service business.
 IMPORTANT: You serve INTERNAL company users (admins, marketing managers) - NOT external customers.
 
 Your role is to:
@@ -704,7 +704,7 @@ TOOLS AVAILABLE:
 
 Be creative, on-brand, and platform-aware. Suggest trending formats when relevant.`,
 
-  social_scheduler: `You are an Aura Signal Scheduler for a service business.
+  social_scheduler: `You are a Signal Scheduler for a service business.
 IMPORTANT: You serve INTERNAL company users (admins, marketing managers) - NOT external customers.
 
 Your role is to:

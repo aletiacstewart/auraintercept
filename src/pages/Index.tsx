@@ -125,19 +125,19 @@ const agentCategories = [{
   }]
 }, {
   id: 'social',
-  name: 'Aura Social Signal Ops',
+  name: 'Social Signal Ops',
   icon: Send,
   color: 'from-pink-500 to-rose-500',
   agents: [{
-    name: 'Aura Social Signal Agent',
+    name: 'Social Signal Agent',
     description: 'AI-powered content creation for all social platforms',
     icon: Send
   }, {
-    name: 'Aura Signal Scheduler',
+    name: 'Signal Scheduler',
     description: 'Automated post scheduling across 6 platforms',
     icon: Calendar
   }, {
-    name: 'Aura Signal Analytics',
+    name: 'Signal Analytics',
     description: 'Engagement metrics and performance tracking',
     icon: BarChart3
   }]
@@ -183,7 +183,7 @@ const agentConsoles = [{
   iconColor: 'text-indigo-500',
   features: ['KPI dashboard', 'Revenue analysis', 'Trend forecasting', 'Performance reports']
 }, {
-  name: 'Aura Social Signal Console',
+  name: 'Social Signal Console',
   description: 'AI content creation and scheduling across all platforms.',
   icon: Send,
   gradient: 'from-pink-500 to-rose-500',
@@ -233,7 +233,7 @@ const platformFeatures = [{
   description: 'Row-level security and role-based access protect sensitive data.'
 }, {
   icon: Send,
-  title: 'Aura Social Signal',
+  title: 'Social Signal',
   description: 'AI-powered content creation and scheduling across all major social platforms.'
 }, {
   icon: FileText,
@@ -688,16 +688,16 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$5,000/year (Save $1,000)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">AI Chat + Aura Social Signal + Aura Web Presence in one affordable package.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">Talk to Aura + Social Signal + Aura Web Presence in one affordable package.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">AI Chat Widget (Text-Based)</span>
+                    <span className="text-xs">Talk to Aura (Text-Based)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Aura Social Signal</span>
+                    <span className="text-xs">Social Signal</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
@@ -709,7 +709,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-                    <span className="text-xs text-muted-foreground">No AI Voice (text chat only)</span>
+                    <span className="text-xs text-muted-foreground">No Proxy Voice Chat (text only)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
@@ -749,11 +749,11 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">AI Chat Widget (Text-Based)</span>
+                    <span className="text-xs">Talk to Aura (Text-Based)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">AI Voice Chat (Speech-Based)</span>
+                    <span className="text-xs">Proxy Voice Chat (Speech-Based)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -769,7 +769,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs text-amber-400">Choice: Aura Social Signal or Aura Web Presence ($500 value)</span>
+                    <span className="text-xs text-amber-400">Choice: Social Signal or Aura Web Presence ($500 value)</span>
                   </div>
                 </div>
 

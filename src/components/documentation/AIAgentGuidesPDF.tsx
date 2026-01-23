@@ -542,7 +542,7 @@ const CONSOLES = [
         requires: ['Campaign Agent'],
       },
       {
-        name: 'Aura Social Signal Agent',
+        name: 'Social Signal Agent',
         description: 'AI-generated content for 6 platforms (Instagram, Facebook, LinkedIn, TikTok, GMB, SMS). Respects character limits and platform styles.',
         isCore: false,
         worksAlone: true,
@@ -629,12 +629,12 @@ const INTEGRATIONS = [
   },
   {
     name: 'ElevenLabs',
-    purpose: 'AI Voice Synthesis (Voice Features Only)',
+    purpose: 'Proxy Voice Chat Synthesis',
     cost: 'Free 10,000 characters/month, then $5-99+/month tiers',
     required: false,
-    requiredFor: 'AI Voice features (speech-based conversations). NOT required for Text Chat Widget which works on all tiers without any dependencies.',
-    agentsAffected: ['AI Receptionist (Voice Mode)', 'Follow-up Agent (Voice Reminders)', 'AI Voice Chat'],
-    whatHappensWithout: 'No AI Voice features - customers interact via text-based Chat Widget only (still fully functional on all tiers).',
+    requiredFor: 'Proxy Voice Chat features (speech-based conversations). NOT required for Talk to Aura text chat which works on all tiers without any dependencies.',
+    agentsAffected: ['AI Receptionist (Voice Mode)', 'Follow-up Agent (Voice Reminders)', 'Proxy Voice Chat'],
+    whatHappensWithout: 'No Proxy Voice Chat features - customers interact via Talk to Aura text chat only (still fully functional on all tiers).',
   },
   {
     name: 'Google Calendar',
@@ -659,7 +659,7 @@ const INTEGRATIONS = [
 // Communication Channels Mapping
 const COMMUNICATION_CHANNELS = [
   {
-    channel: 'AI Chat Widget (Text-Based)',
+    channel: 'Talk to Aura (Text-Based)',
     icon: '⌨️',
     inbound: 'AI Receptionist handles all text conversations via keyboard input',
     outbound: 'All agents can respond via handoff',
@@ -668,7 +668,7 @@ const COMMUNICATION_CHANNELS = [
     tiers: 'All tiers (Core, Single-Point, Multi-Track, Command)',
   },
   {
-    channel: 'AI Voice (Speech-Based)',
+    channel: 'Proxy Voice Chat (Speech-Based)',
     icon: '🎙️',
     inbound: 'AI Receptionist answers inbound voice calls via microphone/speakers',
     outbound: 'Follow-up Agent (reminders), Missed Call Callbacks via speakers',
