@@ -582,7 +582,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.highlightTitle}>The 30-Second Elevator Pitch</Text>
         <Text style={styles.highlightText}>
           Aura Intercept is an AI-powered automation platform that runs your service business 24/7. 
-          With 19 specialized AI agents, we handle everything from answering calls and booking appointments 
+          With 23 specialized AI operatives, we handle everything from answering calls and booking appointments 
           to dispatching technicians and collecting payments. Our clients save 10+ hours per week and 
           see a 40% reduction in missed appointments within 30 days.
         </Text>
@@ -624,7 +624,7 @@ const PlatformDocumentPDF = () => (
       
       <Text style={styles.subsectionTitle}>Key Differentiator</Text>
       <Text style={styles.paragraph}>
-        Unlike generic CRMs or answering services, Aura Intercept uses 19 specialized AI agents that 
+        Unlike generic CRMs or answering services, Aura Intercept uses 23 specialized AI operatives that 
         work together intelligently. When a customer calls about a broken AC, our AI Receptionist 
         classifies the urgency, Scheduling Agent books the appointment, Dispatch Agent assigns the 
         best technician, and Follow-up Agent sends confirmation—all in seconds, all automatically.
@@ -684,7 +684,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.solutionCard}>
         <Text style={styles.solutionTitle}>✅ The Aura Intercept Solution</Text>
         <Text style={styles.solutionText}>
-          Our 19 AI agents work 24/7 to answer every call, book every appointment, remind every customer, 
+          Our 23 AI operatives work 24/7 to answer every call, book every appointment, remind every customer, 
           dispatch every technician, and collect every payment—automatically. One platform. Zero missed opportunities.
         </Text>
       </View>
@@ -825,7 +825,7 @@ const PlatformDocumentPDF = () => (
     {/* AI Agent Ecosystem - Page 1 */}
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent Ecosystem" />
-      <Text style={styles.sectionTitle}>19 AI Agents Working Together</Text>
+      <Text style={styles.sectionTitle}>23 AI Operatives Working Together</Text>
       <Text style={styles.paragraph}>
         Each agent is specialized for a specific task but seamlessly hands off to others when needed.
         This creates an intelligent, always-on workforce that handles your entire operation.
@@ -1167,8 +1167,8 @@ const PlatformDocumentPDF = () => (
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Command</Text>
         <Text style={styles.pricingPrice}>$1,497/month</Text>
-        <Text style={styles.pricingFeature}>• All 19 AI Agents</Text>
-        <Text style={styles.pricingFeature}>• All 5 Control Consoles</Text>
+        <Text style={styles.pricingFeature}>• All 23 AI Operatives</Text>
+        <Text style={styles.pricingFeature}>• All 7 Control Consoles</Text>
         <Text style={styles.pricingFeature}>• Email + SMS + Voice</Text>
         <Text style={styles.pricingFeature}>• Unlimited employees</Text>
         <Text style={styles.pricingFeature}>• Social Media + Analytics + Marketing automation</Text>
@@ -1187,7 +1187,7 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.sectionTitle}>Why Aura Intercept Wins</Text>
       
       <Text style={styles.subsectionTitle}>vs. Generic CRMs (ServiceTitan, Housecall Pro)</Text>
-      <BulletPoint>22 specialized AI agents vs. basic automation rules</BulletPoint>
+      <BulletPoint>23 specialized AI operatives vs. basic automation rules</BulletPoint>
       <BulletPoint>True 24/7 AI voice answering vs. voicemail or expensive call centers</BulletPoint>
       <BulletPoint>Intelligent agent handoffs vs. siloed features</BulletPoint>
       <BulletPoint>Social media automation included vs. extra integrations needed</BulletPoint>

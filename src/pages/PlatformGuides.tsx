@@ -56,8 +56,8 @@ const NAVIGATION_ROUTES: Record<string, string> = {
   'Business Ops Console': '/dashboard/ai-consoles/business-ops',
   'Marketing & Sales Ops': '/dashboard/ai-consoles/marketing',
   'Marketing Console': '/dashboard/ai-consoles/marketing',
-  'Aura Social Signal Ops': '/dashboard/ai-consoles/social-media',
-  'Aura Social Signal Console': '/dashboard/ai-consoles/social-media',
+  'Social Signal Ops': '/dashboard/ai-consoles/social-media',
+  'Social Signal Console': '/dashboard/ai-consoles/social-media',
   'Analytics & Reports Ops': '/dashboard/ai-consoles/analytics',
   'Analytics Console': '/dashboard/ai-consoles/analytics',
   'Customer Portal Console': '/dashboard/ai-consoles/customer-portal',
@@ -122,7 +122,7 @@ const guideCategories = [
           'Single-Point ($497/mo): 3 AI Agents (Receptionist, Follow-up, Review) + Call to Book',
           'Multi-Track ($897/mo): 10 AI Agents + 2 Control Centers + Online Booking',
           'Command ($1,497/mo): All 23 AI Agents + 6 Control Centers + White-Label Branding',
-          'All tiers include AI Voice Chat powered by ElevenLabs',
+          'Proxy Voice Chat powered by ElevenLabs included on Single-Point+',
           'Employee limits: 5 (Single-Point), 10 (Multi-Track), Unlimited (Command)',
           'Premium Add-Ons: Aura Social Signal ($150/mo), Aura Web Presence ($150/mo)',
           'View your tier status in the sidebar bottom section'
@@ -150,7 +150,7 @@ const guideCategories = [
           'Single-Point: Call to Book, Emergency, Services, Hours, Feedback tabs',
           'Multi-Track+: Full suite with Book Appointment, Get Quote, Track, Billing tabs',
           'Portal supports multi-company access for customers',
-          'AI Voice Chat included for all paid tiers',
+          'Proxy Voice Chat included for Single-Point+ tiers',
           'Configure widget embed code in Integrations → Website Embed'
         ],
         tips: ['Widget works on WordPress, Wix, and any HTML site', 'Customers can manage preferences per company']
@@ -269,15 +269,15 @@ const guideCategories = [
         tips: ['A/B test subject lines for better performance', 'Start with simple campaigns before automation']
       },
       {
-        title: 'Aura Social Signal Agents',
+        title: 'Social Signal Agents',
         duration: '12 min',
         steps: [
-          'Aura Social Signal Agent: Creates posts for 6 platforms (IG, FB, LI, TT, GMB, SMS)',
-          'Aura Signal Scheduler: Queues and publishes content',
-          'Aura Signal Analytics: Tracks engagement metrics',
+          'Social Signal Agent: Creates posts for 6 platforms (IG, FB, LI, TT, GMB, SMS)',
+          'Signal Scheduler: Queues and publishes content',
+          'Signal Analytics: Tracks engagement metrics',
           'Uses 3-step Content Wizard: Template → Customize → Schedule',
-          'All Aura Social Signal agents require Command tier',
-          'Access via Aura Social Signal Ops Console'
+          'All Social Signal agents require Command tier',
+          'Access via Social Signal Ops Console'
         ],
         tips: ['Respects platform character limits automatically', 'Queue posts for optimal engagement times']
       },
@@ -295,10 +295,10 @@ const guideCategories = [
         tips: ['Use form-based interfaces for structured reports', 'Export to CSV/PDF from Reports tab']
       },
       {
-        title: 'AI Voice Chat (ElevenLabs)',
+        title: 'Proxy Voice Chat (ElevenLabs)',
         duration: '8 min',
         steps: [
-          'AI Voice powered by ElevenLabs included in all paid tiers',
+          'Proxy Voice Chat powered by ElevenLabs included in Single-Point+ tiers',
           'Customers can speak naturally with AI agents',
           'Supports inbound and outbound voice interactions',
           'Configure voice settings in Integrations → Voice Agent',

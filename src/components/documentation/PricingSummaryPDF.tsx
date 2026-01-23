@@ -551,8 +551,8 @@ const PricingSummaryPDF = () => (
           { category: 'Annual Price', singlePoint: '$4,970', multiTrack: '$8,970', command: '$14,970' },
           { category: 'Annual Savings', singlePoint: '~$1,000', multiTrack: '~$1,800', command: '~$3,000' },
           { category: '', singlePoint: '', multiTrack: '', command: '' },
-          { category: 'AI Agents Included', singlePoint: '3', multiTrack: '10', command: 'All 19' },
-          { category: 'Control Centers', singlePoint: '1', multiTrack: '2', command: 'All 5' },
+          { category: 'AI Agents Included', singlePoint: '3', multiTrack: '10', command: 'All 23' },
+          { category: 'Control Centers', singlePoint: '1', multiTrack: '2', command: 'All 7' },
           { category: 'Appointments/Month', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
           { category: '', singlePoint: '', multiTrack: '', command: '' },
           { category: 'Email Reminders', singlePoint: '✓', multiTrack: '✓', command: '✓' },
@@ -623,9 +623,9 @@ const PricingSummaryPDF = () => (
       <View style={styles.featureList}>
         <FeatureItem>Unlimited appointments</FeatureItem>
         <FeatureItem>Email + SMS + Voice reminders</FeatureItem>
-        <FeatureItem>AI Voice Chat and Outbound Calling (requires Twilio + ElevenLabs)</FeatureItem>
+        <FeatureItem>Proxy Voice Chat and Outbound Calling (requires Twilio + ElevenLabs)</FeatureItem>
         <FeatureItem>5 employees included ($25/month per 10 additional)</FeatureItem>
-        <FeatureItem>Embeddable chat widget</FeatureItem>
+        <FeatureItem>Talk to Aura chat widget</FeatureItem>
         <FeatureItem>Aura Web Presence Included</FeatureItem>
       </View>
 
@@ -713,10 +713,10 @@ const PricingSummaryPDF = () => (
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>Included AI Agents (All 19)</Text>
+      <Text style={styles.subsectionTitle}>Included AI Operatives (All 23)</Text>
       <Text style={styles.paragraph}>
-        Full access to all 19 AI agents including Customer Engagement (3), Field Operations (4), 
-        Business Management (4), Marketing & Sales (4), and Analytics & Reports (4) agents.
+        Full access to all 23 AI operatives including Customer Engagement (4), Field Operations (4), 
+        Business Management (5), Marketing & Sales (3), Social Signal (3), and Analytics & Reports (4) operatives.
       </Text>
 
       <Text style={styles.subsectionTitle}>Control Centers (All 5)</Text>

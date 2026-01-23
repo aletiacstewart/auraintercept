@@ -18,7 +18,7 @@ export function PublicFooter() {
                 </span>
               </div>
             </div>
-            <p className="text-sm text-card-foreground/80">AI agents automating appointment-based in Texas.</p>
+            <p className="text-sm text-card-foreground/80">AI operatives automating appointment-based businesses in Texas.</p>
           </div>
           
           <div>

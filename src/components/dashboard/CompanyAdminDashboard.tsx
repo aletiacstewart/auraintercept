@@ -301,7 +301,7 @@ export function CompanyAdminDashboard() {
               className="flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5 cursor-pointer hover:bg-muted/80 transition-colors"
               onClick={() => navigate('/dashboard/ai-agents')}
             >
-              <span className="text-xs text-muted-foreground">Aura AI Agents:</span>
+              <span className="text-xs text-muted-foreground">Intelligence Network:</span>
               <span className="text-sm font-medium text-green-600">Active</span>
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               <ExternalLink className="h-3 w-3 text-green-600 hover:text-green-500" />
