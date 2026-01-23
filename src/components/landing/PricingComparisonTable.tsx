@@ -134,7 +134,7 @@ const sections: FeatureSection[] = [
     features: [
       { name: 'Appointments', core: 'x', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
       { name: 'Employee Accounts', core: '2 included', singlePoint: '5 included', multiTrack: '10 included', command: '25 included' },
-      { name: 'Additional Employees', core: '$25/mo per 10', singlePoint: '$25/mo per 10', multiTrack: '$25/mo per 10', command: '$25/mo per 10' },
+      { name: 'Additional Employees', core: '$10/employee', singlePoint: '$10/employee', multiTrack: '$10/employee', command: '$10/employee' },
       { name: 'White-Label Branding', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Smart Website', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
       { name: 'Social Media AI Content', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },

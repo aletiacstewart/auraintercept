@@ -902,78 +902,8 @@ export default function Index() {
           <div className="mt-8 text-center">
             <p className="text-sm text-muted-foreground mb-2">30-day free trial • No credit card required</p>
             <p className="text-xs text-muted-foreground/80 mb-2">All we ask is your honest feedback on features and that you report any issues you find.</p>
-            <p className="text-sm text-foreground mb-2">Additional employees (Starter/Professional): <span className="font-medium">$25/month per 10 employees</span></p>
-            <p className="text-sm text-foreground mb-2">One-Time Implementation Fee: <span className="font-medium">$499 - $999</span> <span className="text-muted-foreground">(based on plan)</span></p>
-          </div>
-
-          {/* Add-On Services */}
-          <div className="mt-12 max-w-4xl mx-auto">
-            <div className="text-center mb-8">
-              <h3 className="text-xl font-bold mb-2">Premium Add-Ons</h3>
-              <p className="text-sm text-muted-foreground">
-                Enhance your subscription with specialized AI capabilities
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
-              <div className="rounded-lg p-4 border-2 border-pink-500/30 relative overflow-hidden" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 to-rose-500" />
-                <div className="flex items-center gap-2 mb-2">
-                  <Send className="w-4 h-4 text-pink-400" />
-                  <span className="font-semibold text-sm text-white">Social Media AI Content</span>
-                </div>
-                <p className="text-xs text-white/70 mb-2">AI-powered content creation & scheduling</p>
-                <p className="text-2xl font-bold text-white mb-1">$150<span className="text-sm font-normal text-white/70">/month</span></p>
-                <p className="text-xs text-white/70 mb-3">Add to any plan</p>
-                <ul className="space-y-1 text-xs text-white/80">
-                  <li className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-pink-400" />
-                    6-platform content generation
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-pink-400" />
-                    Automated scheduling
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-pink-400" />
-                    Brand voice consistency
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-pink-400" />
-                    Analytics dashboard
-                  </li>
-                </ul>
-              </div>
-
-              <div className="rounded-lg p-4 border-2 border-teal-500/30 relative overflow-hidden" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 to-cyan-500" />
-                <div className="flex items-center gap-2 mb-2">
-                  <Globe className="w-4 h-4 text-teal-400" />
-                  <span className="font-semibold text-sm text-white">1-Page Smart Website</span>
-                </div>
-                <p className="text-xs text-white/70 mb-2">AI-powered website with chat & voice</p>
-                <p className="text-2xl font-bold text-white mb-1">$150<span className="text-sm font-normal text-white/70">/month</span></p>
-                <p className="text-xs text-white/70 mb-3">Add to any plan</p>
-                <ul className="space-y-1 text-xs text-white/80">
-                  <li className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-teal-400" />
-                    Branded 1-page website
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-teal-400" />
-                    AI Chat & Voice integration
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-teal-400" />
-                    Content editor
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3 h-3 text-teal-400" />
-                    Visitor analytics
-                  </li>
-                </ul>
-              </div>
-            </div>
+            <p className="text-sm text-foreground mb-2">Additional employees: <span className="font-medium">$10/employee</span></p>
+            <p className="text-sm text-foreground mb-2">One-Time Implementation Fee: <span className="font-medium">starting at $499</span></p>
           </div>
 
           {/* 3rd Party Integrations */}
