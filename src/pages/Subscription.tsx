@@ -235,7 +235,7 @@ const sections: FeatureSection[] = [
       { name: 'Twilio (SMS & Voice)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
       { name: 'ElevenLabs (AI Voice)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
       { name: 'Calendar Sync', core: 'x', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
-      { name: 'Social Media Accounts', core: 'Required', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+      { name: 'Social Media Accounts', core: 'Required', singlePoint: 'Optional', multiTrack: 'Required', command: 'Required' },
     ],
   },
   {
