@@ -50,6 +50,7 @@ export default function Auth() {
   const [registrationCode, setRegistrationCode] = useState('');
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [selectedTier, setSelectedTier] = useState<'starter' | 'professional' | 'enterprise' | null>(null);
+  const [selectedAddOn, setSelectedAddOn] = useState<'social_media' | 'smart_website' | null>(null);
   const [passwordValidation, setPasswordValidation] = useState<ServerValidationResult | null>(null);
 
   // Callback for password validation changes
@@ -697,7 +698,10 @@ export default function Auth() {
                 <div className="space-y-3">
                   {/* Starter */}
                   <div 
-                    onClick={() => setSelectedTier(selectedTier === 'starter' ? null : 'starter')}
+                    onClick={() => {
+                      setSelectedTier(selectedTier === 'starter' ? null : 'starter');
+                      if (selectedTier === 'starter') setSelectedAddOn(null);
+                    }}
                     className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                       selectedTier === 'starter' 
                         ? 'border-primary bg-primary/10 ring-2 ring-primary/20' 
@@ -717,14 +721,14 @@ export default function Auth() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-bold text-card-foreground">$497</span>
+                        <span className="text-lg font-bold text-card-foreground">$1,500</span>
                         <span className="text-xs text-card-foreground/70">/mo</span>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-1 text-xs text-card-foreground/70 ml-6">
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>4 AI Agents</span>
+                        <span>3 AI Agents</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
@@ -735,10 +739,45 @@ export default function Auth() {
                         <span>5 Employees</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>Email Reminders</span>
+                        <Check className="w-3 h-3 text-amber-400" />
+                        <span className="text-amber-400">Choice: Add-On ($500 value)</span>
                       </div>
                     </div>
+                    
+                    {/* Add-On Selection (only when starter is selected) */}
+                    {selectedTier === 'starter' && (
+                      <div className="mt-3 pt-3 border-t border-border/50" onClick={(e) => e.stopPropagation()}>
+                        <p className="text-xs font-medium text-foreground mb-2">Choose Your Included Add-On ($500 value):</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div 
+                            onClick={() => setSelectedAddOn('social_media')}
+                            className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
+                              selectedAddOn === 'social_media' 
+                                ? 'border-amber-400 bg-amber-400/10' 
+                                : 'border-border/50 hover:border-amber-400/50'
+                            }`}
+                          >
+                            <MessageSquare className={`w-4 h-4 mx-auto mb-1 ${selectedAddOn === 'social_media' ? 'text-amber-400' : 'text-muted-foreground'}`} />
+                            <span className={`text-xs ${selectedAddOn === 'social_media' ? 'text-amber-400 font-medium' : 'text-muted-foreground'}`}>
+                              Social Media AI
+                            </span>
+                          </div>
+                          <div 
+                            onClick={() => setSelectedAddOn('smart_website')}
+                            className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
+                              selectedAddOn === 'smart_website' 
+                                ? 'border-amber-400 bg-amber-400/10' 
+                                : 'border-border/50 hover:border-amber-400/50'
+                            }`}
+                          >
+                            <Crown className={`w-4 h-4 mx-auto mb-1 ${selectedAddOn === 'smart_website' ? 'text-amber-400' : 'text-muted-foreground'}`} />
+                            <span className={`text-xs ${selectedAddOn === 'smart_website' ? 'text-amber-400 font-medium' : 'text-muted-foreground'}`}>
+                              Smart Website (1pg)
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Professional - Highlighted */}
@@ -766,7 +805,7 @@ export default function Auth() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-bold text-primary">$897</span>
+                        <span className="text-lg font-bold text-primary">$3,997</span>
                         <span className="text-xs text-muted-foreground">/mo</span>
                       </div>
                     </div>
@@ -784,8 +823,8 @@ export default function Auth() {
                         <span>10 Employees</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>Email + SMS</span>
+                        <Check className="w-3 h-3 text-amber-400" />
+                        <span className="text-amber-400">Both Add-Ons Included</span>
                       </div>
                     </div>
                   </div>
@@ -812,7 +851,7 @@ export default function Auth() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-bold text-card-foreground">$1,497</span>
+                        <span className="text-lg font-bold text-card-foreground">$6,997</span>
                         <span className="text-xs text-card-foreground/70">/mo</span>
                       </div>
                     </div>
@@ -823,15 +862,15 @@ export default function Auth() {
                       </div>
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>6 Control Centers</span>
+                        <span>7 Control Centers</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Check className="w-3 h-3 text-green-500" />
-                        <span>Unlimited Employees</span>
+                        <span>25 Employees</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>All Channels</span>
+                        <Check className="w-3 h-3 text-amber-400" />
+                        <span className="text-amber-400">Both Add-Ons Included</span>
                       </div>
                     </div>
                   </div>
