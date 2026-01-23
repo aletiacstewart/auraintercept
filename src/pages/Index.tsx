@@ -115,9 +115,31 @@ const agentCategories = [{
     description: 'Unified marketing for promotions, referrals, win-back, and seasonal campaigns',
     icon: Megaphone
   }, {
-    name: 'Social Media Agent',
-    description: 'AI-powered content creation and scheduling for all social platforms',
+    name: 'Lead Agent',
+    description: 'Qualifies and scores leads with smart follow-up automation',
+    icon: UserPlus
+  }, {
+    name: 'Promo Agent',
+    description: 'Manages promotional codes, discounts, and referral programs',
+    icon: Gift
+  }]
+}, {
+  id: 'social',
+  name: 'Social Media Ops',
+  icon: Send,
+  color: 'from-pink-500 to-rose-500',
+  agents: [{
+    name: 'Social Content Agent',
+    description: 'AI-powered content creation for all social platforms',
     icon: Send
+  }, {
+    name: 'Social Scheduler Agent',
+    description: 'Automated post scheduling across 6 platforms',
+    icon: Calendar
+  }, {
+    name: 'Social Analytics Agent',
+    description: 'Engagement metrics and performance tracking',
+    icon: BarChart3
   }]
 }];
 const agentConsoles = [{
@@ -190,9 +212,9 @@ const platformFeatures = [{
   title: 'Lead Capture',
   description: 'Automatically capture and score leads from AI agent interactions with smart follow-up automation.'
 }, {
-  icon: Layers,
-  title: 'Multi-Tenant Platform',
-  description: 'Serve unlimited companies with isolated data and custom configurations.'
+  icon: Globe,
+  title: '1-Page Smart Website',
+  description: 'AI-powered branded website with integrated chat, voice, and booking capabilities.'
 }, {
   icon: Smartphone,
   title: 'Mobile-First Design',
@@ -365,7 +387,7 @@ const heroStats = [{
   value: '24/7',
   label: 'Automation'
 }, {
-  value: '6',
+  value: '7',
   label: 'Control Centers'
 }, {
   value: '40%',
@@ -539,7 +561,7 @@ export default function Index() {
         <div className="container max-w-6xl mx-auto px-6">
           <div className="text-center mb-6">
             <Badge variant="secondary" className="mb-2">Aura AI Agents</Badge>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">18 Specialized AI Agents</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">23 Specialized AI Agents</h2>
             <p className="text-muted-foreground text-sm max-w-xl mx-auto">
               Purpose-built agents working together with intelligent handoffs.
             </p>
@@ -696,6 +718,16 @@ export default function Index() {
                     <span className="text-sm">Saves 10+ hours/week in lead intake</span>
                   </div>
                 </div>
+                
+                <div className="pt-3 border-t border-white/20 mb-4">
+                  <p className="text-[10px] text-white/60 mb-1.5">Optional Add-Ons:</p>
+                  <div className="flex flex-wrap items-center gap-1 text-[10px]">
+                    <span className="text-pink-400">+ Social Media AI</span>
+                    <span className="text-white/40">or</span>
+                    <span className="text-teal-400">+ Smart Website</span>
+                    <span className="text-amber-400">$150/mo ea</span>
+                  </div>
+                </div>
 
                 <Button variant="outline" size="lg" className="w-full" onClick={() => navigate('/auth?mode=company')}>
                   Start Free Trial
@@ -758,6 +790,14 @@ export default function Index() {
                     <span className="text-sm">Manages up to 5 Field Techs automatically</span>
                   </div>
                 </div>
+                
+                <div className="pt-3 border-t border-white/20 mb-4">
+                  <p className="text-[10px] text-white/60 mb-1.5">Optional Add-On:</p>
+                  <div className="flex items-center gap-1 text-[10px]">
+                    <span className="text-pink-400">+ Social Media AI Content</span>
+                    <span className="text-amber-400">$150/mo</span>
+                  </div>
+                </div>
 
                 <Button size="lg" className="w-full gradient-primary shadow-glow" onClick={() => navigate('/auth?mode=company')}>
                   <Zap className="w-4 h-4 mr-2" />
@@ -788,11 +828,11 @@ export default function Index() {
                 <div className="space-y-2 text-left mb-6">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">All 19 AI Agents</span>
+                    <span className="text-sm">All 23 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">All 5 Control Centers</span>
+                    <span className="text-sm">All 7 Control Centers</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
@@ -813,6 +853,20 @@ export default function Index() {
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Total Business Automation & Brand Control</span>
+                  </div>
+                </div>
+                
+                <div className="pt-3 border-t border-white/20 mb-4">
+                  <p className="text-[10px] text-white/60 mb-1.5">Optional Add-Ons:</p>
+                  <div className="space-y-0.5 text-[10px]">
+                    <div className="flex items-center gap-1">
+                      <span className="text-pink-400">+ Social Media AI Content</span>
+                      <span className="text-amber-400">$150/mo</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-teal-400">+ 1-Page Smart Website</span>
+                      <span className="text-amber-400">$150/mo</span>
+                    </div>
                   </div>
                 </div>
 

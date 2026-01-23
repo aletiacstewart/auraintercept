@@ -22,20 +22,23 @@ const featureDescriptions: Record<string, string> = {
   'Quote Agent': 'Generates professional quotes instantly based on job requirements and pricing rules.',
   'Invoice Agent': 'Creates and sends invoices automatically, with payment tracking and reminders.',
   
-  // AI Agents - Command adds (9 more = 19 total)
+  // AI Agents - Command adds (13 more = 23 total)
+  'Admin Agent': 'User management, company settings, and access control.',
   'Inventory Agent': 'Tracks parts and materials, manages stock levels, and alerts on low inventory.',
   'Warranty Agent': 'Manages warranty claims, tracks coverage periods, and automates claim processing.',
   'Campaign Agent': 'Creates and manages marketing campaigns with automated targeting and scheduling.',
   'Lead Agent': 'Qualifies and scores leads, assigns to sales reps, and tracks conversion progress.',
   'Promo Agent': 'Manages promotional codes, discounts, and special offers across channels.',
+  'Social Content Agent': 'AI-powered content creation for all social platforms.',
+  'Social Scheduler Agent': 'Automated post scheduling across 6 platforms.',
+  'Social Analytics Agent': 'Engagement metrics and performance tracking.',
   'Performance Agent': 'Analyzes team and individual performance metrics with actionable insights.',
   'Revenue Agent': 'Tracks revenue trends, forecasts income, and identifies growth opportunities.',
   'Insights Agent': 'Generates business intelligence reports and identifies patterns in your data.',
   'Forecast Agent': 'Predicts demand, resource needs, and revenue based on historical data.',
   
-  // Add-on Agents
-  'Social Media Agent': 'Creates, schedules, and publishes social media content to grow your online presence.',
-  'All 19 AI Agents': 'Full access to all 19 specialized AI agents for complete business automation.',
+  // Summary
+  'All 23 AI Agents': 'Full access to all 23 specialized AI agents for complete business automation.',
   
   // Control Centers
   'Customer Portal Console': 'Self-service portal where customers can book appointments, view history, and communicate with your team.',
@@ -44,6 +47,8 @@ const featureDescriptions: Record<string, string> = {
   'Marketing & Sales Console': 'Tools for campaigns, lead management, and sales pipeline tracking.',
   'Analytics & Reports Console': 'Comprehensive dashboards with KPIs, performance metrics, and business insights.',
   'Social Media Console': 'Unified dashboard to manage all your social media accounts and content calendar.',
+  'Smart Website Console': 'AI-powered 1-page website builder with chat, voice, and booking integration.',
+  'All 7 Control Centers': 'Full access to all 7 specialized control consoles.',
   
   // Communication
   'Email Reminders': 'Automated email reminders for appointments, follow-ups, and important updates.',
@@ -72,7 +77,7 @@ interface FeatureSection {
 
 const sections: FeatureSection[] = [
   {
-    title: 'AI Agents (3 / 10 / 19)',
+    title: 'AI Agents (3 / 10 / 23)',
     features: [
       // Single-Point tier (3 agents)
       { name: 'AI Receptionist (Triage)', singlePoint: 'check', multiTrack: 'check', command: 'check' },
@@ -86,29 +91,32 @@ const sections: FeatureSection[] = [
       { name: 'Check-in Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Quote Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Invoice Agent', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      // Command tier adds (9 more = 19 total)
+      // Command tier adds (13 more = 23 total)
+      { name: 'Admin Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Inventory Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Warranty Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Campaign Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Lead Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Promo Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Social Content Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Social Scheduler Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Social Analytics Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Performance Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Revenue Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Insights Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Forecast Agent', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      // Add-on
-      { name: 'Social Media Agent', singlePoint: 'Add-on', multiTrack: 'Add-on', command: 'Add-on' },
     ],
   },
   {
-    title: 'Control Centers (Consoles)',
+    title: 'Control Centers (1 / 2 / 7)',
     features: [
       { name: 'Customer Portal Console', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Field Operations Console', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Business Management Console', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Marketing & Sales Console', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Analytics & Reports Console', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Social Media Console', singlePoint: 'Add-on', multiTrack: 'Add-on', command: 'Add-on' },
+      { name: 'Social Media Console', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Smart Website Console', singlePoint: 'x', multiTrack: 'x', command: 'check' },
     ],
   },
   {
