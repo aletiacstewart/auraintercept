@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Users, Zap, Crown, Check } from 'lucide-react';
+import { ArrowRight, Users, Zap, Crown, Check, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { TIER_AGENT_CONFIG } from '@/lib/subscriptionAgentConfig';
 
@@ -43,7 +43,7 @@ const CONSOLE_NAMES: Record<string, string> = {
 };
 
 interface TierCardProps {
-  tier: 'single_point' | 'multi_track' | 'command';
+  tier: 'core' | 'single_point' | 'multi_track' | 'command';
   icon: React.ReactNode;
   color: string;
   bgColor: string;
@@ -52,6 +52,7 @@ interface TierCardProps {
     tier: string;
     priceDiff: number;
   };
+  additionalFeatures?: string[];
 }
 
 const TierCard: React.FC<TierCardProps> = ({ 
@@ -60,7 +61,8 @@ const TierCard: React.FC<TierCardProps> = ({
   color, 
   bgColor, 
   borderColor,
-  upgradeFrom 
+  upgradeFrom,
+  additionalFeatures = []
 }) => {
   const config = TIER_AGENT_CONFIG[tier];
   const navigate = useNavigate();
@@ -79,48 +81,70 @@ const TierCard: React.FC<TierCardProps> = ({
         </div>
         {upgradeFrom && (
           <p className="text-sm text-muted-foreground mt-1">
-            +${upgradeFrom.priceDiff}/mo from {upgradeFrom.tier}
+            +${upgradeFrom.priceDiff.toLocaleString()}/mo from {upgradeFrom.tier}
           </p>
         )}
         <p className="text-sm text-muted-foreground">{config.description}</p>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Agents */}
-        <div>
-          <h4 className="text-sm font-semibold text-card-foreground mb-2 flex items-center gap-1">
-            <Zap className="h-4 w-4" />
-            AI Agents ({config.agents.length})
-          </h4>
-          <div className="grid grid-cols-2 gap-1">
-            {config.agents.slice(0, 8).map(agent => (
-              <div key={agent} className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Check className="h-3 w-3 text-emerald-500" />
-                <span className="truncate">{AGENT_NAMES[agent] || agent}</span>
-              </div>
-            ))}
-            {config.agents.length > 8 && (
-              <div className="text-xs text-primary">
-                +{config.agents.length - 8} more agents
-              </div>
-            )}
+        {/* Additional Features (for Core tier or included add-ons) */}
+        {additionalFeatures.length > 0 && (
+          <div>
+            <h4 className="text-sm font-semibold text-card-foreground mb-2 flex items-center gap-1">
+              <Zap className="h-4 w-4" />
+              Included Features
+            </h4>
+            <div className="space-y-1">
+              {additionalFeatures.map(feature => (
+                <div key={feature} className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Check className="h-3 w-3 text-emerald-500" />
+                  <span>{feature}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Agents */}
+        {config.agents.length > 0 && (
+          <div>
+            <h4 className="text-sm font-semibold text-card-foreground mb-2 flex items-center gap-1">
+              <Zap className="h-4 w-4" />
+              AI Agents ({config.agents.length})
+            </h4>
+            <div className="grid grid-cols-2 gap-1">
+              {config.agents.slice(0, 8).map(agent => (
+                <div key={agent} className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Check className="h-3 w-3 text-emerald-500" />
+                  <span className="truncate">{AGENT_NAMES[agent] || agent}</span>
+                </div>
+              ))}
+              {config.agents.length > 8 && (
+                <div className="text-xs text-primary">
+                  +{config.agents.length - 8} more agents
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Consoles */}
-        <div>
-          <h4 className="text-sm font-semibold text-card-foreground mb-2 flex items-center gap-1">
-            <Users className="h-4 w-4" />
-            Control Centers ({config.consoles.length})
-          </h4>
-          <div className="space-y-1">
-            {config.consoles.map(console => (
-              <div key={console} className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Check className="h-3 w-3 text-emerald-500" />
-                <span>{CONSOLE_NAMES[console] || console}</span>
-              </div>
-            ))}
+        {config.consoles.length > 0 && (
+          <div>
+            <h4 className="text-sm font-semibold text-card-foreground mb-2 flex items-center gap-1">
+              <Users className="h-4 w-4" />
+              Control Centers ({config.consoles.length})
+            </h4>
+            <div className="space-y-1">
+              {config.consoles.map(console => (
+                <div key={console} className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Check className="h-3 w-3 text-emerald-500" />
+                  <span>{CONSOLE_NAMES[console] || console}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <Button 
           className="w-full mt-4" 
@@ -143,13 +167,28 @@ const TierComparisonCards: React.FC = () => {
         See what each tier unlocks and the incremental cost to upgrade.
       </p>
       
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <TierCard
+          tier="core"
+          icon={<MessageSquare className="h-5 w-5 text-emerald-400" />}
+          color="text-emerald-400"
+          bgColor="bg-emerald-950/30"
+          borderColor="border-emerald-600/50"
+          additionalFeatures={[
+            'AI Chat Widget',
+            'Social Media AI Content',
+            '1-Page Smart Website',
+            '2 Employee Accounts',
+          ]}
+        />
+        
         <TierCard
           tier="single_point"
           icon={<Zap className="h-5 w-5 text-amber-400" />}
           color="text-amber-400"
           bgColor="bg-amber-950/30"
           borderColor="border-amber-600/50"
+          upgradeFrom={{ tier: 'Core', priceDiff: 1000 }}
         />
         
         <TierCard
@@ -158,7 +197,11 @@ const TierComparisonCards: React.FC = () => {
           color="text-sky-400"
           bgColor="bg-sky-950/30"
           borderColor="border-sky-600/50"
-          upgradeFrom={{ tier: 'Single-Point', priceDiff: 400 }}
+          upgradeFrom={{ tier: 'Single-Point', priceDiff: 2497 }}
+          additionalFeatures={[
+            'Social Media AI Content',
+            '1-Page Smart Website',
+          ]}
         />
         
         <TierCard
@@ -167,7 +210,11 @@ const TierComparisonCards: React.FC = () => {
           color="text-violet-400"
           bgColor="bg-violet-950/30"
           borderColor="border-violet-600/50"
-          upgradeFrom={{ tier: 'Multi-Track', priceDiff: 600 }}
+          upgradeFrom={{ tier: 'Multi-Track', priceDiff: 3000 }}
+          additionalFeatures={[
+            'Social Media AI Content',
+            '1-Page Smart Website',
+          ]}
         />
       </div>
 
@@ -176,20 +223,26 @@ const TierComparisonCards: React.FC = () => {
         <CardContent className="py-4">
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
             <div className="flex items-center gap-2">
+              <Badge className="bg-emerald-600">Core</Badge>
+              <span className="text-muted-foreground">$500/mo</span>
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-2">
               <Badge className="bg-amber-600">Single-Point</Badge>
-              <span className="text-muted-foreground">$497/mo</span>
+              <span className="text-muted-foreground">$1,500/mo</span>
+              <span className="text-emerald-400">(+$1,000)</span>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-2">
               <Badge className="bg-sky-600">Multi-Track</Badge>
-              <span className="text-muted-foreground">$897/mo</span>
-              <span className="text-emerald-400">(+$400)</span>
+              <span className="text-muted-foreground">$3,997/mo</span>
+              <span className="text-emerald-400">(+$2,497)</span>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-2">
               <Badge className="bg-violet-600">Command</Badge>
-              <span className="text-muted-foreground">$1,497/mo</span>
-              <span className="text-emerald-400">(+$600)</span>
+              <span className="text-muted-foreground">$6,997/mo</span>
+              <span className="text-emerald-400">(+$3,000)</span>
             </div>
           </div>
         </CardContent>
