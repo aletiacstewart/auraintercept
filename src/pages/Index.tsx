@@ -1008,7 +1008,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">AI Voice Synthesis</p>
                 <p className="text-xs text-white/90 font-medium">Free: 10,000 chars/mo</p>
                 <p className="text-xs text-white/70">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
-                <p className="text-xs text-white/60 mt-1">Required for: Multi-Track, Command (Voice Features)</p>
+                <p className="text-xs text-white/60 mt-1">Required for: Single-Point, Multi-Track, Command (Voice Features)</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1019,7 +1019,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">SMS & Voice Calls</p>
                 <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-xs text-white/70">$1.15/number • $0.0079/SMS • $0.014/min calls</p>
-                <p className="text-xs text-white/60 mt-1">Required for: Multi-Track, Command (SMS & Calls)</p>
+                <p className="text-xs text-white/60 mt-1">Required for: Single-Point, Multi-Track, Command (SMS & Calls)</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
