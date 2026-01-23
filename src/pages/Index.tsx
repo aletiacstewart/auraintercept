@@ -675,204 +675,212 @@ export default function Index() {
             </Link>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {/* Starter Plan */}
-            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">Aura Single-Point</h3>
-                <p className="text-xs text-card-foreground/60 mb-1">(Solo-Focus)</p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
+            {/* Aura Core Plan - NEW */}
+            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-emerald-500/30 dark-card-surface border-emerald-500/20">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
+              <CardContent className="p-5">
+                <Badge className="mb-2 bg-emerald-600 text-white border-0 text-[10px]">Entry Level</Badge>
+                <h3 className="text-lg font-bold mb-1">Aura Core</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">(Starter)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-bold">$1,500</span>
-                  <span className="text-card-foreground/60">/month</span>
+                  <span className="text-3xl font-bold text-emerald-400">$500</span>
+                  <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-4">$15,000/year (Save $3,000)</p>
-                <p className="text-sm text-card-foreground/70 mb-6">Perfect for small service companies getting started with AI automation.</p>
+                <p className="text-xs text-secondary mb-3">$5,000/year (Save $1,000)</p>
+                <p className="text-xs text-card-foreground/70 mb-4">AI Chat + Social Media + Smart Website in one affordable package.</p>
                 
-                <div className="space-y-2 text-left mb-6">
+                <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">3 AI Agents</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">AI Chat Widget</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">AI Voice (Chat + Outbound Calls)</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">Social Media AI Content</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Customer Portal Console</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">1-Page Smart Website</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Unlimited Appointments</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">2 Employee Accounts</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Email + SMS + Voice</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">5 Employee Accounts</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Saves 10+ hours/week in lead intake</span>
-                  </div>
-                </div>
-                
-                <div className="pt-3 border-t border-white/20 mb-4">
-                  <p className="text-[10px] text-white/60 mb-1.5">Choice of Add-On (Included):</p>
-                  <div className="flex flex-wrap items-center gap-1 text-[10px]">
-                    <span className="text-pink-400">Social Media AI Content</span>
-                    <span className="text-white/40">or</span>
-                    <span className="text-teal-400">1-Page Smart Website</span>
-                    <span className="text-amber-400">Value $500ea</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">No AI Agents</span>
                   </div>
                 </div>
 
-                <Button variant="outline" size="lg" className="w-full" onClick={() => navigate('/auth?mode=company')}>
+                <Button variant="outline" size="sm" className="w-full border-emerald-500/50 hover:bg-emerald-500/10" onClick={() => navigate('/auth?mode=company')}>
                   Start Free Trial
                 </Button>
                 <button 
                   onClick={() => setShowPlanComparison(!showPlanComparison)}
-                  className="w-full mt-3 text-sm text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
+                  className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
                 >
                   See More Details
-                  {showPlanComparison ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
               </CardContent>
             </Card>
 
-            {/* Professional Plan */}
+            {/* Single-Point Plan - Updated */}
+            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
+              <CardContent className="p-5">
+                <h3 className="text-lg font-bold mb-1">Aura Single-Point</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">(Solo-Focus)</p>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-3xl font-bold">$1,500</span>
+                  <span className="text-card-foreground/60 text-sm">/month</span>
+                </div>
+                <p className="text-xs text-secondary mb-3">$15,000/year (Save $3,000)</p>
+                <p className="text-xs text-card-foreground/70 mb-4">Lead intake & reputation management with AI agents.</p>
+                
+                <div className="space-y-1.5 text-left mb-4">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">3 AI Agents</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">AI Voice (Chat + Outbound)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">Customer Portal Console</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">Email + SMS + Voice</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">5 Employee Accounts</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">10+ hrs/week saved</span>
+                  </div>
+                </div>
+
+                <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/auth?mode=company')}>
+                  Start Free Trial
+                </Button>
+                <button 
+                  onClick={() => setShowPlanComparison(!showPlanComparison)}
+                  className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
+                >
+                  See More Details
+                  {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                </button>
+              </CardContent>
+            </Card>
+
+            {/* Multi-Track Plan */}
             <Card className="relative overflow-hidden border-primary/50 shadow-glow dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 gradient-primary" />
-              <CardContent className="p-6">
-                <Badge className="mb-2 gradient-primary border-0">Most Popular</Badge>
-                <h3 className="text-xl font-bold mb-2">Aura Multi-Track</h3>
-                <p className="text-xs text-card-foreground/60 mb-1">(Business)</p>
+              <CardContent className="p-5">
+                <Badge className="mb-2 gradient-primary border-0 text-[10px]">Most Popular</Badge>
+                <h3 className="text-lg font-bold mb-1">Aura Multi-Track</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">(Business)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-bold gradient-text">$3,997</span>
-                  <span className="text-card-foreground/60">/month</span>
+                  <span className="text-3xl font-bold gradient-text">$3,997</span>
+                  <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-4">$39,970/year (Save $7,994)</p>
-                <p className="text-sm text-card-foreground/70 mb-6">For growing companies with field technicians needing dispatch automation.</p>
+                <p className="text-xs text-secondary mb-3">$39,970/year (Save $7,994)</p>
+                <p className="text-xs text-card-foreground/70 mb-4">Field ops + dispatch automation.</p>
                 
-                <div className="space-y-2 text-left mb-6">
+                <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">10 AI Agents</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">10 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">AI Voice (Chat + Outbound Calls)</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">2 AI Consoles</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">2 AI Consoles</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">Online Booking</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Unlimited Appointments</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">Field Operations</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Email + SMS + Voice</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">10 Employee Accounts</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Field Operations Management</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">10 Employee Accounts</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Manages up to 5 Field Techs automatically</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Social Media AI Content</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">1-Page Smart Website</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">Social + Website Included</span>
                   </div>
                 </div>
 
-                <Button size="lg" className="w-full gradient-primary shadow-glow" onClick={() => navigate('/auth?mode=company')}>
-                  <Zap className="w-4 h-4 mr-2" />
+                <Button size="sm" className="w-full gradient-primary shadow-glow" onClick={() => navigate('/auth?mode=company')}>
+                  <Zap className="w-3 h-3 mr-1" />
                   Start Free Trial
                 </Button>
                 <button 
                   onClick={() => setShowPlanComparison(!showPlanComparison)}
-                  className="w-full mt-3 text-sm text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
+                  className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
                 >
                   See More Details
-                  {showPlanComparison ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
               </CardContent>
             </Card>
 
-            {/* Enterprise Plan */}
+            {/* Command Plan */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">Aura Command</h3>
-                <p className="text-xs text-card-foreground/60 mb-1">(Enterprise)</p>
+              <CardContent className="p-5">
+                <h3 className="text-lg font-bold mb-1">Aura Command</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">(Enterprise)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-bold">$6,997</span>
-                  <span className="text-card-foreground/60">/month</span>
+                  <span className="text-3xl font-bold">$6,997</span>
+                  <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-4">$69,970/year (Save $13,994)</p>
-                <p className="text-sm text-card-foreground/70 mb-6">Full platform access with all agents, consoles, and voice capabilities.</p>
+                <p className="text-xs text-secondary mb-3">$69,970/year (Save $13,994)</p>
+                <p className="text-xs text-card-foreground/70 mb-4">Full business automation suite.</p>
                 
-                <div className="space-y-2 text-left mb-6">
+                <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">All 23 AI Agents</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">All 23 AI Agents</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">All 7 Control Centers</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">All 7 Consoles</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Unlimited Appointments</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">White-Label Branding</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Email + SMS + Voice</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">25 Employee Accounts</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">25 Employee Accounts</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">Social + Website Included</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">White-Label Branding</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Social Media AI Content</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">1-Page Smart Website</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Total Business Automation & Brand Control</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                    <span className="text-xs">Full Automation</span>
                   </div>
                 </div>
 
-                <Button variant="outline" size="lg" className="w-full" onClick={() => navigate('/auth?mode=company')}>
+                <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/auth?mode=company')}>
                   Start Free Trial
                 </Button>
                 <button 
                   onClick={() => setShowPlanComparison(!showPlanComparison)}
-                  className="w-full mt-3 text-sm text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
+                  className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
                 >
                   See More Details
-                  {showPlanComparison ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
               </CardContent>
             </Card>

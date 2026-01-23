@@ -9,7 +9,7 @@
 
 import { Calendar, Clock, DollarSign, AlertTriangle, Star, MapPin, Sparkles, Phone, FileText } from 'lucide-react';
 
-export type SubscriptionTier = 'single_point' | 'multi_track' | 'command';
+export type SubscriptionTier = 'core' | 'single_point' | 'multi_track' | 'command';
 
 export interface QuickActionConfig {
   id: string;
@@ -103,17 +103,18 @@ export const CALL_TO_BOOK_ACTION: QuickActionConfig = {
 
 // Tier hierarchy for comparison
 const TIER_LEVELS: Record<SubscriptionTier, number> = {
-  single_point: 1,
-  multi_track: 2,
-  command: 3,
+  core: 1,
+  single_point: 2,
+  multi_track: 3,
+  command: 4,
 };
 
 /**
  * Check if a company's tier includes access to a specific feature tier
  */
 export function hasTierAccess(companyTier: string | null | undefined, requiredTier: SubscriptionTier): boolean {
-  const effectiveTier = (companyTier || 'single_point') as SubscriptionTier;
-  const companyLevel = TIER_LEVELS[effectiveTier] || TIER_LEVELS.single_point;
+  const effectiveTier = (companyTier || 'core') as SubscriptionTier;
+  const companyLevel = TIER_LEVELS[effectiveTier] || TIER_LEVELS.core;
   const requiredLevel = TIER_LEVELS[requiredTier];
   return companyLevel >= requiredLevel;
 }
@@ -126,7 +127,7 @@ export function getEffectiveTier(
   inTrial: boolean
 ): SubscriptionTier {
   if (inTrial) return 'command'; // Trial gets full access
-  return (subscriptionTier || 'single_point') as SubscriptionTier;
+  return (subscriptionTier || 'core') as SubscriptionTier;
 }
 
 /**
@@ -138,15 +139,15 @@ export function getQuickActionsForTier(
 ): QuickActionConfig[] {
   const actions: QuickActionConfig[] = [];
   
-  // For Single-Point: Add call-to-book if company has a phone
-  if (tier === 'single_point' && hasDispatchPhone) {
+  // For Core and Single-Point: Add call-to-book if company has a phone
+  if ((tier === 'core' || tier === 'single_point') && hasDispatchPhone) {
     actions.push(CALL_TO_BOOK_ACTION);
   }
   
   // Add all actions that the tier has access to
   for (const action of ALL_QUICK_ACTIONS) {
-    // Skip schedule for single_point - they get call_to_book instead
-    if (tier === 'single_point' && action.id === 'schedule') {
+    // Skip schedule for core and single_point - they get call_to_book instead
+    if ((tier === 'core' || tier === 'single_point') && action.id === 'schedule') {
       continue;
     }
     
