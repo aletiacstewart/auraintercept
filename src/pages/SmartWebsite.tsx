@@ -226,8 +226,8 @@ export default function SmartWebsite() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center p-8">
-          <h1 className="text-2xl font-bold mb-2">Website Not Found</h1>
-          <p className="text-muted-foreground">This smart website doesn't exist or isn't published yet.</p>
+          <h1 className="text-2xl font-bold mb-2">Aura Web Presence Not Found</h1>
+          <p className="text-muted-foreground">This Aura Web Presence page doesn't exist or isn't published yet.</p>
         </div>
       </div>
     );

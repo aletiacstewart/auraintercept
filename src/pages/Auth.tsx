@@ -772,7 +772,7 @@ export default function Auth() {
                           >
                             <Crown className={`w-4 h-4 mx-auto mb-1 ${selectedAddOn === 'smart_website' ? 'text-amber-400' : 'text-muted-foreground'}`} />
                             <span className={`text-xs ${selectedAddOn === 'smart_website' ? 'text-amber-400 font-medium' : 'text-muted-foreground'}`}>
-                              Smart Website (1pg)
+                              Aura Web Presence (1pg)
                             </span>
                           </div>
                         </div>

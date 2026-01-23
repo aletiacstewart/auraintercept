@@ -21,12 +21,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access - upgrade to unlock AI agents',
   },
   core: {
-    // Core: AI Chat Widget only (no agents), Social Media AI + Smart Website included
+    // Core: AI Chat Widget only (no agents), Aura Social Signal + Aura Web Presence included
     agents: [],
     consoles: [],
     label: 'Core',
     price: '$500/mo',
-    description: 'AI Chat + Social Media + Smart Website',
+    description: 'AI Chat + Aura Social Signal + Aura Web Presence',
   },
   single_point: {
     // Voice AI (chat + outbound calling) included, but NO booking (call to book)

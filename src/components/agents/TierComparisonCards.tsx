@@ -177,7 +177,7 @@ const TierComparisonCards: React.FC = () => {
           additionalFeatures={[
             'AI Chat Widget',
             'Aura Social Signal',
-            '1-Page Smart Website',
+            'Aura Web Presence (1pg)',
             '2 Employee Accounts',
           ]}
         />

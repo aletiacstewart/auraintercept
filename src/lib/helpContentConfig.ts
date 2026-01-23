@@ -339,12 +339,12 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   core: {
     title: 'Aura Core',
-    description: 'Entry-level plan with Text-Based AI Chat, Social Media, and Smart Website.',
+    description: 'Entry-level plan with Text-Based AI Chat, Aura Social Signal, and Aura Web Presence.',
     highlights: [
       'AI Chat Widget (Text-Based) - customers type, AI responds in text',
       'No voice features - text chat only (no ElevenLabs/Twilio needed)',
       'Aura Social Signal (6 platforms)',
-      '1-Page Smart Website',
+      'Aura Web Presence (1pg)',
       '2 Employee Accounts',
       'No AI agents included',
     ],

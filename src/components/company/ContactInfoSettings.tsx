@@ -92,7 +92,7 @@ export function ContactInfoSettings() {
           Contact Information
         </CardTitle>
         <CardDescription>
-          This information will be displayed on your Smart Website contact section
+          This information will be displayed on your Aura Web Presence contact section
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -183,7 +183,7 @@ export default function SmartWebsiteManager() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['smart-website-admin'] });
-      toast.success('Smart Website created!');
+      toast.success('Aura Web Presence created!');
     },
     onError: (error: any) => {
       toast.error(error.message || 'Failed to create website');
@@ -241,9 +241,9 @@ export default function SmartWebsiteManager() {
               <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <Globe className="w-8 h-8 text-primary" />
               </div>
-              <CardTitle>Create Your Smart Website</CardTitle>
+              <CardTitle>Create Your Aura Web Presence</CardTitle>
               <CardDescription>
-                Get a professional 1-page website that showcases your services, hours, and includes an AI chat widget.
+                Get a professional Aura Web Presence page that showcases your services, hours, and includes an AI chat widget.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -253,7 +253,7 @@ export default function SmartWebsiteManager() {
                 size="lg"
               >
                 {createWebsite.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                Create Smart Website
+                Create Aura Web Presence
               </Button>
             </CardContent>
           </Card>
@@ -268,8 +268,8 @@ export default function SmartWebsiteManager() {
         <div className="space-y-6">
           <PageHeader
             icon={Globe}
-            title="Smart Website"
-            description="Manage your company's 1-page website"
+            title="Aura Web Presence"
+            description="Manage your company's Aura Web Presence page"
             featureColor="config"
             showAuraBar
             action={

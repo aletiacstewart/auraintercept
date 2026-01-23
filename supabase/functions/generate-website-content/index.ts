@@ -236,7 +236,7 @@ serve(async (req) => {
       toneGuidance = toneDescriptions[aiProfile.tone] || '';
     }
 
-    const systemPrompt = `You are a professional marketing copywriter specializing in service business websites. 
+    const systemPrompt = `You are a professional marketing copywriter specializing in Aura Web Presence pages for service businesses. 
 Generate concise, engaging content that:
 - Is clear and easy to read
 - Focuses on customer benefits

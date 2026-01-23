@@ -163,7 +163,7 @@ export function DashboardSetupNav() {
           },
           {
             id: 'smart-website',
-            label: 'Smart Website',
+            label: 'Aura Web Presence',
             href: '/dashboard/smart-website',
             icon: Globe,
             completed: smartWebsiteProgress >= 100,
