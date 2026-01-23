@@ -563,7 +563,7 @@ export default function Index() {
             <Badge variant="secondary" className="mb-2">Aura Intelligence Network</Badge>
             <h2 className="text-2xl sm:text-3xl font-bold mb-2">23 Specialized AI Operatives</h2>
             <p className="text-muted-foreground text-sm max-w-xl mx-auto">
-              All working together via smart handoffs to intercept every opportunity for your business.
+              Intercept Every Lead. Automate Every Move.
             </p>
           </div>
 
