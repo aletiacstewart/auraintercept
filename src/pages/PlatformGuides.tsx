@@ -56,8 +56,8 @@ const NAVIGATION_ROUTES: Record<string, string> = {
   'Business Ops Console': '/dashboard/ai-consoles/business-ops',
   'Marketing & Sales Ops': '/dashboard/ai-consoles/marketing',
   'Marketing Console': '/dashboard/ai-consoles/marketing',
-  'Social Media Ops': '/dashboard/ai-consoles/social-media',
-  'Social Media Console': '/dashboard/ai-consoles/social-media',
+  'Aura Social Signal Ops': '/dashboard/ai-consoles/social-media',
+  'Aura Social Signal Console': '/dashboard/ai-consoles/social-media',
   'Analytics & Reports Ops': '/dashboard/ai-consoles/analytics',
   'Analytics Console': '/dashboard/ai-consoles/analytics',
   'Customer Portal Console': '/dashboard/ai-consoles/customer-portal',
@@ -269,15 +269,15 @@ const guideCategories = [
         tips: ['A/B test subject lines for better performance', 'Start with simple campaigns before automation']
       },
       {
-        title: 'Social Media Agents',
+        title: 'Aura Social Signal Agents',
         duration: '12 min',
         steps: [
-          'Social Content Agent: Creates posts for 6 platforms (IG, FB, LI, TT, GMB, SMS)',
-          'Social Scheduler Agent: Queues and publishes content',
-          'Social Analytics Agent: Tracks engagement metrics',
+          'Aura Social Signal Agent: Creates posts for 6 platforms (IG, FB, LI, TT, GMB, SMS)',
+          'Aura Signal Scheduler: Queues and publishes content',
+          'Aura Signal Analytics: Tracks engagement metrics',
           'Uses 3-step Content Wizard: Template → Customize → Schedule',
-          'All social agents require Command tier',
-          'Access via Social Media Ops Console'
+          'All Aura Social Signal agents require Command tier',
+          'Access via Aura Social Signal Ops Console'
         ],
         tips: ['Respects platform character limits automatically', 'Queue posts for optimal engagement times']
       },

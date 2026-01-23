@@ -70,7 +70,7 @@ const CATEGORY_INFO: Record<string, {
     cssVar: '--feature-marketing'
   },
   social_media: { 
-    label: 'Social Media', 
+    label: 'Aura Social Signal', 
     icon: Globe, 
     colorClass: 'text-pink-400',
     cssVar: '--feature-marketing'
@@ -128,10 +128,10 @@ const AGENT_NAMES: Record<string, string> = {
   campaign: 'Campaign Agent',
   lead: 'Lead Agent',
   promo: 'Promo Agent',
-  // Social Media (3)
-  social_content: 'Social Content Agent',
-  social_scheduler: 'Social Scheduler Agent',
-  social_analytics: 'Social Analytics Agent',
+  // Aura Social Signal (3)
+  social_content: 'Aura Social Signal Agent',
+  social_scheduler: 'Aura Signal Scheduler',
+  social_analytics: 'Aura Signal Analytics',
   // Analytics & Reports (4)
   insights: 'Insights Agent',
   performance: 'Performance Agent',

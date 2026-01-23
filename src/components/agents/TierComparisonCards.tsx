@@ -23,9 +23,9 @@ const AGENT_NAMES: Record<string, string> = {
   campaign: 'Campaign Agent',
   lead: 'Lead Agent',
   promo: 'Promo Agent',
-  social_content: 'Social Content',
-  social_scheduler: 'Social Scheduler',
-  social_analytics: 'Social Analytics',
+  social_content: 'Aura Signal Creator',
+  social_scheduler: 'Aura Signal Scheduler',
+  social_analytics: 'Aura Signal Analytics',
   insights: 'Insights Agent',
   performance: 'Performance Agent',
   revenue: 'Revenue Agent',
@@ -38,7 +38,7 @@ const CONSOLE_NAMES: Record<string, string> = {
   field_operations: 'Field Operations',
   business_management: 'Business Management',
   marketing_sales: 'Marketing & Sales',
-  social_media: 'Social Media',
+  social_media: 'Aura Social Signal',
   analytics_reports: 'Analytics & Reports',
 };
 
@@ -176,7 +176,7 @@ const TierComparisonCards: React.FC = () => {
           borderColor="border-emerald-600/50"
           additionalFeatures={[
             'AI Chat Widget',
-            'Social Media AI Content',
+            'Aura Social Signal',
             '1-Page Smart Website',
             '2 Employee Accounts',
           ]}
@@ -199,7 +199,7 @@ const TierComparisonCards: React.FC = () => {
           borderColor="border-sky-600/50"
           upgradeFrom={{ tier: 'Single-Point', priceDiff: 2497 }}
           additionalFeatures={[
-            'Social Media AI Content',
+            'Aura Social Signal',
             '1-Page Smart Website',
           ]}
         />
@@ -212,7 +212,7 @@ const TierComparisonCards: React.FC = () => {
           borderColor="border-violet-600/50"
           upgradeFrom={{ tier: 'Multi-Track', priceDiff: 3000 }}
           additionalFeatures={[
-            'Social Media AI Content',
+            'Aura Social Signal',
             '1-Page Smart Website',
           ]}
         />
