@@ -175,11 +175,11 @@ export function BatchAgentActivation({ agents, onActivatePhase, onActivateAll }:
               <Rocket className="h-5 w-5 text-primary" />
               Quick Activation
             </CardTitle>
-            <CardDescription>Activate agents by phase or all at once</CardDescription>
+            <CardDescription>Activate operatives by phase or all at once</CardDescription>
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold">{totalEnabled}/{totalAgents}</div>
-            <div className="text-sm text-muted-foreground">Agents Active</div>
+            <div className="text-sm text-muted-foreground">Operatives Active</div>
           </div>
         </div>
       </CardHeader>
@@ -266,7 +266,7 @@ export function BatchAgentActivation({ agents, onActivatePhase, onActivateAll }:
             disabled={activating || totalEnabled === totalAgents}
           >
             <Rocket className="h-4 w-4 mr-2" />
-            Activate All Agents
+            Activate All Operatives
           </Button>
         </div>
 
@@ -274,7 +274,7 @@ export function BatchAgentActivation({ agents, onActivatePhase, onActivateAll }:
         <div className="flex items-start gap-2 p-3 bg-muted rounded-lg text-sm">
           <AlertCircle className="h-4 w-4 text-muted-foreground mt-0.5" />
           <div className="text-muted-foreground">
-            Activating agents will enable AI-powered automation. Make sure to configure each agent's 
+            Activating operatives will enable AI-powered automation. Make sure to configure each operative's
             settings after activation for optimal performance.
           </div>
         </div>

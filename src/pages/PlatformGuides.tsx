@@ -119,12 +119,12 @@ const guideCategories = [
         title: 'Subscription Tiers',
         duration: '8 min',
         steps: [
-          'Single-Point ($497/mo): 3 AI Agents (Receptionist, Follow-up, Review) + Call to Book',
-          'Multi-Track ($897/mo): 10 AI Agents + 2 Control Centers + Online Booking',
-          'Command ($1,497/mo): All 23 AI Agents + 6 Control Centers + White-Label Branding',
+          'Single-Point ($497/mo): 3 AI Operatives (Receptionist, Follow-up, Review) + Call to Book',
+          'Multi-Track ($897/mo): 10 AI Operatives + 2 Control Centers + Online Booking',
+          'Command ($1,497/mo): All 23 AI Operatives + 6 Control Centers + White-Label Branding',
           'Proxy Voice Chat powered by ElevenLabs included on Single-Point+',
           'Employee limits: 5 (Single-Point), 10 (Multi-Track), Unlimited (Command)',
-          'Premium Add-Ons: Aura Social Signal ($150/mo), Aura Web Presence ($150/mo)',
+          'Premium Add-Ons: Social Signal ($150/mo), Web Presence ($150/mo)',
           'View your tier status in the sidebar bottom section'
         ],
         tips: ['Trial users get full Command tier access', 'Annual billing saves up to $2,994/year']

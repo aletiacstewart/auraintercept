@@ -34,7 +34,7 @@ Dashboard Pages (use these exact routes):
 - Customer Portal: /dashboard/ai-consoles/customer-portal
 - Customer Website App: /dashboard/customer-website-app
 - Customer Portal App Install: /dashboard/customer-portal-app-install
-- AI Agents Hub: /dashboard/ai-agents
+- AI Operatives Hub: /dashboard/ai-agents
 - Knowledge Base: /dashboard/knowledge
 - Calculators: /dashboard/calculators
 - 3rd Party Overview: /dashboard/3rd-party-overview

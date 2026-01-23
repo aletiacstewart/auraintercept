@@ -139,7 +139,7 @@ export function DashboardSetupNav() {
           },
           {
             id: 'ai-agents',
-            label: 'AI Agents Hub',
+            label: 'AI Operatives Hub',
             href: '/dashboard/ai-agents',
             icon: Bot,
             completed: aiAgentsProgress >= 100,
