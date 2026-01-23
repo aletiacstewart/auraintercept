@@ -30,7 +30,7 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hi! I'm the Aura Intercept AI Assistant. Ask me anything about our platform, features, pricing, or how we can help automate your service business!"
+      content: "Hi! I'm Aura. Ask me anything about our platform, features, pricing, or how we can help automate your service business!"
     }
   ]);
   const [input, setInput] = useState('');
@@ -160,7 +160,7 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
           <Bot className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h3 className="font-semibold text-primary">AI Assistant</h3>
+          <h3 className="font-semibold text-primary">Talk to Aura</h3>
           <p className="text-xs text-muted-foreground">Always available to help</p>
         </div>
       </div>
@@ -196,7 +196,7 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about Aura Intercept..."
+          placeholder="Ask Aura anything..."
           className="flex-1 bg-white border-border text-[hsl(220,60%,25%)]"
           disabled={isLoading}
         />

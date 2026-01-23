@@ -773,6 +773,8 @@ export type Database = {
           calendar_feed_token: string | null
           callback_delay_seconds: number | null
           callback_retry_count: number | null
+          chat_widget_subtitle: string | null
+          chat_widget_title: string | null
           contact_address: string | null
           contact_email: string | null
           contact_phone: string | null
@@ -877,6 +879,8 @@ export type Database = {
           calendar_feed_token?: string | null
           callback_delay_seconds?: number | null
           callback_retry_count?: number | null
+          chat_widget_subtitle?: string | null
+          chat_widget_title?: string | null
           contact_address?: string | null
           contact_email?: string | null
           contact_phone?: string | null
@@ -981,6 +985,8 @@ export type Database = {
           calendar_feed_token?: string | null
           callback_delay_seconds?: number | null
           callback_retry_count?: number | null
+          chat_widget_subtitle?: string | null
+          chat_widget_title?: string | null
           contact_address?: string | null
           contact_email?: string | null
           contact_phone?: string | null
