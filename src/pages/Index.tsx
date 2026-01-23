@@ -682,10 +682,10 @@ export default function Index() {
                 <h3 className="text-xl font-bold mb-2">Aura Single-Point</h3>
                 <p className="text-xs text-card-foreground/60 mb-1">(Solo-Focus)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-bold">$497</span>
+                  <span className="text-4xl font-bold">$1,500</span>
                   <span className="text-card-foreground/60">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-4">$4,970/year (Save $994)</p>
+                <p className="text-xs text-secondary mb-4">$15,000/year (Save $3,000)</p>
                 <p className="text-sm text-card-foreground/70 mb-6">Perfect for small service companies getting started with AI automation.</p>
                 
                 <div className="space-y-2 text-left mb-6">
@@ -720,12 +720,11 @@ export default function Index() {
                 </div>
                 
                 <div className="pt-3 border-t border-white/20 mb-4">
-                  <p className="text-[10px] text-white/60 mb-1.5">Optional Add-Ons:</p>
+                  <p className="text-[10px] text-white/60 mb-1.5">Choice of Add-On (Included):</p>
                   <div className="flex flex-wrap items-center gap-1 text-[10px]">
-                    <span className="text-pink-400">+ Social Media AI</span>
+                    <span className="text-pink-400">Social Media AI Content</span>
                     <span className="text-white/40">or</span>
-                    <span className="text-teal-400">+ Smart Website</span>
-                    <span className="text-amber-400">$150/mo ea</span>
+                    <span className="text-teal-400">1-Page Smart Website</span>
                   </div>
                 </div>
 
@@ -750,10 +749,10 @@ export default function Index() {
                 <h3 className="text-xl font-bold mb-2">Aura Multi-Track</h3>
                 <p className="text-xs text-card-foreground/60 mb-1">(Business)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-bold gradient-text">$897</span>
+                  <span className="text-4xl font-bold gradient-text">$3,997</span>
                   <span className="text-card-foreground/60">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-4">$8,970/year (Save $1,794)</p>
+                <p className="text-xs text-secondary mb-4">$39,970/year (Save $7,994)</p>
                 <p className="text-sm text-card-foreground/70 mb-6">For growing companies with field technicians needing dispatch automation.</p>
                 
                 <div className="space-y-2 text-left mb-6">
@@ -789,13 +788,13 @@ export default function Index() {
                     <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
                     <span className="text-sm">Manages up to 5 Field Techs automatically</span>
                   </div>
-                </div>
-                
-                <div className="pt-3 border-t border-white/20 mb-4">
-                  <p className="text-[10px] text-white/60 mb-1.5">Optional Add-On:</p>
-                  <div className="flex items-center gap-1 text-[10px]">
-                    <span className="text-pink-400">+ Social Media AI Content</span>
-                    <span className="text-amber-400">$150/mo</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
+                    <span className="text-sm">Social Media AI Content</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
+                    <span className="text-sm">1-Page Smart Website</span>
                   </div>
                 </div>
 
@@ -819,10 +818,10 @@ export default function Index() {
                 <h3 className="text-xl font-bold mb-2">Aura Command</h3>
                 <p className="text-xs text-card-foreground/60 mb-1">(Enterprise)</p>
                 <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-4xl font-bold">$1,497</span>
+                  <span className="text-4xl font-bold">$6,997</span>
                   <span className="text-card-foreground/60">/month</span>
                 </div>
-                <p className="text-xs text-secondary mb-4">$14,970/year (Save $2,994)</p>
+                <p className="text-xs text-secondary mb-4">$69,970/year (Save $13,994)</p>
                 <p className="text-sm text-card-foreground/70 mb-6">Full platform access with all agents, consoles, and voice capabilities.</p>
                 
                 <div className="space-y-2 text-left mb-6">
@@ -852,21 +851,15 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
-                    <span className="text-sm">Total Business Automation & Brand Control</span>
+                    <span className="text-sm">Social Media AI Content</span>
                   </div>
-                </div>
-                
-                <div className="pt-3 border-t border-white/20 mb-4">
-                  <p className="text-[10px] text-white/60 mb-1.5">Optional Add-Ons:</p>
-                  <div className="space-y-0.5 text-[10px]">
-                    <div className="flex items-center gap-1">
-                      <span className="text-pink-400">+ Social Media AI Content</span>
-                      <span className="text-amber-400">$150/mo</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-teal-400">+ 1-Page Smart Website</span>
-                      <span className="text-amber-400">$150/mo</span>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
+                    <span className="text-sm">1-Page Smart Website</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-secondary flex-shrink-0" />
+                    <span className="text-sm">Total Business Automation & Brand Control</span>
                   </div>
                 </div>
 
