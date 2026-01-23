@@ -454,35 +454,6 @@ export default function Index() {
       {/* === COMPANY/BUSINESS SECTION === */}
       
 
-      {/* Communication Channels */}
-      <section className="py-20">
-        <div className="container max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">Multi-Channel</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Connect Everywhere Your Customers Are</h2>
-            <p className="text-foreground max-w-2xl mx-auto">
-              In the service industry, the first company to respond wins the job. Our Aura Intercept AI platform ensures your business is always first, synchronizing Ask Aura, SMS, Email, and Ai Chat into a single, proactive workforce. Unlike basic chatbots, our intelligent AI agents maintain full context across every channel—meaning a customer can start a request via text and finish it over the phone without ever repeating a detail. It's a 24/7 automated dispatch solution that captures leads, handles bookings, and keeps your brand responsive while your team is in the field.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {communicationChannels.map((channel, index) => (
-              <div 
-                key={channel.title}
-                className="rounded-lg p-4 transition-all duration-300 hover:opacity-90 text-center"
-                style={{ backgroundColor: '#2a3d4e' }}
-              >
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${channel.gradientClass} flex items-center justify-center mx-auto mb-3`}>
-                  <channel.icon className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="font-semibold text-sm mb-1 text-white">{channel.title}</h3>
-                <p className="text-xs text-white/70 leading-relaxed">{channel.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Agent Consoles Preview */}
       <section className="bg-muted/30 py-12">
         <div className="container max-w-6xl mx-auto px-6">
@@ -566,6 +537,35 @@ export default function Index() {
                   ))}
                 </div>
               </div>)}
+          </div>
+        </div>
+      </section>
+
+      {/* Communication Channels */}
+      <section className="py-20">
+        <div className="container max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <Badge variant="secondary" className="mb-4">Multi-Channel</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Connect Everywhere Your Customers Are</h2>
+            <p className="text-foreground max-w-2xl mx-auto">
+              In the service industry, the first company to respond wins the job. Our Aura Intercept AI platform ensures your business is always first, synchronizing Ask Aura, SMS, Email, and Ai Chat into a single, proactive workforce. Unlike basic chatbots, our intelligent AI agents maintain full context across every channel—meaning a customer can start a request via text and finish it over the phone without ever repeating a detail. It's a 24/7 automated dispatch solution that captures leads, handles bookings, and keeps your brand responsive while your team is in the field.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {communicationChannels.map((channel, index) => (
+              <div 
+                key={channel.title}
+                className="rounded-lg p-4 transition-all duration-300 hover:opacity-90 text-center"
+                style={{ backgroundColor: '#2a3d4e' }}
+              >
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${channel.gradientClass} flex items-center justify-center mx-auto mb-3`}>
+                  <channel.icon className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="font-semibold text-sm mb-1 text-white">{channel.title}</h3>
+                <p className="text-xs text-white/70 leading-relaxed">{channel.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
