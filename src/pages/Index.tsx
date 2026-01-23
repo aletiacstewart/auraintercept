@@ -760,6 +760,10 @@ export default function Index() {
                     <span className="text-xs">5 Employee Accounts</span>
                   </div>
                   <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    <span className="text-xs text-amber-400">Choice: Social Media AI or Smart Website ($500 value)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
                     <span className="text-xs">10+ hrs/week saved</span>
                   </div>
