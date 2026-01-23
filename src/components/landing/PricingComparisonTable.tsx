@@ -134,8 +134,8 @@ const sections: FeatureSection[] = [
       { name: 'Employee Accounts', singlePoint: '5 included', multiTrack: '10 included', command: 'Unlimited' },
       { name: 'Additional Employees', singlePoint: '$25/mo per 10', multiTrack: '$25/mo per 10', command: 'Included' },
       { name: 'White-Label Branding', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Smart Website', singlePoint: '+$150/mo', multiTrack: '+$150/mo', command: '+$150/mo' },
-      { name: 'Social Media Integration', singlePoint: '+$197/mo', multiTrack: '+$197/mo', command: '+$197/mo' },
+      { name: 'Smart Website', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
+      { name: 'Social Media AI Content', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
       { name: 'Embeddable Chat Widget', singlePoint: 'check', multiTrack: 'check', command: 'check' },
     ],
   },
@@ -163,9 +163,9 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', singlePoint: '$497', multiTrack: '$897', command: '$1,497' },
-      { name: 'Annual Price', singlePoint: '$4,970/year', multiTrack: '$8,970/year', command: '$14,970/year' },
-      { name: 'Annual Savings', singlePoint: 'Save $994', multiTrack: 'Save $1,794', command: 'Save $2,994' },
+      { name: 'Monthly Price', singlePoint: '$1,500', multiTrack: '$3,997', command: '$6,997' },
+      { name: 'Annual Price', singlePoint: '$15,000/year', multiTrack: '$39,970/year', command: '$69,970/year' },
+      { name: 'Annual Savings', singlePoint: 'Save $3,000', multiTrack: 'Save $7,994', command: 'Save $13,994' },
     ],
   },
 ];
@@ -257,15 +257,15 @@ export const PricingComparisonTable = () => {
             <th className="text-left py-2.5 px-4 font-semibold text-white text-sm">Feature</th>
             <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
               <div>Single-Point</div>
-              <div className="text-xs font-normal text-white/70">$497/mo</div>
+              <div className="text-xs font-normal text-white/70">$1,500/mo</div>
             </th>
             <th className="text-center py-2.5 px-3 font-semibold bg-sky-600/40 border-x border-sky-400/50 text-sm">
               <div className="text-sky-300">Multi-Track</div>
-              <div className="text-xs font-normal text-white/70">$897/mo</div>
+              <div className="text-xs font-normal text-white/70">$3,997/mo</div>
             </th>
             <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
               <div>Command</div>
-              <div className="text-xs font-normal text-white/70">$1,497/mo</div>
+              <div className="text-xs font-normal text-white/70">$6,997/mo</div>
             </th>
           </tr>
         </thead>
