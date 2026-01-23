@@ -390,7 +390,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
   COMMAND: {
     tier: 'COMMAND',
-    label: 'Command',
+    label: 'Pro Command',
     price: '$6,997/mo',
     description: 'Complete AI workforce with all 23 operatives and 7 control centers',
     keyFeatures: [

@@ -75,7 +75,7 @@ const CATEGORY_INFO: Record<string, {
     cssVar: '--feature-marketing'
   },
   social_media: { 
-    label: 'Social Signal', 
+    label: 'Social Media Signal',
     icon: Globe, 
     colorClass: 'text-pink-400',
     cssVar: '--feature-marketing'
@@ -133,8 +133,8 @@ const AGENT_NAMES: Record<string, string> = {
   campaign: 'Campaign Agent',
   lead: 'Lead Agent',
   promo: 'Promo Agent',
-  // Social Signal (3)
-  social_content: 'Social Signal Agent',
+  // Social Media Signal (3)
+  social_content: 'Social Media Signal Agent',
   social_scheduler: 'Signal Scheduler',
   social_analytics: 'Signal Analytics',
   // Analytics & Reports (4)

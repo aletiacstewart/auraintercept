@@ -125,11 +125,11 @@ const agentCategories = [{
   }]
 }, {
   id: 'social',
-  name: 'Social Signal Ops',
+  name: 'Social Media Signal Ops',
   icon: Send,
   color: 'from-pink-500 to-rose-500',
   agents: [{
-    name: 'Social Signal Agent',
+    name: 'Social Media Signal Agent',
     description: 'AI-powered content creation for all social platforms',
     icon: Send
   }, {
@@ -843,7 +843,7 @@ export default function Index() {
             {/* Command Plan */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
               <CardContent className="p-5">
-                <h3 className="text-lg font-bold mb-1">Aura Command</h3>
+                <h3 className="text-lg font-bold mb-1">Aura Pro Command</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">(Enterprise)</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold">$6,997</span>

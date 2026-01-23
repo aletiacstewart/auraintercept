@@ -542,7 +542,7 @@ const CONSOLES = [
         requires: ['Campaign Agent'],
       },
       {
-        name: 'Social Signal Agent',
+        name: 'Social Media Signal Agent',
         description: 'AI-generated content for 6 platforms (Instagram, Facebook, LinkedIn, TikTok, GMB, SMS). Respects character limits and platform styles.',
         isCore: false,
         worksAlone: true,

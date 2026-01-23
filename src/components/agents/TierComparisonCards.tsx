@@ -38,7 +38,7 @@ const CONSOLE_NAMES: Record<string, string> = {
   field_operations: 'Field Operations',
   business_management: 'Business Management',
   marketing_sales: 'Marketing & Sales',
-  social_media: 'Social Signal',
+  social_media: 'Social Media Signal',
   analytics_reports: 'Analytics & Reports',
 };
 

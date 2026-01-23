@@ -716,7 +716,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Included AI Operatives (All 23)</Text>
       <Text style={styles.paragraph}>
         Full access to all 23 AI operatives including Customer Engagement (4), Field Operations (4), 
-        Business Management (5), Marketing & Sales (3), Social Signal (3), and Analytics & Reports (4) operatives.
+        Business Management (5), Marketing & Sales (3), Social Media Signal (3), and Analytics & Reports (4) operatives.
       </Text>
 
       <Text style={styles.subsectionTitle}>Control Centers (All 5)</Text>

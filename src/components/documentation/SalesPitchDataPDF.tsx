@@ -573,7 +573,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.dataCardTitle}>Cost Comparison Over 12 Months</Text>
         <VisualDataRow label="Full-time Receptionist" value={100} display="$42,000" color={colors.error} />
         <VisualDataRow label="Part-time + After-hours" value={70} display="$28,000" color={colors.warning} />
-        <VisualDataRow label="Aura Command Tier" value={43} display="$17,964" color={colors.success} />
+        <VisualDataRow label="Aura Pro Command Tier" value={43} display="$17,964" color={colors.success} />
         <VisualDataRow label="Aura Multi-Track Tier" value={26} display="$10,764" color={colors.primary} />
         <VisualDataRow label="Aura Single-Point Tier" value={14} display="$5,964" color={colors.accent} />
       </View>
