@@ -453,36 +453,6 @@ export default function Index() {
 
       {/* === COMPANY/BUSINESS SECTION === */}
       
-      {/* How It Works */}
-      <section className="bg-muted/30 py-20">
-        <div className="container max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4">For Service Businesses</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Get Started in 4 Simple Steps</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              From signup to full automation in minutes, not months.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-6">
-            {howItWorks.map((item, index) => <div key={item.step} className="relative">
-                <Card className="h-full hover:shadow-lg transition-all duration-300 hover:border-primary/50">
-                  <CardContent className="p-6 text-center">
-                    <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-glow">
-                      <item.icon className="w-7 h-7 text-primary-foreground" />
-                    </div>
-                    <div className="text-sm font-medium text-white mb-2">Step {item.step}</div>
-                    <h3 className="text-lg font-semibold mb-2 text-secondary">{item.title}</h3>
-                    <p className="text-sm text-card-muted">{item.description}</p>
-                  </CardContent>
-                </Card>
-                {index < howItWorks.length - 1 && <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
-                    <ChevronRight className="w-6 h-6 text-muted-foreground/50" />
-                  </div>}
-              </div>)}
-          </div>
-        </div>
-      </section>
 
       {/* Communication Channels */}
       <section className="py-20">
@@ -659,7 +629,36 @@ export default function Index() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className="bg-muted/30 py-20">
+        <div className="container max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <Badge variant="secondary" className="mb-4">For Service Businesses</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Get Started in 4 Simple Steps</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              From signup to full automation in minutes, not months.
+            </p>
+          </div>
 
+          <div className="grid md:grid-cols-4 gap-6">
+            {howItWorks.map((item, index) => <div key={item.step} className="relative">
+                <Card className="h-full hover:shadow-lg transition-all duration-300 hover:border-primary/50">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-glow">
+                      <item.icon className="w-7 h-7 text-primary-foreground" />
+                    </div>
+                    <div className="text-sm font-medium text-white mb-2">Step {item.step}</div>
+                    <h3 className="text-lg font-semibold mb-2 text-secondary">{item.title}</h3>
+                    <p className="text-sm text-card-muted">{item.description}</p>
+                  </CardContent>
+                </Card>
+                {index < howItWorks.length - 1 && <div className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
+                    <ChevronRight className="w-6 h-6 text-muted-foreground/50" />
+                  </div>}
+              </div>)}
+          </div>
+        </div>
+      </section>
 
       {/* Pricing Section */}
       <section id="pricing" className="py-20">
