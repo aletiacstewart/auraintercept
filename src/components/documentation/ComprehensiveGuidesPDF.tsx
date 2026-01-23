@@ -325,14 +325,14 @@ const guideCategories = [
         tips: ['Link Quote Forge to your service catalog']
       },
       {
-        title: 'Social Media Agents',
+        title: 'Aura Social Signal Agents',
         duration: '12 min',
         steps: [
-          'Social Content Agent: Creates posts for 6 platforms',
-          'Social Scheduler Agent: Queues and publishes content',
-          'Social Analytics Agent: Tracks engagement metrics',
+          'Aura Social Signal Agent: Creates posts for 6 platforms',
+          'Aura Signal Scheduler: Queues and publishes content',
+          'Aura Signal Analytics: Tracks engagement metrics',
           'Uses 3-step Content Wizard: Template → Customize → Schedule',
-          'All social agents require Command tier'
+          'All Aura Social Signal agents require Command tier'
         ],
         tips: ['Respects platform character limits automatically']
       },
