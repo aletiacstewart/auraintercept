@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { Check, X, Crown, ExternalLink, Loader2, Clock, Sparkles, Users, Mail, MessageSquare, Mic, Info, Globe, Share2, Building } from 'lucide-react';
+import { Check, X, Crown, ExternalLink, Loader2, Clock, Sparkles, Users, Mail, MessageSquare, Mic, Info, Building } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { cn } from '@/lib/utils';
 import {
@@ -136,35 +136,13 @@ const TIERS = [
   },
 ];
 
-// Add-ons configuration
-const ADDONS = [
-  {
-    id: 'social_media',
-    name: 'Social Media AI Content',
-    price: '$150',
-    period: '/mo',
-    icon: Share2,
-    features: [
-      '6-platform content generation',
-      'Automated scheduling',
-      'Brand voice consistency',
-      'Analytics dashboard',
-    ],
-  },
-  {
-    id: 'smart_website',
-    name: '1-Page Smart Website',
-    price: '$150',
-    period: '/mo',
-    icon: Globe,
-    features: [
-      'AI-powered website',
-      'Integrated chat & voice',
-      'Lead capture forms',
-      'Mobile responsive',
-    ],
-  },
-];
+// Employee limits per tier
+export const TIER_EMPLOYEE_LIMITS: Record<string, number> = {
+  core: 2,
+  single_point: 5,
+  multi_track: 10,
+  command: 25,
+};
 
 type FeatureValue = 'check' | 'x' | string;
 
@@ -232,7 +210,7 @@ const sections: FeatureSection[] = [
     features: [
       { name: 'Appointments', core: 'x', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
       { name: 'Employee Accounts', core: '2 included', singlePoint: '5 included', multiTrack: '10 included', command: '25 included' },
-      { name: 'Additional Employees', core: '$25/mo per 10', singlePoint: '$25/mo per 10', multiTrack: '$25/mo per 10', command: '$25/mo per 10' },
+      { name: 'Additional Employees', core: '$10/employee', singlePoint: '$10/employee', multiTrack: '$10/employee', command: '$10/employee' },
       { name: 'White-Label Branding', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Smart Website', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
       { name: 'Social Media AI Content', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
@@ -608,43 +586,6 @@ export default function Subscription() {
           ))}
         </div>
 
-        {/* Premium Add-Ons */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-card-foreground">Premium Add-Ons</h3>
-          <div className="grid md:grid-cols-2 gap-6">
-            {ADDONS.map((addon) => (
-              <Card key={addon.id} className="bg-card border-amber-500/30">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
-                        <addon.icon className="w-5 h-5 text-amber-500" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg text-card-foreground">{addon.name}</CardTitle>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-2xl font-bold text-amber-500">{addon.price}</span>
-                      <span className="text-muted-foreground">{addon.period}</span>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    {addon.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-card-foreground">
-                        <Check className="w-3 h-3 text-emerald-500" />
-                        <span>{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
         {/* Feature Comparison Table */}
         <Card className="bg-card">
           <CardHeader>
@@ -732,12 +673,12 @@ export default function Subscription() {
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">Additional employees: $25/month per 10</span>
+                <span className="text-muted-foreground">Additional employees: $10/employee</span>
               </div>
               <span className="text-muted-foreground">•</span>
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-primary" />
-                <span className="text-muted-foreground">One-Time Implementation Fee: $499 - $999</span>
+                <span className="text-muted-foreground">One-Time Implementation Fee: starting at $499</span>
               </div>
             </div>
           </CardContent>

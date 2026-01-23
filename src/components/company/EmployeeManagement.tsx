@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Checkbox } from '@/components/ui/checkbox';
+
 import {
   Dialog,
   DialogContent,
@@ -43,9 +44,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Plus, Copy, Users, Mail, Clock, Check, Briefcase, Settings2, Trash2, Wrench } from 'lucide-react';
+import { Plus, Copy, Users, Mail, Check, Briefcase, Settings2, Trash2, Wrench, AlertTriangle, Crown } from 'lucide-react';
 import { format } from 'date-fns';
 import { TechnicianServiceAssignments } from './TechnicianServiceAssignments';
+
+// Employee limits per subscription tier
+const TIER_EMPLOYEE_LIMITS: Record<string, number> = {
+  core: 2,
+  single_point: 5,
+  multi_track: 10,
+  command: 25,
+  free: 2,
+  enterprise: 100,
+};
 
 // Job types that correspond to AI agent categories
 const JOB_TYPES = [
@@ -72,7 +83,7 @@ function generateRegistrationCode(): string {
 }
 
 export function EmployeeManagement() {
-  const { companyId, user } = useAuth();
+  const { companyId, user, subscriptionTier, inTrial } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -82,6 +93,10 @@ export function EmployeeManagement() {
     id: string;
     name: string;
   } | null>(null);
+
+  // Determine effective tier for limits (trial gets command access)
+  const effectiveTier = inTrial ? 'command' : (subscriptionTier || 'core');
+  const employeeLimit = TIER_EMPLOYEE_LIMITS[effectiveTier] || 2;
 
   // Fetch employees
   const { data: employees, isLoading: employeesLoading } = useQuery({
@@ -98,6 +113,11 @@ export function EmployeeManagement() {
     },
     enabled: !!companyId,
   });
+
+  // Calculate limit status
+  const currentEmployeeCount = employees?.length || 0;
+  const isAtLimit = currentEmployeeCount >= employeeLimit;
+  const limitPercentage = Math.min((currentEmployeeCount / employeeLimit) * 100, 100);
 
   // Fetch employee job assignments
   const { data: jobAssignments, isLoading: jobsLoading } = useQuery({
@@ -269,16 +289,22 @@ export function EmployeeManagement() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Employees</h1>
           <p className="text-muted-foreground">
-            Manage your team and assign job roles
+            Manage your team and assign job roles • {currentEmployeeCount}/{employeeLimit} employees
           </p>
         </div>
-        <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="w-4 h-4" />
-              Invite Employee
-            </Button>
-          </DialogTrigger>
+        {isAtLimit ? (
+          <Button className="gap-2" onClick={() => navigate('/dashboard/subscription')}>
+            <Crown className="w-4 h-4" />
+            Add More Employees ($10/ea)
+          </Button>
+        ) : (
+          <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2">
+                <Plus className="w-4 h-4" />
+                Invite Employee
+              </Button>
+            </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Invite New Employee</DialogTitle>
@@ -336,7 +362,28 @@ export function EmployeeManagement() {
             )}
           </DialogContent>
         </Dialog>
+        )}
       </div>
+
+      {/* Employee Limit Warning */}
+      {isAtLimit && (
+        <Card className="border-amber-500/30 bg-amber-500/5">
+          <CardContent className="py-4">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-500" />
+              <div className="flex-1">
+                <p className="font-medium text-card-foreground">Employee Limit Reached</p>
+                <p className="text-sm text-muted-foreground">
+                  Your {effectiveTier.replace('_', '-')} plan includes {employeeLimit} employees. Add more for $10/employee.
+                </p>
+              </div>
+              <Button size="sm" onClick={() => navigate('/dashboard/subscription')}>
+                Upgrade
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-3">
