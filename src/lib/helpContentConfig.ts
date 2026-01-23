@@ -55,7 +55,7 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'customer_portal',
     title: 'Customer Portal',
     icon: HeadphonesIcon,
-    description: 'AI-powered customer engagement hub with intelligent triage, automated follow-ups, and review collection. Includes AI Voice Chat for all paid tiers.',
+    description: 'AI-powered customer engagement hub with text-based AI Chat Widget (all tiers), AI Voice Chat (Single-Point+), automated follow-ups, and review collection.',
     requiredTier: 'single_point',
     tabs: ['Chat', 'Voice', 'Services', 'Hours', 'Feedback', 'Track', 'Billing'],
     agents: [
@@ -65,9 +65,10 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
       { name: 'Scheduling Agent', tier: 'multi_track' },
     ],
     features: [
+      { text: 'AI Chat Widget (Text-Based) - keyboard input, no dependencies required', tier: 'core' },
       { text: 'Intelligent customer triage and routing', tier: 'single_point' },
-      { text: 'AI Voice Chat powered by ElevenLabs', tier: 'single_point' },
-      { text: 'AI Outbound Calls for reminders and follow-ups', tier: 'single_point' },
+      { text: 'AI Voice Chat (Speech-Based) - microphone/speaker, requires ElevenLabs', tier: 'single_point' },
+      { text: 'AI Outbound Voice Calls for reminders - requires ElevenLabs + Twilio', tier: 'single_point' },
       { text: 'Answer questions using your Knowledge Base', tier: 'single_point' },
       { text: 'Automated follow-up sequences via Email/SMS', tier: 'single_point' },
       { text: 'Review collection and Google/Yelp/Facebook integration', tier: 'single_point' },
@@ -338,9 +339,10 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   core: {
     title: 'Aura Core',
-    description: 'Entry-level plan with AI Chat, Social Media, and Smart Website.',
+    description: 'Entry-level plan with Text-Based AI Chat, Social Media, and Smart Website.',
     highlights: [
-      'AI Chat Widget for customer conversations',
+      'AI Chat Widget (Text-Based) - customers type, AI responds in text',
+      'No voice features - text chat only (no ElevenLabs/Twilio needed)',
       'Social Media AI Content (6 platforms)',
       '1-Page Smart Website',
       '2 Employee Accounts',
@@ -351,11 +353,12 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     title: 'Aura Single-Point',
     description: 'Perfect for businesses focused on lead intake and reputation management.',
     highlights: [
+      'AI Chat Widget (Text-Based) + AI Voice Chat (Speech-Based)',
       'AI Receptionist for 24/7 customer engagement',
       'Automated follow-up sequences (Email, SMS, Voice)',
       'Review collection with Google/Yelp/Facebook integration',
-      'AI Voice Chat powered by ElevenLabs',
-      'AI Outbound Calls for reminders',
+      'AI Voice Chat - speech via microphone/speakers (requires ElevenLabs)',
+      'AI Outbound Calls for reminders (requires Twilio)',
       'Knowledge Base for intelligent responses',
       'Call to Book (no online scheduling)',
       'Up to 5 employees',
@@ -398,9 +401,14 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
 
 // Platform feature highlights for quick reference
 export const PLATFORM_HIGHLIGHTS = {
+  aiChatWidget: {
+    title: 'AI Chat Widget (Text-Based)',
+    description: 'Text-based chat interface using keyboard input - no external dependencies required',
+    tiers: ['core', 'single_point', 'multi_track', 'command'] as SubscriptionTier[],
+  },
   aiVoice: {
-    title: 'AI Voice',
-    description: 'Natural voice conversations powered by ElevenLabs',
+    title: 'AI Voice (Speech-Based)',
+    description: 'Speech-to-speech conversations via microphone/speakers - requires ElevenLabs',
     tiers: ['single_point', 'multi_track', 'command'] as SubscriptionTier[],
   },
   askAura: {

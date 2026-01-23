@@ -14,8 +14,33 @@ const IntegrationDocs = () => {
           <PageHeader
             icon={BookOpen}
             title="Website Integration Guide"
-            description="Embed AI chat on any website platform"
+            description="Embed the text-based AI Chat Widget on any website platform"
           />
+
+          {/* Chat Widget vs Voice Clarification Banner */}
+          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                <Code className="w-4 h-4 text-blue-400" />
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-semibold text-blue-300">AI Chat Widget (Text-Based) - All Tiers</h4>
+                <p className="text-sm text-muted-foreground">
+                  This guide covers the <strong>AI Chat Widget</strong> which provides <strong>text-based conversations</strong> using keyboard input.
+                  The Chat Widget works on <strong>ALL tiers including Aura Core</strong> with <strong>no external dependencies</strong> - no ElevenLabs or Twilio required.
+                </p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <Badge variant="secondary" className="text-xs">✓ Keyboard Input</Badge>
+                  <Badge variant="secondary" className="text-xs">✓ Text Responses</Badge>
+                  <Badge variant="secondary" className="text-xs">✓ No Dependencies</Badge>
+                  <Badge variant="secondary" className="text-xs">✓ All Tiers</Badge>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  <strong>Looking for AI Voice?</strong> Speech-based conversations via microphone/speakers are available on Single-Point+ tiers and require ElevenLabs + Twilio setup.
+                </p>
+              </div>
+            </div>
+          </div>
 
           <Tabs defaultValue="wordpress" className="space-y-4">
             <TabsList className="inline-flex flex-wrap h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1">

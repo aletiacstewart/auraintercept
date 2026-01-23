@@ -57,6 +57,12 @@ const featureDescriptions: Record<string, string> = {
   'Marketing & Sales Console': 'Tools for campaigns, lead management, and sales pipeline tracking.',
   'Analytics & Reports Console': 'Comprehensive dashboards with KPIs, performance metrics, and business insights.',
   'Social Media Console': 'Unified dashboard to manage all your social media accounts and content calendar.',
+  // Communication Channels - Chat vs Voice distinction
+  'AI Chat Widget (Text-Based)': 'Text-based chat interface using keyboard input. Available on ALL tiers including Core. No external dependencies required (no ElevenLabs or Twilio needed).',
+  'AI Voice (Chat & Outbound Calls)': 'Speech-based AI conversations using microphone and speakers. Available on Single-Point and above. Requires ElevenLabs for voice synthesis and Twilio for telephony.',
+  // 3rd Party Integrations
+  'ElevenLabs (AI Voice)': 'Required for AI Voice features only (speech-based). NOT required for the text-based AI Chat Widget.',
+  'Twilio (SMS & Voice)': 'Required for SMS reminders and AI Voice calls. NOT required for the text-based AI Chat Widget.',
 };
 
 // Tier configuration matching homepage
@@ -199,10 +205,10 @@ const sections: FeatureSection[] = [
   {
     title: 'Communication Channels',
     features: [
-      { name: 'AI Chat Widget', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'AI Chat Widget (Text-Based)', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'AI Voice (Chat & Outbound Calls)', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Email Reminders', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'SMS Reminders', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'AI Voice (Chat & Outbound Calls)', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
     ],
   },
   {

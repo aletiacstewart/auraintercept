@@ -623,18 +623,18 @@ const INTEGRATIONS = [
     purpose: 'SMS Messages & Voice Calls',
     cost: '$1.15/phone number + ~$0.0079/SMS + ~$0.014/minute for calls',
     required: false,
-    requiredFor: 'SMS reminders, voice call reminders, and AI voice features',
+    requiredFor: 'SMS reminders, voice call reminders, and AI Voice features. NOT required for the Text Chat Widget.',
     agentsAffected: ['AI Receptionist (Voice)', 'Follow-up Agent', 'ETA Agent', 'Campaign Agent'],
-    whatHappensWithout: 'No SMS or voice calls - customers can only interact via chat widget.',
+    whatHappensWithout: 'No SMS or voice calls - customers interact via text-based Chat Widget only.',
   },
   {
     name: 'ElevenLabs',
-    purpose: 'AI Voice Synthesis',
+    purpose: 'AI Voice Synthesis (Voice Features Only)',
     cost: 'Free 10,000 characters/month, then $5-99+/month tiers',
     required: false,
-    requiredFor: 'Natural-sounding AI voice calls, voice cloning, and voice reminders',
-    agentsAffected: ['AI Receptionist (Voice)', 'Follow-up Agent (Voice Reminders)'],
-    whatHappensWithout: 'Voice calls use basic Twilio TTS instead of natural AI voice.',
+    requiredFor: 'AI Voice features (speech-based conversations). NOT required for Text Chat Widget which works on all tiers without any dependencies.',
+    agentsAffected: ['AI Receptionist (Voice Mode)', 'Follow-up Agent (Voice Reminders)', 'AI Voice Chat'],
+    whatHappensWithout: 'No AI Voice features - customers interact via text-based Chat Widget only (still fully functional on all tiers).',
   },
   {
     name: 'Google Calendar',
@@ -659,12 +659,22 @@ const INTEGRATIONS = [
 // Communication Channels Mapping
 const COMMUNICATION_CHANNELS = [
   {
-    channel: 'Voice Calls',
-    icon: '📞',
-    inbound: 'AI Receptionist answers all inbound calls',
-    outbound: 'Follow-up Agent (reminders), Missed Call Callbacks',
+    channel: 'AI Chat Widget (Text-Based)',
+    icon: '⌨️',
+    inbound: 'AI Receptionist handles all text conversations via keyboard input',
+    outbound: 'All agents can respond via handoff',
+    agents: ['AI Receptionist', 'All Agents via Handoff'],
+    integration: 'Built-in - No external dependencies required',
+    tiers: 'All tiers (Core, Single-Point, Multi-Track, Command)',
+  },
+  {
+    channel: 'AI Voice (Speech-Based)',
+    icon: '🎙️',
+    inbound: 'AI Receptionist answers inbound voice calls via microphone/speakers',
+    outbound: 'Follow-up Agent (reminders), Missed Call Callbacks via speakers',
     agents: ['AI Receptionist', 'Follow-up Agent'],
-    integration: 'Twilio + ElevenLabs',
+    integration: 'Twilio + ElevenLabs (required)',
+    tiers: 'Single-Point and above only',
   },
   {
     channel: 'SMS Text',
@@ -673,6 +683,7 @@ const COMMUNICATION_CHANNELS = [
     outbound: 'Follow-up, ETA, Campaign, Review agents send messages',
     agents: ['AI Receptionist', 'Follow-up Agent', 'ETA Agent', 'Campaign Agent', 'Review Agent'],
     integration: 'Twilio',
+    tiers: 'Single-Point and above',
   },
   {
     channel: 'Email',
@@ -681,14 +692,7 @@ const COMMUNICATION_CHANNELS = [
     outbound: 'Follow-up, Campaign, Review, Invoice agents send emails',
     agents: ['Follow-up Agent', 'Campaign Agent', 'Review Agent', 'Invoice Agent'],
     integration: 'Resend',
-  },
-  {
-    channel: 'Chat Widget',
-    icon: '💭',
-    inbound: 'AI Receptionist handles all chat conversations',
-    outbound: 'All agents can respond via handoff',
-    agents: ['AI Receptionist', 'All Agents via Handoff'],
-    integration: 'Built-in',
+    tiers: 'Single-Point and above',
   },
 ];
 

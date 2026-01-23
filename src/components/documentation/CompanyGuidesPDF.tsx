@@ -301,12 +301,13 @@ const companyGuideCategories = [
         duration: '8 min',
         steps: [
           'Access via AI Consoles → Customer Portal',
-          'Interact with AI for booking and support',
+          'AI Chat Widget (Text-Based) available on ALL tiers - customers type, AI responds in text',
+          'AI Voice Chat (Speech-Based) available on Single-Point+ - requires ElevenLabs',
           'Use quick actions: Book, Emergency, Quote, etc.',
           'Monitor conversation context and handoffs',
           'Test customer-facing interactions'
         ],
-        tips: ['Practice common customer scenarios']
+        tips: ['Text Chat works on Core tier with no external dependencies. Voice requires ElevenLabs + Twilio.']
       },
       {
         title: 'Field Operations Console',
@@ -374,18 +375,33 @@ const companyGuideCategories = [
     title: 'Integrations Setup',
     guides: [
       {
-        title: 'Voice Integration (Twilio)',
+        title: 'AI Chat Widget Setup (All Tiers)',
+        duration: '10 min',
+        steps: [
+          'Navigate to Integrations → Website Widget',
+          'Copy the embed code for your website',
+          'Add the code to your website footer or page',
+          'The Chat Widget works on ALL tiers including Core',
+          'No external dependencies required (no ElevenLabs or Twilio)',
+          'Test the widget on your website'
+        ],
+        tips: ['Text-based chat works out of the box. Voice features require additional setup.']
+      },
+      {
+        title: 'AI Voice Integration (Single-Point+ Only)',
         duration: '20 min',
         steps: [
           'Navigate to Integrations → Voice Agent',
+          'NOTE: AI Voice (Speech-Based) requires Single-Point tier or higher',
           'Create Twilio account at twilio.com',
           'Obtain Account SID and Auth Token',
           'Purchase a phone number from Twilio',
+          'Create ElevenLabs account for natural voice synthesis',
           'Enter credentials in Voice settings',
           'Configure voice agent prompts',
           'Test with a phone call'
         ],
-        tips: ['Use local number for better answer rates']
+        tips: ['Voice features use microphone/speakers. Text Chat Widget works without this setup.']
       },
       {
         title: 'SMS Integration (Twilio)',
