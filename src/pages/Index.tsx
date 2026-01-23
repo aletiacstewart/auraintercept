@@ -725,6 +725,7 @@ export default function Index() {
                     <span className="text-pink-400">Social Media AI Content</span>
                     <span className="text-white/40">or</span>
                     <span className="text-teal-400">1-Page Smart Website</span>
+                    <span className="text-amber-400">Value $500ea</span>
                   </div>
                 </div>
 
