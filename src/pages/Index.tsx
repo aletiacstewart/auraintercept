@@ -909,7 +909,7 @@ export default function Index() {
           {/* 3rd Party Integrations */}
           <div className="mt-16 max-w-4xl mx-auto">
             <div className="text-center mb-8">
-              <h3 className="text-xl font-bold mb-2">3rd Party Integration Costs</h3>
+              <h3 className="text-xl font-bold mb-2">3rd Party Integration Costs + Usage Fees</h3>
               <p className="text-sm text-muted-foreground">
                 Our platform integrates with industry-leading providers. You'll need your own accounts with these services.
               </p>
