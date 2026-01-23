@@ -268,8 +268,8 @@ export default function SmartWebsiteManager() {
         <div className="space-y-6">
           <PageHeader
             icon={Globe}
-            title="Aura Web Presence"
-            description="Manage your company's Aura Web Presence page"
+            title="Web Presence"
+            description="Manage your company's Web Presence page"
             featureColor="config"
             showAuraBar
             action={

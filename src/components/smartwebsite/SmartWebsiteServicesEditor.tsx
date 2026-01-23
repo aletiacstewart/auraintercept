@@ -405,12 +405,12 @@ export function SmartWebsiteServicesEditor() {
             </div>
 
             <div className="border-t pt-4 mt-4">
-              <Label className="text-sm font-semibold mb-3 block">Aura Web Presence Display Options</Label>
+              <Label className="text-sm font-semibold mb-3 block">Web Presence Display Options</Label>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <Label className="text-sm">Show on Website</Label>
-                    <p className="text-xs text-muted-foreground">Display this service on Aura Web Presence</p>
+                    <p className="text-xs text-muted-foreground">Display this service on Web Presence</p>
                   </div>
                   <Switch
                     checked={formData.website_show_service}

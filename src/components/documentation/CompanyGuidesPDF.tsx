@@ -445,7 +445,7 @@ const companyGuideCategories = [
         tips: ['Use dedicated calendar for business']
       },
       {
-        title: 'Aura Web Presence Widget Embed',
+        title: 'Web Presence Widget Embed',
         duration: '10 min',
         steps: [
           'Navigate to Customer App',

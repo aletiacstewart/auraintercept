@@ -191,8 +191,8 @@ const agentConsoles = [{
   iconColor: 'text-pink-500',
   features: ['AI content generation', 'Multi-platform scheduling', 'Analytics dashboard', 'Brand voice consistency']
 }, {
-  name: 'Aura Web Presence Console',
-  description: 'Branded Aura Web Presence page with AI chat and voice.',
+  name: 'Web Presence Console',
+  description: 'Branded Web Presence page with AI chat and voice.',
   icon: Globe,
   gradient: 'from-teal-500 to-cyan-500',
   iconBg: 'bg-teal-500/10',
@@ -213,7 +213,7 @@ const platformFeatures = [{
   description: 'Automatically capture and score leads from AI agent interactions with smart follow-up automation.'
 }, {
   icon: Globe,
-  title: 'Aura Web Presence',
+  title: 'Web Presence',
   description: 'AI-powered branded web presence with integrated chat, voice, and booking capabilities.'
 }, {
   icon: Smartphone,
@@ -688,7 +688,7 @@ export default function Index() {
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$5,000/year (Save $1,000)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">Talk to Aura + Social Signal + Aura Web Presence in one affordable package.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">Talk to Aura + Social Signal + Web Presence in one affordable package.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
@@ -701,7 +701,7 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Aura Web Presence (1pg)</span>
+                    <span className="text-xs">Web Presence (1pg)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />

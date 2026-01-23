@@ -80,7 +80,7 @@ const TIERS = [
     highlights: [
       'Talk to Aura',
       'Social Signal',
-      'Aura Web Presence (1pg)',
+      'Web Presence (1pg)',
       '2 Employee Accounts',
     ],
   },
@@ -99,7 +99,7 @@ const TIERS = [
       'Customer Portal Console',
       'Proxy Voice Chat & Calling',
       '5 Employee Accounts',
-      'Choice: Social Signal or Aura Web Presence',
+      'Choice: Social Signal or Web Presence',
     ],
   },
   {
@@ -118,7 +118,7 @@ const TIERS = [
       'Online Booking & Scheduling',
       '10 Employee Accounts',
       'Social Signal',
-      'Aura Web Presence (1pg)',
+      'Web Presence (1pg)',
     ],
   },
   {
@@ -137,7 +137,7 @@ const TIERS = [
       'White-Label Branding',
       '25 Employee Accounts',
       'Social Signal',
-      'Aura Web Presence (1pg)',
+      'Web Presence (1pg)',
     ],
   },
 ];
@@ -199,7 +199,7 @@ const sections: FeatureSection[] = [
       { name: 'Marketing & Sales Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Analytics & Reports Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Social Signal Console', core: 'check', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
-      { name: 'Aura Web Presence Console', core: 'check', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
+      { name: 'Web Presence Console', core: 'check', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
     ],
   },
   {

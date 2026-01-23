@@ -84,7 +84,7 @@ export function VisitorLimitModal({
           </div>
           <DialogDescription>
             {isAtLimit
-              ? 'Your Aura Web Presence has reached its monthly visitor limit. New visitors will see a "Coming Soon" page until next month.'
+              ? 'Your Web Presence has reached its monthly visitor limit. New visitors will see a "Coming Soon" page until next month.'
               : `You've used ${usagePercent.toFixed(0)}% of your monthly visitor quota. Consider upgrading to avoid interruptions.`}
           </DialogDescription>
         </DialogHeader>

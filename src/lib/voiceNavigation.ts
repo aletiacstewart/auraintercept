@@ -67,7 +67,6 @@ export const PAGE_ROUTES: Record<string, string> = {
   'quick setup': '/dashboard/quick-setup',
   'settings': '/dashboard/quick-setup',
   'setup': '/dashboard/quick-setup',
-  'aura web presence': '/dashboard/smart-website',
   'web presence': '/dashboard/smart-website',
   'smart website': '/dashboard/smart-website',
   'my schedule': '/dashboard/appointments',
