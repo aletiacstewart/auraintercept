@@ -325,14 +325,14 @@ const guideCategories = [
         tips: ['Link Quote Forge to your service catalog']
       },
       {
-        title: 'Aura Social Signal Agents',
+        title: 'Social Signal Agents',
         duration: '12 min',
         steps: [
-          'Aura Social Signal Agent: Creates posts for 6 platforms',
-          'Aura Signal Scheduler: Queues and publishes content',
-          'Aura Signal Analytics: Tracks engagement metrics',
+          'Social Signal Agent: Creates posts for 6 platforms',
+          'Signal Scheduler: Queues and publishes content',
+          'Signal Analytics: Tracks engagement metrics',
           'Uses 3-step Content Wizard: Template → Customize → Schedule',
-          'All Aura Social Signal agents require Command tier'
+          'All Social Signal agents require Command tier'
         ],
         tips: ['Respects platform character limits automatically']
       },
@@ -349,10 +349,10 @@ const guideCategories = [
         tips: ['Use form-based interfaces for structured reports']
       },
       {
-        title: 'AI Voice Chat (ElevenLabs)',
+        title: 'Proxy Voice Chat (ElevenLabs)',
         duration: '8 min',
         steps: [
-          'AI Voice powered by ElevenLabs included in all paid tiers',
+          'Proxy Voice Chat powered by ElevenLabs included in Single-Point+ tiers',
           'Customers can speak naturally with AI agents',
           'Supports inbound and outbound voice interactions',
           'Configure voice settings in Integrations → Voice Agent',
