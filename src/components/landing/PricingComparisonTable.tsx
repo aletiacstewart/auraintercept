@@ -146,7 +146,7 @@ const sections: FeatureSection[] = [
     features: [
       { name: 'Calendar Sync', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'CRM Integration', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'API Access', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'API Access', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Priority Support', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Dedicated Account Manager', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
     ],
