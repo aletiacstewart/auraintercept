@@ -520,45 +520,45 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
           <View style={styles.tableRow}>
             <Text style={styles.tableCell}>24/7 Availability</Text>
-            <Text style={[styles.tableCell, styles.checkMark]}>✓</Text>
-            <Text style={[styles.tableCell, styles.xMark]}>✗</Text>
-            <Text style={[styles.tableCell, styles.checkMark]}>✓</Text>
+            <Text style={[styles.tableCell, styles.checkMark]}>Yes</Text>
+            <Text style={[styles.tableCell, styles.xMark]}>No</Text>
+            <Text style={[styles.tableCell, styles.checkMark]}>Yes</Text>
           </View>
           <View style={styles.tableRow}>
             <Text style={styles.tableCell}>Instant Scheduling</Text>
-            <Text style={[styles.tableCell, styles.checkMark]}>✓</Text>
-            <Text style={[styles.tableCell, styles.checkMark]}>✓</Text>
-            <Text style={[styles.tableCell, styles.xMark]}>✗</Text>
+            <Text style={[styles.tableCell, styles.checkMark]}>Yes</Text>
+            <Text style={[styles.tableCell, styles.checkMark]}>Yes</Text>
+            <Text style={[styles.tableCell, styles.xMark]}>No</Text>
           </View>
           <View style={styles.tableRow}>
             <Text style={styles.tableCell}>Route Optimization</Text>
-            <Text style={[styles.tableCell, styles.checkMark]}>✓</Text>
-            <Text style={[styles.tableCell, styles.xMark]}>✗</Text>
-            <Text style={[styles.tableCell, styles.xMark]}>✗</Text>
+            <Text style={[styles.tableCell, styles.checkMark]}>Yes</Text>
+            <Text style={[styles.tableCell, styles.xMark]}>No</Text>
+            <Text style={[styles.tableCell, styles.xMark]}>No</Text>
           </View>
           <View style={styles.tableRow}>
             <Text style={styles.tableCell}>AI-Powered Dispatch</Text>
-            <Text style={[styles.tableCell, styles.checkMark]}>✓</Text>
-            <Text style={[styles.tableCell, styles.xMark]}>✗</Text>
-            <Text style={[styles.tableCell, styles.xMark]}>✗</Text>
+            <Text style={[styles.tableCell, styles.checkMark]}>Yes</Text>
+            <Text style={[styles.tableCell, styles.xMark]}>No</Text>
+            <Text style={[styles.tableCell, styles.xMark]}>No</Text>
           </View>
           <View style={styles.tableRow}>
             <Text style={styles.tableCell}>Automatic Follow-up</Text>
-            <Text style={[styles.tableCell, styles.checkMark]}>✓</Text>
-            <Text style={[styles.tableCell, styles.xMark]}>✗</Text>
-            <Text style={[styles.tableCell, styles.xMark]}>✗</Text>
+            <Text style={[styles.tableCell, styles.checkMark]}>Yes</Text>
+            <Text style={[styles.tableCell, styles.xMark]}>No</Text>
+            <Text style={[styles.tableCell, styles.xMark]}>No</Text>
           </View>
           <View style={styles.tableRow}>
             <Text style={styles.tableCell}>Multi-Channel (Voice/SMS/Email)</Text>
-            <Text style={[styles.tableCell, styles.checkMark]}>✓</Text>
+            <Text style={[styles.tableCell, styles.checkMark]}>Yes</Text>
             <Text style={[styles.tableCell, styles.xMark]}>Limited</Text>
-            <Text style={[styles.tableCell, styles.xMark]}>✗</Text>
+            <Text style={[styles.tableCell, styles.xMark]}>No</Text>
           </View>
           <View style={styles.tableRow}>
             <Text style={styles.tableCell}>Invoice Generation</Text>
-            <Text style={[styles.tableCell, styles.checkMark]}>✓</Text>
-            <Text style={[styles.tableCell, styles.xMark]}>✗</Text>
-            <Text style={[styles.tableCell, styles.xMark]}>✗</Text>
+            <Text style={[styles.tableCell, styles.checkMark]}>Yes</Text>
+            <Text style={[styles.tableCell, styles.xMark]}>No</Text>
+            <Text style={[styles.tableCell, styles.xMark]}>No</Text>
           </View>
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, styles.tableCellBold]}>Monthly Cost</Text>
@@ -703,11 +703,11 @@ export const SalesPitchDataPDF: React.FC = () => (
           <Text style={styles.tierPrice}>$397/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Nail salons, hair salons, barbers, massage centers</Text>
-        <Text style={styles.tierBullet}>• 1-3 person operations</Text>
-        <Text style={styles.tierBullet}>• Primary pain: Booking automation</Text>
-        <Text style={styles.tierBullet}>• Need scheduling + follow-up</Text>
-        <Text style={styles.tierBullet}>• Proxy Voice Chat included</Text>
-        <Text style={styles.tierBullet}>• 4 AI Operatives: Receptionist, Scheduling, Follow-up, Voice Chat</Text>
+        <Text style={styles.tierBullet}>- 1-3 person operations</Text>
+        <Text style={styles.tierBullet}>- Primary pain: Booking automation</Text>
+        <Text style={styles.tierBullet}>- Need scheduling + follow-up</Text>
+        <Text style={styles.tierBullet}>- Proxy Voice Chat included</Text>
+        <Text style={styles.tierBullet}>- 4 AI Operatives: Receptionist, Scheduling, Follow-up, Voice Chat</Text>
       </View>
 
       <View style={styles.tierCard}>
@@ -716,11 +716,11 @@ export const SalesPitchDataPDF: React.FC = () => (
           <Text style={styles.tierPrice}>$1,500/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Service businesses focused on lead capture and reputation</Text>
-        <Text style={styles.tierBullet}>• 1-5 person operations</Text>
-        <Text style={styles.tierBullet}>• Primary pain: Missed calls</Text>
-        <Text style={styles.tierBullet}>• Focus on building reviews</Text>
-        <Text style={styles.tierBullet}>• Proxy Voice Chat included</Text>
-        <Text style={styles.tierBullet}>• 3 AI Operatives: Receptionist, Follow-up, Review</Text>
+        <Text style={styles.tierBullet}>- 1-5 person operations</Text>
+        <Text style={styles.tierBullet}>- Primary pain: Missed calls</Text>
+        <Text style={styles.tierBullet}>- Focus on building reviews</Text>
+        <Text style={styles.tierBullet}>- Proxy Voice Chat included</Text>
+        <Text style={styles.tierBullet}>- 3 AI Operatives: Receptionist, Follow-up, Review</Text>
       </View>
 
       <View style={styles.tierCard}>
@@ -729,11 +729,11 @@ export const SalesPitchDataPDF: React.FC = () => (
           <Text style={styles.tierPrice}>$3,997/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Growing teams needing scheduling and field ops</Text>
-        <Text style={styles.tierBullet}>• 5-10 employees</Text>
-        <Text style={styles.tierBullet}>• Multiple technicians to dispatch</Text>
-        <Text style={styles.tierBullet}>• Need route optimization</Text>
-        <Text style={styles.tierBullet}>• Want automated quoting/invoicing</Text>
-        <Text style={styles.tierBullet}>• 10 AI Operatives + 2 Consoles</Text>
+        <Text style={styles.tierBullet}>- 5-10 employees</Text>
+        <Text style={styles.tierBullet}>- Multiple technicians to dispatch</Text>
+        <Text style={styles.tierBullet}>- Need route optimization</Text>
+        <Text style={styles.tierBullet}>- Want automated quoting/invoicing</Text>
+        <Text style={styles.tierBullet}>- 10 AI Operatives + 2 Consoles</Text>
       </View>
 
       <View style={styles.tierCard}>
@@ -742,15 +742,15 @@ export const SalesPitchDataPDF: React.FC = () => (
           <Text style={styles.tierPrice}>$6,997/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: 15+ technicians or multi-location operations</Text>
-        <Text style={styles.tierBullet}>• 15+ employees or multi-location</Text>
-        <Text style={styles.tierBullet}>• Need marketing automation</Text>
-        <Text style={styles.tierBullet}>• Want comprehensive analytics</Text>
-        <Text style={styles.tierBullet}>• All 7 Consoles</Text>
-        <Text style={styles.tierBullet}>• All 23 AI Operatives: Full enterprise suite</Text>
+        <Text style={styles.tierBullet}>- 15+ employees or multi-location</Text>
+        <Text style={styles.tierBullet}>- Need marketing automation</Text>
+        <Text style={styles.tierBullet}>- Want comprehensive analytics</Text>
+        <Text style={styles.tierBullet}>- All 7 Consoles</Text>
+        <Text style={styles.tierBullet}>- All 23 AI Operatives: Full enterprise suite</Text>
       </View>
 
       <View style={styles.closingCard}>
-        <Text style={styles.closingTitle}>🎯 Closing Question</Text>
+        <Text style={styles.closingTitle}>[TARGET] Closing Question</Text>
         <Text style={styles.closingText}>
           "Based on what you've shared about your business—[recap their situation]—I'd recommend starting with [Tier]. It addresses your immediate need for [primary pain point] while giving you room to grow. Should I walk you through the 14-day trial?"
         </Text>

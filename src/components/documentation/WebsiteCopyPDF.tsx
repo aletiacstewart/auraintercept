@@ -283,7 +283,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copySubhead}>Your AI-powered team answers every call, books every lead, and runs your business operations 24/7.</Text>
         <View style={styles.ctaCard}>
           <Text style={styles.ctaLabel}>CTA</Text>
-          <Text style={styles.ctaText}>Start Your Free Trial →</Text>
+          <Text style={styles.ctaText}>Start Your Free Trial</Text>
         </View>
       </View>
 
@@ -324,29 +324,29 @@ export const WebsiteCopyPDF: React.FC = () => (
       <View style={styles.twoColumn}>
         <View style={styles.column}>
           <View style={styles.featureCard}>
-            <Text style={styles.featureName}>🎧 AI Receptionist</Text>
+            <Text style={styles.featureName}>[VOICE] AI Receptionist</Text>
             <Text style={styles.featureDesc}>Natural voice AI answers every call instantly. Books appointments, answers questions, and routes emergencies—all while sounding human.</Text>
           </View>
           <View style={styles.featureCard}>
-            <Text style={styles.featureName}>📅 Smart Scheduling</Text>
+            <Text style={styles.featureName}>[CALENDAR] Smart Scheduling</Text>
             <Text style={styles.featureDesc}>Automated booking syncs with your calendar, sends confirmations, and reminds customers. No more phone tag.</Text>
           </View>
           <View style={styles.featureCard}>
-            <Text style={styles.featureName}>🚗 Route Optimization</Text>
+            <Text style={styles.featureName}>[ROUTE] Route Optimization</Text>
             <Text style={styles.featureDesc}>AI plans the most efficient paths for your technicians. Less driving, more jobs, happier crews.</Text>
           </View>
         </View>
         <View style={styles.column}>
           <View style={styles.featureCard}>
-            <Text style={styles.featureName}>📊 Real-Time Analytics</Text>
+            <Text style={styles.featureName}>[CHART] Real-Time Analytics</Text>
             <Text style={styles.featureDesc}>See every metric that matters. Track calls, bookings, revenue, and team performance in one dashboard.</Text>
           </View>
           <View style={styles.featureCard}>
-            <Text style={styles.featureName}>⭐ Review Automation</Text>
+            <Text style={styles.featureName}>[STAR] Review Automation</Text>
             <Text style={styles.featureDesc}>Automatically request reviews after every service. Build your reputation while you work.</Text>
           </View>
           <View style={styles.featureCard}>
-            <Text style={styles.featureName}>💰 Instant Quoting</Text>
+            <Text style={styles.featureName}>[MONEY] Instant Quoting</Text>
             <Text style={styles.featureDesc}>Generate professional quotes on-site. Convert more leads with faster proposals.</Text>
           </View>
         </View>
@@ -477,11 +477,11 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyHeadline}>Perfect for Solo Operators</Text>
         <Text style={styles.copyBody}>
           Stop missing calls and start building your reputation. The Single-Point tier gives you 24/7 AI reception, automated follow-up, and review collection—everything you need to capture every lead and grow your reviews.{'\n\n'}
-          ✓ AI Receptionist (24/7 call answering){'\n'}
-          ✓ Follow-up Agent (automated lead nurturing){'\n'}
-          ✓ Review Agent (5-star collection){'\n'}
-          ✓ Up to 5 team members{'\n'}
-          ✓ AI Voice capabilities included
+          - AI Receptionist (24/7 call answering){'\n'}
+          - Follow-up Agent (automated lead nurturing){'\n'}
+          - Review Agent (5-star collection){'\n'}
+          - Up to 5 team members{'\n'}
+          - AI Voice capabilities included
         </Text>
       </View>
 
@@ -490,13 +490,13 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyHeadline}>Built for Growing Teams</Text>
         <Text style={styles.copyBody}>
           You're scaling. Your operations should too. Multi-Track adds intelligent scheduling, dispatch optimization, and financial automation—so you can handle more jobs without more chaos.{'\n\n'}
-          ✓ Everything in Single-Point, plus:{'\n'}
-          ✓ Scheduling & Booking automation{'\n'}
-          ✓ Dispatch & Route optimization{'\n'}
-          ✓ ETA & Check-in tracking{'\n'}
-          ✓ Quoting & Invoicing{'\n'}
-          ✓ Inventory management{'\n'}
-          ✓ Up to 10 team members
+          - Everything in Single-Point, plus:{'\n'}
+          - Scheduling and Booking automation{'\n'}
+          - Dispatch and Route optimization{'\n'}
+          - ETA and Check-in tracking{'\n'}
+          - Quoting and Invoicing{'\n'}
+          - Inventory management{'\n'}
+          - Up to 10 team members
         </Text>
       </View>
 

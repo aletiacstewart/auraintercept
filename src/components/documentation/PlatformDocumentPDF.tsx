@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
 
 const Header = ({ title }: { title: string }) => (
   <View style={styles.header} fixed>
-    <Text style={styles.headerTitle}>Aura Intercept • {title}</Text>
+    <Text style={styles.headerTitle}>Aura Intercept - {title}</Text>
     <Text style={styles.pageNumber} render={({ pageNumber }) => `Page ${pageNumber}`} />
   </View>
 );

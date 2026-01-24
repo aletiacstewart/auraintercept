@@ -418,7 +418,7 @@ const Header = ({ title }: { title: string }) => (
 
 const BulletPoint = ({ children }: { children: string }) => (
   <View style={styles.bulletPoint}>
-    <Text style={styles.bullet}>•</Text>
+    <Text style={styles.bullet}>-</Text>
     <Text style={styles.bulletText}>{children}</Text>
   </View>
 );
