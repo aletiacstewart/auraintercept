@@ -63,12 +63,20 @@ export function useOnboardingState() {
   const markTourCompleted = useCallback(async (tourName: string) => {
     if (!user?.id) return false;
 
-    const updatedTours = {
-      ...state.toursCompleted,
-      [tourName]: true,
-    };
-
     try {
+      // Fetch current tours_completed to avoid stale state
+      const { data: currentData } = await supabase
+        .from('profiles')
+        .select('tours_completed')
+        .eq('id', user.id)
+        .single();
+
+      const currentTours = (currentData?.tours_completed as ToursCompleted) || {};
+      const updatedTours = {
+        ...currentTours,
+        [tourName]: true,
+      };
+
       const { error } = await supabase
         .from('profiles')
         .update({ tours_completed: updatedTours })
@@ -76,8 +84,13 @@ export function useOnboardingState() {
 
       if (error) {
         console.error('Error marking tour completed:', error);
+        // Store in localStorage as fallback
+        localStorage.setItem(`tour_${tourName}_${user.id}`, 'true');
         return false;
       }
+
+      // Also store in localStorage as backup
+      localStorage.setItem(`tour_${tourName}_${user.id}`, 'true');
 
       setState(prev => ({
         ...prev,
@@ -87,9 +100,11 @@ export function useOnboardingState() {
       return true;
     } catch (err) {
       console.error('Error in markTourCompleted:', err);
+      // Store in localStorage as fallback
+      localStorage.setItem(`tour_${tourName}_${user.id}`, 'true');
       return false;
     }
-  }, [user?.id, state.toursCompleted]);
+  }, [user?.id]);
 
   // Mark overall onboarding as completed
   const markOnboardingCompleted = useCallback(async () => {
@@ -128,8 +143,15 @@ export function useOnboardingState() {
   // Check if welcome modal should be shown
   const shouldShowWelcome = useCallback((): boolean => {
     if (state.isLoading) return false;
+    
+    // Check localStorage as fallback
+    if (user?.id) {
+      const localSkipped = localStorage.getItem(`tour_welcome_${user.id}`);
+      if (localSkipped === 'true') return false;
+    }
+    
     return !state.toursCompleted.welcome;
-  }, [state.isLoading, state.toursCompleted.welcome]);
+  }, [state.isLoading, state.toursCompleted.welcome, user?.id]);
 
   return {
     ...state,
