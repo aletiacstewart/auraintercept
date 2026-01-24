@@ -393,20 +393,20 @@ export const VideoScriptsPDF: React.FC = () => (
             [Phone buzzes with notification]{'\n'}
             "Your AI just booked a $650 job while you were elbow-deep in a furnace."{'\n'}
             [Show booking confirmation on phone]{'\n'}
-            "This is the way." 😎
+            "This is the way."
           </Text>
         </View>
       </View>
 
       <View style={styles.brollSection}>
-        <Text style={styles.brollTitle}>📹 B-ROLL SHOT LIST FOR SHORT-FORM</Text>
-        <Text style={styles.brollItem}>• Phone ringing on nightstand (dark room, glowing screen)</Text>
-        <Text style={styles.brollItem}>• Contractor hands working on equipment (close-up)</Text>
-        <Text style={styles.brollItem}>• App dashboard showing new booking notification</Text>
-        <Text style={styles.brollItem}>• Split-screen comparison (missed call vs. AI answered)</Text>
-        <Text style={styles.brollItem}>• Calendar filling up with appointments animation</Text>
-        <Text style={styles.brollItem}>• Money/revenue counter going up</Text>
-        <Text style={styles.brollItem}>• Happy customer on phone (stock or testimonial)</Text>
+        <Text style={styles.brollTitle}>[VIDEO] B-ROLL SHOT LIST FOR SHORT-FORM</Text>
+        <Text style={styles.brollItem}>- Phone ringing on nightstand (dark room, glowing screen)</Text>
+        <Text style={styles.brollItem}>- Contractor hands working on equipment (close-up)</Text>
+        <Text style={styles.brollItem}>- App dashboard showing new booking notification</Text>
+        <Text style={styles.brollItem}>- Split-screen comparison (missed call vs. AI answered)</Text>
+        <Text style={styles.brollItem}>- Calendar filling up with appointments animation</Text>
+        <Text style={styles.brollItem}>- Money/revenue counter going up</Text>
+        <Text style={styles.brollItem}>- Happy customer on phone (stock or testimonial)</Text>
       </View>
 
       <Footer />

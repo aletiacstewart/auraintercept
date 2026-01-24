@@ -660,7 +660,7 @@ const INTEGRATIONS = [
 const COMMUNICATION_CHANNELS = [
   {
     channel: 'Talk to Aura (Text-Based)',
-    icon: '⌨️',
+    icon: '[KEYBOARD]',
     inbound: 'AI Receptionist handles all text conversations via keyboard input',
     outbound: 'All agents can respond via handoff',
     agents: ['AI Receptionist', 'All Agents via Handoff'],
@@ -669,7 +669,7 @@ const COMMUNICATION_CHANNELS = [
   },
   {
     channel: 'Proxy Voice Chat (Speech-Based)',
-    icon: '🎙️',
+    icon: '[MIC]',
     inbound: 'AI Receptionist answers inbound voice calls via microphone/speakers',
     outbound: 'Follow-up Agent (reminders), Missed Call Callbacks via speakers',
     agents: ['AI Receptionist', 'Follow-up Agent'],
@@ -678,7 +678,7 @@ const COMMUNICATION_CHANNELS = [
   },
   {
     channel: 'SMS Text',
-    icon: '💬',
+    icon: '[CHAT]',
     inbound: 'AI Receptionist receives and responds to texts',
     outbound: 'Follow-up, ETA, Campaign, Review agents send messages',
     agents: ['AI Receptionist', 'Follow-up Agent', 'ETA Agent', 'Campaign Agent', 'Review Agent'],
@@ -687,7 +687,7 @@ const COMMUNICATION_CHANNELS = [
   },
   {
     channel: 'Email',
-    icon: '✉️',
+    icon: '[EMAIL]',
     inbound: 'Not automated (manual inbox)',
     outbound: 'Follow-up, Campaign, Review, Invoice agents send emails',
     agents: ['Follow-up Agent', 'Campaign Agent', 'Review Agent', 'Invoice Agent'],
@@ -770,7 +770,7 @@ const Footer = () => (
 
 const FeatureItem = ({ children }: { children: string }) => (
   <View style={styles.featureItem}>
-    <Text style={styles.featureCheck}>✓</Text>
+    <Text style={styles.featureCheck}>-</Text>
     <Text style={styles.featureText}>{children}</Text>
   </View>
 );
@@ -864,15 +864,15 @@ const AIAgentGuidesPDF = () => (
       <View style={styles.legendBox}>
         <Text style={[styles.subsectionTitle, { marginTop: 0 }]}>How to Read Agent Information</Text>
         <View style={styles.legendItem}>
-          <Text style={[styles.legendIcon, { color: colors.green }]}>⭐</Text>
+          <Text style={[styles.legendIcon, { color: colors.green }]}>[CORE]</Text>
           <Text style={styles.legendText}><Text style={{ fontWeight: 700 }}>Core Agent</Text> - The main agent that must be enabled for the console to work</Text>
         </View>
         <View style={styles.legendItem}>
-          <Text style={[styles.legendIcon, { color: colors.green }]}>✓</Text>
+          <Text style={[styles.legendIcon, { color: colors.green }]}>[OK]</Text>
           <Text style={styles.legendText}><Text style={{ fontWeight: 700 }}>Works Alone</Text> - Can function without other agents being enabled</Text>
         </View>
         <View style={styles.legendItem}>
-          <Text style={[styles.legendIcon, { color: colors.amber }]}>→</Text>
+          <Text style={[styles.legendIcon, { color: colors.amber }]}>{'[->]'}</Text>
           <Text style={styles.legendText}><Text style={{ fontWeight: 700 }}>Requires</Text> - Needs these other agents to be enabled first</Text>
         </View>
       </View>
@@ -880,7 +880,7 @@ const AIAgentGuidesPDF = () => (
       <View style={styles.infoBox}>
         <Text style={styles.noticeTitle}>Quick Tip</Text>
         <Text style={styles.noticeText}>
-          Always start by enabling the Core Agent (marked with ⭐) for each console you want to use. 
+          Always start by enabling the Core Agent (marked with [CORE]) for each console you want to use. 
           Other agents in that console depend on the core agent being active.
         </Text>
       </View>
