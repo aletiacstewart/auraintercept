@@ -412,19 +412,20 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     tier: 'COMMAND',
     label: 'Aura Pro Command',
     price: '$6,997/mo',
-    description: 'Complete AI workforce with all 23 operatives and 7 control centers',
+    description: 'Enterprise solution for 15+ technician teams and multi-location operations',
     keyFeatures: [
+      '⭐ For 15+ technicians or multi-location',
       'All Multi-Track features',
       '+13 Agents (Admin, Inventory, Warranty, Campaign, Lead, Promo, Social Content, Social Scheduler, Social Analytics, Insights, Performance, Revenue, Forecast)',
       'All 7 Control Centers',
       'White-Label Branding',
-      'Priority Support',
+      'Dedicated Implementation & Priority Support',
       'API Access',
     ],
     agentCount: 23,
     consoleCount: 7,
     employeeLimit: '25 employees',
-    implementationFee: '$499+',
+    implementationFee: 'Custom',
   },
 };
 
