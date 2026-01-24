@@ -229,7 +229,7 @@ export const QUESTIONS: AuditQuestion[] = [
   {
     id: 'social_media_activity',
     question: 'How active is your business on social media?',
-    description: 'Core includes Social Signal AI for content creation',
+    description: 'Core includes Social Media Signal AI for content creation',
     section: 'Social Media & Web Presence',
     options: [
       { label: 'Very active (daily posts)', tierScores: { CORE: 70, SINGLE_POINT: 45, MULTI_TRACK: 60, COMMAND: 80 } },
@@ -339,9 +339,9 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     label: 'Aura Core',
     price: '$500/mo',
     description: 'Text-only AI assistant with social presence for solo operators and small teams',
-    keyFeatures: [
+  keyFeatures: [
       'Talk to Aura (Text Chat Only)',
-      'Social Signal AI (Content Creation)',
+      'Social Media Signal AI (Content Creation)',
       'Web Presence (1-Page Site)',
       'Basic Lead Capture',
       'Email Notifications',
@@ -363,7 +363,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
       'Proxy Voice Chat (ElevenLabs/Twilio)',
       'Customer Portal Console',
       'Email + SMS + Voice Reminders',
-      'Choice of Social Signal OR Web Presence',
+      'Choice of Social Media Signal OR Web Presence',
     ],
     agentCount: 3,
     consoleCount: 1,
@@ -380,7 +380,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
       '+6 Field Ops Agents (Dispatch, Route, ETA, Check-in, Quote, Invoice)',
       'Online Booking Agent',
       'Field Ops Console',
-      'Social Signal + Web Presence included',
+      'Social Media Signal + Web Presence included',
       'API Access',
     ],
     agentCount: 10,
@@ -390,7 +390,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   },
   COMMAND: {
     tier: 'COMMAND',
-    label: 'Pro Command',
+    label: 'Aura Pro Command',
     price: '$6,997/mo',
     description: 'Complete AI workforce with all 23 operatives and 7 control centers',
     keyFeatures: [

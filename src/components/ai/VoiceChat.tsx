@@ -228,7 +228,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
         toast({
           variant: 'destructive',
           title: 'Voice Upgrade Required',
-          description: 'Voice features require the Command tier subscription. Upgrade to unlock.',
+          description: 'Voice features require the Aura Pro Command tier subscription. Upgrade to unlock.',
         });
         setIsConnecting(false);
         return;

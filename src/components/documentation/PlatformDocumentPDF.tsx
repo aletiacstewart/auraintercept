@@ -876,8 +876,8 @@ const PlatformDocumentPDF = () => (
         </View>
       ))}
 
-      <Text style={styles.categoryHeader}>Social Media Add-ons (3 Agents)</Text>
-      <Text style={styles.paragraph}>Premium add-on available for Command tier ($150/mo)</Text>
+      <Text style={styles.categoryHeader}>Social Media Signal Add-ons (3 Agents)</Text>
+      <Text style={styles.paragraph}>Premium add-on available for Aura Pro Command tier ($150/mo)</Text>
       {agents.socialMediaAddons.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>

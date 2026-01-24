@@ -651,7 +651,7 @@ export default function Help() {
                       </AccordionTrigger>
                       <AccordionContent>
                         <p className="text-card-foreground/70">
-                          Your 30-day free trial includes <strong className="text-card-foreground">full access to all Command tier features</strong>. This means all 23 AI agents, all 6 Control Centers, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
+                          Your 30-day free trial includes <strong className="text-card-foreground">full access to all Aura Pro Command tier features</strong>. This means all 23 AI agents, all 6 Control Centers, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
                         </p>
                       </AccordionContent>
                     </AccordionItem>
@@ -695,8 +695,8 @@ export default function Help() {
                               <p className="mt-1">Everything in Single-Point + Scheduling Agent, Dispatch, Route, ETA, Check-in, Quoting, Invoice. Adds online booking and field operations.</p>
                             </li>
                             <li>
-                              <strong className="text-card-foreground">Command ($1,497/mo):</strong>
-                              <p className="mt-1">Full suite of 18+ agents including Marketing, Social Media (3 agents), Analytics (4 agents), Inventory, Warranty, and Admin.</p>
+                              <strong className="text-card-foreground">Aura Pro Command ($1,497/mo):</strong>
+                              <p className="mt-1">Full suite of 18+ agents including Marketing, Social Media Signal (3 agents), Analytics (4 agents), Inventory, Warranty, and Admin.</p>
                             </li>
                           </ul>
                         </div>
@@ -755,7 +755,7 @@ export default function Help() {
                       </AccordionTrigger>
                       <AccordionContent>
                         <div className="text-card-foreground/70 space-y-2">
-                          <p>Social Media Ops (Command tier) supports 6 platforms:</p>
+                          <p>Social Media Signal Ops (Aura Pro Command tier) supports 6 platforms:</p>
                           <ul className="list-disc ml-5 space-y-1">
                             <li><strong className="text-card-foreground">Instagram</strong> - Posts with character optimization</li>
                             <li><strong className="text-card-foreground">Facebook</strong> - Posts and business updates</li>

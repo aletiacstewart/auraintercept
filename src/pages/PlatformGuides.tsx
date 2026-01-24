@@ -56,8 +56,8 @@ const NAVIGATION_ROUTES: Record<string, string> = {
   'Business Ops Console': '/dashboard/ai-consoles/business-ops',
   'Marketing & Sales Ops': '/dashboard/ai-consoles/marketing',
   'Marketing Console': '/dashboard/ai-consoles/marketing',
-  'Social Signal Ops': '/dashboard/ai-consoles/social-media',
-  'Social Signal Console': '/dashboard/ai-consoles/social-media',
+  'Social Media Signal Ops': '/dashboard/ai-consoles/social-media',
+  'Social Media Signal Console': '/dashboard/ai-consoles/social-media',
   'Analytics & Reports Ops': '/dashboard/ai-consoles/analytics',
   'Analytics Console': '/dashboard/ai-consoles/analytics',
   'Customer Portal Console': '/dashboard/ai-consoles/customer-portal',
@@ -124,7 +124,7 @@ const guideCategories = [
           'Command ($1,497/mo): All 23 AI Operatives + 6 Control Centers + White-Label Branding',
           'Proxy Voice Chat powered by ElevenLabs included on Single-Point+',
           'Employee limits: 5 (Single-Point), 10 (Multi-Track), Unlimited (Command)',
-          'Premium Add-Ons: Social Signal ($150/mo), Web Presence ($150/mo)',
+          'Premium Add-Ons: Social Media Signal ($150/mo), Web Presence ($150/mo)',
           'View your tier status in the sidebar bottom section'
         ],
         tips: ['Trial users get full Command tier access', 'Annual billing saves up to $2,994/year']
@@ -269,15 +269,15 @@ const guideCategories = [
         tips: ['A/B test subject lines for better performance', 'Start with simple campaigns before automation']
       },
       {
-        title: 'Social Signal Agents',
+        title: 'Social Media Signal Agents',
         duration: '12 min',
         steps: [
-          'Social Signal Agent: Creates posts for 6 platforms (IG, FB, LI, TT, GMB, SMS)',
+          'Social Media Signal Agent: Creates posts for 6 platforms (IG, FB, LI, TT, GMB, SMS)',
           'Signal Scheduler: Queues and publishes content',
           'Signal Analytics: Tracks engagement metrics',
           'Uses 3-step Content Wizard: Template → Customize → Schedule',
-          'All Social Signal agents require Command tier',
-          'Access via Social Signal Ops Console'
+          'All Social Media Signal agents require Aura Pro Command tier',
+          'Access via Social Media Signal Ops Console'
         ],
         tips: ['Respects platform character limits automatically', 'Queue posts for optimal engagement times']
       },

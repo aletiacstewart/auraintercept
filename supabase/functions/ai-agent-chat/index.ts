@@ -735,7 +735,7 @@ TOOLS AVAILABLE:
 
 Be proactive about suggesting optimal times and maintaining posting consistency.`,
 
-  social_analytics: `You are an Aura Signal Analytics agent for a service business.
+  social_analytics: `You are an Aura Social Media Signal Analytics agent for a service business.
 IMPORTANT: You serve INTERNAL company users (admins, marketing managers) - NOT external customers.
 
 Your role is to:
