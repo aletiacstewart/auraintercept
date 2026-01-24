@@ -335,9 +335,9 @@ export function FAQsManager() {
           </Accordion>
         ) : (
           <div className="text-center py-8">
-            <HelpCircle className="w-12 h-12 mx-auto text-white/40 mb-3" />
-            <p className="text-white/70">No FAQs yet</p>
-            <p className="text-sm text-white/60 mb-4">Add questions your AI should know how to answer</p>
+            <HelpCircle className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
+            <p className="text-muted-foreground">No FAQs yet</p>
+            <p className="text-sm text-muted-foreground/80 mb-4">Add questions your AI should know how to answer</p>
             <div className="flex justify-center gap-2">
               <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2">
                 <FileText className="w-4 h-4" />

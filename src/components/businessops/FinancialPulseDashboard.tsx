@@ -177,7 +177,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
       {/* Summary Stats - Row 1 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-feature-leads/40 transition-colors cursor-pointer" 
+          className="border-border/50 hover:border-feature-leads/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/leads')}
         >
           <CardContent className="p-4">
@@ -188,12 +188,12 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
               </Badge>
             </div>
             <p className="text-2xl font-bold mt-2 text-feature-leads">{newLeads.length}</p>
-            <p className="text-xs text-white/70">New Leads</p>
+            <p className="text-xs text-muted-foreground">New Leads</p>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-feature-quotes/40 transition-colors cursor-pointer" 
+          className="border-border/50 hover:border-feature-quotes/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/quotes')}
         >
           <CardContent className="p-4">
@@ -204,12 +204,12 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
               </Badge>
             </div>
             <p className="text-2xl font-bold mt-2 text-feature-quotes">${pendingQuoteValue.toFixed(0)}</p>
-            <p className="text-xs text-white/70">Pending Quotes</p>
+            <p className="text-xs text-muted-foreground">Pending Quotes</p>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-feature-invoices/40 transition-colors cursor-pointer" 
+          className="border-border/50 hover:border-feature-invoices/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/invoices')}
         >
           <CardContent className="p-4">
@@ -220,12 +220,12 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
               </Badge>
             </div>
             <p className="text-2xl font-bold mt-2 text-feature-invoices">${unpaidInvoiceValue.toFixed(0)}</p>
-            <p className="text-xs text-white/70">Unpaid Invoices</p>
+            <p className="text-xs text-muted-foreground">Unpaid Invoices</p>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-feature-inventory/40 transition-colors cursor-pointer" 
+          className="border-border/50 hover:border-feature-inventory/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/inventory')}
         >
           <CardContent className="p-4">
@@ -236,7 +236,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
               )}
             </div>
             <p className="text-2xl font-bold mt-2 text-feature-inventory">{inventoryAlerts.length}</p>
-            <p className="text-xs text-white/70">Low Stock Alerts</p>
+            <p className="text-xs text-muted-foreground">Low Stock Alerts</p>
           </CardContent>
         </Card>
       </div>
@@ -244,7 +244,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
       {/* Summary Stats - Row 2 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-feature-appointments/40 transition-colors cursor-pointer" 
+          className="border-border/50 hover:border-feature-appointments/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/appointments')}
         >
           <CardContent className="p-4">
@@ -255,12 +255,12 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
               </Badge>
             </div>
             <p className="text-2xl font-bold mt-2 text-feature-appointments">{upcomingAppointments.length}</p>
-            <p className="text-xs text-white/70">Upcoming Appts</p>
+            <p className="text-xs text-muted-foreground">Upcoming Appts</p>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-feature-warranties/40 transition-colors cursor-pointer" 
+          className="border-border/50 hover:border-feature-warranties/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/warranties')}
         >
           <CardContent className="p-4">
@@ -268,12 +268,12 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
               <Shield className="h-5 w-5 text-feature-warranties" />
             </div>
             <p className="text-2xl font-bold mt-2 text-feature-warranties">{activeWarranties}</p>
-            <p className="text-xs text-white/70">Active Warranties</p>
+            <p className="text-xs text-muted-foreground">Active Warranties</p>
           </CardContent>
         </Card>
 
         <Card 
-          className="bg-slate-800 border-white/10 hover:border-feature-marketing/40 transition-colors cursor-pointer" 
+          className="border-border/50 hover:border-feature-marketing/40 transition-colors cursor-pointer" 
           onClick={() => navigate('/dashboard/campaigns')}
         >
           <CardContent className="p-4">
@@ -284,11 +284,11 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
               </Badge>
             </div>
             <p className="text-2xl font-bold mt-2 text-feature-marketing">{campaignStats?.active || 0}</p>
-            <p className="text-xs text-white/70">Active Campaigns</p>
+            <p className="text-xs text-muted-foreground">Active Campaigns</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-white/10 hover:border-accent/40 transition-colors cursor-pointer" onClick={() => onNavigate('payments')}>
+        <Card className="border-border/50 hover:border-accent/40 transition-colors cursor-pointer" onClick={() => onNavigate('payments')}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               {stripeConnected ? (
@@ -305,7 +305,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
             <p className={`text-2xl font-bold mt-2 ${stripeConnected ? 'text-green-400' : 'text-amber-400'}`}>
               {stripeConnected ? 'Connected' : 'Setup'}
             </p>
-            <p className="text-xs text-white/70">Payment Gateway</p>
+            <p className="text-xs text-muted-foreground">Payment Gateway</p>
           </CardContent>
         </Card>
       </div>
@@ -314,10 +314,10 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
       {/* Content Grid */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Quotes */}
-        <Card className="bg-slate-800 border-white/10">
+        <Card className="border-border/50">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-foreground">
                 <FileText className="h-4 w-4 text-feature-quotes" />
                 Quotes
               </CardTitle>
@@ -326,7 +326,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           <CardContent>
             <ScrollArea className="h-[200px]">
               {quotes.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-white/60">
+                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                   <FileText className="h-8 w-8 mb-2 opacity-50" />
                   <p className="text-sm">No quotes</p>
                 </div>
@@ -335,15 +335,15 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                   {quotes.map(quote => {
                     const isPending = quote.status === 'draft' || quote.status === 'sent';
                     const isAccepted = quote.status === 'accepted';
-                    return (
+                      return (
                       <div 
                         key={quote.id} 
-                        className={`flex items-center justify-between p-3 rounded-lg transition-colors border border-white/5 cursor-pointer ${isAccepted ? 'bg-green-500/10 hover:bg-green-500/20' : 'bg-slate-700/50 hover:bg-slate-700'}`}
+                        className={`flex items-center justify-between p-3 rounded-lg transition-colors border border-border/50 cursor-pointer ${isAccepted ? 'bg-green-500/10 hover:bg-green-500/20' : 'bg-muted/50 hover:bg-muted'}`}
                         onClick={() => navigate(`/dashboard/quotes?id=${quote.id}`)}
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate text-white">{quote.customer_name}</p>
-                          <p className="text-xs text-white/60">
+                          <p className="font-medium truncate text-foreground">{quote.customer_name}</p>
+                          <p className="text-xs text-muted-foreground">
                             {format(new Date(quote.created_at), 'MMM d, yyyy')}
                           </p>
                         </div>
@@ -354,7 +354,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                           >
                             {isPending ? 'pending' : quote.status}
                           </Badge>
-                          <span className="font-semibold text-sm text-white">${quote.total_amount?.toFixed(0)}</span>
+                          <span className="font-semibold text-sm text-foreground">${quote.total_amount?.toFixed(0)}</span>
                         </div>
                       </div>
                     );
@@ -366,10 +366,10 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
         </Card>
 
         {/* Invoices */}
-        <Card className="bg-slate-800 border-white/10">
+        <Card className="border-border/50">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-foreground">
                 <Receipt className="h-4 w-4 text-feature-invoices" />
                 Invoices
               </CardTitle>
@@ -378,7 +378,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           <CardContent>
             <ScrollArea className="h-[200px]">
               {invoices.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-white/60">
+                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                   <Receipt className="h-8 w-8 mb-2 opacity-50" />
                   <p className="text-sm">No invoices</p>
                 </div>
@@ -387,15 +387,15 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                   {invoices.map(invoice => {
                     const isPaid = invoice.status === 'paid';
                     const isOverdue = invoice.due_date && isPast(parseISO(invoice.due_date)) && invoice.status !== 'paid';
-                    return (
+                      return (
                       <div 
                         key={invoice.id} 
-                        className={`flex items-center justify-between p-3 rounded-lg transition-colors border border-white/5 cursor-pointer ${isPaid ? 'bg-green-500/10 hover:bg-green-500/20' : isOverdue ? 'bg-destructive/20 hover:bg-destructive/30' : 'bg-slate-700/50 hover:bg-slate-700'}`}
+                        className={`flex items-center justify-between p-3 rounded-lg transition-colors border border-border/50 cursor-pointer ${isPaid ? 'bg-green-500/10 hover:bg-green-500/20' : isOverdue ? 'bg-destructive/20 hover:bg-destructive/30' : 'bg-muted/50 hover:bg-muted'}`}
                         onClick={() => navigate(`/dashboard/invoices?id=${invoice.id}`)}
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate text-white">{invoice.customer_name}</p>
-                          <div className="flex items-center gap-1 text-xs text-white/60">
+                          <p className="font-medium truncate text-foreground">{invoice.customer_name}</p>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
                             <Clock className="h-3 w-3" />
                             {invoice.due_date ? format(new Date(invoice.due_date), 'MMM d') : 'No due date'}
                           </div>
@@ -407,7 +407,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                           >
                             {isPaid ? 'paid' : isOverdue ? 'overdue' : 'unpaid'}
                           </Badge>
-                          <span className="font-semibold text-sm text-white">${invoice.total?.toFixed(0)}</span>
+                          <span className="font-semibold text-sm text-foreground">${invoice.total?.toFixed(0)}</span>
                         </div>
                       </div>
                     );
@@ -420,7 +420,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
       </div>
 
       {inventoryAlerts.length > 0 && (
-        <Card className="bg-slate-800 border-white/10">
+        <Card className="border-border/50">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium flex items-center gap-2 text-destructive">
@@ -440,7 +440,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
                 </Badge>
               ))}
               {inventoryAlerts.length > 6 && (
-                <Badge variant="outline" className="bg-slate-700 text-white/70 border-white/10">
+                <Badge variant="outline" className="bg-muted text-muted-foreground border-border/50">
                   +{inventoryAlerts.length - 6} more
                 </Badge>
               )}
@@ -451,10 +451,10 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
 
       {/* Upcoming Appointments */}
       {upcomingAppointments.length > 0 && (
-        <Card className="bg-slate-800 border-white/10">
+        <Card className="border-border/50">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium flex items-center gap-2 text-white">
+              <CardTitle className="text-sm font-medium flex items-center gap-2 text-foreground">
                 <Calendar className="h-4 w-4 text-accent" />
                 Upcoming Appointments (7 days)
               </CardTitle>
@@ -468,12 +468,12 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
               {upcomingAppointments.map(appt => (
                 <div 
                   key={appt.id} 
-                  className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-colors border border-white/5 cursor-pointer"
+                  className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border/50 cursor-pointer"
                   onClick={() => navigate(`/dashboard/appointments?id=${appt.id}`)}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate text-white">{appt.customer_name}</p>
-                    <p className="text-xs text-white/60">{appt.service_type}</p>
+                    <p className="font-medium truncate text-foreground">{appt.customer_name}</p>
+                    <p className="text-xs text-muted-foreground">{appt.service_type}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30 text-xs">
