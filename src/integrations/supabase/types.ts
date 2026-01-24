@@ -3609,6 +3609,57 @@ export type Database = {
           },
         ]
       }
+      push_subscriptions: {
+        Row: {
+          auth_key: string
+          company_id: string
+          created_at: string
+          endpoint: string
+          id: string
+          p256dh_key: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth_key: string
+          company_id: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          p256dh_key: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth_key?: string
+          company_id?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          p256dh_key?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "push_subscriptions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quote_line_items: {
         Row: {
           created_at: string
@@ -4633,6 +4684,132 @@ export type Database = {
             columns: ["scheduled_post_id"]
             isOneToOne: false
             referencedRelation: "scheduled_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_notification_preferences: {
+        Row: {
+          browser_push_enabled: boolean | null
+          company_id: string
+          created_at: string
+          email_alerts_enabled: boolean | null
+          id: string
+          in_app_enabled: boolean | null
+          notify_job_updates: boolean | null
+          notify_missed_calls: boolean | null
+          notify_new_bookings: boolean | null
+          notify_new_email: boolean | null
+          notify_new_sms: boolean | null
+          sms_alerts_enabled: boolean | null
+          sms_phone_number: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          browser_push_enabled?: boolean | null
+          company_id: string
+          created_at?: string
+          email_alerts_enabled?: boolean | null
+          id?: string
+          in_app_enabled?: boolean | null
+          notify_job_updates?: boolean | null
+          notify_missed_calls?: boolean | null
+          notify_new_bookings?: boolean | null
+          notify_new_email?: boolean | null
+          notify_new_sms?: boolean | null
+          sms_alerts_enabled?: boolean | null
+          sms_phone_number?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          browser_push_enabled?: boolean | null
+          company_id?: string
+          created_at?: string
+          email_alerts_enabled?: boolean | null
+          id?: string
+          in_app_enabled?: boolean | null
+          notify_job_updates?: boolean | null
+          notify_missed_calls?: boolean | null
+          notify_new_bookings?: boolean | null
+          notify_new_email?: boolean | null
+          notify_new_sms?: boolean | null
+          sms_alerts_enabled?: boolean | null
+          sms_phone_number?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_notification_preferences_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_notification_preferences_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_notifications: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          metadata: Json | null
+          notification_type: string
+          read_at: string | null
+          recipient_id: string | null
+          recipient_role: string | null
+          title: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          metadata?: Json | null
+          notification_type: string
+          read_at?: string | null
+          recipient_id?: string | null
+          recipient_role?: string | null
+          title: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          metadata?: Json | null
+          notification_type?: string
+          read_at?: string | null
+          recipient_id?: string | null
+          recipient_role?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_notifications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_notifications_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
             referencedColumns: ["id"]
           },
         ]
