@@ -257,7 +257,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
           <CardContent className="pt-8 pb-8 text-center">
             <h3 className="text-xl font-bold mb-2 text-card-foreground">Ready to Deploy Your AI Workforce?</h3>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Get started with implementation or book a strategy call to discuss your specific needs.
+              Start your 14-day guided launch or schedule a concierge kickoff call.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
@@ -265,7 +265,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
                 onClick={handleViewPricing}
                 className="gap-2"
               >
-                View Full Pricing
+                Start Your 14-Day Launch
                 <ArrowRight className="h-4 w-4" />
               </Button>
               <Button 
@@ -275,7 +275,7 @@ export function AuditResults({ tierPercentages, recommendedTier, onRestart }: Au
                 className="gap-2"
               >
                 <Phone className="h-4 w-4" />
-                Book Implementation Call
+                Schedule Concierge Kickoff
               </Button>
             </div>
           </CardContent>

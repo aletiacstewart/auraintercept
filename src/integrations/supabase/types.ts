@@ -3080,6 +3080,105 @@ export type Database = {
           },
         ]
       }
+      launch_milestones: {
+        Row: {
+          company_id: string
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          milestone_key: string
+          notes: string | null
+          target_day: number | null
+        }
+        Insert: {
+          company_id: string
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          milestone_key: string
+          notes?: string | null
+          target_day?: number | null
+        }
+        Update: {
+          company_id?: string
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          milestone_key?: string
+          notes?: string | null
+          target_day?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "launch_milestones_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "launch_milestones_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      launch_progress: {
+        Row: {
+          company_id: string
+          created_at: string | null
+          current_phase: string | null
+          id: string
+          kickoff_completed_at: string | null
+          kickoff_scheduled_at: string | null
+          launch_type: string
+          started_at: string | null
+          target_go_live_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string | null
+          current_phase?: string | null
+          id?: string
+          kickoff_completed_at?: string | null
+          kickoff_scheduled_at?: string | null
+          launch_type: string
+          started_at?: string | null
+          target_go_live_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string | null
+          current_phase?: string | null
+          id?: string
+          kickoff_completed_at?: string | null
+          kickoff_scheduled_at?: string | null
+          launch_type?: string
+          started_at?: string | null
+          target_go_live_date?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "launch_progress_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "launch_progress_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_activities: {
         Row: {
           activity_type: string
@@ -3918,6 +4017,54 @@ export type Database = {
           },
           {
             foreignKeyName: "reminder_settings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      role_mappings: {
+        Row: {
+          auto_activated: boolean | null
+          company_id: string
+          created_at: string | null
+          currently_handled_by: string
+          id: string
+          mapped_agent_type: string | null
+          pain_level: number | null
+          role: string
+        }
+        Insert: {
+          auto_activated?: boolean | null
+          company_id: string
+          created_at?: string | null
+          currently_handled_by: string
+          id?: string
+          mapped_agent_type?: string | null
+          pain_level?: number | null
+          role: string
+        }
+        Update: {
+          auto_activated?: boolean | null
+          company_id?: string
+          created_at?: string | null
+          currently_handled_by?: string
+          id?: string
+          mapped_agent_type?: string | null
+          pain_level?: number | null
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_mappings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_mappings_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies_public"
