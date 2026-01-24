@@ -215,9 +215,9 @@ export default function TechnicianDashboard() {
             <CardContent className="space-y-3">
               {/* Address */}
               {currentJob.customer_address && (
-                <div className="flex items-start gap-2 p-2.5 rounded-lg bg-slate-700/50 border border-slate-600/50 text-sm">
+                <div className="flex items-start gap-2 p-2.5 rounded-lg bg-muted/50 border border-border/50 text-sm">
                   <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-accent" />
-                  <span className="text-white/80">{currentJob.customer_address}</span>
+                  <span className="text-foreground/80">{currentJob.customer_address}</span>
                 </div>
               )}
 
@@ -366,8 +366,8 @@ export default function TechnicianDashboard() {
                   />
                 </div>
               </div>
-              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-700/50 border border-slate-600/50">
-                <span className="text-sm text-white/80">Status</span>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/50 border border-border/50">
+                <span className="text-sm text-muted-foreground">Status</span>
                 <span className="text-sm font-medium text-green-400 flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                   On Track

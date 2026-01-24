@@ -155,13 +155,13 @@ export function AuraEventCard({ event }: AuraEventCardProps) {
                   <span className={cn("text-xs font-medium", agentConfig.color)}>
                     {agentConfig.label}
                   </span>
-                  <span className="text-xs text-white/50">
+                  <span className="text-xs text-muted-foreground">
                     {formatDistanceToNow(new Date(event.created_at), { addSuffix: true })}
                   </span>
                 </div>
                 
                 {/* Humanized message */}
-                <p className="text-sm text-white/90 leading-relaxed">
+                <p className="text-sm text-foreground/90 leading-relaxed">
                   {message}
                 </p>
               </div>

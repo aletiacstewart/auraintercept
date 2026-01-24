@@ -46,7 +46,7 @@ export function MetricCard({
           {badge}
         </div>
         <p className={cn("text-xl font-bold mt-1.5", valueColors[valueColor])}>{value}</p>
-        <p className="text-[10px] text-white/70">{label}</p>
+        <p className="text-[10px] text-muted-foreground">{label}</p>
       </CardContent>
     </Card>
   );

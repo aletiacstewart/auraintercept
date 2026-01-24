@@ -5517,13 +5517,13 @@ async function executeAgentTool(
               .eq('company_id', companyId);
             
             if (filter === 'active') {
-              query = query.gte('expiration_date', now.toISOString());
+              query = query.gte('warranty_end_date', now.toISOString());
             } else if (filter === 'expired') {
-              query = query.lt('expiration_date', now.toISOString());
+              query = query.lt('warranty_end_date', now.toISOString());
             } else if (filter === 'expiring_soon') {
               const thirtyDaysFromNow = new Date(now);
               thirtyDaysFromNow.setDate(now.getDate() + 30);
-              query = query.gte('expiration_date', now.toISOString()).lte('expiration_date', thirtyDaysFromNow.toISOString());
+              query = query.gte('warranty_end_date', now.toISOString()).lte('warranty_end_date', thirtyDaysFromNow.toISOString());
             }
             
             if (!countOnly) query = query.limit(limit);

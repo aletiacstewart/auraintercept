@@ -130,7 +130,7 @@ export default function EmailLogs() {
                   <Mail className="w-5 h-5" />
                   Email History
                 </CardTitle>
-                <CardDescription className="text-white/70">
+                <CardDescription>
                   All email reminders and notifications sent to customers
                 </CardDescription>
               </div>
