@@ -210,9 +210,9 @@ export default function EmailLogs() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <Mail className="w-12 h-12 mx-auto text-white/50 mb-3" />
-                  <p className="text-white/70">No email logs found</p>
-                  <p className="text-sm text-white/60">
+                  <Mail className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
+                  <p className="text-muted-foreground">No email logs found</p>
+                  <p className="text-sm text-muted-foreground/80">
                     Email reminders and notifications will appear here
                   </p>
                 </div>

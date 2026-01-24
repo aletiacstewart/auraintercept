@@ -304,9 +304,9 @@ export default function CallHistory() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <Phone className="w-12 h-12 mx-auto text-white/50 mb-3" />
-                <p className="text-white/70">No calls found</p>
-                <p className="text-sm text-white/60">
+                <Phone className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
+                <p className="text-muted-foreground">No calls found</p>
+                <p className="text-sm text-muted-foreground/80">
                   {searchQuery || directionFilter !== 'all' || statusFilter !== 'all'
                     ? 'Try adjusting your filters'
                     : 'Call history will appear here once calls are made'}

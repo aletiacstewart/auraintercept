@@ -293,7 +293,7 @@ export function PlatformAdminDashboard() {
         {statCards.map((stat, index) => (
           <Card key={stat.title} className="relative overflow-hidden border-border/50">
             <CardHeader className="flex flex-row items-center justify-between pb-1 pt-3 px-3">
-              <CardTitle className="text-xs font-medium text-white">
+              <CardTitle className="text-xs font-medium text-foreground">
                 {stat.title}
               </CardTitle>
               <div className={`w-8 h-8 rounded-lg ${stat.colorClass.replace('text-', 'bg-')}/15 flex items-center justify-center`}>
@@ -308,7 +308,7 @@ export function PlatformAdminDashboard() {
                   {stat.isString ? stat.value : (stat.value as number).toLocaleString()}
                 </div>
               )}
-              <p className="text-[10px] text-white/70 mt-0.5">{stat.description}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{stat.description}</p>
             </CardContent>
           </Card>
         ))}
@@ -322,27 +322,27 @@ export function PlatformAdminDashboard() {
               <Activity className="w-5 h-5 text-primary" />
               Platform Activity
             </CardTitle>
-            <CardDescription className="text-white/70">Recent activity across all tenants</CardDescription>
+            <CardDescription className="text-muted-foreground">Recent activity across all tenants</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 border border-slate-600/50">
-                <span className="text-sm text-white">System Status</span>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
+                <span className="text-sm text-foreground">System Status</span>
                 <span className="text-sm font-medium text-green-400 flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                   Operational
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 border border-slate-600/50">
-                <span className="text-sm text-white">New Signups (7 days)</span>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
+                <span className="text-sm text-foreground">New Signups (7 days)</span>
                 <span className="text-sm font-medium text-cyan-400">{stats?.recentSignups ?? 0} companies</span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 border border-slate-600/50">
-                <span className="text-sm text-white">Active Integrations</span>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
+                <span className="text-sm text-foreground">Active Integrations</span>
                 <span className="text-sm font-medium text-purple-400">{stats?.activeIntegrations ?? 0} configured</span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-700/50 border border-slate-600/50">
-                <span className="text-sm text-white">AI Agent Events (7 days)</span>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 border border-border/50">
+                <span className="text-sm text-foreground">AI Agent Events (7 days)</span>
                 <span className="text-sm font-medium text-amber-400">{stats?.recentAgentEvents ?? 0} events</span>
               </div>
             </div>
@@ -355,7 +355,7 @@ export function PlatformAdminDashboard() {
               <TrendingUp className="w-5 h-5 text-secondary" />
               Growth Metrics
             </CardTitle>
-            <CardDescription className="text-white/70">Platform performance overview</CardDescription>
+            <CardDescription className="text-muted-foreground">Platform performance overview</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -364,7 +364,7 @@ export function PlatformAdminDashboard() {
                   <span>Monthly Active Companies</span>
                   <span className="font-medium">{stats?.companies ?? 0}</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-slate-600">
+                <div className="w-full h-2 rounded-full bg-muted">
                   <div className="h-full rounded-full gradient-primary transition-all" style={{ width: `${Math.min((stats?.companies ?? 0) * 10, 100)}%` }} />
                 </div>
               </div>
@@ -373,7 +373,7 @@ export function PlatformAdminDashboard() {
                   <span>Lead Conversion</span>
                   <span className="font-medium">{stats?.leadConversionRate ?? 0}%</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-slate-600">
+                <div className="w-full h-2 rounded-full bg-muted">
                   <div className="h-full rounded-full bg-green-500 transition-all" style={{ width: `${stats?.leadConversionRate ?? 0}%` }} />
                 </div>
               </div>
@@ -382,7 +382,7 @@ export function PlatformAdminDashboard() {
                   <span>Quote Conversion</span>
                   <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-slate-600">
+                <div className="w-full h-2 rounded-full bg-muted">
                   <div className="h-full rounded-full bg-secondary transition-all" style={{ width: `${stats?.quoteConversionRate ?? 0}%` }} />
                 </div>
               </div>
@@ -391,7 +391,7 @@ export function PlatformAdminDashboard() {
                   <span>Appointment Completion</span>
                   <span className="font-medium">{stats?.appointmentCompletionRate ?? 0}%</span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-slate-600">
+                <div className="w-full h-2 rounded-full bg-muted">
                   <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${stats?.appointmentCompletionRate ?? 0}%` }} />
                 </div>
               </div>

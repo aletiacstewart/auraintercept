@@ -393,13 +393,13 @@ export function BusinessHoursManager() {
                 checked={!hour.is_closed}
                 onCheckedChange={() => toggleDay(hourType, hour.day_of_week)}
               />
-              <Label className={cn('font-medium text-white', hour.is_closed && 'text-white/60')}>
+              <Label className={cn('font-medium text-foreground', hour.is_closed && 'text-muted-foreground')}>
                 {DAYS[hour.day_of_week]}
               </Label>
             </div>
 
             {hour.is_closed ? (
-              <span className="text-white/60 text-sm">Closed</span>
+              <span className="text-muted-foreground text-sm">Closed</span>
             ) : (
               <div className="flex items-center gap-2">
                 <Select
@@ -421,7 +421,7 @@ export function BusinessHoursManager() {
                   <span className="text-primary text-sm font-medium">(All Day)</span>
                 ) : (
                   <>
-                    <span className="text-white/70">to</span>
+                    <span className="text-muted-foreground">to</span>
                     <Select
                       value={hour.close_time || '17:00:00'}
                       onValueChange={(value) => updateHour(hourType, hour.day_of_week, 'close_time', value)}
@@ -488,7 +488,7 @@ export function BusinessHoursManager() {
               className="max-w-xs"
             />
           </div>
-          <p className="text-sm text-white/60">
+          <p className="text-sm text-muted-foreground">
             Click on dates in the calendar to mark them as closed. Click again to remove.
           </p>
         </div>
