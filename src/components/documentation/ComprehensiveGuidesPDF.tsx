@@ -6,6 +6,7 @@ import {
   View,
   StyleSheet,
 } from '@react-pdf/renderer';
+import { sanitizePdfText } from './pdfSanitize';
 
 const colors = {
   primary: '#6366f1',
@@ -967,7 +968,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
                 <View style={styles.tipBox}>
                   <Text style={styles.tipTitle}>Pro Tip</Text>
                   {guide.tips.map((tip, tipIndex) => (
-                    <Text key={tipIndex} style={styles.tipText}>• {tip}</Text>
+                    <Text key={tipIndex} style={styles.tipText}>- {sanitizePdfText(tip)}</Text>
                   ))}
                 </View>
               )}
@@ -985,87 +986,87 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         
         <Text style={styles.categoryTitle}>AI Agent Categories (22 Total)</Text>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Customer Portal (4 agents): AI Receptionist, Scheduling, Follow-up, Review</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Field Operations (4 agents): Dispatch, Route, ETA, Check-in</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Business Management (5 agents): Admin, Quoting, Invoice, Inventory, Warranty</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Marketing & Sales (2 agents): Campaign, Marketing</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Social Media (3 agents): Social Content, Social Scheduler, Social Analytics</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Analytics & Reports (4 agents): Insights, Performance, Revenue, Forecast</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Subscription Tiers</Text>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Single-Point ($497/mo): AI Receptionist, Follow-up, Review + AI Voice</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Multi-Track ($897/mo): Adds Scheduling, Dispatch, ETA, Quoting, Invoicing</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Command ($1,497/mo): Full 19 agent suite including Social Media & Analytics</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Admin Dashboard: /dashboard</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Technician App: /technician</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Customer Portal: /customer-portal</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Public Chat Widget: /chat/[company-slug]</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Keyboard Shortcuts</Text>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Ctrl/Cmd + Shift + V: Toggle Ask Aura Voice Mode</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Ctrl/Cmd + K: Quick search</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Escape: Close dialogs</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Support Resources</Text>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Help & Documentation: /dashboard/help</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Platform Guides: /dashboard/platform-guides</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Architecture Docs: /dashboard/architecture</Text>
         </View>
 

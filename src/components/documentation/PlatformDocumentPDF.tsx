@@ -5,6 +5,7 @@ import {
   View,
   StyleSheet,
 } from '@react-pdf/renderer';
+import { sanitizePdfText } from './pdfSanitize';
 
 const colors = {
   primary: '#6366f1',
@@ -539,7 +540,7 @@ const PlatformDocumentPDF = () => (
       </View>
       <View style={{ marginTop: 60 }}>
         <Text style={{ fontSize: 12, textAlign: 'center', color: '#a5b4fc' }}>
-          Sales & Marketing Guide • {new Date().toLocaleDateString()}
+          Sales & Marketing Guide - {new Date().toLocaleDateString()}
         </Text>
       </View>
     </Page>
@@ -950,21 +951,21 @@ const PlatformDocumentPDF = () => (
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>💬 Multi-Channel Chat</Text>
+          <Text style={styles.featureTitle}>[CHAT] Multi-Channel Chat</Text>
           <Text style={styles.featureDesc}>
             Unified AI across SMS, email, and web chat. Same context, same intelligence, any channel.
           </Text>
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>📅 Smart Scheduling</Text>
+          <Text style={styles.featureTitle}>[CALENDAR] Smart Scheduling</Text>
           <Text style={styles.featureDesc}>
             AI books appointments based on technician skills, location, and availability in real-time.
           </Text>
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>🚀 Intelligent Dispatch</Text>
+          <Text style={styles.featureTitle}>[LAUNCH] Intelligent Dispatch</Text>
           <Text style={styles.featureDesc}>
             Automated job assignment and route optimization. Maximizes technician productivity.
           </Text>
@@ -992,7 +993,7 @@ const PlatformDocumentPDF = () => (
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>📱 Technician App</Text>
+          <Text style={styles.featureTitle}>[MOBILE] Technician App</Text>
           <Text style={styles.featureDesc}>
             Mobile-optimized for field use. Job queue, navigation, check-in, photo documentation.
           </Text>
