@@ -13,6 +13,7 @@ import { PublicHeader } from '@/components/layout/PublicHeader';
 import { PublicFooter } from '@/components/layout/PublicFooter';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 import { PricingComparisonTable } from '@/components/landing/PricingComparisonTable';
+import { CompetitiveDifferentiation } from '@/components/landing/CompetitiveDifferentiation';
 const agentCategories = [{
   id: 'customer',
   name: 'Customer Portal',
@@ -549,6 +550,9 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Competitive Differentiation */}
+      <CompetitiveDifferentiation />
 
       {/* Communication Channels */}
       <section className="py-20">
