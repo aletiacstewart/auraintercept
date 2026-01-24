@@ -119,15 +119,17 @@ const guideCategories = [
         title: 'Subscription Tiers',
         duration: '8 min',
         steps: [
-          'Single-Point ($497/mo): 3 AI Operatives (Receptionist, Follow-up, Review) + Call to Book',
-          'Multi-Track ($897/mo): 10 AI Operatives + 2 Control Centers + Online Booking',
-          'Command ($1,497/mo): All 23 AI Operatives + 6 Control Centers + White-Label Branding',
-          'Proxy Voice Chat powered by ElevenLabs included on Single-Point+',
-          'Employee limits: 5 (Single-Point), 10 (Multi-Track), Unlimited (Command)',
-          'Premium Add-Ons: Social Media Signal ($150/mo), Web Presence ($150/mo)',
-          'View your tier status in the sidebar bottom section'
+          'Aura Halo ($397/mo): 4 AI Operatives for salons/wellness + Customer Portal Console',
+          'Aura Core ($500/mo): AI-Assisted (No Automation) - Talk to Aura + Social Media Signal + Web Presence',
+          'Single-Point ($1,500/mo): 3 AI Operatives (Receptionist, Follow-up, Review) + 1 Console',
+          'Multi-Track ($3,997/mo): 10 AI Operatives + 2 Consoles + Online Booking + Field Ops',
+          'Aura Pro Command ($6,997/mo): All 23 AI Operatives + 7 Consoles + Enterprise Features',
+          'Proxy Voice Chat included on Halo, Single-Point, Multi-Track, and Command tiers',
+          'Employee limits: 3 (Halo), 2 (Core), 5 (Single-Point), 10 (Multi-Track), 25 (Command)',
+          'Premium Add-Ons: Social Media Signal ($150/mo), Web Presence ($150/mo) for Single-Point/Multi-Track',
+          'Implementation fees: $499 (all tiers), Custom for Command'
         ],
-        tips: ['Trial users get full Command tier access', 'Annual billing saves up to $2,994/year']
+        tips: ['Trial users get full Command tier access', 'Annual billing saves 16% (~$800-$14,000/year)']
       },
       {
         title: 'User Roles & Permissions',
@@ -1163,8 +1165,8 @@ const PlatformGuides: React.FC = () => {
                   <Bot className="h-5 w-5 text-accent" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">19</p>
-                  <p className="text-xs text-card-foreground/70">AI Agents</p>
+                  <p className="text-2xl font-bold">23</p>
+                  <p className="text-xs text-card-foreground/70">AI Operatives</p>
                 </div>
               </div>
             </CardContent>
