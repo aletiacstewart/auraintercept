@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useOnboardingState } from '@/hooks/useOnboardingState';
+import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
 import { TechnicianDashboardLayout } from '@/components/dashboard/TechnicianDashboardLayout';
+import { WelcomeModal } from '@/components/onboarding/WelcomeModal';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
 import { 
   ClipboardList, 
   Navigation, 
@@ -17,11 +19,9 @@ import {
   Bot,
   ArrowRight,
   Phone,
-  Activity,
   TrendingUp,
   Camera,
-  Play,
-  ExternalLink
+  Play
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -37,8 +37,47 @@ const STATUS_STYLES: Record<string, { bg: string; text: string; glow: string; la
 };
 
 export default function TechnicianDashboard() {
-  const { user } = useAuth();
+  const { user, companyId } = useAuth();
+  const { jobTypes } = useEmployeeJobRole();
+  const { shouldShowWelcome, markTourCompleted, isLoading: onboardingLoading } = useOnboardingState();
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const navigate = useNavigate();
+
+  // Fetch profile and company for welcome modal
+  const { data: profileData } = useQuery({
+    queryKey: ['technician-profile', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  const { data: companyData } = useQuery({
+    queryKey: ['technician-company', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data } = await supabase
+        .from('companies')
+        .select('name')
+        .eq('id', companyId)
+        .single();
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  // Show welcome modal for first-time users
+  useEffect(() => {
+    if (!onboardingLoading && user && shouldShowWelcome()) {
+      setShowWelcomeModal(true);
+    }
+  }, [onboardingLoading, user, shouldShowWelcome]);
 
   // Fetch today's jobs
   const { data: jobs, isLoading } = useQuery({
@@ -348,8 +387,22 @@ export default function TechnicianDashboard() {
           <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
+      
+      <WelcomeModal
+        isOpen={showWelcomeModal}
+        onClose={handleCloseWelcome}
+        userRole="employee"
+        userName={profileData?.full_name?.split(' ')[0]}
+        companyName={companyData?.name}
+        jobTypes={jobTypes}
+      />
     </TechnicianDashboardLayout>
   );
+
+  async function handleCloseWelcome() {
+    await markTourCompleted('welcome');
+    setShowWelcomeModal(false);
+  }
 }
 
 function getGreeting() {

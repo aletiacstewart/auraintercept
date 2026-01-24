@@ -3668,9 +3668,11 @@ export type Database = {
           id: string
           location_updated_at: string | null
           must_change_password: boolean | null
+          onboarding_completed_at: string | null
           phone: string | null
           phone_number: string | null
           sms_notifications_enabled: boolean | null
+          tours_completed: Json | null
           updated_at: string
         }
         Insert: {
@@ -3691,9 +3693,11 @@ export type Database = {
           id: string
           location_updated_at?: string | null
           must_change_password?: boolean | null
+          onboarding_completed_at?: string | null
           phone?: string | null
           phone_number?: string | null
           sms_notifications_enabled?: boolean | null
+          tours_completed?: Json | null
           updated_at?: string
         }
         Update: {
@@ -3714,9 +3718,11 @@ export type Database = {
           id?: string
           location_updated_at?: string | null
           must_change_password?: boolean | null
+          onboarding_completed_at?: string | null
           phone?: string | null
           phone_number?: string | null
           sms_notifications_enabled?: boolean | null
+          tours_completed?: Json | null
           updated_at?: string
         }
         Relationships: [
