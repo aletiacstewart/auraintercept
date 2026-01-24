@@ -150,9 +150,9 @@ export function CreateTestAccounts({ companyId }: CreateTestAccountsProps) {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="employees" className="w-full">
-          <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
-            <TabsTrigger value="employees" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Employees</TabsTrigger>
-            <TabsTrigger value="customers" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Customers</TabsTrigger>
+          <TabsList>
+            <TabsTrigger value="employees">Employees</TabsTrigger>
+            <TabsTrigger value="customers">Customers</TabsTrigger>
           </TabsList>
           
           <TabsContent value="employees" className="space-y-6 mt-4">
