@@ -170,25 +170,16 @@ export function FieldOpsConsole({ companyId }: FieldOpsConsoleProps) {
         {/* View Tabs */}
         <div className="flex items-center justify-between mt-4">
           <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'map' | 'agenda' | 'jobs')}>
-            <TabsList className="inline-flex h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1 flex-wrap">
-              <TabsTrigger 
-                value="map" 
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-              >
+            <TabsList>
+              <TabsTrigger value="map" className="flex items-center gap-1.5">
                 <Map className="h-3.5 w-3.5" />
                 Map View
               </TabsTrigger>
-              <TabsTrigger 
-                value="agenda"
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-              >
+              <TabsTrigger value="agenda" className="flex items-center gap-1.5">
                 <List className="h-3.5 w-3.5" />
                 Agenda View
               </TabsTrigger>
-              <TabsTrigger 
-                value="jobs"
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-              >
+              <TabsTrigger value="jobs" className="flex items-center gap-1.5">
                 <ClipboardList className="h-3.5 w-3.5" />
                 Job Status
               </TabsTrigger>

@@ -54,20 +54,20 @@ export const AppointmentsManager: React.FC<AppointmentsManagerProps> = ({ onClos
       </div>
 
       <Tabs defaultValue="calendar" className="w-full">
-        <TabsList className="inline-flex h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1 flex-wrap">
-          <TabsTrigger value="calendar" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+        <TabsList>
+          <TabsTrigger value="calendar" className="flex items-center gap-1.5">
             <Calendar className="h-3 w-3" />
             Calendar
           </TabsTrigger>
-          <TabsTrigger value="jobs" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+          <TabsTrigger value="jobs" className="flex items-center gap-1.5">
             <ClipboardList className="h-3 w-3" />
             Job Queue
           </TabsTrigger>
-          <TabsTrigger value="history" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+          <TabsTrigger value="history" className="flex items-center gap-1.5">
             <History className="h-3 w-3" />
             History
           </TabsTrigger>
-          <TabsTrigger value="all-jobs" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+          <TabsTrigger value="all-jobs" className="flex items-center gap-1.5">
             <Briefcase className="h-3 w-3" />
             All Jobs
           </TabsTrigger>

@@ -18,39 +18,24 @@ interface BusinessOpsHubTabsProps {
 export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsProps) {
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
-      <TabsList className="inline-flex h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1 flex-wrap">
-        <TabsTrigger 
-          value="sales" 
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 data-[state=active]:text-primary transition-all"
-        >
+      <TabsList>
+        <TabsTrigger value="sales" className="flex items-center gap-1.5">
           <DollarSign className="h-3.5 w-3.5" />
           <span>Sales</span>
         </TabsTrigger>
-        <TabsTrigger 
-          value="appointments" 
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-        >
+        <TabsTrigger value="appointments" className="flex items-center gap-1.5">
           <Calendar className="h-3.5 w-3.5" />
           <span>Appointments</span>
         </TabsTrigger>
-        <TabsTrigger 
-          value="inventory" 
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-        >
+        <TabsTrigger value="inventory" className="flex items-center gap-1.5">
           <Package className="h-3.5 w-3.5" />
           <span>Inventory</span>
         </TabsTrigger>
-        <TabsTrigger 
-          value="people" 
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-        >
+        <TabsTrigger value="people" className="flex items-center gap-1.5">
           <UsersRound className="h-3.5 w-3.5" />
           <span>People</span>
         </TabsTrigger>
-        <TabsTrigger 
-          value="all" 
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-        >
+        <TabsTrigger value="all" className="flex items-center gap-1.5">
           <Briefcase className="h-3.5 w-3.5" />
           <span>All Business Ops</span>
         </TabsTrigger>
