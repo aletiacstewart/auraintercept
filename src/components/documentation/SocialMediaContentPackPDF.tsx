@@ -1,5 +1,6 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { sanitizePdfText } from './pdfSanitize';
 
 const colors = {
   primary: '#214ebb',
@@ -438,7 +439,7 @@ export const SocialMediaContentPackPDF: React.FC = () => (
           How many calls did you miss last week?{'\n\n'}
           If the answer isn't "zero," you're leaving money on the table. Our AI Receptionist ensures every single call gets answered, every lead gets captured, and every customer gets scheduled.{'\n\n'}
           No more playing phone tag. No more lost revenue.{'\n\n'}
-          🔗 See how it works: [Link]
+          [LINK] See how it works: [Link]
         </Text>
       </View>
 

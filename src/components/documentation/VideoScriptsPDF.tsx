@@ -1,5 +1,6 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { sanitizePdfText } from './pdfSanitize';
 
 const colors = {
   primary: '#214ebb',
@@ -658,54 +659,54 @@ export const VideoScriptsPDF: React.FC = () => (
       <View style={styles.twoColumn}>
         <View style={styles.column}>
           <View style={styles.brollSection}>
-            <Text style={styles.brollTitle}>📱 TECHNOLOGY SHOTS</Text>
-            <Text style={styles.brollItem}>• Phone screen showing incoming call</Text>
-            <Text style={styles.brollItem}>• App dashboard with notifications</Text>
-            <Text style={styles.brollItem}>• Calendar filling with bookings</Text>
-            <Text style={styles.brollItem}>• Map with route optimization</Text>
-            <Text style={styles.brollItem}>• Chat interface in action</Text>
-            <Text style={styles.brollItem}>• Analytics dashboard</Text>
+            <Text style={styles.brollTitle}>[MOBILE] TECHNOLOGY SHOTS</Text>
+            <Text style={styles.brollItem}>- Phone screen showing incoming call</Text>
+            <Text style={styles.brollItem}>- App dashboard with notifications</Text>
+            <Text style={styles.brollItem}>- Calendar filling with bookings</Text>
+            <Text style={styles.brollItem}>- Map with route optimization</Text>
+            <Text style={styles.brollItem}>- Chat interface in action</Text>
+            <Text style={styles.brollItem}>- Analytics dashboard</Text>
           </View>
 
           <View style={styles.brollSection}>
-            <Text style={styles.brollTitle}>👷 FIELD WORK SHOTS</Text>
-            <Text style={styles.brollItem}>• Technician hands on equipment</Text>
-            <Text style={styles.brollItem}>• Van arriving at customer home</Text>
-            <Text style={styles.brollItem}>• Technician checking phone/tablet</Text>
-            <Text style={styles.brollItem}>• Tools and equipment</Text>
-            <Text style={styles.brollItem}>• Happy customer handshake</Text>
+            <Text style={styles.brollTitle}>[TECH] FIELD WORK SHOTS</Text>
+            <Text style={styles.brollItem}>- Technician hands on equipment</Text>
+            <Text style={styles.brollItem}>- Van arriving at customer home</Text>
+            <Text style={styles.brollItem}>- Technician checking phone/tablet</Text>
+            <Text style={styles.brollItem}>- Tools and equipment</Text>
+            <Text style={styles.brollItem}>- Happy customer handshake</Text>
           </View>
         </View>
 
         <View style={styles.column}>
           <View style={styles.brollSection}>
-            <Text style={styles.brollTitle}>🏢 OFFICE SHOTS</Text>
-            <Text style={styles.brollItem}>• Dispatcher at computer</Text>
-            <Text style={styles.brollItem}>• Team looking at dashboard</Text>
-            <Text style={styles.brollItem}>• Phone ringing (answered/unanswered)</Text>
-            <Text style={styles.brollItem}>• Paperwork and chaos (before)</Text>
-            <Text style={styles.brollItem}>• Clean, organized (after)</Text>
+            <Text style={styles.brollTitle}>[OFFICE] OFFICE SHOTS</Text>
+            <Text style={styles.brollItem}>- Dispatcher at computer</Text>
+            <Text style={styles.brollItem}>- Team looking at dashboard</Text>
+            <Text style={styles.brollItem}>- Phone ringing (answered/unanswered)</Text>
+            <Text style={styles.brollItem}>- Paperwork and chaos (before)</Text>
+            <Text style={styles.brollItem}>- Clean, organized (after)</Text>
           </View>
 
           <View style={styles.brollSection}>
-            <Text style={styles.brollTitle}>😊 EMOTION SHOTS</Text>
-            <Text style={styles.brollItem}>• Stressed business owner (before)</Text>
-            <Text style={styles.brollItem}>• Relieved business owner (after)</Text>
-            <Text style={styles.brollItem}>• Happy customer testimonial</Text>
-            <Text style={styles.brollItem}>• Team celebration</Text>
-            <Text style={styles.brollItem}>• Revenue celebration graphics</Text>
+            <Text style={styles.brollTitle}>[EMOTION] EMOTION SHOTS</Text>
+            <Text style={styles.brollItem}>- Stressed business owner (before)</Text>
+            <Text style={styles.brollItem}>- Relieved business owner (after)</Text>
+            <Text style={styles.brollItem}>- Happy customer testimonial</Text>
+            <Text style={styles.brollItem}>- Team celebration</Text>
+            <Text style={styles.brollItem}>- Revenue celebration graphics</Text>
           </View>
         </View>
       </View>
 
       <View style={styles.tipBox}>
-        <Text style={styles.tipLabel}>🎬 PRODUCTION TIPS</Text>
+        <Text style={styles.tipLabel}>[VIDEO] PRODUCTION TIPS</Text>
         <Text style={styles.tipText}>
-          • Shoot in 4K when possible, deliver in 1080p{'\n'}
-          • Capture 10-second minimum clips for flexibility{'\n'}
-          • Include both wide and close-up versions{'\n'}
-          • Natural lighting preferred for authenticity{'\n'}
-          • Always get model releases for customer footage
+          - Shoot in 4K when possible, deliver in 1080p{'\n'}
+          - Capture 10-second minimum clips for flexibility{'\n'}
+          - Include both wide and close-up versions{'\n'}
+          - Natural lighting preferred for authenticity{'\n'}
+          - Always get model releases for customer footage
         </Text>
       </View>
 

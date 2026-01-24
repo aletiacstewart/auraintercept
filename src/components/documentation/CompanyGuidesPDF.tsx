@@ -6,6 +6,7 @@ import {
   View,
   StyleSheet,
 } from '@react-pdf/renderer';
+import { sanitizePdfText } from './pdfSanitize';
 
 const colors = {
   primary: '#6366f1',
@@ -707,21 +708,21 @@ export function CompanyGuidesPDF() {
           
           {category.guides.map((guide, guideIdx) => (
             <View key={guideIdx} wrap={false} style={{ marginBottom: 16 }}>
-              <Text style={styles.guideTitle}>{guide.title}</Text>
-              <Text style={styles.guideDuration}>⏱ {guide.duration}</Text>
+              <Text style={styles.guideTitle}>{sanitizePdfText(guide.title)}</Text>
+              <Text style={styles.guideDuration}>[TIME] {sanitizePdfText(guide.duration)}</Text>
               
               {guide.steps.map((step, stepIdx) => (
                 <View key={stepIdx} style={styles.bulletRow}>
                   <Text style={styles.bullet}>{stepIdx + 1}.</Text>
-                  <Text style={styles.bulletText}>{step}</Text>
+                  <Text style={styles.bulletText}>{sanitizePdfText(step)}</Text>
                 </View>
               ))}
               
               {guide.tips.length > 0 && (
                 <View style={styles.tipBox}>
-                  <Text style={styles.tipTitle}>💡 Tips</Text>
+                  <Text style={styles.tipTitle}>[TIP] Tips</Text>
                   {guide.tips.map((tip, tipIdx) => (
-                    <Text key={tipIdx} style={styles.tipText}>• {tip}</Text>
+                    <Text key={tipIdx} style={styles.tipText}>- {sanitizePdfText(tip)}</Text>
                   ))}
                 </View>
               )}
@@ -739,59 +740,59 @@ export function CompanyGuidesPDF() {
         
         <Text style={styles.categoryTitle}>Key Navigation Paths</Text>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Dashboard: /dashboard - Company overview</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>AI Agents Hub: /dashboard/ai-agents - Configure AI agents</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Appointments: /dashboard/appointments - Manage bookings</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Employees: /dashboard/employees - Team management</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Knowledge Base: /dashboard/knowledge - Services, FAQs, Hours</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Settings: /dashboard/aura-quick-start - Configuration</Text>
         </View>
 
         <Text style={styles.categoryTitle}>5 AI Control Centers</Text>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Customer Portal Console - Booking, support, communication</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Field Operations Console - Dispatch, routing, technician management</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Business Management Ops Console - Quotes, invoices, inventory</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Marketing & Sales Ops Console - Campaigns, leads, referrals</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Analytics & Reports Ops Console - KPIs, performance, forecasting</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Support Resources</Text>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Help Page: /dashboard/help</Text>
         </View>
         <View style={styles.bulletRow}>
-          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Calculators: /dashboard/calculators - ROI and cost tools</Text>
         </View>
 
