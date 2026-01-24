@@ -215,11 +215,11 @@ const guideCategories = [
         title: 'Subscription Tiers',
         duration: '8 min',
         steps: [
-          'Single-Point ($497/mo): AI Receptionist, Follow-up, Review + Call to Book',
-          'Multi-Track ($897/mo): Adds Scheduling, Dispatch, ETA, Quoting, Invoicing',
-          'Pro Command ($1,497/mo): Full 23 operative suite including Social Media Signal & Analytics',
-          'All tiers include AI Voice Chat powered by ElevenLabs',
-          'Employee limits: 5 (Single-Point), 10 (Multi-Track), Unlimited (Command)'
+          'Aura Halo ($397/mo): Salons/Wellness - AI Receptionist, Scheduling, Follow-up, Proxy Voice Chat',
+          'Aura Core ($500/mo): AI-Assisted foundation with 3 AI Tools (no automation)',
+          'Single-Point ($1,500/mo): AI Receptionist, Follow-up, Review + Proxy Voice Chat',
+          'Multi-Track ($3,997/mo): 10 operatives - adds Scheduling, Dispatch, ETA, Quoting, Invoicing',
+          'Aura Pro Command ($6,997/mo): Full 23 operative suite with all 7 consoles (15+ technicians)'
         ],
         tips: ['Trial users get full Command tier access']
       },

@@ -493,10 +493,10 @@ export const BrandAssetGuidePDF: React.FC = () => (
           <View style={styles.colorCard}>
             <Text style={styles.colorCardTitle}>Subscription Tiers</Text>
             <ColorSwatch 
-              color="#3b82f6" 
-              name="Single-Point Blue" 
-              hex="#3b82f6" 
-              usage="Single-Point tier indicators"
+              color="#ec4899" 
+              name="Aura Halo Rose" 
+              hex="#ec4899" 
+              usage="Aura Halo tier indicators ($397/mo)"
             />
             <ColorSwatch 
               color="#8b5cf6" 
@@ -573,7 +573,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
         </View>
         <View style={{ marginBottom: 0 }}>
           <Text style={styles.fontName}>Monospace: JetBrains Mono</Text>
-          <Text style={[styles.fontDisplay, { fontFamily: 'Courier', fontSize: 18 }]}>$497/month</Text>
+          <Text style={[styles.fontDisplay, { fontFamily: 'Courier', fontSize: 18 }]}>$397-$6,997/month</Text>
           <Text style={styles.fontMeta}>Weights: 400 (Regular), 500 (Medium){'\n'}Use for: Code, data, pricing, technical specs</Text>
         </View>
       </View>

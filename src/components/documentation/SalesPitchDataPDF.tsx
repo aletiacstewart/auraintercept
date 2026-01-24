@@ -450,7 +450,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <Text style={styles.sectionSubtitle}>Quantifiable business impact for sales conversations</Text>
 
       <View style={styles.roiCard}>
-        <Text style={styles.roiTitle}>ROI Calculator: Multi-Track Tier ($897/mo)</Text>
+        <Text style={styles.roiTitle}>ROI Calculator: Multi-Track Tier ($3,997/mo)</Text>
         <View style={styles.roiRow}>
           <Text style={styles.roiLabel}>Missed calls recovered (23/mo × $500)</Text>
           <Text style={styles.roiValue}>+$11,500</Text>
@@ -469,11 +469,11 @@ export const SalesPitchDataPDF: React.FC = () => (
         </View>
         <View style={styles.roiRow}>
           <Text style={styles.roiLabel}>Aura Intercept cost</Text>
-          <Text style={styles.roiValue}>-$897</Text>
+          <Text style={styles.roiValue}>-$3,997</Text>
         </View>
         <View style={[styles.roiRow, styles.roiTotal]}>
           <Text style={styles.roiTotalLabel}>Net Monthly ROI</Text>
-          <Text style={styles.roiTotalValue}>+$13,803</Text>
+          <Text style={styles.roiTotalValue}>+$10,703</Text>
         </View>
       </View>
 
@@ -562,7 +562,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, styles.tableCellBold]}>Monthly Cost</Text>
-            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$497-$1,497</Text>
+            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$397-$6,997</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.error }]}>$3,500+</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.warning }]}>$200-$400</Text>
           </View>
@@ -573,9 +573,10 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.dataCardTitle}>Cost Comparison Over 12 Months</Text>
         <VisualDataRow label="Full-time Receptionist" value={100} display="$42,000" color={colors.error} />
         <VisualDataRow label="Part-time + After-hours" value={70} display="$28,000" color={colors.warning} />
-        <VisualDataRow label="Aura Pro Command Tier" value={43} display="$17,964" color={colors.success} />
-        <VisualDataRow label="Aura Multi-Track Tier" value={26} display="$10,764" color={colors.primary} />
-        <VisualDataRow label="Aura Single-Point Tier" value={14} display="$5,964" color={colors.accent} />
+        <VisualDataRow label="Aura Pro Command Tier" value={100} display="$83,964" color={colors.primary} />
+        <VisualDataRow label="Aura Multi-Track Tier" value={57} display="$47,964" color={colors.secondary} />
+        <VisualDataRow label="Aura Single-Point Tier" value={43} display="$18,000" color={colors.accent} />
+        <VisualDataRow label="Aura Halo Tier" value={11} display="$4,764" color={colors.success} />
       </View>
 
       <Footer />
@@ -602,7 +603,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.objectionText}>"It's too expensive for my small business."</Text>
         <Text style={styles.responseLabel}>Response</Text>
         <Text style={styles.responseText}>
-          "Let's do the math together. How many calls do you miss per week? [Wait for answer] At an average job value of $500, missing just 2 calls a week costs you $4,000/month in lost revenue. Our Single-Point tier is $497/month and captures every single one of those calls. That's not an expense—it's an investment with a 10x return. Most customers see ROI in their first week. What would 8 extra jobs a month do for your business?"
+          "Let's do the math together. How many calls do you miss per week? [Wait for answer] At an average job value of $500, missing just 2 calls a week costs you $4,000/month in lost revenue. Our Aura Halo tier is $397/month for salons or Single-Point at $1,500/month and captures every single one of those calls. That's not an expense—it's an investment with significant return. Most customers see ROI in their first week. What would 8 extra jobs a month do for your business?"
         </Text>
       </View>
 
@@ -698,41 +699,54 @@ export const SalesPitchDataPDF: React.FC = () => (
 
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
-          <Text style={styles.tierName}>Single-Point</Text>
-          <Text style={styles.tierPrice}>$497/mo</Text>
+          <Text style={styles.tierName}>Aura Halo (Salons/Wellness)</Text>
+          <Text style={styles.tierPrice}>$397/mo</Text>
         </View>
-        <Text style={styles.tierDesc}>Best for: Solo operators focused on lead capture and reputation</Text>
-        <Text style={styles.tierBullet}>• 1-2 person operations</Text>
+        <Text style={styles.tierDesc}>Best for: Nail salons, hair salons, barbers, massage centers</Text>
+        <Text style={styles.tierBullet}>• 1-3 person operations</Text>
+        <Text style={styles.tierBullet}>• Primary pain: Booking automation</Text>
+        <Text style={styles.tierBullet}>• Need scheduling + follow-up</Text>
+        <Text style={styles.tierBullet}>• Proxy Voice Chat included</Text>
+        <Text style={styles.tierBullet}>• 4 AI Operatives: Receptionist, Scheduling, Follow-up, Voice Chat</Text>
+      </View>
+
+      <View style={styles.tierCard}>
+        <View style={styles.tierHeader}>
+          <Text style={styles.tierName}>Single-Point</Text>
+          <Text style={styles.tierPrice}>$1,500/mo</Text>
+        </View>
+        <Text style={styles.tierDesc}>Best for: Service businesses focused on lead capture and reputation</Text>
+        <Text style={styles.tierBullet}>• 1-5 person operations</Text>
         <Text style={styles.tierBullet}>• Primary pain: Missed calls</Text>
-        <Text style={styles.tierBullet}>• Don't need scheduling automation</Text>
         <Text style={styles.tierBullet}>• Focus on building reviews</Text>
-        <Text style={styles.tierBullet}>• 3 AI Agents: Receptionist, Follow-up, Review</Text>
+        <Text style={styles.tierBullet}>• Proxy Voice Chat included</Text>
+        <Text style={styles.tierBullet}>• 3 AI Operatives: Receptionist, Follow-up, Review</Text>
       </View>
 
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
           <Text style={styles.tierName}>Multi-Track</Text>
-          <Text style={styles.tierPrice}>$897/mo</Text>
+          <Text style={styles.tierPrice}>$3,997/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: Growing teams needing scheduling and field ops</Text>
-        <Text style={styles.tierBullet}>• 3-10 employees</Text>
+        <Text style={styles.tierBullet}>• 5-10 employees</Text>
         <Text style={styles.tierBullet}>• Multiple technicians to dispatch</Text>
         <Text style={styles.tierBullet}>• Need route optimization</Text>
         <Text style={styles.tierBullet}>• Want automated quoting/invoicing</Text>
-        <Text style={styles.tierBullet}>• 10 AI Agents: All Single-Point + Scheduling, Dispatch, Route, ETA, Check-in, Quoting, Invoicing</Text>
+        <Text style={styles.tierBullet}>• 10 AI Operatives + 2 Consoles</Text>
       </View>
 
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
-          <Text style={styles.tierName}>Command</Text>
-          <Text style={styles.tierPrice}>$1,497/mo</Text>
+          <Text style={styles.tierName}>Aura Pro Command (Enterprise)</Text>
+          <Text style={styles.tierPrice}>$6,997/mo</Text>
         </View>
-        <Text style={styles.tierDesc}>Best for: Established businesses wanting full AI operations</Text>
-        <Text style={styles.tierBullet}>• 10+ employees or multi-location</Text>
+        <Text style={styles.tierDesc}>Best for: 15+ technicians or multi-location operations</Text>
+        <Text style={styles.tierBullet}>• 15+ employees or multi-location</Text>
         <Text style={styles.tierBullet}>• Need marketing automation</Text>
         <Text style={styles.tierBullet}>• Want comprehensive analytics</Text>
-        <Text style={styles.tierBullet}>• Social media management</Text>
-        <Text style={styles.tierBullet}>• 19 AI Agents: Full suite including Marketing, Analytics, Social Media</Text>
+        <Text style={styles.tierBullet}>• All 7 Consoles</Text>
+        <Text style={styles.tierBullet}>• All 23 AI Operatives: Full enterprise suite</Text>
       </View>
 
       <View style={styles.closingCard}>

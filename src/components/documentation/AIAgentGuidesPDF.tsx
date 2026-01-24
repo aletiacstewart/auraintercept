@@ -699,36 +699,58 @@ const COMMUNICATION_CHANNELS = [
 // Subscription tiers
 const TIERS = [
   {
+    name: 'Aura Halo',
+    price: '$397/month',
+    annualPrice: '$3,970/year',
+    consoles: ['Customer Portal'],
+    agentCount: 4,
+    agents: ['AI Receptionist (Triage)', 'Scheduling Agent', 'Follow-up Agent', 'Proxy Voice Chat'],
+    voiceIncluded: true,
+    note: 'Specialized for salons & wellness. Includes AI Receptionist, Scheduling, Follow-up, and Proxy Voice Chat.',
+  },
+  {
+    name: 'Aura Core',
+    price: '$500/month',
+    annualPrice: '$5,000/year',
+    consoles: ['None (AI Tools Only)'],
+    agentCount: 0,
+    agents: ['Talk to Aura (Chat Tool)', 'Social Media Signal (Content Tool)', 'Web Presence (1-Page Site)'],
+    voiceIncluded: false,
+    note: 'AI-Assisted Digital Foundation. No automation - manual workflow with AI tools.',
+  },
+  {
     name: 'Single-Point',
-    price: '$497/month',
-    annualPrice: '$4,970/year',
+    price: '$1,500/month',
+    annualPrice: '$15,000/year',
     consoles: ['Customer Portal'],
     agentCount: 3,
     agents: ['AI Receptionist (Triage)', 'Follow-up Agent', 'Review Agent'],
     voiceIncluded: true,
-    note: 'AI Voice (Chat + Outbound Calls) included. Online booking requires Multi-Track.',
+    note: 'AI-Automated lead intake and reputation management. Choice of Social Media Signal or Web Presence.',
   },
   {
     name: 'Multi-Track',
-    price: '$897/month',
-    annualPrice: '$8,970/year',
+    price: '$3,997/month',
+    annualPrice: '$39,970/year',
     consoles: ['Customer Portal', 'Field Operations'],
     agentCount: 10,
     agents: [
-      'AI Receptionist (Triage)', 'Scheduling Agent (Online Booking)', 'Follow-up Agent', 'Review Agent',
+      'AI Receptionist (Triage)', 'Scheduling Agent', 'Follow-up Agent', 'Review Agent',
       'Dispatch Agent', 'Route Agent', 'ETA Agent', 'Check-in Agent',
       'Quoting Agent', 'Invoice Agent',
     ],
     voiceIncluded: true,
+    note: 'Full field operations with 10 AI operatives and 2 consoles.',
   },
   {
-    name: 'Command',
-    price: '$1,497/month',
-    annualPrice: '$14,970/year',
-    consoles: ['All 6 Control Centers'],
+    name: 'Aura Pro Command',
+    price: '$6,997/month',
+    annualPrice: '$69,970/year',
+    consoles: ['All 7 Control Centers'],
     agentCount: 23,
-    agents: ['All 23 AI Agents'],
+    agents: ['All 23 AI Operatives'],
     voiceIncluded: true,
+    note: 'Enterprise automation. Qualified for 15+ technicians or multi-location operations.',
   },
 ];
 
@@ -763,19 +785,19 @@ const AIAgentGuidesPDF = () => (
       <Text style={styles.coverSubtitle}>Understanding Your AI-Powered Business Assistants</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>6</Text>
+          <Text style={styles.coverStatNumber}>7</Text>
           <Text style={styles.coverStatLabel}>Control Centers</Text>
         </View>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>23</Text>
-          <Text style={styles.coverStatLabel}>AI Agents</Text>
+          <Text style={styles.coverStatLabel}>AI Operatives</Text>
         </View>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>5</Text>
           <Text style={styles.coverStatLabel}>Integrations</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>3</Text>
+          <Text style={styles.coverStatNumber}>5</Text>
           <Text style={styles.coverStatLabel}>Pricing Tiers</Text>
         </View>
       </View>
