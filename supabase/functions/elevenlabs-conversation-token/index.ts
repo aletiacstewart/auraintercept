@@ -51,8 +51,8 @@ serve(async (req) => {
     const trialEndsAt = companyData?.trial_ends_at;
     const inTrial = trialEndsAt && new Date(trialEndsAt) > new Date();
 
-    // Voice is available for all paid tiers (Single-Point and above) or during trial
-    const voiceTiers = ["single_point", "multi_track", "command"];
+    // Voice is available for all paid tiers (Halo, Single-Point and above) or during trial
+    const voiceTiers = ["halo", "single_point", "multi_track", "command"];
     const hasVoiceAccess = inTrial || voiceTiers.includes(subscriptionTier);
 
     if (!hasVoiceAccess) {

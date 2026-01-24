@@ -280,9 +280,10 @@ export function getConsolesForTier(tier: SubscriptionTier): ConsoleHelpConfig[] 
   const tierHierarchy: Record<SubscriptionTier, number> = {
     free: 0,
     core: 1,
-    single_point: 2,
-    multi_track: 3,
-    command: 4,
+    halo: 2,
+    single_point: 3,
+    multi_track: 4,
+    command: 5,
   };
   
   const currentTierLevel = tierHierarchy[tier];
@@ -298,9 +299,10 @@ export function getFilteredFeatures(console: ConsoleHelpConfig, tier: Subscripti
   const tierHierarchy: Record<SubscriptionTier, number> = {
     free: 0,
     core: 1,
-    single_point: 2,
-    multi_track: 3,
-    command: 4,
+    halo: 2,
+    single_point: 3,
+    multi_track: 4,
+    command: 5,
   };
   
   const currentTierLevel = tierHierarchy[tier];
@@ -318,9 +320,10 @@ export function getFilteredAgents(console: ConsoleHelpConfig, tier: Subscription
   const tierHierarchy: Record<SubscriptionTier, number> = {
     free: 0,
     core: 1,
-    single_point: 2,
-    multi_track: 3,
-    command: 4,
+    halo: 2,
+    single_point: 3,
+    multi_track: 4,
+    command: 5,
   };
   
   const currentTierLevel = tierHierarchy[tier];
@@ -347,6 +350,18 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
       'Web Presence (1pg)',
       '2 Employee Accounts',
       'No AI agents included',
+    ],
+  },
+  halo: {
+    title: 'Aura Halo',
+    description: 'Perfect for salons, spas, and wellness businesses with AI scheduling and voice.',
+    highlights: [
+      'AI Receptionist for 24/7 customer engagement',
+      'Scheduling Agent for online booking',
+      'Follow-up Agent for SMS/Email confirmations',
+      'Talk to Aura (Text-Based) + Proxy Voice Chat',
+      'Customer Portal Console',
+      'Designed for nail salons, hair salons, barbers, massage centers',
     ],
   },
   single_point: {
