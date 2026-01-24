@@ -571,6 +571,29 @@ async function bookAppointment(supabase: any, companyId: string, params: any) {
     }).catch(err => console.error('Failed to send confirmation SMS:', err));
   }
 
+  // Send staff notification for new booking
+  if (appointment?.id) {
+    fetch(`${supabaseUrl}/functions/v1/send-staff-notification`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        companyId,
+        notificationType: 'new_booking',
+        title: 'New Appointment Booked',
+        message: `${customer_name} booked ${service.name} for ${new Date(datetime).toLocaleString()}`,
+        metadata: { 
+          appointmentId: appointment.id,
+          customerName: customer_name,
+          customerEmail: customer_email,
+          customerPhone: customer_phone,
+          serviceType: service.name,
+          datetime
+        },
+        recipientRole: 'all'
+      })
+    }).catch(err => console.error('Failed to send staff notification:', err));
+  }
+
   return { 
     success: true, 
     appointment,

@@ -76,6 +76,26 @@ serve(async (req) => {
         metadata: { original_status: callStatus },
       });
 
+      // Send staff notification for missed call
+      const supabaseUrl = Deno.env.get("SUPABASE_URL");
+      fetch(`${supabaseUrl}/functions/v1/send-staff-notification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          companyId,
+          notificationType: 'missed_call',
+          title: 'Missed Call',
+          message: `Missed call from ${callerNumber}`,
+          metadata: { 
+            callerNumber,
+            calledNumber,
+            callSid,
+            callStatus
+          },
+          recipientRole: 'all'
+        })
+      }).catch(err => console.error('Failed to send staff notification:', err));
+
       if (missedCallAction === 'disabled') {
         console.log('Missed call handling disabled for this company');
         return new Response('<?xml version="1.0" encoding="UTF-8"?><Response></Response>', {

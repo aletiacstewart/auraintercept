@@ -98,6 +98,7 @@ import {
 
 import IntegrationDocs from "./pages/IntegrationDocs";
 import PlatformGuides from "./pages/PlatformGuides";
+import NotificationSettingsPage from "./pages/NotificationSettingsPage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -214,6 +215,7 @@ const App = () => {
               <Route path="/dashboard/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
               <Route path="/dashboard/business-ops-hub" element={<ProtectedRoute><BusinessOpsHub /></ProtectedRoute>} />
               <Route path="/dashboard/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
+              <Route path="/dashboard/notification-settings" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />
               <Route path="/dashboard/architecture" element={<ProtectedRoute><Architecture /></ProtectedRoute>} />
               <Route path="/dashboard/calculators" element={<ProtectedRoute><Calculators /></ProtectedRoute>} />
               <Route path="/dashboard/export-docs" element={<ProtectedRoute><ExportDocumentation /></ProtectedRoute>} />
