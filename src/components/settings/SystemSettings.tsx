@@ -23,7 +23,7 @@ export function SystemSettings() {
             <Info className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
             <div className="text-sm">
               <p className="font-medium text-foreground mb-1">When to use Force Refresh</p>
-              <ul className="list-disc list-inside space-y-1 text-foreground/80">
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                 <li>The app seems outdated or shows old data</li>
                 <li>You're seeing unexpected behavior after an update</li>
                 <li>Features aren't working as expected</li>
@@ -43,7 +43,7 @@ export function SystemSettings() {
             </Button>
           </div>
           
-          <p className="text-xs text-foreground/70">
+          <p className="text-xs text-muted-foreground">
             This will clear all cached data, unregister service workers, and reload the application 
             to ensure you're running the latest version.
           </p>
@@ -57,23 +57,23 @@ export function SystemSettings() {
         <CardContent>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-foreground/70">Build Date</p>
+              <p className="text-muted-foreground">Build Date</p>
               <p className="font-medium text-foreground">{new Date().toLocaleDateString()}</p>
             </div>
             <div>
-              <p className="text-foreground/70">PWA Status</p>
+              <p className="text-muted-foreground">PWA Status</p>
               <p className="font-medium text-foreground">
                 {'serviceWorker' in navigator ? 'Enabled' : 'Not Available'}
               </p>
             </div>
             <div>
-              <p className="text-foreground/70">Cache Storage</p>
+              <p className="text-muted-foreground">Cache Storage</p>
               <p className="font-medium text-foreground">
                 {'caches' in window ? 'Available' : 'Not Available'}
               </p>
             </div>
             <div>
-              <p className="text-foreground/70">Online Status</p>
+              <p className="text-muted-foreground">Online Status</p>
               <p className="font-medium text-foreground">
                 {navigator.onLine ? 'Online' : 'Offline'}
               </p>
