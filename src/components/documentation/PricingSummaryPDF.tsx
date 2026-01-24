@@ -425,7 +425,7 @@ const BulletPoint = ({ children }: { children: string }) => (
 
 const FeatureItem = ({ children }: { children: string }) => (
   <View style={styles.featureItem}>
-    <Text style={styles.featureCheck}>✓</Text>
+    <Text style={styles.featureCheck}>-</Text>
     <Text style={styles.featureText}>{children}</Text>
   </View>
 );

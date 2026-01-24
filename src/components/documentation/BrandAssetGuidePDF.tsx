@@ -445,13 +445,13 @@ export const BrandAssetGuidePDF: React.FC = () => (
       </View>
 
       <View style={styles.guidelinesCard}>
-        <Text style={styles.guidelinesTitle}>💡 COLOR USAGE GUIDELINES</Text>
+        <Text style={styles.guidelinesTitle}>COLOR USAGE GUIDELINES</Text>
         <Text style={styles.guidelinesText}>
-          • Always maintain a 4.5:1 contrast ratio for text accessibility{'\n'}
-          • Use Aura Blue (#214ebb) as the dominant brand color (60-70%){'\n'}
-          • Indigo and Cyan should be used sparingly (20-30%){'\n'}
-          • Never use more than 3 colors in a single composition{'\n'}
-          • For gradients, always go from Aura Blue to Indigo (left-to-right or top-to-bottom)
+          - Always maintain a 4.5:1 contrast ratio for text accessibility{'\n'}
+          - Use Aura Blue (#214ebb) as the dominant brand color (60-70%){'\n'}
+          - Indigo and Cyan should be used sparingly (20-30%){'\n'}
+          - Never use more than 3 colors in a single composition{'\n'}
+          - For gradients, always go from Aura Blue to Indigo (left-to-right or top-to-bottom)
         </Text>
       </View>
 
