@@ -19,23 +19,23 @@ export default function Analytics() {
     <DashboardLayout>
       <PageContainer>
         <div className="space-y-6">
-        <PageHeader
-          icon={BarChart3}
-          title="Analytics"
-          description="View insights and performance metrics"
-          showAuraBar
-        />
-        {showCompanyView ? (
-          <CompanyAnalytics companyId={selectedCompanyId} showCompanyName />
-        ) : userRole === 'platform_admin' ? (
-          <PlatformAnalytics />
-        ) : companyId ? (
-          <CompanyAnalytics companyId={companyId} />
-        ) : (
-          <div className="flex items-center justify-center h-64">
-            <p className="text-white/70">No company associated with your account.</p>
-          </div>
-        )}
+          <PageHeader
+            icon={BarChart3}
+            title="Analytics"
+            description="View insights and performance metrics"
+            showAuraBar
+          />
+          {showCompanyView ? (
+            <CompanyAnalytics companyId={selectedCompanyId} showCompanyName />
+          ) : userRole === 'platform_admin' ? (
+            <PlatformAnalytics />
+          ) : companyId ? (
+            <CompanyAnalytics companyId={companyId} />
+          ) : (
+            <div className="flex items-center justify-center h-64">
+              <p className="text-muted-foreground">No company associated with your account.</p>
+            </div>
+          )}
       </div>
       </PageContainer>
     </DashboardLayout>
