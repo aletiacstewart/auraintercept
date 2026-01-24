@@ -84,6 +84,13 @@ interface FeatureSection {
 
 const sections: FeatureSection[] = [
   {
+    title: 'Ideal For',
+    features: [
+      { name: 'Business Size', core: '1-2 employees', halo: 'Salons & Spas', singlePoint: '3-5 employees', multiTrack: '6-10 employees', command: '15+ technicians' },
+      { name: 'Use Case', core: 'Digital presence tools', halo: 'Appointment-based', singlePoint: 'Lead capture focus', multiTrack: 'Field operations', command: 'Multi-location / Enterprise' },
+    ],
+  },
+  {
     title: 'AI Tools (Core Only)',
     features: [
       { name: 'Talk to Aura (Chat Tool)', core: 'check', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
@@ -299,8 +306,9 @@ export const PricingComparisonTable = () => {
               <div className="text-sky-300">Multi-Track</div>
               <div className="text-xs font-normal text-white/70">$3,997/mo</div>
             </th>
-            <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
-              <div>Command</div>
+            <th className="text-center py-2.5 px-3 font-semibold bg-amber-500/20 border-x border-amber-400/30 text-sm">
+              <div className="text-amber-300">Command</div>
+              <div className="text-[10px] font-normal text-amber-400/80">Enterprise</div>
               <div className="text-xs font-normal text-white/70">$6,997/mo</div>
             </th>
           </tr>

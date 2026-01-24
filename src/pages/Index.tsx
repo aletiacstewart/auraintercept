@@ -862,14 +862,15 @@ export default function Index() {
             {/* Command Plan */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
               <CardContent className="p-5">
+                <Badge className="mb-2 bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">Enterprise</Badge>
                 <h3 className="text-lg font-bold mb-1">Aura Pro Command</h3>
-                <p className="text-[10px] text-card-foreground/60 mb-1">(Enterprise)</p>
+                <p className="text-[10px] text-amber-400/80 mb-2">For 15+ technician teams & multi-location operations</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold">$6,997</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$69,970/year (Save $13,994)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">Full business automation suite.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">Full business automation suite with dedicated onboarding.</p>
                 
                 <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
@@ -889,17 +890,17 @@ export default function Index() {
                     <span className="text-xs">25 Employee Accounts</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Social + Website Included</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    <span className="text-xs text-amber-400">Dedicated Implementation</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Full Automation</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    <span className="text-xs text-amber-400">Priority Support</span>
                   </div>
                 </div>
 
-                <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/auth?mode=company')}>
-                  Start Free Trial
+                <Button variant="outline" size="sm" className="w-full border-amber-500/50 hover:bg-amber-500/10" onClick={() => navigate('/contact?tier=command')}>
+                  Schedule Consultation
                 </Button>
                 <button 
                   onClick={() => setShowPlanComparison(!showPlanComparison)}
