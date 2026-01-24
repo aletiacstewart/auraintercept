@@ -47,6 +47,7 @@ export const AGENT_DISPLAY_NAMES: Record<string, string> = {
   revenue: 'Revenue Agent',
   forecast: 'Forecast Agent',
   analytics: 'Analytics Agent',
+  assistant: 'Aura Assistant',
 };
 
 // Console configurations with tier-based content - FULLY UPDATED FOR LAUNCH
@@ -396,20 +397,21 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   command: {
     title: 'Aura Pro Command',
-    description: 'Full business automation suite with 18+ AI agents for growing enterprises.',
+    description: 'Enterprise automation with full 23-operative suite for 15+ technicians or multi-location.',
     highlights: [
       'Everything in Multi-Track',
+      'All 23 AI Operatives',
+      'All 7 Consoles',
       'Business Operations console',
       'Marketing & Sales automation',
       'Social Media Signal Ops (6 platforms)',
       'Analytics & Reports (8 tabs)',
       'Inventory management with reorder alerts',
       'Warranty claims tracking',
-      'Multi-company management',
-      'Employee and customer database',
-      'Campaign and promo code tools',
-      'AI content generation',
+      'Multi-location support',
+      'White-label branding',
       '25 Employee Accounts',
+      '$6,997/mo (Custom implementation)',
     ],
   },
 };

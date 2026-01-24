@@ -18,6 +18,8 @@ const colors = {
   amberLight: '#fef3c7',
   green: '#10b981',
   greenLight: '#d1fae5',
+  rose: '#f43f5e',
+  roseLight: '#ffe4e6',
 };
 
 const styles = StyleSheet.create({
@@ -122,7 +124,6 @@ const styles = StyleSheet.create({
     fontSize: 8,
     color: colors.gray,
   },
-  // Table styles
   table: {
     marginVertical: 12,
   },
@@ -159,7 +160,6 @@ const styles = StyleSheet.create({
     fontSize: 9,
     textAlign: 'left',
   },
-  // Pricing cards
   pricingCard: {
     backgroundColor: colors.lightGray,
     padding: 16,
@@ -177,6 +177,14 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.accent,
     borderWidth: 2,
     borderColor: colors.accent,
+  },
+  pricingCardRose: {
+    backgroundColor: colors.roseLight,
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.rose,
   },
   pricingTierName: {
     fontSize: 16,
@@ -218,7 +226,6 @@ const styles = StyleSheet.create({
     color: colors.dark,
     flex: 1,
   },
-  // Notice boxes
   noticeBox: {
     backgroundColor: colors.amberLight,
     padding: 12,
@@ -246,7 +253,6 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: colors.green,
   },
-  // TOC styles
   tocItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -263,7 +269,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: colors.primary,
   },
-  // Bullet points
   bulletPoint: {
     flexDirection: 'row',
     marginBottom: 6,
@@ -279,31 +284,31 @@ const styles = StyleSheet.create({
     fontSize: 10,
     lineHeight: 1.5,
   },
-  // Summary grid
   summaryGrid: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
     marginVertical: 12,
+    flexWrap: 'wrap',
   },
   summaryCard: {
     flex: 1,
+    minWidth: 90,
     backgroundColor: colors.lightGray,
-    padding: 12,
+    padding: 10,
     borderRadius: 4,
     alignItems: 'center',
   },
   summaryPrice: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 700,
     color: colors.primary,
     marginBottom: 4,
   },
   summaryLabel: {
-    fontSize: 10,
+    fontSize: 9,
     color: colors.gray,
     textAlign: 'center',
   },
-  // Two-column layout
   twoColumn: {
     flexDirection: 'row',
     gap: 16,
@@ -325,58 +330,83 @@ const styles = StyleSheet.create({
   },
 });
 
-// Subscription tier data
+// Updated 5-Tier subscription data
 const SUBSCRIPTION_TIERS = {
+  halo: {
+    name: 'Aura Halo',
+    monthlyPrice: 397,
+    annualPrice: 3970,
+    annualSavings: 794,
+    implementationFee: 499,
+    operatives: 4,
+    consoles: 1,
+    employees: 3,
+    bestFor: 'Nail salons, hair salons, barbers, massage centers, spas, and wellness businesses.',
+    hasVoice: true,
+    hasAutomation: true,
+  },
+  core: {
+    name: 'Aura Core',
+    monthlyPrice: 500,
+    annualPrice: 5000,
+    annualSavings: 1000,
+    implementationFee: 499,
+    operatives: 0,
+    consoles: 0,
+    employees: 2,
+    bestFor: 'Businesses wanting AI-ready tools (Talk to Aura, Social Media Signal, Web Presence) without automated workflows.',
+    hasVoice: false,
+    hasAutomation: false,
+  },
   singlePoint: {
     name: 'Single-Point',
-    monthlyPrice: 497,
-    annualPrice: 4970,
-    annualSavings: 994,
-    agents: ['AI Receptionist (Triage)', 'Follow-up Agent', 'Review Agent'],
-    consoles: ['Customer Portal Console'],
-    appointments: 'Unlimited',
-    reminders: 'Email + SMS + Voice',
-    employees: '5 included',
-    additionalEmployees: '$25/mo per 10 employees',
-    bestFor: 'Small service companies getting started with AI automation. Includes AI Voice. Saves 10+ hours/week in lead intake.',
-    voiceIncluded: true,
+    monthlyPrice: 1500,
+    annualPrice: 15000,
+    annualSavings: 3000,
+    implementationFee: 499,
+    operatives: 3,
+    consoles: 1,
+    employees: 5,
+    bestFor: 'Small service companies focused on lead capture, reputation management, and AI voice/chat engagement.',
+    hasVoice: true,
+    hasAutomation: true,
   },
   multiTrack: {
     name: 'Multi-Track',
-    monthlyPrice: 897,
-    annualPrice: 8970,
-    annualSavings: 1794,
-    agents: ['AI Receptionist (Triage)', 'Scheduling Agent (Booking)', 'Follow-up Agent', 'Review Agent', 'Dispatch Agent', 'Route Agent', 'ETA Agent', 'Check-in Agent', 'Quoting Agent', 'Invoice Agent'],
-    consoles: ['Customer Portal Console', 'Field Operations Console'],
-    appointments: 'Unlimited',
-    reminders: 'Email + SMS + Voice',
-    employees: '10 included',
-    additionalEmployees: '$25/mo per 10 employees',
-    bestFor: 'Growing companies with field technicians needing dispatch automation and online booking.',
-    voiceIncluded: true,
+    monthlyPrice: 3997,
+    annualPrice: 39970,
+    annualSavings: 7994,
+    implementationFee: 499,
+    operatives: 10,
+    consoles: 2,
+    employees: 10,
+    bestFor: 'Growing companies with field technicians needing dispatch automation, online booking, and route optimization.',
+    hasVoice: true,
+    hasAutomation: true,
   },
   command: {
-    name: 'Command',
-    monthlyPrice: 1497,
-    annualPrice: 14970,
-    annualSavings: 2994,
-    agents: 'All 23 AI Agents',
-    consoles: 'All 6 Control Centers',
-    appointments: 'Unlimited',
-    reminders: 'Email + SMS + Voice',
-    employees: 'Unlimited',
-    additionalEmployees: 'N/A',
-    bestFor: 'Large service companies requiring full AI automation, voice capabilities, and total brand control.',
-    voiceIncluded: true,
+    name: 'Aura Pro Command',
+    monthlyPrice: 6997,
+    annualPrice: 69970,
+    annualSavings: 13994,
+    implementationFee: 'Custom',
+    operatives: 23,
+    consoles: 7,
+    employees: 25,
+    bestFor: 'Large service companies with 15+ technicians or multi-location operations requiring full enterprise automation.',
+    hasVoice: true,
+    hasAutomation: true,
+    isEnterprise: true,
   },
 };
 
 const THIRD_PARTY_INTEGRATIONS = [
-  { name: 'Twilio', purpose: 'SMS & Voice Calls', cost: '$1.15/number + ~$30-100/mo usage', required: 'Multi-Track & Command' },
-  { name: 'ElevenLabs', purpose: 'AI Voice Synthesis', cost: '$0-99+/month based on usage', required: 'Command (Voice)' },
+  { name: 'Twilio', purpose: 'SMS & Voice Calls', cost: '$1.15/number + ~$30-100/mo usage', required: 'Halo+ (for Voice)' },
+  { name: 'ElevenLabs', purpose: 'AI Voice Synthesis', cost: '$0-99+/month based on usage', required: 'Halo+ (for Voice)' },
   { name: 'Resend', purpose: 'Email Notifications', cost: '$0-20+/month based on volume', required: 'All Tiers' },
-  { name: 'Google Calendar', purpose: 'Calendar Sync', cost: 'Free', required: 'All Tiers (Optional)' },
-  { name: 'Stripe (Company)', purpose: 'Invoice Payments', cost: '2.9% + $0.30/transaction', required: 'All Tiers' },
+  { name: 'Google Calendar', purpose: 'Calendar Sync', cost: 'Free', required: 'Optional (Halo+)' },
+  { name: 'Stripe', purpose: 'Invoice Payments', cost: '2.9% + $0.30/transaction', required: 'All Tiers' },
+  { name: 'Social Media Accounts', purpose: 'Content Publishing', cost: 'Free (platform accounts)', required: 'Core+ (Social Signal)' },
 ];
 
 const Header = ({ title }: { title: string }) => (
@@ -406,22 +436,22 @@ const PricingSummaryPDF = () => (
     <Page size="A4" style={styles.coverPage}>
       <Text style={styles.coverBrand}>AURA INTERCEPT</Text>
       <Text style={styles.coverTitle}>Subscription Pricing Guide</Text>
-      <Text style={styles.coverSubtitle}>Complete Pricing Breakdown for AI-Powered Service Business Platform</Text>
+      <Text style={styles.coverSubtitle}>Complete 5-Tier Pricing Breakdown for AI-Powered Service Business Platform</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>3</Text>
+          <Text style={styles.coverStatNumber}>5</Text>
           <Text style={styles.coverStatLabel}>Pricing Tiers</Text>
         </View>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>23</Text>
-          <Text style={styles.coverStatLabel}>AI Agents</Text>
+          <Text style={styles.coverStatLabel}>AI Operatives</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>6</Text>
-          <Text style={styles.coverStatLabel}>Control Centers</Text>
+          <Text style={styles.coverStatNumber}>7</Text>
+          <Text style={styles.coverStatLabel}>Consoles</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>$497</Text>
+          <Text style={styles.coverStatNumber}>$397</Text>
           <Text style={styles.coverStatLabel}>Starting Price</Text>
         </View>
       </View>
@@ -439,14 +469,15 @@ const PricingSummaryPDF = () => (
       <View style={{ marginTop: 20 }}>
         {[
           { title: 'Executive Pricing Summary', page: '3' },
-          { title: 'Tier Comparison Table', page: '4' },
-          { title: 'Single-Point Tier Details', page: '5' },
-          { title: 'Multi-Track Tier Details', page: '6' },
-          { title: 'Command Tier Details', page: '7' },
-          { title: 'Annual Discount Savings', page: '8' },
-          { title: '3rd Party Integration Requirements', page: '9' },
-          { title: 'Billing Clarifications', page: '10' },
-          { title: 'Total Cost Examples', page: '11' },
+          { title: '5-Tier Comparison Table', page: '4' },
+          { title: 'Aura Halo Tier (Salons/Wellness)', page: '5' },
+          { title: 'Aura Core Tier (AI-Assisted Tools)', page: '6' },
+          { title: 'Single-Point Tier Details', page: '7' },
+          { title: 'Multi-Track Tier Details', page: '8' },
+          { title: 'Aura Pro Command Tier (Enterprise)', page: '9' },
+          { title: 'Annual Discount Savings', page: '10' },
+          { title: '3rd Party Integration Requirements', page: '11' },
+          { title: 'Add-Ons & Implementation Fees', page: '12' },
         ].map((item, i) => (
           <View key={i} style={styles.tocItem}>
             <Text style={styles.tocTitle}>{item.title}</Text>
@@ -467,29 +498,41 @@ const PricingSummaryPDF = () => (
       <Text style={styles.sectionTitle}>Executive Pricing Summary</Text>
       
       <Text style={styles.paragraph}>
-        Aura Intercept offers three subscription tiers designed to scale with your business needs. 
-        All tiers include access to our AI-powered platform with varying levels of agents, consoles, 
-        and features. Save 16% with annual billing.
+        Aura Intercept offers five subscription tiers designed to scale with your business needs. 
+        All automated tiers include access to our AI-powered platform with varying levels of operatives, 
+        consoles, and features. Save 16% with annual billing.
       </Text>
 
       <View style={styles.summaryGrid}>
-        <View style={styles.summaryCard}>
-          <Text style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>SINGLE-POINT</Text>
-          <Text style={styles.summaryPrice}>$497</Text>
+        <View style={[styles.summaryCard, { backgroundColor: colors.roseLight }]}>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA HALO</Text>
+          <Text style={styles.summaryPrice}>$397</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$4,970/year (Save ~$1,000)</Text>
+          <Text style={{ fontSize: 8, color: colors.rose, marginTop: 4 }}>Salons/Wellness</Text>
+        </View>
+        <View style={styles.summaryCard}>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA CORE</Text>
+          <Text style={styles.summaryPrice}>$500</Text>
+          <Text style={styles.summaryLabel}>per month</Text>
+          <Text style={{ fontSize: 8, color: colors.gray, marginTop: 4 }}>Tools Only</Text>
+        </View>
+        <View style={styles.summaryCard}>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>SINGLE-POINT</Text>
+          <Text style={styles.summaryPrice}>$1,500</Text>
+          <Text style={styles.summaryLabel}>per month</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>AI-Automated</Text>
         </View>
         <View style={[styles.summaryCard, { borderWidth: 2, borderColor: colors.accent }]}>
-          <Text style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: colors.accent }}>MULTI-TRACK</Text>
-          <Text style={styles.summaryPrice}>$897</Text>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6, color: colors.accent }}>MULTI-TRACK</Text>
+          <Text style={styles.summaryPrice}>$3,997</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$8,970/year (Save ~$1,800)</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>Popular</Text>
         </View>
         <View style={styles.summaryCard}>
-          <Text style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>COMMAND</Text>
-          <Text style={styles.summaryPrice}>$1,497</Text>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>PRO COMMAND</Text>
+          <Text style={styles.summaryPrice}>$6,997</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 9, color: colors.green, marginTop: 4 }}>$14,970/year (Save ~$3,000)</Text>
+          <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>Enterprise</Text>
         </View>
       </View>
 
@@ -498,33 +541,36 @@ const PricingSummaryPDF = () => (
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Feature</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Single-Point</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Multi-Track</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Halo</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Core</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Single</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Multi</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { feature: 'AI Agents', singlePoint: '3', multiTrack: '10', command: '19' },
-          { feature: 'Control Centers', singlePoint: '1', multiTrack: '2', command: '5' },
-          { feature: 'Appointments/Month', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
-          { feature: 'Reminder Channels', singlePoint: 'Email + SMS + Voice', multiTrack: 'Email + SMS + Voice', command: 'Email + SMS + Voice' },
-          { feature: 'AI Voice (Chat + Calls)', singlePoint: '✓', multiTrack: '✓', command: '✓' },
-          { feature: 'Online Booking', singlePoint: '—', multiTrack: '✓', command: '✓' },
-          { feature: 'Employee Accounts', singlePoint: '5', multiTrack: '10', command: 'Unlimited' },
+          { feature: 'AI Operatives', halo: '4', core: '0', single: '3', multi: '10', command: '23' },
+          { feature: 'Consoles', halo: '1', core: '0', single: '1', multi: '2', command: '7' },
+          { feature: 'Employees', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
+          { feature: 'AI Automation', halo: '✓', core: '—', single: '✓', multi: '✓', command: '✓' },
+          { feature: 'Proxy Voice Chat', halo: '✓', core: '—', single: '✓', multi: '✓', command: '✓' },
+          { feature: 'Online Booking', halo: '✓', core: '—', single: '—', multi: '✓', command: '✓' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.feature}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>{row.singlePoint}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>{row.multiTrack}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.halo}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.core}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.single}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.multi}</Text>
             <Text style={[styles.tableCell, { flex: 1 }]}>{row.command}</Text>
           </View>
         ))}
       </View>
 
       <View style={styles.infoBox}>
-        <Text style={styles.noticeTitle}>Additional Employee Pricing</Text>
+        <Text style={styles.noticeTitle}>Implementation Fees</Text>
         <Text style={styles.noticeText}>
-          Single-Point and Multi-Track tiers can add additional employee accounts at $25/month per 10 employees. 
-          Command tier includes unlimited employee accounts at no additional cost.
+          All tiers include a one-time $499 implementation fee (Custom for Aura Pro Command).
+          Annual billing saves 16% (~$800 to $14,000 depending on tier).
         </Text>
       </View>
 
@@ -534,50 +580,49 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Tier Comparison Table */}
+    {/* 5-Tier Comparison Table */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Complete Tier Comparison</Text>
+      <Text style={styles.sectionTitle}>Complete 5-Tier Comparison</Text>
 
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 2.5 }]}>Feature Category</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Single-Point</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Multi-Track</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Command</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Halo</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Core</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Single</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Multi</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { category: 'Monthly Price', singlePoint: '$497', multiTrack: '$897', command: '$1,497' },
-          { category: 'Annual Price', singlePoint: '$4,970', multiTrack: '$8,970', command: '$14,970' },
-          { category: 'Annual Savings', singlePoint: '~$1,000', multiTrack: '~$1,800', command: '~$3,000' },
-          { category: '', singlePoint: '', multiTrack: '', command: '' },
-          { category: 'AI Agents Included', singlePoint: '3', multiTrack: '10', command: 'All 23' },
-          { category: 'Control Centers', singlePoint: '1', multiTrack: '2', command: 'All 7' },
-          { category: 'Appointments/Month', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
-          { category: '', singlePoint: '', multiTrack: '', command: '' },
-          { category: 'Email Reminders', singlePoint: '✓', multiTrack: '✓', command: '✓' },
-          { category: 'SMS Reminders', singlePoint: '✓', multiTrack: '✓', command: '✓' },
-          { category: 'Voice Reminders', singlePoint: '✓', multiTrack: '✓', command: '✓' },
-          { category: 'AI Voice (Chat + Calls)', singlePoint: '✓', multiTrack: '✓', command: '✓' },
-          { category: 'Online Booking Agent', singlePoint: '—', multiTrack: '✓', command: '✓' },
-          { category: '', singlePoint: '', multiTrack: '', command: '' },
-          { category: 'Employee Accounts', singlePoint: '5', multiTrack: '10', command: 'Unlimited' },
-          { category: 'Additional Employees', singlePoint: '$25/mo per 10', multiTrack: '$25/mo per 10', command: 'Included' },
-          { category: 'Widget Access', singlePoint: '✓', multiTrack: '✓', command: '✓' },
-          { category: '', singlePoint: '', multiTrack: '', command: '' },
-          { category: 'Customer Portal', singlePoint: '✓', multiTrack: '✓', command: '✓' },
-          { category: 'Field Operations', singlePoint: '—', multiTrack: '✓', command: '✓' },
-          { category: 'Business Management', singlePoint: '—', multiTrack: '—', command: '✓' },
-          { category: 'Marketing & Sales', singlePoint: '—', multiTrack: '—', command: '✓' },
-          { category: 'Analytics Console', singlePoint: '—', multiTrack: '—', command: '✓' },
+          { category: 'Monthly Price', halo: '$397', core: '$500', single: '$1,500', multi: '$3,997', command: '$6,997' },
+          { category: 'Annual Price', halo: '$3,970', core: '$5,000', single: '$15,000', multi: '$39,970', command: '$69,970' },
+          { category: 'Annual Savings', halo: '~$800', core: '~$1,000', single: '~$3,000', multi: '~$8,000', command: '~$14,000' },
+          { category: '', halo: '', core: '', single: '', multi: '', command: '' },
+          { category: 'AI Operatives', halo: '4', core: '0', single: '3', multi: '10', command: 'All 23' },
+          { category: 'Consoles', halo: '1', core: '0', single: '1', multi: '2', command: 'All 7' },
+          { category: 'Employees', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
+          { category: '', halo: '', core: '', single: '', multi: '', command: '' },
+          { category: 'AI Automation', halo: '✓', core: '—', single: '✓', multi: '✓', command: '✓' },
+          { category: 'Talk to Aura (Text)', halo: '✓', core: '✓', single: '✓', multi: '✓', command: '✓' },
+          { category: 'Proxy Voice Chat', halo: '✓', core: '—', single: '✓', multi: '✓', command: '✓' },
+          { category: 'Online Booking', halo: '✓', core: '—', single: '—', multi: '✓', command: '✓' },
+          { category: '', halo: '', core: '', single: '', multi: '', command: '' },
+          { category: 'Customer Portal', halo: '✓', core: '—', single: '✓', multi: '✓', command: '✓' },
+          { category: 'Field Operations', halo: '—', core: '—', single: '—', multi: '✓', command: '✓' },
+          { category: 'Business Ops', halo: '—', core: '—', single: '—', multi: '—', command: '✓' },
+          { category: 'Marketing Console', halo: '—', core: '—', single: '—', multi: '—', command: '✓' },
+          { category: 'Analytics Console', halo: '—', core: '—', single: '—', multi: '—', command: '✓' },
         ].map((row, i) => (
-          <View key={i} style={row.category === '' ? { height: 8 } : (i % 2 === 0 ? styles.tableRow : styles.tableRowAlt)}>
+          <View key={i} style={row.category === '' ? { height: 6 } : (i % 2 === 0 ? styles.tableRow : styles.tableRowAlt)}>
             {row.category !== '' && (
               <>
                 <Text style={[styles.tableCellLeft, { flex: 2.5, fontWeight: row.category.includes('Price') || row.category.includes('Savings') ? 700 : 400 }]}>{row.category}</Text>
-                <Text style={[styles.tableCell, { flex: 1.5 }]}>{row.singlePoint}</Text>
-                <Text style={[styles.tableCell, { flex: 1.5 }]}>{row.multiTrack}</Text>
-                <Text style={[styles.tableCell, { flex: 1.5 }]}>{row.command}</Text>
+                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.halo}</Text>
+                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.core}</Text>
+                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.single}</Text>
+                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.multi}</Text>
+                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.command}</Text>
               </>
             )}
           </View>
@@ -590,52 +635,53 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Single-Point Tier Details */}
+    {/* Aura Halo Tier */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Single-Point Tier</Text>
+      <Text style={styles.sectionTitle}>Aura Halo Tier</Text>
 
-      <View style={styles.pricingCard}>
-        <Text style={styles.pricingTierName}>Single-Point</Text>
-        <Text style={styles.pricingPrice}>$497/month</Text>
-        <Text style={styles.pricingAnnual}>or $4,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$1,000 with annual billing</Text>
+      <View style={styles.pricingCardRose}>
+        <Text style={{ fontSize: 9, color: colors.rose, fontWeight: 700, marginBottom: 4 }}>BEAUTY & WELLNESS</Text>
+        <Text style={styles.pricingTierName}>Aura Halo</Text>
+        <Text style={styles.pricingPrice}>$397/month</Text>
+        <Text style={styles.pricingAnnual}>or $3,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$800 with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
-          {SUBSCRIPTION_TIERS.singlePoint.bestFor}
+          {SUBSCRIPTION_TIERS.halo.bestFor}
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>Included AI Agents (3)</Text>
+      <Text style={styles.subsectionTitle}>Included AI Operatives (4)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>AI Receptionist (Triage) - First point of contact, routes customers to right agent</FeatureItem>
-        <FeatureItem>Follow-up Agent - Automated reminders and confirmations via email, SMS, and voice</FeatureItem>
-        <FeatureItem>Review Agent - Customer feedback collection for Google, Yelp, Facebook</FeatureItem>
+        <FeatureItem>AI Receptionist - 24/7 customer engagement and triage</FeatureItem>
+        <FeatureItem>Scheduling Agent - Online appointment booking</FeatureItem>
+        <FeatureItem>Follow-up Agent - SMS/Email confirmations and reminders</FeatureItem>
+        <FeatureItem>Aura Assistant - Voice and text navigation</FeatureItem>
       </View>
 
-      <Text style={styles.subsectionTitle}>Control Centers (1)</Text>
+      <Text style={styles.subsectionTitle}>Console (1)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Customer Portal Console - Self-service appointment management</FeatureItem>
+        <FeatureItem>Customer Portal Console - Self-service booking and management</FeatureItem>
       </View>
 
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Unlimited appointments</FeatureItem>
-        <FeatureItem>Email + SMS + Voice reminders</FeatureItem>
-        <FeatureItem>Proxy Voice Chat and Outbound Calling (requires Twilio + ElevenLabs)</FeatureItem>
-        <FeatureItem>5 employees included ($25/month per 10 additional)</FeatureItem>
-        <FeatureItem>Talk to Aura chat widget</FeatureItem>
-        <FeatureItem>Web Presence Included</FeatureItem>
+        <FeatureItem>Talk to Aura (Text-Based Chat)</FeatureItem>
+        <FeatureItem>Proxy Voice Chat (Speech-Based) - requires ElevenLabs</FeatureItem>
+        <FeatureItem>SMS/Email appointment reminders</FeatureItem>
+        <FeatureItem>3 employee accounts included</FeatureItem>
+        <FeatureItem>$499 implementation fee</FeatureItem>
       </View>
 
-      <Text style={styles.subsectionTitle}>Key Benefits</Text>
-      <View style={styles.featureList}>
-        <FeatureItem>24/7 AI-powered chat and voice for customer inquiries</FeatureItem>
-        <FeatureItem>Call-to-book via AI Voice (online booking requires Multi-Track)</FeatureItem>
-        <FeatureItem>Multi-channel appointment reminders</FeatureItem>
-        <FeatureItem>Customer self-service portal</FeatureItem>
-        <FeatureItem>Saves 10+ hours/week in lead intake</FeatureItem>
+      <View style={styles.noticeBox}>
+        <Text style={styles.noticeTitle}>Designed for Salons & Wellness</Text>
+        <Text style={styles.noticeText}>
+          Aura Halo is specifically designed for nail salons, hair salons, barbers, massage centers, 
+          spas, and wellness businesses. It includes online booking and voice capabilities at an 
+          accessible price point.
+        </Text>
       </View>
 
       <View style={styles.footer}>
@@ -644,7 +690,110 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Multi-Track Tier Details */}
+    {/* Aura Core Tier */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Aura Intercept - Pricing Guide" />
+      <Text style={styles.sectionTitle}>Aura Core Tier</Text>
+
+      <View style={styles.pricingCard}>
+        <Text style={{ fontSize: 9, color: colors.gray, fontWeight: 700, marginBottom: 4 }}>AI-ASSISTED (NO AUTOMATION)</Text>
+        <Text style={styles.pricingTierName}>Aura Core</Text>
+        <Text style={styles.pricingPrice}>$500/month</Text>
+        <Text style={styles.pricingAnnual}>or $5,000/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$1,000 with annual billing</Text>
+        
+        <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
+        <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
+          {SUBSCRIPTION_TIERS.core.bestFor}
+        </Text>
+      </View>
+
+      <Text style={styles.subsectionTitle}>Included AI Tools (3 Tools - No Automation)</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>Talk to Aura (Text-Based Chat Tool) - AI chat for customer inquiries</FeatureItem>
+        <FeatureItem>Social Media Signal - AI content creation for 6 platforms</FeatureItem>
+        <FeatureItem>Web Presence - 1-page professional website</FeatureItem>
+      </View>
+
+      <View style={styles.noticeBox}>
+        <Text style={styles.noticeTitle}>⚠️ Important: No AI Automation</Text>
+        <Text style={styles.noticeText}>
+          Aura Core is an AI-assisted tier with tools that require manual operation. It does NOT 
+          include automated workflows, AI operatives, or Proxy Voice Chat. All tools are manually 
+          operated by your team. This tier is designed for businesses that want AI-ready tools 
+          without automated customer engagement.
+        </Text>
+      </View>
+
+      <Text style={styles.subsectionTitle}>What's NOT Included</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>No AI Operatives (0 automation)</FeatureItem>
+        <FeatureItem>No Consoles</FeatureItem>
+        <FeatureItem>No Proxy Voice Chat - text only</FeatureItem>
+        <FeatureItem>No automated follow-ups or reminders</FeatureItem>
+        <FeatureItem>No automated booking</FeatureItem>
+      </View>
+
+      <Text style={styles.subsectionTitle}>Platform Features</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>2 employee accounts included</FeatureItem>
+        <FeatureItem>$499 implementation fee</FeatureItem>
+        <FeatureItem>Manual workflow operation</FeatureItem>
+      </View>
+
+      <View style={styles.footer}>
+        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
+      </View>
+    </Page>
+
+    {/* Single-Point Tier */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Aura Intercept - Pricing Guide" />
+      <Text style={styles.sectionTitle}>Single-Point Tier</Text>
+
+      <View style={styles.pricingCard}>
+        <Text style={styles.pricingTierName}>Single-Point</Text>
+        <Text style={styles.pricingPrice}>$1,500/month</Text>
+        <Text style={styles.pricingAnnual}>or $15,000/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$3,000 with annual billing</Text>
+        
+        <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
+        <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
+          {SUBSCRIPTION_TIERS.singlePoint.bestFor}
+        </Text>
+      </View>
+
+      <Text style={styles.subsectionTitle}>Included AI Operatives (3)</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>AI Receptionist (Triage) - First point of contact, routes customers</FeatureItem>
+        <FeatureItem>Follow-up Agent - Automated reminders via email, SMS, and voice</FeatureItem>
+        <FeatureItem>Review Agent - Customer feedback collection for Google, Yelp, Facebook</FeatureItem>
+      </View>
+
+      <Text style={styles.subsectionTitle}>Console (1)</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>Customer Portal Console - Self-service management and engagement</FeatureItem>
+      </View>
+
+      <Text style={styles.subsectionTitle}>Platform Features</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>Talk to Aura (Text-Based Chat)</FeatureItem>
+        <FeatureItem>Proxy Voice Chat (Speech-Based) - requires ElevenLabs</FeatureItem>
+        <FeatureItem>AI Outbound Calls for reminders - requires Twilio</FeatureItem>
+        <FeatureItem>Choice of Social Media Signal OR Web Presence (included)</FeatureItem>
+        <FeatureItem>5 employees included ($25/month per 10 additional)</FeatureItem>
+        <FeatureItem>Call to Book (no online scheduling - use Multi-Track for that)</FeatureItem>
+        <FeatureItem>$499 implementation fee</FeatureItem>
+      </View>
+
+      <View style={styles.footer}>
+        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
+      </View>
+    </Page>
+
+    {/* Multi-Track Tier */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
       <Text style={styles.sectionTitle}>Multi-Track Tier</Text>
@@ -652,9 +801,9 @@ const PricingSummaryPDF = () => (
       <View style={styles.pricingCardHighlight}>
         <Text style={{ fontSize: 9, color: colors.accent, fontWeight: 700, marginBottom: 4 }}>MOST POPULAR</Text>
         <Text style={styles.pricingTierName}>Multi-Track</Text>
-        <Text style={styles.pricingPrice}>$897/month</Text>
-        <Text style={styles.pricingAnnual}>or $8,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$1,800 with annual billing</Text>
+        <Text style={styles.pricingPrice}>$3,997/month</Text>
+        <Text style={styles.pricingAnnual}>or $39,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$8,000 with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
@@ -662,7 +811,7 @@ const PricingSummaryPDF = () => (
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>Included AI Agents (10)</Text>
+      <Text style={styles.subsectionTitle}>Included AI Operatives (10)</Text>
       <View style={styles.featureList}>
         <FeatureItem>AI Receptionist (Triage) - First point of contact and routing</FeatureItem>
         <FeatureItem>Scheduling Agent (Booking) - Natural language appointment booking</FeatureItem>
@@ -676,7 +825,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Invoice Agent - Automated invoice creation and payment tracking</FeatureItem>
       </View>
 
-      <Text style={styles.subsectionTitle}>Control Centers (2)</Text>
+      <Text style={styles.subsectionTitle}>Consoles (2)</Text>
       <View style={styles.featureList}>
         <FeatureItem>Customer Portal Console - Self-service booking and management</FeatureItem>
         <FeatureItem>Field Operations Console - Dispatch, routing, and technician management</FeatureItem>
@@ -684,10 +833,8 @@ const PricingSummaryPDF = () => (
 
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Unlimited appointments</FeatureItem>
-        <FeatureItem>Email + SMS reminders</FeatureItem>
-        <FeatureItem>Base employee allocation</FeatureItem>
-        <FeatureItem>Manages up to 5 Field Techs automatically</FeatureItem>
+        <FeatureItem>10 employees included ($25/month per 10 additional)</FeatureItem>
+        <FeatureItem>$499 implementation fee</FeatureItem>
       </View>
 
       <View style={styles.footer}>
@@ -696,16 +843,17 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Command Tier Details */}
+    {/* Aura Pro Command Tier */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Command Tier</Text>
+      <Text style={styles.sectionTitle}>Aura Pro Command Tier</Text>
 
       <View style={styles.pricingCard}>
-        <Text style={styles.pricingTierName}>Command</Text>
-        <Text style={styles.pricingPrice}>$1,497/month</Text>
-        <Text style={styles.pricingAnnual}>or $14,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$3,000 with annual billing</Text>
+        <Text style={{ fontSize: 9, color: colors.primary, fontWeight: 700, marginBottom: 4 }}>ENTERPRISE</Text>
+        <Text style={styles.pricingTierName}>Aura Pro Command</Text>
+        <Text style={styles.pricingPrice}>$6,997/month</Text>
+        <Text style={styles.pricingAnnual}>or $69,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$14,000 with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
@@ -713,30 +861,38 @@ const PricingSummaryPDF = () => (
         </Text>
       </View>
 
+      <View style={styles.noticeBox}>
+        <Text style={styles.noticeTitle}>Enterprise Qualification</Text>
+        <Text style={styles.noticeText}>
+          Aura Pro Command is designed for service companies with 15+ technicians or multi-location 
+          operations. Custom implementation and onboarding included. Contact sales for consultation.
+        </Text>
+      </View>
+
       <Text style={styles.subsectionTitle}>Included AI Operatives (All 23)</Text>
       <Text style={styles.paragraph}>
-        Full access to all 23 AI operatives including Customer Engagement (4), Field Operations (4), 
-        Business Management (5), Marketing & Sales (3), Social Media Signal (3), and Analytics & Reports (4) operatives.
+        Full access to all 23 AI operatives including Customer Portal (4), Field Operations (4), 
+        Business Management (5), Marketing & Sales (2), Social Media Signal (3), and Analytics (4) operatives, plus Aura Assistant.
       </Text>
 
-      <Text style={styles.subsectionTitle}>Control Centers (All 5)</Text>
+      <Text style={styles.subsectionTitle}>Consoles (All 7)</Text>
       <View style={styles.featureList}>
         <FeatureItem>Customer Portal Console - Complete self-service experience</FeatureItem>
-        <FeatureItem>Field Operations Console - Full dispatch and routing capabilities</FeatureItem>
-        <FeatureItem>Business Mgt Ops Console - Invoicing, inventory, and warranties</FeatureItem>
-        <FeatureItem>Marketing & Sales Console - Campaigns, leads, and referrals</FeatureItem>
-        <FeatureItem>Analytics & Reports Console - KPIs, forecasting, and performance tracking</FeatureItem>
+        <FeatureItem>Field Operations Console - Full dispatch and routing</FeatureItem>
+        <FeatureItem>Business Operations Console - Invoicing, inventory, warranties</FeatureItem>
+        <FeatureItem>Marketing & Sales Console - Campaigns, leads, referrals</FeatureItem>
+        <FeatureItem>Social Media Signal Ops Console - 6-platform content management</FeatureItem>
+        <FeatureItem>Analytics & Reports Console - KPIs, forecasting, performance</FeatureItem>
+        <FeatureItem>AI Operatives Hub - Central operative management</FeatureItem>
       </View>
 
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Unlimited appointments</FeatureItem>
-        <FeatureItem>Email + SMS + Voice reminders</FeatureItem>
-        <FeatureItem>Unlimited employee accounts</FeatureItem>
+        <FeatureItem>25 employee accounts included</FeatureItem>
+        <FeatureItem>Multi-location support</FeatureItem>
+        <FeatureItem>White-label branding</FeatureItem>
+        <FeatureItem>Custom implementation (fee varies)</FeatureItem>
         <FeatureItem>Priority support</FeatureItem>
-        <FeatureItem>AI voice synthesis with ElevenLabs</FeatureItem>
-        <FeatureItem>Advanced analytics and forecasting</FeatureItem>
-        <FeatureItem>Total Business Automation & Brand Control</FeatureItem>
       </View>
 
       <View style={styles.footer}>
@@ -752,7 +908,7 @@ const PricingSummaryPDF = () => (
 
       <Text style={styles.paragraph}>
         Save 16% on your subscription by choosing annual billing. All plans include the same features 
-        whether you choose monthly or annual billing - the only difference is the savings!
+        whether you choose monthly or annual billing.
       </Text>
 
       <Text style={styles.subsectionTitle}>Monthly vs Annual Comparison</Text>
@@ -760,15 +916,17 @@ const PricingSummaryPDF = () => (
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Tier</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Monthly Rate</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1.2 }]}>Monthly Path (12 mo)</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Annual Rate</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>You Save</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Monthly</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1.2 }]}>12 Months</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Annual</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Savings</Text>
         </View>
         {[
-          { tier: 'Single-Point', monthly: '$497', yearlyPath: '$5,964', annual: '$4,970', savings: '~$1,000' },
-          { tier: 'Multi-Track', monthly: '$897', yearlyPath: '$10,764', annual: '$8,970', savings: '~$1,800' },
-          { tier: 'Command', monthly: '$1,497', yearlyPath: '$17,964', annual: '$14,970', savings: '~$3,000' },
+          { tier: 'Aura Halo', monthly: '$397', yearlyPath: '$4,764', annual: '$3,970', savings: '~$800' },
+          { tier: 'Aura Core', monthly: '$500', yearlyPath: '$6,000', annual: '$5,000', savings: '~$1,000' },
+          { tier: 'Single-Point', monthly: '$1,500', yearlyPath: '$18,000', annual: '$15,000', savings: '~$3,000' },
+          { tier: 'Multi-Track', monthly: '$3,997', yearlyPath: '$47,964', annual: '$39,970', savings: '~$8,000' },
+          { tier: 'Pro Command', monthly: '$6,997', yearlyPath: '$83,964', annual: '$69,970', savings: '~$14,000' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 1.5, fontWeight: 600 }]}>{row.tier}</Text>
@@ -790,34 +948,6 @@ const PricingSummaryPDF = () => (
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>Combined Savings Potential</Text>
-      <Text style={styles.paragraph}>
-        When combined with efficient use of 3rd party integrations, annual billing can significantly 
-        reduce your total cost of ownership for the platform.
-      </Text>
-
-      <View style={styles.table}>
-        <View style={styles.tableHeader}>
-          <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Scenario</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Monthly Path</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Annual Path</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Total Savings</Text>
-        </View>
-        {[
-          { scenario: 'Single-Point (1 year)', monthly: '$5,964', annual: '$4,970', savings: '~$1,000' },
-          { scenario: 'Multi-Track (1 year)', monthly: '$10,764', annual: '$8,970', savings: '~$1,800' },
-          { scenario: 'Command (1 year)', monthly: '$17,964', annual: '$14,970', savings: '~$3,000' },
-          { scenario: 'Command (3 years)', monthly: '$53,892', annual: '$44,910', savings: '~$9,000' },
-        ].map((row, i) => (
-          <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
-            <Text style={[styles.tableCellLeft, { flex: 1.5, fontWeight: 600 }]}>{row.scenario}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>{row.monthly}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>{row.annual}</Text>
-            <Text style={[styles.tableCell, { flex: 1, color: colors.green, fontWeight: 700 }]}>{row.savings}</Text>
-          </View>
-        ))}
-      </View>
-
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
         <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
@@ -833,8 +963,7 @@ const PricingSummaryPDF = () => (
         <Text style={styles.noticeTitle}>⚠️ Important: Separate Billing</Text>
         <Text style={styles.noticeText}>
           A valid credit card is required for all 3rd party integration accounts. These services are 
-          billed separately from your Aura Intercept subscription. Companies must set up and manage 
-          their own accounts with each provider.
+          billed separately from your Aura Intercept subscription.
         </Text>
       </View>
 
@@ -857,56 +986,28 @@ const PricingSummaryPDF = () => (
         ))}
       </View>
 
-      <Text style={styles.subsectionTitle}>Integration Details</Text>
-
+      <Text style={styles.subsectionTitle}>Integration Notes</Text>
       <View style={styles.twoColumn}>
         <View style={styles.column}>
           <View style={styles.columnCard}>
-            <Text style={styles.columnTitle}>Twilio (SMS & Voice)</Text>
+            <Text style={styles.columnTitle}>Voice Features (Halo+)</Text>
             <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 8 }}>
-              Required for SMS reminders and voice calls. Pricing based on usage:
+              Required for Proxy Voice Chat and AI Calls:
             </Text>
-            <BulletPoint>Phone number: ~$1.15/month</BulletPoint>
-            <BulletPoint>SMS: ~$0.0075/message</BulletPoint>
-            <BulletPoint>Voice: ~$0.013/minute</BulletPoint>
-            <BulletPoint>Estimated: $30-100/month</BulletPoint>
+            <BulletPoint>Twilio: SMS & phone calls</BulletPoint>
+            <BulletPoint>ElevenLabs: AI voice synthesis</BulletPoint>
+            <BulletPoint>Not needed for Core tier (text-only)</BulletPoint>
           </View>
         </View>
         <View style={styles.column}>
           <View style={styles.columnCard}>
-            <Text style={styles.columnTitle}>ElevenLabs (Voice AI)</Text>
+            <Text style={styles.columnTitle}>Content Features (Core+)</Text>
             <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 8 }}>
-              Required for Enterprise tier voice reminders:
+              Required for Social Media Signal:
             </Text>
-            <BulletPoint>Free tier: 10,000 characters/month</BulletPoint>
-            <BulletPoint>Starter: $5/month (30k chars)</BulletPoint>
-            <BulletPoint>Creator: $22/month (100k chars)</BulletPoint>
-            <BulletPoint>Pro: $99/month (500k chars)</BulletPoint>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.twoColumn}>
-        <View style={styles.column}>
-          <View style={styles.columnCard}>
-            <Text style={styles.columnTitle}>Resend (Email)</Text>
-            <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 8 }}>
-              Email delivery for notifications and reminders:
-            </Text>
-            <BulletPoint>Free: 100 emails/day</BulletPoint>
-            <BulletPoint>Pro: $20/month (50k emails)</BulletPoint>
-            <BulletPoint>Additional emails at usage rates</BulletPoint>
-          </View>
-        </View>
-        <View style={styles.column}>
-          <View style={styles.columnCard}>
-            <Text style={styles.columnTitle}>Google Calendar</Text>
-            <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 8 }}>
-              Optional calendar sync integration:
-            </Text>
-            <BulletPoint>Free to use with Google account</BulletPoint>
-            <BulletPoint>Two-way sync with appointments</BulletPoint>
-            <BulletPoint>OAuth authentication required</BulletPoint>
+            <BulletPoint>Connect social accounts via OAuth</BulletPoint>
+            <BulletPoint>IG, FB, LinkedIn, TikTok, GMB, SMS</BulletPoint>
+            <BulletPoint>Free platform accounts required</BulletPoint>
           </View>
         </View>
       </View>
@@ -917,155 +1018,64 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* Billing Clarifications */}
+    {/* Add-Ons & Implementation Fees */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Billing Clarifications</Text>
+      <Text style={styles.sectionTitle}>Add-Ons & Implementation Fees</Text>
 
+      <Text style={styles.subsectionTitle}>Premium Add-Ons</Text>
       <Text style={styles.paragraph}>
-        Understanding the two types of billing associated with using Aura Intercept is essential for 
-        accurate budgeting and financial planning.
+        Available for Single-Point and Multi-Track tiers. Command tier includes all features.
       </Text>
-
-      <View style={styles.twoColumn}>
-        <View style={styles.column}>
-          <View style={[styles.columnCard, { borderLeftWidth: 4, borderLeftColor: colors.primary }]}>
-            <Text style={[styles.columnTitle, { color: colors.primary }]}>Platform Subscription</Text>
-            <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 6 }}>Billed by Aura Intercept</Text>
-            <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 10 }}>
-              Your subscription payment for access to the AI platform and agents.
-            </Text>
-            <BulletPoint>Monthly or Annual billing cycle</BulletPoint>
-            <BulletPoint>Managed through platform dashboard</BulletPoint>
-            <BulletPoint>Single invoice for AI platform access</BulletPoint>
-            <BulletPoint>Includes all agents and consoles for your tier</BulletPoint>
-            <BulletPoint>Upgrade/downgrade at any time</BulletPoint>
-          </View>
-        </View>
-        <View style={styles.column}>
-          <View style={[styles.columnCard, { borderLeftWidth: 4, borderLeftColor: colors.amber }]}>
-            <Text style={[styles.columnTitle, { color: colors.amber }]}>Company Stripe Account</Text>
-            <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 6 }}>Separate - Required for Invoice Payments</Text>
-            <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 10 }}>
-              Your company's own Stripe account for processing customer payments.
-            </Text>
-            <BulletPoint>Companies must connect their own Stripe</BulletPoint>
-            <BulletPoint>Required for processing customer invoices</BulletPoint>
-            <BulletPoint>Transaction fees: 2.9% + $0.30</BulletPoint>
-            <BulletPoint>Funds go directly to your account</BulletPoint>
-            <BulletPoint>You manage payouts and disputes</BulletPoint>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.noticeBox}>
-        <Text style={styles.noticeTitle}>⚠️ Important Notice</Text>
-        <Text style={styles.noticeText}>
-          Aura Intercept does not process invoice payments on behalf of companies. Each company must 
-          set up and connect their own Stripe account to collect payments from their customers. This 
-          ensures funds go directly to your business account and you maintain full control over your 
-          payment processing.
-        </Text>
-      </View>
-
-      <Text style={styles.subsectionTitle}>Payment Processing Flow</Text>
-      
-      <View style={styles.featureList}>
-        <FeatureItem>Customer receives invoice generated by Invoice Agent</FeatureItem>
-        <FeatureItem>Invoice includes Stripe payment link (connected to YOUR Stripe account)</FeatureItem>
-        <FeatureItem>Customer pays via Stripe checkout</FeatureItem>
-        <FeatureItem>Payment is deposited to your company's bank account</FeatureItem>
-        <FeatureItem>Aura Intercept updates invoice status automatically</FeatureItem>
-      </View>
-
-      <Text style={styles.subsectionTitle}>Setting Up Your Stripe Account</Text>
-      
-      <Text style={styles.paragraph}>
-        To enable invoice payments, navigate to Settings → Payment Connections in your Aura Intercept 
-        dashboard. You'll be guided through connecting your existing Stripe account or creating a new 
-        one. Once connected, invoice payments will be processed through your account.
-      </Text>
-
-      <View style={styles.footer}>
-        <Text>Aura Intercept - AI-Powered Service Platform</Text>
-        <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
-      </View>
-    </Page>
-
-    {/* Total Cost Examples */}
-    <Page size="A4" style={styles.page}>
-      <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Total Cost Examples</Text>
-
-      <Text style={styles.paragraph}>
-        The following examples illustrate typical monthly costs including platform subscription and 
-        estimated 3rd party integration usage. Actual costs will vary based on your specific usage.
-      </Text>
-
-      <Text style={styles.subsectionTitle}>Monthly Cost Scenarios</Text>
 
       <View style={styles.table}>
         <View style={styles.tableHeader}>
-          <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Scenario</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Subscription</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1.2 }]}>3rd Party Est.</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Total/Month</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Add-On</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Monthly Price</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Description</Text>
         </View>
         {[
-          { scenario: 'Single-Point (Email Only)', sub: '$497', third: '~$20', total: '~$517' },
-          { scenario: 'Multi-Track (Light SMS)', sub: '$897', third: '~$80', total: '~$977' },
-          { scenario: 'Multi-Track (Heavy SMS)', sub: '$897', third: '~$150', total: '~$1,047' },
-          { scenario: 'Command (Light Voice)', sub: '$1,497', third: '~$150', total: '~$1,647' },
-          { scenario: 'Command (Full Voice)', sub: '$1,497', third: '~$300', total: '~$1,797' },
+          { addon: 'Social Media Signal', price: '$150/mo', desc: 'AI content creation for 6 platforms' },
+          { addon: 'Web Presence', price: '$150/mo', desc: '1-page professional website' },
+          { addon: 'Additional Employees', price: '$25/mo', desc: 'Per 10 additional employees' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
-            <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.scenario}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>{row.sub}</Text>
-            <Text style={[styles.tableCell, { flex: 1.2 }]}>{row.third}</Text>
-            <Text style={[styles.tableCell, { flex: 1, fontWeight: 700 }]}>{row.total}</Text>
+            <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.addon}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.price}</Text>
+            <Text style={[styles.tableCellLeft, { flex: 2 }]}>{row.desc}</Text>
           </View>
         ))}
       </View>
 
-      <Text style={styles.subsectionTitle}>Annual Cost Comparison</Text>
-
+      <Text style={styles.subsectionTitle}>Implementation Fees</Text>
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Tier</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1.2 }]}>Monthly Billing</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1.2 }]}>Annual Billing</Text>
-          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Annual Savings</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Implementation Fee</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Includes</Text>
         </View>
         {[
-          { tier: 'Single-Point + 3rd Party Est.', monthly: '~$6,200/year', annual: '~$5,200/year', savings: '~$1,000' },
-          { tier: 'Multi-Track + 3rd Party Est.', monthly: '~$11,700/year', annual: '~$9,900/year', savings: '~$1,800' },
-          { tier: 'Command + 3rd Party Est.', monthly: '~$21,600/year', annual: '~$18,600/year', savings: '~$3,000' },
+          { tier: 'Aura Halo', fee: '$499', includes: 'Onboarding, setup, training' },
+          { tier: 'Aura Core', fee: '$499', includes: 'Onboarding, setup, training' },
+          { tier: 'Single-Point', fee: '$499', includes: 'Onboarding, setup, training' },
+          { tier: 'Multi-Track', fee: '$499', includes: 'Onboarding, setup, training' },
+          { tier: 'Aura Pro Command', fee: 'Custom', includes: 'Enterprise onboarding, custom setup' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.tier}</Text>
-            <Text style={[styles.tableCell, { flex: 1.2 }]}>{row.monthly}</Text>
-            <Text style={[styles.tableCell, { flex: 1.2 }]}>{row.annual}</Text>
-            <Text style={[styles.tableCell, { flex: 1, color: colors.green, fontWeight: 700 }]}>{row.savings}</Text>
+            <Text style={[styles.tableCell, { flex: 1, fontWeight: 700 }]}>{row.fee}</Text>
+            <Text style={[styles.tableCellLeft, { flex: 2 }]}>{row.includes}</Text>
           </View>
         ))}
       </View>
 
       <View style={styles.infoBox}>
-        <Text style={styles.noticeTitle}>ROI Considerations</Text>
+        <Text style={styles.noticeTitle}>Questions?</Text>
         <Text style={styles.noticeText}>
-          Most service businesses report significant ROI from AI automation:{'\n\n'}
-          • Average time saved: 20+ hours/week on scheduling and customer service{'\n'}
-          • Reduced no-shows: Up to 35% reduction with automated reminders{'\n'}
-          • Increased bookings: 24/7 AI availability captures after-hours inquiries{'\n'}
-          • Customer satisfaction: Faster response times improve reviews
+          Contact our sales team to discuss your specific needs and get a customized quote based on 
+          your expected usage patterns. Enterprise customers receive dedicated onboarding and support.
         </Text>
       </View>
-
-      <Text style={styles.subsectionTitle}>Questions?</Text>
-      <Text style={styles.paragraph}>
-        Contact our sales team to discuss your specific needs and get a customized quote based on your 
-        expected usage patterns.
-      </Text>
 
       <View style={styles.footer}>
         <Text>Aura Intercept - AI-Powered Service Platform</Text>
