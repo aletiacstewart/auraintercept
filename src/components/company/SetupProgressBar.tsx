@@ -150,6 +150,18 @@ export const SetupProgressBar = forwardRef<HTMLDivElement, object>(function Setu
             // Check if any marketing campaigns have been created
             completed: (campaignsCount || 0) > 0,
           },
+          {
+            id: 'ask-aura',
+            label: 'Ask Aura',
+            // Check if AI voice greeting has been configured
+            completed: !!company?.ai_voice_greeting,
+          },
+          {
+            id: 'system',
+            label: 'System',
+            // Check if service categories have been configured
+            completed: (company?.service_categories?.length || 0) > 0,
+          },
         ];
 
         setSteps([...baseSteps, ...adminSteps]);
