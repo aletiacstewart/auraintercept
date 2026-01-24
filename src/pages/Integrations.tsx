@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { QuickStartWizard } from '@/components/integrations/QuickStartWizard';
 import { CRMConnectionSettings } from '@/components/integrations/CRMConnectionSettings';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -15,12 +14,6 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import {
   Dialog,
   DialogContent,
@@ -39,13 +32,11 @@ import {
   Eye, 
   EyeOff,
   Loader2,
-  Rocket,
   BookOpen,
   Calendar,
   Rss,
   Server,
   ArrowRight,
-  Users,
   Puzzle,
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
@@ -147,7 +138,6 @@ export default function Integrations() {
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
-  const [showQuickStart, setShowQuickStart] = useState(false);
 
   const { data: integrations, isLoading } = useQuery({
     queryKey: ['integrations', companyId],
@@ -269,20 +259,7 @@ export default function Integrations() {
             featureColor="integrations"
             showAuraBar
           />
-          <Button onClick={() => setShowQuickStart(true)} className="gap-2">
-            <Rocket className="w-4 h-4" />
-            Quick Start
-          </Button>
         </div>
-
-        <QuickStartWizard
-          open={showQuickStart}
-          onOpenChange={setShowQuickStart}
-          onComplete={() => queryClient.invalidateQueries({ queryKey: ['integrations'] })}
-          hasResend={!!integrations?.resend_api_key}
-          hasTwilio={!!(integrations?.twilio_account_sid && integrations?.twilio_auth_token && integrations?.twilio_phone_number)}
-          hasElevenLabs={!!integrations?.elevenlabs_api_key}
-        />
 
         {/* Setup Progress */}
         {(() => {
