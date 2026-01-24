@@ -408,7 +408,7 @@ export function PlatformAdminDashboard() {
             <Building2 className="w-5 h-5 text-primary" />
             Company Breakdown
           </CardTitle>
-          <CardDescription className="text-white/70">
+          <CardDescription className="text-muted-foreground">
             Per-company metrics and performance
           </CardDescription>
         </CardHeader>
@@ -424,26 +424,26 @@ export function PlatformAdminDashboard() {
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-slate-600">
-                      <TableHead className="text-white/70">Company</TableHead>
-                      <TableHead className="text-white/70 text-center">Users</TableHead>
-                      <TableHead className="text-white/70 text-center">Customers</TableHead>
-                      <TableHead className="text-white/70 text-center">Leads</TableHead>
-                      <TableHead className="text-white/70 text-center">Appointments</TableHead>
-                      <TableHead className="text-white/70 text-center">Quotes</TableHead>
-                      <TableHead className="text-white/70 text-center">Invoices</TableHead>
-                      <TableHead className="text-white/70 text-center">Revenue</TableHead>
-                      <TableHead className="text-white/70 text-center">Inventory</TableHead>
-                      <TableHead className="text-white/70 text-center">Campaigns</TableHead>
+                    <TableRow className="border-border">
+                      <TableHead>Company</TableHead>
+                      <TableHead className="text-center">Users</TableHead>
+                      <TableHead className="text-center">Customers</TableHead>
+                      <TableHead className="text-center">Leads</TableHead>
+                      <TableHead className="text-center">Appointments</TableHead>
+                      <TableHead className="text-center">Quotes</TableHead>
+                      <TableHead className="text-center">Invoices</TableHead>
+                      <TableHead className="text-center">Revenue</TableHead>
+                      <TableHead className="text-center">Inventory</TableHead>
+                      <TableHead className="text-center">Campaigns</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {(showAllCompanies ? companyBreakdown : companyBreakdown?.slice(0, 5))?.map((company) => (
-                      <TableRow key={company.id} className="border-slate-700 hover:bg-slate-700/30 cursor-pointer" onClick={() => navigate(`/dashboard/analytics?company=${company.id}`)}>
-                        <TableCell className="font-medium text-white">
+                      <TableRow key={company.id} className="border-border hover:bg-muted/50 cursor-pointer" onClick={() => navigate(`/dashboard/analytics?company=${company.id}`)}>
+                        <TableCell className="font-medium text-foreground">
                           <div className="flex items-center gap-2 group">
                             {company.name}
-                            <ExternalLink className="w-3.5 h-3.5 text-white/40 group-hover:text-primary transition-colors" />
+                            <ExternalLink className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
                           </div>
                         </TableCell>
                         <TableCell className="text-center">
