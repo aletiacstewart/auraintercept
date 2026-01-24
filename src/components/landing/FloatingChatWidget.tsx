@@ -116,16 +116,16 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
         {/* Floating Button */}
         <Button
           onClick={() => isOpen ? setIsOpen(false) : handleOpen()}
-          className={`fixed bottom-6 right-6 z-[9999] h-14 w-14 rounded-full shadow-2xl hover:opacity-90 transition-all duration-300 ${
+          className={`fixed bottom-6 right-6 z-[9999] h-11 w-11 rounded-full shadow-lg hover:opacity-90 transition-all duration-300 ${
             isOpen ? 'rotate-0' : 'animate-pulse'
           }`}
           style={buttonStyle}
           size="icon"
         >
           {isOpen ? (
-            <X className="w-6 h-6 text-white" />
+            <X className="w-5 h-5 text-white" />
           ) : (
-            <MessageCircle className="w-6 h-6 text-white" />
+            <MessageCircle className="w-5 h-5 text-white" />
           )}
         </Button>
       </div>
