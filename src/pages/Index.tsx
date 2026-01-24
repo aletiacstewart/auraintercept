@@ -997,7 +997,7 @@ export default function Index() {
                 </div>
                 <p className="text-xs text-white/70 mb-2">Calendar Sync</p>
                 <p className="text-xs text-white/90 font-medium">Free - Unlimited</p>
-                <p className="text-xs text-white/60 mt-1">Optional for: Single-Point, Multi-Track, Command</p>
+                <p className="text-xs text-white/60 mt-1">Optional for: Halo, Single-Point, Multi-Track, Command</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1008,7 +1008,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">Email Notifications</p>
                 <p className="text-xs text-white/90 font-medium">Free: 3,000 emails/mo</p>
                 <p className="text-xs text-white/70">Then $20/mo for 50k emails ($0.0004/email over)</p>
-                <p className="text-xs text-white/60 mt-1">Required for: Single-Point, Multi-Track, Command</p>
+                <p className="text-xs text-white/60 mt-1">Required for: Halo, Single-Point, Multi-Track, Command</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1019,7 +1019,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">AI Voice Synthesis (Voice features only)</p>
                 <p className="text-xs text-white/90 font-medium">Free: 10,000 chars/mo</p>
                 <p className="text-xs text-white/70">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
-                <p className="text-xs text-white/60 mt-1">Required for: AI Voice features (not needed for Text Chat Widget)</p>
+                <p className="text-xs text-white/60 mt-1">Required for: Halo, Single-Point, Multi-Track, Command (not needed for Core)</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1030,7 +1030,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">SMS & Voice Calls</p>
                 <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-xs text-white/70">$1.15/number • $0.0079/SMS • $0.014/min calls</p>
-                <p className="text-xs text-white/60 mt-1">Required for: SMS & Voice calls (not needed for Text Chat Widget)</p>
+                <p className="text-xs text-white/60 mt-1">Required for: Halo, Single-Point, Multi-Track, Command (not needed for Core)</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1041,7 +1041,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">Invoice Payments</p>
                 <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
                 <p className="text-xs text-white/70">2.9% + $0.30 per successful transaction</p>
-                <p className="text-xs text-white/60 mt-1">Required for: Multi-Track, Command (Invoicing)</p>
+                <p className="text-xs text-white/60 mt-1">Required for: Single-Point, Multi-Track, Command (Invoicing)</p>
               </div>
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
@@ -1052,7 +1052,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">Facebook, Instagram, LinkedIn, TikTok</p>
                 <p className="text-xs text-white/90 font-medium">Free - Your Business Pages</p>
                 <p className="text-xs text-white/70">OAuth connection to your existing accounts</p>
-                <p className="text-xs text-white/60 mt-1">Optional for: Social Media Add-On</p>
+                <p className="text-xs text-white/60 mt-1">Required for: Core, Multi-Track, Command • Optional for: Single-Point</p>
               </div>
             </div>
 
