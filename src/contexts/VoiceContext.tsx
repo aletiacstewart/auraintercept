@@ -19,11 +19,14 @@ import {
   getVisibleFieldLabels,
   isLikelyDictationText,
   sanitizeVoiceTextForField,
+  isDataQuery,
 } from '@/lib/voiceNavigation';
+import { detectLocalIntent, isLikelyAnalyticsQuery } from '@/lib/auraIntentDetection';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+
 
 interface VoiceContextType {
   // State
@@ -303,17 +306,33 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       
-      // Check for local navigation command (fast path for common patterns)
-      const navigationDestination = parseNavigationCommand(trimmedText);
-      if (navigationDestination && PAGE_ROUTES[navigationDestination]) {
-        const route = PAGE_ROUTES[navigationDestination];
-        navigate(route);
-        setLastCommand({ success: true, action: 'navigate', message: `Navigating to ${navigationDestination}` });
-        toast.success(`Navigating to ${navigationDestination}`, {
-          duration: 1500,
-          className: 'voice-command-toast',
-        });
-        return;
+      // IMPORTANT: Check if this is a data query FIRST before navigation
+      // This ensures questions like "how many customers" don't get routed to pages
+      const localIntent = detectLocalIntent(trimmedText);
+      
+      if (localIntent.intent === 'data_query' && localIntent.confidence >= 0.6) {
+        // This is a question - route to AI for an answer
+        console.log('[VoiceContext] Detected data query, routing to AI:', trimmedText);
+        const aiHandled = await processWithAI(trimmedText);
+        if (aiHandled) {
+          setLastCommand({ success: true, action: 'query', message: 'Processing your question' });
+          return;
+        }
+      }
+      
+      // Only check navigation for explicit navigation commands (not data queries)
+      if (localIntent.intent !== 'data_query') {
+        const navigationDestination = parseNavigationCommand(trimmedText);
+        if (navigationDestination && PAGE_ROUTES[navigationDestination]) {
+          const route = PAGE_ROUTES[navigationDestination];
+          navigate(route);
+          setLastCommand({ success: true, action: 'navigate', message: `Navigating to ${navigationDestination}` });
+          toast.success(`Navigating to ${navigationDestination}`, {
+            duration: 1500,
+            className: 'voice-command-toast',
+          });
+          return;
+        }
       }
       
       // Check for search command (fast path)
@@ -328,6 +347,7 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
         }
         return;
       }
+
       
       // For complex commands, use AI interpretation
       const aiHandled = await processWithAI(trimmedText);

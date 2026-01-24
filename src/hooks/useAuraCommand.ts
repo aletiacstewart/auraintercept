@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { detectLocalIntent } from '@/lib/auraIntentDetection';
+import { isDataQuery } from '@/lib/voiceNavigation';
 
 interface UseAuraCommandOptions {
   onOpen?: () => void;
   onClose?: () => void;
+  onInlineResponse?: (response: string) => void;
 }
 
 export function useAuraCommand(options: UseAuraCommandOptions = {}) {
@@ -33,8 +36,22 @@ export function useAuraCommand(options: UseAuraCommandOptions = {}) {
   const submitQuery = useCallback((searchQuery: string) => {
     if (!searchQuery.trim()) return;
     
-    // Navigate to Analytics & Reports with the query
-    navigate(`/dashboard/analytics-reports?q=${encodeURIComponent(searchQuery.trim())}`);
+    const trimmedQuery = searchQuery.trim();
+    
+    // Detect if this is a data query that should get an inline answer
+    const localIntent = detectLocalIntent(trimmedQuery);
+    const isDataQuestion = isDataQuery(trimmedQuery) || 
+      (localIntent.intent === 'data_query' && localIntent.confidence >= 0.5);
+    
+    if (isDataQuestion) {
+      // For data queries, navigate to analytics with the query for full processing
+      // The analytics page will show the answer inline
+      navigate(`/dashboard/analytics-reports?q=${encodeURIComponent(trimmedQuery)}`);
+    } else {
+      // For other queries (navigation, actions), still go to analytics
+      navigate(`/dashboard/analytics-reports?q=${encodeURIComponent(trimmedQuery)}`);
+    }
+    
     close();
   }, [navigate, close]);
 
