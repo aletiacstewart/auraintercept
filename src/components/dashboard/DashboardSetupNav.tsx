@@ -214,7 +214,7 @@ export function DashboardSetupNav() {
       </div>
 
       {/* Section Navigation */}
-      <div className="inline-flex flex-wrap p-2 bg-muted/30 rounded-2xl border border-border gap-1">
+      <div className="inline-flex flex-wrap p-1 bg-muted/30 rounded-lg gap-0.5">
         {sections.map((section) => {
           const isActive = location.pathname === section.href || 
             (section.href !== '/dashboard' && location.pathname.startsWith(section.href));
@@ -225,22 +225,22 @@ export function DashboardSetupNav() {
               key={section.id}
               to={section.href}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all text-sm font-medium',
+                'flex items-center gap-1 px-2.5 py-1 rounded-md transition-all text-xs font-medium',
                 isActive
-                  ? 'bg-secondary/20 border-secondary text-secondary'
+                  ? 'bg-background text-foreground shadow-sm'
                   : section.completed
-                    ? 'bg-secondary/10 border-secondary/40 text-secondary hover:bg-secondary/20'
-                    : 'bg-card/50 border-border/50 text-card-foreground/80 hover:bg-card hover:border-border'
+                    ? 'bg-secondary/10 text-secondary hover:bg-secondary/20'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
               )}
             >
               {section.completed ? (
-                <CheckCircle2 className="h-4 w-4" />
+                <CheckCircle2 className="h-3.5 w-3.5" />
               ) : (
-                <Icon className="h-4 w-4" />
+                <Icon className="h-3.5 w-3.5" />
               )}
               <span>{section.label}</span>
               <span className={cn(
-                'text-xs px-1.5 py-0.5 rounded-full',
+                'text-[10px] px-1 py-0.5 rounded',
                 section.completed 
                   ? 'bg-secondary/20 text-secondary' 
                   : 'bg-muted text-muted-foreground'
