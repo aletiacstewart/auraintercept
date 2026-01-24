@@ -15,6 +15,7 @@ import { MissedCallSettings } from '@/components/company/MissedCallSettings';
 import { PublicAppUrlSettings } from '@/components/company/PublicAppUrlSettings';
 import { ContactInfoSettings } from '@/components/company/ContactInfoSettings';
 import { SetupProgressBar } from '@/components/company/SetupProgressBar';
+import { DashboardOnboardingHub } from '@/components/dashboard/DashboardOnboardingHub';
 import { VoiceOnboardingSettings } from '@/components/settings/VoiceOnboardingSettings';
 import { SystemSettings } from '@/components/settings/SystemSettings';
 import { useAuth } from '@/contexts/AuthContext';
@@ -55,6 +56,8 @@ export default function Settings() {
           />
           
           <SetupProgressBar />
+          
+          <DashboardOnboardingHub />
 
           <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
             <TabsList className="inline-flex flex-wrap h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1">
