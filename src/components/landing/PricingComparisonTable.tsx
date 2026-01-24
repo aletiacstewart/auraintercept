@@ -71,6 +71,7 @@ type FeatureValue = 'check' | 'x' | string;
 interface FeatureRow {
   name: string;
   core: FeatureValue;
+  halo: FeatureValue;
   singlePoint: FeatureValue;
   multiTrack: FeatureValue;
   command: FeatureValue;
@@ -83,109 +84,114 @@ interface FeatureSection {
 
 const sections: FeatureSection[] = [
   {
-    title: 'AI Agents (0 / 3 / 10 / 23)',
+    title: 'AI Agents (0 / 3 / 3 / 10 / 23)',
     features: [
-      // Single-Point tier (3 agents)
-      { name: 'AI Receptionist (Triage)', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Follow-up Agent', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Review Agent', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      // Multi-Track tier adds (7 more = 10 total)
-      { name: 'Scheduling Agent (Booking)', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Dispatch Agent', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Route Agent', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'ETA Agent', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Check-in Agent', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Quote Agent', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Invoice Agent', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      // Single-Point tier (3 agents) - Halo has triage, booking, followup
+      { name: 'AI Receptionist (Triage)', core: 'x', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Follow-up Agent', core: 'x', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Review Agent', core: 'x', halo: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      // Multi-Track tier adds (7 more = 10 total) - Halo has booking
+      { name: 'Scheduling Agent (Booking)', core: 'x', halo: 'check', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Dispatch Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Route Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'ETA Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Check-in Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Quote Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Invoice Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       // Command tier adds (13 more = 23 total)
-      { name: 'Admin Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Inventory Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Warranty Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Campaign Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Lead Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Promo Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Social Media Signal Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Signal Scheduler', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Signal Analytics', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Performance Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Revenue Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Insights Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Forecast Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Admin Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Inventory Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Warranty Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Campaign Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Lead Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Promo Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Social Media Signal Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Signal Scheduler', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Signal Analytics', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Performance Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Revenue Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Insights Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Forecast Agent', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
     ],
   },
   {
-    title: 'Control Centers (0 / 1 / 2 / 7)',
+    title: 'Control Centers (0 / 1 / 1 / 2 / 7)',
     features: [
-      { name: 'Customer Portal Console', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Field Operations Console', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Business Management Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Marketing & Sales Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Analytics & Reports Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Social Media Signal Console', core: 'check', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
-      { name: 'Web Presence Console', core: 'check', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
+      { name: 'Customer Portal Console', core: 'x', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Field Operations Console', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Business Management Console', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Marketing & Sales Console', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Analytics & Reports Console', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Social Media Signal Console', core: 'check', halo: 'x', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
+      { name: 'Web Presence Console', core: 'check', halo: 'x', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
     ],
   },
   {
     title: 'Communication Channels',
     features: [
-      { name: 'Talk to Aura (Text-Based)', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Proxy Voice Chat (Chat & Outbound)', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Email Reminders', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'SMS Reminders', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Talk to Aura (Text-Based)', core: 'check', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Proxy Voice Chat (Chat & Outbound)', core: 'x', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Email Reminders', core: 'x', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'SMS Reminders', core: 'x', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
     ],
   },
   {
     title: 'Platform Limits & Features',
     features: [
-      { name: 'Appointments', core: 'x', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
-      { name: 'Employee Accounts', core: '2 included', singlePoint: '5 included', multiTrack: '10 included', command: '25 included' },
-      { name: 'Additional Employees', core: '$10/employee', singlePoint: '$10/employee', multiTrack: '$10/employee', command: '$10/employee' },
-      { name: 'White-Label Branding', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Web Presence', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
-      { name: 'Social Media Signal', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
-      { name: 'Embeddable Chat Widget', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Appointments', core: 'x', halo: 'Unlimited', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
+      { name: 'Employee Accounts', core: '2 included', halo: '2 included', singlePoint: '5 included', multiTrack: '10 included', command: '25 included' },
+      { name: 'Additional Employees', core: '$10/employee', halo: '$10/employee', singlePoint: '$10/employee', multiTrack: '$10/employee', command: '$10/employee' },
+      { name: 'White-Label Branding', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Web Presence', core: 'check', halo: 'x', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
+      { name: 'Social Media Signal', core: 'check', halo: 'x', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
+      { name: 'Embeddable Chat Widget', core: 'check', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
     ],
   },
   {
     title: 'Integration & Support',
     features: [
-      { name: 'Calendar Sync', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'CRM Integration', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'API Access', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Priority Support', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      { name: 'Dedicated Account Manager', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Calendar Sync', core: 'x', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'CRM Integration', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'API Access', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Priority Support', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
+      { name: 'Dedicated Account Manager', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
     ],
   },
   {
     title: 'Required 3rd Party Integrations',
     features: [
-      { name: 'Resend (Email)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-      { name: 'Stripe (Payments)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-      { name: 'Twilio (SMS & Voice)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-      { name: 'ElevenLabs (Proxy Voice Chat)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-      { name: 'Calendar Sync', core: 'x', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
-      { name: 'Social Media Accounts', core: 'Required', singlePoint: 'Optional', multiTrack: 'Required', command: 'Required' },
+      { name: 'Resend (Email)', core: 'x', halo: 'Required', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+      { name: 'Stripe (Payments)', core: 'x', halo: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+      { name: 'Twilio (SMS & Voice)', core: 'x', halo: 'Required', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+      { name: 'ElevenLabs (Proxy Voice Chat)', core: 'x', halo: 'Required', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+      { name: 'Calendar Sync', core: 'x', halo: 'Optional', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
+      { name: 'Social Media Accounts', core: 'Required', halo: 'x', singlePoint: 'Optional', multiTrack: 'Required', command: 'Required' },
     ],
   },
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', core: '$500', singlePoint: '$1,500', multiTrack: '$3,997', command: '$6,997' },
-      { name: 'Annual Price', core: '$5,000/year', singlePoint: '$15,000/year', multiTrack: '$39,970/year', command: '$69,970/year' },
-      { name: 'Annual Savings', core: 'Save $1,000', singlePoint: 'Save $3,000', multiTrack: 'Save $7,994', command: 'Save $13,994' },
+      { name: 'Monthly Price', core: '$500', halo: '$397', singlePoint: '$1,500', multiTrack: '$3,997', command: '$6,997' },
+      { name: 'Annual Price', core: '$5,000/year', halo: '$3,970/year', singlePoint: '$15,000/year', multiTrack: '$39,970/year', command: '$69,970/year' },
+      { name: 'Annual Savings', core: 'Save $1,000', halo: 'Save $794', singlePoint: 'Save $3,000', multiTrack: 'Save $7,994', command: 'Save $13,994' },
     ],
   },
 ];
 
-const renderValue = (value: FeatureValue, isHighlighted: boolean, featureName: string) => {
-  const baseClass = isHighlighted 
-    ? 'py-2 px-3 text-center bg-sky-600/20 border-x border-sky-400/30' 
-    : 'py-2 px-3 text-center';
+const renderValue = (value: FeatureValue, isHighlighted: boolean, featureName: string, isHalo: boolean = false) => {
+  let baseClass = 'py-2 px-3 text-center';
+  
+  if (isHighlighted) {
+    baseClass = 'py-2 px-3 text-center bg-sky-600/20 border-x border-sky-400/30';
+  } else if (isHalo) {
+    baseClass = 'py-2 px-3 text-center bg-rose-500/10 border-x border-rose-400/20';
+  }
 
   if (value === 'check') {
+    const checkColor = isHalo ? 'text-rose-400' : 'text-emerald-400';
     return (
       <td className={baseClass}>
-        <Check className="w-4 h-4 text-emerald-400 mx-auto" />
+        <Check className={`w-4 h-4 ${checkColor} mx-auto`} />
       </td>
     );
   }
@@ -205,9 +211,15 @@ const renderValue = (value: FeatureValue, isHighlighted: boolean, featureName: s
   
   let textClass = 'text-white text-xs';
   if (isPricing) {
-    textClass = isHighlighted ? 'text-sky-300 font-semibold' : 'text-white font-semibold';
+    if (isHalo) {
+      textClass = 'text-rose-300 font-semibold';
+    } else if (isHighlighted) {
+      textClass = 'text-sky-300 font-semibold';
+    } else {
+      textClass = 'text-white font-semibold';
+    }
   } else if (isSavings) {
-    textClass = 'text-emerald-400 text-xs';
+    textClass = isHalo ? 'text-rose-400 text-xs' : 'text-emerald-400 text-xs';
   } else if (isAddon) {
     textClass = 'text-amber-400 text-xs';
   } else if (isOptional) {
@@ -254,11 +266,12 @@ export const PricingComparisonTable = () => {
     <TooltipProvider delayDuration={200}>
       <table className="w-full text-sm table-fixed">
         <colgroup>
-          <col className="w-[32%]" />
+          <col className="w-[26%]" />
+          <col className="w-[12%]" />
           <col className="w-[14%]" />
-          <col className="w-[16%]" />
-          <col className="w-[19%]" />
-          <col className="w-[19%]" />
+          <col className="w-[14%]" />
+          <col className="w-[17%]" />
+          <col className="w-[17%]" />
         </colgroup>
         <thead>
           <tr className="border-b border-white/20 bg-slate-700/80">
@@ -266,6 +279,10 @@ export const PricingComparisonTable = () => {
             <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
               <div>Core</div>
               <div className="text-xs font-normal text-white/70">$500/mo</div>
+            </th>
+            <th className="text-center py-2.5 px-3 font-semibold bg-rose-500/20 border-x border-rose-400/30 text-sm">
+              <div className="text-rose-300">Aura Halo</div>
+              <div className="text-xs font-normal text-rose-300/70">$397/mo</div>
             </th>
             <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
               <div>Single-Point</div>
@@ -286,7 +303,7 @@ export const PricingComparisonTable = () => {
             <>
               {/* Section Header */}
               <tr key={`section-${section.title}`} className="bg-slate-700/60">
-                <td colSpan={5} className="py-1.5 px-4 font-semibold text-sky-300">
+                <td colSpan={6} className="py-1.5 px-4 font-semibold text-sky-300">
                   {section.title}
                 </td>
               </tr>
@@ -302,6 +319,7 @@ export const PricingComparisonTable = () => {
                     <tr className={`border-b border-white/10 hover:bg-slate-600/30 ${rowBg}`}>
                       <FeatureNameCell name={feature.name} rowIndex={rowIndex} />
                       {renderValue(feature.core, false, feature.name)}
+                      {renderValue(feature.halo, false, feature.name, true)}
                       {renderValue(feature.singlePoint, false, feature.name)}
                       {renderValue(feature.multiTrack, true, feature.name)}
                       {renderValue(feature.command, false, feature.name)}
