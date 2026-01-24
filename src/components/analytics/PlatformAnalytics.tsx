@@ -265,7 +265,7 @@ export function PlatformAnalytics() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Platform Analytics</h1>
-        <p className="text-white/70 mt-1">
+        <p className="text-muted-foreground mt-1">
           Comprehensive metrics across all tenants
         </p>
       </div>
@@ -275,7 +275,7 @@ export function PlatformAnalytics() {
         {statCards.map((stat) => (
           <Card key={stat.title} className="relative overflow-hidden border-border/50">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-white">
+              <CardTitle className="text-sm font-medium text-foreground">
                 {stat.title}
               </CardTitle>
               <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}>
@@ -288,7 +288,7 @@ export function PlatformAnalytics() {
               ) : (
                 <div className="text-3xl font-bold">{stat.value.toLocaleString()}</div>
               )}
-              <p className="text-xs text-white/70 mt-1">{stat.description}</p>
+              <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
             </CardContent>
             <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`} />
           </Card>
@@ -366,7 +366,7 @@ export function PlatformAnalytics() {
                     <span>Completion Rate</span>
                     <span className="font-medium">{stats?.appointmentCompletionRate ?? 0}%</span>
                   </div>
-                  <div className="h-2 rounded-full bg-slate-600 overflow-hidden">
+                  <div className="h-2 rounded-full bg-muted overflow-hidden">
                     <div 
                       className="h-full bg-gradient-to-r from-primary to-secondary transition-all" 
                       style={{ width: `${stats?.appointmentCompletionRate ?? 0}%` }} 
@@ -567,7 +567,7 @@ export function PlatformAnalytics() {
                     <span>Conversion Rate</span>
                     <span className="font-medium">{stats?.quoteConversionRate ?? 0}%</span>
                   </div>
-                  <div className="h-2 rounded-full bg-slate-600 overflow-hidden">
+                  <div className="h-2 rounded-full bg-muted overflow-hidden">
                     <div 
                       className="h-full bg-gradient-to-r from-primary to-secondary transition-all" 
                       style={{ width: `${stats?.quoteConversionRate ?? 0}%` }} 
