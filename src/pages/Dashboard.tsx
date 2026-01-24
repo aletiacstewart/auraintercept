@@ -100,8 +100,12 @@ export default function Dashboard() {
   };
 
   const handleCloseWelcome = async () => {
-    await markTourCompleted('welcome');
+    // Close modal first for better UX, then persist
     setShowWelcomeModal(false);
+    const success = await markTourCompleted('welcome');
+    if (!success) {
+      console.warn('Failed to persist welcome tour completion to database, using localStorage fallback');
+    }
   };
 
   return (
