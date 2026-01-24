@@ -468,7 +468,7 @@ const Header = ({ title }: { title: string }) => (
 
 const BulletPoint = ({ children }: { children: string }) => (
   <View style={styles.bulletPoint}>
-    <Text style={styles.bullet}>•</Text>
+    <Text style={styles.bullet}>-</Text>
     <Text style={styles.bulletText}>{children}</Text>
   </View>
 );
@@ -642,7 +642,7 @@ const PlatformDocumentPDF = () => (
       </Text>
       
       <View style={styles.painPointCard}>
-        <Text style={styles.painPointTitle}>[PHONE] Missed Calls = Missed Revenue</Text>
+        <Text style={styles.painPointTitle}>Missed Calls = Missed Revenue</Text>
         <Text style={styles.painPointText}>
           The average service business misses 62% of incoming calls. Each missed call is worth $200-$500 
           in potential revenue. That's $10,000-$25,000 lost monthly.
@@ -650,7 +650,7 @@ const PlatformDocumentPDF = () => (
       </View>
       
       <View style={styles.painPointCard}>
-        <Text style={styles.painPointTitle}>[TIME] Scheduling Chaos</Text>
+        <Text style={styles.painPointTitle}>Scheduling Chaos</Text>
         <Text style={styles.painPointText}>
           Office staff spend 2-3 hours daily on phone calls, scheduling, and rescheduling. That's 50+ hours 
           monthly of administrative work that doesn't grow the business.
@@ -658,7 +658,7 @@ const PlatformDocumentPDF = () => (
       </View>
       
       <View style={styles.painPointCard}>
-        <Text style={styles.painPointTitle}>[X] No-Shows Drain Profits</Text>
+        <Text style={styles.painPointTitle}>No-Shows Drain Profits</Text>
         <Text style={styles.painPointText}>
           Industry average no-show rate is 20-30%. Without automated reminders, businesses lose 
           thousands monthly to empty time slots and wasted technician hours.
@@ -666,7 +666,7 @@ const PlatformDocumentPDF = () => (
       </View>
       
       <View style={styles.painPointCard}>
-        <Text style={styles.painPointTitle}>[SLEEP] After-Hours Black Hole</Text>
+        <Text style={styles.painPointTitle}>After-Hours Black Hole</Text>
         <Text style={styles.painPointText}>
           55% of service requests come outside business hours. Without 24/7 coverage, these leads 
           go to competitors or simply disappear.
@@ -674,7 +674,7 @@ const PlatformDocumentPDF = () => (
       </View>
       
       <View style={styles.painPointCard}>
-        <Text style={styles.painPointTitle}>[DATA] Flying Blind</Text>
+        <Text style={styles.painPointTitle}>Flying Blind</Text>
         <Text style={styles.painPointText}>
           Most owners don't know their true cost per lead, technician utilization rate, or which 
           services are most profitable. Decisions are based on gut feeling, not data.
@@ -682,10 +682,10 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <View style={styles.solutionCard}>
-        <Text style={styles.solutionTitle}>[+] The Aura Intercept Solution</Text>
+        <Text style={styles.solutionTitle}>The Aura Intercept Solution</Text>
         <Text style={styles.solutionText}>
           Our 23 AI operatives work 24/7 to answer every call, book every appointment, remind every customer, 
-          dispatch every technician, and collect every payment—automatically. One platform. Zero missed opportunities.
+          dispatch every technician, and collect every payment - automatically. One platform. Zero missed opportunities.
         </Text>
       </View>
     </Page>
@@ -1147,46 +1147,46 @@ const PlatformDocumentPDF = () => (
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Halo (Salons & Wellness)</Text>
         <Text style={styles.pricingPrice}>$397/month</Text>
-        <Text style={styles.pricingFeature}>• 4 AI Operatives (Receptionist, Scheduling, Follow-up, Voice Chat)</Text>
-        <Text style={styles.pricingFeature}>• Customer Portal Console</Text>
-        <Text style={styles.pricingFeature}>• Proxy Voice Chat included</Text>
-        <Text style={styles.pricingFeature}>• Up to 3 employees</Text>
+        <Text style={styles.pricingFeature}>- 4 AI Operatives (Receptionist, Scheduling, Follow-up, Voice Chat)</Text>
+        <Text style={styles.pricingFeature}>- Customer Portal Console</Text>
+        <Text style={styles.pricingFeature}>- Proxy Voice Chat included</Text>
+        <Text style={styles.pricingFeature}>- Up to 3 employees</Text>
       </View>
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Core (AI-Assisted Foundation)</Text>
         <Text style={styles.pricingPrice}>$500/month</Text>
-        <Text style={styles.pricingFeature}>• 0 AI Operatives (AI Tools Only - No Automation)</Text>
-        <Text style={styles.pricingFeature}>• Talk to Aura Chat, Social Media Signal, Web Presence</Text>
-        <Text style={styles.pricingFeature}>• Manual workflow with AI assistance</Text>
-        <Text style={styles.pricingFeature}>• Up to 2 employees</Text>
+        <Text style={styles.pricingFeature}>- 0 AI Operatives (AI Tools Only - No Automation)</Text>
+        <Text style={styles.pricingFeature}>- Talk to Aura Chat, Social Media Signal, Web Presence</Text>
+        <Text style={styles.pricingFeature}>- Manual workflow with AI assistance</Text>
+        <Text style={styles.pricingFeature}>- Up to 2 employees</Text>
       </View>
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Single-Point</Text>
         <Text style={styles.pricingPrice}>$1,500/month</Text>
-        <Text style={styles.pricingFeature}>• 3 AI Operatives (Receptionist, Follow-up, Review)</Text>
-        <Text style={styles.pricingFeature}>• Customer Portal Console</Text>
-        <Text style={styles.pricingFeature}>• Proxy Voice Chat included</Text>
-        <Text style={styles.pricingFeature}>• Up to 5 employees</Text>
+        <Text style={styles.pricingFeature}>- 3 AI Operatives (Receptionist, Follow-up, Review)</Text>
+        <Text style={styles.pricingFeature}>- Customer Portal Console</Text>
+        <Text style={styles.pricingFeature}>- Proxy Voice Chat included</Text>
+        <Text style={styles.pricingFeature}>- Up to 5 employees</Text>
       </View>
 
       <View style={[styles.pricingCard, { borderWidth: 2, borderColor: colors.primary }]}>
         <Text style={styles.pricingTier}>Multi-Track (Most Popular)</Text>
         <Text style={styles.pricingPrice}>$3,997/month</Text>
-        <Text style={styles.pricingFeature}>• 10 AI Operatives (All Single-Point + Field Operations + Business)</Text>
-        <Text style={styles.pricingFeature}>• 2 Control Consoles</Text>
-        <Text style={styles.pricingFeature}>• Email + SMS + Voice</Text>
-        <Text style={styles.pricingFeature}>• Up to 10 employees</Text>
+        <Text style={styles.pricingFeature}>- 10 AI Operatives (All Single-Point + Field Operations + Business)</Text>
+        <Text style={styles.pricingFeature}>- 2 Control Consoles</Text>
+        <Text style={styles.pricingFeature}>- Email + SMS + Voice</Text>
+        <Text style={styles.pricingFeature}>- Up to 10 employees</Text>
       </View>
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Pro Command (Enterprise)</Text>
         <Text style={styles.pricingPrice}>$6,997/month</Text>
-        <Text style={styles.pricingFeature}>• All 23 AI Operatives</Text>
-        <Text style={styles.pricingFeature}>• All 7 Control Consoles</Text>
-        <Text style={styles.pricingFeature}>• Email + SMS + Voice + Full Automation</Text>
-        <Text style={styles.pricingFeature}>• 15+ technicians / Multi-location</Text>
+        <Text style={styles.pricingFeature}>- All 23 AI Operatives</Text>
+        <Text style={styles.pricingFeature}>- All 7 Control Consoles</Text>
+        <Text style={styles.pricingFeature}>- Email + SMS + Voice + Full Automation</Text>
+        <Text style={styles.pricingFeature}>- 15+ technicians / Multi-location</Text>
       </View>
 
       <Text style={styles.subsectionTitle}>ROI Quick Calculator</Text>
@@ -1222,11 +1222,11 @@ const PlatformDocumentPDF = () => (
       <View style={styles.highlightBox}>
         <Text style={styles.highlightTitle}>Only Platform With:</Text>
         <Text style={styles.highlightText}>
-          • 22 purpose-built AI agents that work together{"\n"}
-          • True voice AI (not just IVR or voicemail){"\n"}
-          • Full social media content creation (6 platforms){"\n"}
-          • White-label ready from Day 1{"\n"}
-          • Built specifically for service businesses
+          - 22 purpose-built AI agents that work together{"\n"}
+          - True voice AI (not just IVR or voicemail){"\n"}
+          - Full social media content creation (6 platforms){"\n"}
+          - White-label ready from Day 1{"\n"}
+          - Built specifically for service businesses
         </Text>
       </View>
     </Page>
