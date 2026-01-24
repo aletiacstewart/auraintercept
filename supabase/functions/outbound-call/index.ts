@@ -60,8 +60,8 @@ serve(async (req) => {
     const trialEndsAt = companyData?.trial_ends_at;
     const inTrial = trialEndsAt && new Date(trialEndsAt) > new Date();
 
-    // Outbound calling available for all paid tiers
-    const voiceTiers = ['single_point', 'multi_track', 'command'];
+    // Outbound calling available for Halo and all paid tiers above
+    const voiceTiers = ['halo', 'single_point', 'multi_track', 'command'];
     const hasVoiceAccess = inTrial || voiceTiers.includes(subscriptionTier);
 
     if (!hasVoiceAccess) {

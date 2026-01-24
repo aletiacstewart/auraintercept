@@ -2269,6 +2269,8 @@ serve(async (req) => {
     // 23 Total Agents - Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
+      // Aura Halo ($397/mo): AI Receptionist + Scheduling + Follow-up for salons/wellness
+      halo: ['triage', 'booking', 'followup'],
       // Single-Point (3): NO booking (call to book), but has Voice AI
       single_point: ['triage', 'followup', 'review'],
       // Multi-Track (10): Adds booking, field ops, quoting/invoice
@@ -2288,8 +2290,9 @@ serve(async (req) => {
     // Helper to determine required tier for an agent
     const getRequiredTierForAgent = (agent: string): string | null => {
       if (TIER_AGENTS.command.includes(agent) && !TIER_AGENTS.multi_track.includes(agent)) return 'command';
-      if (TIER_AGENTS.multi_track.includes(agent) && !TIER_AGENTS.single_point.includes(agent)) return 'multi_track';
-      if (TIER_AGENTS.single_point.includes(agent)) return 'single_point';
+      if (TIER_AGENTS.multi_track.includes(agent) && !TIER_AGENTS.single_point.includes(agent) && !TIER_AGENTS.halo.includes(agent)) return 'multi_track';
+      if (TIER_AGENTS.single_point.includes(agent) && !TIER_AGENTS.halo.includes(agent)) return 'single_point';
+      if (TIER_AGENTS.halo.includes(agent)) return 'halo';
       return null;
     };
 

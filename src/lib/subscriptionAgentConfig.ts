@@ -1,5 +1,5 @@
 // Subscription tier types matching the database enum
-export type SubscriptionTier = 'free' | 'core' | 'single_point' | 'multi_track' | 'command';
+export type SubscriptionTier = 'free' | 'core' | 'halo' | 'single_point' | 'multi_track' | 'command';
 
 // Configuration for each subscription tier
 export interface TierConfig {
@@ -27,6 +27,14 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     label: 'Core',
     price: '$500/mo',
     description: 'Talk to Aura + Social Media Signal + Web Presence',
+  },
+  halo: {
+    // Aura Halo ($397/mo): AI Receptionist + Scheduling + Follow-up for salons/wellness
+    agents: ['triage', 'booking', 'followup'],
+    consoles: ['customer_portal'],
+    label: 'Aura Halo',
+    price: '$397/mo',
+    description: 'AI Receptionist, Scheduling, Voice & SMS/Email for salons & wellness',
   },
   single_point: {
     // Voice AI (chat + outbound calling) included, but NO booking (call to book)
@@ -103,7 +111,7 @@ export const CONSOLE_REQUIRED_AGENTS: Record<string, string[]> = {
 
 // Get the minimum tier required for a specific agent
 export function getRequiredTierForAgent(agentType: string): SubscriptionTier | null {
-  const tiers: SubscriptionTier[] = ['core', 'single_point', 'multi_track', 'command'];
+  const tiers: SubscriptionTier[] = ['core', 'halo', 'single_point', 'multi_track', 'command'];
   
   for (const tier of tiers) {
     if (TIER_AGENT_CONFIG[tier].agents.includes(agentType)) {
@@ -116,7 +124,7 @@ export function getRequiredTierForAgent(agentType: string): SubscriptionTier | n
 
 // Get the minimum tier required for a specific console
 export function getRequiredTierForConsole(consoleType: string): SubscriptionTier | null {
-  const tiers: SubscriptionTier[] = ['core', 'single_point', 'multi_track', 'command'];
+  const tiers: SubscriptionTier[] = ['core', 'halo', 'single_point', 'multi_track', 'command'];
   
   for (const tier of tiers) {
     if (TIER_AGENT_CONFIG[tier].consoles.includes(consoleType)) {
@@ -169,7 +177,7 @@ export function getTierDisplayInfo(tier: SubscriptionTier): { label: string; pri
 
 // Get upgrade path - what tier to upgrade to for a specific agent
 export function getUpgradeTierForAgent(currentTier: SubscriptionTier, agentType: string): SubscriptionTier | null {
-  const tiers: SubscriptionTier[] = ['core', 'single_point', 'multi_track', 'command'];
+  const tiers: SubscriptionTier[] = ['core', 'halo', 'single_point', 'multi_track', 'command'];
   const currentIndex = tiers.indexOf(currentTier);
   
   // If already on command, no upgrade available
@@ -189,9 +197,10 @@ export function getUpgradeTierForAgent(currentTier: SubscriptionTier, agentType:
 export const TIER_HIERARCHY: Record<SubscriptionTier, number> = {
   free: 0,
   core: 1,
-  single_point: 2,
-  multi_track: 3,
-  command: 4,
+  halo: 2,
+  single_point: 3,
+  multi_track: 4,
+  command: 5,
 };
 
 // Compare two tiers
@@ -204,6 +213,11 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
   free: [],
   core: [
     // Core tier: AI Chat only, limited features
+    'can_access_customers',
+  ],
+  halo: [
+    // Halo tier: Appointments + Customers for salons
+    'can_access_appointments',
     'can_access_customers',
   ],
   single_point: [
@@ -236,7 +250,7 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
 
 // Get the minimum tier required for a specific feature area
 export function getRequiredTierForFeature(featureField: string): SubscriptionTier | null {
-  const tiers: SubscriptionTier[] = ['core', 'single_point', 'multi_track', 'command'];
+  const tiers: SubscriptionTier[] = ['core', 'halo', 'single_point', 'multi_track', 'command'];
   
   for (const tier of tiers) {
     if (TIER_FEATURE_CONFIG[tier].includes(featureField)) {
