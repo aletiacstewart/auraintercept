@@ -1,17 +1,59 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEmployeeJobRole } from '@/hooks/useEmployeeJobRole';
+import { useOnboardingState } from '@/hooks/useOnboardingState';
+import { supabase } from '@/integrations/supabase/client';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PlatformAdminDashboard } from '@/components/dashboard/PlatformAdminDashboard';
 import { CompanyAdminDashboard } from '@/components/dashboard/CompanyAdminDashboard';
 import { EmployeeDashboard } from '@/components/dashboard/EmployeeDashboard';
+import { WelcomeModal } from '@/components/onboarding/WelcomeModal';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Dashboard() {
-  const { user, loading, userRole } = useAuth();
-  const { hasJobType, loading: jobRoleLoading } = useEmployeeJobRole();
+  const { user, loading, userRole, companyId } = useAuth();
+  const { hasJobType, jobTypes, loading: jobRoleLoading } = useEmployeeJobRole();
+  const { shouldShowWelcome, markTourCompleted, isLoading: onboardingLoading } = useOnboardingState();
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const navigate = useNavigate();
+
+  // Fetch user profile and company for welcome modal
+  const { data: profileData } = useQuery({
+    queryKey: ['dashboard-profile', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  const { data: companyData } = useQuery({
+    queryKey: ['dashboard-company', companyId],
+    queryFn: async () => {
+      if (!companyId) return null;
+      const { data } = await supabase
+        .from('companies')
+        .select('name')
+        .eq('id', companyId)
+        .single();
+      return data;
+    },
+    enabled: !!companyId,
+  });
+
+  // Show welcome modal for first-time users
+  useEffect(() => {
+    if (!loading && !onboardingLoading && user && shouldShowWelcome()) {
+      setShowWelcomeModal(true);
+    }
+  }, [loading, onboardingLoading, user, shouldShowWelcome]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -57,9 +99,23 @@ export default function Dashboard() {
     }
   };
 
+  const handleCloseWelcome = async () => {
+    await markTourCompleted('welcome');
+    setShowWelcomeModal(false);
+  };
+
   return (
     <DashboardLayout>
       {renderDashboard()}
+      
+      <WelcomeModal
+        isOpen={showWelcomeModal}
+        onClose={handleCloseWelcome}
+        userRole={userRole}
+        userName={profileData?.full_name?.split(' ')[0]}
+        companyName={companyData?.name}
+        jobTypes={jobTypes}
+      />
     </DashboardLayout>
   );
 }
