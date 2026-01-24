@@ -551,9 +551,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Competitive Differentiation */}
-      <CompetitiveDifferentiation />
-
       {/* Communication Channels */}
       <section className="py-20">
         <div className="container max-w-7xl mx-auto px-6">
