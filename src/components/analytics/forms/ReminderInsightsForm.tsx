@@ -338,9 +338,9 @@ export function ReminderInsightsForm({ companyId, onCancel, onAnalyze }: Reminde
       </CardHeader>
       <CardContent className="space-y-4 bg-muted/50 rounded-b-lg">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="inline-flex h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
-            <TabsTrigger value="stats" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Statistics</TabsTrigger>
-            <TabsTrigger value="history" className="px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">History</TabsTrigger>
+          <TabsList>
+            <TabsTrigger value="stats">Statistics</TabsTrigger>
+            <TabsTrigger value="history">History</TabsTrigger>
           </TabsList>
 
           <TabsContent value="stats" className="space-y-6 mt-4">

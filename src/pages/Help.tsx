@@ -129,21 +129,21 @@ export default function Help() {
 
           {/* Main Tabs */}
           <Tabs value={mainTab} onValueChange={(v) => handleMainTabChange(v as MainTabType)}>
-            <TabsList className="inline-flex flex-wrap h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
-              <TabsTrigger value="ai-agents" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-                <Bot className="h-4 w-4" />
+            <TabsList>
+              <TabsTrigger value="ai-agents" className="flex items-center gap-1.5">
+                <Bot className="h-3.5 w-3.5" />
                 AI Agents
               </TabsTrigger>
-              <TabsTrigger value="voice" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-                <Mic className="h-4 w-4" />
+              <TabsTrigger value="voice" className="flex items-center gap-1.5">
+                <Mic className="h-3.5 w-3.5" />
                 Ask Aura
               </TabsTrigger>
-              <TabsTrigger value="company-employee" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-                <Building2 className="h-4 w-4" />
+              <TabsTrigger value="company-employee" className="flex items-center gap-1.5">
+                <Building2 className="h-3.5 w-3.5" />
                 Company & Employees
               </TabsTrigger>
-              <TabsTrigger value="faq" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-                <HelpCircle className="h-4 w-4" />
+              <TabsTrigger value="faq" className="flex items-center gap-1.5">
+                <HelpCircle className="h-3.5 w-3.5" />
                 FAQs
               </TabsTrigger>
             </TabsList>

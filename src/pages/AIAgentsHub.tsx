@@ -385,30 +385,30 @@ export default function AIAgentsHub() {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="inline-flex h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1 flex-wrap">
-            <TabsTrigger value="agents" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+          <TabsList>
+            <TabsTrigger value="agents" className="flex items-center gap-1.5">
               <Bot className="h-3.5 w-3.5" />
               Operatives
             </TabsTrigger>
             {canManageAgents && (
-              <TabsTrigger value="activate" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <TabsTrigger value="activate" className="flex items-center gap-1.5">
                 <Rocket className="h-3.5 w-3.5" />
                 Quick Start
               </TabsTrigger>
             )}
-            <TabsTrigger value="monitor" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+            <TabsTrigger value="monitor" className="flex items-center gap-1.5">
               <Activity className="h-3.5 w-3.5" />
               Monitor
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+            <TabsTrigger value="analytics" className="flex items-center gap-1.5">
               <BarChart3 className="h-3.5 w-3.5" />
               Analytics
             </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+            <TabsTrigger value="history" className="flex items-center gap-1.5">
               <MessageSquare className="h-3.5 w-3.5" />
               History
             </TabsTrigger>
-            <TabsTrigger value="review" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+            <TabsTrigger value="review" className="flex items-center gap-1.5">
               <Eye className="h-3.5 w-3.5" />
               Review
               {reviewCount > 0 && (

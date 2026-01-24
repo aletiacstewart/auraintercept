@@ -411,25 +411,25 @@ export default function CustomerDashboard() {
 
           {/* Tabs for detailed views */}
           <Tabs defaultValue="appointments" className="space-y-4">
-            <TabsList className="inline-flex flex-wrap h-auto p-1.5 bg-muted/30 rounded-full border border-border/50 gap-1">
-              <TabsTrigger value="appointments" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-                <Calendar className="w-4 h-4" />
+            <TabsList>
+              <TabsTrigger value="appointments" className="flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Appointments</span>
               </TabsTrigger>
-              <TabsTrigger value="invoices" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-                <DollarSign className="w-4 h-4" />
+              <TabsTrigger value="invoices" className="flex items-center gap-1.5">
+                <DollarSign className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Invoices</span>
               </TabsTrigger>
-              <TabsTrigger value="quotes" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-                <FileText className="w-4 h-4" />
+              <TabsTrigger value="quotes" className="flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Quotes</span>
               </TabsTrigger>
-              <TabsTrigger value="referrals" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-                <Gift className="w-4 h-4" />
+              <TabsTrigger value="referrals" className="flex items-center gap-1.5">
+                <Gift className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Referrals</span>
               </TabsTrigger>
-              <TabsTrigger value="preferences" className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
-                <Settings className="w-4 h-4" />
+              <TabsTrigger value="preferences" className="flex items-center gap-1.5">
+                <Settings className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Preferences</span>
               </TabsTrigger>
             </TabsList>

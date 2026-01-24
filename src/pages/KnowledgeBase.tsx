@@ -38,57 +38,36 @@ export default function KnowledgeBase() {
         />
 
         <Tabs defaultValue={defaultTab} className="space-y-6">
-          <TabsList className="inline-flex flex-wrap h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1">
-            <TabsTrigger 
-              value="ai-profile" 
-              className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-            >
-              <Sparkles className="w-4 h-4 hidden sm:block" />
+          <TabsList>
+            <TabsTrigger value="ai-profile" className="flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 hidden sm:block" />
               AI Profile
             </TabsTrigger>
-            <TabsTrigger 
-              value="services" 
-              className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-            >
-              <Briefcase className="w-4 h-4 hidden sm:block" />
+            <TabsTrigger value="services" className="flex items-center gap-1.5">
+              <Briefcase className="w-3.5 h-3.5 hidden sm:block" />
               Services
             </TabsTrigger>
-            <TabsTrigger 
-              value="faqs" 
-              className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-            >
-              <HelpCircle className="w-4 h-4 hidden sm:block" />
+            <TabsTrigger value="faqs" className="flex items-center gap-1.5">
+              <HelpCircle className="w-3.5 h-3.5 hidden sm:block" />
               FAQs
             </TabsTrigger>
-            <TabsTrigger 
-              value="hours" 
-              className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-            >
-              <Clock className="w-4 h-4 hidden sm:block" />
+            <TabsTrigger value="hours" className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 hidden sm:block" />
               Hours
             </TabsTrigger>
-            <TabsTrigger 
-              value="documents" 
-              className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-            >
-              <FileText className="w-4 h-4 hidden sm:block" />
+            <TabsTrigger value="documents" className="flex items-center gap-1.5">
+              <FileText className="w-3.5 h-3.5 hidden sm:block" />
               Documents
             </TabsTrigger>
             {isPlatformAdmin && (
-              <TabsTrigger 
-                value="inventory" 
-                className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-              >
-                <Package className="w-4 h-4 hidden sm:block" />
+              <TabsTrigger value="inventory" className="flex items-center gap-1.5">
+                <Package className="w-3.5 h-3.5 hidden sm:block" />
                 Inventory
               </TabsTrigger>
             )}
             {isPlatformAdmin && (
-              <TabsTrigger 
-                value="warranties" 
-                className="flex items-center gap-2 px-4 py-2 rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all"
-              >
-                <Shield className="w-4 h-4 hidden sm:block" />
+              <TabsTrigger value="warranties" className="flex items-center gap-1.5">
+                <Shield className="w-3.5 h-3.5 hidden sm:block" />
                 Warranties
               </TabsTrigger>
             )}

@@ -227,12 +227,12 @@ export function SmsTemplatesEditor() {
       </CardHeader>
       <CardContent className="space-y-6">
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-          <TabsList className="inline-flex h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1 flex-wrap">
+          <TabsList>
             {(Object.keys(TEMPLATE_INFO) as Array<keyof typeof TEMPLATE_INFO>).map((type) => {
               const typeInfo = TEMPLATE_INFO[type];
               const TypeIcon = typeInfo.icon;
               return (
-                <TabsTrigger key={type} value={type} className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+                <TabsTrigger key={type} value={type} className="flex items-center gap-1.5">
                   <TypeIcon className={`w-3.5 h-3.5 ${typeInfo.color}`} />
                   {typeInfo.label}
                   {(hasChanges(type) || isCustomized(type)) && (

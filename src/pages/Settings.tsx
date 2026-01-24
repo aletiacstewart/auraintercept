@@ -57,26 +57,26 @@ export default function Settings() {
           <SetupProgressBar />
 
           <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
-            <TabsList className="inline-flex flex-wrap h-auto p-2 bg-muted/30 rounded-2xl border border-border gap-1">
-              <TabsTrigger value="branding" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 data-[state=active]:text-primary transition-all">Branding</TabsTrigger>
-              <TabsTrigger value="contact" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Contact Info</TabsTrigger>
-              <TabsTrigger value="app-url" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">App URL</TabsTrigger>
-              <TabsTrigger value="reminders" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Reminders</TabsTrigger>
-              <TabsTrigger value="missed-calls" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Missed Calls</TabsTrigger>
-              <TabsTrigger value="default-prefs" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Default Prefs</TabsTrigger>
-              <TabsTrigger value="reports" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Reports</TabsTrigger>
-              <TabsTrigger value="alerts" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Alerts</TabsTrigger>
-              <TabsTrigger value="customer-prefs" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Customer Prefs</TabsTrigger>
-              <TabsTrigger value="emails" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Email Templates</TabsTrigger>
-              <TabsTrigger value="sms" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">SMS Templates</TabsTrigger>
-              <TabsTrigger value="reviews" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Reviews</TabsTrigger>
-              <TabsTrigger value="warranties" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Warranties</TabsTrigger>
-              <TabsTrigger value="campaigns" className="px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">Campaigns</TabsTrigger>
-              <TabsTrigger value="voice" className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+            <TabsList>
+              <TabsTrigger value="branding">Branding</TabsTrigger>
+              <TabsTrigger value="contact">Contact Info</TabsTrigger>
+              <TabsTrigger value="app-url">App URL</TabsTrigger>
+              <TabsTrigger value="reminders">Reminders</TabsTrigger>
+              <TabsTrigger value="missed-calls">Missed Calls</TabsTrigger>
+              <TabsTrigger value="default-prefs">Default Prefs</TabsTrigger>
+              <TabsTrigger value="reports">Reports</TabsTrigger>
+              <TabsTrigger value="alerts">Alerts</TabsTrigger>
+              <TabsTrigger value="customer-prefs">Customer Prefs</TabsTrigger>
+              <TabsTrigger value="emails">Email Templates</TabsTrigger>
+              <TabsTrigger value="sms">SMS Templates</TabsTrigger>
+              <TabsTrigger value="reviews">Reviews</TabsTrigger>
+              <TabsTrigger value="warranties">Warranties</TabsTrigger>
+              <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+              <TabsTrigger value="voice" className="flex items-center gap-1">
                 <Mic className="w-3 h-3" />
                 Ask Aura
               </TabsTrigger>
-              <TabsTrigger value="system" className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <TabsTrigger value="system" className="flex items-center gap-1">
                 <HardDrive className="w-3 h-3" />
                 System
               </TabsTrigger>
