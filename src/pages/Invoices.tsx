@@ -238,23 +238,23 @@ export default function Invoices() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-white">Invoice #</TableHead>
-                  <TableHead className="text-white">Customer</TableHead>
-                  <TableHead className="text-white">Date</TableHead>
-                  <TableHead className="text-white">Due Date</TableHead>
-                  <TableHead className="text-white">Status</TableHead>
-                  <TableHead className="text-right text-white">Total</TableHead>
-                  <TableHead className="text-right text-white">Actions</TableHead>
+                  <TableHead>Invoice #</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Due Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Total</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-white/60">Loading...</TableCell>
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Loading...</TableCell>
                   </TableRow>
                 ) : filteredInvoices.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-white/60">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                       <Receipt className="w-8 h-8 mx-auto mb-2 opacity-50" />
                       No invoices found
                     </TableCell>
@@ -313,32 +313,32 @@ export default function Invoices() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm text-white/70">Invoice #</label>
+                    <label className="text-sm text-muted-foreground">Invoice #</label>
                     <p className="font-mono">{viewInvoice.invoice_number || '-'}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-white/70">Status</label>
+                    <label className="text-sm text-muted-foreground">Status</label>
                     <div>{getStatusBadge(viewInvoice.status)}</div>
                   </div>
                   <div>
-                    <label className="text-sm text-white/70">Customer</label>
+                    <label className="text-sm text-muted-foreground">Customer</label>
                     <p className="font-medium">{viewInvoice.customer_name}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-white/70">Email</label>
+                    <label className="text-sm text-muted-foreground">Email</label>
                     <p>{viewInvoice.customer_email || '-'}</p>
                   </div>
                 </div>
 
                 {lineItems.length > 0 && (
                   <div>
-                    <label className="text-sm text-white/70">Line Items</label>
+                    <label className="text-sm text-muted-foreground">Line Items</label>
                     <div className="mt-2 border rounded-lg">
                       {lineItems.map(item => (
                         <div key={item.id} className="flex justify-between p-2 border-b last:border-b-0">
                           <div>
                             <span className="font-medium">{item.description}</span>
-                            <span className="text-white/70 ml-2">x{item.quantity}</span>
+                            <span className="text-muted-foreground ml-2">x{item.quantity}</span>
                           </div>
                           <span>${item.total.toFixed(2)}</span>
                         </div>
@@ -349,7 +349,7 @@ export default function Invoices() {
 
                 <div className="border-t pt-4 space-y-1 text-right">
                   <div className="text-sm">Subtotal: ${viewInvoice.subtotal.toFixed(2)}</div>
-                  <div className="text-sm text-white/70">Tax ({viewInvoice.tax_rate || 0}%): ${(viewInvoice.tax_amount || 0).toFixed(2)}</div>
+                  <div className="text-sm text-muted-foreground">Tax ({viewInvoice.tax_rate || 0}%): ${(viewInvoice.tax_amount || 0).toFixed(2)}</div>
                   <div className="text-lg font-bold">Total: ${viewInvoice.total.toFixed(2)}</div>
                 </div>
 
@@ -364,7 +364,7 @@ export default function Invoices() {
 
                 {viewInvoice.notes && (
                   <div>
-                    <label className="text-sm text-white/70">Notes</label>
+                    <label className="text-sm text-muted-foreground">Notes</label>
                     <p className="text-sm">{viewInvoice.notes}</p>
                   </div>
                 )}

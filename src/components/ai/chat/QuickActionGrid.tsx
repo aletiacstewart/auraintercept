@@ -73,9 +73,9 @@ export const QuickActionBar: React.FC<QuickActionBarProps> = ({
             variant={action.variant || 'ghost'}
             size="sm"
             className={cn(
-              'text-[10px] shrink-0 rounded-full px-2.5 h-7 text-white/80',
-              'hover:bg-white/10 hover:text-white transition-colors',
-              action.variant === 'destructive' && 'bg-destructive text-white hover:bg-destructive/90'
+              'text-[10px] shrink-0 rounded-full px-2.5 h-7 text-foreground/80',
+              'hover:bg-muted hover:text-foreground transition-colors',
+              action.variant === 'destructive' && 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
             )}
             onClick={() => onAction(action.message, action.id)}
           >

@@ -125,7 +125,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
         .from('warranty_records')
         .select('id', { count: 'exact', head: true })
         .eq('company_id', companyId)
-        .gte('expiration_date', now);
+        .gte('warranty_end_date', now);
       return count || 0;
     },
     enabled: !!companyId,

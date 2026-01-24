@@ -115,9 +115,9 @@ export function RealTimeETASidebar({ jobs, companyId }: RealTimeETASidebarProps)
         <div className="p-4 space-y-3">
           {relevantJobs.length === 0 ? (
             <div className="text-center py-8">
-              <Navigation className="h-10 w-10 mx-auto text-white/30 mb-3" />
-              <p className="text-sm text-white/70">No technicians en route</p>
-              <p className="text-xs text-white/50 mt-1">
+              <Navigation className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
+              <p className="text-sm text-muted-foreground">No technicians en route</p>
+              <p className="text-xs text-muted-foreground/70 mt-1">
                 ETAs will appear here when technicians are dispatched
               </p>
             </div>

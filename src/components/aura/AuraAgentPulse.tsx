@@ -161,7 +161,7 @@ export function AuraAgentPulse({
               {/* Status dot */}
               <div 
                 className={cn(
-                  "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-800",
+                  "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-background",
                   status === 'active' && "bg-aura-emerald",
                   status === 'learning' && "bg-aura-curious",
                   status === 'interacting' && "bg-aura-connection",
@@ -173,7 +173,7 @@ export function AuraAgentPulse({
             {/* Optional label */}
             {showLabel && (
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-white/90">
+                <span className="text-xs font-medium text-foreground/90">
                   {agentConfig.label}
                 </span>
                 <span className={cn("text-xs", statusConfig.colorClass)}>
@@ -185,13 +185,13 @@ export function AuraAgentPulse({
         </TooltipTrigger>
         <TooltipContent 
           side="top" 
-          className="max-w-xs bg-slate-900 border-white/10"
+          className="max-w-xs"
         >
           <div className="space-y-1">
-            <p className="text-sm text-white font-medium">
+            <p className="text-sm font-medium">
               {agentConfig.label} Agent
             </p>
-            <p className="text-xs text-white/70">
+            <p className="text-xs text-muted-foreground">
               {tooltipMessage}
             </p>
             {status === 'learning' && (

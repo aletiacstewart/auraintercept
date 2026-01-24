@@ -157,7 +157,7 @@ export default function EmployeeDetail() {
     return (
       <DashboardLayout>
         <PageContainer>
-          <div className="flex flex-col items-center justify-center h-[400px] text-white/70">
+          <div className="flex flex-col items-center justify-center h-[400px] text-muted-foreground">
             <p>Employee not found</p>
             <Button variant="outline" className="mt-4" onClick={() => navigate('/dashboard/employees')}>
               Back to Employees
@@ -183,7 +183,7 @@ export default function EmployeeDetail() {
             </div>
             <div>
               <h1 className="text-2xl font-bold">{employee.full_name || 'Unknown Employee'}</h1>
-              <p className="text-white/70">{employee.email}</p>
+              <p className="text-muted-foreground">{employee.email}</p>
             </div>
           </div>
         </div>
@@ -196,7 +196,7 @@ export default function EmployeeDetail() {
                 <User className="h-5 w-5 text-primary" />
                 Employee Information
               </CardTitle>
-              <CardDescription className="text-white/70">
+              <CardDescription>
                 Update employee details
               </CardDescription>
             </CardHeader>
@@ -214,7 +214,7 @@ export default function EmployeeDetail() {
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-white/50" />
+                  <Mail className="h-4 w-4 text-muted-foreground" />
                   <Input
                     id="email"
                     value={employee.email || ''}
@@ -222,13 +222,13 @@ export default function EmployeeDetail() {
                     className="bg-muted/50"
                   />
                 </div>
-                <p className="text-xs text-white/50">Email cannot be changed</p>
+                <p className="text-xs text-muted-foreground">Email cannot be changed</p>
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone</Label>
                 <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-white/50" />
+                  <Phone className="h-4 w-4 text-muted-foreground" />
                   <Input
                     id="phone"
                     value={phone}
@@ -241,7 +241,7 @@ export default function EmployeeDetail() {
               <div className="space-y-2">
                 <Label htmlFor="address">Home Address</Label>
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-white/50" />
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
                   <Input
                     id="address"
                     value={homeAddress}
@@ -251,7 +251,7 @@ export default function EmployeeDetail() {
                 </div>
               </div>
 
-              <div className="pt-4 flex items-center justify-between text-sm text-white/50">
+              <div className="pt-4 flex items-center justify-between text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   Joined: {employee.created_at ? format(new Date(employee.created_at), 'MMM d, yyyy') : 'Unknown'}
@@ -276,7 +276,7 @@ export default function EmployeeDetail() {
                 <Briefcase className="h-5 w-5 text-primary" />
                 Job Roles
               </CardTitle>
-              <CardDescription className="text-white/70">
+              <CardDescription>
                 Assign job roles to grant access to related AI agents
                 {isCompanyAdmin && (
                   <span className="block mt-1 text-xs text-primary">
