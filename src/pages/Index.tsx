@@ -684,44 +684,54 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
-            {/* Aura Core Plan - NEW */}
+            {/* Aura Core Plan - AI-Assisted (No Automation) */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-emerald-500/30 dark-card-surface border-emerald-500/20">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
               <CardContent className="p-5">
-                <Badge className="mb-2 bg-emerald-600 text-white border-0 text-[10px]">Entry Level</Badge>
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge className="bg-emerald-600 text-white border-0 text-[10px]">AI-Assisted</Badge>
+                  <Badge variant="outline" className="border-emerald-500/50 text-emerald-400 text-[10px]">0 Agents • 3 Tools</Badge>
+                </div>
                 <h3 className="text-lg font-bold mb-1">Aura Core</h3>
-                <p className="text-[10px] text-card-foreground/60 mb-1">(Starter)</p>
+                <p className="text-[10px] text-card-foreground/60 mb-1">(Digital Foundation)</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold text-emerald-400">$500</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
                 </div>
                 <p className="text-xs text-secondary mb-3">$5,000/year (Save $1,000)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">Talk to Aura + Social Media Signal + Web Presence in one affordable package.</p>
+                <p className="text-xs text-card-foreground/70 mb-4">AI-powered tools for content & presence. <span className="text-emerald-400">You stay in control.</span></p>
                 
-                <div className="space-y-1.5 text-left mb-4">
+                {/* AI Tools Section */}
+                <p className="text-[10px] text-emerald-400 font-medium mb-1.5 uppercase tracking-wide">AI Tools Included</p>
+                <div className="space-y-1.5 text-left mb-3">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Talk to Aura (Text-Based)</span>
+                    <span className="text-xs">Talk to Aura <span className="text-card-foreground/50">(Chat Tool)</span></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Social Media Signal</span>
+                    <span className="text-xs">Social Media Signal <span className="text-card-foreground/50">(Content Tool)</span></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Web Presence (1pg)</span>
+                    <span className="text-xs">Web Presence <span className="text-card-foreground/50">(1-Page Site)</span></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
                     <span className="text-xs">2 Employee Accounts</span>
                   </div>
+                </div>
+                
+                {/* What's NOT included */}
+                <p className="text-[10px] text-muted-foreground font-medium mb-1.5 uppercase tracking-wide">No Automation</p>
+                <div className="space-y-1.5 text-left mb-4">
                   <div className="flex items-center gap-2">
                     <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-                    <span className="text-xs text-muted-foreground">No Proxy Voice Chat (text only)</span>
+                    <span className="text-xs text-muted-foreground">No AI Agents (manual operations)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-                    <span className="text-xs text-muted-foreground">No AI Agents</span>
+                    <span className="text-xs text-muted-foreground">No Voice/SMS (text only)</span>
                   </div>
                 </div>
 

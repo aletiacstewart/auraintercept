@@ -84,7 +84,15 @@ interface FeatureSection {
 
 const sections: FeatureSection[] = [
   {
-    title: 'AI Agents (0 / 3 / 3 / 10 / 23)',
+    title: 'AI Tools (Core Only)',
+    features: [
+      { name: 'Talk to Aura (Chat Tool)', core: 'check', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Social Media Signal (Content Tool)', core: 'check', halo: 'x', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
+      { name: 'Web Presence (Site Tool)', core: 'check', halo: 'x', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
+    ],
+  },
+  {
+    title: 'AI Agents (Automated)',
     features: [
       // Single-Point tier (3 agents) - Halo has triage, booking, followup
       { name: 'AI Receptionist (Triage)', core: 'x', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
@@ -142,8 +150,6 @@ const sections: FeatureSection[] = [
       { name: 'Employee Accounts', core: '2 included', halo: '2 included', singlePoint: '5 included', multiTrack: '10 included', command: '25 included' },
       { name: 'Additional Employees', core: '$10/employee', halo: '$10/employee', singlePoint: '$10/employee', multiTrack: '$10/employee', command: '$10/employee' },
       { name: 'White-Label Branding', core: 'x', halo: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Web Presence', core: 'check', halo: 'x', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
-      { name: 'Social Media Signal', core: 'check', halo: 'x', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
       { name: 'Embeddable Chat Widget', core: 'check', halo: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
     ],
   },
@@ -282,6 +288,7 @@ export const PricingComparisonTable = () => {
             </th>
             <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
               <div>Core</div>
+              <div className="text-xs font-normal text-emerald-400">AI-Assisted</div>
               <div className="text-xs font-normal text-white/70">$500/mo</div>
             </th>
             <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
