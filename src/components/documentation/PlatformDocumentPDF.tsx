@@ -642,7 +642,7 @@ const PlatformDocumentPDF = () => (
       </Text>
       
       <View style={styles.painPointCard}>
-        <Text style={styles.painPointTitle}>📞 Missed Calls = Missed Revenue</Text>
+        <Text style={styles.painPointTitle}>[PHONE] Missed Calls = Missed Revenue</Text>
         <Text style={styles.painPointText}>
           The average service business misses 62% of incoming calls. Each missed call is worth $200-$500 
           in potential revenue. That's $10,000-$25,000 lost monthly.
@@ -650,7 +650,7 @@ const PlatformDocumentPDF = () => (
       </View>
       
       <View style={styles.painPointCard}>
-        <Text style={styles.painPointTitle}>⏰ Scheduling Chaos</Text>
+        <Text style={styles.painPointTitle}>[TIME] Scheduling Chaos</Text>
         <Text style={styles.painPointText}>
           Office staff spend 2-3 hours daily on phone calls, scheduling, and rescheduling. That's 50+ hours 
           monthly of administrative work that doesn't grow the business.
@@ -658,7 +658,7 @@ const PlatformDocumentPDF = () => (
       </View>
       
       <View style={styles.painPointCard}>
-        <Text style={styles.painPointTitle}>🚫 No-Shows Drain Profits</Text>
+        <Text style={styles.painPointTitle}>[X] No-Shows Drain Profits</Text>
         <Text style={styles.painPointText}>
           Industry average no-show rate is 20-30%. Without automated reminders, businesses lose 
           thousands monthly to empty time slots and wasted technician hours.
@@ -666,7 +666,7 @@ const PlatformDocumentPDF = () => (
       </View>
       
       <View style={styles.painPointCard}>
-        <Text style={styles.painPointTitle}>😴 After-Hours Black Hole</Text>
+        <Text style={styles.painPointTitle}>[SLEEP] After-Hours Black Hole</Text>
         <Text style={styles.painPointText}>
           55% of service requests come outside business hours. Without 24/7 coverage, these leads 
           go to competitors or simply disappear.
@@ -674,7 +674,7 @@ const PlatformDocumentPDF = () => (
       </View>
       
       <View style={styles.painPointCard}>
-        <Text style={styles.painPointTitle}>📊 Flying Blind</Text>
+        <Text style={styles.painPointTitle}>[DATA] Flying Blind</Text>
         <Text style={styles.painPointText}>
           Most owners don't know their true cost per lead, technician utilization rate, or which 
           services are most profitable. Decisions are based on gut feeling, not data.
@@ -682,7 +682,7 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <View style={styles.solutionCard}>
-        <Text style={styles.solutionTitle}>✅ The Aura Intercept Solution</Text>
+        <Text style={styles.solutionTitle}>[+] The Aura Intercept Solution</Text>
         <Text style={styles.solutionText}>
           Our 23 AI operatives work 24/7 to answer every call, book every appointment, remind every customer, 
           dispatch every technician, and collect every payment—automatically. One platform. Zero missed opportunities.
@@ -999,14 +999,14 @@ const PlatformDocumentPDF = () => (
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>🎨 White-Label Ready</Text>
+          <Text style={styles.featureTitle}>White-Label Ready</Text>
           <Text style={styles.featureDesc}>
             Full branding customization. Your logo, colors, and domain. Customers see your brand.
           </Text>
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>📲 Social Media AI</Text>
+          <Text style={styles.featureTitle}>Social Media AI</Text>
           <Text style={styles.featureDesc}>
             AI-generated content for 6 platforms. Scheduling, posting, and analytics included.
           </Text>
@@ -1026,56 +1026,56 @@ const PlatformDocumentPDF = () => (
       
       <View style={styles.featureGrid}>
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>🌡️ HVAC Services</Text>
+          <Text style={styles.featureTitle}>HVAC Services</Text>
           <Text style={styles.featureDesc}>
             Heating, cooling, ventilation. Average ticket: $250-$2,500. High urgency, perfect for AI.
           </Text>
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>🔧 Plumbing</Text>
+          <Text style={styles.featureTitle}>Plumbing</Text>
           <Text style={styles.featureDesc}>
             Residential and commercial. Emergency-heavy. 24/7 AI coverage is a game-changer.
           </Text>
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>⚡ Electrical</Text>
+          <Text style={styles.featureTitle}>Electrical</Text>
           <Text style={styles.featureDesc}>
             Installation and repair. Complex scheduling needs. AI handles permits and inspections.
           </Text>
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>🔩 Appliance Repair</Text>
+          <Text style={styles.featureTitle}>Appliance Repair</Text>
           <Text style={styles.featureDesc}>
             Multi-brand expertise. Parts inventory tracking. Warranty management included.
           </Text>
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>🏠 Home Services</Text>
+          <Text style={styles.featureTitle}>Home Services</Text>
           <Text style={styles.featureDesc}>
             Handyman, cleaning, maintenance. High volume, lower ticket. AI scales efficiently.
           </Text>
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>🐛 Pest Control</Text>
+          <Text style={styles.featureTitle}>Pest Control</Text>
           <Text style={styles.featureDesc}>
             Recurring service model. Perfect for automated scheduling and reminders.
           </Text>
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>🌿 Landscaping</Text>
+          <Text style={styles.featureTitle}>Landscaping</Text>
           <Text style={styles.featureDesc}>
             Seasonal peaks and valleys. AI forecasting helps plan staffing and resources.
           </Text>
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>🏊 Pool & Spa</Text>
+          <Text style={styles.featureTitle}>Pool and Spa</Text>
           <Text style={styles.featureDesc}>
             Maintenance schedules, equipment tracking. Route optimization for service routes.
           </Text>
@@ -1288,7 +1288,7 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.sectionTitle}>Video Script Ideas</Text>
       
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>📹 "The Missed Call Cost" (30 seconds)</Text>
+        <Text style={styles.agentName}>[VIDEO] "The Missed Call Cost" (30 seconds)</Text>
         <Text style={styles.agentDescription}>
           Hook: "Every missed call costs your business $300-$500."{"\n"}
           Problem: Show phone ringing, going to voicemail, competitor getting the job.{"\n"}
@@ -1298,7 +1298,7 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>📹 "Day in the Life" (60 seconds)</Text>
+        <Text style={styles.agentName}>[VIDEO] "Day in the Life" (60 seconds)</Text>
         <Text style={styles.agentDescription}>
           Follow a business owner through a typical day.{"\n"}
           Show Aura handling: morning calls, scheduling, dispatch, reminders, reviews.{"\n"}
@@ -1308,7 +1308,7 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>📹 "Before & After" (45 seconds)</Text>
+        <Text style={styles.agentName}>[VIDEO] "Before and After" (45 seconds)</Text>
         <Text style={styles.agentDescription}>
           Split screen comparison.{"\n"}
           Before: Chaos, missed calls, stressed staff, unhappy customers.{"\n"}
@@ -1318,7 +1318,7 @@ const PlatformDocumentPDF = () => (
       </View>
 
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>📹 "Customer Testimonial" (90 seconds)</Text>
+        <Text style={styles.agentName}>[VIDEO] "Customer Testimonial" (90 seconds)</Text>
         <Text style={styles.agentDescription}>
           Real customer shares their transformation story.{"\n"}
           Key moments: "We were missing 60% of calls..." "Now we capture every lead..."{"\n"}

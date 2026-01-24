@@ -335,21 +335,21 @@ export const IndustryMarketingKitPDF: React.FC = () => (
       <View style={styles.twoColumn}>
         <View style={styles.column}>
           <View style={styles.seasonCard}>
-            <Text style={styles.seasonTitle}>🌡️ Summer (Peak)</Text>
+            <Text style={styles.seasonTitle}>[SUMMER] Summer (Peak)</Text>
             <Text style={styles.seasonText}>"When the heat hits, every call counts. AI answers them all—even when your lines are jammed."</Text>
           </View>
           <View style={styles.seasonCard}>
-            <Text style={styles.seasonTitle}>❄️ Winter</Text>
+            <Text style={styles.seasonTitle}>[WINTER] Winter</Text>
             <Text style={styles.seasonText}>"Heating emergencies don't wait for business hours. Neither does your AI receptionist."</Text>
           </View>
         </View>
         <View style={styles.column}>
           <View style={styles.seasonCard}>
-            <Text style={styles.seasonTitle}>🍂 Fall (Maintenance)</Text>
+            <Text style={styles.seasonTitle}>[FALL] Fall (Maintenance)</Text>
             <Text style={styles.seasonText}>"Turn seasonal checkups into booked revenue. AI follow-up reminds every customer on your list."</Text>
           </View>
           <View style={styles.seasonCard}>
-            <Text style={styles.seasonTitle}>🌸 Spring</Text>
+            <Text style={styles.seasonTitle}>[SPRING] Spring</Text>
             <Text style={styles.seasonText}>"AC tune-up season is coming. AI books appointments while you're still finishing heating calls."</Text>
           </View>
         </View>
@@ -371,7 +371,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
       <View style={styles.templateCard}>
         <Text style={styles.templateLabel}>Instagram/Facebook Post</Text>
         <Text style={styles.templateText}>
-          🔥 First 90-degree day of the year.{'\n'}
+          [HOT] First 90-degree day of the year.{'\n'}
           Our phones: *exploding*{'\n'}
           Our AI: "I've got this."{'\n\n'}
           While our competitors are sending calls to voicemail, we're booking every single appointment.{'\n\n'}
@@ -413,10 +413,10 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           AI-powered reception that scales with demand. Book every AC emergency, furnace breakdown, and maintenance request 24/7.
         </Text>
         <View style={styles.bulletList}>
-          <Text style={styles.bulletItem}>✓ Unlimited simultaneous calls during heat waves</Text>
-          <Text style={styles.bulletItem}>✓ After-hours emergency dispatch</Text>
-          <Text style={styles.bulletItem}>✓ Seasonal maintenance reminders</Text>
-          <Text style={styles.bulletItem}>✓ Route optimization for faster response</Text>
+          <Text style={styles.bulletItem}>- Unlimited simultaneous calls during heat waves</Text>
+          <Text style={styles.bulletItem}>- After-hours emergency dispatch</Text>
+          <Text style={styles.bulletItem}>- Seasonal maintenance reminders</Text>
+          <Text style={styles.bulletItem}>- Route optimization for faster response</Text>
         </View>
       </View>
 
@@ -467,7 +467,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
       <View style={styles.templateCard}>
         <Text style={styles.templateLabel}>Social Post: Trust Building</Text>
         <Text style={styles.templateText}>
-          ⭐⭐⭐⭐⭐{'\n\n'}
+          5-STAR REVIEW:{'\n\n'}
           "They answered at 11 PM when my basement was flooding. Sent someone within the hour. Saved my house."—Sarah M.{'\n\n'}
           When plumbing disasters strike, we're there. 24/7 AI reception means you ALWAYS reach us. No voicemail. No waiting.{'\n\n'}
           That's why we have 200+ 5-star reviews.{'\n\n'}
@@ -537,11 +537,11 @@ export const IndustryMarketingKitPDF: React.FC = () => (
       <View style={styles.templateCard}>
         <Text style={styles.templateLabel}>Social Post: Safety Focus</Text>
         <Text style={styles.templateText}>
-          ⚡ Electrical problems don't wait for business hours.{'\n\n'}
+          [ELECTRICAL] Electrical problems don't wait for business hours.{'\n\n'}
           Sparking outlet at 10 PM? Burning smell from the panel?{'\n'}
           Our AI answers immediately. Assesses the situation. Dispatches emergency help if needed.{'\n\n'}
           Because electrical safety isn't a 9-5 issue.{'\n\n'}
-          📞 Call or text anytime. We're always here.{'\n\n'}
+          Call or text anytime. We're always here.{'\n\n'}
           #ElectricalSafety #24HourService #LicensedElectrician
         </Text>
       </View>
@@ -610,12 +610,12 @@ export const IndustryMarketingKitPDF: React.FC = () => (
       <View style={styles.templateCard}>
         <Text style={styles.templateLabel}>Social Post: Project Showcase</Text>
         <Text style={styles.templateText}>
-          🏗️ 12 weeks. 8 trades. 1 seamless renovation.{'\n\n'}
+          [PROJECT] 12 weeks. 8 trades. 1 seamless renovation.{'\n\n'}
           Our secret? AI-powered coordination.{'\n\n'}
           While other contractors are juggling phone calls and spreadsheets, we're running projects with military precision:{'\n\n'}
-          → Real-time scheduling across all trades{'\n'}
-          → Automatic client updates{'\n'}
-          → Zero communication gaps{'\n\n'}
+          - Real-time scheduling across all trades{'\n'}
+          - Automatic client updates{'\n'}
+          - Zero communication gaps{'\n\n'}
           The result? On-time, on-budget, happy clients.{'\n\n'}
           #GeneralContractor #HomeRenovation #SmartBuilding
         </Text>
@@ -628,10 +628,10 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           AI-powered project management that keeps subs on schedule, clients informed, and your sanity intact.
         </Text>
         <View style={styles.bulletList}>
-          <Text style={styles.bulletItem}>✓ Multi-trade scheduling coordination</Text>
-          <Text style={styles.bulletItem}>✓ Automated client status updates</Text>
-          <Text style={styles.bulletItem}>✓ Sub-contractor communication hub</Text>
-          <Text style={styles.bulletItem}>✓ Long-term lead nurturing for big projects</Text>
+          <Text style={styles.bulletItem}>- Multi-trade scheduling coordination</Text>
+          <Text style={styles.bulletItem}>- Automated client status updates</Text>
+          <Text style={styles.bulletItem}>- Sub-contractor communication hub</Text>
+          <Text style={styles.bulletItem}>- Long-term lead nurturing for big projects</Text>
         </View>
       </View>
 
@@ -650,7 +650,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.emailBody}>
           Subject: Is Your AC Ready for Summer? [First Name]?{'\n\n'}
           Hi [Name],{'\n\n'}
-          Spring is here, which means summer heat isn't far behind. 🌡️{'\n\n'}
+          Spring is here, which means summer heat isn't far behind.{'\n\n'}
           Last year, we saw a 300% spike in emergency AC calls during the first heat wave. Don't be one of those calls.{'\n\n'}
           Schedule your pre-season tune-up now:{'\n'}
           → Avoid emergency rates{'\n'}

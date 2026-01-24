@@ -336,23 +336,23 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       <View style={styles.templateCard}>
         <Text style={styles.templateLabel}>Template 1: The Time-Saver</Text>
         <Text style={styles.templateText}>
-          ⏰ Still spending 3+ hours on phone tag with customers?{'\n\n'}
+          [TIME] Still spending 3+ hours on phone tag with customers?{'\n\n'}
           Our AI Receptionist answers every call, books appointments, and sends confirmations—while you focus on the job that pays.{'\n\n'}
-          🔹 24/7 availability{'\n'}
-          🔹 Instant booking{'\n'}
-          🔹 Zero missed calls{'\n\n'}
-          Stop losing leads. Start closing jobs. 💼{'\n\n'}
-          Link in bio to see it in action 👆
+          - 24/7 availability{'\n'}
+          - Instant booking{'\n'}
+          - Zero missed calls{'\n\n'}
+          Stop losing leads. Start closing jobs.{'\n\n'}
+          Link in bio to see it in action
         </Text>
       </View>
 
       <View style={styles.templateCard}>
         <Text style={styles.templateLabel}>Template 2: The Revenue Hook</Text>
         <Text style={styles.templateText}>
-          💸 The math doesn't lie:{'\n\n'}
-          ❌ 1 missed call = $500 average job{'\n'}
-          ❌ 5 missed calls/week = $10,000/month lost{'\n'}
-          ✅ AI answers every call = Revenue protected{'\n\n'}
+          [MONEY] The math doesn't lie:{'\n\n'}
+          X 1 missed call = $500 average job{'\n'}
+          X 5 missed calls/week = $10,000/month lost{'\n'}
+          + AI answers every call = Revenue protected{'\n\n'}
           Aura Intercept never sleeps, never takes breaks, never misses a lead.{'\n\n'}
           Your competitors are already using AI. Are you?
         </Text>
@@ -375,10 +375,10 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       <View style={styles.templateCard}>
         <Text style={styles.templateLabel}>Template 3: Customer Story</Text>
         <Text style={styles.templateText}>
-          "I used to miss 40% of my calls while on jobs. Last month? Zero missed calls, 12 new bookings."—Mike, HVAC Pro 🔥{'\n\n'}
+          "I used to miss 40% of my calls while on jobs. Last month? Zero missed calls, 12 new bookings."—Mike, HVAC Pro [HOT]{'\n\n'}
           Real results. Real contractors. Real AI that works.{'\n\n'}
           What would 12 extra bookings do for YOUR business?{'\n\n'}
-          👇 Comment "DEMO" and we'll show you
+          Comment "DEMO" and we'll show you
         </Text>
       </View>
 
@@ -386,12 +386,12 @@ export const SocialMediaContentPackPDF: React.FC = () => (
         <Text style={styles.templateLabel}>Template 4: Behind the Scenes</Text>
         <Text style={styles.templateText}>
           POV: You're on a job and your AI just:{'\n\n'}
-          ✅ Answered a new lead call{'\n'}
-          ✅ Scheduled them for tomorrow{'\n'}
-          ✅ Sent a confirmation email{'\n'}
-          ✅ Added them to your dispatch route{'\n'}
-          ✅ Notified your team{'\n\n'}
-          All while you're elbow-deep in an AC unit. 😎{'\n\n'}
+          [x] Answered a new lead call{'\n'}
+          [x] Scheduled them for tomorrow{'\n'}
+          [x] Sent a confirmation email{'\n'}
+          [x] Added them to your dispatch route{'\n'}
+          [x] Notified your team{'\n\n'}
+          All while you're elbow-deep in an AC unit.{'\n\n'}
           This is what working smarter looks like.
         </Text>
       </View>
@@ -399,10 +399,10 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       <View style={styles.templateCard}>
         <Text style={styles.templateLabel}>Template 5: Myth Buster</Text>
         <Text style={styles.templateText}>
-          🚫 "AI sounds robotic and customers hate it"{'\n\n'}
+          [MYTH BUSTER] "AI sounds robotic and customers hate it"{'\n\n'}
           Reality: 94% of customers can't tell they're talking to AI. Our voice tech sounds natural, warm, and professional.{'\n\n'}
           Don't believe us? Call our demo line yourself:{'\n'}
-          📞 [Demo Number]{'\n\n'}
+          [Demo Number]{'\n\n'}
           The future of customer service is here. And it sounds human.
         </Text>
       </View>
@@ -410,11 +410,11 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       <View style={styles.ctaBox}>
         <Text style={styles.ctaLabel}>CTA VARIATIONS</Text>
         <Text style={styles.ctaText}>
-          • "Link in bio to start your free trial 👆"{'\n'}
-          • "Comment 'INFO' for a personalized demo"{'\n'}
-          • "DM us 'SAVE' to see your ROI calculation"{'\n'}
-          • "Tag a contractor who needs this 👇"{'\n'}
-          • "Double-tap if you're tired of missed calls ❤️"
+          - "Link in bio to start your free trial"{'\n'}
+          - "Comment 'INFO' for a personalized demo"{'\n'}
+          - "DM us 'SAVE' to see your ROI calculation"{'\n'}
+          - "Tag a contractor who needs this"{'\n'}
+          - "Double-tap if you're tired of missed calls"
         </Text>
       </View>
 
@@ -459,18 +459,18 @@ export const SocialMediaContentPackPDF: React.FC = () => (
         <Text style={styles.templateLabel}>Template 3: List Post</Text>
         <Text style={styles.templateText}>
           5 things your AI receptionist does that a human can't:{'\n\n'}
-          1️⃣ Answer calls at 2 AM (when emergencies happen){'\n'}
-          2️⃣ Handle 10 calls simultaneously during rush hour{'\n'}
-          3️⃣ Never call in sick or take vacation{'\n'}
-          4️⃣ Instantly access your full schedule and pricing{'\n'}
-          5️⃣ Send confirmations before hanging up{'\n\n'}
+          1. Answer calls at 2 AM (when emergencies happen){'\n'}
+          2. Handle 10 calls simultaneously during rush hour{'\n'}
+          3. Never call in sick or take vacation{'\n'}
+          4. Instantly access your full schedule and pricing{'\n'}
+          5. Send confirmations before hanging up{'\n\n'}
           This isn't about replacing people. It's about being there when you can't be.{'\n\n'}
           Ready to never miss a call again?
         </Text>
       </View>
 
       <View style={styles.tipBox}>
-        <Text style={styles.tipLabel}>💡 FACEBOOK PRO TIP</Text>
+        <Text style={styles.tipLabel}>FACEBOOK PRO TIP</Text>
         <Text style={styles.tipText}>
           Post in local business groups and trade-specific communities. Engagement rates are 3x higher in niche groups. Use story formats—Facebook's algorithm prioritizes narrative content.
         </Text>
@@ -511,10 +511,10 @@ export const SocialMediaContentPackPDF: React.FC = () => (
         <Text style={styles.templateLabel}>Template 2: Data-Driven Post</Text>
         <Text style={styles.templateText}>
           I analyzed 10,000 service calls. Here's what I found:{'\n\n'}
-          📊 62% of calls to contractors go unanswered{'\n'}
-          📊 85% of unanswered callers don't leave voicemails{'\n'}
-          📊 78% call a competitor within 5 minutes{'\n'}
-          📊 Average lifetime value of a customer: $4,200{'\n\n'}
+          [DATA] 62% of calls to contractors go unanswered{'\n'}
+          [DATA] 85% of unanswered callers don't leave voicemails{'\n'}
+          [DATA] 78% call a competitor within 5 minutes{'\n'}
+          [DATA] Average lifetime value of a customer: $4,200{'\n\n'}
           The math: Every missed call = $4,200 walking to your competitor.{'\n\n'}
           AI changes this equation entirely. When every call gets answered, every lead gets captured. When every lead gets captured, revenue compounds.{'\n\n'}
           What's your current call answer rate?
@@ -558,7 +558,7 @@ export const SocialMediaContentPackPDF: React.FC = () => (
         <Text style={styles.templateText}>
           POV: Your competitor answered that call you missed at 9 PM{'\n\n'}
           [Split screen: You relaxing vs. competitor booking job]{'\n\n'}
-          Unless... you have AI that never sleeps 🤖{'\n\n'}
+          Unless... you have AI that never sleeps [ROBOT]{'\n\n'}
           #SmallBusiness #HVAC #PlumbingTikTok
         </Text>
       </View>
@@ -584,7 +584,7 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       </View>
 
       <View style={styles.tipBox}>
-        <Text style={styles.tipLabel}>⚠️ TIKTOK COMPLIANCE NOTE</Text>
+        <Text style={styles.tipLabel}>[!] TIKTOK COMPLIANCE NOTE</Text>
         <Text style={styles.tipText}>
           All AI-generated content must be marked with the "AI-generated" label per TikTok's policies. Include "#ad" or "#sponsored" for paid promotions. The Aura Intercept platform automatically adds 'is_aigc' disclosure for scheduled TikTok posts.
         </Text>
@@ -608,7 +608,7 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       <View style={styles.templateCard}>
         <Text style={styles.templateLabel}>Update 1: Service Announcement</Text>
         <Text style={styles.templateText}>
-          🔔 NEW: 24/7 Phone Support{'\n\n'}
+          [NEW] NEW: 24/7 Phone Support{'\n\n'}
           We now answer calls around the clock! Our AI-powered system ensures you always reach us—day or night, weekends and holidays.{'\n\n'}
           Call anytime: [Phone Number]{'\n'}
           Book online: [Link]
@@ -618,16 +618,16 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       <View style={styles.templateCard}>
         <Text style={styles.templateLabel}>Update 2: Seasonal</Text>
         <Text style={styles.templateText}>
-          ❄️ Winter is coming! Is your HVAC ready?{'\n\n'}
+          [WINTER] Winter is coming! Is your HVAC ready?{'\n\n'}
           Schedule your heating system tune-up before the rush. Same-day appointments available.{'\n\n'}
-          📞 Call or text us anytime—we're here 24/7!
+          Call or text us anytime—we're here 24/7!
         </Text>
       </View>
 
       <View style={styles.templateCard}>
         <Text style={styles.templateLabel}>Update 3: Review Request</Text>
         <Text style={styles.templateText}>
-          ⭐ Love our service? We'd love your feedback!{'\n\n'}
+          [STAR] Love our service? We'd love your feedback!{'\n\n'}
           Your 5-star review helps local homeowners find reliable service. Takes just 30 seconds.{'\n\n'}
           Thank you for being part of our community!
         </Text>
@@ -636,12 +636,12 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       <View style={styles.twoColumn}>
         <View style={styles.column}>
           <View style={styles.tipBox}>
-            <Text style={styles.tipLabel}>📍 GMB BEST PRACTICES</Text>
+            <Text style={styles.tipLabel}>[PIN] GMB BEST PRACTICES</Text>
             <Text style={styles.tipText}>
-              • Post weekly for best visibility{'\n'}
-              • Include location keywords{'\n'}
-              • Add photos when possible{'\n'}
-              • Respond to all reviews
+              - Post weekly for best visibility{'\n'}
+              - Include location keywords{'\n'}
+              - Add photos when possible{'\n'}
+              - Respond to all reviews
             </Text>
           </View>
         </View>
@@ -687,7 +687,7 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       <View style={styles.templateCard}>
         <Text style={styles.templateLabel}>SMS 3: Follow-Up</Text>
         <Text style={styles.templateText}>
-          Thanks for choosing [Business]! How was your service? Reply 1-5. Your feedback helps us improve! 🙏
+          Thanks for choosing [Business]! How was your service? Reply 1-5. Your feedback helps us improve!
         </Text>
       </View>
 
@@ -706,13 +706,13 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       </View>
 
       <View style={styles.tipBox}>
-        <Text style={styles.tipLabel}>📱 SMS COMPLIANCE</Text>
+        <Text style={styles.tipLabel}>[MOBILE] SMS COMPLIANCE</Text>
         <Text style={styles.tipText}>
-          • Always include opt-out instructions (Reply STOP){'\n'}
-          • Only text customers who have opted in{'\n'}
-          • Identify your business name in every message{'\n'}
-          • Keep messages under 160 characters to avoid splitting{'\n'}
-          • Aura Intercept tracks opt-outs automatically
+          - Always include opt-out instructions (Reply STOP){'\n'}
+          - Only text customers who have opted in{'\n'}
+          - Identify your business name in every message{'\n'}
+          - Keep messages under 160 characters to avoid splitting{'\n'}
+          - Aura Intercept tracks opt-outs automatically
         </Text>
       </View>
 
@@ -860,28 +860,28 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       <Text style={styles.sectionSubtitle}>Use these prompts with AI tools to create unlimited variations</Text>
 
       <View style={styles.promptBox}>
-        <Text style={styles.promptLabel}>🤖 SOCIAL POST GENERATOR</Text>
+        <Text style={styles.promptLabel}>[AI] SOCIAL POST GENERATOR</Text>
         <Text style={styles.promptText}>
           "Create a [platform] post for a [HVAC/plumbing/electrical] business promoting AI-powered call answering. Use a [problem-solution/story/data-driven] format. Include a hook in the first line, 3-4 key benefits, and a clear CTA. Keep it under [character limit] characters. Tone should be [professional/friendly/urgent]."
         </Text>
       </View>
 
       <View style={styles.promptBox}>
-        <Text style={styles.promptLabel}>🤖 HASHTAG GENERATOR</Text>
+        <Text style={styles.promptLabel}>[AI] HASHTAG GENERATOR</Text>
         <Text style={styles.promptText}>
           "Generate 20 hashtags for a B2B SaaS company targeting [industry] business owners. Include a mix of: industry-specific tags, business growth tags, technology/AI tags, and local service tags. Prioritize hashtags with 10K-500K posts for optimal reach."
         </Text>
       </View>
 
       <View style={styles.promptBox}>
-        <Text style={styles.promptLabel}>🤖 VIDEO SCRIPT GENERATOR</Text>
+        <Text style={styles.promptLabel}>[AI] VIDEO SCRIPT GENERATOR</Text>
         <Text style={styles.promptText}>
           "Write a [15/30/60]-second video script promoting Aura Intercept to [industry] business owners. Start with a hook that stops scrolling. Address the pain of missed calls. Show the AI solution. End with a clear CTA. Include visual direction notes in brackets."
         </Text>
       </View>
 
       <View style={styles.promptBox}>
-        <Text style={styles.promptLabel}>🤖 TESTIMONIAL FRAMEWORK</Text>
+        <Text style={styles.promptLabel}>[AI] TESTIMONIAL FRAMEWORK</Text>
         <Text style={styles.promptText}>
           "Create a customer testimonial template for a [industry] business owner who started using AI call answering. Include: their initial skepticism, the specific problem they faced, results after 30 days (with numbers), and their recommendation. Keep it conversational and authentic."
         </Text>
