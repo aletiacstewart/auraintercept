@@ -1,4 +1,4 @@
-import { Bell, CheckCheck, Calendar, Phone, MessageSquare, Mail, Briefcase } from 'lucide-react';
+import { Bell, CheckCheck, Calendar, Phone, MessageSquare, Mail, Briefcase, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { useStaffNotifications, StaffNotification } from '@/hooks/useStaffNotifications';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 const notificationIcons: Record<string, React.ElementType> = {
   new_booking: Calendar,
@@ -20,11 +21,11 @@ const notificationIcons: Record<string, React.ElementType> = {
 };
 
 const notificationColors: Record<string, string> = {
-  new_booking: 'text-emerald-400',
-  missed_call: 'text-red-400',
-  new_sms: 'text-blue-400',
-  new_email: 'text-purple-400',
-  job_update: 'text-amber-400',
+  new_booking: 'text-feature-appointments',
+  missed_call: 'text-destructive',
+  new_sms: 'text-feature-integrations',
+  new_email: 'text-feature-marketing',
+  job_update: 'text-feature-fieldops',
 };
 
 function NotificationItem({ 
@@ -73,6 +74,7 @@ function NotificationItem({
 
 export function NotificationBell() {
   const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } = useStaffNotifications();
+  const navigate = useNavigate();
 
   return (
     <Popover>
@@ -92,17 +94,28 @@ export function NotificationBell() {
       <PopoverContent className="w-80 p-0" align="end">
         <div className="flex items-center justify-between p-3 border-b">
           <h4 className="font-semibold text-sm">Notifications</h4>
-          {unreadCount > 0 && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="h-7 text-xs gap-1"
-              onClick={markAllAsRead}
+          <div className="flex items-center gap-1">
+            {unreadCount > 0 && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-7 text-xs gap-1"
+                onClick={markAllAsRead}
+              >
+                <CheckCheck className="w-3 h-3" />
+                Mark all read
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => navigate('/dashboard/notification-settings')}
+              title="Notification settings"
             >
-              <CheckCheck className="w-3 h-3" />
-              Mark all read
+              <Settings className="w-3.5 h-3.5" />
             </Button>
-          )}
+          </div>
         </div>
         
         <ScrollArea className="h-[300px]">
@@ -128,8 +141,13 @@ export function NotificationBell() {
         
         {notifications.length > 0 && (
           <div className="p-2 border-t">
-            <Button variant="ghost" size="sm" className="w-full text-xs">
-              View all notifications
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="w-full text-xs"
+              onClick={() => navigate('/dashboard/notification-settings')}
+            >
+              Manage notification settings
             </Button>
           </div>
         )}

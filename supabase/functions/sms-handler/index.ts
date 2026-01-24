@@ -94,6 +94,25 @@ serve(async (req) => {
       twilio_sid: messageSid,
     });
 
+    // Send staff notification for new SMS
+    fetch(`${SUPABASE_URL}/functions/v1/send-staff-notification`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        companyId: integration.company_id,
+        notificationType: 'new_sms',
+        title: 'New SMS Received',
+        message: `From ${fromNumber}: "${messageBody.substring(0, 100)}${messageBody.length > 100 ? '...' : ''}"`,
+        metadata: { 
+          fromNumber,
+          toNumber,
+          messageBody: messageBody.substring(0, 500),
+          messageSid
+        },
+        recipientRole: 'all'
+      })
+    }).catch(err => console.error('Failed to send staff notification:', err));
+
     // Build system prompt for AI
     const systemPrompt = `You are an AI assistant for ${company?.name || 'a service company'}. 
 You are responding to customer SMS messages. Keep your responses concise and helpful (under 320 characters when possible).
