@@ -33,7 +33,7 @@ export function NotificationSettings() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-24">
       {/* Notification Channels */}
       <Card>
         <CardHeader>
