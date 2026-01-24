@@ -65,30 +65,30 @@ export function AuditQuestion({
                 />
                 <Label
                   htmlFor={`${question.id}-${index}`}
+                className={cn(
+                  "flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200",
+                  isSelected
+                    ? `${colors.border} ${colors.bg}`
+                    : "border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300"
+                )}
+              >
+                <div
                   className={cn(
-                    "flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-all duration-200",
+                    "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0",
                     isSelected
-                      ? `${colors.border} ${colors.bg} text-white`
-                      : `border-white/20 bg-white/10 ${colors.hoverBg} hover:border-white/40`
+                      ? "border-white bg-white"
+                      : "border-gray-400"
                   )}
                 >
-                  <div
-                    className={cn(
-                      "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0",
-                      isSelected
-                        ? "border-white bg-white"
-                        : "border-white/50"
-                    )}
-                  >
-                    {isSelected && (
-                      <div className={cn("w-3 h-3 rounded-full", colors.bg)} />
-                    )}
-                  </div>
-                  <span className={cn(
-                    "text-sm sm:text-base font-medium",
-                    isSelected ? "text-white" : "text-white"
-                  )}>{option.label}</span>
-                </Label>
+                  {isSelected && (
+                    <div className={cn("w-3 h-3 rounded-full", colors.bg)} />
+                  )}
+                </div>
+                <span className={cn(
+                  "text-sm sm:text-base font-medium",
+                  isSelected ? "text-white" : "text-gray-700"
+                )}>{option.label}</span>
+              </Label>
               </div>
             );
           })}
