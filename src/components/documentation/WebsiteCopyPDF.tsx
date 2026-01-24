@@ -501,13 +501,13 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Command Tier - $1,497/mo</Text>
+        <Text style={styles.copyLabel}>Aura Pro Command Tier - $1,497/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
           Full command of your business. The complete 19-agent suite handles every operational task from marketing to analytics. For businesses ready to dominate their market.{'\n\n'}
           ✓ Everything in Multi-Track, plus:{'\n'}
           ✓ Lead scoring & Campaign automation{'\n'}
-          ✓ Social media management (all 6 platforms){'\n'}
+          ✓ Social Media Signal management (all 6 platforms){'\n'}
           ✓ Advanced analytics & reporting{'\n'}
           ✓ Customer insights AI{'\n'}
           ✓ Unlimited team members{'\n'}

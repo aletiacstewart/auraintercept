@@ -339,11 +339,11 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   core: {
     title: 'Aura Core',
-    description: 'Entry-level plan with Talk to Aura (Text-Based), Social Signal, and Web Presence.',
+    description: 'Entry-level plan with Talk to Aura (Text-Based), Social Media Signal, and Web Presence.',
     highlights: [
       'Talk to Aura (Text-Based) - customers type, AI responds in text',
       'No voice features - text chat only (no ElevenLabs/Twilio needed)',
-      'Social Signal (6 platforms)',
+      'Social Media Signal (6 platforms)',
       'Web Presence (1pg)',
       '2 Employee Accounts',
       'No AI agents included',

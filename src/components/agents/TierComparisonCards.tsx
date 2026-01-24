@@ -176,7 +176,7 @@ const TierComparisonCards: React.FC = () => {
           borderColor="border-emerald-600/50"
           additionalFeatures={[
             'Talk to Aura',
-            'Social Signal',
+            'Social Media Signal',
             'Web Presence (1pg)',
             '2 Employee Accounts',
           ]}
@@ -199,7 +199,7 @@ const TierComparisonCards: React.FC = () => {
           borderColor="border-sky-600/50"
           upgradeFrom={{ tier: 'Single-Point', priceDiff: 2497 }}
           additionalFeatures={[
-            'Social Signal',
+            'Social Media Signal',
             'Web Presence (1pg)',
           ]}
         />
@@ -212,7 +212,7 @@ const TierComparisonCards: React.FC = () => {
           borderColor="border-violet-600/50"
           upgradeFrom={{ tier: 'Multi-Track', priceDiff: 3000 }}
           additionalFeatures={[
-            'Social Signal',
+            'Social Media Signal',
             'Web Presence (1pg)',
           ]}
         />

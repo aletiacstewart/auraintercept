@@ -37,8 +37,8 @@ export const AGENT_STYLES: Record<string, AgentStyle> = {
   
   // Social Media Signal Agents
   social_content: { label: 'Social Media Signal', color: 'text-pink-400', bgColor: 'bg-pink-500/10' },
-  social_scheduler: { label: 'Signal Scheduler', color: 'text-pink-400', bgColor: 'bg-pink-500/10' },
-  social_analytics: { label: 'Signal Analytics', color: 'text-pink-400', bgColor: 'bg-pink-500/10' },
+  social_scheduler: { label: 'Social Media Signal Scheduler', color: 'text-pink-400', bgColor: 'bg-pink-500/10' },
+  social_analytics: { label: 'Social Media Signal Analytics', color: 'text-pink-400', bgColor: 'bg-pink-500/10' },
   
   // Analytics & Reports Agents
   insights: { label: 'Insights', color: 'text-secondary', bgColor: 'bg-secondary/10' },
@@ -76,7 +76,7 @@ export const AGENT_CATEGORIES = {
   fieldOperations: ['dispatch', 'route', 'eta', 'checkin'],
   businessOperations: ['admin', 'quoting', 'invoice', 'inventory', 'warranty'],
   marketingSales: ['campaign', 'marketing', 'promo', 'referral', 'winback', 'seasonal'],
-  auraSocialSignal: ['social_content', 'social_scheduler', 'social_analytics'],
+  socialMediaSignal: ['social_content', 'social_scheduler', 'social_analytics'],
   analyticsReports: ['insights', 'performance', 'revenue', 'forecast'],
 } as const;
 

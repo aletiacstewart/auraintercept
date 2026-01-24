@@ -506,9 +506,9 @@ export const BrandAssetGuidePDF: React.FC = () => (
             />
             <ColorSwatch 
               color="#f59e0b" 
-              name="Command Gold" 
+              name="Aura Pro Command Gold" 
               hex="#f59e0b" 
-              usage="Command tier indicators"
+              usage="Aura Pro Command tier indicators"
             />
           </View>
         </View>

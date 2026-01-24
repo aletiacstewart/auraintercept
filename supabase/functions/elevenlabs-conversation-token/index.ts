@@ -26,7 +26,7 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // === SUBSCRIPTION TIER GATING FOR VOICE ===
-    // Voice features require the Command tier (or active trial)
+    // Voice features require the Aura Pro Command tier (or active trial)
     const { data: companyData, error: companyError } = await supabase
       .from("companies")
       .select("subscription_tier, trial_ends_at")
