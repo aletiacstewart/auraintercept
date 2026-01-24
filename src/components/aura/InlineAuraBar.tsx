@@ -7,7 +7,7 @@ import { useVoice } from '@/contexts/VoiceContext';
 import { useUnifiedAura } from '@/hooks/useUnifiedAura';
 import { useAuth } from '@/contexts/AuthContext';
 import { AuraQuickResponsePopup } from './AuraQuickResponsePopup';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface InlineAuraBarProps {
   className?: string;
@@ -19,6 +19,7 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
   const { isVoiceModeEnabled, toggleVoiceMode, isListening, isSupported } = useVoice();
   const [showResponse, setShowResponse] = useState(false);
   const [lastResponse, setLastResponse] = useState<string | null>(null);
+  const [showThinking, setShowThinking] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   
   const {
@@ -37,12 +38,23 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
     },
   });
 
+  // Show thinking state when loading
+  useEffect(() => {
+    if (isLoading) {
+      setShowThinking(true);
+      setShowResponse(false);
+    } else {
+      setShowThinking(false);
+    }
+  }, [isLoading]);
+
   // Show quick response popup when new assistant message arrives
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
     if (lastMessage && lastMessage.role === 'assistant' && lastMessage.content) {
       setLastResponse(lastMessage.content);
       setShowResponse(true);
+      setShowThinking(false);
     }
   }, [messages]);
 
@@ -56,6 +68,7 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
 
   const onSubmit = async () => {
     if (inputValue.trim()) {
+      setShowThinking(true);
       await handleInput(inputValue, false);
       clearInput(); // Use clearInput to also reset voice state
     }
@@ -68,15 +81,19 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
     }
     if (e.key === 'Escape') {
       setInputValue('');
+      setShowResponse(false);
       inputRef.current?.blur();
     }
   };
 
   return (
     <div className={cn("relative", className)}>
-      <div className="flex items-center gap-2 bg-card border rounded-xl p-1.5 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-center gap-2 bg-card border border-border rounded-xl p-1.5 shadow-sm hover:shadow-md transition-shadow">
         {/* Aura Icon */}
-        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
+        <div className={cn(
+          "w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 transition-all",
+          isLoading && "animate-pulse"
+        )}>
           <Sparkles className="h-4 w-4 text-white" />
         </div>
         
@@ -86,7 +103,7 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder={placeholder || "Ask Aura anything..."}
-          className="border-0 bg-transparent flex-1 focus-visible:ring-0 focus-visible:ring-offset-0 text-sm text-card-foreground placeholder:text-card-muted"
+          className="border-0 bg-transparent flex-1 focus-visible:ring-0 focus-visible:ring-offset-0 text-sm text-foreground placeholder:text-muted-foreground"
           onKeyDown={handleKeyDown}
           disabled={isLoading}
         />
@@ -116,7 +133,7 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
             size="icon"
             className={cn(
               "h-8 w-8 flex-shrink-0 transition-colors relative z-10",
-              isVoiceModeEnabled && isListening && "bg-aura-emerald/20 text-aura-emerald"
+              isVoiceModeEnabled && isListening && "bg-primary/20 text-primary"
             )}
             onClick={(e) => {
               e.preventDefault();
@@ -147,6 +164,29 @@ export function InlineAuraBar({ className, placeholder }: InlineAuraBarProps) {
           )}
         </Button>
       </div>
+      
+      {/* Thinking Indicator */}
+      <AnimatePresence>
+        {showThinking && !showResponse && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-full left-0 right-0 mt-2 p-4 bg-card border border-border rounded-xl shadow-lg z-50"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 animate-pulse">
+                <Sparkles className="h-4 w-4 text-white" />
+              </div>
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                <span className="text-sm text-muted-foreground">Aura is thinking...</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Quick Response Popup */}
       <AnimatePresence>

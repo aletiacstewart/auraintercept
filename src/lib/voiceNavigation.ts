@@ -175,15 +175,48 @@ export const PAGE_ROUTES: Record<string, string> = {
   // Other pages
   'campaigns': '/dashboard/campaigns',
 };
+// Question words that indicate a data query, not navigation
+const QUESTION_INDICATORS = [
+  'how many', 'how much', 'what is', 'what are', 'what\'s',
+  'do i have', 'do we have', 'are there', 'is there',
+  'count', 'total', 'sum', 'average', 'list', 'tell me',
+  'show me the', 'give me', 'get me', 'find me',
+  'pending', 'overdue', 'upcoming', 'recent', 'today',
+  'this week', 'this month', 'last week', 'last month',
+  '?', 'revenue', 'sales', 'profit', 'status'
+];
+
+// Check if text is a data query rather than navigation
+export function isDataQuery(text: string): boolean {
+  const lower = text.toLowerCase();
+  return QUESTION_INDICATORS.some(indicator => lower.includes(indicator));
+}
 
 // Parse navigation command and extract destination with fuzzy matching
+// IMPORTANT: Only matches explicit navigation commands, not entity mentions
 export function parseNavigationCommand(text: string): string | null {
   const normalizedText = text.toLowerCase().trim();
   
-  // Match patterns like "go to companies", "open invoices", "show leads"
+  // FIRST: Reject if this looks like a data query
+  if (isDataQuery(normalizedText)) {
+    return null;
+  }
+  
+  // Only match EXPLICIT navigation verbs - must have clear intent to navigate
   const navigationPatterns = [
-    /\b(?:go to|navigate to|open|show|take me to|switch to)\s+(.+)/i,
+    /\b(?:go to|navigate to|open|take me to|switch to)\s+(.+)/i,
   ];
+  
+  // "show" is intentionally excluded - it's ambiguous ("show me revenue" vs "show customers page")
+  // Only allow "show" with explicit "page" suffix
+  const showPagePattern = /\bshow\s+(?:the\s+)?(.+?)\s+page\b/i;
+  const showPageMatch = normalizedText.match(showPagePattern);
+  if (showPageMatch) {
+    const destination = showPageMatch[1].trim();
+    if (PAGE_ROUTES[destination]) {
+      return destination;
+    }
+  }
   
   for (const pattern of navigationPatterns) {
     const match = normalizedText.match(pattern);
