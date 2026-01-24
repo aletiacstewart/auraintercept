@@ -106,7 +106,7 @@ export function WelcomeModal({
             icon: Settings,
             title: "Complete Setup",
             description: "Configure hours, services & integrations",
-            link: '/dashboard/settings',
+            link: '/dashboard/quick-setup',
             primary: true
           },
           {

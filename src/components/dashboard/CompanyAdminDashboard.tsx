@@ -5,13 +5,13 @@ import { useSubscription, SubscriptionTier } from '@/hooks/useSubscription';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageContainer } from '@/components/ui/page-container';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Bot, MessageSquare, Plus, Settings, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, HeadphonesIcon, Truck, Briefcase, Code, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield, Megaphone, LayoutDashboard } from 'lucide-react';
+import { Users, Calendar, MessageSquare, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield, Megaphone, LayoutDashboard } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
 import { TrialBanner } from '@/components/dashboard/TrialBanner';
 import { DashboardSetupNav } from './DashboardSetupNav';
-
+import { DashboardOnboardingHub } from './DashboardOnboardingHub';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { CompanyGuidesPDF } from '@/components/documentation/CompanyGuidesPDF';
@@ -313,6 +313,8 @@ export function CompanyAdminDashboard() {
       {/* Setup Navigation & Progress */}
       <DashboardSetupNav />
 
+      {/* Onboarding Hub - Shows Launch Progress or Onboarding Checklist */}
+      <DashboardOnboardingHub companyId={companyId || undefined} />
       <div className="flex items-center gap-4">
         <PDFDownloadLink 
           document={<CompanyGuidesPDF />} 
