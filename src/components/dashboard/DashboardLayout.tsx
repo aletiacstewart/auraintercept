@@ -56,6 +56,7 @@ import logo from '@/assets/aura-intercept-logo.png';
 import { differenceInDays, parseISO } from 'date-fns';
 import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 import { AuraFloatingButton } from '@/components/aura/AuraFloatingButton';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
@@ -474,6 +475,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
       {/* Main content */}
       <main ref={mainRef} className="flex-1 overflow-auto">
+        {/* Header with notification bell */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+          <div className="container max-w-7xl flex items-center justify-end py-2 px-4">
+            <NotificationBell />
+          </div>
+        </div>
         <div className="container max-w-7xl py-5 px-4">
           {children}
         </div>
