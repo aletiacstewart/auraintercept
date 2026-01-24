@@ -34,7 +34,7 @@ export function MetricCard({
   return (
     <Card 
       className={cn(
-        "bg-slate-800 border-white/10 transition-colors",
+        "surface-metric transition-colors",
         onClick && "hover:border-accent/40 cursor-pointer",
         className
       )}

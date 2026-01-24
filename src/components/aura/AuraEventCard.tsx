@@ -133,7 +133,7 @@ export function AuraEventCard({ event }: AuraEventCardProps) {
           <div 
             className={cn(
               "relative p-4 rounded-2xl border transition-all duration-300 animate-fade-in",
-              "bg-slate-800/80 border-white/10 hover:border-secondary/30 hover:bg-slate-800",
+              "surface-elevated border-border/20 hover:border-secondary/30",
               "shadow-lg shadow-primary/5 cursor-default",
               showSparkle && "aura-sparkle-burst"
             )}
@@ -178,7 +178,7 @@ export function AuraEventCard({ event }: AuraEventCardProps) {
         </TooltipTrigger>
         <TooltipContent 
           side="top" 
-          className="max-w-xs bg-slate-900 border-white/10 text-white"
+          className="max-w-xs"
         >
           <p className="text-xs">
             {event.status === 'processed' 

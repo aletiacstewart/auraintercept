@@ -248,6 +248,27 @@
     @apply text-sidebar-foreground/50;
   }
 
+  /* ============================================================
+     SEMANTIC SURFACE UTILITIES
+     ============================================================
+     Use these classes for consistent surface styling across the platform.
+     They respect the theme and work correctly in both light and dark modes.
+     ============================================================ */
+
+  /* Elevated surface: for outer containers like console frames */
+  .surface-elevated {
+    background: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border-color: hsl(var(--border) / 0.5);
+  }
+
+  /* Dark elevated surface: for dark-themed containers */
+  .surface-elevated-dark {
+    background: hsl(208 30% 18%);
+    color: hsl(var(--card-foreground));
+    border-color: hsl(208 30% 28% / 0.5);
+  }
+
   /* Console surfaces: force a light reading surface even when the app is in dark mode.
      This prevents light-mode-optimized forms (bg-white) from inheriting dark-mode text tokens. */
   .console-surface {
@@ -268,6 +289,13 @@
 
     --border: 210 20% 90%;
     --input: 210 20% 90%;
+  }
+
+  /* Metric cards: dark elevated surface for dashboard metrics */
+  .surface-metric {
+    background: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border-color: hsl(var(--card-foreground) / 0.1);
   }
 
   .guide-card-email {

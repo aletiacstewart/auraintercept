@@ -219,7 +219,7 @@ const TierComparisonCards: React.FC = () => {
       </div>
 
       {/* Upgrade Summary */}
-      <Card className="bg-slate-800/50 border-slate-700">
+      <Card className="surface-elevated border-border/50">
         <CardContent className="py-4">
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
             <div className="flex items-center gap-2">

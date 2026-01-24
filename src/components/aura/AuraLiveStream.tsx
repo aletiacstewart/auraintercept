@@ -9,7 +9,6 @@ import { Activity, Sparkles, ChevronRight } from 'lucide-react';
 import { AuraEventCard } from './AuraEventCard';
 import { AuraAgentPulse, AgentStatus } from './AuraAgentPulse';
 import { useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
 
 interface AuraLiveStreamProps {
   companyId: string;
@@ -114,9 +113,9 @@ export function AuraLiveStream({ companyId }: AuraLiveStreamProps) {
   const displayEvents = events.slice(0, 8);
 
   return (
-    <Card className="bg-slate-800/90 border-white/10 overflow-hidden">
+    <Card className="surface-elevated border-border/20 overflow-hidden">
       {/* Header with gradient accent */}
-      <CardHeader className="pb-3 border-b border-white/5">
+      <CardHeader className="pb-3 border-b border-border/10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Breathing activity indicator */}
@@ -127,11 +126,11 @@ export function AuraLiveStream({ companyId }: AuraLiveStreamProps) {
               <div className="absolute inset-0 rounded-full aura-pulse-ring ring-secondary/30" />
             </div>
             <div>
-              <CardTitle className="text-base font-medium text-white flex items-center gap-2">
+              <CardTitle className="text-base font-medium text-card-foreground flex items-center gap-2">
                 Aura Live
                 <Sparkles className="h-4 w-4 text-warning" />
               </CardTitle>
-              <p className="text-xs text-white/60">
+              <p className="text-xs text-muted-foreground">
                 Real-time wins and relief for your business
               </p>
             </div>
@@ -148,8 +147,8 @@ export function AuraLiveStream({ companyId }: AuraLiveStreamProps) {
         
         {/* Active Agents Bar */}
         {activeAgents.length > 0 && (
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/5">
-            <span className="text-xs text-white/50">Active now:</span>
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/10">
+            <span className="text-xs text-muted-foreground">Active now:</span>
             <div className="flex items-center gap-1">
               {activeAgents.slice(0, 6).map(agent => (
                 <AuraAgentPulse 
@@ -160,7 +159,7 @@ export function AuraLiveStream({ companyId }: AuraLiveStreamProps) {
                 />
               ))}
               {activeAgents.length > 6 && (
-                <span className="text-xs text-white/50 ml-1">
+                <span className="text-xs text-muted-foreground ml-1">
                   +{activeAgents.length - 6} more
                 </span>
               )}
@@ -178,7 +177,7 @@ export function AuraLiveStream({ companyId }: AuraLiveStreamProps) {
                 {[1, 2, 3].map(i => (
                   <div 
                     key={i}
-                    className="h-20 rounded-2xl bg-slate-700/50 animate-pulse"
+                    className="h-20 rounded-2xl bg-muted/50 animate-pulse"
                   />
                 ))}
               </div>
@@ -188,10 +187,10 @@ export function AuraLiveStream({ companyId }: AuraLiveStreamProps) {
                 <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mb-4">
                   <Activity className="h-8 w-8 text-secondary/50" />
                 </div>
-                <p className="text-white/70 text-sm mb-1">
+                <p className="text-card-foreground/70 text-sm mb-1">
                   Aura is ready and waiting
                 </p>
-                <p className="text-white/50 text-xs">
+                <p className="text-muted-foreground text-xs">
                   Agent activity will appear here in real-time
                 </p>
               </div>
@@ -206,7 +205,7 @@ export function AuraLiveStream({ companyId }: AuraLiveStreamProps) {
         
         {/* Footer with link to full activity */}
         {events.length > 0 && (
-          <div className="p-3 border-t border-white/5 bg-slate-800/50">
+          <div className="p-3 border-t border-border/10 bg-muted/30">
             <Button 
               variant="ghost" 
               size="sm" 
