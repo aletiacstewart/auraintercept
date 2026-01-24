@@ -1052,7 +1052,7 @@ export default function Index() {
                 <p className="text-xs text-white/70 mb-2">Facebook, Instagram, LinkedIn, TikTok</p>
                 <p className="text-xs text-white/90 font-medium">Free - Your Business Pages</p>
                 <p className="text-xs text-white/70">OAuth connection to your existing accounts</p>
-                <p className="text-xs text-white/60 mt-1">Required for: Core, Multi-Track, Command • Optional for: Single-Point</p>
+                <p className="text-xs text-white/60 mt-1">Required for: Core, Multi-Track, Command • Optional for: Halo, Single-Point</p>
               </div>
             </div>
 
