@@ -276,13 +276,13 @@ export const PricingComparisonTable = () => {
         <thead>
           <tr className="border-b border-white/20 bg-slate-700/80">
             <th className="text-left py-2.5 px-4 font-semibold text-white text-sm">Feature</th>
-            <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
-              <div>Core</div>
-              <div className="text-xs font-normal text-white/70">$500/mo</div>
-            </th>
             <th className="text-center py-2.5 px-3 font-semibold bg-rose-500/20 border-x border-rose-400/30 text-sm">
               <div className="text-rose-300">Aura Halo</div>
               <div className="text-xs font-normal text-rose-300/70">$397/mo</div>
+            </th>
+            <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
+              <div>Core</div>
+              <div className="text-xs font-normal text-white/70">$500/mo</div>
             </th>
             <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
               <div>Single-Point</div>
@@ -318,8 +318,8 @@ export const PricingComparisonTable = () => {
                   <Tooltip key={feature.name}>
                     <tr className={`border-b border-white/10 hover:bg-slate-600/30 ${rowBg}`}>
                       <FeatureNameCell name={feature.name} rowIndex={rowIndex} />
-                      {renderValue(feature.core, false, feature.name)}
                       {renderValue(feature.halo, false, feature.name, true)}
+                      {renderValue(feature.core, false, feature.name)}
                       {renderValue(feature.singlePoint, false, feature.name)}
                       {renderValue(feature.multiTrack, true, feature.name)}
                       {renderValue(feature.command, false, feature.name)}
