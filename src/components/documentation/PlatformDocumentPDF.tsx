@@ -522,10 +522,10 @@ const PlatformDocumentPDF = () => (
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>23</Text>
-          <Text style={styles.coverStatLabel}>AI Agents</Text>
+          <Text style={styles.coverStatLabel}>AI Operatives</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>6</Text>
+          <Text style={styles.coverStatNumber}>7</Text>
           <Text style={styles.coverStatLabel}>Control Centers</Text>
         </View>
         <View style={styles.coverStat}>
@@ -1145,39 +1145,54 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.sectionTitle}>Pricing & ROI Calculator</Text>
       
       <View style={styles.pricingCard}>
-        <Text style={styles.pricingTier}>Single-Point</Text>
-        <Text style={styles.pricingPrice}>$497/month</Text>
-        <Text style={styles.pricingFeature}>• 4 AI Agents (Receptionist, Scheduling, Follow-up, Review)</Text>
+        <Text style={styles.pricingTier}>Aura Halo (Salons & Wellness)</Text>
+        <Text style={styles.pricingPrice}>$397/month</Text>
+        <Text style={styles.pricingFeature}>• 4 AI Operatives (Receptionist, Scheduling, Follow-up, Voice Chat)</Text>
         <Text style={styles.pricingFeature}>• Customer Portal Console</Text>
-        <Text style={styles.pricingFeature}>• Email reminders</Text>
+        <Text style={styles.pricingFeature}>• Proxy Voice Chat included</Text>
+        <Text style={styles.pricingFeature}>• Up to 3 employees</Text>
+      </View>
+
+      <View style={styles.pricingCard}>
+        <Text style={styles.pricingTier}>Aura Core (AI-Assisted Foundation)</Text>
+        <Text style={styles.pricingPrice}>$500/month</Text>
+        <Text style={styles.pricingFeature}>• 0 AI Operatives (AI Tools Only - No Automation)</Text>
+        <Text style={styles.pricingFeature}>• Talk to Aura Chat, Social Media Signal, Web Presence</Text>
+        <Text style={styles.pricingFeature}>• Manual workflow with AI assistance</Text>
+        <Text style={styles.pricingFeature}>• Up to 2 employees</Text>
+      </View>
+
+      <View style={styles.pricingCard}>
+        <Text style={styles.pricingTier}>Single-Point</Text>
+        <Text style={styles.pricingPrice}>$1,500/month</Text>
+        <Text style={styles.pricingFeature}>• 3 AI Operatives (Receptionist, Follow-up, Review)</Text>
+        <Text style={styles.pricingFeature}>• Customer Portal Console</Text>
+        <Text style={styles.pricingFeature}>• Proxy Voice Chat included</Text>
         <Text style={styles.pricingFeature}>• Up to 5 employees</Text>
-        <Text style={styles.pricingFeature}>• 10+ hours saved weekly</Text>
       </View>
 
       <View style={[styles.pricingCard, { borderWidth: 2, borderColor: colors.primary }]}>
         <Text style={styles.pricingTier}>Multi-Track (Most Popular)</Text>
-        <Text style={styles.pricingPrice}>$897/month</Text>
-        <Text style={styles.pricingFeature}>• 14 AI Agents (All Single-Point + Field Operations + Business)</Text>
-        <Text style={styles.pricingFeature}>• 3 Control Consoles</Text>
-        <Text style={styles.pricingFeature}>• Email + SMS reminders</Text>
+        <Text style={styles.pricingPrice}>$3,997/month</Text>
+        <Text style={styles.pricingFeature}>• 10 AI Operatives (All Single-Point + Field Operations + Business)</Text>
+        <Text style={styles.pricingFeature}>• 2 Control Consoles</Text>
+        <Text style={styles.pricingFeature}>• Email + SMS + Voice</Text>
         <Text style={styles.pricingFeature}>• Up to 10 employees</Text>
-        <Text style={styles.pricingFeature}>• Full dispatch and invoicing automation</Text>
       </View>
 
       <View style={styles.pricingCard}>
-        <Text style={styles.pricingTier}>Command</Text>
-        <Text style={styles.pricingPrice}>$1,497/month</Text>
+        <Text style={styles.pricingTier}>Aura Pro Command (Enterprise)</Text>
+        <Text style={styles.pricingPrice}>$6,997/month</Text>
         <Text style={styles.pricingFeature}>• All 23 AI Operatives</Text>
         <Text style={styles.pricingFeature}>• All 7 Control Consoles</Text>
-        <Text style={styles.pricingFeature}>• Email + SMS + Voice</Text>
-        <Text style={styles.pricingFeature}>• Unlimited employees</Text>
-        <Text style={styles.pricingFeature}>• Social Media + Analytics + Marketing automation</Text>
+        <Text style={styles.pricingFeature}>• Email + SMS + Voice + Full Automation</Text>
+        <Text style={styles.pricingFeature}>• 15+ technicians / Multi-location</Text>
       </View>
 
       <Text style={styles.subsectionTitle}>ROI Quick Calculator</Text>
       <Text style={styles.paragraph}>
         Average service business with 10 missed calls/week × $300 avg job = $12,000/month in lost revenue.
-        Aura Intercept captures 100% of these calls. Platform cost: $897. Net ROI: $11,103/month (1,137% return).
+        Aura Intercept captures 100% of these calls. Platform cost: $3,997. Net ROI: $8,003/month.
       </Text>
     </Page>
 
@@ -1193,7 +1208,7 @@ const PlatformDocumentPDF = () => (
       <BulletPoint>Social media automation included vs. extra integrations needed</BulletPoint>
 
       <Text style={styles.subsectionTitle}>vs. Answering Services (Ruby, AnswerConnect)</Text>
-      <BulletPoint>$497-$1,497/mo flat vs. $500-$2,000+/mo for limited minutes</BulletPoint>
+      <BulletPoint>$397-$6,997/mo flat vs. $500-$2,000+/mo for limited minutes</BulletPoint>
       <BulletPoint>Unlimited calls vs. per-minute pricing</BulletPoint>
       <BulletPoint>Books appointments directly vs. just takes messages</BulletPoint>
       <BulletPoint>Full business automation vs. phone only</BulletPoint>
@@ -1377,11 +1392,11 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.subsectionTitle}>Key Numbers for Graphics</Text>
       <View style={styles.heroStatGrid}>
         <View style={styles.heroStatCard}>
-          <Text style={styles.heroStatNumber}>22</Text>
-          <Text style={styles.heroStatLabel}>AI Agents</Text>
+          <Text style={styles.heroStatNumber}>23</Text>
+          <Text style={styles.heroStatLabel}>AI Operatives</Text>
         </View>
         <View style={styles.heroStatCard}>
-          <Text style={styles.heroStatNumber}>6</Text>
+          <Text style={styles.heroStatNumber}>7</Text>
           <Text style={styles.heroStatLabel}>Consoles</Text>
         </View>
         <View style={styles.heroStatCard}>

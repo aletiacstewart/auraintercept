@@ -447,10 +447,10 @@ export const SocialMediaContentPackPDF: React.FC = () => (
         <Text style={styles.templateText}>
           True story from last week:{'\n\n'}
           A plumber named Dave was losing 30% of his leads because he couldn't answer calls while on jobs. He tried hiring a receptionist ($3,500/month). Still missed calls after hours.{'\n\n'}
-          Then he tried Aura Intercept. $497/month. 24/7 coverage. Zero missed calls.{'\n\n'}
+          Then he tried Aura Intercept. $1,500/month. 24/7 coverage. Zero missed calls.{'\n\n'}
           First month: 23 new bookings he would have missed.{'\n'}
           Revenue recovered: $11,500{'\n\n'}
-          That's a 23x return. In month one.{'\n\n'}
+          That's a 7x return. In month one.{'\n\n'}
           Dave's only regret? Not starting sooner.
         </Text>
       </View>
