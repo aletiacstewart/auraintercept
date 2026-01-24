@@ -919,44 +919,44 @@ const AIAgentGuidesPDF = () => (
       <Text style={styles.subsectionTitle}>Agent Communication Capabilities</Text>
       
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>📞 AI Receptionist (Triage)</Text>
+        <Text style={styles.agentName}>[PHONE] AI Receptionist (Triage)</Text>
         <Text style={styles.agentDesc}>
-          Answers Voice Calls • Responds to SMS • Handles Chat Widget • Routes to Specialists
+          Answers Voice Calls - Responds to SMS - Handles Chat Widget - Routes to Specialists
         </Text>
       </View>
 
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>🔔 Follow-up Agent</Text>
+        <Text style={styles.agentName}>[BELL] Follow-up Agent</Text>
         <Text style={styles.agentDesc}>
-          Sends Email Reminders • Sends SMS Reminders • Makes Voice Reminder Calls
+          Sends Email Reminders - Sends SMS Reminders - Makes Voice Reminder Calls
         </Text>
       </View>
 
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>📍 ETA Agent</Text>
+        <Text style={styles.agentName}>[LOCATION] ETA Agent</Text>
         <Text style={styles.agentDesc}>
-          Sends SMS ETA Updates • Sends Email ETA Notifications
+          Sends SMS ETA Updates - Sends Email ETA Notifications
         </Text>
       </View>
 
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>📢 Campaign Agent</Text>
+        <Text style={styles.agentName}>[MEGAPHONE] Campaign Agent</Text>
         <Text style={styles.agentDesc}>
-          Sends Email Campaigns • Sends SMS Campaigns • Promotional Messages
+          Sends Email Campaigns - Sends SMS Campaigns - Promotional Messages
         </Text>
       </View>
 
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>⭐ Review Agent</Text>
+        <Text style={styles.agentName}>[STAR] Review Agent</Text>
         <Text style={styles.agentDesc}>
-          Sends Review Request Emails • Sends Review Request SMS
+          Sends Review Request Emails - Sends Review Request SMS
         </Text>
       </View>
 
       <View style={styles.agentCard}>
-        <Text style={styles.agentName}>💰 Invoice Agent</Text>
+        <Text style={styles.agentName}>[MONEY] Invoice Agent</Text>
         <Text style={styles.agentDesc}>
-          Sends Invoice Emails • Payment Reminder Emails
+          Sends Invoice Emails - Payment Reminder Emails
         </Text>
       </View>
 
@@ -992,14 +992,14 @@ const AIAgentGuidesPDF = () => (
       {CONSOLES[0].agents.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            {agent.isCore && <Text style={{ color: colors.green, fontSize: 12 }}>⭐</Text>}
+            {agent.isCore && <Text style={{ color: colors.green, fontSize: 12 }}>[CORE]</Text>}
             <Text style={styles.agentName}>{agent.name}</Text>
           </View>
           <Text style={styles.agentDesc}>{agent.description}</Text>
           <View style={styles.agentStatus}>
             <View style={[styles.statusBadge, { backgroundColor: agent.worksAlone ? colors.greenLight : colors.amberLight }]}>
               <Text style={[styles.statusText, { color: agent.worksAlone ? colors.green : colors.amber }]}>
-                {agent.worksAlone ? '✓ Works Alone' : '→ Needs Other Agents'}
+                {agent.worksAlone ? 'Works Alone' : 'Needs Other Agents'}
               </Text>
             </View>
             {agent.requires.length > 0 && (
@@ -1033,14 +1033,14 @@ const AIAgentGuidesPDF = () => (
       {CONSOLES[1].agents.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            {agent.isCore && <Text style={{ color: colors.green, fontSize: 12 }}>⭐</Text>}
+            {agent.isCore && <Text style={{ color: colors.green, fontSize: 12 }}>[CORE]</Text>}
             <Text style={styles.agentName}>{agent.name}</Text>
           </View>
           <Text style={styles.agentDesc}>{agent.description}</Text>
           <View style={styles.agentStatus}>
             <View style={[styles.statusBadge, { backgroundColor: agent.worksAlone ? colors.greenLight : colors.amberLight }]}>
               <Text style={[styles.statusText, { color: agent.worksAlone ? colors.green : colors.amber }]}>
-                {agent.worksAlone ? '✓ Works Alone' : '→ Needs Other Agents'}
+                {agent.worksAlone ? 'Works Alone' : 'Needs Other Agents'}
               </Text>
             </View>
             {agent.requires.length > 0 && (
@@ -1074,14 +1074,14 @@ const AIAgentGuidesPDF = () => (
       {CONSOLES[2].agents.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            {agent.isCore && <Text style={{ color: colors.green, fontSize: 12 }}>⭐</Text>}
+            {agent.isCore && <Text style={{ color: colors.green, fontSize: 12 }}>[CORE]</Text>}
             <Text style={styles.agentName}>{agent.name}</Text>
           </View>
           <Text style={styles.agentDesc}>{agent.description}</Text>
           <View style={styles.agentStatus}>
             <View style={[styles.statusBadge, { backgroundColor: agent.worksAlone ? colors.greenLight : colors.amberLight }]}>
               <Text style={[styles.statusText, { color: agent.worksAlone ? colors.green : colors.amber }]}>
-                {agent.worksAlone ? '✓ Works Alone' : '→ Needs Other Agents'}
+                {agent.worksAlone ? 'Works Alone' : 'Needs Other Agents'}
               </Text>
             </View>
             {agent.requires.length > 0 && (
@@ -1115,14 +1115,14 @@ const AIAgentGuidesPDF = () => (
       {CONSOLES[3].agents.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            {agent.isCore && <Text style={{ color: colors.green, fontSize: 12 }}>⭐</Text>}
+            {agent.isCore && <Text style={{ color: colors.green, fontSize: 12 }}>[CORE]</Text>}
             <Text style={styles.agentName}>{agent.name}</Text>
           </View>
           <Text style={styles.agentDesc}>{agent.description}</Text>
           <View style={styles.agentStatus}>
             <View style={[styles.statusBadge, { backgroundColor: agent.worksAlone ? colors.greenLight : colors.amberLight }]}>
               <Text style={[styles.statusText, { color: agent.worksAlone ? colors.green : colors.amber }]}>
-                {agent.worksAlone ? '✓ Works Alone' : '→ Needs Other Agents'}
+                {agent.worksAlone ? 'Works Alone' : 'Needs Other Agents'}
               </Text>
             </View>
           </View>
@@ -1153,14 +1153,14 @@ const AIAgentGuidesPDF = () => (
       {CONSOLES[4].agents.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            {agent.isCore && <Text style={{ color: colors.green, fontSize: 12 }}>⭐</Text>}
+            {agent.isCore && <Text style={{ color: colors.green, fontSize: 12 }}>[CORE]</Text>}
             <Text style={styles.agentName}>{agent.name}</Text>
           </View>
           <Text style={styles.agentDesc}>{agent.description}</Text>
           <View style={styles.agentStatus}>
             <View style={[styles.statusBadge, { backgroundColor: agent.worksAlone ? colors.greenLight : colors.amberLight }]}>
               <Text style={[styles.statusText, { color: agent.worksAlone ? colors.green : colors.amber }]}>
-                {agent.worksAlone ? '✓ Works Alone' : '→ Needs Other Agents'}
+                {agent.worksAlone ? 'Works Alone' : 'Needs Other Agents'}
               </Text>
             </View>
             {agent.requires.length > 0 && (
@@ -1202,7 +1202,7 @@ const AIAgentGuidesPDF = () => (
         {ALL_AGENTS.map((agent, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2 }]}>
-              {agent.isCore ? '⭐ ' : ''}{agent.name}
+              {agent.isCore ? '[CORE] ' : ''}{agent.name}
             </Text>
             <Text style={[styles.tableCell, { flex: 1.5 }]}>{agent.console}</Text>
             <Text style={[styles.tableCell, { flex: 1 }]}>{agent.isCore ? 'Core' : 'Dependent'}</Text>
@@ -1236,13 +1236,13 @@ const AIAgentGuidesPDF = () => (
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 4 }}>Consoles:</Text>
               {tier.consoles.map((c, j) => (
-                <Text key={j} style={{ fontSize: 9 }}>• {c}</Text>
+                <Text key={j} style={{ fontSize: 9 }}>- {c}</Text>
               ))}
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 4 }}>{tier.agentCount} AI Agents:</Text>
               {Array.isArray(tier.agents) ? tier.agents.slice(0, 5).map((a, j) => (
-                <Text key={j} style={{ fontSize: 9 }}>• {a}</Text>
+                <Text key={j} style={{ fontSize: 9 }}>- {a}</Text>
               )) : <Text style={{ fontSize: 9 }}>{tier.agents}</Text>}
               {Array.isArray(tier.agents) && tier.agents.length > 5 && (
                 <Text style={{ fontSize: 9, color: colors.gray }}>+ {tier.agents.length - 5} more...</Text>

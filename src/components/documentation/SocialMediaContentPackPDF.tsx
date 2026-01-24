@@ -299,7 +299,7 @@ export const SocialMediaContentPackPDF: React.FC = () => (
       <Text style={styles.coverTitle}>Social Media{'\n'}Content Pack</Text>
       <Text style={styles.coverSubtitle}>
         Ready-to-Post Templates for All 6 Platforms{'\n'}
-        Hashtags • CTAs • 30-Day Calendar • AI Prompts
+        Hashtags - CTAs - 30-Day Calendar - AI Prompts
       </Text>
       <View style={styles.coverBadge}>
         <Text style={styles.coverBadgeText}>60+ Templates Included</Text>
