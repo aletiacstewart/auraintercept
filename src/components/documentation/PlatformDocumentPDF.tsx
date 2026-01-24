@@ -971,21 +971,21 @@ const PlatformDocumentPDF = () => (
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>💰 Payment Integration</Text>
+          <Text style={styles.featureTitle}>[MONEY] Payment Integration</Text>
           <Text style={styles.featureDesc}>
             One-click payment links via Stripe. Invoice-to-payment in minutes, not weeks.
           </Text>
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>⭐ Review Automation</Text>
+          <Text style={styles.featureTitle}>[STAR] Review Automation</Text>
           <Text style={styles.featureDesc}>
             Automatic review requests after jobs. Drives reputation on Google, Yelp, Facebook.
           </Text>
         </View>
         
         <View style={styles.featureCard}>
-          <Text style={styles.featureTitle}>📊 Real-Time Analytics</Text>
+          <Text style={styles.featureTitle}>[CHART] Real-Time Analytics</Text>
           <Text style={styles.featureDesc}>
             KPI dashboards, AI forecasting, and actionable insights. Make data-driven decisions.
           </Text>
@@ -1247,7 +1247,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.agentCard}>
         <Text style={styles.agentName}>"We're too busy to answer every call"</Text>
         <Text style={styles.agentDescription}>
-          → "Our AI Receptionist answers every call instantly, 24/7. It's like having a receptionist 
+          "Our AI Receptionist answers every call instantly, 24/7. It's like having a receptionist 
           that never sleeps, never takes breaks, and costs less than $20/day."
         </Text>
       </View>
@@ -1255,7 +1255,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.agentCard}>
         <Text style={styles.agentName}>"We already have a CRM"</Text>
         <Text style={styles.agentDescription}>
-          → "Great! We're not replacing your CRM—we're adding a 24/7 AI workforce on top. 
+          "Great! We're not replacing your CRM - we're adding a 24/7 AI workforce on top. 
           Most CRMs help you track data. We actually do the work."
         </Text>
       </View>
@@ -1263,7 +1263,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.agentCard}>
         <Text style={styles.agentName}>"Sounds expensive"</Text>
         <Text style={styles.agentDescription}>
-          → "Let's do the math together. If you miss just 5 calls per week at $300 average job, 
+          "Let's do the math together. If you miss just 5 calls per week at $300 average job, 
           that's $6,000/month in lost revenue. Our platform costs $897. You'd make 6x your investment."
         </Text>
       </View>
@@ -1271,7 +1271,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.agentCard}>
         <Text style={styles.agentName}>"Will customers know it's AI?"</Text>
         <Text style={styles.agentDescription}>
-          → "We use advanced voice synthesis that sounds completely natural. Many customers prefer 
+          "We use advanced voice synthesis that sounds completely natural. Many customers prefer 
           the instant response over waiting on hold. And it's always trained on your business."
         </Text>
       </View>
@@ -1359,11 +1359,11 @@ const PlatformDocumentPDF = () => (
       <View style={styles.agentCard}>
         <Text style={styles.agentName}>Pain Point Ad</Text>
         <Text style={styles.agentDescription}>
-          "Still missing customer calls? 🚫📞{"\n\n"}
+          "Still missing customer calls?{"\n\n"}
           Your competitors aren't.{"\n\n"}
           Aura Intercept answers every call 24/7, books appointments instantly, and sends 
           automatic reminders. 19 AI agents working for you around the clock.{"\n\n"}
-          Free 14-day trial. No credit card. Start now →"
+          Free 14-day trial. No credit card. Start now"
         </Text>
       </View>
 

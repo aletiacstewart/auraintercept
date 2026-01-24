@@ -505,13 +505,13 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
           Full command of your business. The complete 19-agent suite handles every operational task from marketing to analytics. For businesses ready to dominate their market.{'\n\n'}
-          ✓ Everything in Multi-Track, plus:{'\n'}
-          ✓ Lead scoring & Campaign automation{'\n'}
-          ✓ Social Media Signal management (all 6 platforms){'\n'}
-          ✓ Advanced analytics & reporting{'\n'}
-          ✓ Customer insights AI{'\n'}
-          ✓ Unlimited team members{'\n'}
-          ✓ Priority support
+          - Everything in Multi-Track, plus:{'\n'}
+          - Lead scoring and Campaign automation{'\n'}
+          - Social Media Signal management (all 6 platforms){'\n'}
+          - Advanced analytics and reporting{'\n'}
+          - Customer insights AI{'\n'}
+          - Unlimited team members{'\n'}
+          - Priority support
         </Text>
       </View>
 
@@ -608,11 +608,11 @@ export const WebsiteCopyPDF: React.FC = () => (
       <View style={styles.copyCard}>
         <Text style={styles.copyLabel}>Image Alt Text Examples</Text>
         <Text style={styles.copyBody}>
-          • "Aura Intercept AI dashboard showing real-time call analytics"{'\n'}
-          • "HVAC technician using Aura Intercept mobile app for job updates"{'\n'}
-          • "AI receptionist interface answering customer call"{'\n'}
-          • "Route optimization map showing technician dispatch paths"{'\n'}
-          • "Customer appointment confirmation screen on smartphone"
+          - "Aura Intercept AI dashboard showing real-time call analytics"{'\n'}
+          - "HVAC technician using Aura Intercept mobile app for job updates"{'\n'}
+          - "AI receptionist interface answering customer call"{'\n'}
+          - "Route optimization map showing technician dispatch paths"{'\n'}
+          - "Customer appointment confirmation screen on smartphone"
         </Text>
       </View>
 
@@ -644,10 +644,10 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.copyLabel}>Value Proposition Block</Text>
         <Text style={styles.copyHeadline}>We Believe In:</Text>
         <Text style={styles.copyBody}>
-          📞 Every Call Matters — A missed call is a missed opportunity. Our AI ensures zero slip through the cracks.{'\n\n'}
-          ⏰ Time Is Your Most Valuable Asset — Automation should free you, not chain you to a dashboard.{'\n\n'}
-          🤝 Technology Should Feel Human — AI that sounds robotic fails. Ours sounds like your best receptionist.{'\n\n'}
-          📈 Results Over Features — We measure success by your revenue growth, not our feature list.
+          [PHONE] Every Call Matters - A missed call is a missed opportunity. Our AI ensures zero slip through the cracks.{'\n\n'}
+          [CLOCK] Time Is Your Most Valuable Asset - Automation should free you, not chain you to a dashboard.{'\n\n'}
+          [HANDSHAKE] Technology Should Feel Human - AI that sounds robotic fails. Ours sounds like your best receptionist.{'\n\n'}
+          [CHART] Results Over Features - We measure success by your revenue growth, not our feature list.
         </Text>
       </View>
 

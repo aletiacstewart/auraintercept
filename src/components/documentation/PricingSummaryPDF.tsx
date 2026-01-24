@@ -551,9 +551,9 @@ const PricingSummaryPDF = () => (
           { feature: 'AI Operatives', halo: '4', core: '0', single: '3', multi: '10', command: '23' },
           { feature: 'Consoles', halo: '1', core: '0', single: '1', multi: '2', command: '7' },
           { feature: 'Employees', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
-          { feature: 'AI Automation', halo: '✓', core: '—', single: '✓', multi: '✓', command: '✓' },
-          { feature: 'Proxy Voice Chat', halo: '✓', core: '—', single: '✓', multi: '✓', command: '✓' },
-          { feature: 'Online Booking', halo: '✓', core: '—', single: '—', multi: '✓', command: '✓' },
+          { feature: 'AI Automation', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { feature: 'Proxy Voice Chat', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { feature: 'Online Booking', halo: 'Yes', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.feature}</Text>
@@ -603,16 +603,16 @@ const PricingSummaryPDF = () => (
           { category: 'Consoles', halo: '1', core: '0', single: '1', multi: '2', command: 'All 7' },
           { category: 'Employees', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
           { category: '', halo: '', core: '', single: '', multi: '', command: '' },
-          { category: 'AI Automation', halo: '✓', core: '—', single: '✓', multi: '✓', command: '✓' },
-          { category: 'Talk to Aura (Text)', halo: '✓', core: '✓', single: '✓', multi: '✓', command: '✓' },
-          { category: 'Proxy Voice Chat', halo: '✓', core: '—', single: '✓', multi: '✓', command: '✓' },
-          { category: 'Online Booking', halo: '✓', core: '—', single: '—', multi: '✓', command: '✓' },
+          { category: 'AI Automation', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { category: 'Talk to Aura (Text)', halo: 'Yes', core: 'Yes', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { category: 'Proxy Voice Chat', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { category: 'Online Booking', halo: 'Yes', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
           { category: '', halo: '', core: '', single: '', multi: '', command: '' },
-          { category: 'Customer Portal', halo: '✓', core: '—', single: '✓', multi: '✓', command: '✓' },
-          { category: 'Field Operations', halo: '—', core: '—', single: '—', multi: '✓', command: '✓' },
-          { category: 'Business Ops', halo: '—', core: '—', single: '—', multi: '—', command: '✓' },
-          { category: 'Marketing Console', halo: '—', core: '—', single: '—', multi: '—', command: '✓' },
-          { category: 'Analytics Console', halo: '—', core: '—', single: '—', multi: '—', command: '✓' },
+          { category: 'Customer Portal', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { category: 'Field Operations', halo: '-', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
+          { category: 'Business Ops', halo: '-', core: '-', single: '-', multi: '-', command: 'Yes' },
+          { category: 'Marketing Console', halo: '-', core: '-', single: '-', multi: '-', command: 'Yes' },
+          { category: 'Analytics Console', halo: '-', core: '-', single: '-', multi: '-', command: 'Yes' },
         ].map((row, i) => (
           <View key={i} style={row.category === '' ? { height: 6 } : (i % 2 === 0 ? styles.tableRow : styles.tableRowAlt)}>
             {row.category !== '' && (
@@ -716,7 +716,7 @@ const PricingSummaryPDF = () => (
       </View>
 
       <View style={styles.noticeBox}>
-        <Text style={styles.noticeTitle}>⚠️ Important: No AI Automation</Text>
+        <Text style={styles.noticeTitle}>[WARNING] Important: No AI Automation</Text>
         <Text style={styles.noticeText}>
           Aura Core is an AI-assisted tier with tools that require manual operation. It does NOT 
           include automated workflows, AI operatives, or Proxy Voice Chat. All tools are manually 
@@ -960,7 +960,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.sectionTitle}>3rd Party Integration Requirements</Text>
 
       <View style={styles.noticeBox}>
-        <Text style={styles.noticeTitle}>⚠️ Important: Separate Billing</Text>
+        <Text style={styles.noticeTitle}>[WARNING] Important: Separate Billing</Text>
         <Text style={styles.noticeText}>
           A valid credit card is required for all 3rd party integration accounts. These services are 
           billed separately from your Aura Intercept subscription.

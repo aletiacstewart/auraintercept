@@ -795,7 +795,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       </View>
 
       <View style={styles.closingCard}>
-        <Text style={styles.closingTitle}>💰 Final Value Stack</Text>
+        <Text style={styles.closingTitle}>[MONEY] Final Value Stack</Text>
         <Text style={styles.closingText}>
           "When you add it all up: 24/7 call answering, automatic scheduling, route optimization, follow-up automation, review collection, invoicing—you're looking at $4,000-$5,000/month in value for just $[tier price]. That's a 10x return on day one. Let's get you started."
         </Text>

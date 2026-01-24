@@ -553,10 +553,10 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           Hi [Name],{'\n\n'}
           Thanks for reaching out about EV charger installation! Just wanted to follow up on your inquiry.{'\n\n'}
           Most home installations take 2-4 hours and include:{'\n'}
-          • Level 2 charger installation{'\n'}
-          • Panel assessment{'\n'}
-          • Permit handling{'\n'}
-          • 3-year warranty{'\n\n'}
+          - Level 2 charger installation{'\n'}
+          - Panel assessment{'\n'}
+          - Permit handling{'\n'}
+          - 3-year warranty{'\n\n'}
           Would you like to schedule a quick site visit for an exact quote? I have availability [Day/Time].{'\n\n'}
           Best,{'\n'}
           [Business Name]
@@ -653,9 +653,9 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           Spring is here, which means summer heat isn't far behind.{'\n\n'}
           Last year, we saw a 300% spike in emergency AC calls during the first heat wave. Don't be one of those calls.{'\n\n'}
           Schedule your pre-season tune-up now:{'\n'}
-          → Avoid emergency rates{'\n'}
-          → Extend system life{'\n'}
-          → Lock in priority scheduling{'\n\n'}
+          {'>'} Avoid emergency rates{'\n'}
+          {'>'} Extend system life{'\n'}
+          {'>'} Lock in priority scheduling{'\n\n'}
           [Book Now Button]{'\n\n'}
           Stay cool,{'\n'}
           [Business Name]
@@ -682,9 +682,9 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           Hi [Name],{'\n\n'}
           Following up on our conversation about [Project]. Commercial electrical projects have a lot of moving parts—want to make sure you have everything you need.{'\n\n'}
           Quick resources that might help:{'\n'}
-          • Our commercial project checklist (attached){'\n'}
-          • Permit timeline for [City]{'\n'}
-          • Financing options for larger jobs{'\n\n'}
+          - Our commercial project checklist (attached){'\n'}
+          - Permit timeline for [City]{'\n'}
+          - Financing options for larger jobs{'\n\n'}
           When you're ready to move forward, we can start with a site assessment. Takes about an hour and gives you a complete scope and timeline.{'\n\n'}
           Let me know what works.{'\n\n'}
           [Business Name]
@@ -698,9 +698,9 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           Hi [Name],{'\n\n'}
           It's been 30 days since we completed your [Project Type]. Wanted to check in and make sure everything is working perfectly.{'\n\n'}
           Any questions about:{'\n'}
-          • Warranty coverage?{'\n'}
-          • Maintenance tips?{'\n'}
-          • Future project ideas?{'\n\n'}
+          - Warranty coverage?{'\n'}
+          - Maintenance tips?{'\n'}
+          - Future project ideas?{'\n\n'}
           Also, if you're happy with the work, we'd love a quick Google review. It helps other homeowners find reliable contractors:{'\n'}
           [Review Link]{'\n\n'}
           Thanks for choosing us!{'\n'}

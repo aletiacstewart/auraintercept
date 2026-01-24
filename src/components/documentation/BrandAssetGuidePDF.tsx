@@ -774,13 +774,13 @@ export const BrandAssetGuidePDF: React.FC = () => (
       </View>
 
       <View style={styles.guidelinesCard}>
-        <Text style={styles.guidelinesTitle}>⚠️ LOGO DON'TS</Text>
+        <Text style={styles.guidelinesTitle}>[WARNING] LOGO DON'TS</Text>
         <Text style={styles.guidelinesText}>
-          • Don't stretch, skew, or distort the logo{'\n'}
-          • Don't change the logo colors outside brand palette{'\n'}
-          • Don't add effects (shadows, glows, outlines){'\n'}
-          • Don't place on busy backgrounds without contrast{'\n'}
-          • Don't recreate or approximate the logo
+          - Don't stretch, skew, or distort the logo{'\n'}
+          - Don't change the logo colors outside brand palette{'\n'}
+          - Don't add effects (shadows, glows, outlines){'\n'}
+          - Don't place on busy backgrounds without contrast{'\n'}
+          - Don't recreate or approximate the logo
         </Text>
       </View>
 
