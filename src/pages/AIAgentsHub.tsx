@@ -17,6 +17,8 @@ import { BatchAgentActivation } from '@/components/ai/agents/BatchAgentActivatio
 import { AgentAnalyticsDashboard } from '@/components/ai/agents/AgentAnalyticsDashboard';
 import { ConversationHistoryBrowser } from '@/components/ai/agents/ConversationHistoryBrowser';
 import { OperativeDependencyGraph } from '@/components/ai/agents/OperativeDependencyGraph';
+import { AgentReviewQueue } from '@/components/ai/agents/AgentReviewQueue';
+import { useAgentReviewCount } from '@/hooks/useAgentReviewCount';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
@@ -36,7 +38,8 @@ import {
   Lock,
   Sparkles,
   Info,
-  Globe
+  Globe,
+  Eye
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/page-header';
@@ -157,6 +160,7 @@ export default function AIAgentsHub() {
     getAvailableAgents 
   } = useSubscription();
   const navigate = useNavigate();
+  const { count: reviewCount } = useAgentReviewCount();
   const [activeTab, setActiveTab] = useState<string>('agents');
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [autoActivationDone, setAutoActivationDone] = useState(false);
@@ -394,6 +398,15 @@ export default function AIAgentsHub() {
               <MessageSquare className="h-3.5 w-3.5" />
               History
             </TabsTrigger>
+            <TabsTrigger value="review" className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all">
+              <Eye className="h-3.5 w-3.5" />
+              Review
+              {reviewCount > 0 && (
+                <Badge variant="destructive" className="ml-1 h-5 min-w-5 flex items-center justify-center text-xs px-1.5">
+                  {reviewCount}
+                </Badge>
+              )}
+            </TabsTrigger>
           </TabsList>
 
           {/* Agents Tab */}
@@ -528,6 +541,18 @@ export default function AIAgentsHub() {
             ) : (
               <Card className="p-12 text-center">
                 <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Loading...</h3>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Review Tab */}
+          <TabsContent value="review" className="space-y-4">
+            {companyId ? (
+              <AgentReviewQueue companyId={companyId} />
+            ) : (
+              <Card className="p-12 text-center">
+                <Eye className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold mb-2">Loading...</h3>
               </Card>
             )}

@@ -128,37 +128,58 @@ export type Database = {
       }
       ai_agent_events: {
         Row: {
+          action_description: string | null
           company_id: string
+          confidence_score: number | null
           created_at: string | null
+          decision_mode: string | null
           error_message: string | null
           event_type: string
           id: string
+          override_reason: string | null
           payload: Json
           processed_at: string | null
+          requires_human_review: boolean | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           source_agent: string
           status: string | null
           target_agent: string | null
         }
         Insert: {
+          action_description?: string | null
           company_id: string
+          confidence_score?: number | null
           created_at?: string | null
+          decision_mode?: string | null
           error_message?: string | null
           event_type: string
           id?: string
+          override_reason?: string | null
           payload?: Json
           processed_at?: string | null
+          requires_human_review?: boolean | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           source_agent: string
           status?: string | null
           target_agent?: string | null
         }
         Update: {
+          action_description?: string | null
           company_id?: string
+          confidence_score?: number | null
           created_at?: string | null
+          decision_mode?: string | null
           error_message?: string | null
           event_type?: string
           id?: string
+          override_reason?: string | null
           payload?: Json
           processed_at?: string | null
+          requires_human_review?: boolean | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           source_agent?: string
           status?: string | null
           target_agent?: string | null
@@ -176,6 +197,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_agent_events_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
