@@ -19,6 +19,9 @@ import { ConversationHistoryBrowser } from '@/components/ai/agents/ConversationH
 import { OperativeDependencyGraph } from '@/components/ai/agents/OperativeDependencyGraph';
 import { AgentReviewQueue } from '@/components/ai/agents/AgentReviewQueue';
 import { useAgentReviewCount } from '@/hooks/useAgentReviewCount';
+import { useAgentLatestEvents } from '@/hooks/useAgentLatestEvents';
+import { DecisionModeBadge } from '@/components/ai/agents/DecisionModeBadge';
+import { ConfidenceIndicator } from '@/components/ai/agents/ConfidenceIndicator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
@@ -39,13 +42,15 @@ import {
   Sparkles,
   Info,
   Globe,
-  Eye
+  Eye,
+  Clock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/page-header';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { hasFullAccess, canManageAIAgents } from '@/lib/accessControl';
+import { formatDistanceToNow } from 'date-fns';
 
 const CATEGORY_INFO: Record<string, { 
   label: string; 
@@ -161,6 +166,11 @@ export default function AIAgentsHub() {
   } = useSubscription();
   const navigate = useNavigate();
   const { count: reviewCount } = useAgentReviewCount();
+  
+  // Fetch latest events for each agent (for status indicators)
+  const agentTypes = useMemo(() => agents.map(a => a.type), [agents]);
+  const { data: latestEvents } = useAgentLatestEvents(companyId, agentTypes);
+  
   const [activeTab, setActiveTab] = useState<string>('agents');
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [autoActivationDone, setAutoActivationDone] = useState(false);
@@ -479,6 +489,8 @@ export default function AIAgentsHub() {
                         requiredTier={requiredTier}
                         missingDependencies={missingDependencies}
                         getTierInfo={getTierInfo}
+                        latestEvent={latestEvents?.[agent.type] || null}
+                        onReviewClick={() => setActiveTab('review')}
                       />
                     );
                   })}
@@ -573,6 +585,15 @@ interface AgentCardProps {
   requiredTier: string | null;
   missingDependencies: string[];
   getTierInfo: (tier: string) => { label: string; price: string; description: string };
+  latestEvent: {
+    id: string;
+    decision_mode: 'auto' | 'review' | 'escalate';
+    confidence_score: number | null;
+    action_description: string | null;
+    created_at: string;
+    requires_human_review: boolean;
+  } | null;
+  onReviewClick: () => void;
 }
 
 function AgentCard({ 
@@ -584,6 +605,8 @@ function AgentCard({
   requiredTier,
   missingDependencies,
   getTierInfo,
+  latestEvent,
+  onReviewClick,
 }: AgentCardProps) {
   const categoryInfo = CATEGORY_INFO[agent.category];
   const Icon = categoryInfo?.icon || Bot;
@@ -595,6 +618,11 @@ function AgentCard({
   // Get ALL dependencies for this agent (not just missing ones)
   const allDependencies = getAgentDependencies(agent.type);
   const allDependencyNames = allDependencies.map(dep => AGENT_NAMES[dep] || dep);
+
+  // Format time ago
+  const timeAgo = latestEvent?.created_at 
+    ? formatDistanceToNow(new Date(latestEvent.created_at), { addSuffix: true })
+    : null;
 
   return (
     <Card className={cn(
@@ -695,8 +723,55 @@ function AgentCard({
                 {tierInfo?.label}
               </Badge>
             )}
-            <Badge variant="outline" className="text-card-foreground border-border/50 text-[10px] px-1.5 py-0">{agent.category.replace('_', ' ')}</Badge>
+            
+            {/* Decision Mode Badge - only show for active agents with events */}
+            {agent.is_enabled && latestEvent && (
+              <DecisionModeBadge mode={latestEvent.decision_mode} size="sm" />
+            )}
           </div>
+
+          {/* Confidence & Last Action - only show for active agents */}
+          {agent.is_enabled && latestEvent && (
+            <div className="flex items-center gap-2 text-[10px]">
+              <ConfidenceIndicator score={latestEvent.confidence_score} size="sm" showLabel />
+              {timeAgo && (
+                <span className="text-muted-foreground flex items-center gap-1">
+                  <Clock className="h-2.5 w-2.5" />
+                  {timeAgo}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Last Action Description */}
+          {agent.is_enabled && latestEvent?.action_description && (
+            <p className="text-[10px] text-muted-foreground line-clamp-2 italic">
+              "{latestEvent.action_description}"
+            </p>
+          )}
+
+          {/* Needs Review Alert */}
+          {agent.is_enabled && latestEvent?.requires_human_review && (
+            <div className="flex items-center justify-between gap-2 px-2 py-1.5 rounded bg-amber-500/10 border border-amber-500/30">
+              <span className="text-[10px] text-amber-400 font-medium flex items-center gap-1">
+                <Eye className="h-3 w-3" />
+                Needs Review
+              </span>
+              <Button 
+                size="sm" 
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onReviewClick();
+                }}
+                className="h-5 text-[10px] px-2 text-amber-400 hover:text-amber-300 hover:bg-amber-500/20"
+              >
+                View
+              </Button>
+            </div>
+          )}
+
+          <Badge variant="outline" className="text-card-foreground border-border/50 text-[10px] px-1.5 py-0 w-fit">{agent.category.replace('_', ' ')}</Badge>
 
           {/* Always show dependencies if any exist */}
           {allDependencyNames.length > 0 && (
