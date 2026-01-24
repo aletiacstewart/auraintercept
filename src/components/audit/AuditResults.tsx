@@ -15,6 +15,7 @@ import {
   Star,
   MessageSquare
 } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { TierType, TierScores, TIER_RECOMMENDATIONS } from "./types";
 import { useNavigate } from "react-router-dom";
 
@@ -26,6 +27,7 @@ interface AuditResultsProps {
 
 const TIER_ICONS: Record<TierType, React.ReactNode> = {
   CORE: <MessageSquare className="h-6 w-6" />,
+  HALO: <Sparkles className="h-6 w-6" />,
   SINGLE_POINT: <Zap className="h-6 w-6" />,
   MULTI_TRACK: <Users className="h-6 w-6" />,
   COMMAND: <Crown className="h-6 w-6" />,
@@ -33,6 +35,7 @@ const TIER_ICONS: Record<TierType, React.ReactNode> = {
 
 const TIER_COLORS: Record<TierType, string> = {
   CORE: 'from-slate-500 to-slate-600',
+  HALO: 'from-rose-400 to-pink-500',
   SINGLE_POINT: 'from-blue-500 to-cyan-500',
   MULTI_TRACK: 'from-emerald-500 to-teal-500',
   COMMAND: 'from-primary to-orange-500',
@@ -40,16 +43,18 @@ const TIER_COLORS: Record<TierType, string> = {
 
 const TIER_BG_COLORS: Record<TierType, string> = {
   CORE: 'bg-slate-50 border-slate-300',
+  HALO: 'bg-rose-50 border-rose-200',
   SINGLE_POINT: 'bg-blue-50 border-blue-200',
   MULTI_TRACK: 'bg-emerald-50 border-emerald-200',
   COMMAND: 'bg-primary/10 border-primary/30',
 };
 
-const TIER_ORDER: TierType[] = ['CORE', 'SINGLE_POINT', 'MULTI_TRACK', 'COMMAND'];
+const TIER_ORDER: TierType[] = ['CORE', 'HALO', 'SINGLE_POINT', 'MULTI_TRACK', 'COMMAND'];
 
 // ROI estimates by tier
 const TIER_ROI_ESTIMATES: Record<TierType, { hoursSaved: number; leadsRecovered: number; revenueImpact: string }> = {
   CORE: { hoursSaved: 5, leadsRecovered: 3, revenueImpact: '$1,500-3,000' },
+  HALO: { hoursSaved: 12, leadsRecovered: 6, revenueImpact: '$4,000-8,000' },
   SINGLE_POINT: { hoursSaved: 15, leadsRecovered: 8, revenueImpact: '$5,000-10,000' },
   MULTI_TRACK: { hoursSaved: 30, leadsRecovered: 15, revenueImpact: '$15,000-30,000' },
   COMMAND: { hoursSaved: 50, leadsRecovered: 25, revenueImpact: '$30,000-60,000' },

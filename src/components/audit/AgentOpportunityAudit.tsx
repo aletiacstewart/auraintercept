@@ -86,7 +86,7 @@ export function AgentOpportunityAudit() {
 
   // Calculate tier fit percentages for all 4 tiers
   const tierPercentages = useMemo((): TierScores => {
-    const totals: TierScores = { CORE: 0, SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
+    const totals: TierScores = { CORE: 0, HALO: 0, SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
     let answeredCount = 0;
 
     QUESTIONS.forEach((question) => {
@@ -97,6 +97,7 @@ export function AgentOpportunityAudit() {
         );
         if (selectedOption) {
           totals.CORE += selectedOption.tierScores.CORE;
+          totals.HALO += selectedOption.tierScores.HALO;
           totals.SINGLE_POINT += selectedOption.tierScores.SINGLE_POINT;
           totals.MULTI_TRACK += selectedOption.tierScores.MULTI_TRACK;
           totals.COMMAND += selectedOption.tierScores.COMMAND;
@@ -107,11 +108,12 @@ export function AgentOpportunityAudit() {
 
     // Calculate average percentage for each tier
     if (answeredCount === 0) {
-      return { CORE: 0, SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
+      return { CORE: 0, HALO: 0, SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
     }
 
     return {
       CORE: Math.round(totals.CORE / answeredCount),
+      HALO: Math.round(totals.HALO / answeredCount),
       SINGLE_POINT: Math.round(totals.SINGLE_POINT / answeredCount),
       MULTI_TRACK: Math.round(totals.MULTI_TRACK / answeredCount),
       COMMAND: Math.round(totals.COMMAND / answeredCount),
@@ -120,11 +122,12 @@ export function AgentOpportunityAudit() {
 
   // Determine recommended tier based on highest fit
   const recommendedTier = useMemo((): TierType => {
-    const { CORE, SINGLE_POINT, MULTI_TRACK, COMMAND } = tierPercentages;
+    const { CORE, HALO, SINGLE_POINT, MULTI_TRACK, COMMAND } = tierPercentages;
     
     // Find the tier with highest score
     const scores: { tier: TierType; score: number }[] = [
       { tier: 'CORE', score: CORE },
+      { tier: 'HALO', score: HALO },
       { tier: 'SINGLE_POINT', score: SINGLE_POINT },
       { tier: 'MULTI_TRACK', score: MULTI_TRACK },
       { tier: 'COMMAND', score: COMMAND },
