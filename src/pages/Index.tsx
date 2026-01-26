@@ -433,7 +433,7 @@ export default function Index() {
               <h1 className="text-4xl sm:text-5xl md:text-6xl tracking-wide mb-4 animate-fade-in">
                 <span className="font-brand text-[#214ebb]">Aura Intercept</span>
                 <span className="block text-lg sm:text-xl md:text-2xl mt-2 font-normal font-sans text-foreground">
-                  Where Service Companies Meet AI Efficiency
+                  The Pulse of Your Business
                 </span>
               </h1>
 
