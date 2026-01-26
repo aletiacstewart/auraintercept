@@ -1021,7 +1021,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Command ($1,497/mo): Full 19 agent suite including Social Media & Analytics</Text>
+          <Text style={styles.bulletText}>Command ($5,997/mo): Full 19 agent suite including Social Media & Analytics</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Key URLs</Text>

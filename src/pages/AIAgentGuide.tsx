@@ -39,28 +39,28 @@ const QUICK_REFERENCE_DATA = [
     agent: 'Forecast Agent', 
     requires: ['Insights Agent', 'Revenue Agent'], 
     tier: 'Command', 
-    cost: '$1,497', 
+    cost: '$5,997', 
     notes: 'Full analytics suite' 
   },
   { 
     agent: 'Social Scheduler', 
     requires: ['Social Content'], 
     tier: 'Command', 
-    cost: '$1,497', 
+    cost: '$5,997', 
     notes: 'Social media automation' 
   },
   { 
     agent: 'Performance Agent', 
     requires: ['Insights Agent'], 
     tier: 'Command', 
-    cost: '$1,497', 
+    cost: '$5,997', 
     notes: 'KPI tracking' 
   },
   { 
     agent: 'Social Analytics', 
     requires: ['Social Content'], 
     tier: 'Command', 
-    cost: '$1,497', 
+    cost: '$5,997', 
     notes: 'Engagement metrics' 
   },
 ];

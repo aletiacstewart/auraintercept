@@ -75,7 +75,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports'],
     label: 'Aura Pro Command',
-    price: '$1,497/mo',
+    price: '$5,997/mo',
     description: 'Full business automation suite',
   },
 };

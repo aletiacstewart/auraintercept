@@ -16,7 +16,7 @@ About Aura Intercept:
 Pricing Tiers:
 - Single-Point ($497/mo): 3 AI operatives (Receptionist, Follow-up, Review), 1 console (Customer Portal), saves 10+ hours/week in lead intake
 - Multi-Track ($897/mo): 10 AI operatives including Field Operations, 2 consoles, manages up to 5 field techs automatically
-- Pro Command ($1,497/mo): All 23 AI operatives, all 7 Control Centers, total business automation with Proxy Voice Chat capabilities
+- Pro Command ($5,997/mo): All 23 AI operatives, all 7 Control Centers, total business automation with Proxy Voice Chat capabilities
 - Annual billing saves 16% (implementation fee waived for annual plans)
 - Additional employees: $25/mo per 10 employees beyond included amount
 

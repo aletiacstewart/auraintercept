@@ -16,7 +16,7 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 const PRICE_TO_TIER: Record<string, string> = {
   "price_single_point": "single_point",     // Single-Point - $497/month
   "price_multi_track": "multi_track",       // Multi-Track - $897/month
-  "price_command": "command",               // Command - $1,497/month
+  "price_command": "command",               // Command - $5,997/month
   "price_1SelZTJ9fo9y8fGHf9Q9RtGr": "command", // Legacy Enterprise -> Command
 };
 
