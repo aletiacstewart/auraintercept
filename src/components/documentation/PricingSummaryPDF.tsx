@@ -387,9 +387,9 @@ const SUBSCRIPTION_TIERS = {
   },
   command: {
     name: 'Aura Pro Command',
-    monthlyPrice: 6997,
-    annualPrice: 69970,
-    annualSavings: 13994,
+    monthlyPrice: 5997,
+    annualPrice: 59970,
+    annualSavings: 11994,
     implementationFee: 'Custom',
     operatives: 23,
     consoles: 7,

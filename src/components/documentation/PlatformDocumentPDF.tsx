@@ -1183,7 +1183,7 @@ const PlatformDocumentPDF = () => (
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Pro Command (Enterprise)</Text>
-        <Text style={styles.pricingPrice}>$6,997/month</Text>
+        <Text style={styles.pricingPrice}>$5,997/month</Text>
         <Text style={styles.pricingFeature}>- All 23 AI Operatives</Text>
         <Text style={styles.pricingFeature}>- All 7 Control Consoles</Text>
         <Text style={styles.pricingFeature}>- Email + SMS + Voice + Full Automation</Text>
@@ -1209,7 +1209,7 @@ const PlatformDocumentPDF = () => (
       <BulletPoint>Social media automation included vs. extra integrations needed</BulletPoint>
 
       <Text style={styles.subsectionTitle}>vs. Answering Services (Ruby, AnswerConnect)</Text>
-      <BulletPoint>$397-$6,997/mo flat vs. $500-$2,000+/mo for limited minutes</BulletPoint>
+      <BulletPoint>$397-$5,997/mo flat vs. $500-$2,000+/mo for limited minutes</BulletPoint>
       <BulletPoint>Unlimited calls vs. per-minute pricing</BulletPoint>
       <BulletPoint>Books appointments directly vs. just takes messages</BulletPoint>
       <BulletPoint>Full business automation vs. phone only</BulletPoint>

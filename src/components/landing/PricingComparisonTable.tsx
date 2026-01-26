@@ -184,9 +184,9 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', core: '$500', halo: '$397', singlePoint: '$1,500', multiTrack: '$3,997', command: '$6,997' },
-      { name: 'Annual Price', core: '$5,000/year', halo: '$3,970/year', singlePoint: '$15,000/year', multiTrack: '$39,970/year', command: '$69,970/year' },
-      { name: 'Annual Savings', core: 'Save $1,000', halo: 'Save $794', singlePoint: 'Save $3,000', multiTrack: 'Save $7,994', command: 'Save $13,994' },
+      { name: 'Monthly Price', core: '$500', halo: '$397', singlePoint: '$1,500', multiTrack: '$3,997', command: '$5,997' },
+      { name: 'Annual Price', core: '$5,000/year', halo: '$3,970/year', singlePoint: '$15,000/year', multiTrack: '$39,970/year', command: '$59,970/year' },
+      { name: 'Annual Savings', core: 'Save $1,000', halo: 'Save $794', singlePoint: 'Save $3,000', multiTrack: 'Save $7,994', command: 'Save $11,994' },
     ],
   },
 ];

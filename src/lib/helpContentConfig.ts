@@ -411,7 +411,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
       'Multi-location support',
       'White-label branding',
       '25 Employee Accounts',
-      '$6,997/mo (Custom implementation)',
+      '$5,997/mo (Custom implementation)',
     ],
   },
 };
