@@ -571,7 +571,7 @@ const PricingSummaryPDF = () => (
         <Text style={styles.noticeTitle}>Implementation Fees</Text>
         <Text style={styles.noticeText}>
           All tiers include a one-time $499 implementation fee (Custom for Aura Pro Command).
-          Annual billing saves 16% (~$800 to $14,000 depending on tier).
+          Annual billing saves 16% (~$800 to $12,000 depending on tier).
         </Text>
       </View>
 

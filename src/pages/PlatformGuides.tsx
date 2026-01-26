@@ -129,7 +129,7 @@ const guideCategories = [
           'Premium Add-Ons: Social Media Signal ($150/mo), Web Presence ($150/mo) for Single-Point/Multi-Track',
           'Implementation fees: $499 (all tiers), Custom for Command'
         ],
-        tips: ['Trial users get full Command tier access', 'Annual billing saves 16% (~$800-$14,000/year)']
+        tips: ['Trial users get full Command tier access', 'Annual billing saves 16% (~$800-$12,000/year)']
       },
       {
         title: 'User Roles & Permissions',
