@@ -531,7 +531,7 @@ const PricingSummaryPDF = () => (
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>PRO COMMAND</Text>
-          <Text style={styles.summaryPrice}>$6,997</Text>
+          <Text style={styles.summaryPrice}>$5,997</Text>
           <Text style={styles.summaryLabel}>per month</Text>
           <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>Enterprise</Text>
         </View>
@@ -596,9 +596,9 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { category: 'Monthly Price', halo: '$397', core: '$500', single: '$1,500', multi: '$3,997', command: '$6,997' },
-          { category: 'Annual Price', halo: '$3,970', core: '$5,000', single: '$15,000', multi: '$39,970', command: '$69,970' },
-          { category: 'Annual Savings', halo: '~$800', core: '~$1,000', single: '~$3,000', multi: '~$8,000', command: '~$14,000' },
+          { category: 'Monthly Price', halo: '$397', core: '$500', single: '$1,500', multi: '$3,997', command: '$5,997' },
+          { category: 'Annual Price', halo: '$3,970', core: '$5,000', single: '$15,000', multi: '$39,970', command: '$59,970' },
+          { category: 'Annual Savings', halo: '~$800', core: '~$1,000', single: '~$3,000', multi: '~$8,000', command: '~$12,000' },
           { category: '', halo: '', core: '', single: '', multi: '', command: '' },
           { category: 'AI Operatives', halo: '4', core: '0', single: '3', multi: '10', command: 'All 23' },
           { category: 'Consoles', halo: '1', core: '0', single: '1', multi: '2', command: 'All 7' },
@@ -852,9 +852,9 @@ const PricingSummaryPDF = () => (
       <View style={styles.pricingCard}>
         <Text style={{ fontSize: 9, color: colors.primary, fontWeight: 700, marginBottom: 4 }}>ENTERPRISE</Text>
         <Text style={styles.pricingTierName}>Aura Pro Command</Text>
-        <Text style={styles.pricingPrice}>$6,997/month</Text>
-        <Text style={styles.pricingAnnual}>or $69,970/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$14,000 with annual billing</Text>
+        <Text style={styles.pricingPrice}>$5,997/month</Text>
+        <Text style={styles.pricingAnnual}>or $59,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$12,000 with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
@@ -927,7 +927,7 @@ const PricingSummaryPDF = () => (
           { tier: 'Aura Core', monthly: '$500', yearlyPath: '$6,000', annual: '$5,000', savings: '~$1,000' },
           { tier: 'Single-Point', monthly: '$1,500', yearlyPath: '$18,000', annual: '$15,000', savings: '~$3,000' },
           { tier: 'Multi-Track', monthly: '$3,997', yearlyPath: '$47,964', annual: '$39,970', savings: '~$8,000' },
-          { tier: 'Pro Command', monthly: '$6,997', yearlyPath: '$83,964', annual: '$69,970', savings: '~$14,000' },
+          { tier: 'Pro Command', monthly: '$5,997', yearlyPath: '$71,964', annual: '$59,970', savings: '~$12,000' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 1.5, fontWeight: 600 }]}>{row.tier}</Text>

@@ -247,9 +247,9 @@ const sections: FeatureSection[] = [
   {
     title: 'Pricing',
     features: [
-      { name: 'Monthly Price', core: '$500', singlePoint: '$1,500', multiTrack: '$3,997', command: '$6,997' },
-      { name: 'Annual Price', core: '$5,000/year', singlePoint: '$15,000/year', multiTrack: '$39,970/year', command: '$69,970/year' },
-      { name: 'Annual Savings', core: 'Save $1,000', singlePoint: 'Save $3,000', multiTrack: 'Save $7,994', command: 'Save $13,994' },
+      { name: 'Monthly Price', core: '$500', singlePoint: '$1,500', multiTrack: '$3,997', command: '$5,997' },
+      { name: 'Annual Price', core: '$5,000/year', singlePoint: '$15,000/year', multiTrack: '$39,970/year', command: '$59,970/year' },
+      { name: 'Annual Savings', core: 'Save $1,000', singlePoint: 'Save $3,000', multiTrack: 'Save $7,994', command: 'Save $11,994' },
     ],
   },
 ];
@@ -626,7 +626,7 @@ export default function Subscription() {
                       </th>
                       <th className="text-center py-2.5 px-3 font-semibold text-card-foreground text-sm">
                         <div>Command</div>
-                        <div className="text-xs font-normal text-muted-foreground">$6,997/mo</div>
+                        <div className="text-xs font-normal text-muted-foreground">$5,997/mo</div>
                       </th>
                     </tr>
                   </thead>

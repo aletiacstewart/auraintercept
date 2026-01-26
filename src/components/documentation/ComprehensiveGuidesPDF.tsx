@@ -220,7 +220,7 @@ const guideCategories = [
           'Aura Core ($500/mo): AI-Assisted foundation with 3 AI Tools (no automation)',
           'Single-Point ($1,500/mo): AI Receptionist, Follow-up, Review + Proxy Voice Chat',
           'Multi-Track ($3,997/mo): 10 operatives - adds Scheduling, Dispatch, ETA, Quoting, Invoicing',
-          'Aura Pro Command ($6,997/mo): Full 23 operative suite with all 7 consoles (15+ technicians)'
+          'Aura Pro Command ($5,997/mo): Full 23 operative suite with all 7 consoles (15+ technicians)'
         ],
         tips: ['Trial users get full Command tier access']
       },
