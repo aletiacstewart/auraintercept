@@ -574,7 +574,7 @@ export const BrandAssetGuidePDF: React.FC = () => (
         </View>
         <View style={{ marginBottom: 0 }}>
           <Text style={styles.fontName}>Monospace: JetBrains Mono</Text>
-          <Text style={[styles.fontDisplay, { fontFamily: 'Courier', fontSize: 18 }]}>$397-$6,997/month</Text>
+          <Text style={[styles.fontDisplay, { fontFamily: 'Courier', fontSize: 18 }]}>$397-$5,997/month</Text>
           <Text style={styles.fontMeta}>Weights: 400 (Regular), 500 (Medium){'\n'}Use for: Code, data, pricing, technical specs</Text>
         </View>
       </View>

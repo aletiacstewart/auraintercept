@@ -309,7 +309,7 @@ export const PricingComparisonTable = () => {
             <th className="text-center py-2.5 px-3 font-semibold bg-amber-500/20 border-x border-amber-400/30 text-sm">
               <div className="text-amber-300">Command</div>
               <div className="text-[10px] font-normal text-amber-400/80">Enterprise</div>
-              <div className="text-xs font-normal text-white/70">$6,997/mo</div>
+              <div className="text-xs font-normal text-white/70">$5,997/mo</div>
             </th>
           </tr>
         </thead>
