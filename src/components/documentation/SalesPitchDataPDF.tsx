@@ -563,7 +563,7 @@ export const SalesPitchDataPDF: React.FC = () => (
           </View>
           <View style={styles.tableRow}>
             <Text style={[styles.tableCell, styles.tableCellBold]}>Monthly Cost</Text>
-            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$397-$6,997</Text>
+            <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.success }]}>$397-$5,997</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.error }]}>$3,500+</Text>
             <Text style={[styles.tableCell, styles.tableCellBold, { color: colors.warning }]}>$200-$400</Text>
           </View>
@@ -740,7 +740,7 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.tierCard}>
         <View style={styles.tierHeader}>
           <Text style={styles.tierName}>Aura Pro Command (Enterprise)</Text>
-          <Text style={styles.tierPrice}>$6,997/mo</Text>
+          <Text style={styles.tierPrice}>$5,997/mo</Text>
         </View>
         <Text style={styles.tierDesc}>Best for: 15+ technicians or multi-location operations</Text>
         <Text style={styles.tierBullet}>- 15+ employees or multi-location</Text>

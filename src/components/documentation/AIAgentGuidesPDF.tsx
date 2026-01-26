@@ -745,8 +745,8 @@ const TIERS = [
   },
   {
     name: 'Aura Pro Command',
-    price: '$6,997/month',
-    annualPrice: '$69,970/year',
+    price: '$5,997/month',
+    annualPrice: '$59,970/year',
     consoles: ['All 7 Control Centers'],
     agentCount: 23,
     agents: ['All 23 AI Operatives'],

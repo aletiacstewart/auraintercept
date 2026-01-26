@@ -53,7 +53,7 @@ const TIER_PRICES: Record<SubscriptionTier, number> = {
   halo: 397,
   single_point: 1500,
   multi_track: 3997,
-  command: 6997,
+  command: 5997,
 };
 
 const AgentRequirementCalculator: React.FC = () => {

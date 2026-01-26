@@ -123,7 +123,7 @@ const guideCategories = [
           'Aura Core ($500/mo): AI-Assisted (No Automation) - Talk to Aura + Social Media Signal + Web Presence',
           'Single-Point ($1,500/mo): 3 AI Operatives (Receptionist, Follow-up, Review) + 1 Console',
           'Multi-Track ($3,997/mo): 10 AI Operatives + 2 Consoles + Online Booking + Field Ops',
-          'Aura Pro Command ($6,997/mo): All 23 AI Operatives + 7 Consoles + Enterprise Features',
+          'Aura Pro Command ($5,997/mo): All 23 AI Operatives + 7 Consoles + Enterprise Features',
           'Proxy Voice Chat included on Halo, Single-Point, Multi-Track, and Command tiers',
           'Employee limits: 3 (Halo), 2 (Core), 5 (Single-Point), 10 (Multi-Track), 25 (Command)',
           'Premium Add-Ons: Social Media Signal ($150/mo), Web Presence ($150/mo) for Single-Point/Multi-Track',

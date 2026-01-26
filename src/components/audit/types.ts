@@ -411,7 +411,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
   COMMAND: {
     tier: 'COMMAND',
     label: 'Aura Pro Command',
-    price: '$6,997/mo',
+    price: '$5,997/mo',
     description: 'Enterprise solution for 15+ technician teams and multi-location operations',
     keyFeatures: [
       '⭐ For 15+ technicians or multi-location',

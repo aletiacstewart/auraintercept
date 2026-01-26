@@ -124,9 +124,9 @@ const TIERS = [
   {
     id: 'command',
     name: 'Aura Pro Command',
-    monthlyPrice: '$6,997',
-    annualPrice: '$69,970',
-    annualSavings: 'Save $13,994',
+    monthlyPrice: '$5,997',
+    annualPrice: '$59,970',
+    annualSavings: 'Save $11,994',
     description: 'Full business automation suite',
     popular: false,
     agentCount: 23,
