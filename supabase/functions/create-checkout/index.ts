@@ -12,12 +12,33 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
-// Enterprise Company Subscription - $250/month
-const ENTERPRISE_SUBSCRIPTION = {
-  price_id: "price_1SelZTJ9fo9y8fGHf9Q9RtGr",
-  product_id: "prod_TbzYMyd0yO0shv",
-  name: "Enterprise Company Subscription",
-  price: 25000, // $250.00 in cents
+// Subscription tier configuration with Stripe Price IDs
+const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price: number }> = {
+  halo: {
+    price_id: "price_1StwXbJ9fo9y8fGHMaCGdnDV",
+    name: "Aura Halo",
+    price: 39700, // $397 in cents
+  },
+  core: {
+    price_id: "price_1StwXqJ9fo9y8fGHwzQk17IN",
+    name: "Aura Core",
+    price: 50000, // $500 in cents
+  },
+  single_point: {
+    price_id: "price_1StwY2J9fo9y8fGHwOIrLZ8q",
+    name: "Single-Point",
+    price: 150000, // $1,500 in cents
+  },
+  multi_track: {
+    price_id: "price_1StwYEJ9fo9y8fGHdwAoYr5E",
+    name: "Multi-Track",
+    price: 399700, // $3,997 in cents
+  },
+  command: {
+    price_id: "price_1StwYSJ9fo9y8fGHpPa6JL5I",
+    name: "Aura Pro Command",
+    price: 599700, // $5,997 in cents
+  },
 };
 
 serve(async (req) => {
@@ -48,6 +69,20 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
+    // Parse request body for tier selection
+    let requestedTier = "command"; // Default to command tier
+    try {
+      const body = await req.json();
+      if (body.tier && SUBSCRIPTION_TIERS[body.tier]) {
+        requestedTier = body.tier;
+      }
+    } catch {
+      // No body or invalid JSON, use default tier
+    }
+
+    const selectedTier = SUBSCRIPTION_TIERS[requestedTier];
+    logStep("Selected tier", { tier: requestedTier, name: selectedTier.name, price: selectedTier.price });
+
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
     // Check if customer already exists
@@ -67,7 +102,7 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [
         {
-          price: ENTERPRISE_SUBSCRIPTION.price_id,
+          price: selectedTier.price_id,
           quantity: 1,
         },
       ],
@@ -76,11 +111,11 @@ serve(async (req) => {
       cancel_url: `${origin}/dashboard/subscription?canceled=true`,
       metadata: {
         user_id: user.id,
-        tier: "enterprise",
+        tier: requestedTier,
       },
     });
 
-    logStep("Checkout session created", { sessionId: session.id, url: session.url });
+    logStep("Checkout session created", { sessionId: session.id, url: session.url, tier: requestedTier });
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

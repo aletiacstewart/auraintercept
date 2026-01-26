@@ -14,10 +14,14 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 
 // Map price IDs to tier names
 const PRICE_TO_TIER: Record<string, string> = {
-  "price_single_point": "single_point",     // Single-Point - $497/month
-  "price_multi_track": "multi_track",       // Multi-Track - $897/month
-  "price_command": "command",               // Command - $5,997/month
-  "price_1SelZTJ9fo9y8fGHf9Q9RtGr": "command", // Legacy Enterprise -> Command
+  // New tier price IDs
+  "price_1StwXbJ9fo9y8fGHMaCGdnDV": "halo",         // Aura Halo - $397/month
+  "price_1StwXqJ9fo9y8fGHwzQk17IN": "core",         // Aura Core - $500/month
+  "price_1StwY2J9fo9y8fGHwOIrLZ8q": "single_point", // Single-Point - $1,500/month
+  "price_1StwYEJ9fo9y8fGHdwAoYr5E": "multi_track",  // Multi-Track - $3,997/month
+  "price_1StwYSJ9fo9y8fGHpPa6JL5I": "command",      // Aura Pro Command - $5,997/month
+  // Legacy Enterprise -> Command (backward compatibility)
+  "price_1SelZTJ9fo9y8fGHf9Q9RtGr": "command",
 };
 
 serve(async (req) => {

@@ -68,8 +68,26 @@ const featureDescriptions: Record<string, string> = {
 // Tier configuration matching homepage
 const TIERS = [
   {
+    id: 'halo',
+    name: 'Aura Halo',
+    monthlyPrice: '$397',
+    annualPrice: '$3,970',
+    annualSavings: 'Save $794',
+    description: 'Beauty & wellness AI assistant',
+    popular: false,
+    agentCount: 3,
+    consoleCount: 1,
+    highlights: [
+      'AI Receptionist (Triage)',
+      'Scheduling Agent (Booking)',
+      'Follow-up Agent',
+      'Proxy Voice Chat',
+      'Talk to Aura (Text Chat)',
+    ],
+  },
+  {
     id: 'core',
-    name: 'Core',
+    name: 'Aura Core',
     monthlyPrice: '$500',
     annualPrice: '$5,000',
     annualSavings: 'Save $1,000',
@@ -144,6 +162,7 @@ const TIERS = [
 
 // Employee limits per tier
 export const TIER_EMPLOYEE_LIMITS: Record<string, number> = {
+  halo: 2,
   core: 2,
   single_point: 5,
   multi_track: 10,
@@ -297,7 +316,7 @@ export default function Subscription() {
     refetchInterval: 30000,
   });
 
-  const handleSubscribe = async () => {
+  const handleSubscribe = async (tierId: string) => {
     try {
       setLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
@@ -311,6 +330,7 @@ export default function Subscription() {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
+        body: { tier: tierId },
       });
 
       if (error) throw error;
@@ -576,7 +596,7 @@ export default function Subscription() {
                     tier.popular && "bg-primary hover:bg-primary/90"
                   )}
                   variant={tier.popular ? "default" : "outline"}
-                  onClick={handleSubscribe}
+                  onClick={() => handleSubscribe(tier.id)}
                   disabled={loading || (currentTier === tier.id && isSubscribed)}
                 >
                   {loading ? (
