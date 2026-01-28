@@ -41,15 +41,75 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    
-    if (customers.data.length === 0) {
-      throw new Error("No Stripe customer found for this user");
+    // Check user role - only company_admin can access billing portal
+    const { data: roleData } = await supabaseClient
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const userRole = roleData?.role;
+    logStep("User role checked", { role: userRole });
+
+    if (userRole === 'employee') {
+      throw new Error("Only company administrators can manage billing. Please contact your admin.");
     }
     
-    const customerId = customers.data[0].id;
-    logStep("Found Stripe customer", { customerId });
+    if (userRole === 'customer') {
+      throw new Error("Customers cannot access the billing portal. Your access is provided through the company you work with.");
+    }
+
+    if (userRole !== 'company_admin' && userRole !== 'platform_admin') {
+      throw new Error("Only company administrators can manage billing");
+    }
+
+    // Get user's company
+    const { data: profileData } = await supabaseClient
+      .from('profiles')
+      .select('company_id')
+      .eq('id', user.id)
+      .single();
+
+    if (!profileData?.company_id) {
+      throw new Error("Your account is not associated with a company");
+    }
+
+    const companyId = profileData.company_id;
+    logStep("Company ID found", { companyId });
+
+    // Get company's stripe_customer_id
+    const { data: companyData, error: companyError } = await supabaseClient
+      .from('companies')
+      .select('stripe_customer_id, name, email')
+      .eq('id', companyId)
+      .single();
+
+    if (companyError || !companyData) {
+      throw new Error("Failed to fetch company data");
+    }
+
+    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+    
+    let customerId = companyData.stripe_customer_id;
+
+    // If no stripe_customer_id, try to find by email (legacy)
+    if (!customerId) {
+      const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+      if (customers.data.length === 0) {
+        throw new Error("No billing account found for this company. Please subscribe first.");
+      }
+      customerId = customers.data[0].id;
+      logStep("Found Stripe customer by email (legacy)", { customerId });
+
+      // Update company with stripe_customer_id
+      await supabaseClient
+        .from('companies')
+        .update({ stripe_customer_id: customerId })
+        .eq('id', companyId);
+      logStep("Updated company with stripe_customer_id");
+    } else {
+      logStep("Using company's stripe_customer_id", { customerId });
+    }
 
     const origin = req.headers.get("origin") || "http://localhost:5173";
     const portalSession = await stripe.billingPortal.sessions.create({

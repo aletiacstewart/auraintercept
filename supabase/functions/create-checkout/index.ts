@@ -48,7 +48,8 @@ serve(async (req) => {
 
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    { auth: { persistSession: false } }
   );
 
   try {
@@ -69,6 +70,54 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
+    // Check user role - only company_admin can subscribe
+    const { data: roleData } = await supabaseClient
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const userRole = roleData?.role;
+    logStep("User role checked", { role: userRole });
+
+    if (userRole === 'employee') {
+      throw new Error("Only company administrators can manage subscriptions. Please contact your admin.");
+    }
+    
+    if (userRole === 'customer') {
+      throw new Error("Customers cannot subscribe directly. Your access is provided through the company you work with.");
+    }
+
+    if (userRole !== 'company_admin' && userRole !== 'platform_admin') {
+      throw new Error("Only company administrators can manage subscriptions");
+    }
+
+    // Get user's company
+    const { data: profileData } = await supabaseClient
+      .from('profiles')
+      .select('company_id')
+      .eq('id', user.id)
+      .single();
+
+    if (!profileData?.company_id) {
+      throw new Error("Your account is not associated with a company");
+    }
+
+    const companyId = profileData.company_id;
+    logStep("Company ID found", { companyId });
+
+    // Get company data
+    const { data: companyData, error: companyError } = await supabaseClient
+      .from('companies')
+      .select('id, name, email, stripe_customer_id')
+      .eq('id', companyId)
+      .single();
+
+    if (companyError || !companyData) {
+      throw new Error("Failed to fetch company data");
+    }
+    logStep("Company data fetched", { companyName: companyData.name });
+
     // Parse request body for tier selection
     let requestedTier = "command"; // Default to command tier
     try {
@@ -85,21 +134,41 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
-    // Check if customer already exists
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    let customerId;
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
-      logStep("Found existing customer", { customerId });
+    // Use company's existing Stripe customer or create a new one
+    let customerId = companyData.stripe_customer_id;
+    
+    if (customerId) {
+      logStep("Found existing Stripe customer for company", { customerId });
     } else {
-      logStep("No existing customer found");
+      // Create new Stripe customer for the company
+      const customer = await stripe.customers.create({
+        name: companyData.name,
+        email: companyData.email || user.email,
+        metadata: { 
+          company_id: companyId,
+          admin_user_id: user.id,
+        },
+      });
+      customerId = customer.id;
+      logStep("Created new Stripe customer for company", { customerId });
+
+      // Save stripe_customer_id to company record
+      const { error: updateError } = await supabaseClient
+        .from('companies')
+        .update({ stripe_customer_id: customerId })
+        .eq('id', companyId);
+
+      if (updateError) {
+        logStep("Warning: Failed to save stripe_customer_id to company", { error: updateError.message });
+      } else {
+        logStep("Saved stripe_customer_id to company");
+      }
     }
 
     const origin = req.headers.get("origin") || "http://localhost:5173";
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      customer_email: customerId ? undefined : user.email,
       line_items: [
         {
           price: selectedTier.price_id,
@@ -110,7 +179,8 @@ serve(async (req) => {
       success_url: `${origin}/dashboard/subscription?success=true`,
       cancel_url: `${origin}/dashboard/subscription?canceled=true`,
       metadata: {
-        user_id: user.id,
+        company_id: companyId,
+        admin_user_id: user.id,
         tier: requestedTier,
       },
     });
