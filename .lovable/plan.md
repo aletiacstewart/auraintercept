@@ -1,111 +1,226 @@
 
-## Remove Enterprise Plan & Setup Multi-Tier Stripe Subscriptions
+# Company-Level Subscription Implementation Plan
 
-### Summary
-Replace the outdated "Enterprise Company Subscription" with your actual 5-tier subscription structure: **Halo ($397)**, **Core ($500)**, **Single-Point ($1,500)**, **Multi-Track ($3,997)**, and **Pro Command ($5,997)**.
-
----
-
-### Current State Analysis
-
-| Component | Current State | Issue |
-|-----------|---------------|-------|
-| `create-checkout` Edge Function | Hardcoded to "Enterprise" at $250/mo | Only one plan, wrong price |
-| `check-subscription` Edge Function | Has placeholder price mappings | Price IDs don't exist in Stripe |
-| Stripe Products | "Enterprise Company Subscription" | Wrong product structure |
-| Stripe Prices | Only $250/mo price exists | Missing all 5 tier prices |
-| Subscription UI | Shows 4 tiers (Core, Single-Point, Multi-Track, Command) | Missing Halo tier, no tier selection in checkout |
+## Overview
+Update the subscription system so that **companies** are the subscription entities, not individual users. Employees and customers of subscribed companies receive free access based on their company's subscription tier.
 
 ---
 
-### Implementation Plan
+## Current State Analysis
 
-#### Step 1: Create Stripe Products & Prices
+### What Already Works
+- `companies` table has `subscription_tier`, `stripe_customer_id`, and `trial_ends_at` columns
+- `profiles.company_id` links users to their company
+- `user_roles` table properly separates roles: `platform_admin`, `company_admin`, `employee`, `customer`
+- `check-subscription` already reads and updates `company.subscription_tier`
 
-Create 5 new products with monthly recurring prices in Stripe:
+### What Needs Fixing
+1. **Stripe Customer Lookup**: Currently uses user email instead of company's Stripe customer ID
+2. **Checkout Access**: Any authenticated user can subscribe, not just company admins
+3. **Customer/Employee Handling**: Edge functions don't distinguish that these roles get free access through their company
 
-| Tier | Price | Product Name |
-|------|-------|--------------|
-| Halo | $397/mo | Aura Halo |
-| Core | $500/mo | Aura Core |
-| Single-Point | $1,500/mo | Single-Point |
-| Multi-Track | $3,997/mo | Multi-Track |
-| Pro Command | $5,997/mo | Aura Pro Command |
+---
 
-#### Step 2: Update `create-checkout` Edge Function
+## Implementation Steps
 
-Replace the single Enterprise plan with a tier configuration object and accept a `tier` parameter from the frontend:
+### Step 1: Update `check-subscription` Edge Function
 
-```typescript
-// New tier configuration with real Stripe Price IDs
-const SUBSCRIPTION_TIERS = {
-  halo: {
-    price_id: "price_xxx", // Will be created
-    name: "Aura Halo",
-    price: 39700, // $397 in cents
-  },
-  core: {
-    price_id: "price_xxx",
-    name: "Aura Core", 
-    price: 50000, // $500 in cents
-  },
-  single_point: {
-    price_id: "price_xxx",
-    name: "Single-Point",
-    price: 150000, // $1,500 in cents
-  },
-  multi_track: {
-    price_id: "price_xxx",
-    name: "Multi-Track",
-    price: 399700, // $3,997 in cents
-  },
-  command: {
-    price_id: "price_xxx",
-    name: "Aura Pro Command",
-    price: 599700, // $5,997 in cents
-  },
-};
+**File**: `supabase/functions/check-subscription/index.ts`
+
+**Changes**:
+- For `company_admin` users: Look up Stripe subscription using `company.stripe_customer_id` (if exists) or by company admin email as fallback
+- For `employee` users: Skip Stripe lookup entirely, inherit subscription from `company.subscription_tier`
+- For `customer` users: Look up their associated company via `customer_company_associations` and inherit that company's tier
+- For `platform_admin`: Continue granting full access (command tier)
+
+```text
+Logic Flow:
++------------------+
+| Get User & Role  |
++------------------+
+        |
+        v
++------------------+     Yes     +----------------------+
+| platform_admin?  |------------>| Return command tier  |
++------------------+             +----------------------+
+        | No
+        v
++------------------+
+| Get user's       |
+| company_id       |
++------------------+
+        |
+        v
++------------------+     Yes     +----------------------+
+| employee role?   |------------>| Return company tier  |
++------------------+             | (no Stripe lookup)   |
+        | No                     +----------------------+
+        v
++------------------+     Yes     +-----------------------------+
+| customer role?   |------------>| Lookup associated company   |
++------------------+             | Return company tier         |
+        | No                     +-----------------------------+
+        v
++------------------+
+| company_admin    |
+| Lookup Stripe by |
+| stripe_customer_id
++------------------+
+        |
+        v
++----------------------+
+| Update company tier  |
+| Return subscription  |
++----------------------+
 ```
 
-**Key Changes:**
-- Accept `tier` parameter from request body
-- Validate tier exists in configuration
-- Use correct price_id based on selected tier
-- Store tier in checkout session metadata
+### Step 2: Update `create-checkout` Edge Function
 
-#### Step 3: Update `check-subscription` Edge Function
+**File**: `supabase/functions/create-checkout/index.ts`
 
-Update the price-to-tier mapping with the real Stripe price IDs created in Step 1.
+**Changes**:
+- Add role check: Only `company_admin` can initiate checkout
+- Use company's `stripe_customer_id` if it exists, otherwise create a new Stripe customer and save the ID to the company record
+- Pass `company_id` in session metadata for proper association
 
-#### Step 4: Update Subscription UI (`src/pages/Subscription.tsx`)
+**Key Code Changes**:
+```typescript
+// 1. Verify user is company_admin
+const { data: roleData } = await supabaseClient
+  .from('user_roles')
+  .select('role')
+  .eq('user_id', user.id)
+  .single();
 
-- Add **Aura Halo** tier card to the tier list
-- Modify `handleSubscribe` to accept a tier parameter
-- Add "Subscribe" button to each tier card that passes the tier ID
-- Highlight current subscription tier with visual indicators
+if (roleData?.role !== 'company_admin') {
+  throw new Error('Only company administrators can manage subscriptions');
+}
 
-#### Step 5: Clean Up Old Products (Optional)
+// 2. Get company and its Stripe customer ID
+const { data: profileData } = await supabaseClient
+  .from('profiles')
+  .select('company_id')
+  .eq('id', user.id)
+  .single();
 
-After testing, the old Enterprise products can be archived in Stripe Dashboard.
+const { data: companyData } = await supabaseClient
+  .from('companies')
+  .select('id, name, email, stripe_customer_id')
+  .eq('id', profileData.company_id)
+  .single();
+
+// 3. Use existing Stripe customer or create new one for COMPANY
+let customerId = companyData.stripe_customer_id;
+if (!customerId) {
+  const customer = await stripe.customers.create({
+    name: companyData.name,
+    email: companyData.email || user.email,
+    metadata: { company_id: companyData.id }
+  });
+  customerId = customer.id;
+  
+  // Save to company record
+  await supabaseClient
+    .from('companies')
+    .update({ stripe_customer_id: customerId })
+    .eq('id', companyData.id);
+}
+
+// 4. Create checkout with company's Stripe customer
+const session = await stripe.checkout.sessions.create({
+  customer: customerId,
+  // ... rest of config
+  metadata: {
+    company_id: companyData.id,
+    tier: requestedTier,
+  },
+});
+```
+
+### Step 3: Update Subscription UI Page
+
+**File**: `src/pages/Subscription.tsx`
+
+**Changes**:
+- Import `useAuth` and check `userRole`
+- Show "Subscribe" buttons only for `company_admin` users
+- Show informational message for employees: "Your company's subscription: [tier]"
+- Show informational message for customers: "You have free access through [company name]"
+
+**UI Behavior by Role**:
+| Role | See Tier Cards | Subscribe Buttons | Manage Button |
+|------|----------------|-------------------|---------------|
+| company_admin | Yes | Yes | Yes |
+| employee | Yes (read-only) | No - "Contact your admin" | No |
+| customer | Basic info | No | No |
+| platform_admin | Yes | No (full access) | No |
+
+### Step 4: Update AuthContext Subscription Logic
+
+**File**: `src/contexts/AuthContext.tsx`
+
+**Changes**:
+- Update `SubscriptionTier` type to include all 5 tiers: `'free' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command'`
+- Remove the old `PRODUCT_TO_TIER` mapping (handled in edge function now)
+- Trust the `tier` value returned from `check-subscription` directly
+
+### Step 5: Update `stripe-customer-portal` Edge Function
+
+**File**: `supabase/functions/stripe-customer-portal/index.ts`
+
+**Changes**:
+- Add same role check as checkout: only `company_admin` can access
+- Use `company.stripe_customer_id` instead of looking up by email
 
 ---
 
-### Files to Modify
+## Technical Details
 
-| File | Changes |
-|------|---------|
-| `supabase/functions/create-checkout/index.ts` | Replace Enterprise config with 5-tier config, accept tier param |
-| `supabase/functions/check-subscription/index.ts` | Update price-to-tier mapping with real IDs |
-| `src/pages/Subscription.tsx` | Add Halo tier, add per-tier subscribe buttons |
+### Database Queries Needed
+
+**For employees** (in check-subscription):
+```sql
+-- Get company subscription tier directly
+SELECT c.subscription_tier, c.trial_ends_at 
+FROM companies c
+JOIN profiles p ON p.company_id = c.id
+WHERE p.id = :user_id;
+```
+
+**For customers** (in check-subscription):
+```sql
+-- Get associated company's tier
+SELECT c.subscription_tier, c.trial_ends_at, c.name
+FROM companies c
+JOIN customer_company_associations cca ON cca.company_id = c.id
+WHERE cca.customer_user_id = :user_id
+LIMIT 1;
+```
+
+### Error Messages
+
+| Scenario | Error Message |
+|----------|---------------|
+| Employee tries to subscribe | "Only company administrators can manage subscriptions" |
+| Customer tries to subscribe | "Customers cannot subscribe directly. Contact the company for access." |
+| No company association | "Your account is not associated with a company" |
 
 ---
 
-### Technical Notes
+## Files to Modify
 
-1. **Stripe Price Creation**: I'll use the Stripe tools to create the products and prices, which will give us the actual price IDs to use in the code.
+1. `supabase/functions/check-subscription/index.ts` - Major refactor for role-based logic
+2. `supabase/functions/create-checkout/index.ts` - Add role check, use company Stripe ID
+3. `supabase/functions/stripe-customer-portal/index.ts` - Add role check, use company Stripe ID
+4. `src/pages/Subscription.tsx` - Conditional UI based on role
+5. `src/contexts/AuthContext.tsx` - Update tier type, simplify mapping
 
-2. **Backward Compatibility**: The updated `check-subscription` will continue to map the old Enterprise price ID to "command" tier for any existing subscribers.
+---
 
-3. **No Webhooks Needed**: Following your existing pattern, subscription status is checked on-demand via the `check-subscription` function.
+## Testing Scenarios
 
-4. **Customer Portal**: The existing `stripe-customer-portal` function will continue to work for subscription management (upgrades/downgrades handled through Stripe's portal).
+1. **Company Admin subscribes**: Creates Stripe customer for company, associates subscription
+2. **Employee checks subscription**: Gets company's tier without Stripe API call
+3. **Customer checks subscription**: Gets associated company's tier
+4. **Employee tries to subscribe**: Sees disabled buttons with admin contact message
+5. **Company upgrades tier**: All employees immediately see new tier on next refresh
