@@ -1,226 +1,153 @@
 
-# Company-Level Subscription Implementation Plan
+# Fix Google Calendar OAuth "Blocked" Error
 
-## Overview
-Update the subscription system so that **companies** are the subscription entities, not individual users. Employees and customers of subscribed companies receive free access based on their company's subscription tier.
+## Problem Analysis
+
+The error "accounts.google.com is blocked - ERR_BLOCKED_BY_RESPONSE" occurs because Google's OAuth login page cannot be displayed inside an iframe. Google sets `X-Frame-Options: DENY` headers on their authentication pages for security.
+
+### Current Flow
+
+1. User clicks "Connect Google Calendar" in the settings
+2. Code detects if running in an iframe
+3. If in iframe: Opens `/oauth/google-calendar` in a new tab
+4. The `/oauth/google-calendar` page calls the edge function and redirects to Google
+
+### The Issue
+
+The current implementation has a timing/flow problem:
+- The `OAuthGoogleCalendar` page immediately tries to redirect with `window.location.href = data.authUrl`
+- When this page is opened from an embedded preview, it may still be subject to iframe restrictions
+- Additionally, the popup approach with `window.opener.postMessage` expects a popup window, not a new tab
 
 ---
 
-## Current State Analysis
+## Implementation Plan
 
-### What Already Works
-- `companies` table has `subscription_tier`, `stripe_customer_id`, and `trial_ends_at` columns
-- `profiles.company_id` links users to their company
-- `user_roles` table properly separates roles: `platform_admin`, `company_admin`, `employee`, `customer`
-- `check-subscription` already reads and updates `company.subscription_tier`
+### Step 1: Update OAuthGoogleCalendar Page
 
-### What Needs Fixing
-1. **Stripe Customer Lookup**: Currently uses user email instead of company's Stripe customer ID
-2. **Checkout Access**: Any authenticated user can subscribe, not just company admins
-3. **Customer/Employee Handling**: Edge functions don't distinguish that these roles get free access through their company
+**File:** `src/pages/OAuthGoogleCalendar.tsx`
 
----
+Make this page a true intermediate landing page that:
+1. Shows a clear "Connect to Google" button instead of auto-redirecting
+2. User manually clicks to redirect (bypasses popup blocker issues)
+3. Handles the callback properly by storing state in localStorage
 
-## Implementation Steps
+Changes:
+- Remove the auto-redirect `useEffect`
+- Add a visible button that users click to go to Google
+- Add better error handling and user feedback
+- Store the origin URL so the callback knows where to redirect back
 
-### Step 1: Update `check-subscription` Edge Function
+### Step 2: Update GoogleCalendarSettings Component
 
-**File**: `supabase/functions/check-subscription/index.ts`
+**File:** `src/components/integrations/GoogleCalendarSettings.tsx`
 
-**Changes**:
-- For `company_admin` users: Look up Stripe subscription using `company.stripe_customer_id` (if exists) or by company admin email as fallback
-- For `employee` users: Skip Stripe lookup entirely, inherit subscription from `company.subscription_tier`
-- For `customer` users: Look up their associated company via `customer_company_associations` and inherit that company's tier
-- For `platform_admin`: Continue granting full access (command tier)
+Improve the popup/new-tab flow:
+- Store the company context in localStorage before opening the new window
+- Add a message listener for when OAuth completes
+- Refresh the connection status after successful auth
 
-```text
-Logic Flow:
-+------------------+
-| Get User & Role  |
-+------------------+
-        |
-        v
-+------------------+     Yes     +----------------------+
-| platform_admin?  |------------>| Return command tier  |
-+------------------+             +----------------------+
-        | No
-        v
-+------------------+
-| Get user's       |
-| company_id       |
-+------------------+
-        |
-        v
-+------------------+     Yes     +----------------------+
-| employee role?   |------------>| Return company tier  |
-+------------------+             | (no Stripe lookup)   |
-        | No                     +----------------------+
-        v
-+------------------+     Yes     +-----------------------------+
-| customer role?   |------------>| Lookup associated company   |
-+------------------+             | Return company tier         |
-        | No                     +-----------------------------+
-        v
-+------------------+
-| company_admin    |
-| Lookup Stripe by |
-| stripe_customer_id
-+------------------+
-        |
-        v
-+----------------------+
-| Update company tier  |
-| Return subscription  |
-+----------------------+
-```
+Changes:
+- Add `window.addEventListener('message', ...)` to listen for OAuth completion
+- Store `returnUrl` in localStorage for the OAuth page to use
+- Invalidate query cache when connection succeeds
 
-### Step 2: Update `create-checkout` Edge Function
+### Step 3: Update Edge Function Callback HTML
 
-**File**: `supabase/functions/create-checkout/index.ts`
+**File:** `supabase/functions/google-calendar-auth/index.ts`
 
-**Changes**:
-- Add role check: Only `company_admin` can initiate checkout
-- Use company's `stripe_customer_id` if it exists, otherwise create a new Stripe customer and save the ID to the company record
-- Pass `company_id` in session metadata for proper association
-
-**Key Code Changes**:
-```typescript
-// 1. Verify user is company_admin
-const { data: roleData } = await supabaseClient
-  .from('user_roles')
-  .select('role')
-  .eq('user_id', user.id)
-  .single();
-
-if (roleData?.role !== 'company_admin') {
-  throw new Error('Only company administrators can manage subscriptions');
-}
-
-// 2. Get company and its Stripe customer ID
-const { data: profileData } = await supabaseClient
-  .from('profiles')
-  .select('company_id')
-  .eq('id', user.id)
-  .single();
-
-const { data: companyData } = await supabaseClient
-  .from('companies')
-  .select('id, name, email, stripe_customer_id')
-  .eq('id', profileData.company_id)
-  .single();
-
-// 3. Use existing Stripe customer or create new one for COMPANY
-let customerId = companyData.stripe_customer_id;
-if (!customerId) {
-  const customer = await stripe.customers.create({
-    name: companyData.name,
-    email: companyData.email || user.email,
-    metadata: { company_id: companyData.id }
-  });
-  customerId = customer.id;
-  
-  // Save to company record
-  await supabaseClient
-    .from('companies')
-    .update({ stripe_customer_id: customerId })
-    .eq('id', companyData.id);
-}
-
-// 4. Create checkout with company's Stripe customer
-const session = await stripe.checkout.sessions.create({
-  customer: customerId,
-  // ... rest of config
-  metadata: {
-    company_id: companyData.id,
-    tier: requestedTier,
-  },
-});
-```
-
-### Step 3: Update Subscription UI Page
-
-**File**: `src/pages/Subscription.tsx`
-
-**Changes**:
-- Import `useAuth` and check `userRole`
-- Show "Subscribe" buttons only for `company_admin` users
-- Show informational message for employees: "Your company's subscription: [tier]"
-- Show informational message for customers: "You have free access through [company name]"
-
-**UI Behavior by Role**:
-| Role | See Tier Cards | Subscribe Buttons | Manage Button |
-|------|----------------|-------------------|---------------|
-| company_admin | Yes | Yes | Yes |
-| employee | Yes (read-only) | No - "Contact your admin" | No |
-| customer | Basic info | No | No |
-| platform_admin | Yes | No (full access) | No |
-
-### Step 4: Update AuthContext Subscription Logic
-
-**File**: `src/contexts/AuthContext.tsx`
-
-**Changes**:
-- Update `SubscriptionTier` type to include all 5 tiers: `'free' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command'`
-- Remove the old `PRODUCT_TO_TIER` mapping (handled in edge function now)
-- Trust the `tier` value returned from `check-subscription` directly
-
-### Step 5: Update `stripe-customer-portal` Edge Function
-
-**File**: `supabase/functions/stripe-customer-portal/index.ts`
-
-**Changes**:
-- Add same role check as checkout: only `company_admin` can access
-- Use `company.stripe_customer_id` instead of looking up by email
+The callback currently uses `window.opener.postMessage` which only works for popup windows. Update to:
+- Try `postMessage` first (for popup flow)
+- Fall back to localStorage + redirect (for new tab flow)
+- Provide a "Return to app" button if automatic close fails
 
 ---
 
 ## Technical Details
 
-### Database Queries Needed
+### New OAuthGoogleCalendar Flow
 
-**For employees** (in check-subscription):
-```sql
--- Get company subscription tier directly
-SELECT c.subscription_tier, c.trial_ends_at 
-FROM companies c
-JOIN profiles p ON p.company_id = c.id
-WHERE p.id = :user_id;
+```text
+User in iframe
+      |
+      v
+Clicks "Connect Google Calendar"
+      |
+      v
+Opens /oauth/google-calendar in NEW TAB
+      |
+      v
+User sees landing page with "Continue to Google" button
+      |
+      v
+User clicks button → Redirects to accounts.google.com (top-level, no iframe)
+      |
+      v
+User completes Google OAuth
+      |
+      v
+Google redirects to edge function callback
+      |
+      v
+Edge function stores tokens, returns success HTML
+      |
+      v
+Success page: attempts postMessage, then redirects back to app
+      |
+      v
+Original page refreshes and shows "Connected" status
 ```
 
-**For customers** (in check-subscription):
-```sql
--- Get associated company's tier
-SELECT c.subscription_tier, c.trial_ends_at, c.name
-FROM companies c
-JOIN customer_company_associations cca ON cca.company_id = c.id
-WHERE cca.customer_user_id = :user_id
-LIMIT 1;
+### Key Code Changes
+
+**OAuthGoogleCalendar.tsx:**
+```typescript
+// Instead of auto-redirect, show a button
+const [authUrl, setAuthUrl] = useState<string | null>(null);
+
+// Fetch the auth URL on mount
+useEffect(() => {
+  fetchAuthUrl().then(setAuthUrl);
+}, []);
+
+// Render a button user must click
+return (
+  <Button onClick={() => window.location.href = authUrl}>
+    Continue to Google
+  </Button>
+);
 ```
 
-### Error Messages
-
-| Scenario | Error Message |
-|----------|---------------|
-| Employee tries to subscribe | "Only company administrators can manage subscriptions" |
-| Customer tries to subscribe | "Customers cannot subscribe directly. Contact the company for access." |
-| No company association | "Your account is not associated with a company" |
+**Edge function callback HTML:**
+```html
+<script>
+  // Try popup close approach
+  if (window.opener) {
+    window.opener.postMessage({type: 'google-calendar-success'}, '*');
+    window.close();
+  } else {
+    // New tab approach - redirect back to app
+    const returnUrl = localStorage.getItem('gcal-return-url') || '/dashboard/integrations/calendar';
+    localStorage.removeItem('gcal-return-url');
+    window.location.href = returnUrl;
+  }
+</script>
+```
 
 ---
 
 ## Files to Modify
 
-1. `supabase/functions/check-subscription/index.ts` - Major refactor for role-based logic
-2. `supabase/functions/create-checkout/index.ts` - Add role check, use company Stripe ID
-3. `supabase/functions/stripe-customer-portal/index.ts` - Add role check, use company Stripe ID
-4. `src/pages/Subscription.tsx` - Conditional UI based on role
-5. `src/contexts/AuthContext.tsx` - Update tier type, simplify mapping
+1. `src/pages/OAuthGoogleCalendar.tsx` - Convert to button-based flow
+2. `src/components/integrations/GoogleCalendarSettings.tsx` - Add message listener and localStorage handling
+3. `supabase/functions/google-calendar-auth/index.ts` - Update callback HTML for both popup and new-tab flows
 
 ---
 
-## Testing Scenarios
+## Testing Checklist
 
-1. **Company Admin subscribes**: Creates Stripe customer for company, associates subscription
-2. **Employee checks subscription**: Gets company's tier without Stripe API call
-3. **Customer checks subscription**: Gets associated company's tier
-4. **Employee tries to subscribe**: Sees disabled buttons with admin contact message
-5. **Company upgrades tier**: All employees immediately see new tier on next refresh
+- Test OAuth flow from Lovable preview (iframe)
+- Test OAuth flow from published URL (direct browser)
+- Verify tokens are stored correctly
+- Verify connection status updates after auth
+- Test error handling when user cancels Google auth
