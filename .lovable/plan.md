@@ -1,153 +1,52 @@
 
 # Fix Google Calendar OAuth "Blocked" Error
 
-## Problem Analysis
+## Problem Summary
+The "accounts.google.com is blocked" error persists because the **Lovable preview environment** (`id-preview--*.lovable.app`) serves all requests through a proxy layer. Google's OAuth pages detect this and refuse to load due to security restrictions—regardless of whether you open a new tab or try to break out of an iframe.
 
-The error "accounts.google.com is blocked - ERR_BLOCKED_BY_RESPONSE" occurs because Google's OAuth login page cannot be displayed inside an iframe. Google sets `X-Frame-Options: DENY` headers on their authentication pages for security.
-
-### Current Flow
-
-1. User clicks "Connect Google Calendar" in the settings
-2. Code detects if running in an iframe
-3. If in iframe: Opens `/oauth/google-calendar` in a new tab
-4. The `/oauth/google-calendar` page calls the edge function and redirects to Google
-
-### The Issue
-
-The current implementation has a timing/flow problem:
-- The `OAuthGoogleCalendar` page immediately tries to redirect with `window.location.href = data.authUrl`
-- When this page is opened from an embedded preview, it may still be subject to iframe restrictions
-- Additionally, the popup approach with `window.opener.postMessage` expects a popup window, not a new tab
+This is **not a code bug**—it's an environment limitation. OAuth flows to Google will not work from the preview URL.
 
 ---
 
-## Implementation Plan
+## Solution
 
-### Step 1: Update OAuthGoogleCalendar Page
+### Publish the App and Test from the Published URL
 
-**File:** `src/pages/OAuthGoogleCalendar.tsx`
+1. **Publish the project** using the "Publish" button in Lovable. This will create a public URL (e.g., `your-project.lovable.app`).
 
-Make this page a true intermediate landing page that:
-1. Shows a clear "Connect to Google" button instead of auto-redirecting
-2. User manually clicks to redirect (bypasses popup blocker issues)
-3. Handles the callback properly by storing state in localStorage
+2. **Update Google Cloud Console** to include the published domain:
+   - Go to **APIs & Services → Credentials → Your OAuth Client**
+   - Add your published URL (e.g., `https://your-project.lovable.app`) to **Authorized JavaScript origins**
+   - Confirm the **Authorized redirect URI** is still:
+     ```
+     https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/google-calendar-auth?action=callback
+     ```
+     (This stays the same—it's the backend callback URL)
 
-Changes:
-- Remove the auto-redirect `useEffect`
-- Add a visible button that users click to go to Google
-- Add better error handling and user feedback
-- Store the origin URL so the callback knows where to redirect back
-
-### Step 2: Update GoogleCalendarSettings Component
-
-**File:** `src/components/integrations/GoogleCalendarSettings.tsx`
-
-Improve the popup/new-tab flow:
-- Store the company context in localStorage before opening the new window
-- Add a message listener for when OAuth completes
-- Refresh the connection status after successful auth
-
-Changes:
-- Add `window.addEventListener('message', ...)` to listen for OAuth completion
-- Store `returnUrl` in localStorage for the OAuth page to use
-- Invalidate query cache when connection succeeds
-
-### Step 3: Update Edge Function Callback HTML
-
-**File:** `supabase/functions/google-calendar-auth/index.ts`
-
-The callback currently uses `window.opener.postMessage` which only works for popup windows. Update to:
-- Try `postMessage` first (for popup flow)
-- Fall back to localStorage + redirect (for new tab flow)
-- Provide a "Return to app" button if automatic close fails
+3. **Test from the published URL**, not the preview URL. The OAuth flow will work correctly from the published domain.
 
 ---
 
-## Technical Details
+## Why This Works
 
-### New OAuthGoogleCalendar Flow
+| URL Type | Behavior |
+|----------|----------|
+| **Preview URL** (`id-preview--*.lovable.app`) | Routed through Lovable's development proxy, which Google blocks |
+| **Published URL** (`your-app.lovable.app`) | Standard HTTPS domain that Google allows for OAuth |
 
-```text
-User in iframe
-      |
-      v
-Clicks "Connect Google Calendar"
-      |
-      v
-Opens /oauth/google-calendar in NEW TAB
-      |
-      v
-User sees landing page with "Continue to Google" button
-      |
-      v
-User clicks button → Redirects to accounts.google.com (top-level, no iframe)
-      |
-      v
-User completes Google OAuth
-      |
-      v
-Google redirects to edge function callback
-      |
-      v
-Edge function stores tokens, returns success HTML
-      |
-      v
-Success page: attempts postMessage, then redirects back to app
-      |
-      v
-Original page refreshes and shows "Connected" status
-```
-
-### Key Code Changes
-
-**OAuthGoogleCalendar.tsx:**
-```typescript
-// Instead of auto-redirect, show a button
-const [authUrl, setAuthUrl] = useState<string | null>(null);
-
-// Fetch the auth URL on mount
-useEffect(() => {
-  fetchAuthUrl().then(setAuthUrl);
-}, []);
-
-// Render a button user must click
-return (
-  <Button onClick={() => window.location.href = authUrl}>
-    Continue to Google
-  </Button>
-);
-```
-
-**Edge function callback HTML:**
-```html
-<script>
-  // Try popup close approach
-  if (window.opener) {
-    window.opener.postMessage({type: 'google-calendar-success'}, '*');
-    window.close();
-  } else {
-    // New tab approach - redirect back to app
-    const returnUrl = localStorage.getItem('gcal-return-url') || '/dashboard/integrations/calendar';
-    localStorage.removeItem('gcal-return-url');
-    window.location.href = returnUrl;
-  }
-</script>
-```
+The backend callback URL (`*.supabase.co/functions/v1/...`) does not change—it's already a standard domain.
 
 ---
 
-## Files to Modify
+## Quick Steps
 
-1. `src/pages/OAuthGoogleCalendar.tsx` - Convert to button-based flow
-2. `src/components/integrations/GoogleCalendarSettings.tsx` - Add message listener and localStorage handling
-3. `supabase/functions/google-calendar-auth/index.ts` - Update callback HTML for both popup and new-tab flows
+1. Click **Publish** in Lovable
+2. Copy the new published URL
+3. Add it to Google Cloud Console → Credentials → **Authorized JavaScript origins**
+4. Open the published URL and test "Connect Google Calendar"
 
 ---
 
-## Testing Checklist
+## Technical Note
 
-- Test OAuth flow from Lovable preview (iframe)
-- Test OAuth flow from published URL (direct browser)
-- Verify tokens are stored correctly
-- Verify connection status updates after auth
-- Test error handling when user cancels Google auth
+The existing code is correct. No changes are needed. The auto-redirect logic in `OAuthGoogleCalendar.tsx` and the breakout attempts in `GoogleCalendarSettings.tsx` are good fallbacks, but they cannot overcome the proxy-level blocking in the preview environment.
