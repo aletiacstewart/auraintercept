@@ -6,39 +6,24 @@ import { Button } from "@/components/ui/button";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
+/**
+ * Detects whether the current page is loaded inside any iframe.
+ */
+function detectIframe(): boolean {
+  try {
+    return window.self !== window.top;
+  } catch {
+    // Cross-origin iframes throw a security error when accessing window.top
+    return true;
+  }
+}
+
 export default function OAuthGoogleCalendar() {
   const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const isInIframe = (() => {
-    try {
-      return window.self !== window.top;
-    } catch {
-      return true;
-    }
-  })();
-
-  const [popupBlocked, setPopupBlocked] = useState(false);
-
-  const tryOpenTopLevel = (url: string) => {
-    // Prefer a true top-level navigation (best fix for iframe blocks).
-    try {
-      if (window.top && window.top !== window.self) {
-        window.top.location.href = url;
-        return true;
-      }
-    } catch {
-      // Cross-origin access can throw; fall back to opening a new tab.
-    }
-
-    const opened = window.open(url, "_blank", "noopener,noreferrer");
-    if (!opened) {
-      setPopupBlocked(true);
-      return false;
-    }
-    return true;
-  };
+  const [isInIframe] = useState(detectIframe);
+  const [autoRedirecting, setAutoRedirecting] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -51,13 +36,19 @@ export default function OAuthGoogleCalendar() {
 
         if (!session?.access_token) {
           // Store current path so we can return after login
-          localStorage.setItem('gcal-return-url', window.location.origin + '/dashboard/integrations/calendar');
+          localStorage.setItem(
+            "gcal-return-url",
+            window.location.origin + "/dashboard/integrations/calendar"
+          );
           window.location.href = "/auth";
           return;
         }
 
         // Store return URL for after OAuth completes
-        localStorage.setItem('gcal-return-url', window.location.origin + '/dashboard/integrations/calendar');
+        localStorage.setItem(
+          "gcal-return-url",
+          window.location.origin + "/dashboard/integrations/calendar"
+        );
 
         const response = await fetch(
           `${SUPABASE_URL}/functions/v1/google-calendar-auth?action=authorize`,
@@ -76,6 +67,16 @@ export default function OAuthGoogleCalendar() {
         if (!cancelled) {
           setAuthUrl(data.authUrl);
           setLoading(false);
+
+          // ──────────────────────────────────────────────────────────────────
+          // AUTO-REDIRECT if we're inside an iframe (e.g., Lovable preview).
+          // Google blocks accounts.google.com inside iframes, so we skip the
+          // intermediate landing page and immediately navigate to Google.
+          // ──────────────────────────────────────────────────────────────────
+          if (detectIframe()) {
+            setAutoRedirecting(true);
+            window.location.href = data.authUrl;
+          }
         }
       } catch (e) {
         if (cancelled) return;
@@ -93,16 +94,32 @@ export default function OAuthGoogleCalendar() {
 
   const handleConnect = () => {
     if (!authUrl) return;
-
-    // Google blocks OAuth pages inside iframes. If this page is embedded,
-    // force a top-level navigation (or a new tab) instead of navigating in-frame.
-    if (isInIframe) {
-      tryOpenTopLevel(authUrl);
-      return;
-    }
-
     window.location.href = authUrl;
   };
+
+  // While auto-redirecting, show a brief loading state
+  if (autoRedirecting) {
+    return (
+      <main className="min-h-screen flex items-center justify-center p-6 bg-background">
+        <Card className="w-full max-w-lg">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <Calendar className="h-6 w-6 text-primary" />
+            </div>
+            <CardTitle>Redirecting to Google…</CardTitle>
+            <CardDescription>
+              Please wait while we open the Google sign-in page.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-center py-8">
+              <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6 bg-background">
@@ -113,12 +130,11 @@ export default function OAuthGoogleCalendar() {
           </div>
           <CardTitle>Connect Google Calendar</CardTitle>
           <CardDescription>
-            {loading 
-              ? "Preparing connection..." 
-              : error 
-                ? "Something went wrong"
-                : "Click below to authorize access to your Google Calendar"
-            }
+            {loading
+              ? "Preparing connection..."
+              : error
+              ? "Something went wrong"
+              : "Click below to authorize access to your Google Calendar"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -127,9 +143,9 @@ export default function OAuthGoogleCalendar() {
               <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
                 <p className="text-sm text-destructive">{error}</p>
               </div>
-              <Button 
-                onClick={() => window.location.reload()} 
-                variant="outline" 
+              <Button
+                onClick={() => window.location.reload()}
+                variant="outline"
                 className="w-full"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
@@ -144,25 +160,11 @@ export default function OAuthGoogleCalendar() {
             <div className="space-y-4">
               {isInIframe && (
                 <div className="p-3 rounded-lg bg-muted/30 border text-sm text-foreground">
-                  This screen is embedded. To avoid Google’s security block, we’ll open Google outside the embedded view.
+                  This screen is embedded. To avoid Google's security block, we'll
+                  redirect you directly to Google.
                 </div>
               )}
 
-              {popupBlocked && authUrl && (
-                <div className="p-3 rounded-lg bg-muted/30 border text-sm text-foreground space-y-2">
-                  <p>
-                    Your browser blocked the new tab. Please open this link manually:
-                  </p>
-                  <a
-                    href={authUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline break-all"
-                  >
-                    {authUrl}
-                  </a>
-                </div>
-              )}
               <div className="space-y-2 text-sm text-muted-foreground">
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
@@ -177,16 +179,12 @@ export default function OAuthGoogleCalendar() {
                   <span>Two-way sync with instant updates</span>
                 </div>
               </div>
-              
-              <Button 
-                onClick={handleConnect} 
-                className="w-full"
-                size="lg"
-              >
+
+              <Button onClick={handleConnect} className="w-full" size="lg">
                 <ExternalLink className="h-4 w-4 mr-2" />
                 Continue to Google
               </Button>
-              
+
               <p className="text-xs text-center text-muted-foreground">
                 You'll be redirected to Google to sign in and authorize access
               </p>
