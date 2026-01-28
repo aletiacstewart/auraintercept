@@ -11,6 +11,14 @@ export default function OAuthGoogleCalendar() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const isInIframe = (() => {
+    try {
+      return window.self !== window.top;
+    } catch {
+      return true;
+    }
+  })();
+
   useEffect(() => {
     let cancelled = false;
 
@@ -63,10 +71,16 @@ export default function OAuthGoogleCalendar() {
   }, []);
 
   const handleConnect = () => {
-    if (authUrl) {
-      // Navigate in the same window - this is a top-level context now
-      window.location.href = authUrl;
+    if (!authUrl) return;
+
+    // Google blocks OAuth pages inside iframes. If this page is embedded,
+    // open Google in a new tab instead of navigating in-frame.
+    if (isInIframe) {
+      window.open(authUrl, "_blank", "noopener");
+      return;
     }
+
+    window.location.href = authUrl;
   };
 
   return (
@@ -107,6 +121,11 @@ export default function OAuthGoogleCalendar() {
             </div>
           ) : (
             <div className="space-y-4">
+              {isInIframe && (
+                <div className="p-3 rounded-lg bg-muted/30 border text-sm text-foreground">
+                  This screen is embedded. To avoid Google’s security block, we’ll open Google in a new tab.
+                </div>
+              )}
               <div className="space-y-2 text-sm text-muted-foreground">
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
