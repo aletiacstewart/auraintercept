@@ -99,9 +99,25 @@ export function GoogleCalendarSettings() {
   const handleConnect = () => {
     // Store return URL before opening the OAuth page
     localStorage.setItem('gcal-return-url', window.location.origin + '/dashboard/integrations/calendar');
-    
-    // Always open in a new tab to avoid iframe issues
-    window.open('/oauth/google-calendar', '_blank', 'noopener');
+
+    const oauthPath = '/oauth/google-calendar';
+
+    // If we're embedded (Lovable preview), prefer a true top-level navigation.
+    // This avoids cases where the OAuth screen still ends up inside an iframe.
+    try {
+      if (window.top && window.top !== window.self) {
+        window.top.location.href = oauthPath;
+        return;
+      }
+    } catch {
+      // ignore and fall back to opening a new tab
+    }
+
+    // Fallback: open in a new tab
+    const opened = window.open(oauthPath, '_blank', 'noopener,noreferrer');
+    if (!opened) {
+      toast.error('Popup blocked. Please allow popups and try again.');
+    }
   };
 
   // Disconnect from Google Calendar
