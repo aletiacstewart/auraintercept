@@ -274,10 +274,15 @@ const sections: FeatureSection[] = [
 ];
 
 export default function Subscription() {
-  const { user, inTrial, trialEndsAt } = useAuth();
+  const { user, userRole, inTrial, trialEndsAt } = useAuth();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
+
+  // Determine if user can manage subscriptions
+  const canManageSubscription = userRole === 'company_admin' || userRole === 'platform_admin';
+  const isEmployee = userRole === 'employee';
+  const isCustomer = userRole === 'customer';
 
   // Calculate trial days remaining
   const trialDaysRemaining = trialEndsAt 
@@ -455,10 +460,16 @@ export default function Subscription() {
         <PageHeader
           icon={Crown}
           title="Subscription"
-          description={isInTrial ? 'Subscribe to continue after your trial' : 'Choose the plan that fits your business'}
+          description={
+            isEmployee || isCustomer 
+              ? "Your company's subscription plan" 
+              : isInTrial 
+                ? 'Subscribe to continue after your trial' 
+                : 'Choose the plan that fits your business'
+          }
           showAuraBar
           action={
-            isSubscribed ? (
+            isSubscribed && canManageSubscription ? (
               <Button 
                 variant="outline" 
                 onClick={handleManageSubscription}
@@ -513,10 +524,35 @@ export default function Subscription() {
           </Card>
         )}
 
-        {/* Current Status */}
+        {/* Role-based Info Banner for Employees and Customers */}
+        {(isEmployee || isCustomer) && !isLoading && (
+          <Card className="border-primary/30 bg-primary/5">
+            <CardContent className="py-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                  <Building className="w-6 h-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-card-foreground">
+                    {isEmployee 
+                      ? "Your access is provided through your company's subscription"
+                      : "You have access through the company you work with"
+                    }
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Current plan: <span className="font-semibold text-primary capitalize">{currentTier?.replace('_', '-') || 'Free'}</span>
+                    {isEmployee && ' • Contact your company administrator for billing questions'}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Current Status - Only show for admins */}
         {isLoading ? (
           <Skeleton className="h-20 w-full" />
-        ) : isSubscribed ? (
+        ) : isSubscribed && canManageSubscription ? (
           <Card className="border-amber-500/30 bg-amber-500/5">
             <CardContent className="flex items-center justify-between py-4">
               <div className="flex items-center gap-3">
@@ -525,7 +561,7 @@ export default function Subscription() {
                 </div>
                 <div>
                   <p className="font-medium text-card-foreground">
-                    You're on the <span className="text-amber-500 font-semibold capitalize">{currentTier?.replace('_', '-')}</span> plan
+                    Your company is on the <span className="text-amber-500 font-semibold capitalize">{currentTier?.replace('_', '-')}</span> plan
                   </p>
                   {subscription?.subscription_end && (
                     <p className="text-sm text-muted-foreground">
@@ -590,23 +626,33 @@ export default function Subscription() {
                   ))}
                 </div>
 
-                <Button 
-                  className={cn(
-                    "w-full",
-                    tier.popular && "bg-primary hover:bg-primary/90"
-                  )}
-                  variant={tier.popular ? "default" : "outline"}
-                  onClick={() => handleSubscribe(tier.id)}
-                  disabled={loading || (currentTier === tier.id && isSubscribed)}
-                >
-                  {loading ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : currentTier === tier.id && isSubscribed ? (
-                    'Current Plan'
-                  ) : (
-                    'Subscribe'
-                  )}
-                </Button>
+                {canManageSubscription ? (
+                  <Button 
+                    className={cn(
+                      "w-full",
+                      tier.popular && "bg-primary hover:bg-primary/90"
+                    )}
+                    variant={tier.popular ? "default" : "outline"}
+                    onClick={() => handleSubscribe(tier.id)}
+                    disabled={loading || (currentTier === tier.id && isSubscribed)}
+                  >
+                    {loading ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : currentTier === tier.id && isSubscribed ? (
+                      'Current Plan'
+                    ) : (
+                      'Subscribe'
+                    )}
+                  </Button>
+                ) : (
+                  <div className="text-center text-sm text-muted-foreground py-2">
+                    {currentTier === tier.id ? (
+                      <span className="text-primary font-medium">Your Current Plan</span>
+                    ) : (
+                      <span>Contact your admin to upgrade</span>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}

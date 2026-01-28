@@ -4,12 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
 type AppRole = Database['public']['Enums']['app_role'];
-export type SubscriptionTier = 'free' | 'basic' | 'pro' | 'enterprise';
-
-// Map Stripe product IDs to tier names
-const PRODUCT_TO_TIER: Record<string, SubscriptionTier> = {
-  'prod_TbzYMyd0yO0shv': 'enterprise', // Enterprise Company Subscription - $250/month
-};
+export type SubscriptionTier = 'free' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
 
 interface AuthContextType {
   user: User | null;
@@ -47,7 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const isTestAccount = user.email.endsWith('@test.com') || userRole === 'platform_admin';
     if (isTestAccount) {
       setSubscribed(true);
-      setSubscriptionTier('enterprise');
+      setSubscriptionTier('command');
       setSubscriptionEnd(null);
       setInTrial(false);
       setTrialEndsAt(null);
@@ -71,12 +66,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setInTrial(data?.in_trial ?? false);
       setTrialEndsAt(data?.trial_ends_at ?? null);
       
+      // Trust the tier returned from check-subscription edge function
       if (data?.tier) {
         setSubscriptionTier(data.tier as SubscriptionTier);
-      } else if (data?.product_id && PRODUCT_TO_TIER[data.product_id]) {
-        setSubscriptionTier(PRODUCT_TO_TIER[data.product_id]);
       } else {
-        setSubscriptionTier(data?.subscribed ? 'enterprise' : 'free');
+        setSubscriptionTier(data?.subscribed ? 'command' : 'free');
       }
     } catch (err) {
       console.error('Failed to check subscription:', err);
