@@ -18,6 +18,21 @@ function detectIframe(): boolean {
   }
 }
 
+function navigateOutsideIframe(url: string) {
+  // Best-effort: break out of any iframe wrapper.
+  try {
+    if (window.top && window.top !== window.self) {
+      window.top.location.href = url;
+      return;
+    }
+  } catch {
+    // ignore
+  }
+
+  // Fallback: same-frame navigation
+  window.location.href = url;
+}
+
 export default function OAuthGoogleCalendar() {
   const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -75,7 +90,7 @@ export default function OAuthGoogleCalendar() {
           // ──────────────────────────────────────────────────────────────────
           if (detectIframe()) {
             setAutoRedirecting(true);
-            window.location.href = data.authUrl;
+            navigateOutsideIframe(data.authUrl);
           }
         }
       } catch (e) {
@@ -94,7 +109,7 @@ export default function OAuthGoogleCalendar() {
 
   const handleConnect = () => {
     if (!authUrl) return;
-    window.location.href = authUrl;
+    navigateOutsideIframe(authUrl);
   };
 
   // While auto-redirecting, show a brief loading state
