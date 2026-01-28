@@ -19,6 +19,27 @@ export default function OAuthGoogleCalendar() {
     }
   })();
 
+  const [popupBlocked, setPopupBlocked] = useState(false);
+
+  const tryOpenTopLevel = (url: string) => {
+    // Prefer a true top-level navigation (best fix for iframe blocks).
+    try {
+      if (window.top && window.top !== window.self) {
+        window.top.location.href = url;
+        return true;
+      }
+    } catch {
+      // Cross-origin access can throw; fall back to opening a new tab.
+    }
+
+    const opened = window.open(url, "_blank", "noopener,noreferrer");
+    if (!opened) {
+      setPopupBlocked(true);
+      return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
     let cancelled = false;
 
@@ -74,9 +95,9 @@ export default function OAuthGoogleCalendar() {
     if (!authUrl) return;
 
     // Google blocks OAuth pages inside iframes. If this page is embedded,
-    // open Google in a new tab instead of navigating in-frame.
+    // force a top-level navigation (or a new tab) instead of navigating in-frame.
     if (isInIframe) {
-      window.open(authUrl, "_blank", "noopener");
+      tryOpenTopLevel(authUrl);
       return;
     }
 
@@ -123,7 +144,23 @@ export default function OAuthGoogleCalendar() {
             <div className="space-y-4">
               {isInIframe && (
                 <div className="p-3 rounded-lg bg-muted/30 border text-sm text-foreground">
-                  This screen is embedded. To avoid Google’s security block, we’ll open Google in a new tab.
+                  This screen is embedded. To avoid Google’s security block, we’ll open Google outside the embedded view.
+                </div>
+              )}
+
+              {popupBlocked && authUrl && (
+                <div className="p-3 rounded-lg bg-muted/30 border text-sm text-foreground space-y-2">
+                  <p>
+                    Your browser blocked the new tab. Please open this link manually:
+                  </p>
+                  <a
+                    href={authUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline break-all"
+                  >
+                    {authUrl}
+                  </a>
                 </div>
               )}
               <div className="space-y-2 text-sm text-muted-foreground">
