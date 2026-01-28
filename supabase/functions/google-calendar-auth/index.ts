@@ -27,18 +27,135 @@ Deno.serve(async (req) => {
       const state = url.searchParams.get('state'); // Contains companyId and userId
       const error = url.searchParams.get('error');
 
+      // HTML template for success/error pages
+      const createCallbackHtml = (success: boolean, errorMessage?: string) => {
+        const title = success ? 'Connection Successful!' : 'Connection Failed';
+        const message = success 
+          ? 'Your Google Calendar has been connected. You can close this window.'
+          : `Error: ${errorMessage || 'Unknown error'}`;
+        const iconColor = success ? '#22c55e' : '#ef4444';
+        const icon = success 
+          ? '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+          : '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+        
+        return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${title}</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 400px;
+    }
+    .icon {
+      color: ${iconColor};
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      color: #94a3b8;
+      margin-bottom: 1.5rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: #3b82f6;
+      color: white;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      font-weight: 500;
+    }
+    .btn:hover {
+      background: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">${icon}</div>
+    <h1>${title}</h1>
+    <p>${message}</p>
+    <a href="#" class="btn" id="closeBtn">Return to App</a>
+  </div>
+  <script>
+    // Try to notify the opener window
+    if (window.opener) {
+      try {
+        window.opener.postMessage({type: 'google-calendar-${success ? 'success' : 'error'}'${!success && errorMessage ? `, error: '${errorMessage.replace(/'/g, "\\'")}'` : ''}}, '*');
+      } catch (e) {
+        console.log('Could not post message to opener');
+      }
+    }
+    
+    // Set localStorage flag for redirect-based detection
+    try {
+      localStorage.setItem('gcal-oauth-complete', '${success ? 'success' : 'error'}');
+    } catch (e) {
+      console.log('Could not set localStorage');
+    }
+    
+    // Handle button click
+    document.getElementById('closeBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Try to close the window first (works if opened as popup)
+      if (window.opener) {
+        window.close();
+        return;
+      }
+      
+      // Otherwise redirect back to the app
+      var returnUrl = '/dashboard/integrations/calendar';
+      try {
+        var storedUrl = localStorage.getItem('gcal-return-url');
+        if (storedUrl) {
+          returnUrl = storedUrl;
+          localStorage.removeItem('gcal-return-url');
+        }
+      } catch (e) {}
+      
+      window.location.href = returnUrl;
+    });
+    
+    // Auto-close popup after short delay if opener exists
+    if (window.opener) {
+      setTimeout(function() {
+        window.close();
+      }, 2000);
+    }
+  </script>
+</body>
+</html>`;
+      };
+
       if (error) {
         console.error('OAuth error from Google:', error);
         return new Response(
-          `<html><body><script>window.opener.postMessage({type: 'google-calendar-error', error: '${error}'}, '*'); window.close();</script></body></html>`,
+          createCallbackHtml(false, error),
           { headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
         );
       }
 
       if (!code || !state) {
         return new Response(
-          JSON.stringify({ error: 'Missing code or state parameter' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          createCallbackHtml(false, 'Missing code or state parameter'),
+          { headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
         );
       }
 
@@ -48,8 +165,8 @@ Deno.serve(async (req) => {
         stateData = JSON.parse(atob(state));
       } catch {
         return new Response(
-          JSON.stringify({ error: 'Invalid state parameter' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          createCallbackHtml(false, 'Invalid state parameter'),
+          { headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
         );
       }
 
@@ -73,7 +190,7 @@ Deno.serve(async (req) => {
       if (tokenData.error) {
         console.error('Token exchange error:', tokenData);
         return new Response(
-          `<html><body><script>window.opener.postMessage({type: 'google-calendar-error', error: '${tokenData.error_description || tokenData.error}'}, '*'); window.close();</script></body></html>`,
+          createCallbackHtml(false, tokenData.error_description || tokenData.error),
           { headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
         );
       }
@@ -99,7 +216,7 @@ Deno.serve(async (req) => {
       if (upsertError) {
         console.error('Database error:', upsertError);
         return new Response(
-          `<html><body><script>window.opener.postMessage({type: 'google-calendar-error', error: 'Failed to save connection'}, '*'); window.close();</script></body></html>`,
+          createCallbackHtml(false, 'Failed to save connection'),
           { headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
         );
       }
@@ -110,7 +227,7 @@ Deno.serve(async (req) => {
       console.log('Google Calendar connection saved successfully');
 
       return new Response(
-        `<html><body><script>window.opener.postMessage({type: 'google-calendar-success'}, '*'); window.close();</script></body></html>`,
+        createCallbackHtml(true),
         { headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
       );
     }

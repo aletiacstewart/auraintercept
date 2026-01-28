@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -42,6 +42,42 @@ export function GoogleCalendarSettings() {
     setTimeout(() => setCopiedUri(false), 2000);
   };
 
+  // Listen for OAuth completion messages from popup/new tab
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'google-calendar-success') {
+        queryClient.invalidateQueries({ queryKey: ['google-calendar-connection'] });
+        toast.success('Successfully connected to Google Calendar!');
+      } else if (event.data?.type === 'google-calendar-error') {
+        toast.error(event.data.error || 'Failed to connect to Google Calendar');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [queryClient]);
+
+  // Check for OAuth completion when component mounts (for redirect flow)
+  useEffect(() => {
+    const checkOAuthComplete = () => {
+      const oauthComplete = localStorage.getItem('gcal-oauth-complete');
+      if (oauthComplete === 'success') {
+        localStorage.removeItem('gcal-oauth-complete');
+        queryClient.invalidateQueries({ queryKey: ['google-calendar-connection'] });
+        toast.success('Successfully connected to Google Calendar!');
+      } else if (oauthComplete === 'error') {
+        localStorage.removeItem('gcal-oauth-complete');
+        toast.error('Failed to connect to Google Calendar');
+      }
+    };
+
+    checkOAuthComplete();
+    
+    // Also check on focus (in case user returns from another tab)
+    window.addEventListener('focus', checkOAuthComplete);
+    return () => window.removeEventListener('focus', checkOAuthComplete);
+  }, [queryClient]);
+
   // Fetch Google Calendar connection status
   const { data: connection, isLoading } = useQuery({
     queryKey: ['google-calendar-connection', companyId],
@@ -58,45 +94,15 @@ export function GoogleCalendarSettings() {
     enabled: !!companyId,
   });
 
-  const isInIframe = (() => {
-    try {
-      return window.self !== window.top;
-    } catch {
-      return true;
-    }
-  })();
 
-  // Connect to Google Calendar
-  const connectMutation = useMutation({
-    mutationFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) throw new Error('Not authenticated');
-      
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/google-calendar-auth?action=authorize`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to get auth URL');
-      return data.authUrl;
-    },
-    onSuccess: (authUrl) => {
-      if (isInIframe) {
-        // In embedded previews, open a same-origin page in a new tab; it will redirect to Google.
-        // This avoids cross-origin iframe restrictions and browser "refused to connect" issues.
-        window.open('/oauth/google-calendar', '_blank', 'noopener,noreferrer');
-        return;
-      }
-
-      window.location.href = authUrl;
-    },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-  });
+  // Connect to Google Calendar - just opens the intermediate page
+  const handleConnect = () => {
+    // Store return URL before opening the OAuth page
+    localStorage.setItem('gcal-return-url', window.location.origin + '/dashboard/integrations/calendar');
+    
+    // Always open in a new tab to avoid iframe issues
+    window.open('/oauth/google-calendar', '_blank', 'noopener');
+  };
 
   // Disconnect from Google Calendar
   const disconnectMutation = useMutation({
@@ -404,25 +410,10 @@ export function GoogleCalendarSettings() {
 
           {/* Connect button - only when not connected */}
           {!isConnected && (
-            <>
-              {isInIframe ? (
-                <Button asChild className="w-full">
-                  <a href="/oauth/google-calendar" target="_blank" rel="noopener noreferrer">
-                    <Link2 className="h-4 w-4 mr-2" />
-                    Connect Google Calendar
-                  </a>
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => connectMutation.mutate()}
-                  disabled={connectMutation.isPending}
-                  className="w-full"
-                >
-                  <Link2 className={`h-4 w-4 mr-2 ${connectMutation.isPending ? 'animate-spin' : ''}`} />
-                  Connect Google Calendar
-                </Button>
-              )}
-            </>
+            <Button onClick={handleConnect} className="w-full">
+              <Link2 className="h-4 w-4 mr-2" />
+              Connect Google Calendar
+            </Button>
           )}
         </CardContent>
       </Card>
