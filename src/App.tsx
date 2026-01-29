@@ -9,6 +9,7 @@ import { PWAUpdatePrompt } from "@/components/pwa/PWAUpdatePrompt";
 import { AuraVoiceOverlay } from "@/components/voice/AuraVoiceOverlay";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import { useEffect } from "react";
+import { useVisibilityRefresh } from "@/hooks/useVisibilityRefresh";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CustomerAuth from "./pages/CustomerAuth";
@@ -101,9 +102,22 @@ import PlatformGuides from "./pages/PlatformGuides";
 import NotificationSettingsPage from "./pages/NotificationSettingsPage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30 * 1000, // Data is fresh for 30 seconds
+      gcTime: 5 * 60 * 1000, // Garbage collect after 5 minutes
+      refetchOnWindowFocus: true, // Refetch when window gets focus
+      refetchOnReconnect: true, // Refetch on network reconnect
+      retry: 1, // Retry failed requests once
+    },
+  },
+});
 
 const App = () => {
+  // Auto-refresh queries when tab becomes visible after being hidden
+  useVisibilityRefresh(60000); // Refresh if hidden for more than 60 seconds
+
   // Self-healing: unregister service workers on non-technician routes to prevent stale cached versions
   useEffect(() => {
     const path = window.location.pathname;
