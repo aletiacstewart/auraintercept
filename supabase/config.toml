@@ -160,7 +160,7 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.create-demo-accounts]
-verify_jwt = true
+verify_jwt = false
 
 [functions.voice-navigator]
 verify_jwt = true
