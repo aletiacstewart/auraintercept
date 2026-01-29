@@ -1,173 +1,128 @@
 
-
-# Add Aura Express Tier for Restaurants
+# Demo Accounts Setup Plan for Aura Halo and Aura Express
 
 ## Overview
+Create demo company accounts for the **Aura Halo** ($397/mo) and **Aura Express** ($197/mo) tiers, following the existing demo account pattern used for Solo, Multi, and Command tiers.
 
-Add a new **Aura Express** subscription tier at **$197/month** specifically designed for restaurants. This tier includes:
-- Proxy Voice Chat (voice conversations with customers)
-- Talk to Aura (text-based chat)
-- Smart link sharing capability (website, online menu, online ordering) from knowledge base
+## Current Demo Account Structure
+| Tier | Company Email | Employee Email | Customer Email |
+|------|--------------|----------------|----------------|
+| Single-Point | companysolo@demo.com | employeesolo@demo.com | customersolo@demo.com |
+| Multi-Track | companymulti@demo.com | employeemulti@demo.com | customermulti@demo.com |
+| Command | companycmd@demo.com | employeecmd@demo.com | customercmd@demo.com |
 
-This will be positioned as the entry-level tier, appearing next to Aura Halo in the pricing display.
-
----
-
-## Tier Specification
-
-| Property | Value |
-|----------|-------|
-| **Name** | Aura Express |
-| **Price** | $197/month |
-| **Annual** | $1,970/year (save ~$394) |
-| **Target** | Restaurants, cafes, food service |
-| **Implementation Fee** | $299 |
-| **Employees** | 2 |
-| **AI Operatives** | 1 (Aura Assistant with link-sharing) |
-| **Consoles** | 0 (uses embedded widget only) |
-
-### Features Included
-- Talk to Aura (text-based chat)
-- Proxy Voice Chat (voice conversations)
-- Smart link sharing from knowledge base:
-  - Website URL
-  - Online menu link
-  - Online ordering link
-- Embeddable chat widget
-- Knowledge base setup
-
-### Required 3rd Party Integrations
-- **ElevenLabs** - Required (for Proxy Voice Chat)
-- **Twilio** - Required (for voice/SMS)
+## New Accounts to Create
+| Tier | Company Email | Employee Email | Password |
+|------|--------------|----------------|----------|
+| **Aura Halo** | companyhalo@demo.com | employeehalo@demo.com | aidemo*! |
+| **Aura Express** | companyxprs@demo.com | employeexprs@demo.com | aidemo*! |
 
 ---
 
-## Files to Modify
+## Implementation Tasks
 
-### 1. Central Configuration
-**`src/lib/documentationConfig.ts`**
-- Add `express` tier to `SUBSCRIPTION_TIERS` object
-- Update `TIER_ORDER` to include `express` first
-- Update `PLATFORM_STATS.startingPrice` to 197
-- Update `PLATFORM_STATS.totalTiers` to 6
-- Update tier hierarchy in helper functions
+### 1. Add Express Tier to Subscription Agent Config
+**File:** `src/lib/subscriptionAgentConfig.ts`
 
-### 2. Backend Functions
-**`supabase/functions/create-checkout/index.ts`**
-- Add `express` tier configuration with new Stripe price ID
-- Note: Will need to create Stripe product/price first
+The 'express' tier is missing from the agent configuration. This controls what agents and consoles are available in dashboards.
 
-**`supabase/functions/check-subscription/index.ts`**
-- Add price ID to tier mapping for "express"
+**Changes:**
+- Update `SubscriptionTier` type to include `'express'`
+- Add `express` configuration to `TIER_AGENT_CONFIG`:
+  - Agents: `[]` (no AI automation agents - voice/chat only)
+  - Consoles: `[]` (no consoles - uses smart link sharing)
+  - Label: `'Aura Express'`
+  - Price: `'$197/mo'`
+  - Description: `'AI Voice & Chat for restaurants with smart link sharing'`
+- Add `express` to `TIER_HIERARCHY` with value `1` (between free and core)
+- Add `express` to `TIER_FEATURE_CONFIG` with basic features
 
-### 3. Landing Page
-**`src/pages/Index.tsx`**
-- Add new Aura Express card styled with an orange/amber gradient (restaurant theme)
-- Position it next to Aura Halo
-- Include features: Talk to Aura, Proxy Voice Chat, Smart Links
-- Badge: "For Restaurants"
+### 2. Create Demo Companies in Database
+**Method:** SQL Migration
 
-### 4. Pricing Comparison Table
-**`src/components/landing/PricingComparisonTable.tsx`**
-- Add `express` column to all `FeatureRow` interfaces
-- Add new column header with orange styling
-- Update all feature rows with Express values
-- Reorder columns: Express, Halo, Core, Single-Point, Multi-Track, Command
+Create two new company records:
 
-### 5. Business Audit
-**`src/components/audit/types.ts`**
-- Add `'EXPRESS'` to `TierType`
-- Add EXPRESS scores to `TierScores` interface
-- Update all question options with EXPRESS tier scoring
-- Add EXPRESS tier recommendation
-
-### 6. PDF Documentation (Optional - for consistency)
-**`src/components/documentation/PricingSummaryPDF.tsx`**
-- Add Aura Express tier details
-
----
-
-## UI Design for Express Tier Card
-
+**Demo Halo Company:**
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│ ▓▓▓▓▓▓▓▓▓▓▓ Orange gradient bar ▓▓▓▓▓▓▓▓▓▓▓                │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  [For Restaurants]                                          │
-│                                                             │
-│  Aura Express              ✓ Talk to Aura (Chat)           │
-│  Restaurants • Cafes       ✓ Proxy Voice Chat              │
-│                            ✓ Smart Link Sharing            │
-│  $197 /month                 (Menu, Ordering, Website)     │
-│                                                             │
-│                                    [Start Free Trial]       │
-│                                                             │
-│  See More Details ▼                                         │
-└─────────────────────────────────────────────────────────────┘
+- Name: Demo Halo Company
+- Slug: demo-halo
+- Subscription Tier: halo
+- Registration Code: auto-generated
 ```
 
----
+**Demo Express Company:**
+```text
+- Name: Demo Express Company
+- Slug: demo-xprs
+- Subscription Tier: express
+- Registration Code: auto-generated
+```
 
-## Comparison Table Column Updates
+### 3. Create Auth Users and Profiles
+**Method:** Manual creation via Supabase Auth API or SQL
 
-Each section will include Express values:
+For each tier, create:
+1. **Company Admin** user with `company_admin` role
+2. **Employee** user with `employee` role
+3. Link both to the respective company via `company_id` in profiles
+4. Assign roles in `user_roles` table
 
-### Communication Channels
-| Feature | Express |
-|---------|---------|
-| Talk to Aura (Text-Based) | ✓ |
-| Proxy Voice Chat | ✓ |
-| Email Reminders | ✗ |
-| SMS Reminders | ✗ |
+**Accounts:**
+| Email | Role | Company |
+|-------|------|---------|
+| companyhalo@demo.com | company_admin | Demo Halo Company |
+| employeehalo@demo.com | employee | Demo Halo Company |
+| companyxprs@demo.com | company_admin | Demo Express Company |
+| employeexprs@demo.com | employee | Demo Express Company |
 
-### Special Feature: Smart Link Sharing
-| Feature | Express |
-|---------|---------|
-| Website Link Sharing | ✓ |
-| Online Menu Link | ✓ |
-| Online Ordering Link | ✓ |
+### 4. Dashboard Filtering Verification
+The existing tier-based filtering will automatically apply based on `subscription_tier`:
 
-### Required 3rd Party
-| Integration | Express |
-|-------------|---------|
-| ElevenLabs | Required |
-| Twilio | Required |
-| Resend | Not Required |
-| Stripe | Not Required |
+**Aura Halo Features:**
+- AI Receptionist (triage agent)
+- Scheduling Agent (booking agent)
+- Follow-up Agent
+- Message Aura (Text)
+- Talk to Aura (Voice)
+- Customer Portal Console
 
----
-
-## Stripe Setup Required
-
-Before implementation, a Stripe product and price must be created:
-- **Product Name**: Aura Express
-- **Price**: $197/month (19700 cents)
-- **Billing**: Monthly recurring
-
-The price ID will be added to the edge functions after creation.
-
----
-
-## Technical Notes
-
-1. **Knowledge Base Integration**: The link-sharing feature uses the existing knowledge base system. When restaurants subscribe and configure their knowledge base with website, menu, and ordering URLs, the AI can share these links in conversations.
-
-2. **Tier Hierarchy**: Express is level 1, below Halo (level 2). This affects which features/operatives are available.
-
-3. **Feature Access**: Express tier gets Talk to Aura + Proxy Voice Chat but NO AI operatives (like Receptionist, Follow-up, etc.) and NO consoles.
+**Aura Express Features:**
+- Message Aura (Text)
+- Talk to Aura (Voice)
+- Smart Link Sharing
+- No AI automation agents
+- No consoles (widget-based only)
 
 ---
 
-## Summary of Changes
+## Technical Details
 
-| File | Action |
-|------|--------|
-| `src/lib/documentationConfig.ts` | Add express tier config |
-| `supabase/functions/create-checkout/index.ts` | Add express pricing |
-| `supabase/functions/check-subscription/index.ts` | Add price mapping |
-| `src/pages/Index.tsx` | Add Express card UI |
-| `src/components/landing/PricingComparisonTable.tsx` | Add Express column |
-| `src/components/audit/types.ts` | Add EXPRESS tier type |
-| `src/components/documentation/PricingSummaryPDF.tsx` | Add to PDF docs |
+### Tier Hierarchy Update
+```text
+free: 0
+express: 1  ← NEW
+halo: 2     ← Already exists
+core: 3
+single_point: 4
+multi_track: 5
+command: 6
+```
 
+### Required File Changes
+1. `src/lib/subscriptionAgentConfig.ts` - Add express tier configuration
+2. Database migration - Create companies and user accounts
+
+### Security Considerations
+- Passwords will be set via Supabase Auth (hashed automatically)
+- RLS policies already restrict data to company scope
+- Role assignments in `user_roles` table for proper access control
+
+---
+
+## Execution Order
+1. Update `subscriptionAgentConfig.ts` to add express tier
+2. Run database migration to create companies
+3. Create auth users via edge function or Supabase dashboard
+4. Create profile records linked to companies
+5. Assign roles in user_roles table
+6. Test login and dashboard filtering for each account
