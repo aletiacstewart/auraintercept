@@ -10,6 +10,7 @@ import { AuraVoiceOverlay } from "@/components/voice/AuraVoiceOverlay";
 import ErrorBoundary from "@/components/error/ErrorBoundary";
 import { useEffect } from "react";
 import { useVisibilityRefresh } from "@/hooks/useVisibilityRefresh";
+import { useDeploymentAutoReload } from "@/hooks/useDeploymentAutoReload";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CustomerAuth from "./pages/CustomerAuth";
@@ -118,6 +119,9 @@ const queryClient = new QueryClient({
 const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
   // Auto-refresh queries when tab becomes visible after being hidden
   useVisibilityRefresh(60000); // Refresh if hidden for more than 60 seconds
+  
+  // Auto-reload when new deployment is detected (polls every 20s)
+  useDeploymentAutoReload(20000);
 
   return (
     <TooltipProvider>

@@ -12,7 +12,7 @@ export const useVisibilityRefresh = (staleThresholdMs: number = 60000) => {
   const lastVisibleRef = useRef(Date.now());
 
   useEffect(() => {
-    const handleVisibilityChange = () => {
+    const handleRefresh = () => {
       if (document.visibilityState === 'visible') {
         const hiddenDuration = Date.now() - lastVisibleRef.current;
         
@@ -21,16 +21,38 @@ export const useVisibilityRefresh = (staleThresholdMs: number = 60000) => {
           console.log(`[VisibilityRefresh] Tab was hidden for ${Math.round(hiddenDuration / 1000)}s, invalidating queries`);
           queryClient.invalidateQueries();
         }
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        handleRefresh();
       } else {
         // Track when we became hidden
         lastVisibleRef.current = Date.now();
       }
     };
 
+    const handleFocus = () => {
+      handleRefresh();
+    };
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      // Handle bfcache restores
+      if (event.persisted) {
+        console.log('[VisibilityRefresh] Page restored from bfcache, invalidating queries');
+        queryClient.invalidateQueries();
+      }
+    };
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('pageshow', handlePageShow);
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('pageshow', handlePageShow);
     };
   }, [queryClient, staleThresholdMs]);
 };
