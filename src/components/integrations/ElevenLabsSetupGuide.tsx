@@ -40,6 +40,8 @@ function generateToolJson(
           required: prop.required,
           // ElevenLabs expects: 'llm_prompt' | 'dynamic_variable' | 'constant'
           value_type: prop.valueType === 'constant' ? 'constant' : 'llm_prompt',
+          // dynamic_variable is required but can be empty string when not used
+          dynamic_variable: "",
           ...(prop.valueType === 'constant' && prop.constantValue
             ? { constant_value: prop.constantValue }
             : {})
@@ -47,8 +49,8 @@ function generateToolJson(
       },
       request_headers: [
         {
-          id: "Content-Type",
-          // ElevenLabs expects header item 'type' discriminator: 'value' | 'secret' | 'dynamic_variable'
+          id: "content_type_header",
+          name: "Content-Type",
           type: "value",
           value: "application/json"
         }
