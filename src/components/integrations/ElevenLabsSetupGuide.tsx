@@ -38,19 +38,19 @@ function generateToolJson(
           type: prop.type,
           description: prop.description,
           required: prop.required,
-          value_type: prop.valueType === 'constant' ? 'value' : 'llm_prompt',
-          ...(prop.constantValue && { constant_value: prop.constantValue }),
-          dynamic_variable: ""
+          // ElevenLabs expects: 'llm_prompt' | 'dynamic_variable' | 'constant'
+          value_type: prop.valueType === 'constant' ? 'constant' : 'llm_prompt',
+          ...(prop.valueType === 'constant' && prop.constantValue
+            ? { constant_value: prop.constantValue }
+            : {})
         }))
       },
       request_headers: [
         {
           id: "Content-Type",
-          type: "string",
-          description: "Content type header",
-          required: true,
-          value_type: "value",
-          constant_value: "application/json"
+          // ElevenLabs expects header item 'type' discriminator: 'value' | 'secret' | 'dynamic_variable'
+          type: "value",
+          value: "application/json"
         }
       ]
     },
