@@ -914,68 +914,116 @@ export default function Index() {
             </Card>
           </div>
 
-          {/* Aura Halo - Specialized Salon Package */}
-          <div className="mt-8 max-w-2xl mx-auto">
+          {/* Industry-Specific Packages */}
+          <div className="mt-8 grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            {/* Aura Express - Restaurant Package */}
+            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-amber-400/30 dark-card-surface">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
+              <CardContent className="p-5">
+                <Badge className="mb-2 bg-amber-500 text-white border-0 text-[10px]">
+                  For Restaurants
+                </Badge>
+                <h3 className="text-lg font-bold mb-1">Aura Express</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">
+                  Restaurants • Cafes • Food Trucks • Food Service
+                </p>
+                <div className="flex items-baseline gap-1 mb-3">
+                  <span className="text-2xl font-bold text-amber-400">$197</span>
+                  <span className="text-card-foreground/60 text-sm">/month</span>
+                </div>
+                
+                <div className="space-y-1.5 mb-4">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    <span className="text-xs">Talk to Aura (Chat)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    <span className="text-xs">Proxy Voice Chat</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                    <span className="text-xs">Smart Link Sharing</span>
+                  </div>
+                  <p className="text-[10px] text-card-foreground/50 ml-5">(Menu, Ordering, Website)</p>
+                </div>
+
+                <Button 
+                  size="sm" 
+                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+                  onClick={() => navigate('/auth?mode=company')}
+                >
+                  Start Free Trial
+                </Button>
+                <button 
+                  onClick={() => setShowPlanComparison(!showPlanComparison)}
+                  className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
+                >
+                  See More Details
+                  {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                </button>
+                <p className="text-[9px] text-amber-400/70 mt-2 text-center">Requires: ElevenLabs + Twilio</p>
+              </CardContent>
+            </Card>
+
+            {/* Aura Halo - Specialized Salon Package */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-rose-400/30 dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-400 to-pink-500" />
               <CardContent className="p-5">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  {/* Left - Plan Info */}
-                  <div className="flex-1">
-                    <Badge className="mb-2 bg-rose-500 text-white border-0 text-[10px]">
-                      For Salons & Wellness
-                    </Badge>
-                    <h3 className="text-lg font-bold mb-1">Aura Halo</h3>
-                    <p className="text-[10px] text-card-foreground/60 mb-1">
-                      Nail Salons • Hair Salons • Barbers • Massage Centers
-                    </p>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-2xl font-bold text-rose-400">$397</span>
-                      <span className="text-card-foreground/60 text-sm">/month</span>
-                    </div>
+                <Badge className="mb-2 bg-rose-500 text-white border-0 text-[10px]">
+                  For Salons & Wellness
+                </Badge>
+                <h3 className="text-lg font-bold mb-1">Aura Halo</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">
+                  Nail Salons • Hair Salons • Barbers • Massage Centers
+                </p>
+                <div className="flex items-baseline gap-1 mb-3">
+                  <span className="text-2xl font-bold text-rose-400">$397</span>
+                  <span className="text-card-foreground/60 text-sm">/month</span>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mb-4">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                    <span className="text-xs">AI Receptionist</span>
                   </div>
-                  
-                  {/* Center - Features */}
-                  <div className="flex-1">
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                        <span className="text-xs">AI Receptionist</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                        <span className="text-xs">Scheduling Agent</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                        <span className="text-xs">SMS/Email Follow-ups</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                        <span className="text-xs">Proxy Voice Chat</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                        <span className="text-xs">Talk to Aura (Chat)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                        <span className="text-xs">Customer Portal</span>
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                    <span className="text-xs">Scheduling Agent</span>
                   </div>
-                  
-                  {/* Right - CTA */}
-                  <div className="flex-shrink-0">
-                    <Button 
-                      size="sm" 
-                      className="bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white"
-                      onClick={() => navigate('/auth?mode=company')}
-                    >
-                      Start Free Trial
-                    </Button>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                    <span className="text-xs">SMS/Email Follow-ups</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                    <span className="text-xs">Proxy Voice Chat</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                    <span className="text-xs">Talk to Aura (Chat)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                    <span className="text-xs">Customer Portal</span>
                   </div>
                 </div>
+                
+                <Button 
+                  size="sm" 
+                  className="w-full bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white"
+                  onClick={() => navigate('/auth?mode=company')}
+                >
+                  Start Free Trial
+                </Button>
+                <button 
+                  onClick={() => setShowPlanComparison(!showPlanComparison)}
+                  className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
+                >
+                  See More Details
+                  {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                </button>
+                <p className="text-[9px] text-rose-400/70 mt-2 text-center">Requires: ElevenLabs + Twilio + Resend</p>
               </CardContent>
             </Card>
           </div>

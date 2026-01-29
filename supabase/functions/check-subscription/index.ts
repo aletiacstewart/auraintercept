@@ -15,6 +15,7 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 // Map price IDs to tier names
 const PRICE_TO_TIER: Record<string, string> = {
   // New tier price IDs
+  "price_1SuzwwJ9fo9y8fGH0rJZBw5q": "express",      // Aura Express - $197/month
   "price_1StwXbJ9fo9y8fGHMaCGdnDV": "halo",         // Aura Halo - $397/month
   "price_1StwXqJ9fo9y8fGHwzQk17IN": "core",         // Aura Core - $500/month
   "price_1StwY2J9fo9y8fGHwOIrLZ8q": "single_point", // Single-Point - $1,500/month
