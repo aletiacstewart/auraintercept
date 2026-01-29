@@ -61,7 +61,7 @@ const getToolConfigs = (companyId: string): ToolConfig[] => [
     bodyParams: [
       { identifier: 'action', description: 'The action to perform', required: true, valueType: 'value', value: 'get_available_times' },
       { identifier: 'company_id', description: 'The company identifier', required: true, valueType: 'value', value: companyId },
-      { identifier: 'date', description: 'Date in YYYY-MM-DD format chosen by customer', required: true, valueType: 'llm_prompt' },
+      { identifier: 'date', description: 'The appointment date. Convert natural language (tomorrow, next Monday, etc.) to YYYY-MM-DD format based on current date', required: true, valueType: 'llm_prompt' },
       { identifier: 'service_type', description: 'The service type', required: true, valueType: 'llm_prompt' }
     ]
   },
@@ -78,8 +78,8 @@ const getToolConfigs = (companyId: string): ToolConfig[] => [
       { identifier: 'customer_email', description: 'Customer email address', required: false, valueType: 'llm_prompt' },
       { identifier: 'customer_address', description: 'Service address', required: true, valueType: 'llm_prompt' },
       { identifier: 'service_type', description: 'Service type being booked', required: true, valueType: 'llm_prompt' },
-      { identifier: 'date', description: 'Appointment date (YYYY-MM-DD)', required: true, valueType: 'llm_prompt' },
-      { identifier: 'time', description: 'Appointment time (HH:MM)', required: true, valueType: 'llm_prompt' },
+      { identifier: 'date', description: 'Appointment date converted to YYYY-MM-DD. Interpret natural language like tomorrow, next week, Wednesday, etc.', required: true, valueType: 'llm_prompt' },
+      { identifier: 'time', description: 'Appointment time in HH:MM format (24hr). Convert "4pm" to 16:00, "9am" to 09:00, etc.', required: true, valueType: 'llm_prompt' },
       { identifier: 'notes', description: 'Additional notes about the service request', required: false, valueType: 'llm_prompt' }
     ]
   }
@@ -94,6 +94,18 @@ FLOW:
 4. Check available dates (get_available_dates)
 5. Let them pick a date, then check times (get_available_times)
 6. Confirm all details, then book (book_appointment)
+
+IMPORTANT - DATE & TIME HANDLING:
+- Understand natural language dates like "tomorrow", "next Monday", "Wednesday of next week", "in 3 days"
+- Convert these to proper dates before calling tools (format: YYYY-MM-DD)
+- Use your knowledge of today's date to calculate relative dates
+- If unclear, ask for clarification (e.g., "Did you mean this Wednesday or next Wednesday?")
+- Convert times like "4pm" to 24-hour format: 16:00, "9am" to 09:00
+
+DATE EXAMPLES:
+- "tomorrow at 4pm" → date: tomorrow's YYYY-MM-DD, time: 16:00
+- "next Tuesday" → calculate the date for next Tuesday
+- "this Friday afternoon" → that Friday's date, then ask about specific time
 
 GUIDELINES:
 - Be conversational and natural
