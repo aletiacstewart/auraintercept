@@ -102,6 +102,7 @@ import {
 import IntegrationDocs from "./pages/IntegrationDocs";
 import PlatformGuides from "./pages/PlatformGuides";
 import NotificationSettingsPage from "./pages/NotificationSettingsPage";
+import DemoAccounts from "./pages/DemoAccounts";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient({
@@ -215,6 +216,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/integrations/embed" element={<ProtectedRoute><IntegrationDocs /></ProtectedRoute>} />
                 <Route path="/dashboard/platform-guides" element={<ProtectedRoute><PlatformGuides /></ProtectedRoute>} />
                 <Route path="/dashboard/platform-issues" element={<ProtectedRoute><PlatformIssues /></ProtectedRoute>} />
+                <Route path="/dashboard/demo-accounts" element={<ProtectedRoute><DemoAccounts /></ProtectedRoute>} />
                 <Route path="/dashboard/smart-website" element={<ProtectedRoute><SmartWebsiteManager /></ProtectedRoute>} />
                 
                 {/* Customer Portal Routes */}
