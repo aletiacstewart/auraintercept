@@ -1150,7 +1150,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingPrice}>$397/month</Text>
         <Text style={styles.pricingFeature}>- 4 AI Operatives (Receptionist, Scheduling, Follow-up, Voice Chat)</Text>
         <Text style={styles.pricingFeature}>- Customer Portal Console</Text>
-        <Text style={styles.pricingFeature}>- Proxy Voice Chat included</Text>
+        <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
         <Text style={styles.pricingFeature}>- Up to 3 employees</Text>
       </View>
 
@@ -1158,7 +1158,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingTier}>Aura Core (AI-Assisted Foundation)</Text>
         <Text style={styles.pricingPrice}>$500/month</Text>
         <Text style={styles.pricingFeature}>- 0 AI Operatives (AI Tools Only - No Automation)</Text>
-        <Text style={styles.pricingFeature}>- Talk to Aura Chat, Social Media Signal, Web Presence</Text>
+        <Text style={styles.pricingFeature}>- Message Aura (Text), Social Media Signal, Web Presence</Text>
         <Text style={styles.pricingFeature}>- Manual workflow with AI assistance</Text>
         <Text style={styles.pricingFeature}>- Up to 2 employees</Text>
       </View>
@@ -1168,7 +1168,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingPrice}>$1,500/month</Text>
         <Text style={styles.pricingFeature}>- 3 AI Operatives (Receptionist, Follow-up, Review)</Text>
         <Text style={styles.pricingFeature}>- Customer Portal Console</Text>
-        <Text style={styles.pricingFeature}>- Proxy Voice Chat included</Text>
+        <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
         <Text style={styles.pricingFeature}>- Up to 5 employees</Text>
       </View>
 

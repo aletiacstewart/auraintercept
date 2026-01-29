@@ -58,15 +58,33 @@ const featureDescriptions: Record<string, string> = {
   'Analytics & Reports Console': 'Comprehensive dashboards with KPIs, performance metrics, and business insights.',
   'Social Media Signal Console': 'Unified dashboard to manage all your social media accounts and content calendar.',
   // Communication Channels - Chat vs Voice distinction
-  'Talk to Aura (Text-Based)': 'Text-based chat interface using keyboard input. Available on ALL tiers including Core. No external dependencies required (no ElevenLabs or Twilio needed).',
-  'Proxy Voice Chat (Chat & Outbound)': 'Speech-based AI conversations using microphone and speakers. Available on Single-Point and above. Requires ElevenLabs for voice synthesis and Twilio for telephony.',
+  'Message Aura (Text)': 'Text-based chat interface using keyboard input. Available on ALL tiers including Core. No external dependencies required (no ElevenLabs or Twilio needed).',
+  'Talk to Aura (Voice)': 'Speech-based AI conversations using microphone and speakers. Available on Aura Express and above (where enabled). Requires ElevenLabs for voice synthesis and Twilio for telephony.',
   // 3rd Party Integrations
-  'ElevenLabs (Proxy Voice Chat)': 'Required for Proxy Voice Chat features only (speech-based). NOT required for Talk to Aura text chat.',
-  'Twilio (SMS & Voice)': 'Required for SMS reminders and Proxy Voice Chat calls. NOT required for Talk to Aura text chat.',
+  'ElevenLabs (Voice)': 'Required for Talk to Aura (Voice) features only (speech-based). NOT required for Message Aura (Text).',
+  'Twilio (SMS & Voice)': 'Required for SMS reminders and Talk to Aura (Voice) calls. NOT required for Message Aura (Text).',
 };
 
 // Tier configuration matching homepage
 const TIERS = [
+  {
+    id: 'express',
+    name: 'Aura Express',
+    monthlyPrice: '$197',
+    annualPrice: '$1,970',
+    annualSavings: 'Save $394',
+    description: 'Restaurant voice + smart links',
+    popular: false,
+    agentCount: 1,
+    consoleCount: 0,
+    highlights: [
+      'Message Aura (Text)',
+      'Talk to Aura (Voice)',
+      'Smart Link Sharing',
+      'Knowledge Base for FAQs',
+      'Embeddable Chat Widget',
+    ],
+  },
   {
     id: 'halo',
     name: 'Aura Halo',
@@ -81,8 +99,8 @@ const TIERS = [
       'AI Receptionist (Triage)',
       'Scheduling Agent (Booking)',
       'Follow-up Agent',
-      'Proxy Voice Chat',
-      'Talk to Aura (Text Chat)',
+      'Talk to Aura (Voice)',
+      'Message Aura (Text)',
     ],
   },
   {
@@ -96,7 +114,7 @@ const TIERS = [
     agentCount: 0,
     consoleCount: 0,
     highlights: [
-      'Talk to Aura',
+      'Message Aura (Text)',
       'Social Media Signal',
       'Web Presence (1pg)',
       '2 Employee Accounts',
@@ -115,7 +133,7 @@ const TIERS = [
     highlights: [
       '3 AI Agents',
       'Customer Portal Console',
-      'Proxy Voice Chat & Calling',
+      'Talk to Aura (Voice) & Calling',
       '5 Employee Accounts',
       'Choice: Social Media Signal or Web Presence',
     ],
@@ -224,8 +242,8 @@ const sections: FeatureSection[] = [
   {
     title: 'Communication Channels',
     features: [
-      { name: 'Talk to Aura (Text-Based)', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Proxy Voice Chat (Chat & Outbound)', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Message Aura (Text)', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Talk to Aura (Voice)', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Email Reminders', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'SMS Reminders', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
     ],
@@ -258,7 +276,7 @@ const sections: FeatureSection[] = [
       { name: 'Resend (Email)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
       { name: 'Stripe (Payments)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
       { name: 'Twilio (SMS & Voice)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-      { name: 'ElevenLabs (Proxy Voice Chat)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+      { name: 'ElevenLabs (Voice)', core: 'x', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
       { name: 'Calendar Sync', core: 'x', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
       { name: 'Social Media Accounts', core: 'Required', singlePoint: 'Optional', multiTrack: 'Required', command: 'Required' },
     ],

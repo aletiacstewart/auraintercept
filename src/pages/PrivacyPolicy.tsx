@@ -265,8 +265,8 @@ export default function PrivacyPolicy() {
 
             <h3 className="text-xl font-semibold mt-4 mb-3">Data Collected</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li><strong className="text-foreground">Text Conversations:</strong> When you use "Talk to Aura" (text-based chat), we collect the text content of your messages, timestamps, and session identifiers.</li>
-              <li><strong className="text-foreground">Voice Conversations:</strong> When you use "Proxy Voice Chat" (AI voice calling), we collect voice audio recordings, transcriptions, call duration, and call metadata.</li>
+              <li><strong className="text-foreground">Text Conversations:</strong> When you use "Message Aura (Text)" (text-based chat), we collect the text content of your messages, timestamps, and session identifiers.</li>
+              <li><strong className="text-foreground">Voice Conversations:</strong> When you use "Talk to Aura (Voice)" (AI voice calling), we collect voice audio recordings, transcriptions, call duration, and call metadata.</li>
               <li><strong className="text-foreground">Interaction Metadata:</strong> Device information, IP address, and interaction patterns may be collected to improve service quality.</li>
             </ul>
 
