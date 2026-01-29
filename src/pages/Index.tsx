@@ -746,6 +746,7 @@ export default function Index() {
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
+                <p className="text-[9px] text-emerald-400/70 mt-2 text-center">Requires: Social Media Accounts</p>
               </CardContent>
             </Card>
 
@@ -802,6 +803,7 @@ export default function Index() {
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
+                <p className="text-[9px] text-primary/70 mt-2 text-center">Requires: Stripe + Twilio + ElevenLabs</p>
               </CardContent>
             </Card>
 
@@ -857,6 +859,7 @@ export default function Index() {
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
+                <p className="text-[9px] text-primary/70 mt-2 text-center">Requires: Stripe + Twilio + ElevenLabs + Calendar</p>
               </CardContent>
             </Card>
 
@@ -910,6 +913,7 @@ export default function Index() {
                   See More Details
                   {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
+                <p className="text-[9px] text-amber-400/70 mt-2 text-center">Requires: Stripe + Twilio + ElevenLabs + Calendar</p>
               </CardContent>
             </Card>
           </div>
