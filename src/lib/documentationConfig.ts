@@ -27,6 +27,29 @@ export interface TierConfig {
 }
 
 export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
+  express: {
+    id: 'express',
+    name: 'Aura Express',
+    price: 197,
+    annualPrice: 1970,
+    annualSavings: 394,
+    implementationFee: 299,
+    employees: 2,
+    operatives: 1,
+    consoles: 0,
+    description: 'AI voice and chat for restaurants with smart link sharing.',
+    bestFor: 'Restaurants, cafes, food trucks, and food service businesses.',
+    highlights: [
+      'Talk to Aura (Text-Based Chat)',
+      'Proxy Voice Chat for phone conversations',
+      'Smart Link Sharing (Website, Menu, Ordering)',
+      'Knowledge Base for FAQs',
+      'Embeddable Chat Widget',
+      'Designed specifically for restaurants',
+    ],
+    hasVoice: true,
+    hasAutomation: false,
+  },
   halo: {
     id: 'halo',
     name: 'Aura Halo',
@@ -157,7 +180,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
 };
 
 // Tier order for display (price ascending)
-export const TIER_ORDER = ['halo', 'core', 'single_point', 'multi_track', 'command'] as const;
+export const TIER_ORDER = ['express', 'halo', 'core', 'single_point', 'multi_track', 'command'] as const;
 
 // ============================================
 // AI OPERATIVES - 23 TOTAL
@@ -558,12 +581,12 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
 export const PLATFORM_STATS = {
   totalOperatives: 23,
   totalConsoles: 7,
-  totalTiers: 5,
-  startingPrice: 397,
+  totalTiers: 6,
+  startingPrice: 197,
   maxEmployees: 25,
   socialPlatforms: 6,
   analyticsTabs: 8,
-  industries: ['HVAC', 'Plumbing', 'Electrical', 'General Contracting', 'Beauty & Wellness'],
+  industries: ['HVAC', 'Plumbing', 'Electrical', 'General Contracting', 'Beauty & Wellness', 'Restaurants'],
 };
 
 // ============================================
@@ -602,11 +625,12 @@ export function getTierByPrice(price: number): TierConfig | undefined {
 export function getOperativesForTier(tierId: string): OperativeConfig[] {
   const tierHierarchy: Record<string, number> = {
     free: 0,
-    core: 1,
-    halo: 2,
-    single_point: 3,
-    multi_track: 4,
-    command: 5,
+    express: 1,
+    core: 2,
+    halo: 3,
+    single_point: 4,
+    multi_track: 5,
+    command: 6,
   };
   
   const tierLevel = tierHierarchy[tierId] || 0;
@@ -620,11 +644,12 @@ export function getOperativesForTier(tierId: string): OperativeConfig[] {
 export function getConsolesForTierDoc(tierId: string): ConsoleConfig[] {
   const tierHierarchy: Record<string, number> = {
     free: 0,
-    core: 1,
-    halo: 2,
-    single_point: 3,
-    multi_track: 4,
-    command: 5,
+    express: 1,
+    core: 2,
+    halo: 3,
+    single_point: 4,
+    multi_track: 5,
+    command: 6,
   };
   
   const tierLevel = tierHierarchy[tierId] || 0;

@@ -14,6 +14,11 @@ const logStep = (step: string, details?: Record<string, unknown>) => {
 
 // Subscription tier configuration with Stripe Price IDs
 const SUBSCRIPTION_TIERS: Record<string, { price_id: string; name: string; price: number }> = {
+  express: {
+    price_id: "price_1SuzwwJ9fo9y8fGH0rJZBw5q",
+    name: "Aura Express",
+    price: 19700, // $197 in cents
+  },
   halo: {
     price_id: "price_1StwXbJ9fo9y8fGHMaCGdnDV",
     name: "Aura Halo",

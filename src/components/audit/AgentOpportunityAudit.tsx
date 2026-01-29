@@ -84,9 +84,9 @@ export function AgentOpportunityAudit() {
     localStorage.removeItem(STORAGE_KEY);
   };
 
-  // Calculate tier fit percentages for all 4 tiers
+  // Calculate tier fit percentages for all 6 tiers
   const tierPercentages = useMemo((): TierScores => {
-    const totals: TierScores = { CORE: 0, HALO: 0, SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
+    const totals: TierScores = { EXPRESS: 0, CORE: 0, HALO: 0, SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
     let answeredCount = 0;
 
     QUESTIONS.forEach((question) => {
@@ -96,6 +96,7 @@ export function AgentOpportunityAudit() {
           (opt) => opt.label === selectedLabel
         );
         if (selectedOption) {
+          totals.EXPRESS += selectedOption.tierScores.EXPRESS;
           totals.CORE += selectedOption.tierScores.CORE;
           totals.HALO += selectedOption.tierScores.HALO;
           totals.SINGLE_POINT += selectedOption.tierScores.SINGLE_POINT;
@@ -108,10 +109,11 @@ export function AgentOpportunityAudit() {
 
     // Calculate average percentage for each tier
     if (answeredCount === 0) {
-      return { CORE: 0, HALO: 0, SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
+      return { EXPRESS: 0, CORE: 0, HALO: 0, SINGLE_POINT: 0, MULTI_TRACK: 0, COMMAND: 0 };
     }
 
     return {
+      EXPRESS: Math.round(totals.EXPRESS / answeredCount),
       CORE: Math.round(totals.CORE / answeredCount),
       HALO: Math.round(totals.HALO / answeredCount),
       SINGLE_POINT: Math.round(totals.SINGLE_POINT / answeredCount),
