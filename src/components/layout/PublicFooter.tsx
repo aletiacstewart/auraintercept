@@ -9,10 +9,6 @@ export function PublicFooter() {
   const navigate = useNavigate();
   const [showChat, setShowChat] = useState(false);
 
-  const handleContactClick = () => {
-    setShowChat(true);
-  };
-
   return (
     <>
       <footer className="border-t border-border/50 py-12 bg-card">
@@ -44,9 +40,9 @@ export function PublicFooter() {
             <div>
               <h4 className="font-semibold mb-4 text-card-foreground">Company</h4>
               <ul className="space-y-2 text-sm text-card-foreground/80">
-                <li><a href="#" className="hover:text-card-foreground transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-card-foreground transition-colors">Blog</a></li>
-                <li><button onClick={handleContactClick} className="hover:text-card-foreground transition-colors">Contact</button></li>
+                <li><button onClick={() => navigate('/about')} className="hover:text-card-foreground transition-colors">About</button></li>
+                <li><button onClick={() => navigate('/blog')} className="hover:text-card-foreground transition-colors">Blog</button></li>
+                <li><button onClick={() => navigate('/contact')} className="hover:text-card-foreground transition-colors">Contact</button></li>
               </ul>
             </div>
             

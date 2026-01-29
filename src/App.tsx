@@ -86,6 +86,11 @@ import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
 import SmartWebsite from "./pages/SmartWebsite";
 import SmartWebsiteManager from "./pages/SmartWebsiteManager";
 import TalkToAura from "./pages/TalkToAura";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import BlogManagement from "./pages/BlogManagement";
 // Technician Dashboard Pages
 import {
   TechnicianDashboard,
@@ -147,6 +152,10 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
                 <Route path="/customer-auth" element={<CustomerAuth />} />
                 <Route path="/talk-to-aura" element={<TalkToAura />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
                 {/* All Dashboard Routes - Protected */}
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/dashboard/companies" element={<ProtectedRoute><Companies /></ProtectedRoute>} />
@@ -218,6 +227,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/platform-issues" element={<ProtectedRoute><PlatformIssues /></ProtectedRoute>} />
                 <Route path="/dashboard/demo-accounts" element={<ProtectedRoute><DemoAccounts /></ProtectedRoute>} />
                 <Route path="/dashboard/smart-website" element={<ProtectedRoute><SmartWebsiteManager /></ProtectedRoute>} />
+                <Route path="/dashboard/blog-management" element={<ProtectedRoute><BlogManagement /></ProtectedRoute>} />
                 
                 {/* Customer Portal Routes */}
                 <Route path="/customer" element={<CustomerPortalHome />} />
