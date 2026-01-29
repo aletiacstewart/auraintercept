@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { toast } from 'sonner';
-import { Copy, Check, ExternalLink, Mic, Calendar, Clock, Phone, Wrench } from 'lucide-react';
+import { Copy, Check, ExternalLink, Mic, Calendar, Clock, Phone, Wrench, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ElevenLabsSetupGuideProps {
   companyId: string;
@@ -13,105 +14,58 @@ interface ElevenLabsSetupGuideProps {
 
 const WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-booking-agent';
 
-// Helper to generate ElevenLabs-compatible webhook tool JSON
-function generateToolJson(
-  name: string,
-  description: string,
-  properties: Array<{ id: string; type: string; description: string; required: boolean; valueType: 'llm_prompt' | 'constant'; constantValue?: string }>
-) {
-  return {
-    type: "webhook",
-    name,
-    description,
-    api_schema: {
-      url: WEBHOOK_URL,
-      method: "POST",
-      path_params_schema: [],
-      query_params_schema: [],
-      request_body_schema: {
-        id: "body",
-        type: "object",
-        description: "Request body parameters",
-        required: false,
-        properties: properties.map(prop => ({
-          id: prop.id,
-          type: prop.type,
-          description: prop.description,
-          required: prop.required,
-          // ElevenLabs expects: 'llm_prompt' | 'dynamic_variable' | 'constant'
-          value_type: prop.valueType === 'constant' ? 'constant' : 'llm_prompt',
-          // dynamic_variable is required but can be empty string when not used
-          dynamic_variable: "",
-          ...(prop.valueType === 'constant' && prop.constantValue
-            ? { constant_value: prop.constantValue }
-            : {})
-        }))
-      },
-      request_headers: [
-        {
-          id: "content_type_header",
-          name: "Content-Type",
-          type: "value",
-          value: "application/json"
-        }
-      ]
-    },
-    response_timeout_secs: 30
-  };
-}
-
-// Tool definitions with proper schema
+// Tool definitions for form-based setup
 const getToolConfigs = (companyId: string) => [
   {
     id: 'get_services',
     name: 'get_services',
     description: 'Get available services. Call this first to know what services the company offers.',
     icon: Wrench,
-    json: generateToolJson('get_services', 'Get available services. Call this first to know what services the company offers.', [
-      { id: 'action', type: 'string', description: 'Must be exactly: get_services', required: true, valueType: 'constant', constantValue: 'get_services' },
-      { id: 'company_id', type: 'string', description: 'The company ID', required: true, valueType: 'constant', constantValue: companyId }
-    ])
+    bodyParams: [
+      { name: 'action', description: 'The action to perform', type: 'Value', value: 'get_services' },
+      { name: 'company_id', description: 'The company identifier', type: 'Value', value: companyId }
+    ]
   },
   {
     id: 'get_available_dates',
     name: 'get_available_dates',
     description: 'Get available booking dates for a service type.',
     icon: Calendar,
-    json: generateToolJson('get_available_dates', 'Get available booking dates for a service type.', [
-      { id: 'action', type: 'string', description: 'Must be exactly: get_available_dates', required: true, valueType: 'constant', constantValue: 'get_available_dates' },
-      { id: 'company_id', type: 'string', description: 'The company ID', required: true, valueType: 'constant', constantValue: companyId },
-      { id: 'service_type', type: 'string', description: 'The service type (e.g., "General Plumbing")', required: true, valueType: 'llm_prompt' }
-    ])
+    bodyParams: [
+      { name: 'action', description: 'The action to perform', type: 'Value', value: 'get_available_dates' },
+      { name: 'company_id', description: 'The company identifier', type: 'Value', value: companyId },
+      { name: 'service_type', description: 'The service type selected by the customer', type: 'LLM Prompt', value: '' }
+    ]
   },
   {
     id: 'get_available_times',
     name: 'get_available_times',
     description: 'Get available time slots for a specific date.',
     icon: Clock,
-    json: generateToolJson('get_available_times', 'Get available time slots for a specific date.', [
-      { id: 'action', type: 'string', description: 'Must be exactly: get_available_times', required: true, valueType: 'constant', constantValue: 'get_available_times' },
-      { id: 'company_id', type: 'string', description: 'The company ID', required: true, valueType: 'constant', constantValue: companyId },
-      { id: 'date', type: 'string', description: 'Date in YYYY-MM-DD format', required: true, valueType: 'llm_prompt' },
-      { id: 'service_type', type: 'string', description: 'The service type', required: true, valueType: 'llm_prompt' }
-    ])
+    bodyParams: [
+      { name: 'action', description: 'The action to perform', type: 'Value', value: 'get_available_times' },
+      { name: 'company_id', description: 'The company identifier', type: 'Value', value: companyId },
+      { name: 'date', description: 'Date in YYYY-MM-DD format chosen by customer', type: 'LLM Prompt', value: '' },
+      { name: 'service_type', description: 'The service type', type: 'LLM Prompt', value: '' }
+    ]
   },
   {
     id: 'book_appointment',
     name: 'book_appointment',
     description: 'Book an appointment with all customer details.',
     icon: Phone,
-    json: generateToolJson('book_appointment', 'Book an appointment with all customer details.', [
-      { id: 'action', type: 'string', description: 'Must be exactly: book_appointment', required: true, valueType: 'constant', constantValue: 'book_appointment' },
-      { id: 'company_id', type: 'string', description: 'The company ID', required: true, valueType: 'constant', constantValue: companyId },
-      { id: 'customer_name', type: 'string', description: 'Customer full name', required: true, valueType: 'llm_prompt' },
-      { id: 'customer_phone', type: 'string', description: 'Customer phone number', required: true, valueType: 'llm_prompt' },
-      { id: 'customer_email', type: 'string', description: 'Customer email (optional)', required: false, valueType: 'llm_prompt' },
-      { id: 'customer_address', type: 'string', description: 'Service address', required: false, valueType: 'llm_prompt' },
-      { id: 'service_type', type: 'string', description: 'Service type being booked', required: true, valueType: 'llm_prompt' },
-      { id: 'date', type: 'string', description: 'Appointment date (YYYY-MM-DD)', required: true, valueType: 'llm_prompt' },
-      { id: 'time', type: 'string', description: 'Appointment time (HH:MM)', required: true, valueType: 'llm_prompt' },
-      { id: 'notes', type: 'string', description: 'Additional notes about the service', required: false, valueType: 'llm_prompt' }
-    ])
+    bodyParams: [
+      { name: 'action', description: 'The action to perform', type: 'Value', value: 'book_appointment' },
+      { name: 'company_id', description: 'The company identifier', type: 'Value', value: companyId },
+      { name: 'customer_name', description: 'Customer full name', type: 'LLM Prompt', value: '' },
+      { name: 'customer_phone', description: 'Customer phone number', type: 'LLM Prompt', value: '' },
+      { name: 'customer_email', description: 'Customer email address (optional)', type: 'LLM Prompt', value: '' },
+      { name: 'customer_address', description: 'Service address', type: 'LLM Prompt', value: '' },
+      { name: 'service_type', description: 'Service type being booked', type: 'LLM Prompt', value: '' },
+      { name: 'date', description: 'Appointment date (YYYY-MM-DD)', type: 'LLM Prompt', value: '' },
+      { name: 'time', description: 'Appointment time (HH:MM)', type: 'LLM Prompt', value: '' },
+      { name: 'notes', description: 'Additional notes about the service request', type: 'LLM Prompt', value: '' }
+    ]
   }
 ];
 
@@ -145,6 +99,8 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
       toast.error('Failed to copy');
     }
   };
+
+  const toolConfigs = getToolConfigs(companyId);
 
   return (
     <Card className="guide-card guide-card-voice">
@@ -197,7 +153,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
             <AccordionContent className="text-sm text-muted-foreground space-y-3">
               <p>Copy this prompt and paste it in your ElevenLabs agent's "System Prompt" field:</p>
               <div className="relative">
-                <pre className="bg-muted p-4 rounded-lg text-xs overflow-x-auto max-h-48 overflow-y-auto">
+                <pre className="bg-muted p-4 rounded-lg text-xs overflow-x-auto max-h-48 overflow-y-auto whitespace-pre-wrap">
                   {AGENT_PROMPT}
                 </pre>
                 <Button
@@ -213,7 +169,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
             </AccordionContent>
           </AccordionItem>
 
-          {/* Step 3: Add Tools (EASY WAY) */}
+          {/* Step 3: Add Tools using Form Mode */}
           <AccordionItem value="step-3">
             <AccordionTrigger className="text-sm">
               <span className="flex items-center gap-2">
@@ -222,54 +178,157 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
               </span>
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground space-y-4">
-              {/* Simple Instructions */}
-              <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
-                <p className="font-semibold text-foreground mb-3">✨ Easy Setup (3 steps per tool):</p>
-                <ol className="list-decimal list-inside space-y-2 text-foreground">
-                  <li>In ElevenLabs, go to <strong>Tools</strong> → <strong>+ Add Tool</strong> → <strong>Webhook</strong></li>
-                  <li>Click <strong>"JSON Mode"</strong> button (top right of the dialog)</li>
-                  <li>Delete everything in the editor, then <strong>paste the JSON</strong> from below</li>
-                </ol>
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <strong>Use Form Mode</strong> (not JSON Mode) - it's more reliable. Follow the step-by-step instructions below for each tool.
+                </AlertDescription>
+              </Alert>
+
+              {/* Webhook URL */}
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="text-xs font-medium text-foreground mb-2">Webhook URL (same for all tools):</p>
+                <div className="flex items-center gap-2">
+                  <code className="text-xs bg-background px-2 py-1 rounded flex-1 overflow-x-auto">{WEBHOOK_URL}</code>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0"
+                    onClick={() => copyToClipboard(WEBHOOK_URL, 'webhook-url')}
+                  >
+                    {copiedItems['webhook-url'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  </Button>
+                </div>
               </div>
 
-              <p className="font-medium text-foreground">Add all 4 tools below. Click "Copy" and paste into ElevenLabs:</p>
+              <p className="font-medium text-foreground">Create all 4 tools below. For each tool:</p>
+              
+              <ol className="list-decimal list-inside space-y-1 text-foreground text-xs bg-primary/5 p-3 rounded-lg">
+                <li>Go to <strong>Tools</strong> → <strong>+ Add Tool</strong> → <strong>Webhook</strong></li>
+                <li>Make sure you're in <strong>Form Mode</strong> (not JSON Mode)</li>
+                <li>Fill in the fields as shown below</li>
+                <li>Click <strong>Add Tool</strong></li>
+              </ol>
 
-              {/* Tool Cards - Simple List */}
-              <div className="space-y-4">
-                {getToolConfigs(companyId).map((tool) => (
+              {/* Tool Cards */}
+              <div className="space-y-6">
+                {toolConfigs.map((tool, toolIndex) => (
                   <div key={tool.id} className="border rounded-lg overflow-hidden">
-                    <div className="bg-muted/50 p-3 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <tool.icon className="w-4 h-4 text-primary" />
-                        <span className="font-medium">{tool.name}</span>
-                      </div>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="gap-2"
-                        onClick={() => copyToClipboard(JSON.stringify(tool.json, null, 2), `tool-${tool.id}`)}
-                      >
-                        {copiedItems[`tool-${tool.id}`] ? (
-                          <>
-                            <Check className="w-4 h-4" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-4 h-4" />
-                            Copy JSON
-                          </>
-                        )}
-                      </Button>
+                    <div className="bg-muted/50 p-3 flex items-center gap-2">
+                      <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">
+                        Tool {toolIndex + 1}
+                      </Badge>
+                      <tool.icon className="w-4 h-4 text-primary" />
+                      <span className="font-semibold text-foreground">{tool.name}</span>
                     </div>
-                    <div className="p-3">
-                      <p className="text-xs text-muted-foreground mb-2">{tool.json.description}</p>
-                      <details className="text-xs">
-                        <summary className="cursor-pointer text-muted-foreground hover:text-foreground">View JSON</summary>
-                        <pre className="mt-2 bg-muted p-3 rounded text-[10px] overflow-x-auto max-h-48 overflow-y-auto">
-{JSON.stringify(tool.json, null, 2)}
-                        </pre>
-                      </details>
+                    <div className="p-4 space-y-4">
+                      {/* Configuration Section */}
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1">
+                          📋 Configuration Tab
+                        </p>
+                        <table className="w-full text-xs border-collapse">
+                          <tbody>
+                            <tr className="border-b">
+                              <td className="py-1.5 pr-3 font-medium text-muted-foreground w-24">Name</td>
+                              <td className="py-1.5">
+                                <div className="flex items-center gap-2">
+                                  <code className="bg-muted px-2 py-0.5 rounded">{tool.name}</code>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 w-6 p-0"
+                                    onClick={() => copyToClipboard(tool.name, `${tool.id}-name`)}
+                                  >
+                                    {copiedItems[`${tool.id}-name`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="py-1.5 pr-3 font-medium text-muted-foreground">Description</td>
+                              <td className="py-1.5">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-foreground">{tool.description}</span>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 w-6 p-0 shrink-0"
+                                    onClick={() => copyToClipboard(tool.description, `${tool.id}-desc`)}
+                                  >
+                                    {copiedItems[`${tool.id}-desc`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr className="border-b">
+                              <td className="py-1.5 pr-3 font-medium text-muted-foreground">Method</td>
+                              <td className="py-1.5"><code className="bg-muted px-2 py-0.5 rounded">POST</code></td>
+                            </tr>
+                            <tr>
+                              <td className="py-1.5 pr-3 font-medium text-muted-foreground">URL</td>
+                              <td className="py-1.5 text-xs text-muted-foreground italic">Use the webhook URL above</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Body Parameters Section */}
+                      <div>
+                        <p className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1">
+                          📝 Body Parameters Tab
+                        </p>
+                        <p className="text-xs text-muted-foreground mb-2">
+                          Click <strong>+ Add Parameter</strong> for each row below:
+                        </p>
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-xs border-collapse border rounded">
+                            <thead>
+                              <tr className="bg-muted/50">
+                                <th className="py-1.5 px-2 text-left font-medium border-b">Name</th>
+                                <th className="py-1.5 px-2 text-left font-medium border-b">Description</th>
+                                <th className="py-1.5 px-2 text-left font-medium border-b">Type</th>
+                                <th className="py-1.5 px-2 text-left font-medium border-b">Value</th>
+                                <th className="py-1.5 px-2 border-b w-8"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {tool.bodyParams.map((param, paramIndex) => (
+                                <tr key={paramIndex} className="border-b last:border-b-0">
+                                  <td className="py-1.5 px-2">
+                                    <code className="bg-muted px-1 rounded text-[10px]">{param.name}</code>
+                                  </td>
+                                  <td className="py-1.5 px-2 text-muted-foreground text-[10px]">{param.description}</td>
+                                  <td className="py-1.5 px-2">
+                                    <Badge variant={param.type === 'Value' ? 'secondary' : 'default'} className="text-[10px]">
+                                      {param.type}
+                                    </Badge>
+                                  </td>
+                                  <td className="py-1.5 px-2">
+                                    {param.type === 'Value' ? (
+                                      <code className="bg-muted px-1 rounded text-[10px] break-all">{param.value}</code>
+                                    ) : (
+                                      <span className="text-muted-foreground italic text-[10px]">(AI fills in)</span>
+                                    )}
+                                  </td>
+                                  <td className="py-1.5 px-2">
+                                    {param.type === 'Value' && param.value && (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-5 w-5 p-0"
+                                        onClick={() => copyToClipboard(param.value, `${tool.id}-param-${paramIndex}`)}
+                                      >
+                                        {copiedItems[`${tool.id}-param-${paramIndex}`] ? <Check className="w-2.5 h-2.5" /> : <Copy className="w-2.5 h-2.5" />}
+                                      </Button>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -306,8 +365,8 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground space-y-3">
               <div className="space-y-2">
-                <p><strong>JSON error when pasting?</strong></p>
-                <p className="text-xs">Make sure you clicked "JSON Mode" first, and deleted all existing text before pasting.</p>
+                <p><strong>Tool won't save?</strong></p>
+                <p className="text-xs">Make sure you're in Form Mode (not JSON Mode). Fill in all required fields: Name, Description, Method, and URL.</p>
               </div>
               <div className="space-y-2">
                 <p><strong>Agent doesn't use the tools?</strong></p>
@@ -315,7 +374,14 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
               </div>
               <div className="space-y-2">
                 <p><strong>No available times?</strong></p>
-                <p className="text-xs">Check that you have business hours and technician availability configured.</p>
+                <p className="text-xs">Check that you have business hours and technician availability configured in your dashboard.</p>
+              </div>
+              <div className="space-y-2">
+                <p><strong>Parameter type "Value" vs "LLM Prompt"?</strong></p>
+                <p className="text-xs">
+                  <strong>Value</strong> = Fixed value you enter (like company_id).<br/>
+                  <strong>LLM Prompt</strong> = AI extracts from conversation (like customer name).
+                </p>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -325,7 +391,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
         <div className="bg-muted/50 p-3 rounded-lg mt-4">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs font-medium text-muted-foreground">Your Company ID (pre-filled in the JSONs above)</span>
+              <span className="text-xs font-medium text-muted-foreground">Your Company ID (use this for the company_id parameter)</span>
               <p className="text-sm font-mono">{companyId}</p>
             </div>
             <Button
