@@ -1,138 +1,97 @@
 
-# Add Terms Agreement Checkbox to Talk to Aura + ElevenLabs Disclosure
+# Simplified ElevenLabs Body Parameters Setup Guide
 
-## Overview
+## Problem
+The current guide for body parameters is confusing because:
+1. The table format doesn't match what users see in ElevenLabs Form Mode
+2. "Type" and "Value" columns are hard to understand
+3. Users don't know exactly which fields to fill and what to select from dropdowns
+4. The difference between "Value" (constant) and "LLM Prompt" (AI-filled) isn't clear
 
-This plan adds a terms agreement checkbox to the "Talk to Aura" text chat widget and adds ElevenLabs disclosure requirements to both the Terms of Service and Privacy Policy pages.
+## Solution
+Replace the complex table with a simple, step-by-step card-based layout that shows each parameter as a separate visual "form field" - exactly mimicking what users will see in ElevenLabs.
 
----
+## UI Changes
 
-## Changes Summary
+### New Parameter Card Design
+Each body parameter will be displayed as a visual card with:
+- Clear numbered step (1, 2, 3...)
+- Field name with copy button
+- "Type" dropdown indicator (showing exactly what to select)
+- For "Value" type: the exact value to paste
+- For "LLM Prompt" type: a simple explanation like "AI will fill this from conversation"
 
-| Component | Change |
-|-----------|--------|
-| LandingAIChat.tsx | Add terms checkbox before users can send their first message |
-| TermsOfService.tsx | Add new Section 20: ElevenLabs AI Agent Disclosure |
-| PrivacyPolicy.tsx | Add new Section 15: ElevenLabs AI Agent Disclosure |
+### Visual Layout Per Parameter
 
----
+```text
+┌──────────────────────────────────────────────────┐
+│ Parameter 1                                      │
+├──────────────────────────────────────────────────┤
+│ Identifier: [action]                    [Copy]   │
+│ Description: [The action to perform]    [Copy]   │
+│ Required: ☑ Yes                                  │
+│ Type: Select "Value" from dropdown               │
+│ Value: [get_services]                   [Copy]   │
+└──────────────────────────────────────────────────┘
+```
 
-## 1. Add Terms Checkbox to Talk to Aura Chat
+For LLM Prompt parameters:
+```text
+┌──────────────────────────────────────────────────┐
+│ Parameter 3                                      │
+├──────────────────────────────────────────────────┤
+│ Identifier: [service_type]              [Copy]   │
+│ Description: [The service type...]      [Copy]   │
+│ Required: ☑ Yes                                  │
+│ Type: Select "LLM Prompt" from dropdown          │
+│ (AI fills this automatically from conversation)  │
+└──────────────────────────────────────────────────┘
+```
 
-**File:** `src/components/landing/LandingAIChat.tsx`
+### Key Visual Improvements
+1. Remove the confusing table format entirely
+2. Add clear "Step X of Y" indicators for each parameter
+3. Show exact dropdown selections with colored badges
+4. Add a "Quick Reference" legend at the top explaining Value vs LLM Prompt
+5. Include visual icons to differentiate fixed values vs AI-filled
 
-Currently, users can immediately start chatting without agreeing to terms. We will add:
+### Updated Data Structure
+The `bodyParams` will be enhanced with:
+- `identifier` - the field name to enter
+- `description` - the description text
+- `required` - boolean for the checkbox
+- `valueType` - "value" or "llm_prompt" (matching exact ElevenLabs terminology)
+- `value` - only for "value" type parameters
 
-- A state variable `termsAgreed` (defaults to `false`)
-- A consent notice displayed before the first message can be sent
-- Links to Terms of Service and Privacy Policy (opening in new tabs)
-- The send button will be disabled until terms are accepted
+## Files to Modify
 
-**User Flow:**
-1. User opens chat widget
-2. Chat shows welcome message from Aura
-3. Below the input field, a checkbox with terms agreement is displayed
-4. User must check the box before they can send any message
-5. Once agreed, the checkbox hides and the user can chat normally
-
----
-
-## 2. Add ElevenLabs Disclosure to Terms of Service
-
-**File:** `src/pages/TermsOfService.tsx`
-
-Add **Section 20: ElevenLabs AI Agent Disclosure** with:
-
-- Disclosure that users interact with AI, not humans
-- Notice that conversations may be recorded and shared with ElevenLabs and third-party LLM providers
-- Consent requirements for AI interactions
-- Sample disclosure language as referenced in the ElevenLabs documentation
-- Link to ElevenLabs Agents Platform Terms
-
----
-
-## 3. Add ElevenLabs Disclosure to Privacy Policy
-
-**File:** `src/pages/PrivacyPolicy.tsx`
-
-Add **Section 15: ElevenLabs AI Agent Disclosure** with:
-
-- Data collection related to ElevenLabs Agents (voice and text interactions)
-- How conversation data is processed and shared
-- Third-party disclosure to ElevenLabs and their LLM providers
-- User consent acknowledgment
-- Link to ElevenLabs Agents Platform Terms
+**src/components/integrations/ElevenLabsSetupGuide.tsx**
+- Update `getToolConfigs` to use clearer property names
+- Replace the body parameters table with individual parameter cards
+- Add a legend/key section explaining "Value" vs "LLM Prompt"
+- Style each parameter as a distinct visual card
+- Make copy buttons more prominent for each field
+- Add "Required" checkbox indicator
 
 ---
 
 ## Technical Details
 
-### LandingAIChat.tsx Changes
-
-```text
-New imports:
-- Checkbox from @/components/ui/checkbox
-- Link from react-router-dom
-
-New state:
-- termsAgreed: boolean (default false)
-
-New UI (below input form):
-- Consent notice with checkbox
-- Links to /terms-of-service and /privacy-policy
-
-Modified behavior:
-- Send button disabled when !termsAgreed
-- Checkbox hidden after terms are accepted (to keep interface clean)
+### Parameter Card Component Structure
+```tsx
+// New structure for each body parameter
+{
+  identifier: 'action',
+  description: 'The action to perform',
+  required: true,
+  valueType: 'value', // or 'llm_prompt'
+  value: 'get_services' // only when valueType is 'value'
+}
 ```
 
-### Terms of Service Section 20
-
-```text
-20. ElevenLabs AI Agent Disclosure
-
-Notice:
-- You are interacting with AI-powered agents, not human representatives
-- Conversations may be recorded and shared with ElevenLabs and third-party LLM providers
-
-Consent:
-- By interacting with AI agents, you consent to recording and data sharing
-- This includes text chat (Talk to Aura) and voice features (Proxy Voice Chat)
-
-Sample disclosure:
-"We use ElevenLabs Agents to power our AI customer service assistants..."
-
-Reference:
-- Link to ElevenLabs Agents Platform Terms
-```
-
-### Privacy Policy Section 15
-
-```text
-15. ElevenLabs AI Agent Disclosure
-
-Data collected:
-- Text and voice conversation content
-- Interaction timestamps and metadata
-
-Third-party sharing:
-- ElevenLabs Inc.
-- Third-party large language model providers
-
-Purpose:
-- Provide AI-powered customer service
-- Improve products and services
-- Train machine learning models
-- Comply with applicable law
-
-Reference:
-- Link to ElevenLabs Agents Platform Terms
-```
-
----
-
-## Files Changed
-
-1. `src/components/landing/LandingAIChat.tsx` - Add terms checkbox and consent logic
-2. `src/pages/TermsOfService.tsx` - Add Section 20 for ElevenLabs disclosure
-3. `src/pages/PrivacyPolicy.tsx` - Add Section 15 for ElevenLabs disclosure
+### Visual Styling
+- Parameter cards with `border rounded-lg p-4`
+- Clear "Step" badge: `bg-primary text-primary-foreground`
+- "Value" type badge: `bg-blue-100 text-blue-800`
+- "LLM Prompt" type badge: `bg-purple-100 text-purple-800`
+- Each field on its own row for clarity
