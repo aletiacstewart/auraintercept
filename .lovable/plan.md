@@ -1,72 +1,173 @@
 
-Goal: Make the Lovable right-side preview automatically pick up new deployments without requiring you to send a chat message.
 
-What I found (why this is still happening)
-- The current “freshness” strategy is focused on data freshness (React Query invalidations) and iframe refresh inside the WidgetPreview, but it does not reliably detect “a new frontend bundle has been deployed”.
-- In the Lovable preview, your app runs inside an iframe. In that context:
-  - `refetchOnWindowFocus` may not fire reliably (iframe focus behavior differs from top-level tab focus).
-  - `visibilitychange` may not fire in a way that correlates with “a new build is available”.
-- Result: the preview can keep running an older JS bundle in memory until something causes a full navigation/reload. Sending a chat message often triggers a parent-level refresh/reload, which is why that appears to “fix it”.
+# Add Aura Express Tier for Restaurants
 
-Solution approach (add a deployment detector + auto-reload)
-Implement an additional layer: periodically fetch the latest `index.html` with `cache: "no-store"`, detect whether the referenced hashed asset(s) changed, and reload the page if they did.
-- This targets the real problem: the running app bundle is outdated compared to what the server would serve now.
-- It works even if React Query refetches correctly, because it forces the app to load the new compiled JS/CSS.
+## Overview
 
-Planned changes
+Add a new **Aura Express** subscription tier at **$197/month** specifically designed for restaurants. This tier includes:
+- Proxy Voice Chat (voice conversations with customers)
+- Talk to Aura (text-based chat)
+- Smart link sharing capability (website, online menu, online ordering) from knowledge base
 
-1) Add a new hook: `useDeploymentAutoReload`
-File: `src/hooks/useDeploymentAutoReload.ts` (new)
-Responsibilities:
-- Poll at a conservative interval (e.g., every 20–30 seconds) when running in Lovable preview.
-- Fetch `GET /` (or same-origin base) with `cache: "no-store"` and “no-cache” headers.
-- Parse the returned HTML for the current “build signature”, for example:
-  - the `<script type="module" src="...">` path (Vite build filenames include a content hash)
-  - optionally also `<link rel="stylesheet" href="...">`
-- Compare that signature to:
-  - the currently loaded module script src in the DOM (`document.querySelector('script[type="module"][src]')`)
-  - and/or a stored value in memory/localStorage to avoid repeated reloads
-- If the signature differs, trigger a single `window.location.reload()`.
+This will be positioned as the entry-level tier, appearing next to Aura Halo in the pricing display.
 
-Safety guards to prevent reload loops
-- Only reload if we detect a stable change (e.g., two consecutive polls report a different signature), or store “last reloaded signature” and don’t reload again for the same signature.
-- Pause polling while the tab/iframe is not visible (when possible) to reduce noise.
-- Catch fetch errors (offline, transient) and do nothing rather than throwing.
-- Use a backoff if multiple failures occur.
+---
 
-2) Wire the hook into the app
-File: `src/App.tsx` (edit)
-- Call `useDeploymentAutoReload()` inside `AppContent` (important: inside `QueryClientProvider` is fine; it doesn’t depend on it, but keeping “refresh hooks” together is cleaner).
-- Ensure it runs in iframe context too (unlike `PWAUpdatePrompt`, we want this in preview).
+## Tier Specification
 
-3) Optional: strengthen “focus/visibility” refresh beyond React Query
-File: `src/hooks/useVisibilityRefresh.ts` (edit, optional but recommended)
-- In addition to `visibilitychange`, also listen for:
-  - `window.addEventListener('focus', ...)`
-  - `window.addEventListener('pageshow', ...)` (handles bfcache restores)
-- This won’t solve “new bundle deployed” by itself, but it improves consistency for “data refresh when coming back”.
+| Property | Value |
+|----------|-------|
+| **Name** | Aura Express |
+| **Price** | $197/month |
+| **Annual** | $1,970/year (save ~$394) |
+| **Target** | Restaurants, cafes, food service |
+| **Implementation Fee** | $299 |
+| **Employees** | 2 |
+| **AI Operatives** | 1 (Aura Assistant with link-sharing) |
+| **Consoles** | 0 (uses embedded widget only) |
 
-How we’ll verify (in Lovable preview)
-- Step A: Load the preview on `/`.
-- Step B: Make a small code change and let Lovable deploy it.
-- Step C: Without sending a chat message, wait up to the polling interval.
-Expected:
-- The preview reloads itself once, then you see the updated UI.
-- No repeated reload loop.
+### Features Included
+- Talk to Aura (text-based chat)
+- Proxy Voice Chat (voice conversations)
+- Smart link sharing from knowledge base:
+  - Website URL
+  - Online menu link
+  - Online ordering link
+- Embeddable chat widget
+- Knowledge base setup
 
-Edge cases and tradeoffs
-- This adds a small periodic request to `/` in preview. We’ll keep interval conservative and stop/reduce when hidden.
-- If the platform returns cached HTML despite `no-store`, we can adjust to fetch with a cache-busting query param (e.g., `/?_ts=...`) and/or use `HEAD` requests if supported.
-- If your app route isn’t `/`, fetching `/` is still correct for a SPA because `/` serves the same `index.html` with current asset hashes.
+### Required 3rd Party Integrations
+- **ElevenLabs** - Required (for Proxy Voice Chat)
+- **Twilio** - Required (for voice/SMS)
 
-Files impacted
-- New: `src/hooks/useDeploymentAutoReload.ts`
-- Edited: `src/App.tsx`
-- Optional edit: `src/hooks/useVisibilityRefresh.ts`
+---
 
-Acceptance criteria
-- After a deploy, the Lovable preview updates to the newest version automatically (within ~30s) without needing to initiate chat.
-- No infinite reload loops.
-- No new console errors.
+## Files to Modify
 
-If you approve this plan, I’ll implement the hook + App wiring first (minimal change set), then only tweak `useVisibilityRefresh` if needed based on observed behavior.
+### 1. Central Configuration
+**`src/lib/documentationConfig.ts`**
+- Add `express` tier to `SUBSCRIPTION_TIERS` object
+- Update `TIER_ORDER` to include `express` first
+- Update `PLATFORM_STATS.startingPrice` to 197
+- Update `PLATFORM_STATS.totalTiers` to 6
+- Update tier hierarchy in helper functions
+
+### 2. Backend Functions
+**`supabase/functions/create-checkout/index.ts`**
+- Add `express` tier configuration with new Stripe price ID
+- Note: Will need to create Stripe product/price first
+
+**`supabase/functions/check-subscription/index.ts`**
+- Add price ID to tier mapping for "express"
+
+### 3. Landing Page
+**`src/pages/Index.tsx`**
+- Add new Aura Express card styled with an orange/amber gradient (restaurant theme)
+- Position it next to Aura Halo
+- Include features: Talk to Aura, Proxy Voice Chat, Smart Links
+- Badge: "For Restaurants"
+
+### 4. Pricing Comparison Table
+**`src/components/landing/PricingComparisonTable.tsx`**
+- Add `express` column to all `FeatureRow` interfaces
+- Add new column header with orange styling
+- Update all feature rows with Express values
+- Reorder columns: Express, Halo, Core, Single-Point, Multi-Track, Command
+
+### 5. Business Audit
+**`src/components/audit/types.ts`**
+- Add `'EXPRESS'` to `TierType`
+- Add EXPRESS scores to `TierScores` interface
+- Update all question options with EXPRESS tier scoring
+- Add EXPRESS tier recommendation
+
+### 6. PDF Documentation (Optional - for consistency)
+**`src/components/documentation/PricingSummaryPDF.tsx`**
+- Add Aura Express tier details
+
+---
+
+## UI Design for Express Tier Card
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│ ▓▓▓▓▓▓▓▓▓▓▓ Orange gradient bar ▓▓▓▓▓▓▓▓▓▓▓                │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  [For Restaurants]                                          │
+│                                                             │
+│  Aura Express              ✓ Talk to Aura (Chat)           │
+│  Restaurants • Cafes       ✓ Proxy Voice Chat              │
+│                            ✓ Smart Link Sharing            │
+│  $197 /month                 (Menu, Ordering, Website)     │
+│                                                             │
+│                                    [Start Free Trial]       │
+│                                                             │
+│  See More Details ▼                                         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Comparison Table Column Updates
+
+Each section will include Express values:
+
+### Communication Channels
+| Feature | Express |
+|---------|---------|
+| Talk to Aura (Text-Based) | ✓ |
+| Proxy Voice Chat | ✓ |
+| Email Reminders | ✗ |
+| SMS Reminders | ✗ |
+
+### Special Feature: Smart Link Sharing
+| Feature | Express |
+|---------|---------|
+| Website Link Sharing | ✓ |
+| Online Menu Link | ✓ |
+| Online Ordering Link | ✓ |
+
+### Required 3rd Party
+| Integration | Express |
+|-------------|---------|
+| ElevenLabs | Required |
+| Twilio | Required |
+| Resend | Not Required |
+| Stripe | Not Required |
+
+---
+
+## Stripe Setup Required
+
+Before implementation, a Stripe product and price must be created:
+- **Product Name**: Aura Express
+- **Price**: $197/month (19700 cents)
+- **Billing**: Monthly recurring
+
+The price ID will be added to the edge functions after creation.
+
+---
+
+## Technical Notes
+
+1. **Knowledge Base Integration**: The link-sharing feature uses the existing knowledge base system. When restaurants subscribe and configure their knowledge base with website, menu, and ordering URLs, the AI can share these links in conversations.
+
+2. **Tier Hierarchy**: Express is level 1, below Halo (level 2). This affects which features/operatives are available.
+
+3. **Feature Access**: Express tier gets Talk to Aura + Proxy Voice Chat but NO AI operatives (like Receptionist, Follow-up, etc.) and NO consoles.
+
+---
+
+## Summary of Changes
+
+| File | Action |
+|------|--------|
+| `src/lib/documentationConfig.ts` | Add express tier config |
+| `supabase/functions/create-checkout/index.ts` | Add express pricing |
+| `supabase/functions/check-subscription/index.ts` | Add price mapping |
+| `src/pages/Index.tsx` | Add Express card UI |
+| `src/components/landing/PricingComparisonTable.tsx` | Add Express column |
+| `src/components/audit/types.ts` | Add EXPRESS tier type |
+| `src/components/documentation/PricingSummaryPDF.tsx` | Add to PDF docs |
+
