@@ -368,6 +368,14 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                                 type: "webhook",
                                 name: tool.name,
                                 description: tool.description,
+                                api_schema: {
+                                  url: WEBHOOK_URL,
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json"
+                                  }
+                                },
+                                response_timeout_secs: 30,
                                 parameters: {
                                   type: "object",
                                   properties: Object.fromEntries(
@@ -397,6 +405,14 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
   type: "webhook",
   name: tool.name,
   description: tool.description,
+  api_schema: {
+    url: WEBHOOK_URL,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  },
+  response_timeout_secs: 30,
   parameters: {
     type: "object",
     properties: Object.fromEntries(
