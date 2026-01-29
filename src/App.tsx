@@ -114,10 +114,139 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => {
+// Inner component that uses hooks requiring QueryClientProvider
+const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
   // Auto-refresh queries when tab becomes visible after being hidden
   useVisibilityRefresh(60000); // Refresh if hidden for more than 60 seconds
 
+  return (
+    <TooltipProvider>
+      <AuthProvider>
+        <ErrorBoundary>
+          <Sonner />
+          <Toaster />
+          {!isEmbedMode && <PWAUpdatePrompt />}
+          <BrowserRouter>
+            <VoiceProvider>
+              {!isEmbedMode && <AuraVoiceOverlay />}
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/audit" element={<OpportunityAudit />} />
+                <Route path="/field-ops-app" element={<FieldOpsApp />} />
+                <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
+                <Route path="/business-mgt-ops-app" element={<BusinessMgtOpsApp />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
+                <Route path="/customer-auth" element={<CustomerAuth />} />
+                {/* All Dashboard Routes - Protected */}
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/companies" element={<ProtectedRoute><Companies /></ProtectedRoute>} />
+                <Route path="/dashboard/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
+                <Route path="/dashboard/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
+                <Route path="/dashboard/employees/:id" element={<ProtectedRoute><EmployeeDetail /></ProtectedRoute>} />
+                <Route path="/dashboard/quick-setup" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                
+                <Route path="/dashboard/availability" element={<ProtectedRoute><EmployeeAvailability /></ProtectedRoute>} />
+                <Route path="/dashboard/appointments" element={<ProtectedRoute><EmployeeAppointments /></ProtectedRoute>} />
+                
+                <Route path="/dashboard/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+                <Route path="/dashboard/3rd-party-overview" element={<ProtectedRoute><Integrations /></ProtectedRoute>} />
+                <Route path="/dashboard/integrations/voice" element={<ProtectedRoute><VoiceIntegration /></ProtectedRoute>} />
+                <Route path="/dashboard/integrations/sms" element={<ProtectedRoute><SMSIntegration /></ProtectedRoute>} />
+                <Route path="/dashboard/integrations/email" element={<ProtectedRoute><EmailIntegration /></ProtectedRoute>} />
+                <Route path="/dashboard/integrations/crm" element={<ProtectedRoute><CRMIntegration /></ProtectedRoute>} />
+                <Route path="/dashboard/integrations/calendar" element={<ProtectedRoute><CalendarIntegration /></ProtectedRoute>} />
+                <Route path="/dashboard/integrations/social" element={<ProtectedRoute><SocialMediaIntegration /></ProtectedRoute>} />
+                <Route path="/dashboard/knowledge" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-agent" element={<ProtectedRoute><AIAgent /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/customer-portal" element={<ProtectedRoute><CustomerPortalConsole /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/field-ops" element={<ProtectedRoute><FieldOpsConsole /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/business-mgt-ops" element={<ProtectedRoute><BusinessManagementConsole /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/marketing-sales" element={<ProtectedRoute><MarketingSalesConsole /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/social-media" element={<ProtectedRoute><SocialMediaConsole /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/analytics" element={<ProtectedRoute><AnalyticsConsole /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/new-lead" element={<ProtectedRoute><NewLeadPage /></ProtectedRoute>} />
+                <Route path="/dashboard/analytics-reports" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
+                {/* Legacy routes redirect to Analytics & Reports */}
+                <Route path="/dashboard/ask-aura" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/performance-report" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/business-insights" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/revenue-analysis" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/revenue-forecast" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/customer-insights" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-consoles/kpi-dashboard" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-agents" element={<ProtectedRoute><AIAgentsHub /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-agent-guide" element={<ProtectedRoute><AIAgentGuide /></ProtectedRoute>} />
+                <Route path="/dashboard/ai-agents/:agentId" element={<ProtectedRoute><AgentDetailPage /></ProtectedRoute>} />
+                <Route path="/dashboard/customer-website-app" element={<ProtectedRoute><Widget /></ProtectedRoute>} />
+                <Route path="/dashboard/calls" element={<ProtectedRoute><CallHistory /></ProtectedRoute>} />
+                <Route path="/dashboard/email-logs" element={<ProtectedRoute><EmailLogs /></ProtectedRoute>} />
+                <Route path="/dashboard/sms-logs" element={<ProtectedRoute><SMSLogs /></ProtectedRoute>} />
+                <Route path="/dashboard/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+                <Route path="/dashboard/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
+                <Route path="/dashboard/subscription-analytics" element={<ProtectedRoute><SubscriptionAnalytics /></ProtectedRoute>} />
+                <Route path="/dashboard/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
+                <Route path="/dashboard/quotes" element={<ProtectedRoute><Quotes /></ProtectedRoute>} />
+                <Route path="/dashboard/invoices" element={<ProtectedRoute><Invoices /></ProtectedRoute>} />
+                <Route path="/dashboard/warranties" element={<ProtectedRoute><Warranties /></ProtectedRoute>} />
+                <Route path="/dashboard/referrals" element={<ProtectedRoute><Referrals /></ProtectedRoute>} />
+                <Route path="/dashboard/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
+                <Route path="/dashboard/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
+                <Route path="/dashboard/business-ops-hub" element={<ProtectedRoute><BusinessOpsHub /></ProtectedRoute>} />
+                <Route path="/dashboard/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
+                <Route path="/dashboard/notification-settings" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />
+                <Route path="/dashboard/architecture" element={<ProtectedRoute><Architecture /></ProtectedRoute>} />
+                <Route path="/dashboard/calculators" element={<ProtectedRoute><Calculators /></ProtectedRoute>} />
+                <Route path="/dashboard/export-docs" element={<ProtectedRoute><ExportDocumentation /></ProtectedRoute>} />
+                <Route path="/dashboard/dispatch-field-ops" element={<ProtectedRoute><FieldOperations /></ProtectedRoute>} />
+                <Route path="/dashboard/business-operations" element={<ProtectedRoute><BusinessOperations /></ProtectedRoute>} />
+                <Route path="/dashboard/field-ops-install" element={<ProtectedRoute><FieldOpsInstall /></ProtectedRoute>} />
+                <Route path="/dashboard/dispatch-field-ops-install" element={<ProtectedRoute><DispatchFieldOpsInstall /></ProtectedRoute>} />
+                <Route path="/dashboard/business-mgt-ops-install" element={<ProtectedRoute><BusinessMgtOpsInstall /></ProtectedRoute>} />
+                <Route path="/dashboard/customer-portal-app-install" element={<ProtectedRoute><CustomerPortalAppInstall /></ProtectedRoute>} />
+                <Route path="/dashboard/integrations/embed" element={<ProtectedRoute><IntegrationDocs /></ProtectedRoute>} />
+                <Route path="/dashboard/platform-guides" element={<ProtectedRoute><PlatformGuides /></ProtectedRoute>} />
+                <Route path="/dashboard/platform-issues" element={<ProtectedRoute><PlatformIssues /></ProtectedRoute>} />
+                <Route path="/dashboard/smart-website" element={<ProtectedRoute><SmartWebsiteManager /></ProtectedRoute>} />
+                
+                {/* Customer Portal Routes */}
+                <Route path="/customer" element={<CustomerPortalHome />} />
+                <Route path="/customer-portal" element={<CustomerPortalHome />} />
+                <Route path="/customer-portal-install" element={<CustomerPortalInstall />} />
+                <Route path="/customer-portal/:companySlug" element={<CustomerCompanyPortal />} />
+                
+                {/* Legacy Customer Routes */}
+                <Route path="/appointment" element={<CustomerPortal />} />
+                <Route path="/customer-dashboard" element={<CustomerDashboard />} />
+                <Route path="/chat/:companySlug" element={<PublicChat />} />
+                
+                {/* Smart Website Routes */}
+                <Route path="/site/:subdomain" element={<SmartWebsite />} />
+                
+                {/* Technician Dashboard Routes - Protected */}
+                <Route path="/technician" element={<ProtectedRoute><TechnicianDashboard /></ProtectedRoute>} />
+                <Route path="/technician/ai-console" element={<ProtectedRoute><TechnicianAIConsole /></ProtectedRoute>} />
+                <Route path="/technician/jobs" element={<ProtectedRoute><TechnicianJobs /></ProtectedRoute>} />
+                <Route path="/technician/calendar" element={<ProtectedRoute><TechnicianCalendar /></ProtectedRoute>} />
+                <Route path="/technician/settings" element={<ProtectedRoute><TechnicianSettings /></ProtectedRoute>} />
+                <Route path="/technician/availability" element={<ProtectedRoute><TechnicianAvailability /></ProtectedRoute>} />
+                <Route path="/technician/history" element={<ProtectedRoute><TechnicianHistory /></ProtectedRoute>} />
+                <Route path="/technician/profile" element={<ProtectedRoute><TechnicianProfile /></ProtectedRoute>} />
+                <Route path="/technician/install" element={<ProtectedRoute><TechnicianInstall /></ProtectedRoute>} />
+                
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </VoiceProvider>
+          </BrowserRouter>
+        </ErrorBoundary>
+      </AuthProvider>
+    </TooltipProvider>
+  );
+};
+
+const App = () => {
   // Self-healing: unregister service workers on non-technician routes to prevent stale cached versions
   useEffect(() => {
     const path = window.location.pathname;
@@ -143,7 +272,6 @@ const App = () => {
   }, []);
 
   // Embed mode must be true in an iframe (preview widgets) OR when explicitly requested via ?embed=true
-  // NOTE: computed inside the component to avoid stale module-scope evaluation.
   const isEmbedMode = (() => {
     if (typeof window === 'undefined') return false;
     const isIframe = window.self !== window.top;
@@ -152,132 +280,9 @@ const App = () => {
   })();
 
   return (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <ErrorBoundary>
-          <Sonner />
-          <Toaster />
-          {!isEmbedMode && <PWAUpdatePrompt />}
-          <BrowserRouter>
-            <VoiceProvider>
-              {!isEmbedMode && <AuraVoiceOverlay />}
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/audit" element={<OpportunityAudit />} />
-                <Route path="/field-ops-app" element={<FieldOpsApp />} />
-                <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
-                <Route path="/business-mgt-ops-app" element={<BusinessMgtOpsApp />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/terms-of-service" element={<TermsOfService />} />
-                <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
-                <Route path="/customer-auth" element={<CustomerAuth />} />
-              {/* All Dashboard Routes - Protected */}
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/dashboard/companies" element={<ProtectedRoute><Companies /></ProtectedRoute>} />
-              <Route path="/dashboard/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
-              <Route path="/dashboard/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
-              <Route path="/dashboard/employees/:id" element={<ProtectedRoute><EmployeeDetail /></ProtectedRoute>} />
-              <Route path="/dashboard/quick-setup" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-              
-              <Route path="/dashboard/availability" element={<ProtectedRoute><EmployeeAvailability /></ProtectedRoute>} />
-              <Route path="/dashboard/appointments" element={<ProtectedRoute><EmployeeAppointments /></ProtectedRoute>} />
-              
-              <Route path="/dashboard/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-              <Route path="/dashboard/3rd-party-overview" element={<ProtectedRoute><Integrations /></ProtectedRoute>} />
-              <Route path="/dashboard/integrations/voice" element={<ProtectedRoute><VoiceIntegration /></ProtectedRoute>} />
-              <Route path="/dashboard/integrations/sms" element={<ProtectedRoute><SMSIntegration /></ProtectedRoute>} />
-              <Route path="/dashboard/integrations/email" element={<ProtectedRoute><EmailIntegration /></ProtectedRoute>} />
-              <Route path="/dashboard/integrations/crm" element={<ProtectedRoute><CRMIntegration /></ProtectedRoute>} />
-              <Route path="/dashboard/integrations/calendar" element={<ProtectedRoute><CalendarIntegration /></ProtectedRoute>} />
-              <Route path="/dashboard/integrations/social" element={<ProtectedRoute><SocialMediaIntegration /></ProtectedRoute>} />
-              <Route path="/dashboard/knowledge" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-agent" element={<ProtectedRoute><AIAgent /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/customer-portal" element={<ProtectedRoute><CustomerPortalConsole /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/field-ops" element={<ProtectedRoute><FieldOpsConsole /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/business-mgt-ops" element={<ProtectedRoute><BusinessManagementConsole /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/marketing-sales" element={<ProtectedRoute><MarketingSalesConsole /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/social-media" element={<ProtectedRoute><SocialMediaConsole /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/analytics" element={<ProtectedRoute><AnalyticsConsole /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/new-lead" element={<ProtectedRoute><NewLeadPage /></ProtectedRoute>} />
-              <Route path="/dashboard/analytics-reports" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-              {/* Legacy routes redirect to Analytics & Reports */}
-              <Route path="/dashboard/ask-aura" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/performance-report" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/business-insights" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/revenue-analysis" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/revenue-forecast" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/customer-insights" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-consoles/kpi-dashboard" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-agents" element={<ProtectedRoute><AIAgentsHub /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-agent-guide" element={<ProtectedRoute><AIAgentGuide /></ProtectedRoute>} />
-              <Route path="/dashboard/ai-agents/:agentId" element={<ProtectedRoute><AgentDetailPage /></ProtectedRoute>} />
-              <Route path="/dashboard/customer-website-app" element={<ProtectedRoute><Widget /></ProtectedRoute>} />
-              <Route path="/dashboard/calls" element={<ProtectedRoute><CallHistory /></ProtectedRoute>} />
-              <Route path="/dashboard/email-logs" element={<ProtectedRoute><EmailLogs /></ProtectedRoute>} />
-              <Route path="/dashboard/sms-logs" element={<ProtectedRoute><SMSLogs /></ProtectedRoute>} />
-              <Route path="/dashboard/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-              <Route path="/dashboard/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
-              <Route path="/dashboard/subscription-analytics" element={<ProtectedRoute><SubscriptionAnalytics /></ProtectedRoute>} />
-              <Route path="/dashboard/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
-              <Route path="/dashboard/quotes" element={<ProtectedRoute><Quotes /></ProtectedRoute>} />
-              <Route path="/dashboard/invoices" element={<ProtectedRoute><Invoices /></ProtectedRoute>} />
-              <Route path="/dashboard/warranties" element={<ProtectedRoute><Warranties /></ProtectedRoute>} />
-              <Route path="/dashboard/referrals" element={<ProtectedRoute><Referrals /></ProtectedRoute>} />
-              <Route path="/dashboard/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
-              <Route path="/dashboard/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
-              <Route path="/dashboard/business-ops-hub" element={<ProtectedRoute><BusinessOpsHub /></ProtectedRoute>} />
-              <Route path="/dashboard/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
-              <Route path="/dashboard/notification-settings" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />
-              <Route path="/dashboard/architecture" element={<ProtectedRoute><Architecture /></ProtectedRoute>} />
-              <Route path="/dashboard/calculators" element={<ProtectedRoute><Calculators /></ProtectedRoute>} />
-              <Route path="/dashboard/export-docs" element={<ProtectedRoute><ExportDocumentation /></ProtectedRoute>} />
-              <Route path="/dashboard/dispatch-field-ops" element={<ProtectedRoute><FieldOperations /></ProtectedRoute>} />
-              <Route path="/dashboard/business-operations" element={<ProtectedRoute><BusinessOperations /></ProtectedRoute>} />
-              <Route path="/dashboard/field-ops-install" element={<ProtectedRoute><FieldOpsInstall /></ProtectedRoute>} />
-              <Route path="/dashboard/dispatch-field-ops-install" element={<ProtectedRoute><DispatchFieldOpsInstall /></ProtectedRoute>} />
-              <Route path="/dashboard/business-mgt-ops-install" element={<ProtectedRoute><BusinessMgtOpsInstall /></ProtectedRoute>} />
-              <Route path="/dashboard/customer-portal-app-install" element={<ProtectedRoute><CustomerPortalAppInstall /></ProtectedRoute>} />
-              <Route path="/dashboard/integrations/embed" element={<ProtectedRoute><IntegrationDocs /></ProtectedRoute>} />
-              <Route path="/dashboard/platform-guides" element={<ProtectedRoute><PlatformGuides /></ProtectedRoute>} />
-              <Route path="/dashboard/platform-issues" element={<ProtectedRoute><PlatformIssues /></ProtectedRoute>} />
-              <Route path="/dashboard/smart-website" element={<ProtectedRoute><SmartWebsiteManager /></ProtectedRoute>} />
-              
-              {/* Customer Portal Routes */}
-              <Route path="/customer" element={<CustomerPortalHome />} />
-              <Route path="/customer-portal" element={<CustomerPortalHome />} />
-              <Route path="/customer-portal-install" element={<CustomerPortalInstall />} />
-              <Route path="/customer-portal/:companySlug" element={<CustomerCompanyPortal />} />
-              
-              {/* Legacy Customer Routes */}
-              <Route path="/appointment" element={<CustomerPortal />} />
-              <Route path="/customer-dashboard" element={<CustomerDashboard />} />
-              <Route path="/chat/:companySlug" element={<PublicChat />} />
-              
-              {/* Smart Website Routes */}
-              <Route path="/site/:subdomain" element={<SmartWebsite />} />
-              <Route path="/dashboard/smart-website" element={<ProtectedRoute><SmartWebsiteManager /></ProtectedRoute>} />
-              
-              {/* Technician Dashboard Routes - Protected */}
-              <Route path="/technician" element={<ProtectedRoute><TechnicianDashboard /></ProtectedRoute>} />
-              <Route path="/technician/ai-console" element={<ProtectedRoute><TechnicianAIConsole /></ProtectedRoute>} />
-              <Route path="/technician/jobs" element={<ProtectedRoute><TechnicianJobs /></ProtectedRoute>} />
-              <Route path="/technician/calendar" element={<ProtectedRoute><TechnicianCalendar /></ProtectedRoute>} />
-              <Route path="/technician/settings" element={<ProtectedRoute><TechnicianSettings /></ProtectedRoute>} />
-              <Route path="/technician/availability" element={<ProtectedRoute><TechnicianAvailability /></ProtectedRoute>} />
-              <Route path="/technician/history" element={<ProtectedRoute><TechnicianHistory /></ProtectedRoute>} />
-              <Route path="/technician/profile" element={<ProtectedRoute><TechnicianProfile /></ProtectedRoute>} />
-              <Route path="/technician/install" element={<ProtectedRoute><TechnicianInstall /></ProtectedRoute>} />
-              
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </VoiceProvider>
-          </BrowserRouter>
-        </ErrorBoundary>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <AppContent isEmbedMode={isEmbedMode} />
+    </QueryClientProvider>
   );
 };
 
