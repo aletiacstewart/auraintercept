@@ -331,8 +331,21 @@ const styles = StyleSheet.create({
   },
 });
 
-// Updated 5-Tier subscription data
+// Updated 6-Tier subscription data
 const SUBSCRIPTION_TIERS = {
+  express: {
+    name: 'Aura Express',
+    monthlyPrice: 197,
+    annualPrice: 1970,
+    annualSavings: 394,
+    implementationFee: 299,
+    operatives: 1,
+    consoles: 0,
+    employees: 2,
+    bestFor: 'Restaurants, cafes, food trucks, and food service businesses.',
+    hasVoice: true,
+    hasAutomation: false,
+  },
   halo: {
     name: 'Aura Halo',
     monthlyPrice: 397,
@@ -355,7 +368,7 @@ const SUBSCRIPTION_TIERS = {
     operatives: 0,
     consoles: 0,
     employees: 2,
-    bestFor: 'Businesses wanting AI-ready tools (Talk to Aura, Social Media Signal, Web Presence) without automated workflows.',
+    bestFor: 'Businesses wanting AI-ready tools (Message Aura (Text), Social Media Signal, Web Presence) without automated workflows.',
     hasVoice: false,
     hasAutomation: false,
   },
@@ -437,10 +450,10 @@ const PricingSummaryPDF = () => (
     <Page size="A4" style={styles.coverPage}>
       <Text style={styles.coverBrand}>AURA INTERCEPT</Text>
       <Text style={styles.coverTitle}>Subscription Pricing Guide</Text>
-      <Text style={styles.coverSubtitle}>Complete 5-Tier Pricing Breakdown for AI-Powered Service Business Platform</Text>
+      <Text style={styles.coverSubtitle}>Complete 6-Tier Pricing Breakdown for AI-Powered Service Business Platform</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>5</Text>
+          <Text style={styles.coverStatNumber}>6</Text>
           <Text style={styles.coverStatLabel}>Pricing Tiers</Text>
         </View>
         <View style={styles.coverStat}>
@@ -452,7 +465,7 @@ const PricingSummaryPDF = () => (
           <Text style={styles.coverStatLabel}>Consoles</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>$397</Text>
+          <Text style={styles.coverStatNumber}>$197</Text>
           <Text style={styles.coverStatLabel}>Starting Price</Text>
         </View>
       </View>
@@ -470,15 +483,16 @@ const PricingSummaryPDF = () => (
       <View style={{ marginTop: 20 }}>
         {[
           { title: 'Executive Pricing Summary', page: '3' },
-          { title: '5-Tier Comparison Table', page: '4' },
-          { title: 'Aura Halo Tier (Salons/Wellness)', page: '5' },
-          { title: 'Aura Core Tier (AI-Assisted Tools)', page: '6' },
-          { title: 'Single-Point Tier Details', page: '7' },
-          { title: 'Multi-Track Tier Details', page: '8' },
-          { title: 'Aura Pro Command Tier (Enterprise)', page: '9' },
-          { title: 'Annual Discount Savings', page: '10' },
-          { title: '3rd Party Integration Requirements', page: '11' },
-          { title: 'Add-Ons & Implementation Fees', page: '12' },
+          { title: '6-Tier Comparison Table', page: '4' },
+          { title: 'Aura Express Tier (Restaurants)', page: '5' },
+          { title: 'Aura Halo Tier (Salons/Wellness)', page: '6' },
+          { title: 'Aura Core Tier (AI-Assisted Tools)', page: '7' },
+          { title: 'Single-Point Tier Details', page: '8' },
+          { title: 'Multi-Track Tier Details', page: '9' },
+          { title: 'Aura Pro Command Tier (Enterprise)', page: '10' },
+          { title: 'Annual Discount Savings', page: '11' },
+          { title: '3rd Party Integration Requirements', page: '12' },
+          { title: 'Add-Ons & Implementation Fees', page: '13' },
         ].map((item, i) => (
           <View key={i} style={styles.tocItem}>
             <Text style={styles.tocTitle}>{item.title}</Text>
@@ -505,6 +519,12 @@ const PricingSummaryPDF = () => (
       </Text>
 
       <View style={styles.summaryGrid}>
+        <View style={[styles.summaryCard, { backgroundColor: colors.amberLight }]}> 
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA EXPRESS</Text>
+          <Text style={styles.summaryPrice}>$197</Text>
+          <Text style={styles.summaryLabel}>per month</Text>
+          <Text style={{ fontSize: 8, color: colors.amber, marginTop: 4 }}>Restaurants</Text>
+        </View>
         <View style={[styles.summaryCard, { backgroundColor: colors.roseLight }]}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA HALO</Text>
           <Text style={styles.summaryPrice}>$397</Text>
@@ -542,6 +562,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Feature</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Express</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Halo</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Core</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Single</Text>
@@ -549,15 +570,16 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { feature: 'AI Operatives', halo: '4', core: '0', single: '3', multi: '10', command: '23' },
-          { feature: 'Consoles', halo: '1', core: '0', single: '1', multi: '2', command: '7' },
-          { feature: 'Employees', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
-          { feature: 'AI Automation', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
-          { feature: 'Proxy Voice Chat', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
-          { feature: 'Online Booking', halo: 'Yes', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
+          { feature: 'AI Operatives', express: '1', halo: '4', core: '0', single: '3', multi: '10', command: '23' },
+          { feature: 'Consoles', express: '0', halo: '1', core: '0', single: '1', multi: '2', command: '7' },
+          { feature: 'Employees', express: '2', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
+          { feature: 'AI Automation', express: '-', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { feature: 'Talk to Aura (Voice)', express: 'Yes', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { feature: 'Online Booking', express: '-', halo: 'Yes', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.feature}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{(row as any).express}</Text>
             <Text style={[styles.tableCell, { flex: 1 }]}>{row.halo}</Text>
             <Text style={[styles.tableCell, { flex: 1 }]}>{row.core}</Text>
             <Text style={[styles.tableCell, { flex: 1 }]}>{row.single}</Text>
@@ -570,7 +592,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.infoBox}>
         <Text style={styles.noticeTitle}>Implementation Fees</Text>
         <Text style={styles.noticeText}>
-          All tiers include a one-time $499 implementation fee (Custom for Aura Pro Command).
+          All tiers include a one-time implementation fee ($299 for Aura Express, $499 for most tiers; Custom for Aura Pro Command).
           Annual billing saves 16% (~$800 to $12,000 depending on tier).
         </Text>
       </View>
@@ -581,14 +603,15 @@ const PricingSummaryPDF = () => (
       </View>
     </Page>
 
-    {/* 5-Tier Comparison Table */}
+    {/* 6-Tier Comparison Table */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Complete 5-Tier Comparison</Text>
+      <Text style={styles.sectionTitle}>Complete 6-Tier Comparison</Text>
 
       <View style={styles.table}>
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 2.5 }]}>Feature Category</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Express</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Halo</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Core</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Single</Text>
@@ -596,29 +619,30 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { category: 'Monthly Price', halo: '$397', core: '$500', single: '$1,500', multi: '$3,997', command: '$5,997' },
-          { category: 'Annual Price', halo: '$3,970', core: '$5,000', single: '$15,000', multi: '$39,970', command: '$59,970' },
-          { category: 'Annual Savings', halo: '~$800', core: '~$1,000', single: '~$3,000', multi: '~$8,000', command: '~$12,000' },
-          { category: '', halo: '', core: '', single: '', multi: '', command: '' },
-          { category: 'AI Operatives', halo: '4', core: '0', single: '3', multi: '10', command: 'All 23' },
-          { category: 'Consoles', halo: '1', core: '0', single: '1', multi: '2', command: 'All 7' },
-          { category: 'Employees', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
-          { category: '', halo: '', core: '', single: '', multi: '', command: '' },
-          { category: 'AI Automation', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
-          { category: 'Talk to Aura (Text)', halo: 'Yes', core: 'Yes', single: 'Yes', multi: 'Yes', command: 'Yes' },
-          { category: 'Proxy Voice Chat', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
-          { category: 'Online Booking', halo: 'Yes', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
-          { category: '', halo: '', core: '', single: '', multi: '', command: '' },
-          { category: 'Customer Portal', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
-          { category: 'Field Operations', halo: '-', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
-          { category: 'Business Ops', halo: '-', core: '-', single: '-', multi: '-', command: 'Yes' },
-          { category: 'Marketing Console', halo: '-', core: '-', single: '-', multi: '-', command: 'Yes' },
-          { category: 'Analytics Console', halo: '-', core: '-', single: '-', multi: '-', command: 'Yes' },
+          { category: 'Monthly Price', express: '$197', halo: '$397', core: '$500', single: '$1,500', multi: '$3,997', command: '$5,997' },
+          { category: 'Annual Price', express: '$1,970', halo: '$3,970', core: '$5,000', single: '$15,000', multi: '$39,970', command: '$59,970' },
+          { category: 'Annual Savings', express: '~$400', halo: '~$800', core: '~$1,000', single: '~$3,000', multi: '~$8,000', command: '~$12,000' },
+          { category: '', express: '', halo: '', core: '', single: '', multi: '', command: '' },
+          { category: 'AI Operatives', express: '1', halo: '4', core: '0', single: '3', multi: '10', command: 'All 23' },
+          { category: 'Consoles', express: '0', halo: '1', core: '0', single: '1', multi: '2', command: 'All 7' },
+          { category: 'Employees', express: '2', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
+          { category: '', express: '', halo: '', core: '', single: '', multi: '', command: '' },
+          { category: 'AI Automation', express: '-', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { category: 'Message Aura (Text)', express: 'Yes', halo: 'Yes', core: 'Yes', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { category: 'Talk to Aura (Voice)', express: 'Yes', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { category: 'Online Booking', express: '-', halo: 'Yes', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
+          { category: '', express: '', halo: '', core: '', single: '', multi: '', command: '' },
+          { category: 'Customer Portal', express: '-', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { category: 'Field Operations', express: '-', halo: '-', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
+          { category: 'Business Ops', express: '-', halo: '-', core: '-', single: '-', multi: '-', command: 'Yes' },
+          { category: 'Marketing Console', express: '-', halo: '-', core: '-', single: '-', multi: '-', command: 'Yes' },
+          { category: 'Analytics Console', express: '-', halo: '-', core: '-', single: '-', multi: '-', command: 'Yes' },
         ].map((row, i) => (
           <View key={i} style={row.category === '' ? { height: 6 } : (i % 2 === 0 ? styles.tableRow : styles.tableRowAlt)}>
             {row.category !== '' && (
               <>
                 <Text style={[styles.tableCellLeft, { flex: 2.5, fontWeight: row.category.includes('Price') || row.category.includes('Savings') ? 700 : 400 }]}>{row.category}</Text>
+                <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{(row as any).express}</Text>
                 <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.halo}</Text>
                 <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.core}</Text>
                 <Text style={[styles.tableCell, { flex: 1, fontSize: 8 }]}>{row.single}</Text>
@@ -628,6 +652,45 @@ const PricingSummaryPDF = () => (
             )}
           </View>
         ))}
+      </View>
+
+      <View style={styles.footer}>
+        <Text>Aura Intercept - AI-Powered Service Platform</Text>
+        <Text render={({ pageNumber }) => `Page ${pageNumber}`} />
+      </View>
+    </Page>
+
+    {/* Aura Express Tier */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Aura Intercept - Pricing Guide" />
+      <Text style={styles.sectionTitle}>Aura Express Tier</Text>
+
+      <View style={[styles.pricingCard, { backgroundColor: colors.amberLight, borderLeftColor: colors.amber }]}>
+        <Text style={{ fontSize: 9, color: colors.amber, fontWeight: 700, marginBottom: 4 }}>RESTAURANTS & CAFES</Text>
+        <Text style={styles.pricingTierName}>Aura Express</Text>
+        <Text style={styles.pricingPrice}>$197/month</Text>
+        <Text style={styles.pricingAnnual}>or $1,970/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~$400 with annual billing</Text>
+
+        <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
+        <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
+          {SUBSCRIPTION_TIERS.express.bestFor}
+        </Text>
+      </View>
+
+      <Text style={styles.subsectionTitle}>Included Tools</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>Message Aura (Text) - embedded chat for website visitors</FeatureItem>
+        <FeatureItem>Talk to Aura (Voice) - voice conversations (requires ElevenLabs + Twilio)</FeatureItem>
+        <FeatureItem>Smart Link Sharing - website, menu, ordering links</FeatureItem>
+        <FeatureItem>Knowledge Base for FAQs</FeatureItem>
+      </View>
+
+      <View style={styles.noticeBox}>
+        <Text style={styles.noticeTitle}>Designed for Restaurants</Text>
+        <Text style={styles.noticeText}>
+          Aura Express focuses on fast customer responses and link sharing (menu + ordering) without full automation workflows.
+        </Text>
       </View>
 
       <View style={styles.footer}>
@@ -669,8 +732,8 @@ const PricingSummaryPDF = () => (
 
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Talk to Aura (Text-Based Chat)</FeatureItem>
-        <FeatureItem>Proxy Voice Chat (Speech-Based) - requires ElevenLabs</FeatureItem>
+        <FeatureItem>Message Aura (Text)</FeatureItem>
+        <FeatureItem>Talk to Aura (Voice) - requires ElevenLabs</FeatureItem>
         <FeatureItem>SMS/Email appointment reminders</FeatureItem>
         <FeatureItem>3 employee accounts included</FeatureItem>
         <FeatureItem>$499 implementation fee</FeatureItem>
@@ -711,7 +774,7 @@ const PricingSummaryPDF = () => (
 
       <Text style={styles.subsectionTitle}>Included AI Tools (3 Tools - No Automation)</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Talk to Aura (Text-Based Chat Tool) - AI chat for customer inquiries</FeatureItem>
+        <FeatureItem>Message Aura (Text) (Chat Tool) - AI chat for customer inquiries</FeatureItem>
         <FeatureItem>Social Media Signal - AI content creation for 6 platforms</FeatureItem>
         <FeatureItem>Web Presence - 1-page professional website</FeatureItem>
       </View>
@@ -720,7 +783,7 @@ const PricingSummaryPDF = () => (
         <Text style={styles.noticeTitle}>[WARNING] Important: No AI Automation</Text>
         <Text style={styles.noticeText}>
           Aura Core is an AI-assisted tier with tools that require manual operation. It does NOT 
-          include automated workflows, AI operatives, or Proxy Voice Chat. All tools are manually 
+          include automated workflows, AI operatives, or Talk to Aura (Voice). All tools are manually 
           operated by your team. This tier is designed for businesses that want AI-ready tools 
           without automated customer engagement.
         </Text>
@@ -730,7 +793,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.featureList}>
         <FeatureItem>No AI Operatives (0 automation)</FeatureItem>
         <FeatureItem>No Consoles</FeatureItem>
-        <FeatureItem>No Proxy Voice Chat - text only</FeatureItem>
+        <FeatureItem>No Talk to Aura (Voice) - text only</FeatureItem>
         <FeatureItem>No automated follow-ups or reminders</FeatureItem>
         <FeatureItem>No automated booking</FeatureItem>
       </View>
@@ -779,8 +842,8 @@ const PricingSummaryPDF = () => (
 
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Talk to Aura (Text-Based Chat)</FeatureItem>
-        <FeatureItem>Proxy Voice Chat (Speech-Based) - requires ElevenLabs</FeatureItem>
+        <FeatureItem>Message Aura (Text)</FeatureItem>
+        <FeatureItem>Talk to Aura (Voice) - requires ElevenLabs</FeatureItem>
         <FeatureItem>AI Outbound Calls for reminders - requires Twilio</FeatureItem>
         <FeatureItem>Choice of Social Media Signal OR Web Presence (included)</FeatureItem>
         <FeatureItem>5 employees included ($25/month per 10 additional)</FeatureItem>
@@ -993,7 +1056,7 @@ const PricingSummaryPDF = () => (
           <View style={styles.columnCard}>
             <Text style={styles.columnTitle}>Voice Features (Halo+)</Text>
             <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 8 }}>
-              Required for Proxy Voice Chat and AI Calls:
+              Required for Talk to Aura (Voice) and AI Calls:
             </Text>
             <BulletPoint>Twilio: SMS & phone calls</BulletPoint>
             <BulletPoint>ElevenLabs: AI voice synthesis</BulletPoint>

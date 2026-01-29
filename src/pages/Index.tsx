@@ -270,7 +270,7 @@ const communicationChannels = [{
 }, {
   icon: Headphones,
   title: 'Aura Chat AI',
-  description: 'Talk to Aura chat for website visitor engagement.',
+  description: 'Message Aura (Text) chat for website visitor engagement.',
   color: 'bg-channel-chat',
   gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(270,67%,48%)]'
 }];
@@ -382,7 +382,7 @@ const howItWorks = [{
 }, {
   step: 3,
   title: 'Connect Customers',
-  description: 'Share your customer portal link or embed Talk to Aura on your website.',
+  description: 'Share your customer portal link or embed Message Aura (Text) on your website.',
   icon: Users
 }, {
   step: 4,
@@ -707,7 +707,7 @@ export default function Index() {
                 <div className="space-y-1.5 text-left mb-3">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Talk to Aura <span className="text-card-foreground/50">(Chat Tool)</span></span>
+                    <span className="text-xs">Message Aura (Text) <span className="text-card-foreground/50">(Chat Tool)</span></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
@@ -768,11 +768,11 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Talk to Aura (Text-Based)</span>
+                    <span className="text-xs">Message Aura (Text)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
-                    <span className="text-xs">Proxy Voice Chat (Speech-Based)</span>
+                    <span className="text-xs">Talk to Aura (Voice)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
@@ -935,11 +935,11 @@ export default function Index() {
                 <div className="space-y-1.5 mb-4">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs">Talk to Aura (Chat)</span>
+                    <span className="text-xs">Message Aura (Text)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="text-xs">Proxy Voice Chat</span>
+                    <span className="text-xs">Talk to Aura (Voice)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
@@ -997,11 +997,11 @@ export default function Index() {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">Proxy Voice Chat</span>
+                    <span className="text-xs">Talk to Aura (Voice)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
-                    <span className="text-xs">Talk to Aura (Chat)</span>
+                    <span className="text-xs">Message Aura (Text)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
