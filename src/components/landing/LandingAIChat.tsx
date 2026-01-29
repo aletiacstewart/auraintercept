@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { TermsAgreementCheckbox } from '@/components/auth/TermsAgreementCheckbox';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -35,6 +36,7 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [termsAgreed, setTermsAgreed] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -127,7 +129,7 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !termsAgreed) return;
 
     const userMessage: Message = { role: 'user', content: input.trim() };
     const newMessages = [...messages, userMessage];
@@ -191,19 +193,34 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
         </div>
       </ScrollArea>
 
+      {/* Terms Agreement (shown until agreed) */}
+      {!termsAgreed && (
+        <div className="py-3 px-1 border-t border-border/50">
+          <TermsAgreementCheckbox
+            id="chat-terms-agreement"
+            checked={termsAgreed}
+            onCheckedChange={setTermsAgreed}
+            compact
+          />
+          <p className="text-xs text-muted-foreground mt-2">
+            By chatting, you consent to AI-generated responses and data processing as described in our policies.
+          </p>
+        </div>
+      )}
+
       {/* Input */}
       <form onSubmit={handleSubmit} className="flex gap-2 pt-4 border-t border-border/50">
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask Aura anything..."
+          placeholder={termsAgreed ? "Ask Aura anything..." : "Agree to terms to start chatting..."}
           className="flex-1 bg-white border-border text-[hsl(220,60%,25%)]"
-          disabled={isLoading}
+          disabled={isLoading || !termsAgreed}
         />
         <Button 
           type="submit" 
           size="icon" 
-          disabled={isLoading || !input.trim()}
+          disabled={isLoading || !input.trim() || !termsAgreed}
           className="shrink-0"
         >
           <Send className="w-4 h-4" />

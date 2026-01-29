@@ -254,6 +254,76 @@ export default function PrivacyPolicy() {
               </a>.
             </p>
           </section>
+
+          {/* Section 15: ElevenLabs AI Agent Disclosure */}
+          <section className="border-t border-border pt-8 mt-12">
+            <h2 className="text-2xl font-semibold mb-4">15. ElevenLabs AI Agent Disclosure</h2>
+            <p className="mb-4">
+              Aura Intercept uses ElevenLabs Agents to power our AI customer service assistants. This section describes 
+              how data is collected, processed, and shared when you interact with these AI-powered features.
+            </p>
+
+            <h3 className="text-xl font-semibold mt-4 mb-3">Data Collected</h3>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li><strong className="text-foreground">Text Conversations:</strong> When you use "Talk to Aura" (text-based chat), we collect the text content of your messages, timestamps, and session identifiers.</li>
+              <li><strong className="text-foreground">Voice Conversations:</strong> When you use "Proxy Voice Chat" (AI voice calling), we collect voice audio recordings, transcriptions, call duration, and call metadata.</li>
+              <li><strong className="text-foreground">Interaction Metadata:</strong> Device information, IP address, and interaction patterns may be collected to improve service quality.</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold mt-4 mb-3">Third-Party Data Sharing</h3>
+            <p className="mb-4 text-muted-foreground">
+              Your AI agent interactions are shared with the following third parties:
+            </p>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li><strong className="text-foreground">ElevenLabs Inc.:</strong> Provides the AI voice synthesis and conversational AI platform that powers our AI agents.</li>
+              <li><strong className="text-foreground">Third-Party LLM Providers:</strong> ElevenLabs may share data with large language model providers (such as OpenAI, Anthropic, or similar) to process and respond to your queries.</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold mt-4 mb-3">Purpose of Data Processing</h3>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li>Providing AI-powered customer service and support</li>
+              <li>Improving the quality and accuracy of AI responses</li>
+              <li>Training and improving machine learning models</li>
+              <li>Ensuring compliance with applicable laws and platform terms</li>
+              <li>Detecting and preventing misuse or abuse of the service</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold mt-4 mb-3">User Consent</h3>
+            <p className="text-muted-foreground mb-4">
+              By interacting with our AI agents, you acknowledge that you are communicating with artificial intelligence 
+              (not human representatives) and you consent to the recording, storage, and sharing of your communications 
+              as described in this section.
+            </p>
+
+            <h3 className="text-xl font-semibold mt-4 mb-3">Data Retention</h3>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li><strong className="text-foreground">Text Chat Logs:</strong> Retained for 1 year for service improvement and support purposes.</li>
+              <li><strong className="text-foreground">Voice Recordings:</strong> Retained for 90 days unless required longer for legal purposes.</li>
+              <li><strong className="text-foreground">Third-Party Retention:</strong> ElevenLabs and their service providers may retain data according to their own privacy policies.</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold mt-4 mb-3">Third-Party Privacy Policies</h3>
+            <p className="text-muted-foreground">
+              For information about how ElevenLabs handles your data, please review the{' '}
+              <a 
+                href="https://elevenlabs.io/agents-terms" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                ElevenLabs Agents Platform Terms
+              </a>{' '}
+              and{' '}
+              <a 
+                href="https://elevenlabs.io/privacy" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                ElevenLabs Privacy Policy
+              </a>.
+            </p>
+          </section>
         </div>
       </main>
       

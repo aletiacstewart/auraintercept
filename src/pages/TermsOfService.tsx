@@ -337,6 +337,61 @@ export default function TermsOfService() {
               </a>.
             </p>
           </section>
+
+          {/* Section 20: ElevenLabs AI Agent Disclosure */}
+          <section className="border-t border-border pt-8 mt-12">
+            <h2 className="text-2xl font-semibold mb-4">20. ElevenLabs AI Agent Disclosure</h2>
+            <p className="mb-4">
+              Aura Intercept uses ElevenLabs Agents to power our AI customer service assistants, including "Talk to Aura" 
+              (text-based chat) and "Proxy Voice Chat" (AI voice calling features). Your use of these features is subject 
+              to the following disclosures:
+            </p>
+
+            <h3 className="text-xl font-semibold mt-4 mb-3">Notice of AI Interaction</h3>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li><strong className="text-foreground">AI-Powered Agents:</strong> You are interacting with AI-powered agents, not human representatives. Our AI assistants are designed to provide helpful information and support, but they are artificial intelligence systems.</li>
+              <li><strong className="text-foreground">Recording and Storage:</strong> Your conversations with our AI agents may be recorded, stored, and shared with ElevenLabs and its third-party large language model (LLM) providers.</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold mt-4 mb-3">Consent and Data Usage</h3>
+            <p className="mb-4 text-muted-foreground">
+              By clicking "Agree" or otherwise interacting with our AI agents (Talk to Aura or Proxy Voice Chat), you consent to the following:
+            </p>
+            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+              <li>Recording, viewing, storing, and sharing of your communications by Aura Intercept, ElevenLabs, and their respective service providers (including third-party LLM providers)</li>
+              <li>Use of your interaction data to provide the requested service</li>
+              <li>Use of anonymized data to improve products and services</li>
+              <li>Use of data to train machine learning models</li>
+              <li>Retention and processing as required to comply with applicable law</li>
+            </ul>
+
+            <h3 className="text-xl font-semibold mt-4 mb-3">Verbal Disclosure (Voice Calls)</h3>
+            <p className="text-muted-foreground mb-4">
+              When you interact with our AI voice calling feature (Proxy Voice Chat), you will hear a disclosure similar to: 
+              "Hi, I'm an AI assistant. This call may be recorded and shared with service providers for quality assurance 
+              and service improvement purposes."
+            </p>
+
+            <h3 className="text-xl font-semibold mt-4 mb-3">Third-Party Terms</h3>
+            <p className="text-muted-foreground">
+              Your use of ElevenLabs-powered features is also subject to the{' '}
+              <a 
+                href="https://elevenlabs.io/agents-terms" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                ElevenLabs Agents Platform Terms
+              </a>.
+            </p>
+
+            <h3 className="text-xl font-semibold mt-4 mb-3">Legal Disclaimer</h3>
+            <p className="text-muted-foreground text-sm">
+              The information provided in this section is for general informational purposes only. Aura Intercept is 
+              responsible for ensuring compliance with the ElevenLabs Agents Platform Terms and all applicable laws 
+              and regulations. This guidance does not constitute legal advice.
+            </p>
+          </section>
         </div>
       </main>
       
