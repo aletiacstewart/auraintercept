@@ -280,11 +280,12 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
 export function getConsolesForTier(tier: SubscriptionTier): ConsoleHelpConfig[] {
   const tierHierarchy: Record<SubscriptionTier, number> = {
     free: 0,
-    core: 1,
+    express: 1,
     halo: 2,
-    single_point: 3,
-    multi_track: 4,
-    command: 5,
+    core: 3,
+    single_point: 4,
+    multi_track: 5,
+    command: 6,
   };
   
   const currentTierLevel = tierHierarchy[tier];
@@ -299,11 +300,12 @@ export function getConsolesForTier(tier: SubscriptionTier): ConsoleHelpConfig[] 
 export function getFilteredFeatures(console: ConsoleHelpConfig, tier: SubscriptionTier): string[] {
   const tierHierarchy: Record<SubscriptionTier, number> = {
     free: 0,
-    core: 1,
+    express: 1,
     halo: 2,
-    single_point: 3,
-    multi_track: 4,
-    command: 5,
+    core: 3,
+    single_point: 4,
+    multi_track: 5,
+    command: 6,
   };
   
   const currentTierLevel = tierHierarchy[tier];
@@ -320,11 +322,12 @@ export function getFilteredFeatures(console: ConsoleHelpConfig, tier: Subscripti
 export function getFilteredAgents(console: ConsoleHelpConfig, tier: SubscriptionTier): string[] {
   const tierHierarchy: Record<SubscriptionTier, number> = {
     free: 0,
-    core: 1,
+    express: 1,
     halo: 2,
-    single_point: 3,
-    multi_track: 4,
-    command: 5,
+    core: 3,
+    single_point: 4,
+    multi_track: 5,
+    command: 6,
   };
   
   const currentTierLevel = tierHierarchy[tier];
@@ -340,6 +343,18 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     title: 'Free Plan',
     description: 'Limited access to platform features.',
     highlights: [],
+  },
+  express: {
+    title: 'Aura Express',
+    description: 'AI Voice & Chat for restaurants with smart link sharing.',
+    highlights: [
+      'Message Aura (Text) - AI chat for customer inquiries',
+      'Talk to Aura (Voice) - AI voice interactions',
+      'Smart Link Sharing - share menu, ordering, website links',
+      'Perfect for restaurants, cafes, and food service',
+      'No AI automation agents (voice/chat only)',
+      'Requires ElevenLabs + Twilio integrations',
+    ],
   },
   core: {
     title: 'Aura Core',

@@ -1,5 +1,5 @@
 // Subscription tier types matching the database enum
-export type SubscriptionTier = 'free' | 'core' | 'halo' | 'single_point' | 'multi_track' | 'command';
+export type SubscriptionTier = 'free' | 'express' | 'core' | 'halo' | 'single_point' | 'multi_track' | 'command';
 
 // Configuration for each subscription tier
 export interface TierConfig {
@@ -19,6 +19,14 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     label: 'Free',
     price: '$0/mo',
     description: 'Limited access - upgrade to unlock AI agents',
+  },
+  express: {
+    // Aura Express ($197/mo): Voice & Chat only for restaurants with smart link sharing
+    agents: [],
+    consoles: [],
+    label: 'Aura Express',
+    price: '$197/mo',
+    description: 'AI Voice & Chat for restaurants with smart link sharing',
   },
   core: {
     // Core: Talk to Aura only (no agents), Social Media Signal + Web Presence included
@@ -196,11 +204,12 @@ export function getUpgradeTierForAgent(currentTier: SubscriptionTier, agentType:
 // Tier hierarchy for comparison
 export const TIER_HIERARCHY: Record<SubscriptionTier, number> = {
   free: 0,
-  core: 1,
+  express: 1,
   halo: 2,
-  single_point: 3,
-  multi_track: 4,
-  command: 5,
+  core: 3,
+  single_point: 4,
+  multi_track: 5,
+  command: 6,
 };
 
 // Compare two tiers
@@ -211,6 +220,10 @@ export function isTierAtLeast(currentTier: SubscriptionTier, requiredTier: Subsc
 // Feature area to tier mapping (for role permissions)
 export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
   free: [],
+  express: [
+    // Express tier: Voice & Chat only, customers for restaurants
+    'can_access_customers',
+  ],
   core: [
     // Core tier: AI Chat only, limited features
     'can_access_customers',

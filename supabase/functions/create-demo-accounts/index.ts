@@ -29,6 +29,8 @@ Deno.serve(async (req) => {
       solo: '8fafcec0-4b2a-45a1-8663-f9ccb5afc545',
       multi: '4f85ed98-0e98-480c-b904-1c33424e26ad',
       cmd: '298a7275-0a1f-4bd8-a0ae-b692fdbcd3af',
+      halo: '56c0a3a8-a2a1-4689-9c18-d115080a816d',
+      xprs: 'd4a6c195-c89a-4208-a818-981902af6c51',
     };
 
     // Define all accounts to create
@@ -37,10 +39,14 @@ Deno.serve(async (req) => {
       { email: 'companysolo@demo.com', name: 'Solo Demo Admin', role: 'company_admin', companyId: companies.solo },
       { email: 'companymulti@demo.com', name: 'Multi Demo Admin', role: 'company_admin', companyId: companies.multi },
       { email: 'companycmd@demo.com', name: 'Command Demo Admin', role: 'company_admin', companyId: companies.cmd },
+      { email: 'companyhalo@demo.com', name: 'Halo Demo Admin', role: 'company_admin', companyId: companies.halo },
+      { email: 'companyxprs@demo.com', name: 'Express Demo Admin', role: 'company_admin', companyId: companies.xprs },
       // Employees
       { email: 'employeesolo@demo.com', name: 'Solo Demo Employee', role: 'employee', companyId: companies.solo },
       { email: 'employeemulti@demo.com', name: 'Multi Demo Employee', role: 'employee', companyId: companies.multi },
       { email: 'employeecmd@demo.com', name: 'Command Demo Employee', role: 'employee', companyId: companies.cmd },
+      { email: 'employeehalo@demo.com', name: 'Halo Demo Employee', role: 'employee', companyId: companies.halo },
+      { email: 'employeexprs@demo.com', name: 'Express Demo Employee', role: 'employee', companyId: companies.xprs },
       // Customers
       { email: 'customersolo@demo.com', name: 'Solo Demo Customer', role: 'customer', companyId: companies.solo },
       { email: 'customermulti@demo.com', name: 'Multi Demo Customer', role: 'customer', companyId: companies.multi },
