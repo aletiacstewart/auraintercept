@@ -541,10 +541,33 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
             <AccordionContent className="text-sm text-muted-foreground space-y-3">
               <p>Log all voice conversations in your Aura dashboard for review and analytics.</p>
               
-              <div className="bg-muted/50 p-3 rounded-lg">
-                <p className="text-xs font-medium text-foreground mb-2">Location in ElevenLabs:</p>
-                <p className="text-xs">Agent Settings → Advanced Settings → <strong>Post-call webhook URL</strong></p>
+              <div className="bg-muted/50 p-3 rounded-lg space-y-2">
+                <p className="text-xs font-medium text-foreground">Location in ElevenLabs:</p>
+                <p className="text-xs">
+                  ElevenLabs Dashboard → <strong>Agents</strong> → <strong>Settings</strong> (gear icon in sidebar)
+                  <br />→ <strong>Post-call Webhooks</strong> section
+                </p>
+                <p className="text-xs">
+                  <a 
+                    href="https://elevenlabs.io/app/agents/settings" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline inline-flex items-center gap-1"
+                  >
+                    Open ElevenLabs Settings <ExternalLink className="w-3 h-3" />
+                  </a>
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Select webhook type: <code className="bg-muted px-1 rounded">post_call_transcription</code>
+                </p>
               </div>
+
+              <Alert className="border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950">
+                <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <AlertDescription className="text-xs text-blue-700 dark:text-blue-300">
+                  <strong>Important:</strong> This is a workspace-level setting that applies to all your agents.
+                </AlertDescription>
+              </Alert>
 
               <div className="space-y-2">
                 <p className="text-xs font-medium text-foreground">Webhook URL:</p>
