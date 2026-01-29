@@ -1,156 +1,164 @@
 
 
-# Twilio A2P 10DLC Compliance Update Plan
+# Fix: Live Preview Not Updating Without User Interaction
 
-## Overview
+## Problem Summary
 
-Update the Twilio Setup Guide to include comprehensive A2P 10DLC registration guidance for US SMS compliance. This is a critical requirement for businesses sending SMS to US phone numbers.
+The Lovable preview iframe doesn't automatically show the latest changes after code is deployed. You need to interact with the chat (send a message) or manually refresh to see updates.
 
----
-
-## Current State
-
-The existing `TwilioSetupGuide.tsx` has 6 steps:
-1. Create Twilio Account
-2. Get API Credentials
-3. Purchase Phone Number (has a brief A2P 10DLC mention)
-4. Configure Webhooks
-5. Configure AI Missed Call Callbacks
-6. Pricing Overview
-
-**Problem**: The A2P 10DLC information is currently just a small tip in Step 3. Users need comprehensive guidance on:
-- Why they need their own Twilio account
-- What A2P 10DLC is and why it's required
-- Step-by-step registration process
-- Associated costs
+This happens because:
+1. **React Query caches data** - Data is cached and not refetched until you interact with the page
+2. **No automatic reload mechanism** - The preview doesn't detect when builds complete
+3. **Static iframe key** - The preview iframe uses a fixed key, so it doesn't force re-render
 
 ---
 
-## Proposed Changes
+## Solution Overview
 
-### File to Modify: `src/components/integrations/TwilioSetupGuide.tsx`
+Implement a multi-layered approach to ensure the preview stays fresh:
 
-### New Structure (8 Steps)
-
-| Step | Title | Content |
-|------|-------|---------|
-| **NEW** | Why Connect Your Own Twilio Account | Explanation of separate billing, compliance, and control |
-| **NEW** | A2P 10DLC Overview | What it is, why US carriers require it |
-| 1 | Create Twilio Account | Existing content (unchanged) |
-| 2 | Get API Credentials | Existing content + note about API Keys for extra security |
-| **NEW** | Register for A2P 10DLC | Brand registration, Campaign registration, step-by-step guide |
-| 3 | Purchase Phone Number | Updated to emphasize A2P registration requirement |
-| 4 | Configure Webhooks | Existing content (unchanged) |
-| 5 | Configure AI Missed Call Callbacks | Existing content (unchanged) |
-| 6 | Pricing Overview | Updated with A2P 10DLC costs |
+| Layer | What It Does |
+|-------|--------------|
+| **1. Reduce cache staleness** | Lower React Query's default stale time so data refreshes sooner |
+| **2. Add window focus refetch** | Auto-refetch data when you click back into the preview |
+| **3. Add visibility refetch** | Refetch when the tab becomes visible |
+| **4. Smart iframe key** | Add a timestamp-based key to force iframe reload on navigation |
 
 ---
 
-## Detailed Content Additions
+## Technical Implementation
 
-### Step 0: Why Connect Your Own Twilio Account (New Intro Section)
+### 1. Configure React Query Defaults (src/App.tsx)
 
-Add a prominent info card at the top explaining:
-- Each client must use their own Twilio account
-- Keeps costs separate and transparent
-- Ensures compliance with US carrier regulations
-- Client controls their own messaging spend and registration
+Update the QueryClient to have shorter stale times and enable automatic refetching:
 
-### Step 1: A2P 10DLC Overview (New)
-
-Content:
-- **What is A2P 10DLC?** Application-to-Person messaging using 10-digit long codes
-- **Why is it required?** US carrier requirement for businesses sending SMS from applications
-- **What happens without it?** Messages may be blocked or filtered
-- **When is it NOT required?** If not sending to US numbers
-
-### Step 4: Register for A2P 10DLC (New)
-
-Content:
-1. Navigate to: Twilio Console → Messaging → Regulatory Compliance → A2P 10DLC
-2. Register your business (Brand)
-   - Company name, address, EIN
-   - Brand type (usually "Standard" for small businesses)
-3. Register your messaging use case (Campaign)
-   - Campaign type: "Appointment Reminders" or "Notifications"
-   - Sample message content
-   - Opt-in/opt-out workflow description
-4. Wait for approval (usually 1-7 business days)
-5. Link your phone number to the registered Campaign
-
-Include link to Twilio's A2P 10DLC guide.
-
-### Step 5: Purchase Phone Number (Update)
-
-Update existing content to:
-- Emphasize checking A2P 10DLC registration status before purchasing
-- Note that the number must be linked to an approved Campaign
-- Remove the outdated "toll-free only needs A2P" tip (all 10DLC needs it now)
-
-### Step 7: Pricing Overview (Update)
-
-Add new cost items:
-- **A2P 10DLC Brand Registration**: ~$4 one-time fee
-- **A2P 10DLC Campaign Registration**: $0.05 - $15/month depending on use case
-- **Carrier Fees**: ~$0.0025 per SMS segment (in addition to Twilio rates)
-
----
-
-## UI Enhancements
-
-1. **Info Alert at Top**: Yellow/amber alert explaining "Why your own Twilio account?"
-2. **Required Badge**: Mark A2P steps as "Required for US SMS"
-3. **External Links**: 
-   - Twilio A2P 10DLC Registration Guide
-   - Twilio A2P Pricing Page
-4. **Visual Distinction**: Different colored badges for "Required" vs "Optional" steps
-
----
-
-## Implementation Summary
-
-| Change | Description |
-|--------|-------------|
-| Add intro alert | Explain why clients need their own account |
-| Add A2P 10DLC explanation step | What it is and why required |
-| Add registration step | Brand + Campaign registration walkthrough |
-| Update phone number step | Emphasize A2P requirement |
-| Update pricing step | Include A2P fees |
-| Add external links | Twilio docs for A2P registration |
-
----
-
-## Technical Details
-
-### New Imports Needed
 ```typescript
-import { AlertTriangle, Building, FileCheck } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30 * 1000, // Data is fresh for 30 seconds
+      gcTime: 5 * 60 * 1000, // Garbage collect after 5 minutes
+      refetchOnWindowFocus: true, // Refetch when window gets focus
+      refetchOnReconnect: true, // Refetch on network reconnect
+      retry: 1, // Retry failed requests once
+    },
+  },
+});
 ```
 
-### Key External URLs
-- A2P 10DLC Registration: `https://console.twilio.com/us1/develop/sms/regulatory-compliance/a2p-10dlc`
-- A2P Documentation: `https://www.twilio.com/docs/sms/a2p-10dlc`
-- A2P Pricing: `https://www.twilio.com/en-us/a2p-10dlc`
+**Why this helps**: When you interact with the preview (click, scroll, etc.), queries will automatically refresh if data is older than 30 seconds.
 
-### Code Changes Overview
-The `TwilioSetupGuide.tsx` file will be updated to:
-1. Add an intro alert box before the accordion
-2. Restructure accordion items with 2 new steps
-3. Update existing steps with A2P context
-4. Add pricing information for A2P registration fees
+### 2. Add Visibility-Based Reload Hook (new file)
+
+Create a hook that detects when the page becomes visible and triggers a refresh:
+
+**File**: `src/hooks/useVisibilityRefresh.ts`
+
+```typescript
+// Detects when preview tab becomes visible
+// Triggers a soft refresh of stale data
+```
+
+This hook will:
+- Listen for `visibilitychange` events
+- Track time since last refresh
+- Invalidate stale queries when the tab becomes visible after being hidden for >60 seconds
+
+### 3. Integrate Auto-Refresh in App.tsx
+
+Add the visibility refresh hook to the App component so it runs globally.
+
+### 4. Fix WidgetPreview Iframe Key
+
+Update the iframe to use a dynamic key that changes when needed:
+
+**File**: `src/components/widget/WidgetPreview.tsx`
+
+```typescript
+// Add a state to track iframe refresh
+const [iframeKey, setIframeKey] = useState(Date.now());
+
+// Add a refresh button
+<Button onClick={() => setIframeKey(Date.now())}>
+  Refresh Preview
+</Button>
+
+<iframe
+  key={`widget-preview-${iframeKey}`}
+  src={`/chat/${companySlug}?embed=true&v=${iframeKey}`}
+  ...
+/>
+```
 
 ---
 
-## Expected Result
+## Files to Create
 
-Users will have clear, step-by-step guidance to:
-1. Understand why they need their own Twilio account
-2. Know what A2P 10DLC is before they start
-3. Register their business (Brand) with Twilio
-4. Register their messaging use case (Campaign)
-5. Purchase and configure a compliant phone number
-6. Understand all associated costs upfront
+| File | Purpose |
+|------|---------|
+| `src/hooks/useVisibilityRefresh.ts` | Hook to detect visibility changes and refresh data |
 
-This ensures compliance with US carrier regulations and prevents SMS delivery issues.
+## Files to Modify
+
+| File | Changes |
+|------|---------|
+| `src/App.tsx` | Configure QueryClient with auto-refresh options, add visibility hook |
+| `src/components/widget/WidgetPreview.tsx` | Add manual refresh button and dynamic iframe key |
+
+---
+
+## How It Works
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                   Lovable Makes Changes                      │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Code Deploys to Preview                    │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│     User Clicks/Focuses Preview Window                       │
+│     ┌─────────────────────────────────────────────────────┐ │
+│     │  refetchOnWindowFocus: true  →  Queries Refetch     │ │
+│     └─────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Fresh Data Displayed                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Expected Behavior After Fix
+
+1. **Click into preview** → Data auto-refreshes if stale (>30s old)
+2. **Switch tabs back** → Data auto-refreshes if hidden for >60s
+3. **Manual refresh button** → Available in WidgetPreview for force reload
+4. **Network reconnect** → Data auto-refreshes
+
+---
+
+## Alternative: Force Hard Refresh
+
+For cases where even this isn't enough, the existing "Force Refresh" button in Settings → System can be used to clear all caches completely.
+
+---
+
+## Summary
+
+| Change | Benefit |
+|--------|---------|
+| `staleTime: 30s` | Data refreshes more frequently |
+| `refetchOnWindowFocus: true` | Auto-refresh on click into preview |
+| `refetchOnReconnect: true` | Auto-refresh after network issues |
+| Visibility hook | Refresh after tab switching |
+| Dynamic iframe key | Force iframe reload when needed |
+
+This ensures the preview stays up-to-date without requiring manual interaction with the chat.
 
