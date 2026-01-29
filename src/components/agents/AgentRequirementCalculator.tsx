@@ -40,6 +40,7 @@ const AGENT_INFO: Record<string, { name: string; description: string; icon: stri
 
 const TIER_COLORS: Record<SubscriptionTier, string> = {
   free: 'bg-slate-600',
+  express: 'bg-amber-500',
   core: 'bg-emerald-600',
   halo: 'bg-rose-500',
   single_point: 'bg-amber-600',
@@ -49,6 +50,7 @@ const TIER_COLORS: Record<SubscriptionTier, string> = {
 
 const TIER_PRICES: Record<SubscriptionTier, number> = {
   free: 0,
+  express: 197,
   core: 500,
   halo: 397,
   single_point: 1500,
@@ -113,6 +115,7 @@ const AgentRequirementCalculator: React.FC = () => {
   const agentsByTier = useMemo(() => {
     const grouped: Record<SubscriptionTier, string[]> = {
       free: [],
+      express: [],
       core: [],
       halo: [],
       single_point: [],
