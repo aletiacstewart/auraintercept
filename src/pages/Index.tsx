@@ -865,7 +865,7 @@ export default function Index() {
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">Enterprise</Badge>
                 <h3 className="text-lg font-bold mb-1">Aura Pro Command</h3>
-                <p className="text-[10px] text-amber-400/80 mb-2">For 15+ technician teams & multi-location operations</p>
+                <p className="text-[10px] text-amber-400/80 mb-2">Large Scale Business</p>
                 <div className="flex items-baseline gap-1 mb-1">
                   <span className="text-3xl font-bold">$5,997</span>
                   <span className="text-card-foreground/60 text-sm">/month</span>
