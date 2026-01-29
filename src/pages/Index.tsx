@@ -900,7 +900,7 @@ export default function Index() {
                   </div>
                 </div>
 
-                <Button variant="outline" size="sm" className="w-full border-amber-500/50 hover:bg-amber-500/10" onClick={() => navigate('/contact?tier=command')}>
+                <Button variant="outline" size="sm" className="w-full border-amber-500/50 hover:bg-amber-500/10" onClick={() => navigate('/talk-to-aura?tier=command')}>
                   Schedule Consultation
                 </Button>
                 <button 

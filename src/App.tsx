@@ -85,6 +85,7 @@ import PlatformIssues from "./pages/PlatformIssues";
 import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
 import SmartWebsite from "./pages/SmartWebsite";
 import SmartWebsiteManager from "./pages/SmartWebsiteManager";
+import TalkToAura from "./pages/TalkToAura";
 // Technician Dashboard Pages
 import {
   TechnicianDashboard,
@@ -144,6 +145,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                 <Route path="/oauth/google-calendar" element={<OAuthGoogleCalendar />} />
                 <Route path="/customer-auth" element={<CustomerAuth />} />
+                <Route path="/talk-to-aura" element={<TalkToAura />} />
                 {/* All Dashboard Routes - Protected */}
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/dashboard/companies" element={<ProtectedRoute><Companies /></ProtectedRoute>} />
