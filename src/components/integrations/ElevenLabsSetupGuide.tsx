@@ -363,7 +363,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                             variant="secondary"
                             size="sm"
                             className="h-7 gap-1"
-                            onClick={() => {
+                          onClick={() => {
                               const fullConfig = {
                                 name: tool.name,
                                 description: tool.description,
@@ -371,25 +371,14 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                                   type: "object",
                                   properties: Object.fromEntries(
                                     Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => {
-                                      if (key === 'company_id') {
-                                        return [key, {
-                                          type: "string",
-                                          description: value.description,
-                                          value: companyId
-                                        }];
-                                      }
-                                      if (key === 'action') {
-                                        return [key, {
-                                          type: "string",
-                                          description: value.description,
-                                          enum: value.enum,
-                                          value: value.enum?.[0]
-                                        }];
-                                      }
-                                      return [key, {
+                                      const prop: Record<string, any> = {
                                         type: value.type || "string",
                                         description: value.description
-                                      }];
+                                      };
+                                      if (value.enum) {
+                                        prop.enum = value.enum;
+                                      }
+                                      return [key, prop];
                                     })
                                   ),
                                   required: tool.parameters.required
@@ -410,25 +399,14 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
     type: "object",
     properties: Object.fromEntries(
       Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => {
-        if (key === 'company_id') {
-          return [key, {
-            type: "string",
-            description: value.description,
-            value: companyId
-          }];
-        }
-        if (key === 'action') {
-          return [key, {
-            type: "string",
-            description: value.description,
-            enum: value.enum,
-            value: value.enum?.[0]
-          }];
-        }
-        return [key, {
+        const prop: Record<string, any> = {
           type: value.type || "string",
           description: value.description
-        }];
+        };
+        if (value.enum) {
+          prop.enum = value.enum;
+        }
+        return [key, prop];
       })
     ),
     required: tool.parameters.required
