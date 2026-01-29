@@ -363,8 +363,9 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                             variant="secondary"
                             size="sm"
                             className="h-7 gap-1"
-                          onClick={() => {
+                            onClick={() => {
                               const fullConfig = {
+                                type: "webhook",
                                 name: tool.name,
                                 description: tool.description,
                                 parameters: {
@@ -393,6 +394,7 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                         </div>
                         <pre className="bg-green-500/10 border border-green-500/20 p-3 rounded text-xs overflow-x-auto max-h-80 overflow-y-auto">
 {JSON.stringify({
+  type: "webhook",
   name: tool.name,
   description: tool.description,
   parameters: {
