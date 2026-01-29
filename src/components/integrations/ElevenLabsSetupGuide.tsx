@@ -14,16 +14,32 @@ interface ElevenLabsSetupGuideProps {
 
 const WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-booking-agent';
 
-// Tool definitions for form-based setup
-const getToolConfigs = (companyId: string) => [
+// Tool definitions for form-based setup with clearer structure
+interface BodyParam {
+  identifier: string;
+  description: string;
+  required: boolean;
+  valueType: 'value' | 'llm_prompt';
+  value?: string;
+}
+
+interface ToolConfig {
+  id: string;
+  name: string;
+  description: string;
+  icon: typeof Wrench;
+  bodyParams: BodyParam[];
+}
+
+const getToolConfigs = (companyId: string): ToolConfig[] => [
   {
     id: 'get_services',
     name: 'get_services',
     description: 'Get available services. Call this first to know what services the company offers.',
     icon: Wrench,
     bodyParams: [
-      { name: 'action', description: 'The action to perform', type: 'Value', value: 'get_services' },
-      { name: 'company_id', description: 'The company identifier', type: 'Value', value: companyId }
+      { identifier: 'action', description: 'The action to perform', required: true, valueType: 'value', value: 'get_services' },
+      { identifier: 'company_id', description: 'The company identifier', required: true, valueType: 'value', value: companyId }
     ]
   },
   {
@@ -32,9 +48,9 @@ const getToolConfigs = (companyId: string) => [
     description: 'Get available booking dates for a service type.',
     icon: Calendar,
     bodyParams: [
-      { name: 'action', description: 'The action to perform', type: 'Value', value: 'get_available_dates' },
-      { name: 'company_id', description: 'The company identifier', type: 'Value', value: companyId },
-      { name: 'service_type', description: 'The service type selected by the customer', type: 'LLM Prompt', value: '' }
+      { identifier: 'action', description: 'The action to perform', required: true, valueType: 'value', value: 'get_available_dates' },
+      { identifier: 'company_id', description: 'The company identifier', required: true, valueType: 'value', value: companyId },
+      { identifier: 'service_type', description: 'The service type selected by the customer', required: true, valueType: 'llm_prompt' }
     ]
   },
   {
@@ -43,10 +59,10 @@ const getToolConfigs = (companyId: string) => [
     description: 'Get available time slots for a specific date.',
     icon: Clock,
     bodyParams: [
-      { name: 'action', description: 'The action to perform', type: 'Value', value: 'get_available_times' },
-      { name: 'company_id', description: 'The company identifier', type: 'Value', value: companyId },
-      { name: 'date', description: 'Date in YYYY-MM-DD format chosen by customer', type: 'LLM Prompt', value: '' },
-      { name: 'service_type', description: 'The service type', type: 'LLM Prompt', value: '' }
+      { identifier: 'action', description: 'The action to perform', required: true, valueType: 'value', value: 'get_available_times' },
+      { identifier: 'company_id', description: 'The company identifier', required: true, valueType: 'value', value: companyId },
+      { identifier: 'date', description: 'Date in YYYY-MM-DD format chosen by customer', required: true, valueType: 'llm_prompt' },
+      { identifier: 'service_type', description: 'The service type', required: true, valueType: 'llm_prompt' }
     ]
   },
   {
@@ -55,16 +71,16 @@ const getToolConfigs = (companyId: string) => [
     description: 'Book an appointment with all customer details.',
     icon: Phone,
     bodyParams: [
-      { name: 'action', description: 'The action to perform', type: 'Value', value: 'book_appointment' },
-      { name: 'company_id', description: 'The company identifier', type: 'Value', value: companyId },
-      { name: 'customer_name', description: 'Customer full name', type: 'LLM Prompt', value: '' },
-      { name: 'customer_phone', description: 'Customer phone number', type: 'LLM Prompt', value: '' },
-      { name: 'customer_email', description: 'Customer email address (optional)', type: 'LLM Prompt', value: '' },
-      { name: 'customer_address', description: 'Service address', type: 'LLM Prompt', value: '' },
-      { name: 'service_type', description: 'Service type being booked', type: 'LLM Prompt', value: '' },
-      { name: 'date', description: 'Appointment date (YYYY-MM-DD)', type: 'LLM Prompt', value: '' },
-      { name: 'time', description: 'Appointment time (HH:MM)', type: 'LLM Prompt', value: '' },
-      { name: 'notes', description: 'Additional notes about the service request', type: 'LLM Prompt', value: '' }
+      { identifier: 'action', description: 'The action to perform', required: true, valueType: 'value', value: 'book_appointment' },
+      { identifier: 'company_id', description: 'The company identifier', required: true, valueType: 'value', value: companyId },
+      { identifier: 'customer_name', description: 'Customer full name', required: true, valueType: 'llm_prompt' },
+      { identifier: 'customer_phone', description: 'Customer phone number', required: true, valueType: 'llm_prompt' },
+      { identifier: 'customer_email', description: 'Customer email address', required: false, valueType: 'llm_prompt' },
+      { identifier: 'customer_address', description: 'Service address', required: true, valueType: 'llm_prompt' },
+      { identifier: 'service_type', description: 'Service type being booked', required: true, valueType: 'llm_prompt' },
+      { identifier: 'date', description: 'Appointment date (YYYY-MM-DD)', required: true, valueType: 'llm_prompt' },
+      { identifier: 'time', description: 'Appointment time (HH:MM)', required: true, valueType: 'llm_prompt' },
+      { identifier: 'notes', description: 'Additional notes about the service request', required: false, valueType: 'llm_prompt' }
     ]
   }
 ];
@@ -273,60 +289,119 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                         </table>
                       </div>
 
-                      {/* Body Parameters Section */}
+                      {/* Body Parameters Section - Card-based layout */}
                       <div>
                         <p className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1">
                           📝 Body Parameters Tab
                         </p>
-                        <p className="text-xs text-muted-foreground mb-2">
-                          Click <strong>+ Add Parameter</strong> for each row below:
+                        
+                        {/* Legend */}
+                        <div className="bg-muted/30 p-2 rounded-lg mb-3 flex flex-wrap gap-3 text-[10px]">
+                          <div className="flex items-center gap-1.5">
+                            <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 text-[10px] px-1.5">Value</Badge>
+                            <span className="text-muted-foreground">= Fixed constant (you paste it)</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100 text-[10px] px-1.5">LLM Prompt</Badge>
+                            <span className="text-muted-foreground">= AI fills from conversation</span>
+                          </div>
+                        </div>
+                        
+                        <p className="text-xs text-muted-foreground mb-3">
+                          Click <strong>+ Add Parameter</strong> for each step below:
                         </p>
-                        <div className="overflow-x-auto">
-                          <table className="w-full text-xs border-collapse border rounded">
-                            <thead>
-                              <tr className="bg-muted/50">
-                                <th className="py-1.5 px-2 text-left font-medium border-b">Name</th>
-                                <th className="py-1.5 px-2 text-left font-medium border-b">Description</th>
-                                <th className="py-1.5 px-2 text-left font-medium border-b">Type</th>
-                                <th className="py-1.5 px-2 text-left font-medium border-b">Value</th>
-                                <th className="py-1.5 px-2 border-b w-8"></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {tool.bodyParams.map((param, paramIndex) => (
-                                <tr key={paramIndex} className="border-b last:border-b-0">
-                                  <td className="py-1.5 px-2">
-                                    <code className="bg-muted px-1 rounded text-[10px]">{param.name}</code>
-                                  </td>
-                                  <td className="py-1.5 px-2 text-muted-foreground text-[10px]">{param.description}</td>
-                                  <td className="py-1.5 px-2">
-                                    <Badge variant={param.type === 'Value' ? 'secondary' : 'default'} className="text-[10px]">
-                                      {param.type}
-                                    </Badge>
-                                  </td>
-                                  <td className="py-1.5 px-2">
-                                    {param.type === 'Value' ? (
-                                      <code className="bg-muted px-1 rounded text-[10px] break-all">{param.value}</code>
-                                    ) : (
-                                      <span className="text-muted-foreground italic text-[10px]">(AI fills in)</span>
-                                    )}
-                                  </td>
-                                  <td className="py-1.5 px-2">
-                                    {param.type === 'Value' && param.value && (
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-5 w-5 p-0"
-                                        onClick={() => copyToClipboard(param.value, `${tool.id}-param-${paramIndex}`)}
-                                      >
-                                        {copiedItems[`${tool.id}-param-${paramIndex}`] ? <Check className="w-2.5 h-2.5" /> : <Copy className="w-2.5 h-2.5" />}
-                                      </Button>
-                                    )}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
+                        
+                        {/* Parameter Cards */}
+                        <div className="space-y-3">
+                          {tool.bodyParams.map((param, paramIndex) => (
+                            <div key={paramIndex} className="border rounded-lg p-3 bg-background">
+                              {/* Step Header */}
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  <Badge variant="outline" className="bg-primary text-primary-foreground text-[10px] px-1.5 py-0">
+                                    Step {paramIndex + 1}
+                                  </Badge>
+                                  <Badge 
+                                    className={`text-[10px] px-1.5 ${
+                                      param.valueType === 'value' 
+                                        ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' 
+                                        : 'bg-purple-100 text-purple-800 hover:bg-purple-100'
+                                    }`}
+                                  >
+                                    {param.valueType === 'value' ? 'Value' : 'LLM Prompt'}
+                                  </Badge>
+                                </div>
+                                <span className={`text-[10px] ${param.required ? 'text-red-600 font-medium' : 'text-muted-foreground'}`}>
+                                  {param.required ? '✓ Required' : 'Optional'}
+                                </span>
+                              </div>
+                              
+                              {/* Fields */}
+                              <div className="space-y-2">
+                                {/* Identifier */}
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[10px] text-muted-foreground w-20 shrink-0">Identifier:</span>
+                                  <code className="text-xs bg-muted px-2 py-1 rounded flex-1 font-mono">{param.identifier}</code>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 w-6 p-0 shrink-0"
+                                    onClick={() => copyToClipboard(param.identifier, `${tool.id}-param-${paramIndex}-id`)}
+                                  >
+                                    {copiedItems[`${tool.id}-param-${paramIndex}-id`] ? <Check className="w-3 h-3 text-green-600" /> : <Copy className="w-3 h-3" />}
+                                  </Button>
+                                </div>
+                                
+                                {/* Description */}
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[10px] text-muted-foreground w-20 shrink-0">Description:</span>
+                                  <span className="text-xs bg-muted px-2 py-1 rounded flex-1">{param.description}</span>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 w-6 p-0 shrink-0"
+                                    onClick={() => copyToClipboard(param.description, `${tool.id}-param-${paramIndex}-desc`)}
+                                  >
+                                    {copiedItems[`${tool.id}-param-${paramIndex}-desc`] ? <Check className="w-3 h-3 text-green-600" /> : <Copy className="w-3 h-3" />}
+                                  </Button>
+                                </div>
+                                
+                                {/* Type Instruction */}
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[10px] text-muted-foreground w-20 shrink-0">Type:</span>
+                                  <span className="text-xs text-foreground">
+                                    Select <strong>"{param.valueType === 'value' ? 'Value' : 'LLM Prompt'}"</strong> from dropdown
+                                  </span>
+                                </div>
+                                
+                                {/* Value (only for constant type) */}
+                                {param.valueType === 'value' && param.value && (
+                                  <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-950/30 p-2 rounded">
+                                    <span className="text-[10px] text-blue-700 dark:text-blue-300 w-20 shrink-0">Paste this:</span>
+                                    <code className="text-xs bg-white dark:bg-blue-900/50 px-2 py-1 rounded flex-1 font-mono text-blue-800 dark:text-blue-200 break-all">{param.value}</code>
+                                    <Button
+                                      variant="secondary"
+                                      size="sm"
+                                      className="h-6 px-2 shrink-0 text-[10px]"
+                                      onClick={() => copyToClipboard(param.value!, `${tool.id}-param-${paramIndex}-val`)}
+                                    >
+                                      {copiedItems[`${tool.id}-param-${paramIndex}-val`] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                      <span className="ml-1">Copy</span>
+                                    </Button>
+                                  </div>
+                                )}
+                                
+                                {/* LLM Prompt note */}
+                                {param.valueType === 'llm_prompt' && (
+                                  <div className="flex items-center gap-2 bg-purple-50 dark:bg-purple-950/30 p-2 rounded">
+                                    <span className="text-[10px] text-purple-700 dark:text-purple-300">
+                                      💡 The AI will extract this from the conversation automatically
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
