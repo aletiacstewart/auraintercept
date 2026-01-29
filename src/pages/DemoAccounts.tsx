@@ -200,11 +200,32 @@ const tierFeatures: Record<string, string[]> = {
 export default function DemoAccounts() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const copyToClipboard = (text: string, field: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedField(field);
-    toast.success('Copied to clipboard');
-    setTimeout(() => setCopiedField(null), 2000);
+  const copyToClipboard = async (text: string, field: string) => {
+    try {
+      // Clipboard API can be blocked in iframes / some browser contexts.
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (!ok) throw new Error('Copy command failed');
+      }
+
+      setCopiedField(field);
+      toast.success('Copied to clipboard');
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch (err) {
+      console.warn('Copy to clipboard failed', err);
+      toast.error('Could not copy. Please copy manually.');
+    }
   };
 
   const CopyButton = ({ text, field }: { text: string; field: string }) => (
@@ -212,7 +233,7 @@ export default function DemoAccounts() {
       variant="ghost"
       size="sm"
       className="h-6 w-6 p-0 ml-1"
-      onClick={() => copyToClipboard(text, field)}
+      onClick={() => void copyToClipboard(text, field)}
     >
       {copiedField === field ? (
         <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
