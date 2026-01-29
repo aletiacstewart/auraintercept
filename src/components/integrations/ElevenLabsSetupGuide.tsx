@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { toast } from 'sonner';
-import { Copy, Check, ExternalLink, Mic, Calendar, Clock, Phone, Wrench, AlertCircle } from 'lucide-react';
+import { Copy, Check, ExternalLink, Mic, Calendar, Clock, Phone, Wrench, AlertCircle, MessageSquare, BookOpen, Webhook, BarChart3 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ElevenLabsSetupGuideProps {
@@ -13,6 +13,7 @@ interface ElevenLabsSetupGuideProps {
 }
 
 const WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/voice-booking-agent';
+const POST_CALL_WEBHOOK_URL = 'https://zwlcwtgjvesbevheknbk.supabase.co/functions/v1/elevenlabs-post-call';
 
 // Tool definitions for form-based setup with clearer structure
 interface BodyParam {
@@ -439,6 +440,199 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                 <li>The agent should ask for your details and book an appointment</li>
                 <li>Check your dashboard - the appointment should appear!</li>
               </ol>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Optional Enhancements Header */}
+          <div className="mt-6 mb-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Optional Enhancements</p>
+          </div>
+
+          {/* Step 5: First Message */}
+          <AccordionItem value="step-5">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">5</Badge>
+                <MessageSquare className="w-4 h-4 text-primary" />
+                Configure First Message
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+              <p>Set a welcoming first message so your agent greets callers immediately instead of waiting silently.</p>
+              
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="text-xs font-medium text-foreground mb-2">Location in ElevenLabs:</p>
+                <p className="text-xs">Agent Settings → Advanced Settings → <strong>First Message</strong></p>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-foreground">Recommended First Message:</p>
+                <div className="relative">
+                  <pre className="bg-muted p-3 rounded-lg text-xs overflow-x-auto whitespace-pre-wrap">
+{`Hi! Thanks for calling. I'm Aura, your scheduling assistant. I can help you book an appointment, answer questions about our services, or check on an existing booking. How can I help you today?`}
+                  </pre>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="absolute top-2 right-2 gap-1"
+                    onClick={() => copyToClipboard("Hi! Thanks for calling. I'm Aura, your scheduling assistant. I can help you book an appointment, answer questions about our services, or check on an existing booking. How can I help you today?", 'first-message')}
+                  >
+                    {copiedItems['first-message'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                    {copiedItems['first-message'] ? 'Copied' : 'Copy'}
+                  </Button>
+                </div>
+              </div>
+
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription className="text-xs">
+                  <strong>Why this matters:</strong> Without a first message, the agent waits for the caller to speak first, which can feel awkward.
+                </AlertDescription>
+              </Alert>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Step 6: Knowledge Base */}
+          <AccordionItem value="step-6">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">6</Badge>
+                <BookOpen className="w-4 h-4 text-primary" />
+                Add Knowledge Base (Optional)
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+              <p>Upload your FAQs, service descriptions, and policies so the agent can answer questions beyond booking.</p>
+              
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="text-xs font-medium text-foreground mb-2">Location in ElevenLabs:</p>
+                <p className="text-xs">Agent Settings → <strong>Knowledge Base</strong> → Upload Files</p>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-foreground">Recommended content to upload:</p>
+                <ul className="list-disc list-inside space-y-1 text-xs">
+                  <li><strong>Service descriptions</strong> - What services you offer and pricing</li>
+                  <li><strong>FAQs</strong> - Common customer questions and answers</li>
+                  <li><strong>Service areas</strong> - Cities/zip codes you serve</li>
+                  <li><strong>Company policies</strong> - Cancellation, refund, warranties</li>
+                  <li><strong>Contact information</strong> - Business hours, phone, email</li>
+                </ul>
+              </div>
+
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription className="text-xs">
+                  <strong>Tip:</strong> Export your FAQ entries from the Aura Knowledge Base section and upload them as a text file.
+                </AlertDescription>
+              </Alert>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Step 7: Post-Call Webhook */}
+          <AccordionItem value="step-7">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">7</Badge>
+                <Webhook className="w-4 h-4 text-primary" />
+                Set Up Post-Call Logging (Optional)
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+              <p>Log all voice conversations in your Aura dashboard for review and analytics.</p>
+              
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="text-xs font-medium text-foreground mb-2">Location in ElevenLabs:</p>
+                <p className="text-xs">Agent Settings → Advanced Settings → <strong>Post-call webhook URL</strong></p>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-foreground">Webhook URL:</p>
+                <div className="flex items-center gap-2">
+                  <code className="text-xs bg-muted px-2 py-1 rounded flex-1 overflow-x-auto">{POST_CALL_WEBHOOK_URL}</code>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0"
+                    onClick={() => copyToClipboard(POST_CALL_WEBHOOK_URL, 'post-call-webhook')}
+                  >
+                    {copiedItems['post-call-webhook'] ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-foreground">What gets logged:</p>
+                <ul className="list-disc list-inside space-y-1 text-xs">
+                  <li><strong>Full transcript</strong> - Complete conversation text</li>
+                  <li><strong>Call duration</strong> - How long the call lasted</li>
+                  <li><strong>Call summary</strong> - AI-generated summary</li>
+                  <li><strong>Customer info</strong> - Name, phone if collected</li>
+                  <li><strong>Recording URL</strong> - Link to call recording</li>
+                  <li><strong>Success metrics</strong> - Whether booking was completed</li>
+                </ul>
+              </div>
+
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription className="text-xs">
+                  <strong>Note:</strong> Calls will appear in your Call History after the webhook is configured.
+                </AlertDescription>
+              </Alert>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Step 8: Call Analytics */}
+          <AccordionItem value="step-8">
+            <AccordionTrigger className="text-sm">
+              <span className="flex items-center gap-2">
+                <Badge variant="outline" className="rounded-full px-2 py-0.5 text-xs">8</Badge>
+                <BarChart3 className="w-4 h-4 text-primary" />
+                Configure Call Analytics (Optional)
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+              <p>Set up success criteria and data collection to track how well your voice agent is performing.</p>
+              
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="text-xs font-medium text-foreground mb-2">Location in ElevenLabs:</p>
+                <p className="text-xs">Agent Settings → <strong>Analysis</strong> tab</p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <p className="text-xs font-medium text-foreground mb-1">1. Evaluation Criteria (Success Metrics)</p>
+                  <p className="text-xs mb-2">Add criteria to determine if a call was successful:</p>
+                  <ul className="list-disc list-inside space-y-1 text-xs bg-muted/30 p-2 rounded">
+                    <li>"Was an appointment successfully booked?"</li>
+                    <li>"Did the customer provide all required information?"</li>
+                    <li>"Was the customer satisfied with the interaction?"</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <p className="text-xs font-medium text-foreground mb-1">2. Data Collection</p>
+                  <p className="text-xs mb-2">Collect specific data from each call:</p>
+                  <ul className="list-disc list-inside space-y-1 text-xs bg-muted/30 p-2 rounded">
+                    <li><code className="bg-muted px-1 rounded">customer_name</code> - "What is the customer's full name?"</li>
+                    <li><code className="bg-muted px-1 rounded">customer_phone</code> - "What is the customer's phone number?"</li>
+                    <li><code className="bg-muted px-1 rounded">service_type</code> - "What service did the customer request?"</li>
+                    <li><code className="bg-muted px-1 rounded">call_reason</code> - "Why did the customer call?"</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <p className="text-xs font-medium text-foreground mb-1">3. Transcript Summary</p>
+                  <p className="text-xs">Enable <strong>"Generate a summary after the call"</strong> for quick call reviews.</p>
+                </div>
+              </div>
+
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription className="text-xs">
+                  <strong>Pro tip:</strong> The data collected here will be included in your call logs when using the post-call webhook.
+                </AlertDescription>
+              </Alert>
             </AccordionContent>
           </AccordionItem>
 
