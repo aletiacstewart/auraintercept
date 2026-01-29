@@ -1,97 +1,94 @@
 
-# Simplified ElevenLabs Body Parameters Setup Guide
+
+# Fix Natural Language Date Understanding in ElevenLabs Voice Agent
 
 ## Problem
-The current guide for body parameters is confusing because:
-1. The table format doesn't match what users see in ElevenLabs Form Mode
-2. "Type" and "Value" columns are hard to understand
-3. Users don't know exactly which fields to fill and what to select from dropdowns
-4. The difference between "Value" (constant) and "LLM Prompt" (AI-filled) isn't clear
+
+When users say dates like "tomorrow at 4pm" or "Wednesday next week", the ElevenLabs agent asks for the date in MM/DD/YY format instead of understanding natural language.
+
+**Root Cause**: The current system prompt and tool parameter descriptions don't instruct the ElevenLabs AI to interpret and convert natural language dates. The AI passes the raw text to the webhook, but it's better to have the AI understand the date context upfront.
 
 ## Solution
-Replace the complex table with a simple, step-by-step card-based layout that shows each parameter as a separate visual "form field" - exactly mimicking what users will see in ElevenLabs.
 
-## UI Changes
+Update both the **system prompt** and the **parameter descriptions** in the ElevenLabs setup guide to:
+1. Instruct the AI that it should understand natural language dates
+2. Provide explicit examples of date formats to accept
+3. Add date conversion guidance in the prompt
 
-### New Parameter Card Design
-Each body parameter will be displayed as a visual card with:
-- Clear numbered step (1, 2, 3...)
-- Field name with copy button
-- "Type" dropdown indicator (showing exactly what to select)
-- For "Value" type: the exact value to paste
-- For "LLM Prompt" type: a simple explanation like "AI will fill this from conversation"
+## Changes Required
 
-### Visual Layout Per Parameter
+### File: `src/components/integrations/ElevenLabsSetupGuide.tsx`
 
-```text
-┌──────────────────────────────────────────────────┐
-│ Parameter 1                                      │
-├──────────────────────────────────────────────────┤
-│ Identifier: [action]                    [Copy]   │
-│ Description: [The action to perform]    [Copy]   │
-│ Required: ☑ Yes                                  │
-│ Type: Select "Value" from dropdown               │
-│ Value: [get_services]                   [Copy]   │
-└──────────────────────────────────────────────────┘
+**1. Update the Agent Prompt (AGENT_PROMPT constant)**
+
+Add clear instructions for handling natural language dates:
+
+```
+IMPORTANT DATE HANDLING:
+- Understand natural language dates like "tomorrow", "next Monday", "Wednesday of next week", "in 3 days"
+- Convert these to proper dates before calling tools
+- Today's date context: Use your knowledge of the current date to calculate relative dates
+- If unclear, ask for clarification (e.g., "Did you mean this Wednesday or next Wednesday?")
+- For get_available_times and book_appointment, convert to YYYY-MM-DD format
+
+EXAMPLES:
+- "tomorrow at 4pm" -> date: tomorrow's date in YYYY-MM-DD, time: 16:00
+- "next Tuesday" -> calculate the date for next Tuesday
+- "this Friday afternoon" -> that Friday's date, then ask about specific time
 ```
 
-For LLM Prompt parameters:
-```text
-┌──────────────────────────────────────────────────┐
-│ Parameter 3                                      │
-├──────────────────────────────────────────────────┤
-│ Identifier: [service_type]              [Copy]   │
-│ Description: [The service type...]      [Copy]   │
-│ Required: ☑ Yes                                  │
-│ Type: Select "LLM Prompt" from dropdown          │
-│ (AI fills this automatically from conversation)  │
-└──────────────────────────────────────────────────┘
+**2. Update Parameter Descriptions**
+
+For the `date` parameter in `get_available_times` and `book_appointment`, update the LLM prompt descriptions:
+
+Current:
+```
+description: 'Date in YYYY-MM-DD format chosen by customer'
+description: 'Appointment date (YYYY-MM-DD)'
 ```
 
-### Key Visual Improvements
-1. Remove the confusing table format entirely
-2. Add clear "Step X of Y" indicators for each parameter
-3. Show exact dropdown selections with colored badges
-4. Add a "Quick Reference" legend at the top explaining Value vs LLM Prompt
-5. Include visual icons to differentiate fixed values vs AI-filled
+Change to:
+```
+description: 'The appointment date. Convert natural language (tomorrow, next Monday, etc.) to YYYY-MM-DD format based on current date'
+description: 'Appointment date converted to YYYY-MM-DD. Interpret natural language like tomorrow, next week, Wednesday, etc.'
+```
 
-### Updated Data Structure
-The `bodyParams` will be enhanced with:
-- `identifier` - the field name to enter
-- `description` - the description text
-- `required` - boolean for the checkbox
-- `valueType` - "value" or "llm_prompt" (matching exact ElevenLabs terminology)
-- `value` - only for "value" type parameters
+**3. Update Time Parameter Description**
 
-## Files to Modify
+For the `time` parameter in `book_appointment`:
 
-**src/components/integrations/ElevenLabsSetupGuide.tsx**
-- Update `getToolConfigs` to use clearer property names
-- Replace the body parameters table with individual parameter cards
-- Add a legend/key section explaining "Value" vs "LLM Prompt"
-- Style each parameter as a distinct visual card
-- Make copy buttons more prominent for each field
-- Add "Required" checkbox indicator
+Current:
+```
+description: 'Appointment time (HH:MM)'
+```
+
+Change to:
+```
+description: 'Appointment time in HH:MM format (24hr). Convert "4pm" to 16:00, "9am" to 09:00, etc.'
+```
+
+## Why This Works
+
+ElevenLabs uses the parameter descriptions as prompts to the LLM when extracting values from conversation. By:
+1. Explicitly telling the AI it can understand natural dates
+2. Providing conversion instructions in the description
+3. Adding examples in the system prompt
+
+The AI will interpret "tomorrow at 4pm" and extract:
+- `date`: `2026-01-30` (correctly calculated)
+- `time`: `16:00` (correctly converted)
+
+## Additional Enhancement
+
+The edge function (`voice-booking-agent`) already has fallback date parsing (lines 167-187), but this update ensures the AI does the conversion upfront for a smoother experience.
 
 ---
 
-## Technical Details
+## Summary
 
-### Parameter Card Component Structure
-```tsx
-// New structure for each body parameter
-{
-  identifier: 'action',
-  description: 'The action to perform',
-  required: true,
-  valueType: 'value', // or 'llm_prompt'
-  value: 'get_services' // only when valueType is 'value'
-}
-```
+| Change | Location | Purpose |
+|--------|----------|---------|
+| Update AGENT_PROMPT | Lines 88-101 | Add natural language date handling instructions |
+| Update `date` description | Lines 64, 81 | Tell AI to convert dates to YYYY-MM-DD |
+| Update `time` description | Line 82 | Tell AI to convert times to HH:MM |
 
-### Visual Styling
-- Parameter cards with `border rounded-lg p-4`
-- Clear "Step" badge: `bg-primary text-primary-foreground`
-- "Value" type badge: `bg-blue-100 text-blue-800`
-- "LLM Prompt" type badge: `bg-purple-100 text-purple-800`
-- Each field on its own row for clarity
