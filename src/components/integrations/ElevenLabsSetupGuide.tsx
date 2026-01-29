@@ -364,6 +364,22 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                             size="sm"
                             className="h-7 gap-1"
                             onClick={() => {
+                              const requestBodySchema = {
+                                type: "object",
+                                properties: Object.fromEntries(
+                                  Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => {
+                                    const prop: Record<string, any> = {
+                                      type: value.type || "string",
+                                      description: value.description
+                                    };
+                                    if (value.enum) {
+                                      prop.enum = value.enum;
+                                    }
+                                    return [key, prop];
+                                  })
+                                ),
+                                required: tool.parameters.required
+                              };
                               const fullConfig = {
                                 type: "webhook",
                                 name: tool.name,
@@ -371,27 +387,14 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
                                 api_schema: {
                                   url: WEBHOOK_URL,
                                   method: "POST",
-                                  headers: {
+                                  path_params_schema: {},
+                                  query_params_schema: {},
+                                  request_body_schema: requestBodySchema,
+                                  request_headers: {
                                     "Content-Type": "application/json"
                                   }
                                 },
-                                response_timeout_secs: 30,
-                                parameters: {
-                                  type: "object",
-                                  properties: Object.fromEntries(
-                                    Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => {
-                                      const prop: Record<string, any> = {
-                                        type: value.type || "string",
-                                        description: value.description
-                                      };
-                                      if (value.enum) {
-                                        prop.enum = value.enum;
-                                      }
-                                      return [key, prop];
-                                    })
-                                  ),
-                                  required: tool.parameters.required
-                                }
+                                response_timeout_secs: 30
                               };
                               copyToClipboard(JSON.stringify(fullConfig, null, 2), `fullconfig-${tool.id}`);
                             }}
@@ -408,27 +411,29 @@ export function ElevenLabsSetupGuide({ companyId, agentId }: ElevenLabsSetupGuid
   api_schema: {
     url: WEBHOOK_URL,
     method: "POST",
-    headers: {
+    path_params_schema: {},
+    query_params_schema: {},
+    request_body_schema: {
+      type: "object",
+      properties: Object.fromEntries(
+        Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => {
+          const prop: Record<string, any> = {
+            type: value.type || "string",
+            description: value.description
+          };
+          if (value.enum) {
+            prop.enum = value.enum;
+          }
+          return [key, prop];
+        })
+      ),
+      required: tool.parameters.required
+    },
+    request_headers: {
       "Content-Type": "application/json"
     }
   },
-  response_timeout_secs: 30,
-  parameters: {
-    type: "object",
-    properties: Object.fromEntries(
-      Object.entries(tool.parameters.properties).map(([key, value]: [string, any]) => {
-        const prop: Record<string, any> = {
-          type: value.type || "string",
-          description: value.description
-        };
-        if (value.enum) {
-          prop.enum = value.enum;
-        }
-        return [key, prop];
-      })
-    ),
-    required: tool.parameters.required
-  }
+  response_timeout_secs: 30
 }, null, 2)}
                         </pre>
                       </div>
