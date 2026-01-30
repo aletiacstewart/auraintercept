@@ -171,25 +171,21 @@ export const useDeploymentAutoReload = (pollIntervalMs: number = 20000) => {
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Handle Vite HMR reconnection events
-    const handleViteReconnect = () => {
-      console.log('[DeploymentAutoReload] Vite reconnected, reloading...');
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
-    };
-
-    if (import.meta.hot) {
-      import.meta.hot.on('vite:ws:connect', handleViteReconnect);
-    }
-
     return () => {
       clearTimeout(timeoutId);
       clearInterval(intervalId);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      if (import.meta.hot) {
-        import.meta.hot.off('vite:ws:connect', handleViteReconnect);
-      }
     };
   }, [pollIntervalMs]);
 };
+
+// Handle Vite HMR reconnection at module level (outside React)
+// This prevents hook count mismatches during hot reloads
+if (import.meta.hot) {
+  import.meta.hot.on('vite:ws:connect', () => {
+    console.log('[DeploymentAutoReload] Vite reconnected, reloading...');
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+  });
+}
