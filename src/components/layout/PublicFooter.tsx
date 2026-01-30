@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Zap } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 
-export function PublicFooter() {
+export const PublicFooter = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
   const [showChat, setShowChat] = useState(false);
 
   return (
     <>
-      <footer className="border-t border-border/50 py-12 bg-card">
+      <footer ref={ref} className="border-t border-border/50 py-12 bg-card">
         <div className="container max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
@@ -80,4 +80,6 @@ export function PublicFooter() {
       )}
     </>
   );
-}
+});
+
+PublicFooter.displayName = 'PublicFooter';
