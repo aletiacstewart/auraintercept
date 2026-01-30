@@ -171,29 +171,25 @@ export const useDeploymentAutoReload = (pollIntervalMs: number = 20000) => {
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    return () => {
-      clearTimeout(timeoutId);
-      clearInterval(intervalId);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [pollIntervalMs]);
-
-  // Handle Vite HMR reconnection events
-  useEffect(() => {
-    if (!import.meta.hot) return;
-
+    // Handle Vite HMR reconnection events
     const handleViteReconnect = () => {
-      console.log('[DeploymentAutoReload] Vite reconnected, checking for updates...');
-      // Small delay to ensure server is fully ready
+      console.log('[DeploymentAutoReload] Vite reconnected, reloading...');
       setTimeout(() => {
         window.location.reload();
       }, 500);
     };
 
-    import.meta.hot.on('vite:ws:connect', handleViteReconnect);
+    if (import.meta.hot) {
+      import.meta.hot.on('vite:ws:connect', handleViteReconnect);
+    }
 
     return () => {
-      import.meta.hot?.off('vite:ws:connect', handleViteReconnect);
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (import.meta.hot) {
+        import.meta.hot.off('vite:ws:connect', handleViteReconnect);
+      }
     };
-  }, []);
+  }, [pollIntervalMs]);
 };
