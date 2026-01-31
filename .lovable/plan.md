@@ -1,34 +1,164 @@
 
-# Blog Content Generation System with Tavily Integration
+# Add Tavily AI Research & AI Generate Buttons Across All Pages
 
 ## Overview
-Create an AI-powered blog generation system similar to the social media posts wizard, with Tavily research integration. Also integrate Tavily into campaign content generation.
+Add consistent AI generation capabilities with Tavily research integration across Blog posts, Social Media wizard, and Web Presence pages. This includes adding inline "AI Generate" buttons to form fields and showing Tavily connection status.
 
 ---
 
-## System Architecture
+## Current State Analysis
+
+| Feature | AI Generate Buttons | Tavily Integration | Tavily Status Shown |
+|---------|--------------------|--------------------|---------------------|
+| Campaign Forms | ✅ Yes (inline) | ✅ Yes | ❌ No |
+| Blog Wizard | ✅ Yes (separate) | ✅ Yes | ✅ Yes |
+| Blog Dialog (New Post) | ❌ No | ❌ No | ❌ No |
+| Social Media Wizard | ❌ No (auto-generates) | ❌ No | ❌ No |
+| Web Presence | ✅ Yes (AIContentButton) | ❌ No | ❌ No |
+
+---
+
+## Implementation Plan
+
+### 1. Create Reusable Tavily Status Component
+Create a small component that shows if Tavily is connected and can be reused across all pages.
+
+**New File:** `src/components/ai/TavilyStatusBadge.tsx`
 
 ```text
-+--------------------+     +-------------------------+     +------------------+
-|  BlogContentWizard | --> | generate-blog-content   | --> | Lovable AI       |
-|  (Topic + Keywords)|     | (edge function)         |     | (Gemini)         |
-+--------------------+     +-------------------------+     +------------------+
-                                    |                              ^
-                                    v                              |
-                           +------------------+             Research context
-                           | Tavily API       |             included in prompt
-                           | (if configured)  |--------------------+
-                           +------------------+
++-----------------------------------------------+
+| ✓ Tavily Connected - Will research trends     |
++-----------------------------------------------+
+```
 
-+--------------------+     +-------------------------+     +------------------+
-|  Campaign Form     | --> | generate-campaign-      | --> | Lovable AI       |
-|  (Email/SMS/Ads)   |     | content (updated)       |     | (Gemini)         |
-+--------------------+     +-------------------------+     +------------------+
-                                    |                              ^
-                                    v                              |
-                           +------------------+             Research context
-                           | Tavily API       |--------------------+
-                           +------------------+
+### 2. Update Edge Functions for Tavily
+
+**Files to Modify:**
+- `supabase/functions/generate-social-variations/index.ts`
+- `supabase/functions/generate-website-content/index.ts`
+
+**Changes:**
+- Accept `companyId` parameter
+- Fetch Tavily API key from `tenant_integrations`
+- If key exists, search for relevant industry trends
+- Include research in AI prompt
+
+### 3. Add AI Generate Buttons to Blog Post Dialog
+
+**File:** `src/pages/BlogManagement.tsx`
+
+Add inline AI Generate buttons (using AIContentButton pattern) to:
+- Title field
+- Excerpt field  
+- Content field
+
+```text
++----------------------------------------------------------+
+|  Title                                   [✨ AI Generate] |
+|  +-----------------------------------------------------+  |
+|  | Article title...                                    |  |
+|  +-----------------------------------------------------+  |
+|                                                           |
+|  Excerpt                                 [✨ AI Generate] |
+|  +-----------------------------------------------------+  |
+|  | Brief summary...                                    |  |
+|  +-----------------------------------------------------+  |
++----------------------------------------------------------+
+```
+
+### 4. Update Social Media Wizard
+
+**File:** `src/components/social/SocialContentWizard.tsx`
+
+**Changes:**
+- Add TavilyStatusBadge to Step 1
+- Pass companyId to check Tavily status
+- Update generation progress text when Tavily is used
+
+```text
+Step 1: Topic & Platforms
++----------------------------------------------------------+
+|  What would you like to post about?       [📋 Templates]  |
+|  +-----------------------------------------------------+  |
+|  | e.g., Summer AC maintenance special...              |  |
+|  +-----------------------------------------------------+  |
+|                                                           |
+|  [✓ Tavily Connected - Will research current trends]      |
++----------------------------------------------------------+
+```
+
+### 5. Update Web Presence Manager
+
+**File:** `src/pages/SmartWebsiteManager.tsx`
+
+**Changes:**
+- Add TavilyStatusBadge to Content tab header
+- Update AIContentButton to accept/pass context for Tavily
+
+### 6. Update AIContentButton Component
+
+**File:** `src/components/ai/AIContentButton.tsx`
+
+**Changes:**
+- Add optional prop to show Tavily badge inline
+- Pass companyId to edge function (already does this)
+
+---
+
+## Edge Function Changes Detail
+
+### generate-social-variations/index.ts
+```typescript
+// Add after fetching company data
+const { data: integrations } = await supabase
+  .from('tenant_integrations')
+  .select('tavily_api_key')
+  .eq('company_id', companyId)
+  .single();
+
+let tavilyResearch = '';
+if (integrations?.tavily_api_key) {
+  const searchQuery = `${topic} ${serviceCategories.join(' ')} marketing trends`;
+  const tavilyResponse = await fetch('https://api.tavily.com/search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      api_key: integrations.tavily_api_key,
+      query: searchQuery,
+      search_depth: 'basic',
+      max_results: 3
+    })
+  });
+  // Format and include in prompt
+}
+```
+
+### generate-website-content/index.ts
+Same pattern - fetch Tavily key and research relevant content for the field type.
+
+---
+
+## New Content Types for AIContentButton
+
+Add to `src/components/ai/AIContentButton.tsx`:
+```typescript
+| 'blog_title' | 'blog_excerpt' | 'blog_content'
+```
+
+Add to `supabase/functions/generate-website-content/index.ts`:
+```typescript
+blog_title: {
+  generate: "Create an engaging, SEO-friendly blog title...",
+  reword: "Improve this blog title..."
+},
+blog_excerpt: {
+  generate: "Write a compelling meta description for this blog...",
+  reword: "Improve this excerpt..."
+},
+blog_content: {
+  generate: "Write a comprehensive blog section...",
+  reword: "Improve this blog content..."
+}
 ```
 
 ---
@@ -37,214 +167,69 @@ Create an AI-powered blog generation system similar to the social media posts wi
 
 | File | Purpose |
 |------|---------|
-| `supabase/functions/generate-blog-content/index.ts` | New edge function for AI blog generation with Tavily |
-| `src/components/blog/BlogContentWizard.tsx` | Multi-step wizard for blog creation |
-| `src/components/blog/BlogTopicInput.tsx` | Topic and keyword input component |
-| `src/components/blog/BlogPreview.tsx` | Live preview of generated blog content |
-
----
+| `src/components/ai/TavilyStatusBadge.tsx` | Reusable Tavily connection indicator |
 
 ## Files to Modify
 
 | File | Changes |
 |------|---------|
-| `supabase/functions/generate-campaign-content/index.ts` | Add Tavily research integration |
-| `src/pages/BlogManagement.tsx` | Add "AI Generate" button, integrate wizard |
-| `src/components/marketing/forms/CampaignForm.tsx` | Pass companyId for Tavily lookup |
-| `src/pages/Campaigns.tsx` | Pass companyId for Tavily lookup |
+| `src/pages/BlogManagement.tsx` | Add AIContentButton to Title, Excerpt, Content fields |
+| `src/components/social/SocialContentWizard.tsx` | Add TavilyStatusBadge, update progress messages |
+| `src/pages/SmartWebsiteManager.tsx` | Add TavilyStatusBadge to Content tab |
+| `src/components/ai/AIContentButton.tsx` | Add blog content types |
+| `supabase/functions/generate-social-variations/index.ts` | Add Tavily research |
+| `supabase/functions/generate-website-content/index.ts` | Add Tavily research + blog content types |
 
 ---
 
-## 1. New Edge Function: generate-blog-content
+## Visual Summary
 
-### Functionality
-- Accept topic, keywords, tone, and companyId
-- Fetch Tavily API key from tenant_integrations
-- If Tavily configured: research current trends on the topic
-- Generate full blog article with:
-  - Title
-  - SEO-optimized slug
-  - Excerpt (meta description)
-  - Full HTML content (with proper headings, paragraphs)
-  - Suggested featured image description
+### Before vs After - Blog Post Dialog
 
-### Tavily Integration
-```typescript
-// Check for Tavily API key
-const { data: integrations } = await supabase
-  .from('tenant_integrations')
-  .select('tavily_api_key')
-  .eq('company_id', companyId)
-  .single();
-
-let researchContext = '';
-if (integrations?.tavily_api_key) {
-  const tavilyResponse = await fetch('https://api.tavily.com/search', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      api_key: integrations.tavily_api_key,
-      query: `${topic} ${keywords.join(' ')} latest trends insights`,
-      search_depth: 'advanced',
-      max_results: 5,
-      include_answer: true
-    })
-  });
-  
-  const research = await tavilyResponse.json();
-  researchContext = formatResearchForPrompt(research);
-}
-```
-
-### AI Prompt Structure
+**Before:**
 ```text
-=== RESEARCH CONTEXT ===
-${researchContext || 'No external research available'}
-
-=== TASK ===
-Write a comprehensive blog article about: ${topic}
-
-Keywords to include naturally: ${keywords.join(', ')}
-Tone: ${tone}
-Target length: ${wordCount} words
-
-Generate:
-1. Engaging title (SEO-optimized)
-2. URL slug
-3. Meta description (150-160 chars)
-4. Full article with:
-   - Introduction hook
-   - 3-5 main sections with H2 headings
-   - Practical tips or insights
-   - Conclusion with CTA
+Title: [___________________]
+Excerpt: [_________________]
+Content: [_________________]
 ```
 
----
-
-## 2. BlogContentWizard Component
-
-### Step 1: Topic & Setup
-- Topic input field
-- Target keywords (comma-separated)
-- Tone selector (professional, casual, educational)
-- Target word count (500, 1000, 1500)
-- Optional: Featured image upload
-
-### Step 2: AI Generation
-- Progress indicator
-- Shows research happening (if Tavily configured)
-- Generates full blog content
-
-### Step 3: Review & Edit
-- Title editor
-- Slug editor (auto-generated, editable)
-- Excerpt/meta description editor
-- Rich text content editor
-- Live preview panel
-- Publish or Save as Draft options
-
-### UI Pattern
+**After:**
 ```text
-+----------------------------------------------------------+
-|  AI Blog Generator                         Step 1 of 3    |
-|----------------------------------------------------------+
-|                                                           |
-|  What would you like to write about?                      |
-|  +-----------------------------------------------------+  |
-|  | Enter your blog topic...                            |  |
-|  +-----------------------------------------------------+  |
-|                                                           |
-|  Target Keywords (optional)                               |
-|  +-----------------------------------------------------+  |
-|  | HVAC maintenance, energy efficiency, home comfort   |  |
-|  +-----------------------------------------------------+  |
-|                                                           |
-|  Tone         [Professional ▼]                            |
-|  Word Count   [1000 words ▼]                              |
-|                                                           |
-|  [Tavily Connected: Will research current trends ✓]       |
-|                                                           |
-|                              [Cancel]  [Generate Blog →]  |
-+----------------------------------------------------------+
+Title: [___________________] [✨]
+Excerpt: [_________________] [✨]
+Content: [_________________] [✨]
+
+[✓ Tavily Connected - AI will research trends]
 ```
 
----
+### Before vs After - Social Media Wizard
 
-## 3. Update Campaign Content Generation
-
-### Changes to generate-campaign-content/index.ts
-- Accept `companyId` parameter
-- Fetch Tavily key if companyId provided
-- Research relevant trends before generating:
-  - Email subjects
-  - Email body content
-  - SMS messages
-  - Campaign ads
-
-### Search Query Logic by Campaign Type
-| Campaign Type | Tavily Search Query |
-|---------------|---------------------|
-| Promotional | "{industry} promotional offers trends" |
-| Win-back | "customer re-engagement strategies {industry}" |
-| Seasonal | "seasonal marketing {currentSeason} {industry}" |
-| Referral | "referral marketing best practices" |
-
----
-
-## 4. Integration into BlogManagement.tsx
-
-### New Elements
-- "AI Generate" button next to "New Post" button
-- Triggers BlogContentWizard modal
-- On success: opens edit dialog with generated content pre-filled
-
-### Flow
+**Before:**
 ```text
-User clicks "AI Generate"
-    ↓
-BlogContentWizard opens
-    ↓
-User enters topic + keywords
-    ↓
-Edge function generates content (with Tavily research)
-    ↓
-User reviews/edits generated content
-    ↓
-User saves as draft or publishes
+What would you like to post about?
+[________________________________]
+```
+
+**After:**
+```text
+What would you like to post about?    [📋 Templates]
+[________________________________]
+
+[✓ Tavily Connected - Will research current trends]
 ```
 
 ---
 
-## Benefits of Tavily Integration
+## Summary
 
-| Feature | Without Tavily | With Tavily |
-|---------|----------------|-------------|
-| Blog Content | Generic AI writing | Current trends + statistics included |
-| Campaign Emails | Standard marketing copy | Industry-specific insights |
-| SMS Messages | Basic templates | Timely, relevant messaging |
-| Source Citations | None | Can include recent data points |
+| Component | Add AI Buttons | Add Tavily Check | Show Status |
+|-----------|---------------|------------------|-------------|
+| Blog Dialog | ✅ Title, Excerpt, Content | ✅ | ✅ |
+| Social Wizard | Already has | ✅ | ✅ |
+| Web Presence | Already has | ✅ | ✅ |
+| Campaign Forms | Already has | Already has | ✅ |
 
----
+**Total Edge Functions to Update:** 2
+**Total Components to Update:** 5
+**New Components:** 1
 
-## Summary of Changes
-
-| Component | Change Type | Description |
-|-----------|-------------|-------------|
-| `generate-blog-content/index.ts` | Create | New edge function with Tavily |
-| `generate-campaign-content/index.ts` | Modify | Add Tavily research integration |
-| `BlogContentWizard.tsx` | Create | 3-step blog generation wizard |
-| `BlogTopicInput.tsx` | Create | Topic/keyword input component |
-| `BlogPreview.tsx` | Create | Live blog preview component |
-| `BlogManagement.tsx` | Modify | Add AI Generate button + wizard |
-| `CampaignForm.tsx` | Modify | Pass companyId to edge function |
-| `Campaigns.tsx` | Modify | Pass companyId to edge function |
-
----
-
-## Edge Function Config
-
-Add to `supabase/config.toml`:
-```toml
-[functions.generate-blog-content]
-verify_jwt = false
-```
