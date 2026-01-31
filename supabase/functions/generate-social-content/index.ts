@@ -94,63 +94,69 @@ serve(async (req) => {
       );
     }
 
-    // Get company info for branding
-    const { data: company } = await supabase
-      .from("companies")
-      .select("name, service_categories")
-      .eq("id", companyId)
-      .single();
+    // ============ FETCH COMPREHENSIVE KNOWLEDGE BASE CONTEXT ============
+    const [
+      companyRes,
+      aiProfileRes,
+      servicesRes,
+      faqsRes,
+      hoursRes,
+      warrantiesRes,
+      inventoryRes,
+      activeCampaignRes,
+      websiteRes
+    ] = await Promise.all([
+      supabase.from("companies").select("name, service_categories").eq("id", companyId).single(),
+      supabase.from("company_ai_content_profiles").select("*").eq("company_id", companyId).maybeSingle(),
+      supabase.from("services").select("name, description, base_price, duration_minutes")
+        .eq("company_id", companyId).eq("is_active", true).limit(15),
+      supabase.from("faqs").select("question, answer, category").eq("company_id", companyId).limit(20),
+      supabase.from("business_hours").select("*").eq("company_id", companyId),
+      supabase.from("warranty_policies").select("name, coverage_details, duration_months")
+        .eq("company_id", companyId).eq("is_active", true).limit(10),
+      supabase.from("inventory_items").select("name, category, brand")
+        .eq("company_id", companyId).limit(15),
+      supabase.from("marketing_campaigns")
+        .select("name, campaign_type, discount_type, discount_value, promo_code")
+        .eq("company_id", companyId).eq("status", "active")
+        .order("created_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("smart_websites").select("cta_button_text, cta_button_url").eq("company_id", companyId).maybeSingle(),
+    ]);
+
+    const company = companyRes.data;
+    const aiProfile = aiProfileRes.data;
+    const services = servicesRes.data || [];
+    const faqs = faqsRes.data || [];
+    const hours = hoursRes.data || [];
+    const warranties = warrantiesRes.data || [];
+    const inventory = inventoryRes.data || [];
+    const activeCampaign = activeCampaignRes.data;
+    const website = websiteRes.data;
 
     const companyName = company?.name || "Our Company";
     const serviceCategories = company?.service_categories || [];
     const service = serviceType || "service";
 
-    // ============ FETCH KNOWLEDGE BASE CONTEXT ============
+    // Format business hours
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const formattedHours = hours.map(h => 
+      `${dayNames[h.day_of_week]}: ${h.is_closed ? 'Closed' : `${h.open_time} - ${h.close_time}`}`
+    ).join('\n') || "Not specified";
+
+    // Build comprehensive knowledge base context
+    const servicesContext = services.map(s => 
+      `• ${s.name}: ${s.description || 'No description'}${s.base_price ? ` ($${s.base_price})` : ''}`
+    ).join('\n') || "No services listed";
+
+    const faqsContext = faqs.map(f => `Q: ${f.question}\nA: ${f.answer}`).join('\n\n') || "No FAQs";
     
-    // Fetch AI Content Profile for brand voice/tone
-    const { data: aiProfile } = await supabase
-      .from("company_ai_content_profiles")
-      .select("*")
-      .eq("company_id", companyId)
-      .maybeSingle();
+    const warrantiesContext = warranties.map(w => 
+      `• ${w.name}: ${w.coverage_details || 'Standard coverage'}${w.duration_months ? ` (${w.duration_months} months)` : ''}`
+    ).join('\n') || "No warranties listed";
 
-    // Fetch active services for Knowledge Base context
-    const { data: services } = await supabase
-      .from("services")
-      .select("name, description, base_price")
-      .eq("company_id", companyId)
-      .eq("is_active", true)
-      .limit(10);
-
-    // Fetch FAQs for Knowledge Base
-    const { data: faqs } = await supabase
-      .from("faqs")
-      .select("question, answer")
-      .eq("company_id", companyId)
-      .limit(10);
-
-    // Fetch active campaign goals
-    const { data: activeCampaign } = await supabase
-      .from("marketing_campaigns")
-      .select("name, campaign_type, discount_type, discount_value, promo_code")
-      .eq("company_id", companyId)
-      .eq("status", "active")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    // Fetch CTA target from Smart Website
-    const { data: website } = await supabase
-      .from("smart_websites")
-      .select("cta_button_text, cta_button_url")
-      .eq("company_id", companyId)
-      .maybeSingle();
-
-    // Build Knowledge Base context
-    const knowledgeBase = {
-      services: services?.map(s => ({ name: s.name, description: s.description })) || [],
-      faqs: faqs?.map(f => ({ q: f.question, a: f.answer })) || [],
-    };
+    const inventoryContext = inventory.map(i => 
+      `• ${i.name}${i.brand ? ` (${i.brand})` : ''}${i.category ? ` - ${i.category}` : ''}`
+    ).join('\n') || "No inventory listed";
 
     const campaignContext = activeCampaign 
       ? `${activeCampaign.name} - ${activeCampaign.campaign_type} with ${activeCampaign.discount_value}${activeCampaign.discount_type === 'percentage' ? '%' : '$'} off (code: ${activeCampaign.promo_code || 'N/A'})`
@@ -159,19 +165,47 @@ serve(async (req) => {
     const brandTone = aiProfile?.tone || "professional";
     const brandVoice = aiProfile?.brand_voice || "Friendly and approachable";
     const avoidKeywords = aiProfile?.avoid_keywords?.join(", ") || "none specified";
+    const contentTopics = aiProfile?.content_topics || [];
+    const keywords = aiProfile?.keywords || [];
+    const usps = aiProfile?.unique_selling_points || [];
+    const targetAudience = aiProfile?.target_audience || "";
     const ctaTarget = website?.cta_button_text || "Contact Us";
     const ctaUrl = website?.cta_button_url || "website";
 
     // ============ BUILD ENHANCED SYSTEM PROMPT ============
     const systemPrompt = `Role: You are the "Aura Intercept Content Strategist." Your purpose is to act as a specialized social media manager for the company: ${companyName}.
 
-Primary Context:
-- Knowledge Base: ${JSON.stringify(knowledgeBase)}
-- Active Campaign: ${campaignContext}
-- Brand Voice: ${brandTone} - ${brandVoice}
-- Industry: ${serviceCategories.join(", ") || "Home Services"}
+=== KNOWLEDGE BASE ===
+Services Offered:
+${servicesContext}
 
-Task:
+FAQs:
+${faqsContext}
+
+Business Hours:
+${formattedHours}
+
+Warranties & Guarantees:
+${warrantiesContext}
+
+Equipment/Products Available:
+${inventoryContext}
+
+=== AI PROFILE ===
+Brand Voice: ${brandTone} - ${brandVoice}
+Target Audience: ${targetAudience || "General customers"}
+Key USPs: ${usps.join(', ') || "Quality service"}
+Industry: ${serviceCategories.join(", ") || "Home Services"}
+Keywords to Use: ${keywords.join(', ') || "service, quality, professional"}
+Keywords to Avoid: ${avoidKeywords}
+
+=== CONTENT TOPICS ===
+${contentTopics.length > 0 ? `Focus on these themes:\n${contentTopics.map((t: string) => `• ${t}`).join('\n')}` : "Generate content based on the job details."}
+
+=== ACTIVE CAMPAIGN ===
+${campaignContext}
+
+=== TASK ===
 Analyze the job completion details and generate high-engagement social media posts for multiple platforms.
 
 Output Requirements:
@@ -180,11 +214,10 @@ For each platform, generate:
 2. "media_instructions": Which uploaded asset(s) should be used and how
 3. "api_metadata": Platform-specific publishing metadata
 
-Constraints:
-- Only use facts present in the Knowledge Base when mentioning services or capabilities
+=== RULES ===
+- Only use facts present in the Knowledge Base when mentioning services, prices, or capabilities
 - If content is AI-generated, include the 'is_aigc' flag for TikTok compliance
 - CTA must align with: ${ctaTarget} → ${ctaUrl}
-- Avoid these topics/words: ${avoidKeywords}
 - Match platform character limits:
   * Instagram: 2200 chars max
   * Google Business: 1500 chars max

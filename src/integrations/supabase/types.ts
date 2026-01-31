@@ -1153,6 +1153,7 @@ export type Database = {
           brand_voice: string | null
           business_description: string | null
           company_id: string
+          content_topics: string[] | null
           created_at: string
           id: string
           keywords: string[] | null
@@ -1169,6 +1170,7 @@ export type Database = {
           brand_voice?: string | null
           business_description?: string | null
           company_id: string
+          content_topics?: string[] | null
           created_at?: string
           id?: string
           keywords?: string[] | null
@@ -1185,6 +1187,7 @@ export type Database = {
           brand_voice?: string | null
           business_description?: string | null
           company_id?: string
+          content_topics?: string[] | null
           created_at?: string
           id?: string
           keywords?: string[] | null
