@@ -4296,6 +4296,84 @@ export type Database = {
           },
         ]
       }
+      scheduled_social_posts: {
+        Row: {
+          ai_research_used: boolean | null
+          approved_at: string | null
+          approved_by: string | null
+          batch_id: string | null
+          company_id: string
+          content_json: Json
+          created_at: string | null
+          id: string
+          image_url: string | null
+          keywords: string[] | null
+          platforms: string[]
+          publish_error: string | null
+          published_at: string | null
+          scheduled_for: string
+          status: string
+          timezone: string | null
+          topic: string
+          updated_at: string | null
+        }
+        Insert: {
+          ai_research_used?: boolean | null
+          approved_at?: string | null
+          approved_by?: string | null
+          batch_id?: string | null
+          company_id: string
+          content_json?: Json
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          keywords?: string[] | null
+          platforms?: string[]
+          publish_error?: string | null
+          published_at?: string | null
+          scheduled_for: string
+          status?: string
+          timezone?: string | null
+          topic: string
+          updated_at?: string | null
+        }
+        Update: {
+          ai_research_used?: boolean | null
+          approved_at?: string | null
+          approved_by?: string | null
+          batch_id?: string | null
+          company_id?: string
+          content_json?: Json
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          keywords?: string[] | null
+          platforms?: string[]
+          publish_error?: string | null
+          published_at?: string | null
+          scheduled_for?: string
+          status?: string
+          timezone?: string | null
+          topic?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_social_posts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_social_posts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       services: {
         Row: {
           category: string | null
