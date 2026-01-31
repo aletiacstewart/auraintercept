@@ -5,3 +5,4 @@ export { default as EmailIntegration } from './EmailIntegration';
 export { default as CRMIntegration } from './CRMIntegration';
 export { default as CalendarIntegration } from './CalendarIntegration';
 export { default as SocialMediaIntegration } from './SocialMediaIntegration';
+export { default as TavilyIntegration } from './TavilyIntegration';

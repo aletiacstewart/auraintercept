@@ -38,6 +38,7 @@ import {
   Server,
   ArrowRight,
   Puzzle,
+  Search,
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { cn } from '@/lib/utils';
@@ -129,6 +130,19 @@ const INTEGRATIONS: Integration[] = [
     ],
     checkConnection: (data) => !!data.resend_api_key,
     note: '💡 3,000 free emails/mo, then $0.001/email. Most cost-effective reminder channel.',
+  },
+  {
+    id: 'tavily',
+    name: 'Tavily AI',
+    description: 'AI-powered web research for content.',
+    icon: Search,
+    color: 'bg-cyan-500',
+    docsUrl: 'https://tavily.com',
+    fields: [
+      { key: 'tavily_api_key', label: 'API Key', placeholder: 'tvly-...', type: 'password', required: true, helpText: 'Get from app.tavily.com' },
+    ],
+    checkConnection: (data) => !!data.tavily_api_key,
+    note: '💡 1,000 free searches/mo. Enhances social content with current trends.',
   },
 ];
 
