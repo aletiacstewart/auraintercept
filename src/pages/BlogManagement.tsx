@@ -193,17 +193,21 @@ export default function BlogManagement() {
           </div>
           
           <div className="flex gap-2">
-            {activeTab === 'posts' ? (
+            {activeTab === 'posts' && (
               <>
                 <Button variant="outline" onClick={() => setIsWizardOpen(true)}>
                   <Sparkles className="mr-2 h-4 w-4" />
                   AI Generate
                 </Button>
+                <Button variant="outline" onClick={() => setIsBatchWizardOpen(true)}>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Batch Posts
+                </Button>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
                     <Button onClick={() => resetForm()}>
                       <Plus className="mr-2 h-4 w-4" />
-                      New Post
+                      Single Post
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -325,11 +329,6 @@ export default function BlogManagement() {
                   </DialogContent>
                 </Dialog>
               </>
-            ) : (
-              <Button onClick={() => setIsBatchWizardOpen(true)}>
-                <Sparkles className="mr-2 h-4 w-4" />
-                Batch Generate
-              </Button>
             )}
           </div>
         </div>
