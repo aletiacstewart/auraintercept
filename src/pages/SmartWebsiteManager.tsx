@@ -53,6 +53,7 @@ import { SmartWebsiteServicesEditor } from '@/components/smartwebsite/SmartWebsi
 import { SmartWebsiteHoursEditor } from '@/components/smartwebsite/SmartWebsiteHoursEditor';
 import { SmartWebsiteContactEditor } from '@/components/smartwebsite/SmartWebsiteContactEditor';
 import { AIContentButton } from '@/components/ai/AIContentButton';
+import { TavilyStatusBadge } from '@/components/ai/TavilyStatusBadge';
 
 // Extended type for website data with new night mode fields
 interface ExtendedWebsiteData {
@@ -318,6 +319,13 @@ export default function SmartWebsiteManager() {
           </TabsList>
 
           <TabsContent value="content" className="space-y-6">
+            {/* Tavily Status Badge */}
+            {companyId && (
+              <div className="flex justify-end">
+                <TavilyStatusBadge companyId={companyId} showDisconnected />
+              </div>
+            )}
+            
             {/* Hero Section */}
             <Collapsible>
               <Card>

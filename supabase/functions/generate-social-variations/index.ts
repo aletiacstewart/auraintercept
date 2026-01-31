@@ -86,6 +86,57 @@ serve(async (req) => {
 
     console.log("[generate-social-variations] Generating for platforms:", platforms);
 
+    // ============ FETCH TAVILY API KEY ============
+    const { data: integrations } = await supabase
+      .from("tenant_integrations")
+      .select("tavily_api_key")
+      .eq("company_id", companyId)
+      .maybeSingle();
+
+    let tavilyResearch = '';
+    if (integrations?.tavily_api_key) {
+      console.log("[generate-social-variations] Tavily connected, researching trends...");
+      try {
+        const searchQuery = `${topic} marketing trends social media`;
+        const tavilyResponse = await fetch("https://api.tavily.com/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            api_key: integrations.tavily_api_key,
+            query: searchQuery,
+            search_depth: "basic",
+            max_results: 3,
+            include_answer: true,
+          }),
+        });
+
+        if (tavilyResponse.ok) {
+          const tavilyData = await tavilyResponse.json();
+          const insights: string[] = [];
+          
+          if (tavilyData.answer) {
+            insights.push(`Key Insight: ${tavilyData.answer}`);
+          }
+          
+          if (tavilyData.results?.length > 0) {
+            const topResults = tavilyData.results.slice(0, 3);
+            topResults.forEach((r: any, idx: number) => {
+              if (r.content) {
+                insights.push(`Source ${idx + 1}: ${r.content.substring(0, 200)}...`);
+              }
+            });
+          }
+
+          if (insights.length > 0) {
+            tavilyResearch = `\n\n=== CURRENT TRENDS & RESEARCH ===\n${insights.join('\n\n')}`;
+          }
+          console.log("[generate-social-variations] Tavily research added to context");
+        }
+      } catch (tavilyError) {
+        console.error("[generate-social-variations] Tavily error (continuing without):", tavilyError);
+      }
+    }
+
     // ============ FETCH COMPREHENSIVE CONTEXT ============
     const [
       companyRes,
@@ -164,6 +215,7 @@ serve(async (req) => {
 
     // ============ BUILD ENHANCED SYSTEM PROMPT ============
     const systemPrompt = `Role: You are the "Aura Content Strategist" for ${companyName}.
+${tavilyResearch}
 
 === KNOWLEDGE BASE ===
 Services Offered:

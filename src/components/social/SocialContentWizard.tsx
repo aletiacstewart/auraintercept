@@ -38,6 +38,7 @@ import {
 import { SchedulePostDialog } from '@/components/marketing/SchedulePostDialog';
 import { PostTemplates } from './PostTemplates';
 import { PlatformPreviewMockup } from './PlatformPreviewMockup';
+import { TavilyStatusBadge } from '@/components/ai/TavilyStatusBadge';
 
 const STEP_LABELS = ['Topic & Platforms', 'AI Generation', 'Review & Publish'];
 
@@ -624,6 +625,9 @@ export const SocialContentWizard: React.FC<SocialContentWizardProps> = ({ compan
           })}
         </div>
       </div>
+
+      {/* Tavily Status */}
+      <TavilyStatusBadge companyId={companyId} showDisconnected />
 
       {/* Generate Button */}
       <Button
