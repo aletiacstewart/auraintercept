@@ -1,165 +1,69 @@
 
-# Add Tavily AI Research & AI Generate Buttons Across All Pages
+# Social Media Batch Generation & Schedule Queue System
 
 ## Overview
-Add consistent AI generation capabilities with Tavily research integration across Blog posts, Social Media wizard, and Web Presence pages. This includes adding inline "AI Generate" buttons to form fields and showing Tavily connection status.
+Add batch generation and approval queue functionality to social media, mirroring the blog system. This allows generating posts for multiple scheduled dates at once, with each date creating unique content for all configured platforms.
 
 ---
 
-## Current State Analysis
+## Current State vs Proposed
 
-| Feature | AI Generate Buttons | Tavily Integration | Tavily Status Shown |
-|---------|--------------------|--------------------|---------------------|
-| Campaign Forms | ✅ Yes (inline) | ✅ Yes | ❌ No |
-| Blog Wizard | ✅ Yes (separate) | ✅ Yes | ✅ Yes |
-| Blog Dialog (New Post) | ❌ No | ❌ No | ❌ No |
-| Social Media Wizard | ❌ No (auto-generates) | ❌ No | ❌ No |
-| Web Presence | ✅ Yes (AIContentButton) | ❌ No | ❌ No |
+| Feature | Blog System | Social Media (Current) | Social Media (Proposed) |
+|---------|-------------|------------------------|------------------------|
+| Batch Generation | `BlogBatchWizard` | None | `SocialBatchWizard` |
+| Approval Queue | `BlogScheduleQueue` | None | `SocialScheduleQueue` |
+| Edge Function | `generate-blog-batch` | `generate-social-variations` (single) | `generate-social-batch` |
+| Queue Table | `scheduled_blog_posts` | Uses `social_content_drafts` | `scheduled_social_posts` (new) |
 
 ---
 
-## Implementation Plan
-
-### 1. Create Reusable Tavily Status Component
-Create a small component that shows if Tavily is connected and can be reused across all pages.
-
-**New File:** `src/components/ai/TavilyStatusBadge.tsx`
+## Architecture
 
 ```text
-+-----------------------------------------------+
-| ✓ Tavily Connected - Will research trends     |
-+-----------------------------------------------+
++----------------------+     +---------------------------+     +------------------+
+|  SocialBatchWizard   | --> | generate-social-batch     | --> | Lovable AI       |
+|  (Topics + Platforms)|     | (edge function)           |     | (Gemini)         |
++----------------------+     +---------------------------+     +------------------+
+         |                            |                               ^
+         |                            v                               |
+         |                   +------------------+              Research context
+         |                   | Tavily API       |-------------------+
+         |                   | (if configured)  |
+         |                   +------------------+
+         v
++---------------------------+
+| scheduled_social_posts    |  <-- New table
+| (pending/approved/published)|
++---------------------------+
+         |
+         v
++----------------------+
+| SocialScheduleQueue  |  <-- Approval workflow
++----------------------+
 ```
-
-### 2. Update Edge Functions for Tavily
-
-**Files to Modify:**
-- `supabase/functions/generate-social-variations/index.ts`
-- `supabase/functions/generate-website-content/index.ts`
-
-**Changes:**
-- Accept `companyId` parameter
-- Fetch Tavily API key from `tenant_integrations`
-- If key exists, search for relevant industry trends
-- Include research in AI prompt
-
-### 3. Add AI Generate Buttons to Blog Post Dialog
-
-**File:** `src/pages/BlogManagement.tsx`
-
-Add inline AI Generate buttons (using AIContentButton pattern) to:
-- Title field
-- Excerpt field  
-- Content field
-
-```text
-+----------------------------------------------------------+
-|  Title                                   [✨ AI Generate] |
-|  +-----------------------------------------------------+  |
-|  | Article title...                                    |  |
-|  +-----------------------------------------------------+  |
-|                                                           |
-|  Excerpt                                 [✨ AI Generate] |
-|  +-----------------------------------------------------+  |
-|  | Brief summary...                                    |  |
-|  +-----------------------------------------------------+  |
-+----------------------------------------------------------+
-```
-
-### 4. Update Social Media Wizard
-
-**File:** `src/components/social/SocialContentWizard.tsx`
-
-**Changes:**
-- Add TavilyStatusBadge to Step 1
-- Pass companyId to check Tavily status
-- Update generation progress text when Tavily is used
-
-```text
-Step 1: Topic & Platforms
-+----------------------------------------------------------+
-|  What would you like to post about?       [📋 Templates]  |
-|  +-----------------------------------------------------+  |
-|  | e.g., Summer AC maintenance special...              |  |
-|  +-----------------------------------------------------+  |
-|                                                           |
-|  [✓ Tavily Connected - Will research current trends]      |
-+----------------------------------------------------------+
-```
-
-### 5. Update Web Presence Manager
-
-**File:** `src/pages/SmartWebsiteManager.tsx`
-
-**Changes:**
-- Add TavilyStatusBadge to Content tab header
-- Update AIContentButton to accept/pass context for Tavily
-
-### 6. Update AIContentButton Component
-
-**File:** `src/components/ai/AIContentButton.tsx`
-
-**Changes:**
-- Add optional prop to show Tavily badge inline
-- Pass companyId to edge function (already does this)
 
 ---
 
-## Edge Function Changes Detail
+## Database Changes
 
-### generate-social-variations/index.ts
-```typescript
-// Add after fetching company data
-const { data: integrations } = await supabase
-  .from('tenant_integrations')
-  .select('tavily_api_key')
-  .eq('company_id', companyId)
-  .single();
+### New Table: `scheduled_social_posts`
 
-let tavilyResearch = '';
-if (integrations?.tavily_api_key) {
-  const searchQuery = `${topic} ${serviceCategories.join(' ')} marketing trends`;
-  const tavilyResponse = await fetch('https://api.tavily.com/search', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      api_key: integrations.tavily_api_key,
-      query: searchQuery,
-      search_depth: 'basic',
-      max_results: 3
-    })
-  });
-  // Format and include in prompt
-}
-```
-
-### generate-website-content/index.ts
-Same pattern - fetch Tavily key and research relevant content for the field type.
-
----
-
-## New Content Types for AIContentButton
-
-Add to `src/components/ai/AIContentButton.tsx`:
-```typescript
-| 'blog_title' | 'blog_excerpt' | 'blog_content'
-```
-
-Add to `supabase/functions/generate-website-content/index.ts`:
-```typescript
-blog_title: {
-  generate: "Create an engaging, SEO-friendly blog title...",
-  reword: "Improve this blog title..."
-},
-blog_excerpt: {
-  generate: "Write a compelling meta description for this blog...",
-  reword: "Improve this excerpt..."
-},
-blog_content: {
-  generate: "Write a comprehensive blog section...",
-  reword: "Improve this blog content..."
-}
-```
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | uuid | Primary key |
+| `company_id` | uuid | Company reference |
+| `topic` | text | Original topic/prompt |
+| `platforms` | text[] | Selected platforms |
+| `content_json` | jsonb | Platform-specific content variations |
+| `image_url` | text | Optional shared image |
+| `scheduled_for` | timestamptz | When to publish |
+| `timezone` | text | User timezone |
+| `status` | text | pending/approved/published/rejected/failed |
+| `batch_id` | uuid | Groups posts from same batch |
+| `ai_research_used` | boolean | Whether Tavily was used |
+| `approved_by` | uuid | Who approved |
+| `approved_at` | timestamptz | When approved |
+| `published_at` | timestamptz | When published |
 
 ---
 
@@ -167,69 +71,156 @@ blog_content: {
 
 | File | Purpose |
 |------|---------|
-| `src/components/ai/TavilyStatusBadge.tsx` | Reusable Tavily connection indicator |
+| `supabase/functions/generate-social-batch/index.ts` | Batch generation edge function |
+| `src/components/social/SocialBatchWizard.tsx` | Multi-step wizard for batch setup |
+| `src/components/social/SocialScheduleQueue.tsx` | Approval queue with actions |
+
+---
 
 ## Files to Modify
 
 | File | Changes |
 |------|---------|
-| `src/pages/BlogManagement.tsx` | Add AIContentButton to Title, Excerpt, Content fields |
-| `src/components/social/SocialContentWizard.tsx` | Add TavilyStatusBadge, update progress messages |
-| `src/pages/SmartWebsiteManager.tsx` | Add TavilyStatusBadge to Content tab |
-| `src/components/ai/AIContentButton.tsx` | Add blog content types |
-| `supabase/functions/generate-social-variations/index.ts` | Add Tavily research |
-| `supabase/functions/generate-website-content/index.ts` | Add Tavily research + blog content types |
+| `src/components/social/SocialMediaAgentConsole.tsx` | Add "Batch Generate" and "Schedule Queue" quick actions |
+| `supabase/config.toml` | Register new edge function |
 
 ---
 
-## Visual Summary
+## Component Details
 
-### Before vs After - Blog Post Dialog
+### 1. SocialBatchWizard (3 Steps)
 
-**Before:**
-```text
-Title: [___________________]
-Excerpt: [_________________]
-Content: [_________________]
+**Step 1: Schedule Settings**
+- Start date picker
+- Posting frequency (daily, twice weekly, weekly, etc.)
+- Number of posts to generate (2-12)
+- Default platforms to target (Instagram, Facebook, LinkedIn, etc.)
+- Tavily status badge
+
+**Step 2: Topics**
+- Bulk topic entry (one per line)
+- Individual topic + keywords per scheduled slot
+- Editable scheduled dates
+- Platform selection per topic (optional override)
+
+**Step 3: Generation**
+- Progress indicator with Tavily research phase
+- Generates unique content for each topic
+- Each topic gets platform-optimized variations
+- Saves to `scheduled_social_posts` as "pending"
+
+### 2. SocialScheduleQueue
+
+**Stats Dashboard**
+- Pending Review count
+- Approved count  
+- Published count
+- Total scheduled
+
+**Post List with Actions**
+- Status filter (All/Pending/Approved/Published/Rejected)
+- Preview modal showing all platform variations
+- Edit modal for tweaking content
+- Approve / Reject buttons for pending posts
+- Publish Now for approved posts
+- Delete option
+
+**Platform Preview**
+- Tabs for each platform's content
+- Character count indicators
+- Hashtag display for Instagram/TikTok
+
+### 3. generate-social-batch Edge Function
+
+**Input**
+```typescript
+{
+  topics: [{
+    topic: string,
+    keywords: string[],
+    scheduledFor: string,
+    platforms?: string[]  // Optional override
+  }],
+  defaultPlatforms: string[],
+  companyId: string,
+  timezone: string
+}
 ```
 
-**After:**
-```text
-Title: [___________________] [✨]
-Excerpt: [_________________] [✨]
-Content: [_________________] [✨]
+**Process**
+1. Fetch company info and AI profile
+2. Check for Tavily API key, perform research if available
+3. Loop through topics:
+   - Call existing variation generation logic
+   - Generate platform-specific content
+   - Store results with scheduled timestamp
+4. Insert all into `scheduled_social_posts`
+5. Return batch summary
 
-[✓ Tavily Connected - AI will research trends]
+---
+
+## UI Integration
+
+### SocialMediaAgentConsole Updates
+
+Add new quick actions:
+```typescript
+{ id: 'batch', label: 'Batch Generate', icon: Sparkles, message: 'Open batch generator' },
+{ id: 'queue', label: 'Schedule Queue', icon: ListChecks, message: 'Open schedule queue' },
 ```
 
-### Before vs After - Social Media Wizard
+Add new tab handlers to show:
+- `SocialBatchWizard` when "Batch Generate" is clicked
+- `SocialScheduleQueue` when "Schedule Queue" is clicked
 
-**Before:**
+---
+
+## Workflow Summary
+
 ```text
-What would you like to post about?
-[________________________________]
-```
-
-**After:**
-```text
-What would you like to post about?    [📋 Templates]
-[________________________________]
-
-[✓ Tavily Connected - Will research current trends]
+User opens Social Media Console
+    ↓
+Clicks "Batch Generate"
+    ↓
+SocialBatchWizard Step 1: Configure schedule (dates, frequency, platforms)
+    ↓
+Step 2: Enter topics for each scheduled slot
+    ↓
+Step 3: AI generates content (with Tavily research if connected)
+    ↓
+Posts saved to scheduled_social_posts as "pending"
+    ↓
+User clicks "Schedule Queue"
+    ↓
+Reviews pending posts, previews platform content
+    ↓
+Approves or edits each post
+    ↓
+Uses "Publish Now" or waits for auto-publish (future cron)
 ```
 
 ---
 
-## Summary
+## Key Differences from Blog Batch
 
-| Component | Add AI Buttons | Add Tavily Check | Show Status |
-|-----------|---------------|------------------|-------------|
-| Blog Dialog | ✅ Title, Excerpt, Content | ✅ | ✅ |
-| Social Wizard | Already has | ✅ | ✅ |
-| Web Presence | Already has | ✅ | ✅ |
-| Campaign Forms | Already has | Already has | ✅ |
+| Aspect | Blog | Social Media |
+|--------|------|--------------|
+| Content per slot | 1 blog post | Multiple platform variations |
+| Output format | HTML article | Platform-optimized text |
+| Storage | Single content field | JSON with platform keys |
+| Preview | Single HTML view | Tabbed platform view |
+| Character limits | None | Per-platform limits |
+| Hashtags | None | Instagram/TikTok only |
 
-**Total Edge Functions to Update:** 2
-**Total Components to Update:** 5
-**New Components:** 1
+---
 
+## Summary of Changes
+
+| Item | Type | Description |
+|------|------|-------------|
+| `scheduled_social_posts` | Database | New table for scheduled social content |
+| `generate-social-batch` | Edge Function | Batch generation with Tavily |
+| `SocialBatchWizard.tsx` | Component | 3-step wizard UI |
+| `SocialScheduleQueue.tsx` | Component | Approval queue with preview/edit |
+| `SocialMediaAgentConsole.tsx` | Update | Add batch and queue actions |
+| `supabase/config.toml` | Update | Register new function |
