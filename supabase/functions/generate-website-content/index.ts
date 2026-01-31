@@ -78,6 +78,18 @@ const CONTENT_PROMPTS: Record<string, { generate: string; reword: string }> = {
   keywords_suggestion: {
     generate: "Generate 15 highly relevant SEO keywords for this business based on the industries provided. Focus on: services, solutions, customer pain points, local search terms, and industry-specific terminology. Return ONLY a JSON array of keyword strings with no explanation. Example format: [\"keyword1\", \"keyword2\", \"keyword3\"]",
     reword: "Suggest alternative keywords based on the existing ones provided."
+  },
+  blog_title: {
+    generate: "Create an engaging, SEO-friendly blog title. Maximum 70 characters. Should be attention-grabbing and include relevant keywords.",
+    reword: "Improve this blog title to be more engaging and SEO-friendly. Keep it under 70 characters."
+  },
+  blog_excerpt: {
+    generate: "Write a compelling meta description / excerpt for this blog post. 150-160 characters. Should summarize the content and encourage clicks.",
+    reword: "Improve this blog excerpt to be more compelling. Keep it between 150-160 characters."
+  },
+  blog_content: {
+    generate: "Write a comprehensive, well-structured blog section with proper HTML formatting. Include headings, paragraphs, and bullet points where appropriate. Maximum 500 words.",
+    reword: "Improve this blog content. Enhance readability, fix any issues, and make it more engaging while maintaining the core message."
   }
 };
 
@@ -112,6 +124,7 @@ serve(async (req) => {
     // Fetch AI Content Profile and Services from database if companyId is provided
     let aiProfile = null;
     let services: string[] = [];
+    let tavilyResearch = '';
     
     if (companyId) {
       const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -137,6 +150,47 @@ serve(async (req) => {
       
       if (servicesData) {
         services = servicesData.map(s => s.name);
+      }
+
+      // Fetch Tavily API key and research if available
+      const { data: integrations } = await supabase
+        .from('tenant_integrations')
+        .select('tavily_api_key')
+        .eq('company_id', companyId)
+        .maybeSingle();
+
+      if (integrations?.tavily_api_key) {
+        console.log(`[generate-website-content] Tavily connected, researching for ${contentType}...`);
+        try {
+          const searchQuery = `${contentType.replace(/_/g, ' ')} ${aiProfile?.primary_industry || ''} best practices`;
+          const tavilyResponse = await fetch('https://api.tavily.com/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              api_key: integrations.tavily_api_key,
+              query: searchQuery,
+              search_depth: 'basic',
+              max_results: 2,
+              include_answer: true,
+            }),
+          });
+
+          if (tavilyResponse.ok) {
+            const tavilyData = await tavilyResponse.json();
+            const insights: string[] = [];
+            
+            if (tavilyData.answer) {
+              insights.push(`Research Insight: ${tavilyData.answer}`);
+            }
+
+            if (insights.length > 0) {
+              tavilyResearch = `\n\nCurrent Industry Trends:\n${insights.join('\n')}`;
+            }
+            console.log('[generate-website-content] Tavily research added');
+          }
+        } catch (tavilyError) {
+          console.error('[generate-website-content] Tavily error (continuing without):', tavilyError);
+        }
       }
     }
 
@@ -202,7 +256,7 @@ serve(async (req) => {
 
     let userPrompt = '';
     if (action === 'generate') {
-      userPrompt = promptConfig.generate + contextString + avoidanceInstructions;
+      userPrompt = promptConfig.generate + contextString + avoidanceInstructions + tavilyResearch;
     } else if (action === 'reword') {
       if (!existingContent) {
         return new Response(

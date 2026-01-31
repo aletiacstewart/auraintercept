@@ -17,7 +17,8 @@ export type ContentType =
   | 'holiday_headline' | 'holiday_subheadline'
   | 'service_name' | 'service_description'
   | 'email_subject' | 'email_heading' | 'email_message'
-  | 'social_content';
+  | 'social_content'
+  | 'blog_title' | 'blog_excerpt' | 'blog_content';
 
 interface AIContentButtonProps {
   contentType: ContentType;

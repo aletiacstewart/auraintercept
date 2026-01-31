@@ -15,6 +15,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Plus, Edit, Trash2, Eye, EyeOff, FileText, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 import { BlogContentWizard } from '@/components/blog/BlogContentWizard';
+import { AIContentButton } from '@/components/ai/AIContentButton';
+import { TavilyStatusBadge } from '@/components/ai/TavilyStatusBadge';
 
 interface BlogPost {
   id: string;
@@ -31,7 +33,7 @@ interface BlogPost {
 }
 
 export default function BlogManagement() {
-  const { user } = useAuth();
+  const { user, companyId } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -205,8 +207,23 @@ export default function BlogManagement() {
               </DialogHeader>
               
               <form onSubmit={handleSubmit} className="space-y-4">
+                {companyId && (
+                  <TavilyStatusBadge companyId={companyId} showDisconnected />
+                )}
+                
                 <div>
-                  <Label htmlFor="title">Title</Label>
+                  <div className="flex items-center justify-between mb-1">
+                    <Label htmlFor="title">Title</Label>
+                    <AIContentButton
+                      contentType="blog_title"
+                      existingContent={formData.title}
+                      onGenerate={(content) => setFormData({ 
+                        ...formData, 
+                        title: content,
+                        slug: editingPost ? formData.slug : generateSlug(content),
+                      })}
+                    />
+                  </div>
                   <Input
                     id="title"
                     value={formData.title}
@@ -234,7 +251,14 @@ export default function BlogManagement() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="excerpt">Excerpt</Label>
+                  <div className="flex items-center justify-between mb-1">
+                    <Label htmlFor="excerpt">Excerpt</Label>
+                    <AIContentButton
+                      contentType="blog_excerpt"
+                      existingContent={formData.excerpt}
+                      onGenerate={(content) => setFormData({ ...formData, excerpt: content })}
+                    />
+                  </div>
                   <Textarea
                     id="excerpt"
                     value={formData.excerpt}
@@ -245,7 +269,14 @@ export default function BlogManagement() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="content">Content (HTML)</Label>
+                  <div className="flex items-center justify-between mb-1">
+                    <Label htmlFor="content">Content (HTML)</Label>
+                    <AIContentButton
+                      contentType="blog_content"
+                      existingContent={formData.content}
+                      onGenerate={(content) => setFormData({ ...formData, content: content })}
+                    />
+                  </div>
                   <Textarea
                     id="content"
                     value={formData.content}
