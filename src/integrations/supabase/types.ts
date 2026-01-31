@@ -3492,6 +3492,9 @@ export type Database = {
           message_template: string | null
           name: string
           promo_code: string | null
+          scheduled_send_date: string | null
+          series_id: string | null
+          series_order: number | null
           start_date: string | null
           status: string
           target_segment: string | null
@@ -3514,6 +3517,9 @@ export type Database = {
           message_template?: string | null
           name: string
           promo_code?: string | null
+          scheduled_send_date?: string | null
+          series_id?: string | null
+          series_order?: number | null
           start_date?: string | null
           status?: string
           target_segment?: string | null
@@ -3536,6 +3542,9 @@ export type Database = {
           message_template?: string | null
           name?: string
           promo_code?: string | null
+          scheduled_send_date?: string | null
+          series_id?: string | null
+          series_order?: number | null
           start_date?: string | null
           status?: string
           target_segment?: string | null
@@ -3545,7 +3554,15 @@ export type Database = {
           total_sent?: number | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "marketing_campaigns_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       missed_call_callbacks: {
         Row: {

@@ -9,6 +9,7 @@ import { FileText, Send, ArrowLeft, Mail, MessageSquare, Loader2, Plus, X } from
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { AIContentButton } from '@/components/ai/AIContentButton';
 
 interface Service {
   id: string;
@@ -325,12 +326,21 @@ export function BusinessQuoteForm({
               <div className="space-y-2 max-h-40 overflow-y-auto">
                 {lineItems.map((item, index) => (
                   <div key={index} className="grid grid-cols-12 gap-1 items-center">
-                    <Input
-                      className="col-span-5 h-8 text-xs"
-                      placeholder="Description"
-                      value={item.description}
-                      onChange={e => updateLineItem(index, 'description', e.target.value)}
-                    />
+                    <div className="col-span-5 flex items-center gap-1">
+                      <Input
+                        className="h-8 text-xs flex-1"
+                        placeholder="Description"
+                        value={item.description}
+                        onChange={e => updateLineItem(index, 'description', e.target.value)}
+                      />
+                      <AIContentButton
+                        contentType="line_item_description"
+                        existingContent={item.description}
+                        onGenerate={(content) => updateLineItem(index, 'description', content)}
+                        context={{ serviceType: item.description }}
+                        size="sm"
+                      />
+                    </div>
                     <Input
                       className="col-span-2 h-8 text-xs"
                       type="number"

@@ -28,15 +28,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { Megaphone, Plus, Send, TrendingUp, Eye, MousePointer, Users, Mail, MessageSquare, Sparkles, Loader2 } from 'lucide-react';
+import { Megaphone, Plus, Send, TrendingUp, Eye, MousePointer, Users, Mail, MessageSquare, Sparkles, Loader2, Layers } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { MetricCard } from '@/components/ui/metric-card';
 import { PageContainer } from '@/components/ui/page-container';
+import { CampaignSeriesWizard } from '@/components/marketing/CampaignSeriesWizard';
 
 export default function Campaigns() {
   const { companyId } = useAuth();
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showSeriesWizard, setShowSeriesWizard] = useState(false);
   const [generatingSubject, setGeneratingSubject] = useState(false);
   const [generatingMessage, setGeneratingMessage] = useState(false);
   const [formData, setFormData] = useState({
@@ -162,6 +164,13 @@ export default function Campaigns() {
   return (
     <DashboardLayout>
       <PageContainer>
+        {showSeriesWizard && companyId ? (
+          <CampaignSeriesWizard
+            companyId={companyId}
+            onCancel={() => setShowSeriesWizard(false)}
+            onSuccess={() => setShowSeriesWizard(false)}
+          />
+        ) : (
         <div className="space-y-6 animate-fade-in">
         <PageHeader
           icon={Megaphone}
@@ -169,10 +178,14 @@ export default function Campaigns() {
           description="Create and track marketing campaigns"
           showAuraBar
           action={
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button><Plus className="h-4 w-4 mr-2" /> New Campaign</Button>
-              </DialogTrigger>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setShowSeriesWizard(true)}>
+                <Layers className="h-4 w-4 mr-2" /> Batch Series
+              </Button>
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button><Plus className="h-4 w-4 mr-2" /> New Campaign</Button>
+                </DialogTrigger>
             <DialogContent className="max-w-lg">
               <DialogHeader>
                 <DialogTitle>Create Campaign</DialogTitle>
@@ -301,6 +314,7 @@ export default function Campaigns() {
               </div>
             </DialogContent>
             </Dialog>
+            </div>
           }
         />
 
@@ -409,6 +423,7 @@ export default function Campaigns() {
           </div>
         )}
       </div>
+        )}
       </PageContainer>
     </DashboardLayout>
   );

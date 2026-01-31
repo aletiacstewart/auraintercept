@@ -13,7 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { MessageSquare, Save, RotateCcw, Loader2, CheckCircle, XCircle, Bell, Link } from 'lucide-react';
 import { triggerSetupProgressRefresh } from '@/hooks/useSetupProgress';
-
+import { AIContentButton } from '@/components/ai/AIContentButton';
 interface SmsTemplate {
   id?: string;
   company_id: string;
@@ -256,7 +256,16 @@ export function SmsTemplatesEditor() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="message" className="text-card-foreground">Message</Label>
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="message" className="text-card-foreground">Message</Label>
+                      <AIContentButton
+                        contentType="sms_message"
+                        existingContent={currentTemplate.message}
+                        onGenerate={(content) => updateField(content)}
+                        context={{ templateType: activeTab }}
+                        size="sm"
+                      />
+                    </div>
                     <span className={`text-xs ${isOverLimit ? 'text-destructive' : 'text-card-foreground/70'}`}>
                       {charCount}/160 characters {isOverLimit && '(may be split into multiple SMS)'}
                     </span>

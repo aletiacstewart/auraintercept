@@ -11,6 +11,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { AIContentButton } from '@/components/ai/AIContentButton';
 
 export interface InvoiceFormData {
   appointmentId: string | null;
@@ -571,12 +572,21 @@ export function InvoiceForm({
           <div className="space-y-2 max-h-48 overflow-y-auto border rounded-lg p-2 bg-muted/20">
             {lineItems.map((item, index) => (
               <div key={item.id} className="grid grid-cols-12 gap-1 items-center">
-                <Input
-                  className="col-span-5 h-8 text-xs"
-                  placeholder="Description"
-                  value={item.description}
-                  onChange={e => updateLineItem(index, 'description', e.target.value)}
-                />
+                <div className="col-span-5 flex items-center gap-1">
+                  <Input
+                    className="h-8 text-xs flex-1"
+                    placeholder="Description"
+                    value={item.description}
+                    onChange={e => updateLineItem(index, 'description', e.target.value)}
+                  />
+                  <AIContentButton
+                    contentType="line_item_description"
+                    existingContent={item.description}
+                    onGenerate={(content) => updateLineItem(index, 'description', content)}
+                    context={{ serviceType: item.description }}
+                    size="sm"
+                  />
+                </div>
                 <Input
                   className="col-span-2 h-8 text-xs"
                   type="number"
