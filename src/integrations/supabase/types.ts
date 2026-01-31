@@ -4123,6 +4123,93 @@ export type Database = {
           },
         ]
       }
+      scheduled_blog_posts: {
+        Row: {
+          ai_research_used: boolean | null
+          approved_at: string | null
+          approved_by: string | null
+          batch_id: string | null
+          company_id: string
+          content: string
+          created_at: string
+          created_by: string | null
+          excerpt: string | null
+          featured_image_url: string | null
+          id: string
+          keywords: string[] | null
+          publish_error: string | null
+          published_at: string | null
+          scheduled_for: string
+          slug: string
+          status: string
+          timezone: string
+          title: string
+          tone: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_research_used?: boolean | null
+          approved_at?: string | null
+          approved_by?: string | null
+          batch_id?: string | null
+          company_id: string
+          content: string
+          created_at?: string
+          created_by?: string | null
+          excerpt?: string | null
+          featured_image_url?: string | null
+          id?: string
+          keywords?: string[] | null
+          publish_error?: string | null
+          published_at?: string | null
+          scheduled_for: string
+          slug: string
+          status?: string
+          timezone?: string
+          title: string
+          tone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_research_used?: boolean | null
+          approved_at?: string | null
+          approved_by?: string | null
+          batch_id?: string | null
+          company_id?: string
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          excerpt?: string | null
+          featured_image_url?: string | null
+          id?: string
+          keywords?: string[] | null
+          publish_error?: string | null
+          published_at?: string | null
+          scheduled_for?: string
+          slug?: string
+          status?: string
+          timezone?: string
+          title?: string
+          tone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_blog_posts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_blog_posts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scheduled_posts: {
         Row: {
           company_id: string
