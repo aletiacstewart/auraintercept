@@ -4689,6 +4689,54 @@ export type Database = {
           },
         ]
       }
+      sms_keywords: {
+        Row: {
+          company_id: string
+          created_at: string
+          hit_count: number
+          id: string
+          is_enabled: boolean
+          keyword: string
+          response_message: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          hit_count?: number
+          id?: string
+          is_enabled?: boolean
+          keyword: string
+          response_message: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          hit_count?: number
+          id?: string
+          is_enabled?: boolean
+          keyword?: string
+          response_message?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_keywords_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sms_keywords_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sms_templates: {
         Row: {
           company_id: string
@@ -5986,6 +6034,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_keyword_hit: {
+        Args: { keyword_id: string }
+        Returns: undefined
       }
       increment_site_metric: {
         Args: { p_metric: string; p_website_id: string }
