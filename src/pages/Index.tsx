@@ -987,7 +987,7 @@ export default function Index() {
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-teal-500" />
               <CardContent className="p-5">
                 <Badge className="mb-2 bg-cyan-500 text-white border-0 text-[10px]">
-                  For Service Businesses
+                  AI Personal Assistant
                 </Badge>
                 <h3 className="text-lg font-bold mb-1">Aura Flow</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">
