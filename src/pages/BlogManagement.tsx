@@ -12,8 +12,9 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Edit, Trash2, Eye, EyeOff, FileText } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, FileText, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
+import { BlogContentWizard } from '@/components/blog/BlogContentWizard';
 
 interface BlogPost {
   id: string;
@@ -35,6 +36,7 @@ export default function BlogManagement() {
   const queryClient = useQueryClient();
   
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -44,6 +46,19 @@ export default function BlogManagement() {
     featured_image_url: '',
     published: false,
   });
+
+  const handleWizardSuccess = (data: { title: string; slug: string; excerpt: string; content: string }) => {
+    setFormData({
+      title: data.title,
+      slug: data.slug,
+      excerpt: data.excerpt,
+      content: data.content,
+      featured_image_url: '',
+      published: false,
+    });
+    setEditingPost(null);
+    setIsDialogOpen(true);
+  };
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ['blog-posts-admin'],
@@ -170,15 +185,20 @@ export default function BlogManagement() {
             </p>
           </div>
           
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={() => resetForm()}>
-                <Plus className="mr-2 h-4 w-4" />
-                New Post
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setIsWizardOpen(true)}>
+              <Sparkles className="mr-2 h-4 w-4" />
+              AI Generate
+            </Button>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={() => resetForm()}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  New Post
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
                 <DialogTitle>
                   {editingPost ? 'Edit Post' : 'Create New Post'}
                 </DialogTitle>
@@ -264,8 +284,15 @@ export default function BlogManagement() {
                   </Button>
                 </div>
               </form>
-            </DialogContent>
-          </Dialog>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <BlogContentWizard
+            open={isWizardOpen}
+            onOpenChange={setIsWizardOpen}
+            onSuccess={handleWizardSuccess}
+          />
         </div>
 
         {isLoading ? (

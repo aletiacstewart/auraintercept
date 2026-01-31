@@ -60,6 +60,7 @@ export default function Campaigns() {
           targetSegment: formData.target_segment,
           companyName: 'our company',
           field,
+          companyId,
         },
       });
       if (error) throw error;

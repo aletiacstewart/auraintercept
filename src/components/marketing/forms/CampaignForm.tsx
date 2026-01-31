@@ -110,6 +110,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({ companyId, onCancel,
           discountType: formData.discountType,
           discountValue: formData.discountValue,
           inactivePeriod: formData.inactivePeriod,
+          companyId,
         },
       });
 
