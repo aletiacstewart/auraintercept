@@ -47,6 +47,14 @@ export function CompanyAdminDashboard() {
       const monthStart = startOfMonth(now).toISOString();
       const monthEnd = endOfMonth(now).toISOString();
 
+      // First, fetch employee profile IDs for the company (needed for blog_posts filtering)
+      const { data: employeeProfiles } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('company_id', companyId);
+      
+      const employeeIds = (employeeProfiles ?? []).map(p => p.id);
+
       const [employees, customers, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs, leads, inventory, warranties, campaigns, socialPosts, blogPosts, siteMetrics] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('customer_profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
@@ -61,7 +69,10 @@ export function CompanyAdminDashboard() {
         supabase.from('warranty_policies').select('id').eq('company_id', companyId),
         supabase.from('marketing_campaigns').select('id, status').eq('company_id', companyId),
         supabase.from('scheduled_social_posts').select('id, status').eq('company_id', companyId),
-        supabase.from('blog_posts').select('id, published', { count: 'exact', head: true }),
+        // Filter blog_posts by company employees (author_id)
+        employeeIds.length > 0 
+          ? supabase.from('blog_posts').select('id, published').in('author_id', employeeIds)
+          : Promise.resolve({ data: [], count: 0 }),
         supabase.from('site_metrics').select('page_views, unique_visitors, chat_interactions').eq('company_id', companyId),
       ]);
 
@@ -124,8 +135,9 @@ export function CompanyAdminDashboard() {
       const scheduledSocialPosts = allSocialPosts.filter(p => p.status === 'pending').length;
       const totalSocialPosts = allSocialPosts.length;
 
-      // Blog posts count (from all company authors)
-      const totalBlogPosts = blogPosts.count ?? 0;
+      // Blog posts count (filtered by company authors)
+      const allBlogPosts = blogPosts.data ?? [];
+      const totalBlogPosts = allBlogPosts.length;
 
       // Site metrics totals
       const allSiteMetrics = siteMetrics.data ?? [];
