@@ -9,7 +9,6 @@ import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
 import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
-import { AgentHowToGuide } from '@/components/ai/chat/AgentHowToGuide';
 import { SocialContentWizard } from './SocialContentWizard';
 import { SocialFeedQueue } from '@/components/marketing/SocialFeedQueue';
 import { SocialContentCalendar } from './SocialContentCalendar';
@@ -23,14 +22,12 @@ import {
   Calendar,
   CalendarDays,
   Sparkles,
-  ListChecks,
 } from 'lucide-react';
 
 // Quick actions for Social Media Ops - removed Analytics (moved to Analytics console)
 const QUICK_ACTIONS = [
-  { id: 'create', label: 'New Post', icon: PenSquare, message: 'Create a new social media post', featureColor: 'text-pink-400' },
-  { id: 'batch', label: 'Batch Generate', icon: Sparkles, message: 'Generate batch of posts', featureColor: 'text-pink-400' },
-  { id: 'queue', label: 'Schedule Queue', icon: ListChecks, message: 'View schedule queue', featureColor: 'text-pink-400' },
+  { id: 'create', label: 'Single Post', icon: PenSquare, message: 'Create a new social media post', featureColor: 'text-pink-400' },
+  { id: 'batch', label: 'Batch Posts', icon: Sparkles, message: 'Generate batch of posts', featureColor: 'text-pink-400' },
   { id: 'drafts', label: 'Drafts', icon: FileText, message: 'Show me pending social media drafts', featureColor: 'text-pink-400' },
   { id: 'scheduled', label: 'Scheduled', icon: Calendar, message: 'Show my scheduled posts', featureColor: 'text-pink-400' },
   { id: 'calendar', label: 'Calendar', icon: CalendarDays, message: 'Open content calendar', featureColor: 'text-pink-400' },
@@ -123,12 +120,6 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
       setShowBatchWizard(true);
       return;
     }
-    if (actionId === 'queue') {
-      hideAllForms();
-      setShowScheduleQueue(true);
-      setActiveTab('chat');
-      return;
-    }
     if (actionId === 'drafts') {
       hideAllForms();
       setFeedFilter('pending');
@@ -137,8 +128,8 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     }
     if (actionId === 'scheduled') {
       hideAllForms();
-      setFeedFilter('scheduled');
-      setActiveTab('feed');
+      setShowScheduleQueue(true);
+      setActiveTab('chat');
       return;
     }
     if (actionId === 'calendar') {
@@ -176,9 +167,9 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   // Get active label based on form type
   const getActiveLabel = () => {
     if (activeTab === 'feed') return feedFilter === 'scheduled' ? 'Scheduled Posts' : 'Content Queue';
-    if (showPostForm) return 'New Post';
+    if (showPostForm) return 'Single Post';
     if (showCalendar) return 'Content Calendar';
-    if (showScheduleQueue) return 'Schedule Queue';
+    if (showScheduleQueue) return 'Scheduled Posts';
     if (messages.length > 0) return agentStyle.label;
     return 'Home';
   };
