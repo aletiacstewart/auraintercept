@@ -50,6 +50,29 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     hasVoice: true,
     hasAutomation: false,
   },
+  aura_flow: {
+    id: 'aura_flow',
+    name: 'Aura Flow',
+    price: 297,
+    annualPrice: 2970,
+    annualSavings: 594,
+    implementationFee: 399,
+    employees: 2,
+    operatives: 4,
+    consoles: 0,
+    description: 'AI voice, chat, and scheduling with calendar sync.',
+    bestFor: 'Service businesses needing automated booking without a customer portal.',
+    highlights: [
+      'AI Receptionist for 24/7 engagement',
+      'Message Aura (Text) + Talk to Aura (Voice)',
+      'Smart Link Sharing',
+      'Scheduling Agent with calendar sync',
+      'Follow-up Agent (SMS + Email)',
+      'Knowledge Base for FAQs',
+    ],
+    hasVoice: true,
+    hasAutomation: true,
+  },
   halo: {
     id: 'halo',
     name: 'Aura Halo',
@@ -180,7 +203,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
 };
 
 // Tier order for display (price ascending)
-export const TIER_ORDER = ['express', 'halo', 'core', 'single_point', 'multi_track', 'command'] as const;
+export const TIER_ORDER = ['express', 'aura_flow', 'halo', 'core', 'single_point', 'multi_track', 'command'] as const;
 
 // ============================================
 // AI OPERATIVES - 23 TOTAL

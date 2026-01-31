@@ -931,7 +931,7 @@ export default function Index() {
           </div>
 
           {/* Industry-Specific Packages */}
-          <div className="mt-8 grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+          <div className="mt-8 grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {/* Aura Express - Restaurant Package */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-amber-400/30 dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
@@ -979,6 +979,67 @@ export default function Index() {
                   {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
                 <p className="text-[9px] text-amber-400/70 mt-2 text-center">Requires: ElevenLabs + Twilio</p>
+              </CardContent>
+            </Card>
+
+            {/* Aura Flow - Service Business Package */}
+            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-cyan-400/30 dark-card-surface">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-teal-500" />
+              <CardContent className="p-5">
+                <Badge className="mb-2 bg-cyan-500 text-white border-0 text-[10px]">
+                  For Service Businesses
+                </Badge>
+                <h3 className="text-lg font-bold mb-1">Aura Flow</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">
+                  Service Pros • Calendar-Based Booking
+                </p>
+                <div className="flex items-baseline gap-1 mb-3">
+                  <span className="text-2xl font-bold text-cyan-400">$297</span>
+                  <span className="text-card-foreground/60 text-sm">/month</span>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mb-4">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
+                    <span className="text-xs">AI Receptionist</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
+                    <span className="text-xs">Scheduling Agent</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
+                    <span className="text-xs">SMS/Email Follow-ups</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
+                    <span className="text-xs">Talk to Aura (Voice)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
+                    <span className="text-xs">Message Aura (Text)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
+                    <span className="text-xs">Calendar Sync</span>
+                  </div>
+                </div>
+                
+                <Button 
+                  size="sm" 
+                  className="w-full bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white"
+                  onClick={() => navigate('/auth?mode=company')}
+                >
+                  Start Free Trial
+                </Button>
+                <button 
+                  onClick={() => setShowPlanComparison(!showPlanComparison)}
+                  className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
+                >
+                  See More Details
+                  {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                </button>
+                <p className="text-[9px] text-cyan-400/70 mt-2 text-center">Requires: ElevenLabs + Twilio + Resend</p>
               </CardContent>
             </Card>
 

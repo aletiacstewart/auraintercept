@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
   },
 });
 
-// Updated 6-Tier subscription data
+// Updated 7-Tier subscription data
 const SUBSCRIPTION_TIERS = {
   express: {
     name: 'Aura Express',
@@ -345,6 +345,19 @@ const SUBSCRIPTION_TIERS = {
     bestFor: 'Restaurants, cafes, food trucks, and food service businesses.',
     hasVoice: true,
     hasAutomation: false,
+  },
+  aura_flow: {
+    name: 'Aura Flow',
+    monthlyPrice: 297,
+    annualPrice: 2970,
+    annualSavings: 594,
+    implementationFee: 399,
+    operatives: 4,
+    consoles: 0,
+    employees: 2,
+    bestFor: 'Service businesses needing automated booking via calendar sync without a customer portal.',
+    hasVoice: true,
+    hasAutomation: true,
   },
   halo: {
     name: 'Aura Halo',

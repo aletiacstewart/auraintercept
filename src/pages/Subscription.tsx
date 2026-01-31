@@ -86,6 +86,25 @@ const TIERS = [
     ],
   },
   {
+    id: 'aura_flow',
+    name: 'Aura Flow',
+    monthlyPrice: '$297',
+    annualPrice: '$2,970',
+    annualSavings: 'Save $594',
+    description: 'AI scheduling with calendar sync',
+    popular: false,
+    agentCount: 4,
+    consoleCount: 0,
+    highlights: [
+      'AI Receptionist (Triage)',
+      'Scheduling Agent',
+      'Follow-up Agent',
+      'Talk to Aura (Voice)',
+      'Message Aura (Text)',
+      'Direct calendar sync',
+    ],
+  },
+  {
     id: 'halo',
     name: 'Aura Halo',
     monthlyPrice: '$397',
@@ -181,6 +200,7 @@ const TIERS = [
 // Employee limits per tier
 export const TIER_EMPLOYEE_LIMITS: Record<string, number> = {
   express: 2,
+  aura_flow: 2,
   halo: 3,
   core: 2,
   single_point: 5,
