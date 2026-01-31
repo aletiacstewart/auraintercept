@@ -13,6 +13,8 @@ import { AgentHowToGuide } from '@/components/ai/chat/AgentHowToGuide';
 import { SocialContentWizard } from './SocialContentWizard';
 import { SocialFeedQueue } from '@/components/marketing/SocialFeedQueue';
 import { SocialContentCalendar } from './SocialContentCalendar';
+import { SocialBatchWizard } from './SocialBatchWizard';
+import { SocialScheduleQueue } from './SocialScheduleQueue';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Share2, 
@@ -20,11 +22,15 @@ import {
   FileText,
   Calendar,
   CalendarDays,
+  Sparkles,
+  ListChecks,
 } from 'lucide-react';
 
 // Quick actions for Social Media Ops - removed Analytics (moved to Analytics console)
 const QUICK_ACTIONS = [
   { id: 'create', label: 'New Post', icon: PenSquare, message: 'Create a new social media post', featureColor: 'text-pink-400' },
+  { id: 'batch', label: 'Batch Generate', icon: Sparkles, message: 'Generate batch of posts', featureColor: 'text-pink-400' },
+  { id: 'queue', label: 'Schedule Queue', icon: ListChecks, message: 'View schedule queue', featureColor: 'text-pink-400' },
   { id: 'drafts', label: 'Drafts', icon: FileText, message: 'Show me pending social media drafts', featureColor: 'text-pink-400' },
   { id: 'scheduled', label: 'Scheduled', icon: Calendar, message: 'Show my scheduled posts', featureColor: 'text-pink-400' },
   { id: 'calendar', label: 'Calendar', icon: CalendarDays, message: 'Open content calendar', featureColor: 'text-pink-400' },
@@ -52,6 +58,8 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   // Form visibility states
   const [showPostForm, setShowPostForm] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [showBatchWizard, setShowBatchWizard] = useState(false);
+  const [showScheduleQueue, setShowScheduleQueue] = useState(false);
   
   // Feed filter state
   const [feedFilter, setFeedFilter] = useState<'pending' | 'scheduled'>('pending');
@@ -89,6 +97,8 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const hideAllForms = () => {
     setShowPostForm(false);
     setShowCalendar(false);
+    setShowBatchWizard(false);
+    setShowScheduleQueue(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -105,6 +115,17 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     if (actionId === 'create') {
       hideAllForms();
       setShowPostForm(true);
+      setActiveTab('chat');
+      return;
+    }
+    if (actionId === 'batch') {
+      hideAllForms();
+      setShowBatchWizard(true);
+      return;
+    }
+    if (actionId === 'queue') {
+      hideAllForms();
+      setShowScheduleQueue(true);
       setActiveTab('chat');
       return;
     }
@@ -148,7 +169,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     setLastAgent('social_content');
   };
 
-  const isShowingForm = showPostForm || showCalendar;
+  const isShowingForm = showPostForm || showCalendar || showScheduleQueue;
   const showWelcome = messages.length === 0 && !isShowingForm && activeTab === 'chat';
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -157,6 +178,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     if (activeTab === 'feed') return feedFilter === 'scheduled' ? 'Scheduled Posts' : 'Content Queue';
     if (showPostForm) return 'New Post';
     if (showCalendar) return 'Content Calendar';
+    if (showScheduleQueue) return 'Schedule Queue';
     if (messages.length > 0) return agentStyle.label;
     return 'Home';
   };
@@ -237,6 +259,14 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                     />
                   )}
 
+                  {/* Schedule Queue View */}
+                  {showScheduleQueue && effectiveCompanyId && (
+                    <SocialScheduleQueue
+                      companyId={effectiveCompanyId}
+                      onClose={handleHome}
+                    />
+                  )}
+
                   {/* Chat Messages */}
                   {!isShowingForm && messages.map((msg, idx) => {
                     const msgAgentStyle = msg.agent ? getAgentStyle(msg.agent) : agentStyle;
@@ -282,6 +312,17 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
           </>
         )}
       </div>
+
+      {/* Batch Wizard Dialog */}
+      <SocialBatchWizard
+        open={showBatchWizard}
+        onOpenChange={setShowBatchWizard}
+        onSuccess={() => {
+          setShowBatchWizard(false);
+          setShowScheduleQueue(true);
+          setActiveTab('chat');
+        }}
+      />
     </Card>
   );
 };
