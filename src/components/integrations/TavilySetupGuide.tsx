@@ -26,7 +26,7 @@ export function TavilySetupGuide() {
                 What is Tavily?
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+            <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <p>Tavily is an <strong>AI-optimized search API</strong> specifically designed for AI agents and LLMs:</p>
               <ul className="list-disc list-inside space-y-2">
                 <li><strong>Structured Data</strong> - Returns clean, AI-ready results (not raw HTML)</li>
@@ -50,7 +50,7 @@ export function TavilySetupGuide() {
                 Create Free Account
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+            <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <ol className="list-decimal list-inside space-y-2">
                 <li>Go to <a href="https://tavily.com" target="_blank" rel="noopener noreferrer" className="text-secondary hover:underline">tavily.com</a></li>
                 <li>Click <strong>Get Started</strong> or <strong>Sign Up</strong></li>
@@ -82,7 +82,7 @@ export function TavilySetupGuide() {
                 Get Your API Key
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+            <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <ol className="list-decimal list-inside space-y-2">
                 <li>Log in to your Tavily account</li>
                 <li>Navigate to your <strong>Dashboard</strong> or <strong>API Keys</strong> section</li>
@@ -117,7 +117,7 @@ export function TavilySetupGuide() {
                 Free Tier (1,000 searches/month)
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+            <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <div className="bg-muted p-4 rounded-lg space-y-3">
                 <div className="flex items-center gap-2 text-green-600">
                   <CheckCircle className="w-4 h-4" />
@@ -137,7 +137,7 @@ export function TavilySetupGuide() {
                     <span className="font-medium">~$0.005/search</span>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground pt-2 border-t">
+                <p className="text-xs text-foreground/80 pt-2 border-t">
                   The free tier should cover approximately 900+ social media posts per month.
                 </p>
               </div>
@@ -152,7 +152,7 @@ export function TavilySetupGuide() {
                 How It's Used
               </span>
             </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground space-y-3">
+            <AccordionContent className="text-sm text-foreground/80 space-y-3">
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
