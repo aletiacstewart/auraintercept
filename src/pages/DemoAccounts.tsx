@@ -34,7 +34,7 @@ const demoAccounts = [
     price: '$197/mo',
     companyAdmin: 'companyxprs@demo.com',
     employee: 'employeexprs@demo.com',
-    customer: null,
+    customer: 'customerxprs@demo.com',
   },
   {
     tier: 'Aura Halo',
@@ -42,7 +42,7 @@ const demoAccounts = [
     price: '$397/mo',
     companyAdmin: 'companyhalo@demo.com',
     employee: 'employeehalo@demo.com',
-    customer: null,
+    customer: 'customerhalo@demo.com',
   },
   {
     tier: 'Single-Point',
