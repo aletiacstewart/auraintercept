@@ -379,6 +379,10 @@ const industryCategories = [{
     name: 'Restaurants',
     icon: UtensilsCrossed,
     description: 'Cafes & Food Service'
+  }, {
+    name: 'Personal Assistant',
+    icon: Bot,
+    description: 'Calendar & Scheduling'
   }]
 }];
 const howItWorks = [{
