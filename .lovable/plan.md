@@ -1,227 +1,161 @@
 
-
-# Enhanced Social Media Auto-Posting with Knowledge Base & Topics
+# Tavily AI Integration Setup
 
 ## Overview
-Enhance the social media content generation system to deeply leverage the Knowledge Base and AI Profile, and add a new "Content Topics" field to guide automated post generation for the batch scheduling feature.
+Add Tavily as a new 3rd party integration for AI-powered web research with **1,000 free searches per month**. This follows the established pattern used for Resend, Twilio, and ElevenLabs integrations.
 
 ---
 
-## Current State Analysis
-
-### What Already Works
-The existing `generate-social-variations` and `generate-social-content` functions already pull:
-- Services (name, description, base_price)
-- FAQs (question, answer)
-- AI Content Profile (tone, brand_voice, avoid_keywords)
-- Active marketing campaigns
-- Website CTA
-
-### What's Missing
-1. **No content topics/themes field** - AI has no guidance on what subjects to write about
-2. **Limited knowledge base usage** - Not using business hours, documents, warranties, inventory
-3. **No seasonal/evergreen categorization** for varied content
+## What is Tavily?
+Tavily is an AI-optimized search API specifically designed for AI agents. Key benefits:
+- **1,000 free searches/month** - no credit card required
+- Returns structured, AI-ready data (not raw HTML)
+- Includes citations and sources
+- Perfect for enhancing social media content with current industry trends
 
 ---
 
-## Database Changes
+## Technical Implementation
 
-### Alter Table: `company_ai_content_profiles`
+### 1. Database Migration
+Add `tavily_api_key` column to the `tenant_integrations` table:
 
-Add new column:
-| Column | Type | Description |
-|--------|------|-------------|
-| `content_topics` | text[] | Array of topics for AI content generation |
-
-Example topics a company might add:
-- "Home maintenance tips"
-- "Seasonal HVAC reminders"  
-- "Customer success stories"
-- "Industry news and trends"
-- "Behind the scenes"
-- "Team spotlights"
-- "DIY tips for homeowners"
-- "Safety tips"
-
----
-
-## Enhanced Knowledge Base Integration
-
-### Data to Include in Generation Prompts
-
-```text
-Full Knowledge Base Context:
-
-1. SERVICES (existing)
-   - Name, description, price, duration
-   
-2. FAQs (existing)  
-   - Question/answer pairs
-   
-3. BUSINESS HOURS (NEW)
-   - Open/close times per day
-   - Holiday schedules
-   
-4. WARRANTIES (NEW)
-   - Product warranties offered
-   - Service guarantees
-   
-5. INVENTORY/EQUIPMENT (NEW)
-   - Products/equipment available
-   - Brands carried
-   
-6. DOCUMENTS (NEW - summaries only)
-   - Training materials
-   - Company policies
-   - Service guides
+```sql
+ALTER TABLE tenant_integrations 
+ADD COLUMN tavily_api_key TEXT;
 ```
 
----
+### 2. New Files to Create
 
-## Edge Function Updates
-
-### 1. Update `generate-social-variations/index.ts`
-
-Enhance context fetching:
-
-```typescript
-// Current (limited)
-const { data: services } = await supabase
-  .from("services")
-  .select("name, description")
-  .eq("company_id", companyId);
-
-// Enhanced (comprehensive)
-const [servicesRes, faqsRes, hoursRes, warrantiesRes, inventoryRes] = await Promise.all([
-  supabase.from("services")
-    .select("name, description, base_price, duration_minutes")
-    .eq("company_id", companyId).eq("is_active", true),
-  supabase.from("faqs")
-    .select("question, answer, category")
-    .eq("company_id", companyId).limit(20),
-  supabase.from("business_hours")
-    .select("*").eq("company_id", companyId),
-  supabase.from("warranties")
-    .select("name, coverage_details, duration_months")
-    .eq("company_id", companyId),
-  supabase.from("inventory")
-    .select("name, category, brand")
-    .eq("company_id", companyId).limit(20),
-]);
-```
-
-### 2. Update System Prompt Structure
-
-```typescript
-const systemPrompt = `Role: Aura Content Strategist for ${companyName}
-
-=== KNOWLEDGE BASE ===
-Services Offered:
-${services.map(s => `• ${s.name}: ${s.description} ($${s.base_price})`).join('\n')}
-
-FAQs:
-${faqs.map(f => `Q: ${f.question}\nA: ${f.answer}`).join('\n\n')}
-
-Business Hours:
-${formattedHours}
-
-Warranties & Guarantees:
-${warranties.map(w => `• ${w.name}: ${w.coverage_details}`).join('\n')}
-
-=== AI PROFILE ===
-Brand Voice: ${aiProfile.tone} - ${aiProfile.brand_voice}
-Target Audience: ${aiProfile.target_audience}
-Key USPs: ${aiProfile.unique_selling_points.join(', ')}
-Industry: ${aiProfile.primary_industry}
-Keywords to Use: ${aiProfile.keywords.join(', ')}
-Keywords to Avoid: ${aiProfile.avoid_keywords.join(', ')}
-
-=== CONTENT TOPICS ===
-Generate content about these themes:
-${aiProfile.content_topics.join('\n')}
-
-=== ACTIVE CAMPAIGN ===
-${campaignContext}
-
-=== RULES ===
-- Only state facts from the Knowledge Base
-- Match brand voice consistently
-- Include CTA: ${ctaTarget} → ${ctaUrl}`;
-```
-
----
-
-## UI Updates
-
-### AI Content Profile Manager Enhancement
-
-Add "Content Topics" section to `src/components/knowledge/AIContentProfileManager.tsx`:
-
-```text
-┌─────────────────────────────────────────────────────────┐
-│  📝 Content Topics                                       │
-│  Define themes for automated social content generation   │
-├─────────────────────────────────────────────────────────┤
-│  [☑] Home maintenance tips                              │
-│  [☑] Seasonal reminders                                 │
-│  [☑] Customer success stories                           │
-│  [☑] Behind the scenes                                  │
-│  [ ] Industry news                                      │
-│  [ ] Team spotlights                                    │
-│                                                         │
-│  + Add custom topic: [_________________] [Add]          │
-│                                                         │
-│  💡 Suggested topics based on your industry:            │
-│  [+ Energy saving tips] [+ Safety reminders]            │
-└─────────────────────────────────────────────────────────┘
-```
-
----
-
-## Files to Modify
-
-| File | Changes |
+| File | Purpose |
 |------|---------|
-| Database migration | Add `content_topics` column to `company_ai_content_profiles` |
-| `src/components/knowledge/AIContentProfileManager.tsx` | Add topics management UI |
-| `supabase/functions/generate-social-variations/index.ts` | Expand knowledge base fetching, include topics in prompt |
-| `supabase/functions/generate-social-content/index.ts` | Same enhancements |
-| `supabase/functions/batch-generate-social-content/index.ts` | (New) Use topics for variety |
+| `src/components/integrations/TavilySetupGuide.tsx` | Step-by-step accordion guide |
+| `src/pages/integrations/TavilyIntegration.tsx` | Dedicated integration page |
+
+### 3. Files to Modify
+
+| File | Change |
+|------|--------|
+| `src/pages/integrations/index.ts` | Add export for TavilyIntegration |
+| `src/App.tsx` | Add route `/dashboard/integrations/tavily` |
+| `src/components/dashboard/DashboardLayout.tsx` | Add "AI Research" nav item |
+| `src/pages/Integrations.tsx` | Add Tavily card to overview |
 
 ---
 
-## Batch Generation Topic Rotation
+## Setup Guide Structure
 
-For auto-posting batches, the system will rotate through topics to ensure variety:
+The TavilySetupGuide component will include these accordion sections:
 
+| Step | Title | Content |
+|------|-------|---------|
+| 1 | What is Tavily? | AI-optimized search API explanation |
+| 2 | Create Free Account | Sign up at tavily.com (no credit card) |
+| 3 | Get API Key | Navigate to dashboard and copy key |
+| 4 | Free Tier Details | 1,000 searches/month, $5/1,000 after |
+| 5 | How It's Used | Integration with social media content generation |
+
+---
+
+## Navigation Updates
+
+Add to "3rd Party Integrations" section in sidebar:
 ```typescript
-// Example: 12 posts over 3 months
-const topics = aiProfile.content_topics; // ["tips", "stories", "seasonal", "team"]
-
-const generateBatchTopics = (numPosts: number, topics: string[]): string[] => {
-  const result = [];
-  for (let i = 0; i < numPosts; i++) {
-    result.push(topics[i % topics.length]);
-  }
-  return result;
-};
-
-// Result: ["tips", "stories", "seasonal", "team", "tips", "stories", ...]
+{ 
+  label: 'AI Research', 
+  icon: Search,  // from lucide-react
+  href: '/dashboard/integrations/tavily', 
+  roles: ['platform_admin', 'company_admin'], 
+  featureColor: 'text-feature-integrations' 
+}
 ```
 
-Each generated post will focus on a different topic while still using the full knowledge base for facts.
+---
+
+## Integration Card for Overview Page
+
+```typescript
+{
+  id: 'tavily',
+  name: 'Tavily AI',
+  description: 'AI-powered web research for content enhancement.',
+  icon: Search,
+  color: 'bg-cyan-500',
+  docsUrl: 'https://tavily.com',
+  fields: [
+    { 
+      key: 'tavily_api_key', 
+      label: 'API Key', 
+      placeholder: 'tvly-...', 
+      type: 'password', 
+      required: true 
+    }
+  ],
+  checkConnection: (data) => !!data.tavily_api_key,
+  note: '1,000 free searches/month. Enhances social content with current trends.'
+}
+```
 
 ---
 
-## Summary
+## Component Preview
 
-**AI Model**: Lovable AI (Google Gemini 3 Flash Preview) - internal only, no external web searches
+```text
++----------------------------------------------------------+
+|  Tavily AI Setup Guide                       [AI Research]
+|  Configure AI-powered web search for content enhancement
++----------------------------------------------------------+
+|
+|  [1] What is Tavily?
+|      > AI-optimized search API built for AI agents
+|      > Returns structured data with citations
+|      > Perfect for finding current industry trends
+|
+|  [2] Create Free Account
+|      > Go to tavily.com and sign up
+|      > No credit card required for free tier
+|      > Verify your email
+|
+|  [3] Get Your API Key
+|      > Go to dashboard.tavily.com
+|      > Copy your API key (starts with tvly-)
+|
+|  [4] Free Tier (1,000 searches/month)
+|      > Free: 1,000 API calls per month
+|      > Pro: $5 per 1,000 additional calls
+|      > No usage tracking needed on our end
+|
+|  [5] How It Works
+|      > When generating social content, Tavily
+|        searches for current trends on your topics
+|      > Results include sources and citations
+|      > AI uses this to write more relevant posts
+|
++----------------------------------------------------------+
+```
 
-**Enhancements**:
-1. Add `content_topics` field to AI Profile
-2. Pull more Knowledge Base data (hours, warranties, inventory)
-3. Structure prompts to use all context effectively
-4. Topic rotation for batch generation variety
+---
 
-This ensures AI-generated content is grounded in your company's actual data and guided by the topics you want to discuss.
+## Summary of Changes
 
+| Item | Action | Notes |
+|------|--------|-------|
+| Database migration | Add column | `tavily_api_key` to tenant_integrations |
+| `TavilySetupGuide.tsx` | Create | 5-step accordion guide |
+| `TavilyIntegration.tsx` | Create | Full integration page |
+| `pages/integrations/index.ts` | Modify | Add export |
+| `App.tsx` | Modify | Add route |
+| `DashboardLayout.tsx` | Modify | Add nav item |
+| `Integrations.tsx` | Modify | Add to overview grid |
+
+---
+
+## Cost Comparison
+
+| Service | Free Tier | Paid Rate |
+|---------|-----------|-----------|
+| **Tavily** | 1,000/month | $0.005/search |
+| Perplexity | None | $0.005-0.02/search |
+| Brave Search | 2,000/month | $0.003/search |
+
+Tavily offers the best balance of free tier + AI-optimized responses for this use case.
