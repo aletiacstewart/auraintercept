@@ -49,7 +49,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     agents: ['triage', 'followup', 'review'],
     consoles: ['customer_portal'],
     label: 'Single-Point',
-    price: '$497/mo',
+    price: '$1,500/mo',
     description: 'Customer engagement + AI Voice',
   },
   multi_track: {
@@ -61,7 +61,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     ],
     consoles: ['customer_portal', 'field_operations'],
     label: 'Multi-Track',
-    price: '$897/mo',
+    price: '$3,997/mo',
     description: 'Customer + Field operations + Online booking',
   },
   command: {
