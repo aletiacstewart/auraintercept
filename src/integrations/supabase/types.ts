@@ -5276,6 +5276,7 @@ export type Database = {
           stripe_publishable_key: string | null
           stripe_secret_key: string | null
           stripe_webhook_secret: string | null
+          tavily_api_key: string | null
           tts_monthly_limit: number | null
           tts_provider: string | null
           twilio_account_sid: string | null
@@ -5308,6 +5309,7 @@ export type Database = {
           stripe_publishable_key?: string | null
           stripe_secret_key?: string | null
           stripe_webhook_secret?: string | null
+          tavily_api_key?: string | null
           tts_monthly_limit?: number | null
           tts_provider?: string | null
           twilio_account_sid?: string | null
@@ -5340,6 +5342,7 @@ export type Database = {
           stripe_publishable_key?: string | null
           stripe_secret_key?: string | null
           stripe_webhook_secret?: string | null
+          tavily_api_key?: string | null
           tts_monthly_limit?: number | null
           tts_provider?: string | null
           twilio_account_sid?: string | null
