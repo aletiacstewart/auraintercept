@@ -160,7 +160,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     setLastAgent('social_content');
   };
 
-  const isShowingForm = showPostForm || showCalendar || showScheduleQueue;
+  const isShowingForm = showPostForm || showCalendar || showScheduleQueue || showBatchWizard;
   const showWelcome = messages.length === 0 && !isShowingForm && activeTab === 'chat';
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -168,6 +168,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const getActiveLabel = () => {
     if (activeTab === 'feed') return feedFilter === 'scheduled' ? 'Scheduled Posts' : 'Content Queue';
     if (showPostForm) return 'Single Post';
+    if (showBatchWizard) return 'Batch Posts';
     if (showCalendar) return 'Content Calendar';
     if (showScheduleQueue) return 'Scheduled Posts';
     if (messages.length > 0) return agentStyle.label;
@@ -242,6 +243,18 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                     />
                   )}
 
+                  {/* Batch Wizard (inline) */}
+                  {showBatchWizard && effectiveCompanyId && (
+                    <SocialBatchWizard
+                      companyId={effectiveCompanyId}
+                      onCancel={handleHome}
+                      onSuccess={() => {
+                        hideAllForms();
+                        setShowScheduleQueue(true);
+                      }}
+                    />
+                  )}
+
                   {/* Calendar View */}
                   {showCalendar && effectiveCompanyId && (
                     <SocialContentCalendar
@@ -303,17 +316,6 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
           </>
         )}
       </div>
-
-      {/* Batch Wizard Dialog */}
-      <SocialBatchWizard
-        open={showBatchWizard}
-        onOpenChange={setShowBatchWizard}
-        onSuccess={() => {
-          setShowBatchWizard(false);
-          setShowScheduleQueue(true);
-          setActiveTab('chat');
-        }}
-      />
     </Card>
   );
 };
