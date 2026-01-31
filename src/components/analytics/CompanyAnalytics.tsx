@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { 
   Users, 
   Calendar, 
@@ -10,7 +11,12 @@ import {
   TrendingUp,
   Clock,
   CheckCircle,
-  MessageSquare
+  MessageSquare,
+  Mail,
+  Share2,
+  FileText,
+  Megaphone,
+  Globe
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -27,6 +33,11 @@ import {
   Cell
 } from 'recharts';
 import { format, subDays } from 'date-fns';
+import { RemindersAnalytics } from './RemindersAnalytics';
+import { SocialMediaAnalytics } from './SocialMediaAnalytics';
+import { BlogAnalytics } from './BlogAnalytics';
+import { CampaignsAnalytics } from './CampaignsAnalytics';
+import { WidgetAnalytics } from './WidgetAnalytics';
 
 const CHART_COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--muted))'];
 
@@ -281,12 +292,35 @@ export function CompanyAnalytics({ companyId, showCompanyName = false }: Company
       </div>
 
       <Tabs defaultValue="appointments" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="appointments">Appointments</TabsTrigger>
-          <TabsTrigger value="calls">AI Agent Calls</TabsTrigger>
-          <TabsTrigger value="revenue">Revenue</TabsTrigger>
-          <TabsTrigger value="quotes">Quotes</TabsTrigger>
-        </TabsList>
+        <ScrollArea className="w-full">
+          <TabsList className="inline-flex w-max">
+            <TabsTrigger value="appointments">Appointments</TabsTrigger>
+            <TabsTrigger value="calls">AI Agent Calls</TabsTrigger>
+            <TabsTrigger value="revenue">Revenue</TabsTrigger>
+            <TabsTrigger value="quotes">Quotes</TabsTrigger>
+            <TabsTrigger value="reminders" className="flex items-center gap-1.5">
+              <Mail className="h-3.5 w-3.5" />
+              Reminders
+            </TabsTrigger>
+            <TabsTrigger value="campaigns" className="flex items-center gap-1.5">
+              <Megaphone className="h-3.5 w-3.5" />
+              Campaigns
+            </TabsTrigger>
+            <TabsTrigger value="social" className="flex items-center gap-1.5">
+              <Share2 className="h-3.5 w-3.5" />
+              Social Media
+            </TabsTrigger>
+            <TabsTrigger value="blog" className="flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5" />
+              Blog
+            </TabsTrigger>
+            <TabsTrigger value="widget" className="flex items-center gap-1.5">
+              <Globe className="h-3.5 w-3.5" />
+              Website Widget
+            </TabsTrigger>
+          </TabsList>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
 
         <TabsContent value="appointments" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
@@ -564,6 +598,26 @@ export function CompanyAnalytics({ companyId, showCompanyName = false }: Company
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="reminders">
+          <RemindersAnalytics companyId={companyId} />
+        </TabsContent>
+
+        <TabsContent value="campaigns">
+          <CampaignsAnalytics companyId={companyId} />
+        </TabsContent>
+
+        <TabsContent value="social">
+          <SocialMediaAnalytics companyId={companyId} />
+        </TabsContent>
+
+        <TabsContent value="blog">
+          <BlogAnalytics companyId={companyId} />
+        </TabsContent>
+
+        <TabsContent value="widget">
+          <WidgetAnalytics companyId={companyId} />
         </TabsContent>
       </Tabs>
     </div>

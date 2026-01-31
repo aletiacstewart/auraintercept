@@ -5,7 +5,7 @@ import { useSubscription, SubscriptionTier } from '@/hooks/useSubscription';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageContainer } from '@/components/ui/page-container';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, MessageSquare, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield, Megaphone, LayoutDashboard } from 'lucide-react';
+import { Users, Calendar, MessageSquare, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield, Megaphone, LayoutDashboard, Share2, Globe, PenTool } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
@@ -47,7 +47,7 @@ export function CompanyAdminDashboard() {
       const monthStart = startOfMonth(now).toISOString();
       const monthEnd = endOfMonth(now).toISOString();
 
-      const [employees, customers, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs, leads, inventory, warranties, campaigns] = await Promise.all([
+      const [employees, customers, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs, leads, inventory, warranties, campaigns, socialPosts, blogPosts, siteMetrics] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('customer_profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('appointments').select('id, status').eq('company_id', companyId),
@@ -55,11 +55,14 @@ export function CompanyAdminDashboard() {
         supabase.from('invoices').select('id, total, status, quote_id').eq('company_id', companyId),
         supabase.from('invoices').select('total').eq('company_id', companyId).eq('status', 'paid').gte('paid_at', monthStart).lte('paid_at', monthEnd),
         supabase.from('customer_feedback').select('rating').eq('company_id', companyId).not('rating', 'is', null),
-        supabase.from('reminder_logs').select('id', { count: 'exact', head: true }).eq('company_id', companyId).gte('created_at', monthStart).lte('created_at', monthEnd),
+        supabase.from('reminder_logs').select('id, channel', { count: 'exact' }).eq('company_id', companyId).gte('created_at', monthStart).lte('created_at', monthEnd),
         supabase.from('leads').select('id, status').eq('company_id', companyId),
         supabase.from('inventory_items').select('id, quantity, min_quantity').eq('company_id', companyId),
         supabase.from('warranty_policies').select('id').eq('company_id', companyId),
         supabase.from('marketing_campaigns').select('id, status').eq('company_id', companyId),
+        supabase.from('scheduled_social_posts').select('id, status').eq('company_id', companyId),
+        supabase.from('blog_posts').select('id, published', { count: 'exact', head: true }),
+        supabase.from('site_metrics').select('page_views, unique_visitors, chat_interactions').eq('company_id', companyId),
       ]);
 
       // Calculate totals
@@ -115,6 +118,21 @@ export function CompanyAdminDashboard() {
       const activeCampaigns = allCampaigns.filter(c => c.status === 'active').length;
       const totalCampaigns = allCampaigns.length;
 
+      // Social media posts stats
+      const allSocialPosts = socialPosts.data ?? [];
+      const publishedSocialPosts = allSocialPosts.filter(p => p.status === 'published').length;
+      const scheduledSocialPosts = allSocialPosts.filter(p => p.status === 'pending').length;
+      const totalSocialPosts = allSocialPosts.length;
+
+      // Blog posts count (from all company authors)
+      const totalBlogPosts = blogPosts.count ?? 0;
+
+      // Site metrics totals
+      const allSiteMetrics = siteMetrics.data ?? [];
+      const totalPageViews = allSiteMetrics.reduce((sum, m) => sum + (m.page_views || 0), 0);
+      const totalVisitors = allSiteMetrics.reduce((sum, m) => sum + (m.unique_visitors || 0), 0);
+      const totalChatInteractions = allSiteMetrics.reduce((sum, m) => sum + (m.chat_interactions || 0), 0);
+
       return {
         employees: employees.count ?? 0,
         customers: customers.count ?? 0,
@@ -136,6 +154,13 @@ export function CompanyAdminDashboard() {
         warrantyCount,
         activeCampaigns,
         totalCampaigns,
+        publishedSocialPosts,
+        scheduledSocialPosts,
+        totalSocialPosts,
+        totalBlogPosts,
+        totalPageViews,
+        totalVisitors,
+        totalChatInteractions,
       };
     },
     enabled: !!companyId,
@@ -245,6 +270,33 @@ export function CompanyAdminDashboard() {
       colorClass: 'bg-feature-marketing/15 text-feature-marketing',
       href: '/dashboard/campaigns',
       requiredTier: 'command' as SubscriptionTier
+    },
+    { 
+      title: 'Social Posts', 
+      value: stats?.totalSocialPosts ?? 0, 
+      icon: Share2, 
+      description: `${stats?.publishedSocialPosts ?? 0} published, ${stats?.scheduledSocialPosts ?? 0} scheduled`,
+      colorClass: 'bg-feature-marketing/15 text-feature-marketing',
+      href: '/dashboard/social-content',
+      requiredTier: 'command' as SubscriptionTier
+    },
+    { 
+      title: 'Blog Posts', 
+      value: stats?.totalBlogPosts ?? 0, 
+      icon: PenTool, 
+      description: 'Published articles',
+      colorClass: 'bg-primary/15 text-primary',
+      href: '/dashboard/blog',
+      requiredTier: 'command' as SubscriptionTier
+    },
+    { 
+      title: 'Website Traffic', 
+      value: stats?.totalPageViews ?? 0, 
+      icon: Globe, 
+      description: `${stats?.totalVisitors ?? 0} visitors, ${stats?.totalChatInteractions ?? 0} chats`,
+      colorClass: 'bg-feature-analytics/15 text-feature-analytics',
+      href: '/dashboard/analytics',
+      requiredTier: 'multi_track' as SubscriptionTier
     },
   ];
 
