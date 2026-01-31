@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { ServicesManager } from '@/components/knowledge/ServicesManager';
 import { FAQsManager } from '@/components/knowledge/FAQsManager';
 import { BusinessHoursManager } from '@/components/knowledge/BusinessHoursManager';
@@ -8,6 +10,7 @@ import { DocumentsManager } from '@/components/knowledge/DocumentsManager';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
 import { AIContentProfileManager } from '@/components/knowledge/AIContentProfileManager';
+import { KnowledgeBaseWizard } from '@/components/knowledge/KnowledgeBaseWizard';
 import { Briefcase, HelpCircle, Clock, FileText, Package, Shield, BookOpen, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/page-header';
@@ -15,15 +18,25 @@ import { PageContainer } from '@/components/ui/page-container';
 
 export default function KnowledgeBase() {
   const [searchParams] = useSearchParams();
-  const { userRole } = useAuth();
+  const { userRole, companyId } = useAuth();
   const defaultTab = searchParams.get('tab') || 'services';
+  const [showWizard, setShowWizard] = useState(false);
   
   const isPlatformAdmin = userRole === 'platform_admin';
   
-  // Determine grid columns based on whether platform admin tabs are shown
-  const gridColsClass = isPlatformAdmin 
-    ? 'grid-cols-3 lg:grid-cols-7' 
-    : 'grid-cols-3 lg:grid-cols-5';
+  if (showWizard && companyId) {
+    return (
+      <DashboardLayout>
+        <PageContainer>
+          <KnowledgeBaseWizard 
+            companyId={companyId} 
+            onCancel={() => setShowWizard(false)}
+            onSuccess={() => setShowWizard(false)}
+          />
+        </PageContainer>
+      </DashboardLayout>
+    );
+  }
   
   return (
     <DashboardLayout>
@@ -35,6 +48,11 @@ export default function KnowledgeBase() {
           description="Train your AI agent with your business information"
           featureColor="config"
           showAuraBar
+          action={
+            <Button onClick={() => setShowWizard(true)} variant="outline">
+              <Sparkles className="h-4 w-4 mr-2" /> AI Generate
+            </Button>
+          }
         />
 
         <Tabs defaultValue={defaultTab} className="space-y-6">

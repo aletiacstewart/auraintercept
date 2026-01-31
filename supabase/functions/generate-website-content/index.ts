@@ -90,6 +90,14 @@ const CONTENT_PROMPTS: Record<string, { generate: string; reword: string }> = {
   blog_content: {
     generate: "Write a comprehensive, well-structured blog section with proper HTML formatting. Include headings, paragraphs, and bullet points where appropriate. Maximum 500 words.",
     reword: "Improve this blog content. Enhance readability, fix any issues, and make it more engaging while maintaining the core message."
+  },
+  sms_message: {
+    generate: "Create a concise, professional SMS message for this template type. MUST be under 160 characters. Include a clear call-to-action. Use {{placeholders}} for dynamic content like {{customer_name}}, {{company_name}}, {{date}}, {{time}}.",
+    reword: "Improve this SMS message to be more engaging while staying under 160 characters. Maintain all placeholders and the core message."
+  },
+  line_item_description: {
+    generate: "Create a professional, detailed line item description for a quote or invoice. 1-2 sentences. Should clearly explain what the service/item includes and its value. Maximum 150 characters.",
+    reword: "Improve this line item description to be more professional and detailed. Keep it concise but informative. Maximum 150 characters."
   }
 };
 

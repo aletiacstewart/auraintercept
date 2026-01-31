@@ -18,7 +18,8 @@ export type ContentType =
   | 'service_name' | 'service_description'
   | 'email_subject' | 'email_heading' | 'email_message'
   | 'social_content'
-  | 'blog_title' | 'blog_excerpt' | 'blog_content';
+  | 'blog_title' | 'blog_excerpt' | 'blog_content'
+  | 'sms_message' | 'line_item_description';
 
 interface AIContentButtonProps {
   contentType: ContentType;
