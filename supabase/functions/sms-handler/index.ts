@@ -94,6 +94,49 @@ serve(async (req) => {
       twilio_sid: messageSid,
     });
 
+    // === KEYWORD AUTO-RESPONDER ===
+    // Check for hashtag keywords before AI processing
+    const hashtagMatch = messageBody.match(/#(\w+)/);
+    if (hashtagMatch) {
+      const keyword = hashtagMatch[1].toLowerCase();
+      console.log(`Detected keyword: #${keyword}`);
+      
+      const { data: keywordConfig } = await supabase
+        .from('sms_keywords')
+        .select('id, response_message')
+        .eq('company_id', integration.company_id)
+        .eq('keyword', keyword)
+        .eq('is_enabled', true)
+        .single();
+      
+      if (keywordConfig) {
+        console.log(`Keyword match found, sending auto-response`);
+        
+        // Send instant response
+        await sendSmsReply(integration, fromNumber, keywordConfig.response_message);
+        
+        // Log outbound SMS
+        await supabase.from('sms_logs').insert({
+          company_id: integration.company_id,
+          direction: 'outbound',
+          from_number: toNumber,
+          to_number: fromNumber,
+          message: keywordConfig.response_message,
+          status: 'sent',
+        });
+        
+        // Increment hit count
+        await supabase.rpc('increment_keyword_hit', { keyword_id: keywordConfig.id });
+        
+        // Return empty TwiML - response already sent via API
+        return new Response(
+          `<?xml version="1.0" encoding="UTF-8"?><Response></Response>`,
+          { headers: { ...corsHeaders, 'Content-Type': 'application/xml' } }
+        );
+      }
+    }
+    // === END KEYWORD AUTO-RESPONDER ===
+
     // Send staff notification for new SMS
     fetch(`${SUPABASE_URL}/functions/v1/send-staff-notification`, {
       method: 'POST',
