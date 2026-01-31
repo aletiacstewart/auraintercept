@@ -1075,102 +1075,102 @@ export default function Index() {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Ordered from lowest to highest cost */}
-              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="w-4 h-4 text-cyan-400" />
-                  <span className="font-semibold text-sm text-white">Google Calendar</span>
+              <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                  <span className="font-semibold text-xs text-white">Google Calendar</span>
                 </div>
-                <p className="text-xs text-white/70 mb-2">Calendar Sync</p>
-                <p className="text-xs text-white/90 font-medium">Free - Unlimited</p>
-                <p className="text-xs text-white/60 mt-1">Optional for: Halo, Single-Point, Multi-Track, Command</p>
+                <p className="text-[10px] text-white/70 mb-1">Calendar Sync</p>
+                <p className="text-[10px] text-white/90 font-medium">Free - Unlimited</p>
+                <p className="text-[10px] text-white/60">Optional for: Halo, Single-Point, Multi-Track, Command</p>
               </div>
 
-              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Mail className="w-4 h-4 text-channel-email" />
-                  <span className="font-semibold text-sm text-white">Resend</span>
+              <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <Mail className="w-3.5 h-3.5 text-channel-email" />
+                  <span className="font-semibold text-xs text-white">Resend</span>
                 </div>
-                <p className="text-xs text-white/70 mb-2">Email Notifications</p>
-                <p className="text-xs text-white/90 font-medium">Free: 3,000 emails/mo</p>
-                <p className="text-xs text-white/70">Then $20/mo for 50k emails ($0.0004/email over)</p>
-                <p className="text-xs text-white/60 mt-1">Required for: Halo, Single-Point, Multi-Track, Command</p>
+                <p className="text-[10px] text-white/70 mb-1">Email Notifications</p>
+                <p className="text-[10px] text-white/90 font-medium">Free: 3,000 emails/mo</p>
+                <p className="text-[10px] text-white/70">Then $20/mo for 50k emails ($0.0004/email over)</p>
+                <p className="text-[10px] text-white/60">Required for: Halo, Single-Point, Multi-Track, Command</p>
               </div>
 
-              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Mic className="w-4 h-4 text-purple-400" />
-                  <span className="font-semibold text-sm text-white">ElevenLabs</span>
+              <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <Mic className="w-3.5 h-3.5 text-purple-400" />
+                  <span className="font-semibold text-xs text-white">ElevenLabs</span>
                 </div>
-                <p className="text-xs text-white/70 mb-2">AI Voice Synthesis (Voice features only)</p>
-                <p className="text-xs text-white/90 font-medium">Free: 10,000 chars/mo</p>
-                <p className="text-xs text-white/70">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
-                <p className="text-xs text-white/60 mt-1">Required for: Halo, Single-Point, Multi-Track, Command (not needed for Core)</p>
+                <p className="text-[10px] text-white/70 mb-1">AI Voice Synthesis (Voice features only)</p>
+                <p className="text-[10px] text-white/90 font-medium">Free: 10,000 chars/mo</p>
+                <p className="text-[10px] text-white/70">$5/mo (30k) • $22/mo (100k) • $99/mo (500k)</p>
+                <p className="text-[10px] text-white/60">Required for: Halo, Single-Point, Multi-Track, Command (not needed for Core)</p>
               </div>
 
-              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Phone className="w-4 h-4 text-green-400" />
-                  <span className="font-semibold text-sm text-white">Twilio</span>
+              <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <Phone className="w-3.5 h-3.5 text-green-400" />
+                  <span className="font-semibold text-xs text-white">Twilio</span>
                 </div>
-                <p className="text-xs text-white/70 mb-2">SMS & Voice Calls</p>
-                <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
-                <p className="text-xs text-white/70">$1.15/number • $0.0079/SMS • $0.014/min calls</p>
-                <p className="text-xs text-white/60 mt-1">Required for: Halo, Single-Point, Multi-Track, Command (not needed for Core)</p>
+                <p className="text-[10px] text-white/70 mb-1">SMS & Voice Calls</p>
+                <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
+                <p className="text-[10px] text-white/70">$1.15/number • $0.0079/SMS • $0.014/min calls</p>
+                <p className="text-[10px] text-white/60">Required for: Halo, Single-Point, Multi-Track, Command (not needed for Core)</p>
               </div>
 
-              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Shield className="w-4 h-4 text-cyan-400" />
-                  <span className="font-semibold text-sm text-white">A2P 10DLC Compliance</span>
+              <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <Shield className="w-3.5 h-3.5 text-cyan-400" />
+                  <span className="font-semibold text-xs text-white">A2P 10DLC Compliance</span>
                 </div>
-                <p className="text-xs text-white/70 mb-2">US SMS Carrier Registration (Twilio)</p>
-                <p className="text-xs text-white/90 font-medium">One-time: $4 Brand + $15 Campaign</p>
-                <p className="text-xs text-white/70">Monthly: $10/campaign • Surcharge: ~$0.003/SMS</p>
-                <p className="text-xs text-white/60 mt-1">Required for: All SMS features • Prevents carrier filtering</p>
+                <p className="text-[10px] text-white/70 mb-1">US SMS Carrier Registration (Twilio)</p>
+                <p className="text-[10px] text-white/90 font-medium">One-time: $4 Brand + $15 Campaign</p>
+                <p className="text-[10px] text-white/70">Monthly: $10/campaign • Surcharge: ~$0.003/SMS</p>
+                <p className="text-[10px] text-white/60">Required for: All SMS features • Prevents carrier filtering</p>
               </div>
 
-              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <DollarSign className="w-4 h-4 text-amber-400" />
-                  <span className="font-semibold text-sm text-white">Stripe (Your Account)</span>
+              <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <DollarSign className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="font-semibold text-xs text-white">Stripe (Your Account)</span>
                 </div>
-                <p className="text-xs text-white/70 mb-2">Invoice Payments</p>
-                <p className="text-xs text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
-                <p className="text-xs text-white/70">2.9% + $0.30 per successful transaction</p>
-                <p className="text-xs text-white/60 mt-1">Required for: Single-Point, Multi-Track, Command (Invoicing)</p>
+                <p className="text-[10px] text-white/70 mb-1">Invoice Payments</p>
+                <p className="text-[10px] text-white/90 font-medium">Pay-as-you-go (no free tier)</p>
+                <p className="text-[10px] text-white/70">2.9% + $0.30 per successful transaction</p>
+                <p className="text-[10px] text-white/60">Required for: Single-Point, Multi-Track, Command (Invoicing)</p>
               </div>
 
-              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Send className="w-4 h-4 text-pink-400" />
-                  <span className="font-semibold text-sm text-white">Social Media Accounts</span>
+              <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <Send className="w-3.5 h-3.5 text-pink-400" />
+                  <span className="font-semibold text-xs text-white">Social Media Accounts</span>
                 </div>
-                <p className="text-xs text-white/70 mb-2">Facebook, Instagram, LinkedIn, TikTok</p>
-                <p className="text-xs text-white/90 font-medium">Free - Your Business Pages</p>
-                <p className="text-xs text-white/70">OAuth connection to your existing accounts</p>
-                <p className="text-xs text-white/60 mt-1">Required for: Core, Multi-Track, Command • Optional for: Halo, Single-Point</p>
+                <p className="text-[10px] text-white/70 mb-1">Facebook, Instagram, LinkedIn, TikTok</p>
+                <p className="text-[10px] text-white/90 font-medium">Free - Your Business Pages</p>
+                <p className="text-[10px] text-white/70">OAuth connection to your existing accounts</p>
+                <p className="text-[10px] text-white/60">Required for: Core, Multi-Track, Command • Optional for: Halo, Single-Point</p>
               </div>
 
-              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Brain className="w-4 h-4 text-blue-400" />
-                  <span className="font-semibold text-sm text-white">Google Gemini</span>
+              <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <Brain className="w-3.5 h-3.5 text-blue-400" />
+                  <span className="font-semibold text-xs text-white">Google Gemini</span>
                 </div>
-                <p className="text-xs text-white/70 mb-2">AI Content Generation</p>
-                <p className="text-xs text-white/90 font-medium">Free: 15 requests/min</p>
-                <p className="text-xs text-white/70">Powers blog posts, social media, emails & marketing</p>
-                <p className="text-xs text-white/60 mt-1">Required for: All tiers (Core, Halo, Single-Point, Multi-Track, Command)</p>
+                <p className="text-[10px] text-white/70 mb-1">AI Content Generation</p>
+                <p className="text-[10px] text-white/90 font-medium">Free: 15 requests/min</p>
+                <p className="text-[10px] text-white/70">Powers blog posts, social media, emails & marketing</p>
+                <p className="text-[10px] text-white/60">Required for: All tiers (Core, Halo, Single-Point, Multi-Track, Command)</p>
               </div>
 
-              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Search className="w-4 h-4 text-orange-400" />
-                  <span className="font-semibold text-sm text-white">Tavily</span>
+              <div className="rounded-lg p-3 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <Search className="w-3.5 h-3.5 text-orange-400" />
+                  <span className="font-semibold text-xs text-white">Tavily</span>
                 </div>
-                <p className="text-xs text-white/70 mb-2">AI Research Engine</p>
-                <p className="text-xs text-white/90 font-medium">Free: 1,000 searches/mo</p>
-                <p className="text-xs text-white/70">Real-time industry trends, statistics & expert insights</p>
-                <p className="text-xs text-white/60 mt-1">Optional for: All tiers • Enhances AI-generated content quality</p>
+                <p className="text-[10px] text-white/70 mb-1">AI Research Engine</p>
+                <p className="text-[10px] text-white/90 font-medium">Free: 1,000 searches/mo</p>
+                <p className="text-[10px] text-white/70">Real-time industry trends, statistics & expert insights</p>
+                <p className="text-[10px] text-white/60">Optional for: All tiers • Enhances AI-generated content quality</p>
               </div>
             </div>
 
