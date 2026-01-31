@@ -248,6 +248,14 @@ const platformFeatures = [{
   icon: MapPin,
   title: 'Route Optimization',
   description: 'Intelligent routing for field technicians to minimize drive time and maximize efficiency.'
+}, {
+  icon: Brain,
+  title: 'AI Content Generation',
+  description: 'Gemini-powered blog posts, social media, emails & marketing campaigns with brand voice.'
+}, {
+  icon: Search,
+  title: 'AI Research Engine',
+  description: 'Tavily-enhanced content with real-time industry trends, statistics & expert insights.'
 }];
 const communicationChannels = [{
   icon: Mic,
@@ -1130,6 +1138,28 @@ export default function Index() {
                 <p className="text-xs text-white/90 font-medium">Free - Your Business Pages</p>
                 <p className="text-xs text-white/70">OAuth connection to your existing accounts</p>
                 <p className="text-xs text-white/60 mt-1">Required for: Core, Multi-Track, Command • Optional for: Halo, Single-Point</p>
+              </div>
+
+              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <Brain className="w-4 h-4 text-blue-400" />
+                  <span className="font-semibold text-sm text-white">Google Gemini</span>
+                </div>
+                <p className="text-xs text-white/70 mb-2">AI Content Generation</p>
+                <p className="text-xs text-white/90 font-medium">Free: 15 requests/min</p>
+                <p className="text-xs text-white/70">Powers blog posts, social media, emails & marketing</p>
+                <p className="text-xs text-white/60 mt-1">Required for: All tiers (Core, Halo, Single-Point, Multi-Track, Command)</p>
+              </div>
+
+              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <Search className="w-4 h-4 text-orange-400" />
+                  <span className="font-semibold text-sm text-white">Tavily</span>
+                </div>
+                <p className="text-xs text-white/70 mb-2">AI Research Engine</p>
+                <p className="text-xs text-white/90 font-medium">Free: 1,000 searches/mo</p>
+                <p className="text-xs text-white/70">Real-time industry trends, statistics & expert insights</p>
+                <p className="text-xs text-white/60 mt-1">Optional for: All tiers • Enhances AI-generated content quality</p>
               </div>
             </div>
 
