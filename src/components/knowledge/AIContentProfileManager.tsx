@@ -9,7 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { X, Plus, Save, Sparkles, Building2, Tags, Target, MessageSquare, Ban, Loader2 } from 'lucide-react';
+import { X, Plus, Save, Sparkles, Building2, Tags, Target, MessageSquare, Ban, Loader2, Lightbulb } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 // Common industry categories (similar to Google My Business)
 const INDUSTRY_OPTIONS = [
@@ -94,9 +95,24 @@ interface AIContentProfile {
   brand_voice: string | null;
   avoid_keywords: string[];
   avoid_topics: string[];
+  content_topics: string[];
   created_at: string;
   updated_at: string;
 }
+
+// Default content topic suggestions
+const DEFAULT_CONTENT_TOPICS = [
+  'Home maintenance tips',
+  'Seasonal reminders',
+  'Customer success stories',
+  'Behind the scenes',
+  'Industry news and trends',
+  'Team spotlights',
+  'DIY tips for homeowners',
+  'Safety tips',
+  'Energy saving tips',
+  'Product/equipment highlights',
+];
 
 export function AIContentProfileManager() {
   const { companyId } = useAuth();
@@ -115,6 +131,8 @@ export function AIContentProfileManager() {
   const [brandVoice, setBrandVoice] = useState('');
   const [avoidKeywords, setAvoidKeywords] = useState<string[]>([]);
   const [avoidKeywordInput, setAvoidKeywordInput] = useState('');
+  const [contentTopics, setContentTopics] = useState<string[]>([]);
+  const [customTopicInput, setCustomTopicInput] = useState('');
   const [hasChanges, setHasChanges] = useState(false);
   
   // Keyword suggestions state
@@ -150,6 +168,7 @@ export function AIContentProfileManager() {
       setTone(profile.tone || 'professional');
       setBrandVoice(profile.brand_voice || '');
       setAvoidKeywords(profile.avoid_keywords || []);
+      setContentTopics(profile.content_topics || []);
       setHasChanges(false);
     }
   }, [profile]);
@@ -171,6 +190,7 @@ export function AIContentProfileManager() {
         brand_voice: brandVoice || null,
         avoid_keywords: avoidKeywords,
         avoid_topics: [],
+        content_topics: contentTopics,
       };
 
       if (profile?.id) {
@@ -239,6 +259,29 @@ export function AIContentProfileManager() {
 
   const removeAvoidKeyword = (keyword: string) => {
     setAvoidKeywords(avoidKeywords.filter(k => k !== keyword));
+    markChanged();
+  };
+
+  const toggleContentTopic = (topic: string) => {
+    if (contentTopics.includes(topic)) {
+      setContentTopics(contentTopics.filter(t => t !== topic));
+    } else {
+      setContentTopics([...contentTopics, topic]);
+    }
+    markChanged();
+  };
+
+  const addCustomTopic = () => {
+    const trimmed = customTopicInput.trim();
+    if (trimmed && !contentTopics.includes(trimmed)) {
+      setContentTopics([...contentTopics, trimmed]);
+      setCustomTopicInput('');
+      markChanged();
+    }
+  };
+
+  const removeCustomTopic = (topic: string) => {
+    setContentTopics(contentTopics.filter(t => t !== topic));
     markChanged();
   };
 
@@ -616,6 +659,77 @@ export function AIContentProfileManager() {
               className="min-h-[80px]"
             />
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Content Topics */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <Lightbulb className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-base">Content Topics</CardTitle>
+          </div>
+          <CardDescription>
+            Define themes for automated social content generation. The AI will rotate through these topics when creating batch content.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Preset topic checkboxes */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {DEFAULT_CONTENT_TOPICS.map(topic => (
+              <div key={topic} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`topic-${topic}`}
+                  checked={contentTopics.includes(topic)}
+                  onCheckedChange={() => toggleContentTopic(topic)}
+                />
+                <Label 
+                  htmlFor={`topic-${topic}`}
+                  className="text-sm font-normal cursor-pointer"
+                >
+                  {topic}
+                </Label>
+              </div>
+            ))}
+          </div>
+
+          {/* Custom topics */}
+          {contentTopics.filter(t => !DEFAULT_CONTENT_TOPICS.includes(t)).length > 0 && (
+            <div className="pt-2 border-t">
+              <Label className="text-sm text-muted-foreground mb-2 block">Custom Topics</Label>
+              <div className="flex flex-wrap gap-2">
+                {contentTopics
+                  .filter(t => !DEFAULT_CONTENT_TOPICS.includes(t))
+                  .map(topic => (
+                    <Badge key={topic} variant="secondary" className="gap-1">
+                      {topic}
+                      <button onClick={() => removeCustomTopic(topic)}>
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* Add custom topic input */}
+          <div className="flex gap-2">
+            <Input
+              placeholder="Add a custom topic..."
+              value={customTopicInput}
+              onChange={(e) => setCustomTopicInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomTopic())}
+            />
+            <Button variant="outline" size="icon" onClick={addCustomTopic}>
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {contentTopics.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              Select at least one topic to enable intelligent content variety in batch generation.
+            </p>
+          )}
         </CardContent>
       </Card>
 

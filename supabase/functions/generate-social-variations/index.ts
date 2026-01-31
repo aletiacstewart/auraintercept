@@ -86,39 +86,54 @@ serve(async (req) => {
 
     console.log("[generate-social-variations] Generating for platforms:", platforms);
 
-    // ============ FETCH CONTEXT ============
-    const { data: company } = await supabase
-      .from("companies")
-      .select("name, service_categories")
-      .eq("id", companyId)
-      .single();
+    // ============ FETCH COMPREHENSIVE CONTEXT ============
+    const [
+      companyRes,
+      aiProfileRes,
+      activeCampaignRes,
+      websiteRes,
+      servicesRes,
+      faqsRes,
+      hoursRes,
+      warrantiesRes,
+      inventoryRes
+    ] = await Promise.all([
+      supabase.from("companies").select("name, service_categories").eq("id", companyId).single(),
+      supabase.from("company_ai_content_profiles").select("*").eq("company_id", companyId).maybeSingle(),
+      supabase.from("marketing_campaigns")
+        .select("name, campaign_type, discount_type, discount_value, promo_code")
+        .eq("company_id", companyId).eq("status", "active")
+        .order("created_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("smart_websites").select("cta_button_text, cta_button_url").eq("company_id", companyId).maybeSingle(),
+      supabase.from("services").select("name, description, base_price, duration_minutes")
+        .eq("company_id", companyId).eq("is_active", true).limit(15),
+      supabase.from("faqs").select("question, answer, category").eq("company_id", companyId).limit(20),
+      supabase.from("business_hours").select("*").eq("company_id", companyId),
+      supabase.from("warranty_policies").select("name, coverage_details, duration_months")
+        .eq("company_id", companyId).eq("is_active", true).limit(10),
+      supabase.from("inventory_items").select("name, category, brand")
+        .eq("company_id", companyId).limit(15),
+    ]);
 
-    const { data: aiProfile } = await supabase
-      .from("company_ai_content_profiles")
-      .select("*")
-      .eq("company_id", companyId)
-      .maybeSingle();
-
-    const { data: activeCampaign } = await supabase
-      .from("marketing_campaigns")
-      .select("name, campaign_type, discount_type, discount_value, promo_code")
-      .eq("company_id", companyId)
-      .eq("status", "active")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    const { data: website } = await supabase
-      .from("smart_websites")
-      .select("cta_button_text, cta_button_url")
-      .eq("company_id", companyId)
-      .maybeSingle();
+    const company = companyRes.data;
+    const aiProfile = aiProfileRes.data;
+    const activeCampaign = activeCampaignRes.data;
+    const website = websiteRes.data;
+    const services = servicesRes.data || [];
+    const faqs = faqsRes.data || [];
+    const hours = hoursRes.data || [];
+    const warranties = warrantiesRes.data || [];
+    const inventory = inventoryRes.data || [];
 
     const companyName = company?.name || "Our Company";
     const serviceCategories = company?.service_categories || [];
     const brandTone = aiProfile?.tone || "professional";
     const brandVoice = aiProfile?.brand_voice || "Friendly and approachable";
     const avoidKeywords = aiProfile?.avoid_keywords?.join(", ") || "none specified";
+    const contentTopics = aiProfile?.content_topics || [];
+    const keywords = aiProfile?.keywords || [];
+    const usps = aiProfile?.unique_selling_points || [];
+    const targetAudience = aiProfile?.target_audience || "";
     const ctaTarget = website?.cta_button_text || "Contact Us";
     const ctaUrl = website?.cta_button_url || "website";
 
@@ -126,17 +141,62 @@ serve(async (req) => {
       ? `${activeCampaign.name} - ${activeCampaign.campaign_type} with ${activeCampaign.discount_value}${activeCampaign.discount_type === 'percentage' ? '%' : '$'} off (code: ${activeCampaign.promo_code || 'N/A'})`
       : "No active campaign";
 
-    // ============ BUILD SYSTEM PROMPT ============
+    // Format business hours
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const formattedHours = hours.map(h => 
+      `${dayNames[h.day_of_week]}: ${h.is_closed ? 'Closed' : `${h.open_time} - ${h.close_time}`}`
+    ).join('\n') || "Not specified";
+
+    // Build knowledge base context
+    const servicesContext = services.map(s => 
+      `• ${s.name}: ${s.description || 'No description'}${s.base_price ? ` ($${s.base_price})` : ''}`
+    ).join('\n') || "No services listed";
+
+    const faqsContext = faqs.map(f => `Q: ${f.question}\nA: ${f.answer}`).join('\n\n') || "No FAQs";
+    
+    const warrantiesContext = warranties.map(w => 
+      `• ${w.name}: ${w.coverage_details || 'Standard coverage'}${w.duration_months ? ` (${w.duration_months} months)` : ''}`
+    ).join('\n') || "No warranties listed";
+
+    const inventoryContext = inventory.map(i => 
+      `• ${i.name}${i.brand ? ` (${i.brand})` : ''}${i.category ? ` - ${i.category}` : ''}`
+    ).join('\n') || "No inventory listed";
+
+    // ============ BUILD ENHANCED SYSTEM PROMPT ============
     const systemPrompt = `Role: You are the "Aura Content Strategist" for ${companyName}.
 
-Brand Context:
-- Brand Voice: ${brandTone} - ${brandVoice}
-- Industry: ${serviceCategories.join(", ") || "Home Services"}
-- Active Campaign: ${campaignContext}
-- CTA: ${ctaTarget} → ${ctaUrl}
-- Avoid: ${avoidKeywords}
+=== KNOWLEDGE BASE ===
+Services Offered:
+${servicesContext}
 
-Task: Generate platform-optimized social media content based on the user's topic.
+FAQs:
+${faqsContext}
+
+Business Hours:
+${formattedHours}
+
+Warranties & Guarantees:
+${warrantiesContext}
+
+Equipment/Products Available:
+${inventoryContext}
+
+=== AI PROFILE ===
+Brand Voice: ${brandTone} - ${brandVoice}
+Target Audience: ${targetAudience || "General customers"}
+Key USPs: ${usps.join(', ') || "Quality service"}
+Industry: ${serviceCategories.join(", ") || "Home Services"}
+Keywords to Use: ${keywords.join(', ') || "service, quality, professional"}
+Keywords to Avoid: ${avoidKeywords}
+
+=== CONTENT TOPICS ===
+${contentTopics.length > 0 ? `Focus on these themes:\n${contentTopics.map((t: string) => `• ${t}`).join('\n')}` : "Generate content based on the topic provided."}
+
+=== ACTIVE CAMPAIGN ===
+${campaignContext}
+
+=== TASK ===
+Generate platform-optimized social media content based on the user's topic.
 
 Platform Requirements:
 - Instagram (max 2200 chars): Engaging, visual-focused, include relevant hashtags
@@ -146,11 +206,12 @@ Platform Requirements:
 - Google Business (max 1500 chars): Local SEO focused, professional
 - SMS (max 160 chars): Concise, action-oriented
 
-Guidelines:
-- Match platform-specific tone and style
+=== RULES ===
+- Only state facts present in the Knowledge Base when mentioning services, prices, or capabilities
+- Match brand voice consistently across all platforms
 - ${includeImage ? "Content will accompany an image - reference visuals naturally" : "No image - content should stand alone"}
 - Include relevant hashtags for Instagram and TikTok only
-- Keep brand voice consistent across all platforms`;
+- CTA must align with: ${ctaTarget} → ${ctaUrl}`;
 
     const userPrompt = `Create social media content about: "${topic}"
 
