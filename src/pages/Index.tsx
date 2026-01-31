@@ -256,6 +256,10 @@ const platformFeatures = [{
   icon: Search,
   title: 'AI Research Engine',
   description: 'Tavily-enhanced content with real-time industry trends, statistics & expert insights.'
+}, {
+  icon: Bot,
+  title: 'Personal Assistant',
+  description: 'AI-powered scheduling assistant with direct calendar sync for booking appointments.'
 }];
 const communicationChannels = [{
   icon: Mic,
