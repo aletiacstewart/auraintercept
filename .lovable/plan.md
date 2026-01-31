@@ -1,95 +1,132 @@
 
-# Fix Live Preview Refresh Issues
+# SMS Keyword Auto-Responder System
 
-## Problem Analysis
-
-Two issues were identified from the console logs:
-
-1. **Vite Server Connection Lost** (`[vite] server connection lost. Polling for restart...`)
-   - This is a transient network issue between the Lovable preview iframe and the Vite dev server
-   - The existing `useDeploymentAutoReload` hook should handle this, but may need improvement
-
-2. **PublicFooter Ref Warning** (non-critical)
-   - React warns that `PublicFooter` is receiving a ref without `forwardRef`
-   - This is a minor warning and doesn't directly affect refresh behavior
+## Overview
+Add a keyword-based SMS auto-responder that detects hashtag keywords (like `#menu`, `#facebook`, `#hours`) in incoming texts and instantly replies with pre-configured links or messages—no AI processing needed for these quick responses.
 
 ---
 
-## Solution
+## How It Works
 
-### 1. Improve Deployment Auto-Reload Reliability
-
-Update `src/hooks/useDeploymentAutoReload.ts` to:
-- Add a dedicated handler for Vite HMR reconnection
-- Force page reload after vite reconnects to ensure fresh content
-- Add a fallback mechanism when connection is lost for extended periods
-
-### 2. Fix PublicFooter forwardRef Warning
-
-Update `src/components/layout/PublicFooter.tsx` to:
-- Wrap the component with `React.forwardRef`
-- This ensures proper ref forwarding if any parent component passes a ref
+```text
+Customer                    Twilio                   Your System
+   │                           │                          │
+   │  SMS: "#menu"             │                          │
+   │ ─────────────────────────>│ ──────────────────────> │
+   │                           │                          │
+   │                           │      Check keywords DB   │
+   │                           │      ┌─────────────────┐ │
+   │                           │      │ #menu → link    │ │
+   │                           │      │ #facebook → url │ │
+   │                           │      └─────────────────┘ │
+   │                           │                          │
+   │  "Here's our menu: ..."   │ <────────────────────── │
+   │ <─────────────────────────│                          │
+```
 
 ---
 
-## Technical Details
+## Database Changes
 
-### useDeploymentAutoReload.ts Changes
+### New Table: `sms_keywords`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | uuid | Primary key |
+| `company_id` | uuid | Foreign key to companies |
+| `keyword` | text | The trigger keyword (e.g., "menu", "facebook") |
+| `response_message` | text | Full response message with link |
+| `is_enabled` | boolean | Enable/disable this keyword |
+| `hit_count` | integer | Analytics: how many times triggered |
+| `created_at` | timestamp | When created |
+| `updated_at` | timestamp | Last modified |
+
+**Unique constraint**: One keyword per company
+
+---
+
+## Edge Function Update: `sms-handler`
+
+Modify the incoming SMS handler to:
+
+1. **Extract hashtag keywords** from the message body
+2. **Check the `sms_keywords` table** for matches
+3. **If match found**: Reply with the configured response and skip AI
+4. **If no match**: Continue with existing AI response flow
 
 ```typescript
-// Add Vite HMR reconnection handling
-useEffect(() => {
-  // Listen for vite reconnection events
-  const handleViteReconnect = () => {
-    console.log('[DeploymentAutoReload] Vite reconnected, checking for updates...');
-    // Force a check after reconnection
-    checkForUpdate();
-  };
-
-  // Vite injects this event when HMR reconnects
-  if (import.meta.hot) {
-    import.meta.hot.on('vite:ws:connect', handleViteReconnect);
+// Early in sms-handler, before AI processing:
+const hashtagMatch = messageBody.match(/#(\w+)/);
+if (hashtagMatch) {
+  const keyword = hashtagMatch[1].toLowerCase();
+  
+  const { data: keywordConfig } = await supabase
+    .from('sms_keywords')
+    .select('response_message')
+    .eq('company_id', companyId)
+    .eq('keyword', keyword)
+    .eq('is_enabled', true)
+    .single();
+  
+  if (keywordConfig) {
+    // Send instant response, skip AI
+    await sendSmsReply(integration, fromNumber, keywordConfig.response_message);
+    // Increment hit count
+    await supabase.rpc('increment_keyword_hit', { keyword_id: keywordConfig.id });
+    return;
   }
-
-  return () => {
-    if (import.meta.hot) {
-      import.meta.hot.off('vite:ws:connect', handleViteReconnect);
-    }
-  };
-}, []);
-```
-
-### PublicFooter.tsx Changes
-
-```typescript
-import { forwardRef, useState } from 'react';
-
-export const PublicFooter = forwardRef<HTMLDivElement>((_, ref) => {
-  // ... existing component logic
-  return (
-    <footer ref={ref} ...>
-      {/* existing content */}
-    </footer>
-  );
-});
-
-PublicFooter.displayName = 'PublicFooter';
+}
+// Continue to AI processing if no keyword match...
 ```
 
 ---
 
-## Files to Modify
+## Admin UI: Keyword Management
 
-| File | Change |
-|------|--------|
-| `src/hooks/useDeploymentAutoReload.ts` | Add Vite HMR reconnection handler |
-| `src/components/layout/PublicFooter.tsx` | Wrap with `forwardRef` |
+Add a new section to the SMS Integration page or create a dedicated "SMS Keywords" management page:
+
+**Features:**
+- Add/edit/delete keywords
+- Set response message with link
+- Toggle enabled/disabled
+- View hit count analytics
+- Preview how the response looks
+
+**Example Keywords to Pre-configure:**
+| Keyword | Response Message |
+|---------|------------------|
+| `menu` | "Here's our menu: https://yoursite.com/menu" |
+| `facebook` | "Follow us on Facebook: https://facebook.com/yourpage" |
+| `hours` | "We're open Mon-Fri 9am-5pm, Sat 10am-2pm" |
+| `address` | "Visit us at: 123 Main St, City, State 12345" |
+| `book` | "Book your appointment here: https://yoursite.com/book" |
 
 ---
 
-## Expected Outcome
+## Files to Create/Modify
 
-After these changes:
-- The preview will automatically refresh when Vite reconnects after losing connection
-- The React ref warning will be resolved
-- Build updates will be detected more reliably in the Lovable preview iframe
+| File | Action | Purpose |
+|------|--------|---------|
+| Database migration | Create | Add `sms_keywords` table with RLS |
+| `supabase/functions/sms-handler/index.ts` | Modify | Add keyword detection before AI |
+| `src/pages/settings/SMSKeywords.tsx` | Create | Admin UI for managing keywords |
+| `src/components/sms/KeywordForm.tsx` | Create | Form for adding/editing keywords |
+| `src/components/sms/KeywordList.tsx` | Create | List of configured keywords |
+
+---
+
+## Security (RLS Policies)
+
+- Companies can only view/edit their own keywords
+- Enable RLS on `sms_keywords` table
+- Policies tied to company_id from user's profile
+
+---
+
+## Technical Notes
+
+- Keywords are case-insensitive (converted to lowercase)
+- Only first hashtag in message triggers response
+- If customer sends `#help #menu`, only `#help` is checked
+- Empty/disabled keywords fall through to AI response
+- Hit count tracking for analytics on popular keywords
