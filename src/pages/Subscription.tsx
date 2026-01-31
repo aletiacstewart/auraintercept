@@ -180,7 +180,8 @@ const TIERS = [
 
 // Employee limits per tier
 export const TIER_EMPLOYEE_LIMITS: Record<string, number> = {
-  halo: 2,
+  express: 2,
+  halo: 3,
   core: 2,
   single_point: 5,
   multi_track: 10,

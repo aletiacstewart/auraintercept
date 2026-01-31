@@ -308,6 +308,56 @@ const guideCategories = [
           'Real-time transcription shows in console'
         ],
         tips: ['Choose a voice matching your brand personality', 'Test voice interactions before going live']
+      },
+      {
+        title: 'Knowledge Base AI Generator',
+        duration: '5 min',
+        steps: [
+          'Navigate to Knowledge Base from sidebar',
+          'Click the "AI Generate" button (sparkle icon) in the header',
+          'Select your primary industry from the dropdown',
+          'Enter your service area (city, state)',
+          'Choose a business type that matches your operation',
+          'Add a brief description of your services (optional)',
+          'Select content to generate: FAQs, Services, and/or Business Hours',
+          'Review generated content before saving',
+          'Edit any items as needed in the preview',
+          'Click "Save to Knowledge Base" to add all items'
+        ],
+        tips: ['Generated content uses industry-specific language', 'You can regenerate if results don\'t match your needs', 'Edit items after saving in their respective tabs']
+      },
+      {
+        title: 'Campaign Series Generator',
+        duration: '8 min',
+        steps: [
+          'Navigate to Campaigns from sidebar (Command tier)',
+          'Click "Batch Series" button next to New Campaign',
+          'Enter series name and select campaign type (promotional, nurture, etc.)',
+          'Choose duration: 2-8 weeks',
+          'Select communication channels: Email, SMS, or both',
+          'Set touchpoints per week (1-3 recommended)',
+          'Review the generated timeline of touchpoints',
+          'AI generates coordinated content for each touchpoint',
+          'Review and edit each message before creating',
+          'Click "Create Series" to save all campaigns'
+        ],
+        tips: ['Multi-week series improve engagement vs one-off campaigns', 'Mix Email and SMS for best results', 'Each touchpoint builds on the previous one']
+      },
+      {
+        title: 'AI Content Generation (SMS & Line Items)',
+        duration: '3 min',
+        steps: [
+          'SMS Templates: Go to Settings → SMS Templates',
+          'Click the sparkle (✨) button next to Message field',
+          'AI generates professional SMS with 160-character limit',
+          'Generated messages include proper placeholder support',
+          'Quote/Invoice Line Items: Open any Quote or Invoice form',
+          'Click the sparkle button next to line item description',
+          'AI generates professional descriptions from service names',
+          'Descriptions include industry context from your profile',
+          'Accept or regenerate until satisfied'
+        ],
+        tips: ['SMS AI respects character limits automatically', 'Line item AI uses your AI Content Profile for context', 'Works with any service name input']
       }
     ]
   },
