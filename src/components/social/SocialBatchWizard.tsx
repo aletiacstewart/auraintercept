@@ -1,13 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,13 +33,14 @@ import {
   Video,
   MapPin,
   MessageSquare,
+  X,
 } from 'lucide-react';
 import { format, addDays } from 'date-fns';
 import { TavilyStatusBadge } from '@/components/ai/TavilyStatusBadge';
 
 interface SocialBatchWizardProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  companyId: string;
+  onCancel: () => void;
   onSuccess?: () => void;
 }
 
@@ -74,8 +69,7 @@ const PLATFORM_OPTIONS = [
   { value: 'sms', label: 'SMS', icon: MessageSquare },
 ];
 
-export function SocialBatchWizard({ open, onOpenChange, onSuccess }: SocialBatchWizardProps) {
-  const { companyId } = useAuth();
+export function SocialBatchWizard({ companyId, onCancel, onSuccess }: SocialBatchWizardProps) {
   const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
   
@@ -221,7 +215,7 @@ export function SocialBatchWizard({ open, onOpenChange, onSuccess }: SocialBatch
       toast.success(`Generated ${data.generatedCount} social posts for approval!`);
       queryClient.invalidateQueries({ queryKey: ['scheduled-social-posts'] });
       onSuccess?.();
-      handleClose();
+      onCancel();
     },
     onError: (error: any) => {
       console.error('Generation error:', error);
@@ -251,15 +245,6 @@ export function SocialBatchWizard({ open, onOpenChange, onSuccess }: SocialBatch
     }
   };
 
-  const handleClose = () => {
-    setStep(1);
-    setTopics([]);
-    setBulkTopics('');
-    setGenerationProgress(0);
-    setGenerationPhase('');
-    onOpenChange(false);
-  };
-
   const getStepTitle = () => {
     switch (step) {
       case 1: return 'Schedule & Platforms';
@@ -270,24 +255,30 @@ export function SocialBatchWizard({ open, onOpenChange, onSuccess }: SocialBatch
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+    <Card className="border-border/50">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-lg">
             <Sparkles className="h-5 w-5 text-pink-500" />
-            Batch Social Media Generator
-            <span className="text-sm font-normal text-muted-foreground ml-auto">
+            Batch Posts Generator
+          </CardTitle>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-muted-foreground">
               Step {step} of 3: {getStepTitle()}
             </span>
-          </DialogTitle>
-        </DialogHeader>
+            <Button variant="ghost" size="icon" onClick={onCancel} className="h-8 w-8">
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+        <Progress value={(step / 3) * 100} className="h-1 mt-2" />
+      </CardHeader>
 
-        <Progress value={(step / 3) * 100} className="h-1" />
-
+      <CardContent>
         {/* Step 1: Schedule Settings */}
         {step === 1 && (
-          <div className="space-y-6 py-4">
-            {companyId && <TavilyStatusBadge companyId={companyId} showDisconnected />}
+          <div className="space-y-6">
+            <TavilyStatusBadge companyId={companyId} showDisconnected />
             
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -370,7 +361,7 @@ export function SocialBatchWizard({ open, onOpenChange, onSuccess }: SocialBatch
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={handleClose}>Cancel</Button>
+              <Button variant="outline" onClick={onCancel}>Cancel</Button>
               <Button onClick={handleNext} disabled={selectedPlatforms.length === 0}>
                 Configure Topics
                 <ArrowRight className="h-4 w-4 ml-2" />
@@ -381,7 +372,7 @@ export function SocialBatchWizard({ open, onOpenChange, onSuccess }: SocialBatch
 
         {/* Step 2: Topics */}
         {step === 2 && (
-          <div className="space-y-4 py-4">
+          <div className="space-y-4">
             {/* Bulk entry */}
             <div className="space-y-2">
               <Label>Bulk Topics (one per line)</Label>
@@ -473,7 +464,7 @@ export function SocialBatchWizard({ open, onOpenChange, onSuccess }: SocialBatch
                 Back
               </Button>
               <div className="flex gap-2">
-                <Button variant="outline" onClick={handleClose}>Cancel</Button>
+                <Button variant="outline" onClick={onCancel}>Cancel</Button>
                 <Button 
                   onClick={handleNext}
                   disabled={topics.filter(t => t.topic.trim()).length === 0}
@@ -514,7 +505,7 @@ export function SocialBatchWizard({ open, onOpenChange, onSuccess }: SocialBatch
             </div>
           </div>
         )}
-      </DialogContent>
-    </Dialog>
+      </CardContent>
+    </Card>
   );
 }
