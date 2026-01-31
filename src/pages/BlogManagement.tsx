@@ -15,7 +15,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Edit, Trash2, Eye, EyeOff, FileText, Sparkles, CalendarClock } from 'lucide-react';
 import { format } from 'date-fns';
-import { BlogContentWizard } from '@/components/blog/BlogContentWizard';
 import { BlogBatchWizard } from '@/components/blog/BlogBatchWizard';
 import { BlogScheduleQueue } from '@/components/blog/BlogScheduleQueue';
 import { AIContentButton } from '@/components/ai/AIContentButton';
@@ -42,7 +41,6 @@ export default function BlogManagement() {
   
   const [activeTab, setActiveTab] = useState('posts');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [isBatchWizardOpen, setIsBatchWizardOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [formData, setFormData] = useState({
@@ -53,19 +51,6 @@ export default function BlogManagement() {
     featured_image_url: '',
     published: false,
   });
-
-  const handleWizardSuccess = (data: { title: string; slug: string; excerpt: string; content: string }) => {
-    setFormData({
-      title: data.title,
-      slug: data.slug,
-      excerpt: data.excerpt,
-      content: data.content,
-      featured_image_url: '',
-      published: false,
-    });
-    setEditingPost(null);
-    setIsDialogOpen(true);
-  };
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ['blog-posts-admin'],
@@ -195,10 +180,6 @@ export default function BlogManagement() {
           <div className="flex gap-2">
             {activeTab === 'posts' && (
               <>
-                <Button variant="outline" onClick={() => setIsWizardOpen(true)}>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  AI Generate
-                </Button>
                 <Button variant="outline" onClick={() => setIsBatchWizardOpen(true)}>
                   <Sparkles className="mr-2 h-4 w-4" />
                   Batch Posts
@@ -332,12 +313,6 @@ export default function BlogManagement() {
             )}
           </div>
         </div>
-
-        <BlogContentWizard
-          open={isWizardOpen}
-          onOpenChange={setIsWizardOpen}
-          onSuccess={handleWizardSuccess}
-        />
 
         <BlogBatchWizard
           open={isBatchWizardOpen}
