@@ -1120,6 +1120,17 @@ export default function Index() {
 
               <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
                 <div className="flex items-center gap-2 mb-2">
+                  <Shield className="w-4 h-4 text-cyan-400" />
+                  <span className="font-semibold text-sm text-white">A2P 10DLC Compliance</span>
+                </div>
+                <p className="text-xs text-white/70 mb-2">US SMS Carrier Registration (Twilio)</p>
+                <p className="text-xs text-white/90 font-medium">One-time: $4 Brand + $15 Campaign</p>
+                <p className="text-xs text-white/70">Monthly: $10/campaign • Surcharge: ~$0.003/SMS</p>
+                <p className="text-xs text-white/60 mt-1">Required for: All SMS features • Prevents carrier filtering</p>
+              </div>
+
+              <div className="rounded-lg p-4 dark-card-surface" style={{ backgroundColor: '#2a3d4e' }}>
+                <div className="flex items-center gap-2 mb-2">
                   <DollarSign className="w-4 h-4 text-amber-400" />
                   <span className="font-semibold text-sm text-white">Stripe (Your Account)</span>
                 </div>
