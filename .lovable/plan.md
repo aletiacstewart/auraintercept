@@ -1,279 +1,207 @@
 
-# Comprehensive AI Automation Implementation Plan
 
-## Overview
-This plan implements four AI automation features across the platform to streamline content creation for companies, employees, and their customers.
+# Platform-Wide Audit: Updates & Enhancements Required
 
----
-
-## Feature 1: Add AI to SMS Templates
-
-### Summary
-Add AI content generation buttons to the SMS Templates Editor, mirroring the existing Email Templates implementation.
-
-### Files to Modify
-| File | Change |
-|------|--------|
-| `src/components/settings/SmsTemplatesEditor.tsx` | Add AIContentButton import and integrate into message field |
-| `src/components/ai/AIContentButton.tsx` | Add new content type `sms_message` |
-| `supabase/functions/generate-website-content/index.ts` | Add SMS-specific prompt configuration |
-
-### Implementation Details
-1. Import `AIContentButton` into SmsTemplatesEditor
-2. Add sparkle button next to the "Message" label (line 259)
-3. Add new `sms_message` content type with character limit awareness (160 chars)
-4. Include template type context (confirmation, cancellation, reminder) in generation
-
-### UI Placement
-```
-┌─────────────────────────────────────────┐
-│ Message                    [AI Sparkle] │
-│ ┌─────────────────────────────────────┐ │
-│ │ SMS message textarea...             │ │
-│ └─────────────────────────────────────┘ │
-│ 145/160 characters                      │
-└─────────────────────────────────────────┘
-```
+## Executive Summary
+This audit identified **12 critical issues** across pricing, documentation, agent configuration, and feature naming that need immediate attention to ensure platform consistency.
 
 ---
 
-## Feature 2: Knowledge Base AI Generator
+## Critical Issues Found
 
-### Summary
-Create a multi-step wizard that generates foundational knowledge base content (FAQs, services, business hours) from minimal company input.
+### 1. PRICING INCONSISTENCIES (HIGH PRIORITY)
 
-### New Files to Create
-| File | Purpose |
+| Location | Current (Wrong) | Correct Value |
+|----------|-----------------|---------------|
+| `landing-chat/index.ts` | Single-Point $497/mo | $1,500/mo |
+| `landing-chat/index.ts` | Multi-Track $897/mo | $3,997/mo |
+| `trial-reminders/index.ts` | "Starting at $497/month" | "Starting at $197/month" |
+| `subscriptionAgentConfig.ts` | Single-Point $497/mo | $1,500/mo |
+| `subscriptionAgentConfig.ts` | Multi-Track $897/mo | $3,997/mo |
+
+**Files to Update:**
+- `supabase/functions/landing-chat/index.ts` (lines 17-18)
+- `supabase/functions/trial-reminders/index.ts` (lines 264, 308)
+- `src/lib/subscriptionAgentConfig.ts` (lines 52, 64)
+
+---
+
+### 2. EMPLOYEE COUNT INCONSISTENCIES
+
+| Tier | documentationConfig.ts | Subscription.tsx | Correct |
+|------|------------------------|------------------|---------|
+| Halo | 3 employees | 2 employees | 3 employees |
+
+**Files to Update:**
+- `src/pages/Subscription.tsx` - `TIER_EMPLOYEE_LIMITS` (line 187)
+
+---
+
+### 3. AGENT NAMING DISCREPANCIES
+
+The landing page `Index.tsx` Marketing section lists different agents than `documentationConfig.ts`:
+
+| Index.tsx | documentationConfig.ts | Resolution |
+|-----------|----------------------|------------|
+| Lead Agent | Campaign Agent | Keep both - Lead Agent exists |
+| Promo Agent | Marketing Agent | Standardize to Marketing Agent per memory |
+| Campaign Agent | - | Already present |
+
+**Recommendation:** Update `documentationConfig.ts` to include all 3 Marketing agents (Campaign, Lead/Marketing, Promo) to match the Index.tsx definitions.
+
+---
+
+### 4. MISSING TIER INFORMATION IN LANDING CHAT
+
+The `landing-chat/index.ts` system prompt is missing:
+- Aura Express ($197/mo) - Restaurants tier
+- Aura Halo ($397/mo) - Salons/Wellness tier
+- Aura Core ($500/mo) - AI-Assisted tools tier
+
+**File to Update:**
+- `supabase/functions/landing-chat/index.ts` - Add all 6 tiers to pricing section
+
+---
+
+### 5. NEW FEATURES NOT DOCUMENTED
+
+Recently added AI automation features need documentation:
+- **Knowledge Base AI Generator** (just added)
+- **Campaign Series Generator** (just added)
+- **SMS Template AI Generation** (just added)
+- **Quote/Invoice Line Item AI** (just added)
+
+**Files to Update:**
+- `src/pages/Help.tsx` - Add new feature documentation
+- `src/pages/PlatformGuides.tsx` - Add guides for new AI generators
+
+---
+
+## Files Requiring Updates
+
+### Edge Functions (Deploy Required)
+
+| File | Changes |
 |------|---------|
-| `src/components/knowledge/KnowledgeBaseWizard.tsx` | Main wizard component with 3 steps |
-| `supabase/functions/generate-knowledge-base/index.ts` | Edge function for batch KB generation |
+| `supabase/functions/landing-chat/index.ts` | Update all pricing, add Express/Halo/Core tiers |
+| `supabase/functions/trial-reminders/index.ts` | Update CTA pricing from $497 to $197 |
 
-### Files to Modify
-| File | Change |
-|------|--------|
-| `src/pages/KnowledgeBase.tsx` | Add "AI Generate" button in header |
+### Frontend Configuration
 
-### Wizard Steps
-1. **Business Info** - Industry, service area, business type
-2. **Content Selection** - Choose what to generate (FAQs, Services, Hours)
-3. **Review & Confirm** - Preview generated items before saving
-
-### Database Operations
-- Batch insert into `faqs` table
-- Batch insert into `services` table  
-- Upsert into `business_hours` table
-
-### UI Flow
-```
-Step 1: Business Context
-┌─────────────────────────────────────────┐
-│ [Sparkles] Knowledge Base Generator     │
-│ Step 1 of 3: Business Information       │
-├─────────────────────────────────────────┤
-│ Primary Industry: [Select dropdown]     │
-│ Service Area: [Input - e.g., Miami, FL] │
-│ Business Type: [Select]                 │
-│ Brief Description: [Textarea]           │
-│                                         │
-│           [Cancel]  [Next: Select →]    │
-└─────────────────────────────────────────┘
-
-Step 2: Content Selection
-┌─────────────────────────────────────────┐
-│ What would you like to generate?        │
-├─────────────────────────────────────────┤
-│ ☑ FAQs (10-15 common questions)         │
-│ ☑ Services (5-8 typical services)       │
-│ ☑ Business Hours (standard schedule)    │
-│                                         │
-│         [Back]  [Generate Content →]    │
-└─────────────────────────────────────────┘
-
-Step 3: Review
-┌─────────────────────────────────────────┐
-│ Generated Content Preview               │
-├─────────────────────────────────────────┤
-│ FAQs (12 items)           [Edit] [✓]    │
-│ Services (6 items)        [Edit] [✓]    │
-│ Business Hours            [Edit] [✓]    │
-│                                         │
-│         [Back]  [Save to Knowledge Base]│
-└─────────────────────────────────────────┘
-```
-
----
-
-## Feature 3: AI Line Item Suggestions for Quotes/Invoices
-
-### Summary
-Add AI-powered line item description generation that creates professional descriptions based on selected services or manual input.
-
-### Files to Modify
-| File | Change |
+| File | Changes |
 |------|---------|
-| `src/components/billing/forms/BusinessQuoteForm.tsx` | Add AI button next to line item description field |
-| `src/components/billing/forms/InvoiceForm.tsx` | Add AI button next to line item description field |
-| `src/components/ai/AIContentButton.tsx` | Add `line_item_description` content type |
-| `supabase/functions/generate-website-content/index.ts` | Add line item prompt |
+| `src/lib/subscriptionAgentConfig.ts` | Update Single-Point to $1,500, Multi-Track to $3,997 |
+| `src/lib/documentationConfig.ts` | Verify agent counts match, update Marketing agents |
+| `src/lib/helpContentConfig.ts` | Add new AI generation features |
 
-### Implementation Details
-1. Add small AI sparkle button next to each line item description input
-2. When clicked, generate professional description based on:
-   - Service name (if linked to a service)
-   - Industry context from AI Content Profile
-   - Standard billing language best practices
+### Pages
 
-### UI Placement (BusinessQuoteForm line ~328)
-```
-┌─────────────────────────────────────────────────────────┐
-│ Description          Qty    Price    Total              │
-│ ┌────────────────┐ ┌───┐ ┌──────┐ ┌──────┐            │
-│ │ AC Repair...  [✨]│ │ 1 │ │ $150 │ │ $150 │ [X]      │
-│ └────────────────┘ └───┘ └──────┘ └──────┘            │
-└─────────────────────────────────────────────────────────┘
-```
-
-### AI Prompt Logic
-- Input: Service name + company industry
-- Output: Professional 1-2 sentence description
-- Example: "AC Repair" → "Comprehensive air conditioning diagnostic and repair service including system inspection, refrigerant check, and component repair as needed."
-
----
-
-## Feature 4: Campaign Series Generator
-
-### Summary
-Create a batch wizard that generates coordinated multi-touch marketing campaigns spanning multiple weeks with both Email and SMS touchpoints.
-
-### New Files to Create
-| File | Purpose |
+| File | Changes |
 |------|---------|
-| `src/components/marketing/CampaignSeriesWizard.tsx` | Main wizard component |
-| `supabase/functions/generate-campaign-series/index.ts` | Edge function for series generation |
-
-### Files to Modify
-| File | Change |
-|------|--------|
-| `src/pages/Campaigns.tsx` | Add "Batch Series" button next to "New Campaign" |
-
-### Wizard Steps
-1. **Series Configuration** - Name, duration (2-8 weeks), campaign type
-2. **Channel Selection** - Email, SMS, or both
-3. **Touchpoint Scheduling** - Frequency and timing of messages
-4. **Review & Generate** - Preview all campaign touchpoints
-
-### Campaign Series Structure
-```
-Week 1: Introduction Email + Welcome SMS
-Week 2: Value Proposition Email
-Week 3: Testimonial/Social Proof Email + Reminder SMS
-Week 4: Limited Offer Email + Urgency SMS
-```
-
-### Database Operations
-- Create multiple entries in `marketing_campaigns` table
-- Link them via a `series_id` field (may need migration)
-- Each touchpoint has scheduled_date, channel, and content
-
-### UI Flow
-```
-Step 1: Series Setup
-┌─────────────────────────────────────────┐
-│ [Sparkles] Campaign Series Generator    │
-│ Step 1 of 4: Series Configuration       │
-├─────────────────────────────────────────┤
-│ Series Name: [Input]                    │
-│ Campaign Type: [promotional ▼]          │
-│ Duration: [4 weeks ▼]                   │
-│ Target Segment: [all customers ▼]       │
-│                                         │
-│           [Cancel]  [Configure →]       │
-└─────────────────────────────────────────┘
-
-Step 2: Channels
-┌─────────────────────────────────────────┐
-│ Select Communication Channels           │
-├─────────────────────────────────────────┤
-│ ☑ Email - Primary messaging             │
-│ ☑ SMS - Quick reminders & urgency       │
-│                                         │
-│ Touchpoints per week: [2 ▼]             │
-│                                         │
-│           [Back]  [Schedule →]          │
-└─────────────────────────────────────────┘
-
-Step 3: Schedule Preview
-┌─────────────────────────────────────────┐
-│ Campaign Timeline                       │
-├─────────────────────────────────────────┤
-│ Week 1                                  │
-│   📧 Day 1: Welcome Email               │
-│   💬 Day 3: Follow-up SMS               │
-│ Week 2                                  │
-│   📧 Day 8: Value Proposition           │
-│ Week 3                                  │
-│   📧 Day 15: Social Proof               │
-│   💬 Day 17: Reminder SMS               │
-│ Week 4                                  │
-│   📧 Day 22: Final Offer                │
-│   💬 Day 24: Urgency SMS                │
-│                                         │
-│           [Back]  [Generate Content →]  │
-└─────────────────────────────────────────┘
-
-Step 4: Review Generated Content
-┌─────────────────────────────────────────┐
-│ Review & Save                           │
-├─────────────────────────────────────────┤
-│ [Generating 8 touchpoints...]           │
-│ ✓ Week 1 Email: "Welcome to..."         │
-│ ✓ Week 1 SMS: "Thanks for..."           │
-│ ✓ Week 2 Email: "Did you know..."       │
-│ ... (expandable preview)                │
-│                                         │
-│           [Back]  [Create Series]       │
-└─────────────────────────────────────────┘
-```
+| `src/pages/Subscription.tsx` | Fix Halo employee limit (2 to 3) |
+| `src/pages/Help.tsx` | Add documentation for new AI generators |
+| `src/pages/PlatformGuides.tsx` | Add guides for Knowledge Base AI, Campaign Series |
 
 ---
 
-## Database Changes Required
+## Detailed Changes
 
-### New Column for Campaign Series
-```sql
-ALTER TABLE marketing_campaigns 
-ADD COLUMN series_id UUID REFERENCES marketing_campaigns(id),
-ADD COLUMN series_order INTEGER,
-ADD COLUMN scheduled_send_date TIMESTAMPTZ;
+### 1. Update `landing-chat/index.ts` System Prompt
+
 ```
+Pricing Tiers (6 Total):
+- Aura Express ($197/mo): AI Voice & Chat for restaurants, smart link sharing, 2 employees
+- Aura Halo ($397/mo): 4 AI operatives for salons/wellness, Customer Portal, 3 employees
+- Aura Core ($500/mo): AI-assisted tools only (no automation), Social Media Signal, Web Presence, 2 employees
+- Single-Point ($1,500/mo): 3 AI operatives, 1 console, lead intake & reputation, 5 employees
+- Multi-Track ($3,997/mo): 10 AI operatives, 2 consoles, field operations + booking, 10 employees
+- Pro Command ($5,997/mo): All 23 AI operatives, 7 consoles, enterprise automation, 25 employees
+```
+
+### 2. Update `subscriptionAgentConfig.ts` Prices
+
+```typescript
+single_point: {
+  // ...
+  label: 'Single-Point',
+  price: '$1,500/mo',  // Was $497/mo
+  // ...
+},
+multi_track: {
+  // ...
+  label: 'Multi-Track',
+  price: '$3,997/mo',  // Was $897/mo
+  // ...
+},
+```
+
+### 3. Update `Subscription.tsx` Employee Limits
+
+```typescript
+export const TIER_EMPLOYEE_LIMITS: Record<string, number> = {
+  halo: 3,  // Was 2
+  core: 2,
+  single_point: 5,
+  multi_track: 10,
+  command: 25,
+};
+```
+
+### 4. Update `trial-reminders/index.ts` CTA
+
+Change "Starting at $497/month" to "Starting at $197/month" (Aura Express is now lowest tier)
 
 ---
 
-## Edge Functions to Create
+## Recommended Enhancements
 
-### 1. generate-knowledge-base
-- Input: industry, service_area, business_type, content_types[]
-- Output: { faqs: [], services: [], business_hours: {} }
-- Uses tool calling for structured output
+### A. Help Page Updates
+Add new sections for:
+1. **AI Content Generation** - SMS templates, quote/invoice line items
+2. **Knowledge Base AI Generator** - How to batch-generate FAQs, services, hours
+3. **Campaign Series Generator** - Multi-week coordinated email/SMS campaigns
 
-### 2. generate-campaign-series  
-- Input: series_config, touchpoint_schedule, company_context
-- Output: Array of campaign objects with generated content
-- Leverages Tavily for industry trends if connected
+### B. Platform Guides Updates
+Add new guides:
+1. "Using AI to Generate Knowledge Base Content" (5 min)
+2. "Creating Multi-Week Campaign Series" (8 min)
+3. "AI-Powered Line Item Descriptions" (3 min)
+
+### C. Landing Page Chat Enhancement
+Update the landing page chat AI to know about:
+- New AI generation capabilities
+- All 6 subscription tiers with accurate pricing
+- Industry-specific packages (Express for restaurants, Halo for salons)
 
 ---
 
 ## Implementation Order
-1. **SMS Templates AI** (smallest scope, establishes pattern)
-2. **Quote/Invoice Line Items AI** (adds value to existing forms)
-3. **Knowledge Base Generator** (new wizard, high impact)
-4. **Campaign Series Generator** (largest scope, requires migration)
+
+1. **Phase 1: Critical Pricing Fixes** (Immediate)
+   - Update `landing-chat/index.ts`
+   - Update `trial-reminders/index.ts`
+   - Update `subscriptionAgentConfig.ts`
+   - Update `Subscription.tsx` employee limits
+
+2. **Phase 2: Documentation Updates** (Next)
+   - Update `Help.tsx` with new features
+   - Update `PlatformGuides.tsx` with new guides
+   - Verify `documentationConfig.ts` agent consistency
+
+3. **Phase 3: Edge Function Deployment**
+   - Deploy updated `landing-chat`
+   - Deploy updated `trial-reminders`
 
 ---
 
-## Technical Notes
-- All AI generation uses existing `generate-website-content` pattern
-- New content types extend the CONTENT_PROMPTS object
-- Wizards follow SocialBatchWizard inline card pattern
-- Tool calling used for structured JSON output in batch generators
-- Rate limit (429) and credit exhaustion (402) errors handled consistently
+## Summary Table
+
+| Category | Issues Found | Priority |
+|----------|--------------|----------|
+| Pricing Inconsistencies | 5 locations | Critical |
+| Employee Count Mismatch | 1 location | High |
+| Agent Naming | 2 locations | Medium |
+| Missing Tier Info | 1 location | Medium |
+| Missing Feature Docs | 4 features | Medium |
+| **Total** | **13 items** | - |
+
