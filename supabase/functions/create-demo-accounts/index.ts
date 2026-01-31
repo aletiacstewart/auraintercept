@@ -67,6 +67,8 @@ Deno.serve(async (req) => {
       { email: 'customersolo@demo.com', name: 'Solo Demo Customer', role: 'customer', companyId: companies.solo },
       { email: 'customermulti@demo.com', name: 'Multi Demo Customer', role: 'customer', companyId: companies.multi },
       { email: 'customercmd@demo.com', name: 'Command Demo Customer', role: 'customer', companyId: companies.cmd },
+      { email: 'customerxprs@demo.com', name: 'Express Demo Customer', role: 'customer', companyId: companies.xprs },
+      { email: 'customerhalo@demo.com', name: 'Halo Demo Customer', role: 'customer', companyId: companies.halo },
     ];
 
     for (const account of accounts) {
