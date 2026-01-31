@@ -43,6 +43,9 @@ import {
   Facebook,
   Linkedin,
   Twitter,
+  Video,
+  MapPin,
+  MessageSquare,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
@@ -83,6 +86,9 @@ const PLATFORM_ICONS: Record<string, React.ComponentType<any>> = {
   facebook: Facebook,
   linkedin: Linkedin,
   twitter: Twitter,
+  tiktok: Video,
+  google_business: MapPin,
+  sms: MessageSquare,
 };
 
 const PLATFORM_LIMITS: Record<string, number> = {
@@ -90,6 +96,9 @@ const PLATFORM_LIMITS: Record<string, number> = {
   facebook: 63206,
   linkedin: 3000,
   twitter: 280,
+  tiktok: 2200,
+  google_business: 1500,
+  sms: 160,
 };
 
 interface SocialScheduleQueueProps {
@@ -303,7 +312,7 @@ export function SocialScheduleQueue({ companyId: propCompanyId, onClose }: Socia
       {/* Header with close button */}
       {onClose && (
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Schedule Queue</h2>
+          <h2 className="text-xl font-semibold">Scheduled Posts</h2>
           <Button variant="outline" size="sm" onClick={onClose}>
             Back to Home
           </Button>
@@ -383,7 +392,7 @@ export function SocialScheduleQueue({ companyId: propCompanyId, onClose }: Socia
             <CalendarIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No Scheduled Posts</h3>
             <p className="text-muted-foreground">
-              Use the Batch Generator to create scheduled social posts.
+              Use Single Post or Batch Posts to create scheduled content.
             </p>
           </CardContent>
         </Card>
@@ -396,6 +405,9 @@ export function SocialScheduleQueue({ companyId: propCompanyId, onClose }: Socia
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
                       {getStatusBadge(post.status)}
+                      <Badge variant="outline" className={`text-xs ${post.batch_id ? 'border-pink-500/30 bg-pink-500/10 text-pink-600' : 'border-blue-500/30 bg-blue-500/10 text-blue-600'}`}>
+                        {post.batch_id ? 'Batch' : 'Single'}
+                      </Badge>
                       {post.ai_research_used && (
                         <Badge variant="outline" className="text-xs">
                           <Search className="h-3 w-3 mr-1" />

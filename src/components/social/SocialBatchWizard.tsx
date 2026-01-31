@@ -36,7 +36,9 @@ import {
   Instagram,
   Facebook,
   Linkedin,
-  Twitter,
+  Video,
+  MapPin,
+  MessageSquare,
 } from 'lucide-react';
 import { format, addDays } from 'date-fns';
 import { TavilyStatusBadge } from '@/components/ai/TavilyStatusBadge';
@@ -67,7 +69,9 @@ const PLATFORM_OPTIONS = [
   { value: 'instagram', label: 'Instagram', icon: Instagram },
   { value: 'facebook', label: 'Facebook', icon: Facebook },
   { value: 'linkedin', label: 'LinkedIn', icon: Linkedin },
-  { value: 'twitter', label: 'Twitter/X', icon: Twitter },
+  { value: 'tiktok', label: 'TikTok', icon: Video },
+  { value: 'google_business', label: 'Google Business', icon: MapPin },
+  { value: 'sms', label: 'SMS', icon: MessageSquare },
 ];
 
 export function SocialBatchWizard({ open, onOpenChange, onSuccess }: SocialBatchWizardProps) {
@@ -79,7 +83,7 @@ export function SocialBatchWizard({ open, onOpenChange, onSuccess }: SocialBatch
   const [frequency, setFrequency] = useState('twice_weekly');
   const [startDate, setStartDate] = useState<Date>(addDays(new Date(), 1));
   const [postCount, setPostCount] = useState('6');
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['instagram', 'facebook', 'linkedin']);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['instagram', 'facebook']);
   
   // Step 2: Topics
   const [topics, setTopics] = useState<TopicEntry[]>([]);
