@@ -41,6 +41,7 @@ const AGENT_INFO: Record<string, { name: string; description: string; icon: stri
 const TIER_COLORS: Record<SubscriptionTier, string> = {
   free: 'bg-slate-600',
   express: 'bg-amber-500',
+  aura_flow: 'bg-cyan-500',
   core: 'bg-emerald-600',
   halo: 'bg-rose-500',
   single_point: 'bg-amber-600',
@@ -51,6 +52,7 @@ const TIER_COLORS: Record<SubscriptionTier, string> = {
 const TIER_PRICES: Record<SubscriptionTier, number> = {
   free: 0,
   express: 197,
+  aura_flow: 297,
   core: 500,
   halo: 397,
   single_point: 1500,
@@ -116,6 +118,7 @@ const AgentRequirementCalculator: React.FC = () => {
     const grouped: Record<SubscriptionTier, string[]> = {
       free: [],
       express: [],
+      aura_flow: [],
       core: [],
       halo: [],
       single_point: [],

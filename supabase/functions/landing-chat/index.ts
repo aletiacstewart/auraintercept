@@ -13,8 +13,9 @@ About Aura Intercept:
 - Key features include: AI-powered scheduling, automated reminders via SMS/email/voice, customer portal, technician dispatch, quote generation, inventory management, Social Media Signal content, and business analytics
 - The platform offers 24/7 AI automation for handling customer inquiries, booking appointments, and managing operations
 
-Pricing Tiers (6 Total):
+Pricing Tiers (7 Total):
 - Aura Express ($197/mo): AI Voice & Chat for restaurants, smart link sharing to menu/ordering/website, 2 employees. Requires ElevenLabs + Twilio.
+- Aura Flow ($297/mo): AI voice, chat, and scheduling with direct calendar sync. Includes AI Receptionist, Scheduling Agent, Follow-up Agent. No customer portal - books directly to calendar. 2 employees. Great for service businesses needing automated booking.
 - Aura Halo ($397/mo): 4 AI operatives (Receptionist, Scheduling, Follow-up) for salons/wellness, Customer Portal Console, 3 employees. Ideal for nail salons, hair salons, spas.
 - Aura Core ($500/mo): AI-assisted tools only (no automation), Message Aura (Text), Social Media Signal, Web Presence, 2 employees. No external dependencies required.
 - Single-Point ($1,500/mo): 3 AI operatives (Receptionist, Follow-up, Review), 1 console (Customer Portal), Talk to Aura Voice + Calling, 5 employees. Saves 10+ hours/week in lead intake.
@@ -25,7 +26,7 @@ Pricing Tiers (6 Total):
 
 Communication Channels:
 - Message Aura (Text): Keyboard-based chat available on ALL tiers including Core. No external dependencies required.
-- Talk to Aura (Voice): Speech-based AI via microphone/speakers. Available on Express, Halo, Single-Point, Multi-Track, and Command. Requires ElevenLabs.
+- Talk to Aura (Voice): Speech-based AI via microphone/speakers. Available on Express, Aura Flow, Halo, Single-Point, Multi-Track, and Command. Requires ElevenLabs.
 - AI Receptionist answers inbound Proxy Voice Chat calls, SMS, and Talk to Aura conversations
 - Follow-up Agent sends reminders via email, SMS, and voice calls
 - ETA Agent and Campaign Agent send SMS and email notifications

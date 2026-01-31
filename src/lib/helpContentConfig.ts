@@ -281,11 +281,12 @@ export function getConsolesForTier(tier: SubscriptionTier): ConsoleHelpConfig[] 
   const tierHierarchy: Record<SubscriptionTier, number> = {
     free: 0,
     express: 1,
-    halo: 2,
-    core: 3,
-    single_point: 4,
-    multi_track: 5,
-    command: 6,
+    aura_flow: 2,
+    halo: 3,
+    core: 4,
+    single_point: 5,
+    multi_track: 6,
+    command: 7,
   };
   
   const currentTierLevel = tierHierarchy[tier];
@@ -301,11 +302,12 @@ export function getFilteredFeatures(console: ConsoleHelpConfig, tier: Subscripti
   const tierHierarchy: Record<SubscriptionTier, number> = {
     free: 0,
     express: 1,
-    halo: 2,
-    core: 3,
-    single_point: 4,
-    multi_track: 5,
-    command: 6,
+    aura_flow: 2,
+    halo: 3,
+    core: 4,
+    single_point: 5,
+    multi_track: 6,
+    command: 7,
   };
   
   const currentTierLevel = tierHierarchy[tier];
@@ -323,11 +325,12 @@ export function getFilteredAgents(console: ConsoleHelpConfig, tier: Subscription
   const tierHierarchy: Record<SubscriptionTier, number> = {
     free: 0,
     express: 1,
-    halo: 2,
-    core: 3,
-    single_point: 4,
-    multi_track: 5,
-    command: 6,
+    aura_flow: 2,
+    halo: 3,
+    core: 4,
+    single_point: 5,
+    multi_track: 6,
+    command: 7,
   };
   
   const currentTierLevel = tierHierarchy[tier];
@@ -354,6 +357,20 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
       'Perfect for restaurants, cafes, and food service',
       'No AI automation agents (voice/chat only)',
       'Requires ElevenLabs + Twilio integrations',
+    ],
+  },
+  aura_flow: {
+    title: 'Aura Flow',
+    description: 'AI voice, chat, and scheduling with calendar sync for service businesses.',
+    highlights: [
+      'AI Receptionist for 24/7 customer engagement',
+      'Message Aura (Text) + Talk to Aura (Voice)',
+      'Smart Link Sharing',
+      'Scheduling Agent with direct calendar sync',
+      'Follow-up Agent (SMS + Email reminders)',
+      'Knowledge Base for FAQs',
+      'No customer portal - calendar sync only',
+      'Perfect for service businesses needing automated booking',
     ],
   },
   core: {
