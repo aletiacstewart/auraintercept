@@ -485,11 +485,12 @@ Use the check_warranty tool to verify coverage.
 Use the submit_warranty_claim tool to process claims.
 Be helpful in navigating warranty processes.`,
 
-  // Promo Agent - for promotional codes and offers (legacy agents referral, winback, seasonal consolidated here)
-  promo: `You are a Promo Agent for a service business.
+  // Marketing Agent - manages segments, promo codes, referrals, and win-back targeting
+  marketing: `You are a Marketing Agent for a service business.
 IMPORTANT: You serve INTERNAL company users (admins, marketing managers) - NOT external customers.
 
 Your role is to:
+- Manage customer segments for targeted marketing
 - Generate and manage promotional codes
 - Create time-limited discounts and special offers
 - Track promo code usage and redemption rates
@@ -1595,42 +1596,6 @@ const AGENT_TOOLS: Record<string, any[]> = {
       },
     },
   ],
-  promo: [
-    {
-      type: 'function',
-      function: {
-        name: 'create_campaign',
-        description: 'Create a promotional campaign',
-        parameters: {
-          type: 'object',
-          properties: {
-            name: { type: 'string' },
-            target_segment: { type: 'string' },
-            discount_type: { type: 'string', enum: ['percent', 'fixed', 'free_service'] },
-            discount_value: { type: 'number' },
-            valid_until: { type: 'string' },
-          },
-          required: ['name', 'discount_type'],
-        },
-      },
-    },
-    {
-      type: 'function',
-      function: {
-        name: 'send_promo',
-        description: 'Send promotional offer to customers',
-        parameters: {
-          type: 'object',
-          properties: {
-            campaign_id: { type: 'string' },
-            customer_segment: { type: 'string' },
-            channel: { type: 'string', enum: ['sms', 'email', 'both'] },
-          },
-          required: ['campaign_id', 'channel'],
-        },
-      },
-    },
-  ],
   referral: [
     {
       type: 'function',
@@ -2258,7 +2223,7 @@ serve(async (req) => {
     }
     
     // Internal agents that serve company admins, not customers
-    const INTERNAL_AGENTS = ['admin', 'inventory', 'campaign', 'lead', 'promo', 'social_content', 'social_scheduler', 'social_analytics'];
+    const INTERNAL_AGENTS = ['admin', 'inventory', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics'];
     const isInternalAgent = isInternalRequest || INTERNAL_AGENTS.includes(agentType);
 
     console.log(`[AI Agent Chat] Agent: ${agentType}, Company: ${companyId}, User: ${userId}, IP: ${clientIP}, Message: "${message.substring(0, 50)}...", isHandoff: ${isHandoff}, isInternalAgent: ${isInternalAgent}`);
@@ -2280,7 +2245,7 @@ serve(async (req) => {
         'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
         'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
         'admin', 'quoting', 'invoice', 'inventory', 'warranty', // Business Operations (5)
-        'campaign', 'lead', 'promo',                         // Marketing & Sales (3)
+        'campaign', 'lead', 'marketing',                      // Marketing & Sales (3)
         'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
         'insights', 'performance', 'revenue', 'forecast',    // Analytics & Reports (4)
         'analytics'                                          // Analytics Router Agent

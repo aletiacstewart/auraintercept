@@ -354,11 +354,11 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     isCore: false,
     worksAlone: true,
   },
-  // Marketing & Sales Console - 2 agents
+  // Marketing & Sales Console - 3 agents
   {
     id: 'campaign',
     name: 'Campaign Agent',
-    description: 'Creates and manages marketing campaigns. Handles email and SMS campaigns with scheduling and analytics.',
+    description: 'Creates and sends email/SMS campaigns. Manages campaign scheduling and performance analytics.',
     console: 'marketing_sales',
     tier: 'command',
     dependencies: [],
@@ -366,9 +366,19 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     worksAlone: true,
   },
   {
+    id: 'lead',
+    name: 'Lead Agent',
+    description: 'Qualifies and scores incoming leads based on engagement. Automates follow-up sequences to move leads through the pipeline.',
+    console: 'marketing_sales',
+    tier: 'command',
+    dependencies: [],
+    isCore: false,
+    worksAlone: true,
+  },
+  {
     id: 'marketing',
     name: 'Marketing Agent',
-    description: 'Manages customer segments, promo codes, referral programs, and win-back automation for inactive customers.',
+    description: 'Manages customer segments, promo codes, referral tracking, and win-back targeting for inactive customers.',
     console: 'marketing_sales',
     tier: 'command',
     dependencies: [],
