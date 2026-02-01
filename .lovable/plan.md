@@ -1,68 +1,173 @@
 
-# Platform Consistency Audit: Comprehensive Update Plan
+# Comprehensive Platform Consistency Audit
 
-## Executive Summary
-After auditing the entire platform including dashboards, consoles, audit system, export docs, guides, and signup pages, I identified **15+ critical inconsistencies** related to the new 7-tier subscription structure (including Aura Flow). The primary issues are outdated tier counts, missing Aura Flow from key configurations, and outdated documentation.
-
----
-
-## Critical Issues Found
-
-### 1. Auth.tsx - Company Signup Page (HIGH PRIORITY)
-**Location**: `src/pages/Auth.tsx` (Lines 52, 700-876)
-**Issue**: Company signup only displays 3 tiers (Single-Point, Multi-Track, Command)
-**Missing Tiers**: 
-- Aura Express ($197)
-- Aura Flow ($297) 
-- Aura Halo ($397)
-- Aura Core ($500)
-
-**Impact**: New companies cannot see or select the lower-priced tiers during registration
+## Summary of Issues Found
+I identified **25+ inconsistencies** across the platform involving naming conventions, agent counts, tier configurations, and outdated references.
 
 ---
 
-### 2. documentationConfig.ts - Tier Count & Hierarchy (HIGH PRIORITY)
-**Location**: `src/lib/documentationConfig.ts`
+## Critical Issues
 
-| Line | Current Value | Should Be |
-|------|--------------|-----------|
-| 8 | "5-TIER STRUCTURE" | "7-TIER STRUCTURE" |
-| 607 | `totalTiers: 6` | `totalTiers: 7` |
-| 649-657 | tierHierarchy missing aura_flow | Add aura_flow: 2 |
-| 668-676 | tierHierarchy missing aura_flow | Add aura_flow: 2 |
+### 1. Agent Naming Inconsistencies (HIGH PRIORITY)
 
----
+| Agent ID | Should Be (Per Memory) | Found Variations |
+|----------|------------------------|------------------|
+| `marketing` | Marketing Agent | "Promo Agent" (Index.tsx line 122-126, subscriptionAgentConfig.ts line 86) |
+| `social_content` | Social Media Signal Agent | "Social Content Agent" (AgentTestConsole, useAIAgentOrchestrator), "Signal Creator" (TierComparisonCards) |
+| `social_scheduler` | Signal Scheduler | "Social Scheduler Agent" (useAIAgentOrchestrator) |
+| `social_analytics` | Signal Analytics | "Social Analytics Agent" (useAIAgentOrchestrator) |
 
-### 3. PricingSummaryPDF.tsx - PDF Export (MEDIUM PRIORITY)
-**Location**: `src/components/documentation/PricingSummaryPDF.tsx`
-
-| Line | Current Value | Should Be |
-|------|--------------|-----------|
-| 466 | "6-Tier Pricing Breakdown" | "7-Tier Pricing Breakdown" |
-| 469 | "6 Pricing Tiers" stat | "7 Pricing Tiers" |
-| 499 | "6-Tier Comparison Table" | "7-Tier Comparison Table" |
-| 619, 622 | "6-Tier" references | "7-Tier" |
+**Files affected:**
+- `src/pages/Index.tsx` - Marketing section shows "Promo Agent" (line 122-126)
+- `src/lib/subscriptionAgentConfig.ts` - Uses `promo` not `marketing` (line 86)
+- `src/hooks/useAIAgentOrchestrator.ts` - Incorrect social agent names (lines 71-73)
+- `src/components/agents/TierComparisonCards.tsx` - Uses "Signal Creator" instead of "Social Media Signal Agent"
+- `src/components/ai/agents/AgentTestConsole.tsx` - Uses old social agent names
 
 ---
 
-### 4. ExportDocumentation.tsx - Document Descriptions (MEDIUM PRIORITY)
-**Location**: `src/pages/ExportDocumentation.tsx`
+### 2. Halo Tier Agent Count Mismatch (HIGH PRIORITY)
 
-| Line | Current Value | Should Be |
-|------|--------------|-----------|
-| 55 | "5-Tier Subscription Access" | "7-Tier Subscription Access" |
-| 165 | "Five-Tier Comparison" | "Seven-Tier Comparison" |
+The Halo tier has **conflicting agent counts**:
+
+| File | Agent Count |
+|------|-------------|
+| `documentationConfig.ts` | operatives: **4** |
+| `subscriptionAgentConfig.ts` | agents array has **3** (triage, booking, followup) |
+| `Subscription.tsx` | agentCount: **3** |
+| `audit/types.ts` | agentCount: **3** |
+| `PricingSummaryPDF.tsx` | operatives: **4** AND comparison table shows **4** |
+| `AIAgentGuidesPDF.tsx` | agentCount: **4** |
+
+**Resolution needed:** Determine if Halo has 3 or 4 agents, then synchronize across all files.
 
 ---
 
-### 5. PlatformGuides.tsx - Subscription Tiers Guide (MEDIUM PRIORITY)
-**Location**: `src/pages/PlatformGuides.tsx` (Lines 119-133)
-**Issue**: The "Subscription Tiers" guide step is missing:
-- Aura Express ($197/mo) - Restaurant tier
-- Aura Flow ($297/mo) - Personal Assistant tier
+### 3. Voice Feature Naming Inconsistencies (MEDIUM PRIORITY)
 
-**Current**: Lists only 5 tiers (Halo, Core, Single-Point, Multi-Track, Command)
-**Should**: Include all 7 tiers with descriptions
+Per branding standard (memory: style/branding-naming-standard-v4):
+- "Talk to Aura (Voice)" - Correct
+- "Ask Aura AI" - Used on landing page but should be "Talk to Aura (Voice)"
+- "Proxy Voice Chat" - Legacy name found in PDFs and documentation
+
+**Files with legacy naming:**
+- `src/pages/Index.tsx` line 265-267: Uses "Ask Aura AI" instead of "Talk to Aura (Voice)"
+- `src/pages/Settings.tsx` line 77: Tab labeled "Ask Aura" 
+- `src/components/documentation/SalesPitchDataPDF.tsx`: Uses "Proxy Voice Chat"
+- `src/components/documentation/PlatformDocumentPDF.tsx`: Uses "Proxy Voice Chat"
+
+---
+
+### 4. Marketing & Sales Agent Mismatch (MEDIUM PRIORITY)
+
+The Marketing & Sales console has inconsistent agent lists:
+
+| Source | Agents Listed |
+|--------|---------------|
+| documentationConfig.ts | campaign, marketing (2 agents) |
+| subscriptionAgentConfig.ts | campaign, lead, promo (3 agents using old names) |
+| Index.tsx agentCategories | Campaign, Lead, Promo (3 agents) |
+| helpContentConfig.ts | Campaign Agent, Marketing Agent (2 agents) |
+
+**Per memory (ai-operatives/marketing-agent-standardization):** Should be Campaign Agent, Lead Agent, Marketing Agent (3 agents total).
+
+---
+
+### 5. Landing Page Missing Express, Flow, Halo in Main Pricing Grid (MEDIUM PRIORITY)
+
+The main pricing grid on Index.tsx (lines 707-938) shows only 4 tiers:
+- Core, Single-Point, Multi-Track, Command
+
+The industry-specific packages (Express, Flow, Halo) are shown separately below (lines 941-1100).
+
+**Issue:** The "See More Details" comparison modal may not include all 7 tiers properly.
+
+---
+
+## Moderate Issues
+
+### 6. subscriptionAgentConfig.ts Uses Legacy Agent IDs
+
+The `command` tier lists legacy agent IDs that don't match the standardized naming:
+```typescript
+// Line 86 - uses 'promo' instead of 'marketing'
+'campaign', 'lead', 'promo',
+```
+
+Should be:
+```typescript
+'campaign', 'lead', 'marketing',
+```
+
+---
+
+### 7. useAIAgentOrchestrator.ts Has Wrong Agent Names
+
+```typescript
+// Lines 69-73 - wrong names
+{ type: 'promo', name: 'Promo Agent', ... }
+{ type: 'social_content', name: 'Social Content Agent', ... }
+{ type: 'social_scheduler', name: 'Social Scheduler Agent', ... }
+{ type: 'social_analytics', name: 'Social Analytics Agent', ... }
+```
+
+Should be:
+```typescript
+{ type: 'marketing', name: 'Marketing Agent', ... }
+{ type: 'social_content', name: 'Social Media Signal Agent', ... }
+{ type: 'social_scheduler', name: 'Signal Scheduler', ... }
+{ type: 'social_analytics', name: 'Signal Analytics', ... }
+```
+
+---
+
+### 8. AIAgentsHub.tsx AGENT_NAMES Missing Updates
+
+Line 142-143 shows:
+```typescript
+lead: 'Lead Agent',
+promo: 'Promo Agent',
+```
+
+Per memory, `promo` should be `marketing: 'Marketing Agent'`
+
+---
+
+### 9. Index.tsx agentCategories Uses Promo Agent
+
+Lines 122-126:
+```typescript
+{
+  name: 'Promo Agent',
+  description: 'Manages promotional codes, discounts, and referral programs',
+  icon: Gift
+}
+```
+
+Should be:
+```typescript
+{
+  name: 'Marketing Agent',
+  description: 'Manages customer segments, promo codes, referral programs, and win-back automation',
+  icon: Megaphone
+}
+```
+
+---
+
+## Documentation Issues
+
+### 10. PricingSummaryPDF Still References Legacy Agent Count for Halo
+
+The PDF shows Halo with 4 operatives but other sources show 3.
+
+### 11. SalesPitchDataPDF Uses "Proxy Voice Chat" 
+
+Multiple references to legacy "Proxy Voice Chat" terminology instead of "Talk to Aura (Voice)".
+
+### 12. WebsiteCopyPDF Has Inconsistent Pricing
+
+Line 589 shows "$497/mo" but there is no $497 tier in the current pricing structure.
 
 ---
 
@@ -72,114 +177,60 @@ After auditing the entire platform including dashboards, consoles, audit system,
 
 | File | Changes Required |
 |------|-----------------|
-| `src/pages/Auth.tsx` | Add 4 missing tier cards (Express, Flow, Halo, Core) to company signup |
-| `src/lib/documentationConfig.ts` | Update comment (5→7), totalTiers (6→7), add aura_flow to both tierHierarchy functions |
+| `src/lib/subscriptionAgentConfig.ts` | Replace `promo` with `marketing` in command tier agents |
+| `src/hooks/useAIAgentOrchestrator.ts` | Fix agent names for marketing and social media agents |
+| `src/pages/Index.tsx` | Update Promo Agent to Marketing Agent |
+| `src/pages/AIAgentsHub.tsx` | Update AGENT_NAMES mapping |
 
-### Medium Priority (Documentation/PDFs)
+### Medium Priority (Consistency)
 
 | File | Changes Required |
 |------|-----------------|
-| `src/components/documentation/PricingSummaryPDF.tsx` | Update all "6-Tier" references to "7-Tier" |
-| `src/pages/ExportDocumentation.tsx` | Update tier count references |
-| `src/pages/PlatformGuides.tsx` | Add Express and Flow to subscription tiers guide |
+| `src/components/agents/TierComparisonCards.tsx` | Fix social_content name |
+| `src/components/ai/agents/AgentTestConsole.tsx` | Fix social agent names |
+| `src/pages/Settings.tsx` | Rename "Ask Aura" tab |
 
-### Already Correct (No Changes Needed)
+### Low Priority (Documentation)
 
-| File | Status |
-|------|--------|
-| `src/pages/Index.tsx` | Has all 7 tiers displayed |
-| `src/pages/Subscription.tsx` | Has all 7 tiers in TIERS array |
-| `supabase/functions/landing-chat/index.ts` | Correctly shows 7 tiers |
-| `src/lib/helpContentConfig.ts` | Has aura_flow in tierHierarchy |
-| `src/components/audit/types.ts` | Recently updated with FLOW tier |
-
----
-
-## Detailed Implementation
-
-### Phase 1: Fix Core Configuration
-
-**documentationConfig.ts Updates:**
-```typescript
-// Line 8: Update comment
-// SUBSCRIPTION TIERS - 7-TIER STRUCTURE
-
-// Line 607: Update totalTiers
-totalTiers: 7,
-
-// Lines 649-657 and 668-676: Add aura_flow to tierHierarchy
-const tierHierarchy: Record<string, number> = {
-  free: 0,
-  express: 1,
-  aura_flow: 2,  // ADD THIS
-  halo: 3,
-  core: 4,
-  single_point: 5,
-  multi_track: 6,
-  command: 7,
-};
-```
-
-### Phase 2: Fix Auth.tsx Company Signup
-
-**Current Structure (3 tiers):**
-- Starter → Single-Point ($1,500)
-- Professional → Multi-Track ($3,997)
-- Enterprise → Command ($5,997)
-
-**New Structure (7 tiers):**
-Display industry-specific packages prominently:
-1. Aura Express ($197) - Restaurants
-2. Aura Flow ($297) - Personal Assistant
-3. Aura Halo ($397) - Salons/Wellness
-
-Display general tiers:
-4. Aura Core ($500) - AI-Assisted
-5. Single-Point ($1,500) - Solo-Focus
-6. Multi-Track ($3,997) - Small Scale
-7. Aura Pro Command ($5,997) - Enterprise
-
-**Key Changes:**
-- Update `selectedTier` type from `'starter' | 'professional' | 'enterprise'` to match actual tier IDs
-- Add 4 new tier selection cards with proper styling
-- Match the Index.tsx pricing display for consistency
-
-### Phase 3: Fix PDF Exports
-
-**PricingSummaryPDF.tsx:**
-- Update cover page stats from "6" to "7" tiers
-- Update subtitle from "6-Tier" to "7-Tier"
-- Update table of contents entries
-- Update section headers
-
-### Phase 4: Fix Platform Guides
-
-**PlatformGuides.tsx - Subscription Tiers Guide:**
-Add missing entries:
-```typescript
-'Aura Express ($197/mo): AI Voice + Chat for restaurants with smart link sharing',
-'Aura Flow ($297/mo): AI Personal Assistant with scheduling via calendar sync',
-```
+| File | Changes Required |
+|------|-----------------|
+| `src/components/documentation/SalesPitchDataPDF.tsx` | Update "Proxy Voice Chat" references |
+| `src/components/documentation/PlatformDocumentPDF.tsx` | Update "Proxy Voice Chat" references |
+| `src/components/documentation/WebsiteCopyPDF.tsx` | Fix pricing reference |
+| `src/components/documentation/PricingSummaryPDF.tsx` | Verify Halo agent count |
 
 ---
 
-## Summary of Changes
+## Halo Agent Count Resolution
 
-| Category | Files | Estimated Effort |
-|----------|-------|------------------|
-| Core Config | 1 file | 10 min |
-| Company Signup | 1 file | 45 min |
-| PDF Exports | 2 files | 15 min |
-| Platform Guides | 1 file | 10 min |
-| **Total** | **5 files** | **~80 min** |
+**Decision Required:** The Halo tier needs a definitive agent count.
+
+**Option A (4 agents):** AI Receptionist, Scheduling Agent, Follow-up Agent + Voice Chat capabilities counted as an agent.
+
+**Option B (3 agents):** AI Receptionist, Scheduling Agent, Follow-up Agent (Voice is a feature, not an agent).
+
+**Recommendation:** Go with **3 agents** since Voice is a communication channel/feature, not a standalone AI agent. This aligns with the subscriptionAgentConfig.ts definition.
 
 ---
 
-## Testing Checklist
+## Implementation Sequence
 
-After implementation:
-1. Navigate to `/auth?mode=company` and verify all 7 tiers display
-2. Download Pricing Summary PDF and verify "7-Tier" appears throughout
-3. Check Platform Guides subscription section for all tiers
-4. Verify documentationConfig helper functions return correct tier order
-5. Test audit to ensure FLOW tier recommendations work correctly
+1. **Phase 1:** Resolve Halo agent count (decision needed)
+2. **Phase 2:** Update agent naming across all config files
+3. **Phase 3:** Update frontend components (Index.tsx, AIAgentsHub.tsx, etc.)
+4. **Phase 4:** Update PDF documentation exports
+5. **Phase 5:** Test audit recommendations and tier comparisons
+
+---
+
+## Summary Statistics
+
+| Category | Count |
+|----------|-------|
+| Naming inconsistencies | 8 |
+| Agent count mismatches | 4 |
+| Legacy terminology | 6 |
+| Documentation errors | 4 |
+| **Total issues** | **22** |
+
+**Estimated effort:** 2-3 hours for implementation
