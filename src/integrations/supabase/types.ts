@@ -1338,6 +1338,64 @@ export type Database = {
           },
         ]
       }
+      content_engine_history: {
+        Row: {
+          channel: string
+          company_id: string
+          content: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          saved_id: string | null
+          saved_to: string | null
+          topic: string
+        }
+        Insert: {
+          channel: string
+          company_id: string
+          content: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          saved_id?: string | null
+          saved_to?: string | null
+          topic: string
+        }
+        Update: {
+          channel?: string
+          company_id?: string
+          content?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          saved_id?: string | null
+          saved_to?: string | null
+          topic?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_engine_history_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_engine_history_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_engine_history_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cost_estimates: {
         Row: {
           appointments_count: number
