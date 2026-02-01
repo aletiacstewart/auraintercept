@@ -68,7 +68,6 @@ flowchart TB
         direction TB
         Admin["👔 Admin Agent"]
         Inventory["📦 Inventory Agent"]
-        Warranty["🛡️ Warranty Agent"]
         Campaign["📣 Campaign Agent"]
         Lead["🎯 Lead Agent"]
         SocialContent["✏️ Social Content"]

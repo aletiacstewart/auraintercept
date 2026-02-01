@@ -22,10 +22,9 @@ const featureDescriptions: Record<string, string> = {
   'Quote Agent': 'Generates professional quotes instantly based on job requirements and pricing rules.',
   'Invoice Agent': 'Creates and sends invoices automatically, with payment tracking and reminders.',
   
-  // AI Agents - Command adds (13 more = 23 total)
+  // AI Agents - Command adds (12 more = 22 total)
   'Admin Agent': 'User management, company settings, and access control.',
   'Inventory Agent': 'Tracks parts and materials, manages stock levels, and alerts on low inventory.',
-  'Warranty Agent': 'Manages warranty claims, tracks coverage periods, and automates claim processing.',
   'Campaign Agent': 'Creates and manages marketing campaigns with automated targeting and scheduling.',
   'Lead Agent': 'Qualifies and scores leads, assigns to sales reps, and tracks conversion progress.',
   'Promo Agent': 'Manages promotional codes, discounts, and special offers across channels.',
@@ -114,10 +113,9 @@ const sections: FeatureSection[] = [
       { name: 'Check-in Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Quote Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Invoice Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      // Command tier adds (13 more = 23 total)
+      // Command tier adds (12 more = 22 total)
       { name: 'Admin Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Inventory Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Warranty Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Campaign Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Lead Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Promo Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },

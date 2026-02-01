@@ -421,10 +421,6 @@ export const WebsiteCopyPDF: React.FC = () => (
             <Text style={styles.agentDesc}>Never run out of parts. AI tracks stock levels and alerts you before you hit zero.</Text>
           </View>
           <View style={styles.agentCard}>
-            <Text style={styles.agentName}>Warranty Agent</Text>
-            <Text style={styles.agentDesc}>Warranty tracking without the headache. Know exactly what's covered and when it expires.</Text>
-          </View>
-          <View style={styles.agentCard}>
             <Text style={styles.agentName}>Lead Agent</Text>
             <Text style={styles.agentDesc}>Score and prioritize every lead. Focus your energy on prospects most likely to convert.</Text>
           </View>

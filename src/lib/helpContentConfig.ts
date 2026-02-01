@@ -36,7 +36,6 @@ export const AGENT_DISPLAY_NAMES: Record<string, string> = {
   quoting: 'Quoting Agent',
   invoice: 'Invoice Agent',
   inventory: 'Inventory Agent',
-  warranty: 'Warranty Agent',
   campaign: 'Campaign Agent',
   marketing: 'Marketing Agent',
   social_content: 'Social Media Signal Agent',
@@ -137,13 +136,12 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     icon: Briefcase,
     description: 'Comprehensive business management console with AI-powered quoting, invoicing, lead management, inventory tracking, and warranty administration.',
     requiredTier: 'command',
-    tabs: ['Quote', 'Invoice', 'Lead', 'Appointments', 'Inventory', 'Warranty', 'Companies', 'Employees', 'Customers'],
+    tabs: ['Quote', 'Invoice', 'Lead', 'Appointments', 'Inventory', 'Companies', 'Employees', 'Customers'],
     agents: [
       { name: 'Admin Agent', tier: 'command' },
       { name: 'Quoting Agent', tier: 'multi_track' },
       { name: 'Invoice Agent', tier: 'multi_track' },
       { name: 'Inventory Agent', tier: 'command' },
-      { name: 'Warranty Agent', tier: 'command' },
     ],
     features: [
       { text: 'Create and send professional quotes', tier: 'multi_track' },

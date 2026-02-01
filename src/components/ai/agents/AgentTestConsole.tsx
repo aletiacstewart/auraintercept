@@ -49,7 +49,6 @@ const AGENT_NAMES: Record<string, string> = {
   quoting: 'Quoting Agent',
   invoice: 'Invoice Agent',
   inventory: 'Inventory Agent',
-  warranty: 'Warranty Agent',
   campaign: 'Campaign Agent',
   marketing: 'Marketing Agent',
   social_content: 'Social Media Signal Agent',

@@ -662,20 +662,6 @@ const guideCategories = [
         tips: ['Link common parts to service types', 'Regular audits ensure accuracy']
       },
       {
-        title: 'Warranty Management',
-        duration: '8 min',
-        steps: [
-          'Navigate to Knowledge Base → Warranties (Command tier)',
-          'Create warranty policy templates',
-          'Define coverage terms and durations',
-          'Link warranties to completed jobs automatically',
-          'Customers can look up warranty status in portal',
-          'Process and track warranty claims',
-          'Warranty Agent sends expiration reminders'
-        ],
-        tips: ['Clear warranty terms reduce disputes', 'Auto-assign warranties on job completion']
-      },
-      {
         title: 'Payment Connections',
         duration: '10 min',
         steps: [
@@ -1024,20 +1010,6 @@ const guideCategories = [
           'Run inventory reports for ordering'
         ],
         tips: ['Regular audits ensure accuracy', 'Link parts to service types']
-      },
-      {
-        title: 'Warranty Policies',
-        duration: '8 min',
-        steps: [
-          'Navigate to Knowledge Base → Warranties (Command tier)',
-          'Create warranty policy templates',
-          'Define coverage terms and durations',
-          'Set up automatic warranty assignment on job completion',
-          'Customers can lookup warranty status in portal',
-          'Process and track warranty claims',
-          'Warranty Agent sends expiration reminders'
-        ],
-        tips: ['Clear terms reduce disputes', 'Automate warranty registration']
       }
     ]
   }

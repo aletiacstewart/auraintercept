@@ -492,7 +492,6 @@ const agents = {
     { name: 'Quoting Agent', desc: 'Instant professional quotes from service catalog. Increases close rates.' },
     { name: 'Invoice Agent', desc: 'Automated invoice creation with one-click payment links. Faster collections.' },
     { name: 'Inventory Agent', desc: 'Parts and inventory tracking with low-stock alerts. Prevents service delays.' },
-    { name: 'Warranty Agent', desc: 'Warranty registration, lookup, and claims processing. Reduces support tickets.' },
   ],
   marketingSales: [
     { name: 'Campaign Agent', desc: 'Creates and manages promotional, referral, win-back, seasonal, and loyalty campaigns.' },
@@ -1050,7 +1049,7 @@ const PlatformDocumentPDF = () => (
         <View style={styles.featureCard}>
           <Text style={styles.featureTitle}>Appliance Repair</Text>
           <Text style={styles.featureDesc}>
-            Multi-brand expertise. Parts inventory tracking. Warranty management included.
+            Multi-brand expertise. Parts inventory tracking.
           </Text>
         </View>
         

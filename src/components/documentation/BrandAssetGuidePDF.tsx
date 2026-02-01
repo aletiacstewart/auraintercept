@@ -674,10 +674,6 @@ export const BrandAssetGuidePDF: React.FC = () => (
             <Text style={styles.iconName}>Inventory Agent</Text>
             <Text style={styles.iconDesc}>Box + barcode. Represents stock management.</Text>
           </View>
-          <View style={[styles.iconCard, { borderLeftColor: colors.accent }]}>
-            <Text style={styles.iconName}>Warranty Agent</Text>
-            <Text style={styles.iconDesc}>Shield + checkmark. Represents coverage.</Text>
-          </View>
           <View style={[styles.iconCard, { borderLeftColor: colors.success }]}>
             <Text style={styles.iconName}>Lead Agent</Text>
             <Text style={styles.iconDesc}>Magnet icon. Represents lead capture.</Text>

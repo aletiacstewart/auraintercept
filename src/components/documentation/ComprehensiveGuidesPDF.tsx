@@ -320,8 +320,7 @@ const guideCategories = [
           'Quoting Agent: Generates quotes from service catalog',
           'Invoice Agent: Creates invoices and tracks payments',
           'Inventory Agent: Monitors stock levels (Command)',
-          'Warranty Agent: Manages warranty policies (Command)',
-          'Quoting/Invoice: Multi-Track+; Inventory/Warranty: Command'
+          'Quoting/Invoice: Multi-Track+; Inventory: Command'
         ],
         tips: ['Link Quote Forge to your service catalog']
       },
@@ -527,10 +526,10 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to Business Ops Hub from sidebar',
-          'Quick Action Tabs: Companies, Employees, Customers, Inventory, Warranties',
+          'Quick Action Tabs: Companies, Employees, Customers, Inventory',
           'View real-time KPIs for quotes, invoices, and revenue',
           'Access Quote Forge for AI-powered quote generation',
-          'Inventory and Warranty tabs require Command tier'
+          'Inventory tab requires Command tier'
         ],
         tips: ['Use Business Ops Overview for executive dashboard']
       },
@@ -569,18 +568,6 @@ const guideCategories = [
           'Inventory Agent monitors and alerts automatically'
         ],
         tips: ['Link common parts to service types']
-      },
-      {
-        title: 'Warranty Management',
-        duration: '8 min',
-        steps: [
-          'Navigate to Knowledge Base → Warranties (Command tier)',
-          'Create warranty policy templates',
-          'Define coverage terms and durations',
-          'Link warranties to completed jobs automatically',
-          'Warranty Agent sends expiration reminders'
-        ],
-        tips: ['Auto-assign warranties on job completion']
       },
       {
         title: 'Payment Connections',
@@ -854,18 +841,6 @@ const guideCategories = [
           'Inventory Agent monitors and sends alerts'
         ],
         tips: ['Regular audits ensure accuracy']
-      },
-      {
-        title: 'Warranty Policies',
-        duration: '8 min',
-        steps: [
-          'Navigate to Knowledge Base → Warranties (Command tier)',
-          'Create warranty policy templates',
-          'Define coverage terms and durations',
-          'Set up automatic warranty assignment',
-          'Warranty Agent sends expiration reminders'
-        ],
-        tips: ['Clear terms reduce disputes']
       }
     ]
   }
@@ -995,7 +970,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Business Management (5 agents): Admin, Quoting, Invoice, Inventory, Warranty</Text>
+          <Text style={styles.bulletText}>Business Management (4 agents): Admin, Quoting, Invoice, Inventory</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
