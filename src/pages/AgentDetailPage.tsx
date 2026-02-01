@@ -293,26 +293,6 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'track_by_technician', label: 'Track by Technician', type: 'switch', defaultValue: true }
     ]
   },
-  warranty: {
-    name: 'Warranty Agent',
-    description: 'Manages warranty claims, tracks coverage, and handles claim processing.',
-    category: 'business_operations',
-    phase: 5,
-    icon: Briefcase,
-    color: 'text-feature-warranties',
-    capabilities: [
-      'Coverage verification',
-      'Claim submission',
-      'Status tracking',
-      'Expiration alerts'
-    ],
-    configFields: [
-      { key: 'default_warranty_days', label: 'Default Warranty (days)', type: 'number', min: 0, max: 730, defaultValue: 90 },
-      { key: 'expiration_alert_days', label: 'Expiration Alert (days before)', type: 'number', min: 7, max: 90, defaultValue: 30 },
-      { key: 'auto_extend_offers', label: 'Auto-Offer Extended Warranty', type: 'switch', defaultValue: true },
-      { key: 'require_photos_for_claims', label: 'Require Photos for Claims', type: 'switch', defaultValue: true }
-    ]
-  },
   admin: {
     name: 'Admin Agent',
     description: 'Handles administrative tasks, user management, and company configuration.',

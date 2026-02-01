@@ -62,7 +62,6 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'quoting', name: 'Quoting Agent', category: 'business_operations', phase: 2, is_enabled: false, settings: {} },
   { type: 'invoice', name: 'Invoice Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
   { type: 'inventory', name: 'Inventory Agent', category: 'business_operations', phase: 4, is_enabled: false, settings: {} },
-  { type: 'warranty', name: 'Warranty Agent', category: 'business_operations', phase: 5, is_enabled: false, settings: {} },
   // Marketing & Sales (Phases 1-3) - 3 agents
   { type: 'campaign', name: 'Campaign Agent', category: 'marketing_sales', phase: 1, is_enabled: false, settings: {} },
   { type: 'lead', name: 'Lead Agent', category: 'marketing_sales', phase: 2, is_enabled: false, settings: {} },

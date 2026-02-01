@@ -34,7 +34,6 @@ const AGENT_CONFIG: Record<string, { icon: typeof Calendar; label: string; color
   route: { icon: Route, label: 'Route Agent', color: 'text-feature-fieldops' },
   invoice: { icon: Receipt, label: 'Billing Agent', color: 'text-feature-invoices' },
   quoting: { icon: FileText, label: 'Quoting Agent', color: 'text-feature-quotes' },
-  warranty: { icon: Shield, label: 'Warranty Agent', color: 'text-feature-warranties' },
   campaign: { icon: Megaphone, label: 'Campaign Agent', color: 'text-feature-marketing' },
   followup: { icon: UserCheck, label: 'Follow-up Agent', color: 'text-secondary' },
   triage: { icon: MessageSquare, label: 'Triage Agent', color: 'text-primary' },
@@ -75,11 +74,6 @@ function getHumanizedMessage(event: AuraEventCardProps['event']): string {
       return `New opportunity incoming: Quoting Agent prepared a $${amount.toLocaleString()} estimate for ${customerName}.`;
     }
     return `Quote generated for ${customerName}.`;
-  }
-  
-  // Warranty events
-  if (source_agent === 'warranty' || event_type.includes('warranty')) {
-    return `Coverage secured: Warranty Agent registered a new protection plan for ${customerName}.`;
   }
   
   // Campaign events

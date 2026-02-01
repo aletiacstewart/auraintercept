@@ -497,13 +497,6 @@ const CONSOLES = [
         worksAlone: true,
         requires: [],
       },
-      {
-        name: 'Warranty Agent',
-        description: 'Registers product warranties, tracks expiration dates, and processes warranty claims for customers.',
-        isCore: false,
-        worksAlone: true,
-        requires: [],
-      },
     ],
   },
   {

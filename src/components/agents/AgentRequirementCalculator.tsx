@@ -25,7 +25,6 @@ const AGENT_INFO: Record<string, { name: string; description: string; icon: stri
   invoice: { name: 'Invoice Agent', description: 'Billing automation', icon: '💳' },
   admin: { name: 'Admin Agent', description: 'Business management', icon: '👔' },
   inventory: { name: 'Inventory Agent', description: 'Stock tracking', icon: '📦' },
-  warranty: { name: 'Warranty Agent', description: 'Claims processing', icon: '🛡️' },
   campaign: { name: 'Campaign Agent', description: 'Marketing automation', icon: '📣' },
   marketing: { name: 'Lead Agent', description: 'Lead qualification', icon: '🎯' },
   social_content: { name: 'Social Content', description: 'Content creation', icon: '✏️' },

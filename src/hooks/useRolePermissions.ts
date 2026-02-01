@@ -141,7 +141,6 @@ export const ALL_AI_AGENTS = [
   { id: 'followup', name: 'Follow-up Agent', description: 'Handles post-service follow-ups' },
   { id: 'review', name: 'Review Agent', description: 'Manages customer reviews and feedback' },
   { id: 'quoting', name: 'Quoting Agent', description: 'Generates and manages quotes' },
-  { id: 'warranty', name: 'Warranty Agent', description: 'Handles warranty inquiries' },
   { id: 'dispatch', name: 'Dispatch Agent', description: 'Manages technician dispatch' },
   { id: 'route', name: 'Route Agent', description: 'Optimizes service routes' },
   { id: 'eta', name: 'ETA Agent', description: 'Provides arrival time estimates' },

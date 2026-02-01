@@ -382,18 +382,6 @@ export const QUESTIONS: AuditQuestion[] = [
     ],
   },
   {
-    id: 'warranty_claims',
-    question: 'Do you offer warranties or service guarantees?',
-    description: 'Command includes Warranty Claims Agent',
-    section: 'Business Operations',
-    options: [
-      { label: 'No warranties offered', tierScores: { EXPRESS: 75, FLOW: 80, CORE: 75, HALO: 80, SINGLE_POINT: 70, MULTI_TRACK: 55, COMMAND: 45 } },
-      { label: 'Yes, with a tracking system', tierScores: { EXPRESS: 35, FLOW: 40, CORE: 45, HALO: 45, SINGLE_POINT: 50, MULTI_TRACK: 60, COMMAND: 65 } },
-      { label: 'Yes, but track manually', tierScores: { EXPRESS: 30, FLOW: 35, CORE: 40, HALO: 45, SINGLE_POINT: 50, MULTI_TRACK: 70, COMMAND: 90 } },
-      { label: 'Limited warranties offered', tierScores: { EXPRESS: 50, FLOW: 55, CORE: 55, HALO: 60, SINGLE_POINT: 60, MULTI_TRACK: 65, COMMAND: 75 } },
-    ],
-  },
-  {
     id: 'walkin_vs_appointment',
     question: 'Do you offer walk-in services or appointment-only?',
     description: 'Helps determine receptionist vs scheduling focus',
