@@ -11,16 +11,18 @@ import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { CampaignForm } from './forms/CampaignForm';
 import { CustomerSegmentsForm } from './forms/CustomerSegmentsForm';
+import { LeadForm } from './forms/LeadForm';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Megaphone, 
   Users,
+  UserPlus,
 } from 'lucide-react';
 
-// Quick actions for Marketing & Sales - focused on campaigns and segments
-// Promo Code and Win-Back are accessible within Campaign form dropdown
+// Quick actions for Marketing & Sales - 3 agents: Campaign, Lead, Marketing (Segments)
 const QUICK_ACTIONS = [
   { id: 'campaign', label: 'Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign', featureColor: 'text-feature-marketing' },
+  { id: 'leads', label: 'Leads', icon: UserPlus, message: 'Help me manage and qualify leads', featureColor: 'text-feature-leads' },
   { id: 'customers', label: 'Segments', icon: Users, message: 'Show me customer segments', featureColor: 'text-feature-customers' },
 ];
 
@@ -45,6 +47,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   
   // Form visibility states
   const [showCampaignForm, setShowCampaignForm] = useState(false);
+  const [showLeadsForm, setShowLeadsForm] = useState(false);
   const [showSegmentsForm, setShowSegmentsForm] = useState(false);
 
   // Company branding
@@ -79,6 +82,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
 
   const hideAllForms = () => {
     setShowCampaignForm(false);
+    setShowLeadsForm(false);
     setShowSegmentsForm(false);
   };
 
@@ -96,6 +100,12 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     if (actionId === 'campaign') {
       hideAllForms();
       setShowCampaignForm(true);
+      setActiveTab('chat');
+      return;
+    }
+    if (actionId === 'leads') {
+      hideAllForms();
+      setShowLeadsForm(true);
       setActiveTab('chat');
       return;
     }
@@ -137,13 +147,14 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
     }
   };
 
-  const isShowingForm = showCampaignForm || showSegmentsForm;
+  const isShowingForm = showCampaignForm || showLeadsForm || showSegmentsForm;
   const showWelcome = messages.length === 0 && !isShowingForm && activeTab === 'chat';
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
   // Get active label based on form type
   const getActiveLabel = () => {
     if (showCampaignForm) return 'Campaign';
+    if (showLeadsForm) return 'Leads';
     if (showSegmentsForm) return 'Segments';
     if (messages.length > 0) return agentStyle.label;
     return 'Home';
@@ -203,6 +214,14 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
                       companyId={effectiveCompanyId}
                       onCancel={handleHome}
                       onSuccess={(data) => handleFormSuccess('campaign', data)}
+                    />
+                  )}
+
+                  {showLeadsForm && effectiveCompanyId && (
+                    <LeadForm
+                      companyId={effectiveCompanyId}
+                      onCancel={handleHome}
+                      onSuccess={(data) => handleFormSuccess('leads', data)}
                     />
                   )}
                   
