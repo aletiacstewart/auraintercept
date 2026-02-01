@@ -118,6 +118,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     if (actionId === 'batch') {
       hideAllForms();
       setShowBatchWizard(true);
+      setActiveTab('chat');
       return;
     }
     if (actionId === 'drafts') {
