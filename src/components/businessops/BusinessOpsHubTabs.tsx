@@ -1,12 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { DollarSign, Calendar, FileText, Receipt, Package, ShieldCheck, Briefcase, Users, Building2, UserCheck, UsersRound } from 'lucide-react';
+import { DollarSign, Calendar, FileText, Receipt, Package, Briefcase, Users, Building2, UserCheck, UsersRound } from 'lucide-react';
 import { LeadsManager } from '@/components/leads/LeadsManager';
 import { AppointmentsManager } from '@/components/appointments/AppointmentsManager';
 import { QuotesManager } from '@/components/quotes/QuotesManager';
 import { InvoicesManager } from '@/components/invoices/InvoicesManager';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
-import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
 import { CompaniesManager } from '@/components/businessops/CompaniesManager';
 import { EmployeeManagement } from '@/components/company/EmployeeManagement';
 import { CustomersManager } from '@/components/businessops/CustomersManager';
@@ -111,17 +110,6 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
               <InventoryManager />
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="warranties" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
-              <div className="flex items-center gap-3">
-                <ShieldCheck className="h-5 w-5 text-feature-warranties" />
-                <span className="font-semibold text-foreground">Warranties</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="pb-4">
-              <WarrantiesManager />
-            </AccordionContent>
-          </AccordionItem>
         </Accordion>
       </TabsContent>
 
@@ -220,17 +208,6 @@ export function BusinessOpsHubTabs({ defaultTab = 'sales' }: BusinessOpsHubTabsP
             </AccordionTrigger>
             <AccordionContent className="pb-4">
               <InventoryManager />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="all-warranties" className="border border-border rounded-lg bg-background px-4">
-            <AccordionTrigger className="hover:no-underline py-4 text-foreground">
-              <div className="flex items-center gap-3">
-                <ShieldCheck className="h-5 w-5 text-feature-warranties" />
-                <span className="font-semibold text-foreground">Warranties</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="pb-4">
-              <WarrantiesManager />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

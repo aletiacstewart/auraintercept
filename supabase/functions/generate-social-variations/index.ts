@@ -146,7 +146,6 @@ serve(async (req) => {
       servicesRes,
       faqsRes,
       hoursRes,
-      warrantiesRes,
       inventoryRes
     ] = await Promise.all([
       supabase.from("companies").select("name, service_categories").eq("id", companyId).single(),
@@ -160,8 +159,6 @@ serve(async (req) => {
         .eq("company_id", companyId).eq("is_active", true).limit(15),
       supabase.from("faqs").select("question, answer, category").eq("company_id", companyId).limit(20),
       supabase.from("business_hours").select("*").eq("company_id", companyId),
-      supabase.from("warranty_policies").select("name, coverage_details, duration_months")
-        .eq("company_id", companyId).eq("is_active", true).limit(10),
       supabase.from("inventory_items").select("name, category, brand")
         .eq("company_id", companyId).limit(15),
     ]);
@@ -173,7 +170,6 @@ serve(async (req) => {
     const services = servicesRes.data || [];
     const faqs = faqsRes.data || [];
     const hours = hoursRes.data || [];
-    const warranties = warrantiesRes.data || [];
     const inventory = inventoryRes.data || [];
 
     const companyName = company?.name || "Our Company";
@@ -204,12 +200,8 @@ serve(async (req) => {
     ).join('\n') || "No services listed";
 
     const faqsContext = faqs.map(f => `Q: ${f.question}\nA: ${f.answer}`).join('\n\n') || "No FAQs";
-    
-    const warrantiesContext = warranties.map(w => 
-      `• ${w.name}: ${w.coverage_details || 'Standard coverage'}${w.duration_months ? ` (${w.duration_months} months)` : ''}`
-    ).join('\n') || "No warranties listed";
 
-    const inventoryContext = inventory.map(i => 
+    const inventoryContext = inventory.map(i =>
       `• ${i.name}${i.brand ? ` (${i.brand})` : ''}${i.category ? ` - ${i.category}` : ''}`
     ).join('\n') || "No inventory listed";
 
@@ -226,9 +218,6 @@ ${faqsContext}
 
 Business Hours:
 ${formattedHours}
-
-Warranties & Guarantees:
-${warrantiesContext}
 
 Equipment/Products Available:
 ${inventoryContext}

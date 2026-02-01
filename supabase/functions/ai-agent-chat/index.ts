@@ -474,17 +474,6 @@ Use the check_inventory tool to see stock levels.
 Use the reorder_parts tool to trigger orders.
 Provide specific quantities and item names.`,
 
-  warranty: `You are a Warranty Agent for a service business. Your role is to:
-- Check warranty coverage for equipment/services
-- Process warranty claims
-- Track claim status
-- Alert customers before warranties expire
-- Explain warranty terms clearly
-
-Use the check_warranty tool to verify coverage.
-Use the submit_warranty_claim tool to process claims.
-Be helpful in navigating warranty processes.`,
-
   // Marketing Agent - manages segments, promo codes, referrals, and win-back targeting
   marketing: `You are a Marketing Agent for a service business.
 IMPORTANT: You serve INTERNAL company users (admins, marketing managers) - NOT external customers.
@@ -811,8 +800,6 @@ QUICK ACTIONS YOU CAN HELP WITH:
 - "Create Quote" → Generate accurate service quotes with pricing
 - "Generate Invoice" → Create invoices from completed jobs
 - "Check Inventory" → Look up parts and stock levels
-- "Warranty Check" → Verify warranty coverage for equipment
-- "Warranty Claim" → Process warranty claims
 - "Price Lookup" → Find pricing for services
 
 Use the list_services tool to get accurate pricing.
@@ -1548,54 +1535,6 @@ const AGENT_TOOLS: Record<string, any[]> = {
       },
     },
   ],
-  warranty: [
-    {
-      type: 'function',
-      function: {
-        name: 'check_warranty',
-        description: 'Check warranty status',
-        parameters: {
-          type: 'object',
-          properties: {
-            equipment_id: { type: 'string' },
-            serial_number: { type: 'string' },
-            customer_id: { type: 'string' },
-          },
-        },
-      },
-    },
-    {
-      type: 'function',
-      function: {
-        name: 'submit_warranty_claim',
-        description: 'Submit a warranty claim',
-        parameters: {
-          type: 'object',
-          properties: {
-            equipment_id: { type: 'string' },
-            issue_description: { type: 'string' },
-            photos: { type: 'array', items: { type: 'string' } },
-          },
-          required: ['equipment_id', 'issue_description'],
-        },
-      },
-    },
-    {
-      type: 'function',
-      function: {
-        name: 'handoff_to_agent',
-        description: 'Hand off to other agent',
-        parameters: {
-          type: 'object',
-          properties: {
-            target_agent: { type: 'string', enum: ['booking', 'dispatch'] },
-            reason: { type: 'string' },
-          },
-          required: ['target_agent', 'reason'],
-        },
-      },
-    },
-  ],
   referral: [
     {
       type: 'function',
@@ -2164,22 +2103,6 @@ const AGENT_TOOLS: Record<string, any[]> = {
         },
       },
     },
-    {
-      type: 'function',
-      function: {
-        name: 'check_warranty',
-        description: 'Check warranty status for customer equipment',
-        parameters: {
-          type: 'object',
-          properties: {
-            customer_name: { type: 'string' },
-            customer_phone: { type: 'string' },
-            equipment_type: { type: 'string' },
-          },
-          required: ['customer_name'],
-        },
-      },
-    },
   ],
 };
 
@@ -2240,11 +2163,11 @@ serve(async (req) => {
       single_point: ['triage', 'followup', 'review'],
       // Multi-Track (10): Adds booking, field ops, quoting/invoice
       multi_track: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice'],
-      // Command (23): Full suite - 4 Customer Portal + 4 Field Ops + 5 Business Ops + 3 Marketing + 3 Social Media + 4 Analytics + 1 Analytics Router
+      // Command (22): Full suite - 4 Customer Portal + 4 Field Ops + 4 Business Ops + 3 Marketing + 3 Social Media + 4 Analytics + 1 Analytics Router
       command: [
         'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
         'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
-        'admin', 'quoting', 'invoice', 'inventory', 'warranty', // Business Operations (5)
+        'admin', 'quoting', 'invoice', 'inventory',          // Business Operations (4)
         'campaign', 'lead', 'marketing',                      // Marketing & Sales (3)
         'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
         'insights', 'performance', 'revenue', 'forecast',    // Analytics & Reports (4)
