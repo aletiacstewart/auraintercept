@@ -44,7 +44,7 @@ export interface AgentEvent {
   created_at: string;
 }
 
-// Default agent definitions - 23 total agents across 7 categories
+// Default agent definitions - 24 total agents across 8 categories
 // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
 const DEFAULT_AGENTS: AgentInfo[] = [
   // Customer Portal (Phases 1-4) - 4 agents
@@ -76,6 +76,8 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'performance', name: 'Performance Agent', category: 'analytics_reports', phase: 2, is_enabled: false, settings: {} },
   { type: 'revenue', name: 'Revenue Agent', category: 'analytics_reports', phase: 3, is_enabled: false, settings: {} },
   { type: 'forecast', name: 'Forecast Agent', category: 'analytics_reports', phase: 4, is_enabled: false, settings: {} },
+  // Content Engine (Phase 1) - 1 agent
+  { type: 'creative', name: 'Creative Agent', category: 'content_engine', phase: 1, is_enabled: false, settings: {} },
 ];
 
 function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo[]> {

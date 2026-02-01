@@ -48,6 +48,7 @@ import AskAura from "./pages/AskAura";
 import AIAgentsHub from "./pages/AIAgentsHub";
 import AIAgentGuide from "./pages/AIAgentGuide";
 import AgentDetailPage from "./pages/AgentDetailPage";
+import ContentEngineConsole from "./pages/ContentEngineConsole";
 import Widget from "./pages/Widget";
 import CallHistory from "./pages/CallHistory";
 import Analytics from "./pages/Analytics";
@@ -197,6 +198,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/ai-agents" element={<ProtectedRoute><AIAgentsHub /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-agent-guide" element={<ProtectedRoute><AIAgentGuide /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-agents/:agentId" element={<ProtectedRoute><AgentDetailPage /></ProtectedRoute>} />
+                <Route path="/dashboard/content-engine" element={<ProtectedRoute><ContentEngineConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/customer-website-app" element={<ProtectedRoute><Widget /></ProtectedRoute>} />
                 <Route path="/dashboard/calls" element={<ProtectedRoute><CallHistory /></ProtectedRoute>} />
                 <Route path="/dashboard/email-logs" element={<ProtectedRoute><EmailLogs /></ProtectedRoute>} />

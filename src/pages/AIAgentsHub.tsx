@@ -94,6 +94,12 @@ const CATEGORY_INFO: Record<string, {
     colorClass: 'text-feature-analytics',
     cssVar: '--feature-analytics'
   },
+  content_engine: { 
+    label: 'Content Engine',
+    icon: Sparkles, 
+    colorClass: 'text-violet-400',
+    cssVar: '--feature-marketing'
+  },
 };
 
 
@@ -119,7 +125,7 @@ const JOB_TYPE_TO_AGENTS: Record<string, string[]> = {
 };
 
 // Agent name mapping for display
-// 23 User-Facing Agents - Keep in sync with subscriptionAgentConfig.ts
+// 24 User-Facing Agents - Keep in sync with subscriptionAgentConfig.ts
 const AGENT_NAMES: Record<string, string> = {
   // Customer Portal (4)
   triage: 'AI Receptionist',
@@ -150,6 +156,8 @@ const AGENT_NAMES: Record<string, string> = {
   performance: 'Performance Agent',
   revenue: 'Revenue Agent',
   forecast: 'Forecast Agent',
+  // Content Engine (1)
+  creative: 'Creative Agent',
 };
 
 export default function AIAgentsHub() {
@@ -333,7 +341,7 @@ export default function AIAgentsHub() {
           icon={Bot}
           title="AI Operatives Hub"
           description={canManageAgents 
-            ? '23 specialized AI operatives powering your business automation'
+            ? '24 specialized AI operatives powering your business automation'
             : `${totalCount} AI operatives available based on your job roles`}
           featureColor="config"
           action={
