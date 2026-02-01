@@ -23,7 +23,7 @@ import {
 const QUICK_ACTIONS = [
   { id: 'campaign', label: 'Campaign', icon: Megaphone, message: 'I need to create a new marketing campaign', featureColor: 'text-feature-marketing' },
   { id: 'leads', label: 'Leads', icon: UserPlus, message: 'Help me manage and qualify leads', featureColor: 'text-feature-leads' },
-  { id: 'customers', label: 'Segments', icon: Users, message: 'Show me customer segments', featureColor: 'text-feature-customers' },
+  { id: 'customers', label: 'Marketing', icon: Users, message: 'Show me customer segments', featureColor: 'text-feature-customers' },
 ];
 
 // Tab configuration
@@ -155,7 +155,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
   const getActiveLabel = () => {
     if (showCampaignForm) return 'Campaign';
     if (showLeadsForm) return 'Leads';
-    if (showSegmentsForm) return 'Segments';
+    if (showSegmentsForm) return 'Marketing';
     if (messages.length > 0) return agentStyle.label;
     return 'Home';
   };
