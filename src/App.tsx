@@ -60,7 +60,6 @@ import PublicChat from "./pages/PublicChat";
 import Inventory from "./pages/Inventory";
 import Quotes from "./pages/Quotes";
 import Invoices from "./pages/Invoices";
-import Warranties from "./pages/Warranties";
 import Referrals from "./pages/Referrals";
 import Campaigns from "./pages/Campaigns";
 import Leads from "./pages/Leads";
@@ -209,7 +208,6 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
                 <Route path="/dashboard/quotes" element={<ProtectedRoute><Quotes /></ProtectedRoute>} />
                 <Route path="/dashboard/invoices" element={<ProtectedRoute><Invoices /></ProtectedRoute>} />
-                <Route path="/dashboard/warranties" element={<ProtectedRoute><Warranties /></ProtectedRoute>} />
                 <Route path="/dashboard/referrals" element={<ProtectedRoute><Referrals /></ProtectedRoute>} />
                 <Route path="/dashboard/campaigns" element={<ProtectedRoute><Campaigns /></ProtectedRoute>} />
                 <Route path="/dashboard/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />

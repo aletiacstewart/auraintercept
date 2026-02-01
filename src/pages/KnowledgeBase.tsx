@@ -8,10 +8,9 @@ import { FAQsManager } from '@/components/knowledge/FAQsManager';
 import { BusinessHoursManager } from '@/components/knowledge/BusinessHoursManager';
 import { DocumentsManager } from '@/components/knowledge/DocumentsManager';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
-import { WarrantiesManager } from '@/components/knowledge/WarrantiesManager';
 import { AIContentProfileManager } from '@/components/knowledge/AIContentProfileManager';
 import { KnowledgeBaseWizard } from '@/components/knowledge/KnowledgeBaseWizard';
-import { Briefcase, HelpCircle, Clock, FileText, Package, Shield, BookOpen, Sparkles } from 'lucide-react';
+import { Briefcase, HelpCircle, Clock, FileText, Package, BookOpen, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
@@ -83,12 +82,6 @@ export default function KnowledgeBase() {
                 Inventory
               </TabsTrigger>
             )}
-            {isPlatformAdmin && (
-              <TabsTrigger value="warranties" className="flex items-center gap-1.5">
-                <Shield className="w-3.5 h-3.5 hidden sm:block" />
-                Warranties
-              </TabsTrigger>
-            )}
           </TabsList>
 
           <TabsContent value="ai-profile">
@@ -114,12 +107,6 @@ export default function KnowledgeBase() {
           {isPlatformAdmin && (
             <TabsContent value="inventory">
               <InventoryManager />
-            </TabsContent>
-          )}
-
-          {isPlatformAdmin && (
-            <TabsContent value="warranties">
-              <WarrantiesManager />
             </TabsContent>
           )}
         </Tabs>

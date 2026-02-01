@@ -9,7 +9,6 @@ import { EmailTemplatesEditor } from '@/components/settings/EmailTemplatesEditor
 import { SmsTemplatesEditor } from '@/components/settings/SmsTemplatesEditor';
 import { ReviewRequestSettings } from '@/components/company/ReviewRequestSettings';
 import { ProfileSettings } from '@/components/employee/ProfileSettings';
-import { WarrantySettings } from '@/components/settings/WarrantySettings';
 import { CampaignSettings } from '@/components/settings/CampaignSettings';
 import { MissedCallSettings } from '@/components/company/MissedCallSettings';
 import { PublicAppUrlSettings } from '@/components/company/PublicAppUrlSettings';
@@ -27,7 +26,7 @@ import { useSearchParams } from 'react-router-dom';
 const VALID_TABS = [
   'branding', 'contact', 'app-url', 'reminders', 'missed-calls', 
   'default-prefs', 'reports', 'alerts', 'customer-prefs', 
-  'emails', 'sms', 'reviews', 'warranties', 'campaigns', 'voice', 'system'
+  'emails', 'sms', 'reviews', 'campaigns', 'voice', 'system'
 ];
 
 export default function Settings() {
@@ -70,7 +69,6 @@ export default function Settings() {
               <TabsTrigger value="emails">Email Templates</TabsTrigger>
               <TabsTrigger value="sms">SMS Templates</TabsTrigger>
               <TabsTrigger value="reviews">Reviews</TabsTrigger>
-              <TabsTrigger value="warranties">Warranties</TabsTrigger>
               <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
               <TabsTrigger value="voice" className="flex items-center gap-1">
                 <Mic className="w-3 h-3" />
@@ -116,9 +114,6 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="reviews">
               <ReviewRequestSettings />
-            </TabsContent>
-            <TabsContent value="warranties">
-              <WarrantySettings />
             </TabsContent>
             <TabsContent value="campaigns">
               <CampaignSettings />

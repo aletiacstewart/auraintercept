@@ -24,7 +24,6 @@ export const AGENT_STYLES: Record<string, AgentStyle> = {
   quoting: { label: 'Quoting', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
   invoice: { label: 'Invoice', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
   inventory: { label: 'Inventory', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
-  warranty: { label: 'Warranty', color: 'text-secondary', bgColor: 'bg-secondary/10' },
   admin: { label: 'Admin', color: 'text-channel-chat', bgColor: 'bg-channel-chat/10' },
   
   // Marketing & Sales Agents
@@ -77,7 +76,7 @@ export function getAgentStyle(agent: string | undefined | null): AgentStyle {
 export const AGENT_CATEGORIES = {
   customerEngagement: ['triage', 'booking', 'followup', 'review'],
   fieldOperations: ['dispatch', 'route', 'eta', 'checkin'],
-  businessOperations: ['admin', 'quoting', 'invoice', 'inventory', 'warranty'],
+  businessOperations: ['admin', 'quoting', 'invoice', 'inventory'],
   marketingSales: ['campaign', 'marketing', 'promo', 'referral', 'winback', 'seasonal'],
   socialMediaSignal: ['social_content', 'social_scheduler', 'social_analytics'],
   analyticsReports: ['insights', 'performance', 'revenue', 'forecast'],
