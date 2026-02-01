@@ -354,7 +354,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     isCore: false,
     worksAlone: true,
   },
-  // Marketing & Sales Console - 3 agents
+  // Outreach & Sales Console - 3 agents
   {
     id: 'campaign',
     name: 'Campaign Agent',
@@ -525,11 +525,11 @@ export const CONSOLES: ConsoleConfig[] = [
   },
   {
     id: 'marketing_sales',
-    name: 'Marketing & Sales',
+    name: 'Outreach & Sales Ops',
     description: 'AI-powered marketing automation with campaign management, customer segmentation, promotional tools, and lead nurturing.',
     tier: 'command',
-    agentCount: 2,
-    tabs: ['Campaigns', 'Promo Codes', 'Segments', 'Referrals', 'Leads', 'Win-back'],
+    agentCount: 3,
+    tabs: ['Campaign', 'Leads', 'Marketing'],
     color: 'orange',
   },
   {
