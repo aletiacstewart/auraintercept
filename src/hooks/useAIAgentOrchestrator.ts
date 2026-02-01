@@ -66,11 +66,11 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   // Marketing & Sales (Phases 1-3) - 3 agents
   { type: 'campaign', name: 'Campaign Agent', category: 'marketing_sales', phase: 1, is_enabled: false, settings: {} },
   { type: 'lead', name: 'Lead Agent', category: 'marketing_sales', phase: 2, is_enabled: false, settings: {} },
-  { type: 'promo', name: 'Promo Agent', category: 'marketing_sales', phase: 3, is_enabled: false, settings: {} },
+  { type: 'marketing', name: 'Marketing Agent', category: 'marketing_sales', phase: 3, is_enabled: false, settings: {} },
   // Social Media (Phases 1-3) - 3 agents
-  { type: 'social_content', name: 'Social Content Agent', category: 'social_media', phase: 1, is_enabled: false, settings: {} },
-  { type: 'social_scheduler', name: 'Social Scheduler Agent', category: 'social_media', phase: 2, is_enabled: false, settings: {} },
-  { type: 'social_analytics', name: 'Social Analytics Agent', category: 'social_media', phase: 3, is_enabled: false, settings: {} },
+  { type: 'social_content', name: 'Social Media Signal Agent', category: 'social_media', phase: 1, is_enabled: false, settings: {} },
+  { type: 'social_scheduler', name: 'Signal Scheduler', category: 'social_media', phase: 2, is_enabled: false, settings: {} },
+  { type: 'social_analytics', name: 'Signal Analytics', category: 'social_media', phase: 3, is_enabled: false, settings: {} },
   // Analytics & Reports (Phases 1-4) - 4 agents
   { type: 'insights', name: 'Insights Agent', category: 'analytics_reports', phase: 1, is_enabled: false, settings: {} },
   { type: 'performance', name: 'Performance Agent', category: 'analytics_reports', phase: 2, is_enabled: false, settings: {} },

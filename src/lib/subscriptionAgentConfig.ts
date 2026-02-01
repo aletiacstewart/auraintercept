@@ -83,7 +83,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       // Business Operations (5)
       'admin', 'quoting', 'invoice', 'inventory', 'warranty',
       // Marketing & Sales (3)
-      'campaign', 'lead', 'promo',
+      'campaign', 'lead', 'marketing',
       // Social Media Signal (3)
       'social_content', 'social_scheduler', 'social_analytics',
       // Analytics & Reports (4)

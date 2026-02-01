@@ -707,8 +707,8 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierBullet}>- 1-3 person operations</Text>
         <Text style={styles.tierBullet}>- Primary pain: Booking automation</Text>
         <Text style={styles.tierBullet}>- Need scheduling + follow-up</Text>
-        <Text style={styles.tierBullet}>- Proxy Voice Chat included</Text>
-        <Text style={styles.tierBullet}>- 4 AI Operatives: Receptionist, Scheduling, Follow-up, Voice Chat</Text>
+        <Text style={styles.tierBullet}>- Talk to Aura (Voice) included</Text>
+        <Text style={styles.tierBullet}>- 3 AI Operatives: Receptionist, Scheduling, Follow-up</Text>
       </View>
 
       <View style={styles.tierCard}>
@@ -720,7 +720,7 @@ export const SalesPitchDataPDF: React.FC = () => (
         <Text style={styles.tierBullet}>- 1-5 person operations</Text>
         <Text style={styles.tierBullet}>- Primary pain: Missed calls</Text>
         <Text style={styles.tierBullet}>- Focus on building reviews</Text>
-        <Text style={styles.tierBullet}>- Proxy Voice Chat included</Text>
+        <Text style={styles.tierBullet}>- Talk to Aura (Voice) included</Text>
         <Text style={styles.tierBullet}>- 3 AI Operatives: Receptionist, Follow-up, Review</Text>
       </View>
 

@@ -352,7 +352,7 @@ const SUBSCRIPTION_TIERS = {
     annualPrice: 2970,
     annualSavings: 594,
     implementationFee: 399,
-    operatives: 4,
+    operatives: 3,
     consoles: 0,
     employees: 2,
     bestFor: 'Service businesses needing automated booking via calendar sync without a customer portal.',
@@ -365,7 +365,7 @@ const SUBSCRIPTION_TIERS = {
     annualPrice: 3970,
     annualSavings: 794,
     implementationFee: 499,
-    operatives: 4,
+    operatives: 3,
     consoles: 1,
     employees: 3,
     bestFor: 'Nail salons, hair salons, barbers, massage centers, spas, and wellness businesses.',
@@ -583,7 +583,7 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { feature: 'AI Operatives', express: '1', halo: '4', core: '0', single: '3', multi: '10', command: '23' },
+          { feature: 'AI Operatives', express: '1', halo: '3', core: '0', single: '3', multi: '10', command: '23' },
           { feature: 'Consoles', express: '0', halo: '1', core: '0', single: '1', multi: '2', command: '7' },
           { feature: 'Employees', express: '2', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
           { feature: 'AI Automation', express: '-', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
@@ -636,7 +636,7 @@ const PricingSummaryPDF = () => (
           { category: 'Annual Price', express: '$1,970', halo: '$3,970', core: '$5,000', single: '$15,000', multi: '$39,970', command: '$59,970' },
           { category: 'Annual Savings', express: '~$400', halo: '~$800', core: '~$1,000', single: '~$3,000', multi: '~$8,000', command: '~$12,000' },
           { category: '', express: '', halo: '', core: '', single: '', multi: '', command: '' },
-          { category: 'AI Operatives', express: '1', halo: '4', core: '0', single: '3', multi: '10', command: 'All 23' },
+          { category: 'AI Operatives', express: '1', halo: '3', core: '0', single: '3', multi: '10', command: 'All 23' },
           { category: 'Consoles', express: '0', halo: '1', core: '0', single: '1', multi: '2', command: 'All 7' },
           { category: 'Employees', express: '2', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
           { category: '', express: '', halo: '', core: '', single: '', multi: '', command: '' },
@@ -730,7 +730,7 @@ const PricingSummaryPDF = () => (
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>Included AI Operatives (4)</Text>
+      <Text style={styles.subsectionTitle}>Included AI Operatives (3)</Text>
       <View style={styles.featureList}>
         <FeatureItem>AI Receptionist - 24/7 customer engagement and triage</FeatureItem>
         <FeatureItem>Scheduling Agent - Online appointment booking</FeatureItem>

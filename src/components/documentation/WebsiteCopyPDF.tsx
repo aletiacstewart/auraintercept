@@ -474,7 +474,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       <Text style={styles.sectionSubtitle}>Copy for pricing tables and plan comparisons</Text>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Single-Point Tier - $497/mo</Text>
+        <Text style={styles.copyLabel}>Single-Point Tier - $1,500/mo</Text>
         <Text style={styles.copyHeadline}>Perfect for Solo Operators</Text>
         <Text style={styles.copyBody}>
           Stop missing calls and start building your reputation. The Single-Point tier gives you 24/7 AI reception, automated follow-up, and review collection—everything you need to capture every lead and grow your reviews.{'\n\n'}
@@ -487,7 +487,7 @@ export const WebsiteCopyPDF: React.FC = () => (
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Multi-Track Tier - $897/mo</Text>
+        <Text style={styles.copyLabel}>Multi-Track Tier - $3,997/mo</Text>
         <Text style={styles.copyHeadline}>Built for Growing Teams</Text>
         <Text style={styles.copyBody}>
           You're scaling. Your operations should too. Multi-Track adds intelligent scheduling, dispatch optimization, and financial automation—so you can handle more jobs without more chaos.{'\n\n'}
@@ -586,7 +586,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Pricing Page</Text>
         <Text style={styles.seoText}>
           Title: Pricing Plans | Aura Intercept AI Business Automation{'\n'}
-          Meta: Plans from $497/mo. 23 AI operatives, 24/7 call answering, scheduling automation & more. 23x average ROI. Start your free trial today.
+          Meta: Plans from $197/mo. 23 AI operatives, 24/7 call answering, scheduling automation & more. 23x average ROI. Start your free trial today.
         </Text>
       </View>
 

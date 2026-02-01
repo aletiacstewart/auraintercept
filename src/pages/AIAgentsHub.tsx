@@ -140,7 +140,7 @@ const AGENT_NAMES: Record<string, string> = {
   // Marketing & Sales (3)
   campaign: 'Campaign Agent',
   lead: 'Lead Agent',
-  promo: 'Promo Agent',
+  marketing: 'Marketing Agent',
   // Social Media Signal (3)
   social_content: 'Social Media Signal Agent',
   social_scheduler: 'Signal Scheduler',
