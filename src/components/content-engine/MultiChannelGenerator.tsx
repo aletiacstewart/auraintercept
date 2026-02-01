@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -17,12 +18,15 @@ import {
   Loader2,
   Copy,
   Check,
-  Wand2
+  Wand2,
+  Calendar,
+  ArrowRight,
+  Save
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 type Channel = 'website' | 'social' | 'campaign' | 'blog' | 'sms';
 
@@ -43,16 +47,19 @@ const CHANNELS: ChannelConfig[] = [
 ];
 
 export function MultiChannelGenerator() {
-  const { user } = useAuth();
+  const { user, companyId } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [topic, setTopic] = useState('');
   const [selectedChannels, setSelectedChannels] = useState<Channel[]>(['social']);
   const [generating, setGenerating] = useState(false);
   const [results, setResults] = useState<Record<string, unknown>>({});
   const [activeResultTab, setActiveResultTab] = useState<string>('');
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [savingChannel, setSavingChannel] = useState<string | null>(null);
 
-  // Get company ID
+  // Get company ID from profile if not in context
   const { data: profile } = useQuery({
     queryKey: ['profile-company', user?.id],
     queryFn: async () => {
@@ -64,7 +71,25 @@ export function MultiChannelGenerator() {
         .single();
       return data;
     },
-    enabled: !!user?.id,
+    enabled: !!user?.id && !companyId,
+  });
+
+  const effectiveCompanyId = companyId || profile?.company_id;
+
+  // Track content generation in history
+  const trackGeneration = useMutation({
+    mutationFn: async ({ channel, content }: { channel: string; content: unknown }) => {
+      if (!effectiveCompanyId) return;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase.from('content_engine_history') as any).insert({
+        company_id: effectiveCompanyId,
+        channel,
+        topic: topic.trim(),
+        content: content as Record<string, unknown>,
+        created_by: user?.id,
+      });
+      if (error) console.error('Error tracking generation:', error);
+    },
   });
 
   const toggleChannel = (channel: Channel) => {
@@ -84,7 +109,7 @@ export function MultiChannelGenerator() {
       toast({ title: 'Select channels', description: 'Please select at least one channel', variant: 'destructive' });
       return;
     }
-    if (!profile?.company_id) {
+    if (!effectiveCompanyId) {
       toast({ title: 'No company', description: 'You must be associated with a company', variant: 'destructive' });
       return;
     }
@@ -100,7 +125,7 @@ export function MultiChannelGenerator() {
             channel,
             contentType: 'general',
             topic: topic.trim(),
-            companyId: profile.company_id,
+            companyId: effectiveCompanyId,
           },
         });
 
@@ -118,6 +143,8 @@ export function MultiChannelGenerator() {
         if (response.status === 'fulfilled') {
           newResults[channel] = response.value.data.content;
           successCount++;
+          // Track generation
+          trackGeneration.mutate({ channel, content: response.value.data.content });
         } else {
           console.error(`Failed to generate ${channel}:`, response.reason);
           newResults[channel] = { error: response.reason.message };
@@ -126,6 +153,9 @@ export function MultiChannelGenerator() {
 
       setResults(newResults);
       setActiveResultTab(selectedChannels[0]);
+
+      // Invalidate history queries
+      queryClient.invalidateQueries({ queryKey: ['content-engine-history'] });
 
       toast({
         title: 'Content Generated',
@@ -148,6 +178,190 @@ export function MultiChannelGenerator() {
     setCopiedField(field);
     setTimeout(() => setCopiedField(null), 2000);
     toast({ title: 'Copied!', description: 'Content copied to clipboard' });
+  };
+
+  // Save actions for each channel
+  const saveToSocialPosts = async (content: Record<string, { post?: string; hashtags?: string[] }>) => {
+    setSavingChannel('social');
+    try {
+      // Build content_json from all platforms
+      const platforms = Object.keys(content);
+      
+      const scheduledDate = new Date();
+      scheduledDate.setDate(scheduledDate.getDate() + 1);
+      scheduledDate.setHours(10, 0, 0, 0);
+
+      const { error } = await supabase.from('scheduled_social_posts').insert({
+        company_id: effectiveCompanyId!,
+        topic: topic.trim(),
+        platforms: platforms,
+        content_json: content,
+        scheduled_for: scheduledDate.toISOString(),
+        status: 'pending',
+      });
+
+      if (error) throw error;
+      toast({ title: 'Saved!', description: 'Post added to scheduled social posts' });
+      queryClient.invalidateQueries({ queryKey: ['scheduled-social-posts'] });
+    } catch (error) {
+      console.error('Error saving social post:', error);
+      toast({ title: 'Error', description: 'Failed to save post', variant: 'destructive' });
+    } finally {
+      setSavingChannel(null);
+    }
+  };
+
+  const saveToCampaign = async (content: Record<string, string>) => {
+    setSavingChannel('campaign');
+    try {
+      const { error } = await supabase.from('marketing_campaigns').insert({
+        company_id: effectiveCompanyId!,
+        name: topic.trim(),
+        campaign_type: 'email',
+        subject: content.subject || topic,
+        email_template: content.body || '',
+        status: 'draft',
+        created_by: user?.id,
+      });
+
+      if (error) throw error;
+      toast({ title: 'Saved!', description: 'Campaign draft created' });
+      navigate('/dashboard/campaigns');
+    } catch (error) {
+      console.error('Error saving campaign:', error);
+      toast({ title: 'Error', description: 'Failed to create campaign', variant: 'destructive' });
+    } finally {
+      setSavingChannel(null);
+    }
+  };
+
+  const saveToBlogDraft = async (content: Record<string, string>) => {
+    setSavingChannel('blog');
+    try {
+      const blogTitle = content.title || topic;
+      const slug = blogTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      
+      const scheduledDate = new Date();
+      scheduledDate.setDate(scheduledDate.getDate() + 7);
+      scheduledDate.setHours(9, 0, 0, 0);
+
+      const { error } = await supabase.from('scheduled_blog_posts').insert({
+        company_id: effectiveCompanyId!,
+        title: blogTitle,
+        slug: slug,
+        content: content.body || content.content || '',
+        excerpt: content.excerpt || content.meta_description || '',
+        scheduled_for: scheduledDate.toISOString(),
+        status: 'draft',
+        created_by: user?.id,
+      });
+
+      if (error) throw error;
+      toast({ title: 'Saved!', description: 'Blog post draft created' });
+      queryClient.invalidateQueries({ queryKey: ['scheduled-blog-posts'] });
+    } catch (error) {
+      console.error('Error saving blog post:', error);
+      toast({ title: 'Error', description: 'Failed to create draft', variant: 'destructive' });
+    } finally {
+      setSavingChannel(null);
+    }
+  };
+
+  const saveToSmsTemplates = async (content: Record<string, string> | string) => {
+    setSavingChannel('sms');
+    try {
+      const messageContent = typeof content === 'string' ? content : (content.message || content.template || Object.values(content)[0] || '');
+      
+      const { error } = await supabase.from('sms_templates').insert({
+        company_id: effectiveCompanyId!,
+        template_type: 'marketing',
+        message: String(messageContent),
+      });
+
+      if (error) throw error;
+      toast({ title: 'Saved!', description: 'SMS template created' });
+      queryClient.invalidateQueries({ queryKey: ['sms-templates'] });
+    } catch (error) {
+      console.error('Error saving SMS template:', error);
+      toast({ title: 'Error', description: 'Failed to save template', variant: 'destructive' });
+    } finally {
+      setSavingChannel(null);
+    }
+  };
+
+  const renderSaveAction = (channel: string, content: unknown) => {
+    if (!content || (typeof content === 'object' && 'error' in (content as Record<string, unknown>))) return null;
+
+    const isSaving = savingChannel === channel;
+    
+    switch (channel) {
+      case 'social':
+        return (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => saveToSocialPosts(content as Record<string, { post?: string; hashtags?: string[] }>)}
+            disabled={isSaving}
+            className="gap-2"
+          >
+            {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Calendar className="h-3 w-3" />}
+            Schedule Post
+          </Button>
+        );
+      case 'campaign':
+        return (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => saveToCampaign(content as Record<string, string>)}
+            disabled={isSaving}
+            className="gap-2"
+          >
+            {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <ArrowRight className="h-3 w-3" />}
+            Create Campaign
+          </Button>
+        );
+      case 'blog':
+        return (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => saveToBlogDraft(content as Record<string, string>)}
+            disabled={isSaving}
+            className="gap-2"
+          >
+            {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+            Save as Draft
+          </Button>
+        );
+      case 'sms':
+        return (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => saveToSmsTemplates(content as Record<string, string>)}
+            disabled={isSaving}
+            className="gap-2"
+          >
+            {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+            Save Template
+          </Button>
+        );
+      case 'website':
+        return (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => navigate('/dashboard/web-presence')}
+            className="gap-2"
+          >
+            <ArrowRight className="h-3 w-3" />
+            Go to Website
+          </Button>
+        );
+      default:
+        return null;
+    }
   };
 
   const renderContent = (content: unknown, channel: string) => {
@@ -328,7 +542,10 @@ export function MultiChannelGenerator() {
 
               {selectedChannels.map((channel) => (
                 <TabsContent key={channel} value={channel}>
-                  <ScrollArea className="h-[400px] pr-4">
+                  <div className="flex justify-end mb-3">
+                    {renderSaveAction(channel, results[channel])}
+                  </div>
+                  <ScrollArea className="h-[350px] pr-4">
                     {renderContent(results[channel], channel)}
                   </ScrollArea>
                 </TabsContent>

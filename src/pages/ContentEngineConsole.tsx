@@ -3,7 +3,7 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
   Sparkles, 
@@ -17,17 +17,51 @@ import {
   Settings
 } from 'lucide-react';
 import { MultiChannelGenerator } from '@/components/content-engine/MultiChannelGenerator';
+import { ContentEngineDashboard } from '@/components/content-engine/ContentEngineDashboard';
+import { ContentEngineCalendar } from '@/components/content-engine/ContentEngineCalendar';
+import { AIContentProfileManager } from '@/components/knowledge/AIContentProfileManager';
+import { useAuth } from '@/contexts/AuthContext';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
-const CHANNEL_STATS = [
-  { channel: 'Website', icon: Globe, count: 0, color: 'text-blue-400' },
-  { channel: 'Social', icon: Share2, count: 0, color: 'text-pink-400' },
-  { channel: 'Campaign', icon: Mail, count: 0, color: 'text-amber-400' },
-  { channel: 'Blog', icon: FileText, count: 0, color: 'text-green-400' },
-  { channel: 'SMS', icon: MessageSquare, count: 0, color: 'text-purple-400' },
+const CHANNEL_STATS_CONFIG = [
+  { channel: 'Website', icon: Globe, key: 'website', color: 'text-blue-400' },
+  { channel: 'Social', icon: Share2, key: 'social', color: 'text-pink-400' },
+  { channel: 'Campaign', icon: Mail, key: 'campaign', color: 'text-amber-400' },
+  { channel: 'Blog', icon: FileText, key: 'blog', color: 'text-green-400' },
+  { channel: 'SMS', icon: MessageSquare, key: 'sms', color: 'text-purple-400' },
 ];
 
 export default function ContentEngineConsole() {
   const [activeTab, setActiveTab] = useState('generator');
+  const { companyId } = useAuth();
+
+  // Fetch content history stats
+  const { data: historyStats } = useQuery({
+    queryKey: ['content-engine-stats', companyId],
+    queryFn: async () => {
+      if (!companyId) return {};
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase.from('content_engine_history') as any)
+        .select('channel')
+        .eq('company_id', companyId);
+      
+      if (error) throw error;
+      
+      // Count by channel
+      const counts: Record<string, number> = {};
+      (data || []).forEach((item: { channel: string }) => {
+        counts[item.channel] = (counts[item.channel] || 0) + 1;
+      });
+      return counts;
+    },
+    enabled: !!companyId,
+  });
+
+  const channelStats = CHANNEL_STATS_CONFIG.map(config => ({
+    ...config,
+    count: historyStats?.[config.key] || 0,
+  }));
 
   return (
     <DashboardLayout>
@@ -48,7 +82,7 @@ export default function ContentEngineConsole() {
 
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {CHANNEL_STATS.map(({ channel, icon: Icon, count, color }) => (
+            {channelStats.map(({ channel, icon: Icon, count, color }) => (
               <Card key={channel} className="bg-sidebar/50">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
@@ -91,49 +125,15 @@ export default function ContentEngineConsole() {
             </TabsContent>
 
             <TabsContent value="dashboard" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Content Dashboard</CardTitle>
-                  <CardDescription>Overview of generated content across all channels</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-12 text-muted-foreground">
-                    <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Start generating content to see analytics here</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <ContentEngineDashboard />
             </TabsContent>
 
             <TabsContent value="calendar" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Content Calendar</CardTitle>
-                  <CardDescription>Unified view of scheduled content across channels</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-12 text-muted-foreground">
-                    <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No scheduled content yet</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <ContentEngineCalendar />
             </TabsContent>
 
             <TabsContent value="settings" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Brand Voice Settings</CardTitle>
-                  <CardDescription>Configure your AI Content Profile for consistent messaging</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-12 text-muted-foreground">
-                    <Settings className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Brand voice settings coming soon</p>
-                    <p className="text-sm mt-2">Configure via Knowledge Base → AI Content Profile</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <AIContentProfileManager />
             </TabsContent>
           </Tabs>
         </div>
