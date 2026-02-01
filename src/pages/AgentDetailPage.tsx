@@ -22,7 +22,8 @@ import {
   Truck,
   Briefcase,
   Megaphone,
-  BarChart3
+  BarChart3,
+  Sparkles
 } from 'lucide-react';
 
 const AGENT_DEFINITIONS: Record<string, {
@@ -555,6 +556,44 @@ const AGENT_DEFINITIONS: Record<string, {
       { key: 'show_team_metrics', label: 'Show Team Metrics', type: 'switch', defaultValue: true },
       { key: 'performance_goal_completion', label: 'Goal Completion Target (%)', type: 'slider', min: 50, max: 100, step: 5, defaultValue: 85 },
       { key: 'alert_low_performers', label: 'Alert on Low Performance', type: 'switch', defaultValue: false, description: 'Send alerts when performance drops below threshold' }
+    ]
+  },
+  creative: {
+    name: 'Creative Agent',
+    description: 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing.',
+    category: 'content_engine',
+    phase: 1,
+    icon: Sparkles,
+    color: 'text-purple-400',
+    capabilities: [
+      'Multi-channel content generation',
+      'Brand voice consistency',
+      'Website copy creation',
+      'Social media content',
+      'Campaign messaging',
+      'Blog post generation',
+      'SMS template creation'
+    ],
+    configFields: [
+      { key: 'brand_voice', label: 'Brand Voice', type: 'select', options: [
+        { value: 'professional', label: 'Professional' },
+        { value: 'friendly', label: 'Friendly' },
+        { value: 'casual', label: 'Casual' },
+        { value: 'authoritative', label: 'Authoritative' }
+      ], defaultValue: 'professional' },
+      { key: 'tone', label: 'Tone', type: 'select', options: [
+        { value: 'informative', label: 'Informative' },
+        { value: 'persuasive', label: 'Persuasive' },
+        { value: 'conversational', label: 'Conversational' },
+        { value: 'inspirational', label: 'Inspirational' }
+      ], defaultValue: 'informative' },
+      { key: 'target_audience', label: 'Target Audience', type: 'textarea', placeholder: 'Homeowners, businesses, property managers...', description: 'Describe your target audience' },
+      { key: 'use_research', label: 'Use Real-time Research', type: 'switch', defaultValue: true, description: 'Enhance content with Tavily research' },
+      { key: 'content_length', label: 'Default Content Length', type: 'select', options: [
+        { value: 'short', label: 'Short (50-100 words)' },
+        { value: 'medium', label: 'Medium (100-250 words)' },
+        { value: 'long', label: 'Long (250-500 words)' }
+      ], defaultValue: 'medium' }
     ]
   }
 };
