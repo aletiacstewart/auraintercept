@@ -74,7 +74,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
   },
   command: {
     // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
-    // 23 Total Agents: 4 Customer Portal + 4 Field Ops + 5 Business Ops + 3 Marketing + 3 Social Media Signal + 4 Analytics
+    // 24 Total Agents: 4 Customer Portal + 4 Field Ops + 5 Business Ops + 3 Marketing + 3 Social Media Signal + 4 Analytics + 1 Content Engine
     agents: [
       // Customer Portal (4)
       'triage', 'booking', 'followup', 'review',
@@ -87,9 +87,11 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       // Social Media Signal (3)
       'social_content', 'social_scheduler', 'social_analytics',
       // Analytics & Reports (4)
-      'insights', 'performance', 'revenue', 'forecast'
+      'insights', 'performance', 'revenue', 'forecast',
+      // Content Engine (1)
+      'creative'
     ],
-    consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports'],
+    consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports', 'content_engine'],
     label: 'Aura Pro Command',
     price: '$5,997/mo',
     description: 'Full business automation suite',

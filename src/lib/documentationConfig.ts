@@ -206,7 +206,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
 export const TIER_ORDER = ['express', 'aura_flow', 'halo', 'core', 'single_point', 'multi_track', 'command'] as const;
 
 // ============================================
-// AI OPERATIVES - 23 TOTAL
+// AI OPERATIVES - 24 TOTAL
 // ============================================
 
 export interface OperativeConfig {
@@ -468,6 +468,17 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     isCore: true,
     worksAlone: true,
   },
+  // Content Engine Console - 1 agent
+  {
+    id: 'creative',
+    name: 'Creative Agent',
+    description: 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing with consistent voice and messaging.',
+    console: 'content_engine',
+    tier: 'command',
+    dependencies: [],
+    isCore: true,
+    worksAlone: true,
+  },
 ];
 
 // ============================================
@@ -542,11 +553,20 @@ export const CONSOLES: ConsoleConfig[] = [
   {
     id: 'ai_operatives_hub',
     name: 'AI Operatives Hub',
-    description: 'Central management console for the Aura Intelligence Network. Configure, monitor, and analyze all 23 AI operatives.',
+    description: 'Central management console for the Aura Intelligence Network. Configure, monitor, and analyze all 24 AI operatives.',
     tier: 'halo',
     agentCount: 0,
     tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],
     color: 'indigo',
+  },
+  {
+    id: 'content_engine',
+    name: 'Content Engine',
+    description: 'Unified AI content generation console. Create on-brand content for website, social media, campaigns, blogs, and SMS from a single topic.',
+    tier: 'command',
+    agentCount: 1,
+    tabs: ['Generate', 'Dashboard', 'Calendar', 'Brand Voice'],
+    color: 'violet',
   },
 ];
 
@@ -612,8 +632,8 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
 // ============================================
 
 export const PLATFORM_STATS = {
-  totalOperatives: 23,
-  totalConsoles: 7,
+  totalOperatives: 24,
+  totalConsoles: 8,
   totalTiers: 7,
   startingPrice: 197,
   maxEmployees: 25,

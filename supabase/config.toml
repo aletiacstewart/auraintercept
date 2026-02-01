@@ -188,3 +188,6 @@ verify_jwt = true
 
 [functions.generate-social-batch]
 verify_jwt = true
+
+[functions.content-engine]
+verify_jwt = true
