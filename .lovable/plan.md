@@ -1,237 +1,185 @@
 
-# Free Audit Update Plan
+# Platform Consistency Audit: Comprehensive Update Plan
 
-## Overview
-Update the AI Opportunity Audit to include all new tiers, features, and industry-specific questions for restaurants, wellness/beauty, and personal assistants.
-
-## Current State Analysis
-
-The audit currently has:
-- **6 Tiers**: EXPRESS, CORE, HALO, SINGLE_POINT, MULTI_TRACK, COMMAND
-- **22 Questions** across 8 sections
-- **Missing**: Aura Flow tier ($297/mo) - Personal Assistant scheduling tier
-
-### Key Gap Identified
-**Aura Flow** is defined in `documentationConfig.ts` but NOT included in the audit scoring system. This tier is positioned between Express ($197) and Halo ($397) for businesses needing AI scheduling without a customer portal.
+## Executive Summary
+After auditing the entire platform including dashboards, consoles, audit system, export docs, guides, and signup pages, I identified **15+ critical inconsistencies** related to the new 7-tier subscription structure (including Aura Flow). The primary issues are outdated tier counts, missing Aura Flow from key configurations, and outdated documentation.
 
 ---
 
-## Implementation Plan
+## Critical Issues Found
 
-### Phase 1: Add Aura Flow Tier to Scoring System
+### 1. Auth.tsx - Company Signup Page (HIGH PRIORITY)
+**Location**: `src/pages/Auth.tsx` (Lines 52, 700-876)
+**Issue**: Company signup only displays 3 tiers (Single-Point, Multi-Track, Command)
+**Missing Tiers**: 
+- Aura Express ($197)
+- Aura Flow ($297) 
+- Aura Halo ($397)
+- Aura Core ($500)
 
-**File: `src/components/audit/types.ts`**
-
-1. Update `TierType` to include FLOW:
-   ```typescript
-   export type TierType = 'EXPRESS' | 'FLOW' | 'CORE' | 'HALO' | 'SINGLE_POINT' | 'MULTI_TRACK' | 'COMMAND';
-   ```
-
-2. Update `TierScores` interface to include FLOW scoring
-
-3. Add FLOW to `TIER_RECOMMENDATIONS`:
-   - Price: $297/mo
-   - 4 AI Operatives (Receptionist, Scheduling, Follow-up + Text/Voice)
-   - 0 Consoles (calendar sync only, no customer portal)
-   - Implementation: $399
-   - 2 employees
-
-4. Update all existing question scoring matrices to include FLOW scores
+**Impact**: New companies cannot see or select the lower-priced tiers during registration
 
 ---
 
-### Phase 2: Add New Industry-Specific Questions
+### 2. documentationConfig.ts - Tier Count & Hierarchy (HIGH PRIORITY)
+**Location**: `src/lib/documentationConfig.ts`
 
-**New Section: "Industry & Service Type" (4 questions)**
-
-| Question | Purpose |
-|----------|---------|
-| "What type of business do you operate?" | Primary industry identifier for Express/Halo/Flow targeting |
-| "Do customers typically need to schedule appointments?" | Differentiates scheduling-heavy vs walk-in businesses |
-| "What's your primary service delivery model?" | Identifies if field ops (Multi-Track) or in-location (Halo) |
-| "Do you have an online ordering or menu system?" | Restaurant-specific for Express tier |
-
-**New Questions for Existing Sections:**
-
-| Section | New Question | Target Tier |
-|---------|-------------|-------------|
-| Communication | "Do you need AI to handle reservation or booking calls?" | Flow/Halo |
-| Scheduling | "Would direct calendar sync (without customer portal) work for you?" | Flow vs Halo |
-| Scheduling | "How many appointments do you handle per day?" | Volume-based scoring |
-| Retention | "Do you send appointment reminders to customers?" | Flow/Halo automation |
-| Operations | "Do you offer walk-in services or appointment-only?" | Express vs Halo |
+| Line | Current Value | Should Be |
+|------|--------------|-----------|
+| 8 | "5-TIER STRUCTURE" | "7-TIER STRUCTURE" |
+| 607 | `totalTiers: 6` | `totalTiers: 7` |
+| 649-657 | tierHierarchy missing aura_flow | Add aura_flow: 2 |
+| 668-676 | tierHierarchy missing aura_flow | Add aura_flow: 2 |
 
 ---
 
-### Phase 3: Update Scoring Logic for New Tiers
+### 3. PricingSummaryPDF.tsx - PDF Export (MEDIUM PRIORITY)
+**Location**: `src/components/documentation/PricingSummaryPDF.tsx`
 
-**Scoring Philosophy:**
+| Line | Current Value | Should Be |
+|------|--------------|-----------|
+| 466 | "6-Tier Pricing Breakdown" | "7-Tier Pricing Breakdown" |
+| 469 | "6 Pricing Tiers" stat | "7 Pricing Tiers" |
+| 499 | "6-Tier Comparison Table" | "7-Tier Comparison Table" |
+| 619, 622 | "6-Tier" references | "7-Tier" |
 
-| Tier | Primary Signals |
+---
+
+### 4. ExportDocumentation.tsx - Document Descriptions (MEDIUM PRIORITY)
+**Location**: `src/pages/ExportDocumentation.tsx`
+
+| Line | Current Value | Should Be |
+|------|--------------|-----------|
+| 55 | "5-Tier Subscription Access" | "7-Tier Subscription Access" |
+| 165 | "Five-Tier Comparison" | "Seven-Tier Comparison" |
+
+---
+
+### 5. PlatformGuides.tsx - Subscription Tiers Guide (MEDIUM PRIORITY)
+**Location**: `src/pages/PlatformGuides.tsx` (Lines 119-133)
+**Issue**: The "Subscription Tiers" guide step is missing:
+- Aura Express ($197/mo) - Restaurant tier
+- Aura Flow ($297/mo) - Personal Assistant tier
+
+**Current**: Lists only 5 tiers (Halo, Core, Single-Point, Multi-Track, Command)
+**Should**: Include all 7 tiers with descriptions
+
+---
+
+## Files Requiring Updates
+
+### High Priority (Core Functionality)
+
+| File | Changes Required |
 |------|-----------------|
-| **Express** ($197) | Restaurant/cafe, walk-in, menu/ordering links, low scheduling needs |
-| **Flow** ($297) | Personal assistant needs, calendar-focused, no portal needed, solo/small team |
-| **Halo** ($397) | Salon/wellness, appointment-heavy, needs customer portal, 3+ employees |
-| **Core** ($500) | Text-only OK, manual operations preferred, content/web focus |
-| **Single-Point** ($1,500) | Lead-focused, review collection priority, 5+ employees |
-| **Multi-Track** ($3,997) | Field techs, dispatch needs, GPS routing, quotes in field |
-| **Command** ($5,997) | 15+ techs, multi-location, enterprise features |
+| `src/pages/Auth.tsx` | Add 4 missing tier cards (Express, Flow, Halo, Core) to company signup |
+| `src/lib/documentationConfig.ts` | Update comment (5→7), totalTiers (6→7), add aura_flow to both tierHierarchy functions |
+
+### Medium Priority (Documentation/PDFs)
+
+| File | Changes Required |
+|------|-----------------|
+| `src/components/documentation/PricingSummaryPDF.tsx` | Update all "6-Tier" references to "7-Tier" |
+| `src/pages/ExportDocumentation.tsx` | Update tier count references |
+| `src/pages/PlatformGuides.tsx` | Add Express and Flow to subscription tiers guide |
+
+### Already Correct (No Changes Needed)
+
+| File | Status |
+|------|--------|
+| `src/pages/Index.tsx` | Has all 7 tiers displayed |
+| `src/pages/Subscription.tsx` | Has all 7 tiers in TIERS array |
+| `supabase/functions/landing-chat/index.ts` | Correctly shows 7 tiers |
+| `src/lib/helpContentConfig.ts` | Has aura_flow in tierHierarchy |
+| `src/components/audit/types.ts` | Recently updated with FLOW tier |
 
 ---
 
-### Phase 4: Update AuditResults Component
+## Detailed Implementation
 
-**File: `src/components/audit/AuditResults.tsx`**
+### Phase 1: Fix Core Configuration
 
-1. Add FLOW to `TIER_ICONS` - use `CalendarDays` icon
-2. Add FLOW to `TIER_COLORS` - teal/cyan gradient (between Express amber and Halo rose)
-3. Add FLOW to `TIER_BG_COLORS` - teal background
-4. Add FLOW to `TIER_ORDER` array (after EXPRESS, before CORE)
-5. Add FLOW to `TIER_ROI_ESTIMATES`:
-   - Hours saved: 10/week
-   - Leads recovered: 5
-   - Revenue impact: $3,000-6,000
-
----
-
-### Phase 5: Update AgentOpportunityAudit Component
-
-**File: `src/components/audit/AgentOpportunityAudit.tsx`**
-
-1. Update tier percentage calculations to include FLOW
-2. Update recommended tier logic to consider FLOW in the ranking
-
----
-
-## New Question Set (Total: 30 questions)
-
-### Section 1: Business Basics (4 questions - was 3)
-- Employee count (existing)
-- Multi-location (existing)
-- Annual revenue (existing)
-- **NEW: Industry/business type** (Restaurant, Salon/Spa, Personal Services, Field Services, Other)
-
-### Section 2: Lead Intake & Response (3 questions - unchanged)
-- Lead response time
-- After hours calls
-- Lead volume
-
-### Section 3: Communication Preferences (4 questions - was 3)
-- AI interaction mode (existing)
-- Communication channels (existing)
-- Missed calls (existing)
-- **NEW: Reservation/booking call handling**
-
-### Section 4: Scheduling & Operations (5 questions - was 3)
-- Booking process (existing, updated options)
-- Dispatch routing (existing)
-- Customer ETA (existing)
-- **NEW: Calendar sync vs portal preference**
-- **NEW: Daily appointment volume**
-
-### Section 5: Customer Retention & Reviews (3 questions - was 2)
-- Review collection (existing)
-- Customer reactivation (existing)
-- **NEW: Appointment reminder system**
-
-### Section 6: Social Media & Web Presence (3 questions - unchanged)
-- Social media activity
-- Content creation
-- Website status
-
-### Section 7: Business Operations (4 questions - was 3)
-- Quoting process (existing)
-- Inventory tracking (existing)
-- Warranty claims (existing)
-- **NEW: Walk-in vs appointment model**
-
-### Section 8: Analytics & Growth (2 questions - unchanged)
-- Performance tracking
-- Marketing automation
-
-### Section 9: Service Delivery Model (NEW - 2 questions)
-- **NEW: Primary service location** (Customer location, Your location, Both)
-- **NEW: Team structure** (Solo, Small team fixed location, Field technicians)
-
----
-
-## Updated Section Order
-
+**documentationConfig.ts Updates:**
 ```typescript
-export const SECTION_ORDER = [
-  'Business Basics',           // 4 questions
-  'Industry & Services',       // 2 questions (new)
-  'Lead Intake & Response',    // 3 questions
-  'Communication Preferences', // 4 questions
-  'Scheduling & Operations',   // 5 questions
-  'Customer Retention',        // 3 questions
-  'Social & Web Presence',     // 3 questions
-  'Business Operations',       // 4 questions
-  'Analytics & Growth',        // 2 questions
-];
-// Total: 30 questions
+// Line 8: Update comment
+// SUBSCRIPTION TIERS - 7-TIER STRUCTURE
+
+// Line 607: Update totalTiers
+totalTiers: 7,
+
+// Lines 649-657 and 668-676: Add aura_flow to tierHierarchy
+const tierHierarchy: Record<string, number> = {
+  free: 0,
+  express: 1,
+  aura_flow: 2,  // ADD THIS
+  halo: 3,
+  core: 4,
+  single_point: 5,
+  multi_track: 6,
+  command: 7,
+};
+```
+
+### Phase 2: Fix Auth.tsx Company Signup
+
+**Current Structure (3 tiers):**
+- Starter → Single-Point ($1,500)
+- Professional → Multi-Track ($3,997)
+- Enterprise → Command ($5,997)
+
+**New Structure (7 tiers):**
+Display industry-specific packages prominently:
+1. Aura Express ($197) - Restaurants
+2. Aura Flow ($297) - Personal Assistant
+3. Aura Halo ($397) - Salons/Wellness
+
+Display general tiers:
+4. Aura Core ($500) - AI-Assisted
+5. Single-Point ($1,500) - Solo-Focus
+6. Multi-Track ($3,997) - Small Scale
+7. Aura Pro Command ($5,997) - Enterprise
+
+**Key Changes:**
+- Update `selectedTier` type from `'starter' | 'professional' | 'enterprise'` to match actual tier IDs
+- Add 4 new tier selection cards with proper styling
+- Match the Index.tsx pricing display for consistency
+
+### Phase 3: Fix PDF Exports
+
+**PricingSummaryPDF.tsx:**
+- Update cover page stats from "6" to "7" tiers
+- Update subtitle from "6-Tier" to "7-Tier"
+- Update table of contents entries
+- Update section headers
+
+### Phase 4: Fix Platform Guides
+
+**PlatformGuides.tsx - Subscription Tiers Guide:**
+Add missing entries:
+```typescript
+'Aura Express ($197/mo): AI Voice + Chat for restaurants with smart link sharing',
+'Aura Flow ($297/mo): AI Personal Assistant with scheduling via calendar sync',
 ```
 
 ---
 
-## Files to Modify
+## Summary of Changes
 
-| File | Changes |
-|------|---------|
-| `src/components/audit/types.ts` | Add FLOW tier, new questions, updated scoring matrices |
-| `src/components/audit/AuditResults.tsx` | Add FLOW tier display, icons, colors, ROI |
-| `src/components/audit/AgentOpportunityAudit.tsx` | Update tier calculations for FLOW |
-
----
-
-## Technical Details
-
-### New Type Definitions
-
-```typescript
-export type TierType = 'EXPRESS' | 'FLOW' | 'CORE' | 'HALO' | 'SINGLE_POINT' | 'MULTI_TRACK' | 'COMMAND';
-
-export interface TierScores {
-  EXPRESS: number;      // Restaurants
-  FLOW: number;         // Personal Assistant (NEW)
-  CORE: number;         // Digital foundation
-  HALO: number;         // Salons/wellness
-  SINGLE_POINT: number; // Lead focused
-  MULTI_TRACK: number;  // Field ops
-  COMMAND: number;      // Enterprise
-}
-```
-
-### FLOW Tier Recommendation
-
-```typescript
-FLOW: {
-  tier: 'FLOW',
-  label: 'Aura Flow',
-  price: '$297/mo',
-  description: 'AI Personal Assistant with scheduling via direct calendar sync',
-  keyFeatures: [
-    'AI Receptionist (24/7 engagement)',
-    'Scheduling Agent (calendar sync)',
-    'Follow-up Agent (SMS + Email)',
-    'Message Aura (Text) + Talk to Aura (Voice)',
-    'Smart Link Sharing',
-    'No customer portal - direct calendar only',
-  ],
-  agentCount: 4,
-  consoleCount: 0,
-  employeeLimit: '2 employees',
-  implementationFee: '$399',
-}
-```
+| Category | Files | Estimated Effort |
+|----------|-------|------------------|
+| Core Config | 1 file | 10 min |
+| Company Signup | 1 file | 45 min |
+| PDF Exports | 2 files | 15 min |
+| Platform Guides | 1 file | 10 min |
+| **Total** | **5 files** | **~80 min** |
 
 ---
 
-## Testing Considerations
+## Testing Checklist
 
 After implementation:
-1. Complete the audit selecting restaurant-focused answers - should recommend EXPRESS
-2. Complete with salon/wellness answers - should recommend HALO
-3. Complete with personal assistant/scheduling focus - should recommend FLOW
-4. Verify all 7 tiers display correctly in results
-5. Confirm fit percentages calculate correctly for all tiers
+1. Navigate to `/auth?mode=company` and verify all 7 tiers display
+2. Download Pricing Summary PDF and verify "7-Tier" appears throughout
+3. Check Platform Guides subscription section for all tiers
+4. Verify documentationConfig helper functions return correct tier order
+5. Test audit to ensure FLOW tier recommendations work correctly
