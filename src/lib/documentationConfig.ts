@@ -191,7 +191,6 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       'Social Media Signal Ops (6 platforms)',
       'Analytics & Reports (8 tabs)',
       'Inventory management with reorder alerts',
-      'Warranty claims tracking',
       'Multi-location support',
       'White-label branding',
       '25 Employee Accounts',
@@ -206,7 +205,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
 export const TIER_ORDER = ['express', 'aura_flow', 'halo', 'core', 'single_point', 'multi_track', 'command'] as const;
 
 // ============================================
-// AI OPERATIVES - 24 TOTAL
+// AI OPERATIVES - 23 TOTAL
 // ============================================
 
 export interface OperativeConfig {
@@ -303,7 +302,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     isCore: false,
     worksAlone: false,
   },
-  // Business Operations Console - 5 agents
+  // Business Operations Console - 4 agents
   {
     id: 'admin',
     name: 'Admin Agent',
@@ -338,16 +337,6 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     id: 'inventory',
     name: 'Inventory Agent',
     description: 'Tracks parts, materials, and supplies. Alerts when stock is low and helps plan reorders.',
-    console: 'business_management',
-    tier: 'command',
-    dependencies: [],
-    isCore: false,
-    worksAlone: true,
-  },
-  {
-    id: 'warranty',
-    name: 'Warranty Agent',
-    description: 'Manages product and service warranties. Tracks warranty periods, processes claims, and handles replacements.',
     console: 'business_management',
     tier: 'command',
     dependencies: [],
@@ -517,10 +506,10 @@ export const CONSOLES: ConsoleConfig[] = [
   {
     id: 'business_management',
     name: 'Business Operations',
-    description: 'Comprehensive business management console with AI-powered quoting, invoicing, lead management, inventory tracking, and warranty administration.',
+    description: 'Comprehensive business management console with AI-powered quoting, invoicing, lead management, and inventory tracking.',
     tier: 'command',
-    agentCount: 5,
-    tabs: ['Quote', 'Invoice', 'Lead', 'Appointments', 'Inventory', 'Warranty', 'Companies', 'Employees', 'Customers'],
+    agentCount: 4,
+    tabs: ['Quote', 'Invoice', 'Lead', 'Appointments', 'Inventory', 'Companies', 'Employees', 'Customers'],
     color: 'purple',
   },
   {
@@ -553,7 +542,7 @@ export const CONSOLES: ConsoleConfig[] = [
   {
     id: 'ai_operatives_hub',
     name: 'AI Operatives Hub',
-    description: 'Central management console for the Aura Intelligence Network. Configure, monitor, and analyze all 24 AI operatives.',
+    description: 'Central management console for the Aura Intelligence Network. Configure, monitor, and analyze all 23 AI operatives.',
     tier: 'halo',
     agentCount: 0,
     tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],

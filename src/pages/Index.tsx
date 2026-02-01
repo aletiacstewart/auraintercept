@@ -3,9 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Bot, Building2, Zap, Shield, MessageSquare, Play, Calendar, Phone, Users, TrendingUp, Clock, MapPin, FileText, DollarSign, Package, Award, Megaphone, Gift, RotateCcw, Sun, BarChart3, Target, CheckCircle2, ArrowRight, Sparkles, Wrench, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Star, Navigation, Truck, Search, UserPlus, Globe, Headphones, Bell, Mail, Smartphone, Video, Mic, Brain, Layers, Lock, Send, Key, Fence, PanelTop, Wind, DoorOpen, Bug, TreeDeciduous, Waves, TreePine, Trash2, Refrigerator, Hammer, PaintBucket, Grid3X3, Sparkle, Car, HardHat, Wifi, Camera, Briefcase, HeadphonesIcon, Check, X, Scissors, UtensilsCrossed } from 'lucide-react';
+import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, Clock, MapPin, FileText, DollarSign, Package, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Star, Navigation, Truck, Search, UserPlus, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Briefcase, HeadphonesIcon, X, Scissors, UtensilsCrossed, Car } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import logo from '@/assets/aura-intercept-logo.png';
 // Hero video served from public folder for better browser compatibility
@@ -79,10 +77,6 @@ const agentCategories = [{
     name: 'Inventory Agent',
     description: 'Stock tracking, low stock alerts, and auto-reorder',
     icon: Package
-  }, {
-    name: 'Warranty Agent',
-    description: 'Coverage verification and claim processing',
-    icon: Award
   }]
 }, {
   id: 'analytics',
@@ -161,12 +155,12 @@ const agentConsoles = [{
   features: ['Smart dispatch', 'Route optimization', 'Live ETA tracking', 'Technician check-in']
 }, {
   name: 'Business Management Console',
-  description: 'Invoicing, inventory, and warranty operations.',
+  description: 'Invoicing, inventory, and business operations.',
   icon: Briefcase,
   gradient: 'from-orange-500 to-amber-500',
   iconBg: 'bg-orange-500/10',
   iconColor: 'text-orange-500',
-  features: ['Invoice generation', 'Inventory tracking', 'Warranty management', 'Quote builder']
+  features: ['Invoice generation', 'Inventory tracking', 'Quote builder', 'Lead management']
 }, {
   name: 'Marketing & Sales Console',
   description: 'Lead management and campaign automation.',
