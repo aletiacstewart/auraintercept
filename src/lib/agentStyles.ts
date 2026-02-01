@@ -45,6 +45,9 @@ export const AGENT_STYLES: Record<string, AgentStyle> = {
   performance: { label: 'Performance', color: 'text-secondary', bgColor: 'bg-secondary/10' },
   revenue: { label: 'Revenue', color: 'text-secondary', bgColor: 'bg-secondary/10' },
   forecast: { label: 'Forecast', color: 'text-secondary', bgColor: 'bg-secondary/10' },
+  
+  // Content Engine Agents
+  creative: { label: 'Creative', color: 'text-purple-400', bgColor: 'bg-purple-500/10' },
 };
 
 // Default style for unknown agents
@@ -78,6 +81,7 @@ export const AGENT_CATEGORIES = {
   marketingSales: ['campaign', 'marketing', 'promo', 'referral', 'winback', 'seasonal'],
   socialMediaSignal: ['social_content', 'social_scheduler', 'social_analytics'],
   analyticsReports: ['insights', 'performance', 'revenue', 'forecast'],
+  contentEngine: ['creative'],
 } as const;
 
 export type AgentCategory = keyof typeof AGENT_CATEGORIES;
