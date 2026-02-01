@@ -1,13 +1,32 @@
-
-
 # Marketing & Sales Console: Agent Clarification Fix
 
-## Problem Summary
-The Marketing & Sales Console has overlapping agent descriptions and an inconsistent agent count (2 vs 3) across different configuration files.
+## ✅ COMPLETED
 
-## Resolution: Define 3 Distinct Agents
+Fixed the Marketing & Sales Console to have **3 distinct agents** with clear, non-overlapping purposes.
 
-Based on the platform architecture memory, Marketing & Sales should have **3 agents** with clear, distinct purposes:
+## Changes Made
+
+### 1. documentationConfig.ts ✅
+- Updated comment from "2 agents" to "3 agents"
+- Added Lead Agent definition
+- Clarified Campaign Agent description: "Creates and sends email/SMS campaigns"
+- Clarified Marketing Agent description: "Manages customer segments, promo codes, referral tracking"
+
+### 2. Index.tsx ✅
+- Campaign Agent: "Creates and schedules email and SMS marketing campaigns with performance analytics"
+- Lead Agent: "Qualifies and scores leads with automated follow-up sequences"
+- Marketing Agent: "Manages customer segments, promo codes, and referral programs"
+- Changed Marketing Agent icon from Megaphone to Target for visual distinction
+
+### 3. ai-agent-chat Edge Function ✅
+- Renamed `promo` agent prompt to `marketing`
+- Updated INTERNAL_AGENTS list: `promo` → `marketing`
+- Updated TIER_AGENTS.command list: `promo` → `marketing`
+- Removed duplicate tools entry
+
+## Result
+
+Marketing & Sales Console now has **3 clearly distinct agents**:
 
 | Agent ID | Name | Distinct Purpose |
 |----------|------|------------------|
@@ -15,64 +34,4 @@ Based on the platform architecture memory, Marketing & Sales should have **3 age
 | `lead` | Lead Agent | **Pipeline** - Qualifies incoming leads, scores them based on engagement, automates follow-up sequences |
 | `marketing` | Marketing Agent | **Segmentation** - Manages customer segments, promo codes, referral tracking, and win-back targeting |
 
-## Changes Required
-
-### 1. Add Lead Agent to documentationConfig.ts
-
-Add the missing Lead Agent definition to the AI_OPERATIVES array:
-
-```typescript
-// Marketing & Sales Console - 3 agents (update comment)
-{
-  id: 'lead',
-  name: 'Lead Agent',
-  description: 'Qualifies and scores incoming leads based on engagement. Automates follow-up sequences to move leads through the pipeline.',
-  console: 'marketing_sales',
-  tier: 'command',
-  dependencies: [],
-  isCore: false,
-  worksAlone: true,
-},
-```
-
-### 2. Update Index.tsx Agent Descriptions
-
-Clarify the distinct purposes in the landing page:
-
-```typescript
-{
-  name: 'Campaign Agent',
-  description: 'Creates and schedules email and SMS marketing campaigns with performance analytics',
-  icon: Megaphone
-}, {
-  name: 'Lead Agent', 
-  description: 'Qualifies and scores leads with automated follow-up sequences',
-  icon: UserPlus
-}, {
-  name: 'Marketing Agent',
-  description: 'Manages customer segments, promo codes, and referral programs',
-  icon: Target
-}
-```
-
-### 3. Update Edge Function (ai-agent-chat)
-
-Change `'promo'` to `'marketing'` to match standardized naming.
-
-## Files to Modify
-
-| File | Change |
-|------|--------|
-| `src/lib/documentationConfig.ts` | Add Lead Agent definition, update comment to "3 agents" |
-| `src/pages/Index.tsx` | Update agent descriptions to be distinct |
-| `supabase/functions/ai-agent-chat/index.ts` | Replace `promo` with `marketing` |
-
-## Result After Fix
-
-Marketing & Sales Console will have **3 clearly distinct agents**:
-1. **Campaign Agent** - Campaign execution and delivery
-2. **Lead Agent** - Lead qualification and nurturing  
-3. **Marketing Agent** - Segmentation and promotions
-
-Total AI Operatives will increase from 22 to **23** (matching the "23 Specialized AI Operatives" marketing messaging).
-
+Total AI Operatives: **23** (matching the "23 Specialized AI Operatives" marketing messaging)

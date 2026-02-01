@@ -113,16 +113,16 @@ const agentCategories = [{
   color: 'from-orange-500 to-amber-500',
   agents: [{
     name: 'Campaign Agent',
-    description: 'Unified marketing for promotions, referrals, win-back, and seasonal campaigns',
+    description: 'Creates and schedules email and SMS marketing campaigns with performance analytics',
     icon: Megaphone
   }, {
     name: 'Lead Agent',
-    description: 'Qualifies and scores leads with smart follow-up automation',
+    description: 'Qualifies and scores leads with automated follow-up sequences',
     icon: UserPlus
   }, {
     name: 'Marketing Agent',
-    description: 'Manages customer segments, promo codes, referral programs, and win-back automation',
-    icon: Megaphone
+    description: 'Manages customer segments, promo codes, and referral programs',
+    icon: Target
   }]
 }, {
   id: 'social',
