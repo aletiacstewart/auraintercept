@@ -126,7 +126,7 @@ const guideCategories = [
           'Single-Point ($1,500/mo): 3 AI Operatives (Receptionist, Follow-up, Review) + 1 Console',
           'Multi-Track ($3,997/mo): 10 AI Operatives + 2 Consoles + Online Booking + Field Ops',
           'Aura Pro Command ($5,997/mo): All 23 AI Operatives + 7 Consoles + Enterprise Features',
-          'Proxy Voice Chat included on Express, Flow, Halo, Single-Point, Multi-Track, and Command tiers',
+          'Talk to Aura (Voice) included on Express, Flow, Halo, Single-Point, Multi-Track, and Command tiers',
           'Employee limits: 2 (Express/Flow), 3 (Halo), 2 (Core), 5 (Single-Point), 10 (Multi-Track), 25 (Command)',
           'Premium Add-Ons: Social Media Signal ($150/mo), Web Presence ($150/mo) for Single-Point/Multi-Track',
           'Implementation fees: $299 (Express), $399 (Flow), $499 (others), Custom for Command'
@@ -154,7 +154,7 @@ const guideCategories = [
           'Single-Point: Call to Book, Emergency, Services, Hours, Feedback tabs',
           'Multi-Track+: Full suite with Book Appointment, Get Quote, Track, Billing tabs',
           'Portal supports multi-company access for customers',
-          'Proxy Voice Chat included for Single-Point+ tiers',
+          'Talk to Aura (Voice) included for Single-Point+ tiers',
           'Configure widget embed code in Integrations → Website Embed'
         ],
         tips: ['Widget works on WordPress, Wix, and any HTML site', 'Customers can manage preferences per company']
@@ -299,10 +299,10 @@ const guideCategories = [
         tips: ['Use form-based interfaces for structured reports', 'Export to CSV/PDF from Reports tab']
       },
       {
-        title: 'Proxy Voice Chat (ElevenLabs)',
+        title: 'Talk to Aura (Voice) via ElevenLabs',
         duration: '8 min',
         steps: [
-          'Proxy Voice Chat powered by ElevenLabs included in Single-Point+ tiers',
+          'Talk to Aura (Voice) powered by ElevenLabs included in Single-Point+ tiers',
           'Customers can speak naturally with AI agents',
           'Supports inbound and outbound voice interactions',
           'Configure voice settings in Integrations → Voice Agent',

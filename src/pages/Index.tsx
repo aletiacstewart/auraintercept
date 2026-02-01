@@ -120,9 +120,9 @@ const agentCategories = [{
     description: 'Qualifies and scores leads with smart follow-up automation',
     icon: UserPlus
   }, {
-    name: 'Promo Agent',
-    description: 'Manages promotional codes, discounts, and referral programs',
-    icon: Gift
+    name: 'Marketing Agent',
+    description: 'Manages customer segments, promo codes, referral programs, and win-back automation',
+    icon: Megaphone
   }]
 }, {
   id: 'social',
@@ -263,7 +263,7 @@ const platformFeatures = [{
 }];
 const communicationChannels = [{
   icon: Mic,
-  title: 'Ask Aura AI',
+  title: 'Talk to Aura (Voice)',
   description: 'Natural voice conversations with AI agents for phone-based customer service.',
   color: 'bg-channel-voice',
   gradientClass: 'from-[hsl(var(--channel-voice))] to-[hsl(348,83%,50%)]'

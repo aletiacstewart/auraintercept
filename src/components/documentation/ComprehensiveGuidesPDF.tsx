@@ -216,7 +216,7 @@ const guideCategories = [
         title: 'Subscription Tiers',
         duration: '8 min',
         steps: [
-          'Aura Halo ($397/mo): Salons/Wellness - AI Receptionist, Scheduling, Follow-up, Proxy Voice Chat',
+          'Aura Halo ($397/mo): Salons/Wellness - AI Receptionist, Scheduling, Follow-up + Talk to Aura (Voice)',
           'Aura Core ($500/mo): AI-Assisted foundation with 3 AI Tools (no automation)',
           'Single-Point ($1,500/mo): AI Receptionist, Follow-up, Review + Proxy Voice Chat',
           'Multi-Track ($3,997/mo): 10 operatives - adds Scheduling, Dispatch, ETA, Quoting, Invoicing',
@@ -1013,11 +1013,11 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         <Text style={styles.categoryTitle}>Subscription Tiers</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Single-Point ($497/mo): AI Receptionist, Follow-up, Review + AI Voice</Text>
+          <Text style={styles.bulletText}>Single-Point ($1,500/mo): AI Receptionist, Follow-up, Review + AI Voice</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Multi-Track ($897/mo): Adds Scheduling, Dispatch, ETA, Quoting, Invoicing</Text>
+          <Text style={styles.bulletText}>Multi-Track ($3,997/mo): Adds Scheduling, Dispatch, ETA, Quoting, Invoicing</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
