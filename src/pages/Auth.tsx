@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Bot, Building2, Users, Shield, Check, Crown, Zap, MessageSquare, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones } from 'lucide-react';
+import { Bot, Building2, Users, Shield, Check, Zap, Phone, Mail, Mic, UserCircle, DollarSign, FileText, Calendar, Search, Headphones } from 'lucide-react';
 import logo from '@/assets/aura-intercept-logo.png';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { PasswordStrengthIndicator } from '@/components/auth/PasswordStrengthIndicator';
@@ -49,8 +49,8 @@ export default function Auth() {
   const [companyName, setCompanyName] = useState('');
   const [registrationCode, setRegistrationCode] = useState('');
   const [termsAgreed, setTermsAgreed] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<'starter' | 'professional' | 'enterprise' | null>(null);
-  const [selectedAddOn, setSelectedAddOn] = useState<'social_media' | 'smart_website' | null>(null);
+  const [selectedTier, setSelectedTier] = useState<'express' | 'flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command' | null>(null);
+  // Add-on selection removed - now using 7-tier structure
   const [passwordValidation, setPasswordValidation] = useState<ServerValidationResult | null>(null);
 
   // Callback for password validation changes
@@ -694,195 +694,276 @@ export default function Auth() {
                   </p>
                 </div>
 
-                {/* 3 Tier Cards */}
-                <div className="space-y-3">
-                  {/* Starter */}
+                {/* 7 Tier Cards - Compact Grid */}
+                <div className="space-y-2">
+                  {/* Industry-Specific Tiers Label */}
+                  <p className="text-xs font-medium text-muted-foreground">Industry-Specific Packages:</p>
+                  
+                  {/* Express */}
                   <div 
-                    onClick={() => {
-                      setSelectedTier(selectedTier === 'starter' ? null : 'starter');
-                      if (selectedTier === 'starter') setSelectedAddOn(null);
-                    }}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedTier === 'starter' 
-                        ? 'border-primary bg-primary/10 ring-2 ring-primary/20' 
-                        : 'border-border/50 bg-card hover:border-primary/30'
+                    onClick={() => setSelectedTier(selectedTier === 'express' ? null : 'express')}
+                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedTier === 'express' 
+                        ? 'border-amber-500 bg-amber-500/10 ring-2 ring-amber-500/20' 
+                        : 'border-border/50 bg-card hover:border-amber-500/30'
                     }`}
                   >
-                    <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                          selectedTier === 'starter' ? 'border-primary bg-primary' : 'border-muted-foreground/50'
+                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === 'express' ? 'border-amber-500 bg-amber-500' : 'border-muted-foreground/50'
                         }`}>
-                          {selectedTier === 'starter' && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
+                          {selectedTier === 'express' && <Check className="w-2 h-2 text-white" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-sm text-card-foreground">Aura Single-Point (Solo-Focus)</h3>
-                          <p className="text-xs text-card-foreground/70">Small service companies</p>
+                          <h3 className="font-semibold text-xs text-card-foreground">Aura Express</h3>
+                          <p className="text-[10px] text-card-foreground/70">Restaurants & Cafes</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-bold text-card-foreground">$1,500</span>
-                        <span className="text-xs text-card-foreground/70">/mo</span>
+                        <span className="text-sm font-bold text-amber-600">$197</span>
+                        <span className="text-[10px] text-card-foreground/70">/mo</span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-1 text-xs text-card-foreground/70 ml-6">
-                      <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>3 AI Agents</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>1 Console</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>5 Employees</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-amber-400" />
-                        <span className="text-amber-400">Choice: Add-On ($500 value)</span>
-                      </div>
+                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
+                      <span>1 Agent</span>
+                      <span>•</span>
+                      <span>Voice + Chat</span>
+                      <span>•</span>
+                      <span>Smart Links</span>
                     </div>
-                    
-                    {/* Add-On Selection (only when starter is selected) */}
-                    {selectedTier === 'starter' && (
-                      <div className="mt-3 pt-3 border-t border-border/50" onClick={(e) => e.stopPropagation()}>
-                        <p className="text-xs font-medium text-foreground mb-2">Choose Your Included Add-On ($500 value):</p>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div 
-                            onClick={() => setSelectedAddOn('social_media')}
-                            className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
-                              selectedAddOn === 'social_media' 
-                                ? 'border-amber-400 bg-amber-400/10' 
-                                : 'border-border/50 hover:border-amber-400/50'
-                            }`}
-                          >
-                            <MessageSquare className={`w-4 h-4 mx-auto mb-1 ${selectedAddOn === 'social_media' ? 'text-amber-400' : 'text-muted-foreground'}`} />
-                            <span className={`text-xs ${selectedAddOn === 'social_media' ? 'text-amber-400 font-medium' : 'text-muted-foreground'}`}>
-                              Social Media AI
-                            </span>
-                          </div>
-                          <div 
-                            onClick={() => setSelectedAddOn('smart_website')}
-                            className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
-                              selectedAddOn === 'smart_website' 
-                                ? 'border-amber-400 bg-amber-400/10' 
-                                : 'border-border/50 hover:border-amber-400/50'
-                            }`}
-                          >
-                            <Crown className={`w-4 h-4 mx-auto mb-1 ${selectedAddOn === 'smart_website' ? 'text-amber-400' : 'text-muted-foreground'}`} />
-                            <span className={`text-xs ${selectedAddOn === 'smart_website' ? 'text-amber-400 font-medium' : 'text-muted-foreground'}`}>
-                              Web Presence (1pg)
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
 
-                  {/* Professional - Highlighted */}
+                  {/* Flow */}
                   <div 
-                    onClick={() => setSelectedTier(selectedTier === 'professional' ? null : 'professional')}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all relative ${
-                      selectedTier === 'professional' 
+                    onClick={() => setSelectedTier(selectedTier === 'flow' ? null : 'flow')}
+                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedTier === 'flow' 
+                        ? 'border-teal-500 bg-teal-500/10 ring-2 ring-teal-500/20' 
+                        : 'border-border/50 bg-card hover:border-teal-500/30'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === 'flow' ? 'border-teal-500 bg-teal-500' : 'border-muted-foreground/50'
+                        }`}>
+                          {selectedTier === 'flow' && <Check className="w-2 h-2 text-white" />}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-xs text-card-foreground">Aura Flow</h3>
+                          <p className="text-[10px] text-card-foreground/70">Personal Assistant</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-sm font-bold text-teal-600">$297</span>
+                        <span className="text-[10px] text-card-foreground/70">/mo</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
+                      <span>4 Agents</span>
+                      <span>•</span>
+                      <span>Scheduling</span>
+                      <span>•</span>
+                      <span>Calendar Sync</span>
+                    </div>
+                  </div>
+
+                  {/* Halo */}
+                  <div 
+                    onClick={() => setSelectedTier(selectedTier === 'halo' ? null : 'halo')}
+                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedTier === 'halo' 
+                        ? 'border-rose-500 bg-rose-500/10 ring-2 ring-rose-500/20' 
+                        : 'border-border/50 bg-card hover:border-rose-500/30'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === 'halo' ? 'border-rose-500 bg-rose-500' : 'border-muted-foreground/50'
+                        }`}>
+                          {selectedTier === 'halo' && <Check className="w-2 h-2 text-white" />}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-xs text-card-foreground">Aura Halo</h3>
+                          <p className="text-[10px] text-card-foreground/70">Salons & Wellness</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-sm font-bold text-rose-600">$397</span>
+                        <span className="text-[10px] text-card-foreground/70">/mo</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
+                      <span>4 Agents</span>
+                      <span>•</span>
+                      <span>1 Console</span>
+                      <span>•</span>
+                      <span>Online Booking</span>
+                    </div>
+                  </div>
+
+                  {/* General Business Tiers Label */}
+                  <p className="text-xs font-medium text-muted-foreground pt-2">General Business Plans:</p>
+
+                  {/* Core */}
+                  <div 
+                    onClick={() => setSelectedTier(selectedTier === 'core' ? null : 'core')}
+                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedTier === 'core' 
+                        ? 'border-slate-500 bg-slate-500/10 ring-2 ring-slate-500/20' 
+                        : 'border-border/50 bg-card hover:border-slate-500/30'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === 'core' ? 'border-slate-500 bg-slate-500' : 'border-muted-foreground/50'
+                        }`}>
+                          {selectedTier === 'core' && <Check className="w-2 h-2 text-white" />}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-xs text-card-foreground">Aura Core</h3>
+                          <p className="text-[10px] text-card-foreground/70">AI-Assisted (No Automation)</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-sm font-bold text-slate-600">$500</span>
+                        <span className="text-[10px] text-card-foreground/70">/mo</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
+                      <span>Tools Only</span>
+                      <span>•</span>
+                      <span>Chat</span>
+                      <span>•</span>
+                      <span>Social + Web</span>
+                    </div>
+                  </div>
+
+                  {/* Single-Point */}
+                  <div 
+                    onClick={() => setSelectedTier(selectedTier === 'single_point' ? null : 'single_point')}
+                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedTier === 'single_point' 
+                        ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/20' 
+                        : 'border-border/50 bg-card hover:border-blue-500/30'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === 'single_point' ? 'border-blue-500 bg-blue-500' : 'border-muted-foreground/50'
+                        }`}>
+                          {selectedTier === 'single_point' && <Check className="w-2 h-2 text-white" />}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-xs text-card-foreground">Single-Point</h3>
+                          <p className="text-[10px] text-card-foreground/70">Solo-Focus Service Business</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-sm font-bold text-blue-600">$1,500</span>
+                        <span className="text-[10px] text-card-foreground/70">/mo</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
+                      <span>3 Agents</span>
+                      <span>•</span>
+                      <span>1 Console</span>
+                      <span>•</span>
+                      <span>5 Employees</span>
+                    </div>
+                  </div>
+
+                  {/* Multi-Track - Highlighted */}
+                  <div 
+                    onClick={() => setSelectedTier(selectedTier === 'multi_track' ? null : 'multi_track')}
+                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all relative ${
+                      selectedTier === 'multi_track' 
                         ? 'border-primary bg-primary/10 ring-2 ring-primary/20' 
                         : 'border-primary/50 bg-primary/5 hover:border-primary'
                     }`}
                   >
-                    <div className="absolute -top-2 left-4">
-                      <span className="text-[10px] px-2 py-0.5 rounded-full gradient-primary text-primary-foreground font-medium">Most Popular</span>
+                    <div className="absolute -top-2 left-3">
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full gradient-primary text-primary-foreground font-medium">Popular</span>
                     </div>
-                    <div className="flex items-start justify-between mb-2 mt-1">
+                    <div className="flex items-center justify-between mt-1">
                       <div className="flex items-center gap-2">
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                          selectedTier === 'professional' ? 'border-primary bg-primary' : 'border-primary/50'
+                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === 'multi_track' ? 'border-primary bg-primary' : 'border-primary/50'
                         }`}>
-                          {selectedTier === 'professional' && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
+                          {selectedTier === 'multi_track' && <Check className="w-2 h-2 text-primary-foreground" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-sm text-foreground">Aura Multi-Track (Small Scale Business)</h3>
-                          <p className="text-xs text-muted-foreground">Growing companies with technicians</p>
+                          <h3 className="font-semibold text-xs text-foreground">Multi-Track</h3>
+                          <p className="text-[10px] text-muted-foreground">Small Scale Business</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-bold text-primary">$3,997</span>
-                        <span className="text-xs text-muted-foreground">/mo</span>
+                        <span className="text-sm font-bold text-primary">$3,997</span>
+                        <span className="text-[10px] text-muted-foreground">/mo</span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground ml-6">
-                      <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>10 AI Agents</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>2 Consoles</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>10 Employees</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-amber-400" />
-                        <span className="text-amber-400">Both Add-Ons Included</span>
-                      </div>
+                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-muted-foreground">
+                      <span>10 Agents</span>
+                      <span>•</span>
+                      <span>2 Consoles</span>
+                      <span>•</span>
+                      <span>Field Ops</span>
                     </div>
                   </div>
 
-                  {/* Enterprise */}
+                  {/* Command */}
                   <div 
-                    onClick={() => setSelectedTier(selectedTier === 'enterprise' ? null : 'enterprise')}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedTier === 'enterprise' 
-                        ? 'border-primary bg-primary/10 ring-2 ring-primary/20' 
-                        : 'border-border/50 bg-card hover:border-primary/30'
+                    onClick={() => setSelectedTier(selectedTier === 'command' ? null : 'command')}
+                    className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedTier === 'command' 
+                        ? 'border-purple-500 bg-purple-500/10 ring-2 ring-purple-500/20' 
+                        : 'border-border/50 bg-card hover:border-purple-500/30'
                     }`}
                   >
-                    <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                          selectedTier === 'enterprise' ? 'border-primary bg-primary' : 'border-muted-foreground/50'
+                        <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center ${
+                          selectedTier === 'command' ? 'border-purple-500 bg-purple-500' : 'border-muted-foreground/50'
                         }`}>
-                          {selectedTier === 'enterprise' && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
+                          {selectedTier === 'command' && <Check className="w-2 h-2 text-white" />}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-sm text-card-foreground">Aura Pro Command (Enterprise)</h3>
-                          <p className="text-xs text-card-foreground/70">Full AI automation suite</p>
+                          <h3 className="font-semibold text-xs text-card-foreground">Aura Pro Command</h3>
+                          <p className="text-[10px] text-card-foreground/70">Large Scale / Enterprise</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-lg font-bold text-card-foreground">$5,997</span>
-                        <span className="text-xs text-card-foreground/70">/mo</span>
+                        <span className="text-sm font-bold text-purple-600">$5,997</span>
+                        <span className="text-[10px] text-card-foreground/70">/mo</span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-1 text-xs text-card-foreground/70 ml-6">
-                      <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>23 AI Agents</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>7 Control Centers</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-green-500" />
-                        <span>25 Employees</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Check className="w-3 h-3 text-amber-400" />
-                        <span className="text-amber-400">Both Add-Ons Included</span>
-                      </div>
+                    <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
+                      <span>23 Agents</span>
+                      <span>•</span>
+                      <span>7 Consoles</span>
+                      <span>•</span>
+                      <span>25 Employees</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Selection Info */}
                 {selectedTier && (
-                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/30">
+                  <div className="p-2 rounded-lg bg-primary/10 border border-primary/30">
                     <p className="text-xs text-center text-foreground">
-                      <span className="font-medium">Selected: {selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)}</span>
-                      <br />
-                      <span className="text-muted-foreground">Complete signup to subscribe immediately</span>
+                      <span className="font-medium">Selected: {
+                        selectedTier === 'express' ? 'Aura Express' :
+                        selectedTier === 'flow' ? 'Aura Flow' :
+                        selectedTier === 'halo' ? 'Aura Halo' :
+                        selectedTier === 'core' ? 'Aura Core' :
+                        selectedTier === 'single_point' ? 'Single-Point' :
+                        selectedTier === 'multi_track' ? 'Multi-Track' :
+                        'Aura Pro Command'
+                      }</span>
                     </p>
                   </div>
                 )}
@@ -893,36 +974,33 @@ export default function Auth() {
                 </p>
 
                 {/* Customer Info */}
-                <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20">
-                  <p className="text-xs text-center text-foreground">
-                    <span className="font-medium text-green-600">Customers get free accounts</span> to engage with registered companies — book appointments, chat with AI agents, and more!
+                <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <p className="text-[10px] text-center text-foreground">
+                    <span className="font-medium text-green-600">Customers get free accounts</span> to engage with registered companies!
                   </p>
                 </div>
 
                 {/* 3rd Party Integrations */}
-                <div className="mt-4 p-4 rounded-lg bg-muted/50 border border-border/50">
-                  <h4 className="text-xs font-semibold text-foreground mb-3 text-center">3rd Party Integrations (Your Accounts)</h4>
-                  <div className="grid grid-cols-2 gap-2 text-[10px]">
-                    <div className="flex items-center gap-1.5">
-                      <Mail className="w-3 h-3 text-blue-500" />
+                <div className="p-3 rounded-lg bg-muted/50 border border-border/50">
+                  <h4 className="text-[10px] font-semibold text-foreground mb-2 text-center">3rd Party Integrations (Your Accounts)</h4>
+                  <div className="grid grid-cols-2 gap-1.5 text-[9px]">
+                    <div className="flex items-center gap-1">
+                      <Mail className="w-2.5 h-2.5 text-blue-500" />
                       <span className="text-muted-foreground">Resend (Email)</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Phone className="w-3 h-3 text-green-500" />
+                    <div className="flex items-center gap-1">
+                      <Phone className="w-2.5 h-2.5 text-green-500" />
                       <span className="text-muted-foreground">Twilio (SMS/Voice)</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Mic className="w-3 h-3 text-purple-500" />
+                    <div className="flex items-center gap-1">
+                      <Mic className="w-2.5 h-2.5 text-purple-500" />
                       <span className="text-muted-foreground">ElevenLabs (AI Voice)</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <DollarSign className="w-3 h-3 text-amber-500" />
+                    <div className="flex items-center gap-1">
+                      <DollarSign className="w-2.5 h-2.5 text-amber-500" />
                       <span className="text-muted-foreground">Stripe (Payments)</span>
                     </div>
                   </div>
-                  <p className="text-[10px] text-muted-foreground text-center mt-2">
-                    Usage-based billing through your own accounts
-                  </p>
                 </div>
               </div>
             )}

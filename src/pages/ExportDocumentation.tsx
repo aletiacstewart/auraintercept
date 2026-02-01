@@ -52,7 +52,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                   <li>Communication Channels</li>
                   <li>Agent Dependencies & Requirements</li>
                   <li>3rd Party Integration Guide</li>
-                  <li>5-Tier Subscription Access</li>
+                  <li>7-Tier Subscription Access</li>
                 </ul>
               </div>
 
@@ -162,7 +162,7 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 <p className="font-medium text-card-foreground">Document includes:</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>Executive Pricing Summary</li>
-                  <li>Five-Tier Comparison</li>
+                  <li>Seven-Tier Comparison</li>
                   <li>Detailed Tier Breakdowns</li>
                   <li>Implementation Fees</li>
                   <li>3rd Party Integration Costs</li>

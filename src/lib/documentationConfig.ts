@@ -5,7 +5,7 @@
  */
 
 // ============================================
-// SUBSCRIPTION TIERS - 5-TIER STRUCTURE
+// SUBSCRIPTION TIERS - 7-TIER STRUCTURE
 // ============================================
 
 export interface TierConfig {
@@ -604,12 +604,12 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
 export const PLATFORM_STATS = {
   totalOperatives: 23,
   totalConsoles: 7,
-  totalTiers: 6,
+  totalTiers: 7,
   startingPrice: 197,
   maxEmployees: 25,
   socialPlatforms: 6,
   analyticsTabs: 8,
-  industries: ['HVAC', 'Plumbing', 'Electrical', 'General Contracting', 'Beauty & Wellness', 'Restaurants'],
+  industries: ['HVAC', 'Plumbing', 'Electrical', 'General Contracting', 'Beauty & Wellness', 'Restaurants', 'Personal Services'],
 };
 
 // ============================================
@@ -649,11 +649,12 @@ export function getOperativesForTier(tierId: string): OperativeConfig[] {
   const tierHierarchy: Record<string, number> = {
     free: 0,
     express: 1,
-    core: 2,
+    aura_flow: 2,
     halo: 3,
-    single_point: 4,
-    multi_track: 5,
-    command: 6,
+    core: 4,
+    single_point: 5,
+    multi_track: 6,
+    command: 7,
   };
   
   const tierLevel = tierHierarchy[tierId] || 0;
@@ -668,11 +669,12 @@ export function getConsolesForTierDoc(tierId: string): ConsoleConfig[] {
   const tierHierarchy: Record<string, number> = {
     free: 0,
     express: 1,
-    core: 2,
+    aura_flow: 2,
     halo: 3,
-    single_point: 4,
-    multi_track: 5,
-    command: 6,
+    core: 4,
+    single_point: 5,
+    multi_track: 6,
+    command: 7,
   };
   
   const tierLevel = tierHierarchy[tierId] || 0;
