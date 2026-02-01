@@ -66,7 +66,6 @@ const NAVIGATION_ROUTES: Record<string, string> = {
   'Knowledge Base → Hours': '/dashboard/knowledge',
   'Knowledge Base → Documents': '/dashboard/knowledge',
   'Knowledge Base → Inventory': '/dashboard/knowledge',
-  'Knowledge Base → Warranties': '/dashboard/knowledge',
   'Settings → Branding': '/dashboard/settings',
   'Settings → Email Templates': '/dashboard/settings',
   'Settings → Role Permissions': '/dashboard/settings',
@@ -253,9 +252,8 @@ const guideCategories = [
           'Quoting Agent: Generates quotes from service catalog pricing',
           'Invoice Agent: Creates invoices and tracks payment status',
           'Inventory Agent: Monitors stock levels and triggers alerts (Command)',
-          'Warranty Agent: Manages warranty policies and claims (Command)',
           'Access via Business Ops Console',
-          'Quoting/Invoice available Multi-Track+; Inventory/Warranty Command only'
+          'Quoting/Invoice available Multi-Track+; Inventory Command only'
         ],
         tips: ['Link Quote Forge to your service catalog', 'Configure low-stock thresholds for proactive ordering']
       },
