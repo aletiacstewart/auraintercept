@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, Clock, MapPin, FileText, DollarSign, Package, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Star, Navigation, Truck, Search, UserPlus, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, X, Scissors, UtensilsCrossed } from 'lucide-react';
+import { Bot, Building2, Zap, Shield, MessageSquare, Calendar, Phone, Users, TrendingUp, Clock, MapPin, FileText, DollarSign, Package, Megaphone, Sun, BarChart3, Target, CheckCircle2, Home, Flame, Droplet, ChevronRight, ChevronDown, ChevronUp, Star, Navigation, Truck, Search, UserPlus, Globe, Headphones, Bell, Mail, Smartphone, Mic, Brain, Lock, Send, Fence, Bug, TreeDeciduous, Waves, Refrigerator, Hammer, HardHat, Camera, Car, Briefcase, HeadphonesIcon, X, Scissors, UtensilsCrossed, Palette } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import logo from '@/assets/aura-intercept-logo.png';
 // Hero video served from public folder for better browser compatibility
@@ -117,6 +117,10 @@ const agentCategories = [{
     name: 'Marketing Agent',
     description: 'Manages customer segments, promo codes, and referral programs',
     icon: Target
+  }, {
+    name: 'Creative Agent',
+    description: 'AI-powered multi-channel content generation for blogs, campaigns, and websites',
+    icon: Palette
   }]
 }, {
   id: 'social',
