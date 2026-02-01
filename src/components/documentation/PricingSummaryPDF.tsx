@@ -463,10 +463,10 @@ const PricingSummaryPDF = () => (
     <Page size="A4" style={styles.coverPage}>
       <Text style={styles.coverBrand}>AURA INTERCEPT</Text>
       <Text style={styles.coverTitle}>Subscription Pricing Guide</Text>
-      <Text style={styles.coverSubtitle}>Complete 6-Tier Pricing Breakdown for AI-Powered Service Business Platform</Text>
+      <Text style={styles.coverSubtitle}>Complete 7-Tier Pricing Breakdown for AI-Powered Service Business Platform</Text>
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>6</Text>
+          <Text style={styles.coverStatNumber}>7</Text>
           <Text style={styles.coverStatLabel}>Pricing Tiers</Text>
         </View>
         <View style={styles.coverStat}>
@@ -496,7 +496,7 @@ const PricingSummaryPDF = () => (
       <View style={{ marginTop: 20 }}>
         {[
           { title: 'Executive Pricing Summary', page: '3' },
-          { title: '6-Tier Comparison Table', page: '4' },
+          { title: '7-Tier Comparison Table', page: '4' },
           { title: 'Aura Express Tier (Restaurants)', page: '5' },
           { title: 'Aura Halo Tier (Salons/Wellness)', page: '6' },
           { title: 'Aura Core Tier (AI-Assisted Tools)', page: '7' },
