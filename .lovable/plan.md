@@ -1,43 +1,117 @@
 
-# Fix: Batch Posts Tab Not Showing Content
+# Remove Warranty Agent from Platform
 
-## Problem
-When clicking the "Batch Posts" tab, the content area is blank because:
-1. `handleTabChange('batch')` sets `activeTab` to `'batch'`
-2. `handleQuickAction('batch')` sets `showBatchWizard = true` but doesn't reset `activeTab` to `'chat'`
-3. The rendering only handles `activeTab === 'feed'` or `activeTab === 'chat'`
-4. Since `activeTab === 'batch'`, nothing renders
-
-## Solution
-Add `setActiveTab('chat')` to the batch action handler, similar to how other actions handle this.
+## Summary
+Complete removal of the Warranty Agent and all warranty-related functionality from the platform. This affects 20+ files across configuration, UI components, settings, edge functions, and documentation.
 
 ---
 
-## Code Change
+## Files to Delete (7 files)
 
-**File**: `src/components/social/SocialMediaAgentConsole.tsx`
-
-**Line 118-122** - Update batch handler:
-```typescript
-// Before
-if (actionId === 'batch') {
-  hideAllForms();
-  setShowBatchWizard(true);
-  return;
-}
-
-// After
-if (actionId === 'batch') {
-  hideAllForms();
-  setShowBatchWizard(true);
-  setActiveTab('chat');  // Add this line
-  return;
-}
-```
+| File | Purpose |
+|------|---------|
+| `src/pages/Warranties.tsx` | Standalone warranties page |
+| `src/components/settings/WarrantySettings.tsx` | Warranty settings tab component |
+| `src/components/knowledge/WarrantiesManager.tsx` | Main warranty management UI |
+| `src/components/warranties/WarrantyPoliciesList.tsx` | Policy list component |
+| `src/components/warranties/WarrantyPolicyForm.tsx` | Policy creation form |
+| `src/components/warranties/WarrantyReportForm.tsx` | Report form |
+| `src/components/billing/forms/WarrantyForm.tsx` | Warranty creation form |
+| `src/components/billing/forms/WarrantyLookupForm.tsx` | Warranty lookup form |
 
 ---
 
-## Why This Works
-- The `SocialBatchWizard` component renders inside the `activeTab === 'chat'` block (lines 247-256)
-- By setting `activeTab` to `'chat'`, the batch wizard will be visible
-- This matches the pattern used by other actions like `'create'`, `'scheduled'`, and `'calendar'`
+## Configuration Files to Update
+
+### 1. src/lib/agentStyles.ts
+- Remove `warranty` from `AGENT_STYLES` object
+- Remove `'warranty'` from `businessOperations` array in `AGENT_CATEGORIES`
+
+### 2. src/lib/documentationConfig.ts
+- Remove warranty agent object from `AI_OPERATIVES` array
+- Update `business_management` console `agentCount` from 5 to 4
+- Remove "Warranty claims tracking" from command tier highlights
+
+### 3. src/lib/subscriptionAgentConfig.ts
+- Remove `'warranty'` from command tier agents array
+- Update comment "Business Operations (5)" → "Business Operations (4)"
+- Remove `'can_access_warranties'` from `TIER_FEATURE_CONFIG.command`
+
+---
+
+## Page Updates
+
+### 4. src/pages/Settings.tsx
+- Remove `WarrantySettings` import
+- Remove `'warranties'` from `VALID_TABS` array
+- Remove `<TabsTrigger value="warranties">` element
+- Remove `<TabsContent value="warranties">` block
+
+### 5. src/pages/AgentDetailPage.tsx
+- Remove `warranty` object from `AGENT_DEFINITIONS`
+- Remove `'warranty'` from `PLATFORM_ADMIN_ONLY_AGENTS` array
+
+### 6. src/pages/Index.tsx
+- Remove Warranty Agent from business operations agents list
+- Remove "Warranty management" from Business Management Console features
+
+### 7. src/pages/KnowledgeBase.tsx
+- Remove `WarrantiesManager` import
+- Remove warranties tab (`TabsTrigger` and `TabsContent`)
+
+### 8. src/pages/PlatformGuides.tsx
+- Remove "Warranty Agent" from training content
+- Remove "Warranty Management" and "Warranty Policies" sections
+- Remove warranty references from tips and descriptions
+
+---
+
+## Component Updates
+
+### 9. src/components/billing/BusinessOpsAgentConsole.tsx
+- Remove `WarrantiesManager` import
+- Remove `showWarrantiesManager` state
+- Remove warranty handler in `handleQuickAction`
+- Remove warranty from `isShowingForm` check
+- Remove warranty section from render
+
+### 10. src/components/businessops/BusinessOpsHubTabs.tsx
+- Remove `WarrantiesManager` import
+- Remove warranty `AccordionItem` sections (2 occurrences)
+
+---
+
+## Edge Function Updates
+
+### 11. supabase/functions/ai-agent-chat/index.ts
+- Remove `warranty` system prompt from `AGENT_PROMPTS`
+- Remove "Warranty Check/Claim" from admin prompt
+- Remove `'warranty'` from `TIER_AGENTS.command` array
+- Remove `warranty` tools from `AGENT_TOOLS`
+- Remove `check_warranty` from admin tools
+- Remove `check_warranty` and `submit_warranty_claim` tool handlers
+
+### 12. supabase/functions/generate-social-variations/index.ts
+- Remove `warranty_policies` query from knowledge base fetch
+
+---
+
+## Summary of Changes
+
+| Category | Files Affected |
+|----------|----------------|
+| Delete files | 8 |
+| Configuration | 3 |
+| Pages | 5 |
+| Components | 2 |
+| Edge functions | 2 |
+| **Total** | **20 files** |
+
+---
+
+## Result After Changes
+
+- Business Operations Console will have **4 agents**: Admin, Quoting, Invoice, Inventory
+- No warranty-related UI, settings, or documentation
+- Edge functions will no longer process warranty requests
+- Agent count updates from 24 to 23 total operatives
