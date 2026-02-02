@@ -94,14 +94,7 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'Business Management',
-    requiredTier: 'command',
-    items: [
-      { label: 'Business Mgt Ops Overview', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics', requiredTier: 'command' },
-    ],
-  },
-  {
-    label: 'Business Mobile Apps',
+    label: 'Business Mgt Console & Mobile App',
     requiredTier: 'command',
     items: [
       { label: 'Business Mgt Ops Console', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'command' },

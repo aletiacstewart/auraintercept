@@ -1,4 +1,5 @@
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -218,7 +219,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/calculators" element={<ProtectedRoute><Calculators /></ProtectedRoute>} />
                 <Route path="/dashboard/export-docs" element={<ProtectedRoute><ExportDocumentation /></ProtectedRoute>} />
                 <Route path="/dashboard/dispatch-field-ops" element={<ProtectedRoute><FieldOperations /></ProtectedRoute>} />
-                <Route path="/dashboard/business-operations" element={<ProtectedRoute><BusinessOperations /></ProtectedRoute>} />
+                <Route path="/dashboard/business-operations" element={<Navigate to="/dashboard/ai-consoles/business-mgt-ops" replace />} />
                 <Route path="/dashboard/field-ops-install" element={<ProtectedRoute><FieldOpsInstall /></ProtectedRoute>} />
                 <Route path="/dashboard/dispatch-field-ops-install" element={<ProtectedRoute><DispatchFieldOpsInstall /></ProtectedRoute>} />
                 <Route path="/dashboard/business-mgt-ops-install" element={<ProtectedRoute><BusinessMgtOpsInstall /></ProtectedRoute>} />

@@ -77,11 +77,11 @@ export const PAGE_ROUTES: Record<string, string> = {
   'availability': '/technician/availability',
   
   // Business Management Section (exact sidebar labels)
-  'business ops overview': '/dashboard/business-operations',
-  'business operations': '/dashboard/business-operations',
-  'business ops': '/dashboard/business-operations',
-  'business management': '/dashboard/business-operations',
-  'ops hub': '/dashboard/business-operations',
+  'business ops overview': '/dashboard/ai-consoles/business-mgt-ops',
+  'business operations': '/dashboard/ai-consoles/business-mgt-ops',
+  'business ops': '/dashboard/ai-consoles/business-mgt-ops',
+  'business management': '/dashboard/ai-consoles/business-mgt-ops',
+  'ops hub': '/dashboard/ai-consoles/business-mgt-ops',
   'companies': '/dashboard/companies',
   'employees': '/dashboard/employees',
   'customers': '/dashboard/customers',
@@ -92,11 +92,11 @@ export const PAGE_ROUTES: Record<string, string> = {
   'inventory': '/dashboard/inventory',
   
   // Analytics & Reports Section (now part of Business Operations)
-  'ask aura': '/dashboard/business-operations?tab=analytics',
-  'aura': '/dashboard/business-operations?tab=analytics',
-  'analytics': '/dashboard/business-operations?tab=analytics',
-  'analytics and reports': '/dashboard/business-operations?tab=analytics',
-  'analytics reports': '/dashboard/business-operations?tab=analytics',
+  'ask aura': '/dashboard/ai-consoles/business-mgt-ops',
+  'aura': '/dashboard/ai-consoles/business-mgt-ops',
+  'analytics': '/dashboard/ai-consoles/analytics',
+  'analytics and reports': '/dashboard/ai-consoles/analytics',
+  'analytics reports': '/dashboard/ai-consoles/analytics',
   'subscription analytics': '/dashboard/subscription-analytics',
   
   // Business Mobile Consoles Section
