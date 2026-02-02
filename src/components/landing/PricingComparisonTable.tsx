@@ -97,7 +97,7 @@ const sections: FeatureSection[] = [
     features: [
       // Single-Point tier (3 agents) - Halo has triage, booking, followup - Flow has receptionist, scheduling, followup
       { name: 'AI Receptionist (Triage)', express: 'x', flow: 'check', halo: 'check', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Follow-up Agent', express: 'x', flow: 'check', halo: 'check', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Follow-up Agent', express: 'x', flow: 'x', halo: 'check', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Review Agent', express: 'x', flow: 'x', halo: 'x', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       // Multi-Track tier adds (7 more = 10 total) - Halo has booking, Flow has scheduling
       { name: 'Scheduling Agent (Booking)', express: 'x', flow: 'check', halo: 'check', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
