@@ -43,15 +43,15 @@ export default function CustomerPortalAppInstall() {
               <Smartphone className="w-5 h-5 text-cyan-400" />
               Customer Portal PWA
             </CardTitle>
-            <CardDescription className="text-white/70">
+            <CardDescription className="text-muted-foreground">
               Standalone Progressive Web App with install info, sign-in, and full AI Console access
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-4">
-                <h4 className="font-semibold text-sm text-white">How It Works</h4>
-                <ul className="space-y-3 text-sm text-white/70">
+                <h4 className="font-semibold text-sm text-foreground">How It Works</h4>
+                <ul className="space-y-3 text-sm text-muted-foreground">
                   <li className="flex items-start gap-3">
                     <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0 font-semibold">1</span>
                     <span>Customers sign up through company's embedded widget</span>
@@ -67,7 +67,7 @@ export default function CustomerPortalAppInstall() {
                 </ul>
               </div>
               <div className="space-y-4">
-                <h4 className="font-semibold text-sm text-white">Customer Benefits</h4>
+                <h4 className="font-semibold text-sm text-foreground">Customer Benefits</h4>
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { label: 'Customer Portal Mobile App Access', icon: Building2 },
@@ -75,7 +75,7 @@ export default function CustomerPortalAppInstall() {
                     { label: 'View quotes & invoices', icon: FileText },
                     { label: 'Get notifications', icon: Bell }
                   ].map((feature) => (
-                    <div key={feature.label} className="flex items-center gap-2 text-xs text-white/70 bg-slate-700/50 rounded-lg px-3 py-2">
+                    <div key={feature.label} className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
                       {feature.label}
                     </div>
@@ -105,7 +105,7 @@ export default function CustomerPortalAppInstall() {
                 <QrCode className="w-5 h-5 text-primary" />
                 Installation QR Code
               </CardTitle>
-              <CardDescription className="text-white/70">
+              <CardDescription className="text-muted-foreground">
                 Customers can scan this code to install the app
               </CardDescription>
             </CardHeader>
@@ -133,13 +133,13 @@ export default function CustomerPortalAppInstall() {
                 <Download className="w-5 h-5 text-secondary" />
                 Direct Install Link
               </CardTitle>
-              <CardDescription className="text-white/70">
+              <CardDescription className="text-muted-foreground">
                 Share this link with customers to install the app
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-slate-700/50 rounded-lg px-4 py-3 border border-slate-600/50">
+                <div className="flex-1 bg-muted/50 rounded-lg px-4 py-3 border border-border/50">
                   <code className="text-sm text-cyan-400 break-all">{installUrl}</code>
                 </div>
                 <Button variant="outline" size="icon" onClick={handleCopyUrl}>
@@ -148,8 +148,8 @@ export default function CustomerPortalAppInstall() {
               </div>
               
               <div className="space-y-3 pt-4">
-                <h4 className="font-medium text-sm text-white">How to Share</h4>
-                <ul className="space-y-2 text-sm text-white/70">
+                <h4 className="font-medium text-sm text-foreground">How to Share</h4>
+                <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-400" />
                     Include in confirmation emails
@@ -184,7 +184,7 @@ export default function CustomerPortalAppInstall() {
         <Card className="border-border/50">
           <CardHeader>
             <CardTitle>Customer Installation Journey</CardTitle>
-            <CardDescription className="text-white/70">
+            <CardDescription className="text-muted-foreground">
               The path customers take to install and use the app
             </CardDescription>
           </CardHeader>
@@ -201,11 +201,11 @@ export default function CustomerPortalAppInstall() {
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground font-bold text-lg mb-2">
                       {item.step}
                     </div>
-                    <h4 className="font-medium text-sm text-white">{item.title}</h4>
-                    <p className="text-xs text-white/60">{item.desc}</p>
+                    <h4 className="font-medium text-sm text-foreground">{item.title}</h4>
+                    <p className="text-xs text-muted-foreground">{item.desc}</p>
                   </div>
                   {idx < 3 && (
-                    <ArrowRight className="w-5 h-5 text-white/30 hidden md:block" />
+                    <ArrowRight className="w-5 h-5 text-muted-foreground/50 hidden md:block" />
                   )}
                 </div>
               ))}
