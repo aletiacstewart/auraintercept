@@ -1,67 +1,133 @@
 
-# Add Missing Content Engine Tabs to Social Media Console
+# Option A: Consolidate Social Tools into "Social Posts" Tab
 
 ## Overview
-Expand the Content Engine integration in the Social Media Signal Ops console to include all 4 original tabs: Brand Voice, Generate, Dashboard, and Calendar, plus the Quick Stats section.
+Simplify the Social Media Signal Ops console by consolidating 5 social-specific tools (Single Post, Batch Posts, Drafts, Scheduled, Calendar) into a single "Social Posts" tab with sub-navigation. This reduces the main navigation from 7 tabs to 3 cleaner options.
 
-## Current State
-- Only `MultiChannelGenerator` (Generate tab) was added
-- Missing: Brand Voice, Dashboard, Calendar tabs
-- Missing: Quick Stats cards
+## New Navigation Structure
 
-## Changes
+**Before (7 tabs):**
+```
+Home | Single Post | Batch Posts | Content Engine | Drafts | Scheduled | Calendar
+```
+
+**After (3 tabs):**
+```
+Home | Social Posts | Content Engine
+```
+
+**Social Posts sub-tabs:**
+```
+Create | Batch | Drafts | Scheduled | Calendar
+```
+
+---
+
+## Technical Changes
 
 ### File: `src/components/social/SocialMediaAgentConsole.tsx`
 
-**1. Add new imports:**
+**1. Simplify QUICK_ACTIONS array:**
+Replace 5 individual actions with 1 consolidated "Social Posts" action:
 ```typescript
-import { ContentEngineDashboard } from '@/components/content-engine/ContentEngineDashboard';
-import { ContentEngineCalendar } from '@/components/content-engine/ContentEngineCalendar';
-import { AIContentProfileManager } from '@/components/knowledge/AIContentProfileManager';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+const QUICK_ACTIONS = [
+  { id: 'social-posts', label: 'Social Posts', icon: Share2, message: 'Manage social posts', featureColor: 'text-pink-400' },
+  { id: 'content-engine', label: 'Content Engine', icon: Wand2, message: 'Open multi-channel generator', featureColor: 'text-pink-400' },
+];
 ```
 
-**2. Add Content Engine sub-tab state:**
+**2. Add Social Posts sub-tab state:**
 ```typescript
-const [contentEngineTab, setContentEngineTab] = useState('settings');
+const [showSocialPosts, setShowSocialPosts] = useState(false);
+const [socialPostsTab, setSocialPostsTab] = useState('create');
 ```
 
-**3. Update Content Engine render section:**
-Replace the simple `MultiChannelGenerator` render with a full tabbed interface:
+**3. Simplify form visibility states:**
+Remove individual states (`showPostForm`, `showBatchWizard`, etc.) and rely on `socialPostsTab` value instead.
 
+**4. Update handleQuickAction:**
 ```typescript
-{showContentEngine && effectiveCompanyId && (
-  <div className="p-2 space-y-4">
-    {/* Optional: Quick Stats */}
-    
-    <Tabs value={contentEngineTab} onValueChange={setContentEngineTab}>
+if (actionId === 'social-posts') {
+  hideAllForms();
+  setShowSocialPosts(true);
+  setSocialPostsTab('create'); // Default to Create tab
+  setActiveTab('chat');
+  return;
+}
+```
+
+**5. Create Social Posts nested tabs UI:**
+```typescript
+{showSocialPosts && effectiveCompanyId && (
+  <div className="space-y-4">
+    <Tabs value={socialPostsTab} onValueChange={setSocialPostsTab}>
       <TabsList>
-        <TabsTrigger value="settings">Brand Voice</TabsTrigger>
-        <TabsTrigger value="generator">Generate</TabsTrigger>
-        <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+        <TabsTrigger value="create">Create</TabsTrigger>
+        <TabsTrigger value="batch">Batch</TabsTrigger>
+        <TabsTrigger value="drafts">Drafts</TabsTrigger>
+        <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
         <TabsTrigger value="calendar">Calendar</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="settings">
-        <AIContentProfileManager />
+      <TabsContent value="create">
+        <SocialContentWizard ... />
       </TabsContent>
-      <TabsContent value="generator">
-        <MultiChannelGenerator />
+      <TabsContent value="batch">
+        <SocialBatchWizard ... />
       </TabsContent>
-      <TabsContent value="dashboard">
-        <ContentEngineDashboard />
+      <TabsContent value="drafts">
+        <SocialFeedQueue initialFilter="pending" ... />
+      </TabsContent>
+      <TabsContent value="scheduled">
+        <SocialScheduleQueue ... />
       </TabsContent>
       <TabsContent value="calendar">
-        <ContentEngineCalendar />
+        <SocialContentCalendar ... />
       </TabsContent>
     </Tabs>
   </div>
 )}
 ```
 
+**6. Update getActiveLabel function:**
+```typescript
+const getActiveLabel = () => {
+  if (showSocialPosts) {
+    const labels = {
+      create: 'Create Post',
+      batch: 'Batch Posts', 
+      drafts: 'Drafts',
+      scheduled: 'Scheduled',
+      calendar: 'Calendar'
+    };
+    return labels[socialPostsTab] || 'Social Posts';
+  }
+  if (showContentEngine) return 'Content Engine';
+  // ... rest
+};
+```
+
+**7. Remove unused states and update hideAllForms:**
+```typescript
+const hideAllForms = () => {
+  setShowSocialPosts(false);
+  setShowContentEngine(false);
+};
+```
+
+---
+
 ## Result
-The Content Engine tab within Social Media Signal Ops will have nested tabs matching the original standalone page:
-- **Brand Voice** - Configure AI content profile
-- **Generate** - Multi-channel content generator
-- **Dashboard** - View content generation history/analytics
-- **Calendar** - Visual content scheduling view
+
+| Area | Before | After |
+|------|--------|-------|
+| Main tabs | 7 items | 3 items |
+| Social tools | Scattered across tabs | Unified under "Social Posts" |
+| Content Engine | Nested tabs | Unchanged (nested tabs) |
+| Navigation depth | Mix of flat and nested | Consistent 2-level hierarchy |
+
+## Benefits
+- Cleaner, less cluttered main navigation
+- Logical grouping of related social media tools
+- Consistent pattern with Content Engine (both use nested tabs)
+- Easier to find all social post management in one place
