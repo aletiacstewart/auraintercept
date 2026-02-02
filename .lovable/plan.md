@@ -1,233 +1,175 @@
 
-# Update Operative Dependencies & Subscription Plans
+# Add Domain Verification Functionality
 
 ## Summary
-This plan addresses inconsistencies in operative dependencies across three key files and ensures subscription plan agent listings match the 24-agent total.
+The custom domain verification is stuck on "Verification Pending" because there's no mechanism to check DNS records. This plan adds a "Check Verification" button and an edge function to verify DNS records.
 
 ---
 
-## 1. OperativeDependencyGraph.tsx Updates
+## Current State
+- User can enter a custom domain (`smart.auraintercept.ai`)
+- DNS instructions are displayed (CNAME + TXT records)
+- `domain_verified` flag exists but is never updated
+- No verification trigger exists
 
-### Issues Found:
-- `AGENT_DISPLAY_NAMES` missing: `admin`, `creative`, `web_presence`, `marketing`
-- Still references `promo` instead of `marketing`
-- `DEPENDENCY_MAP` missing entries for new agents
-- No category config for consolidated social_media with web_presence
+## Proposed Solution
 
-### Changes:
+### 1. Create Edge Function: `verify-domain`
 
-**A. Update AGENT_DISPLAY_NAMES (lines 38-61):**
+**File:** `supabase/functions/verify-domain/index.ts`
+
+The function will:
+- Accept a `websiteId` parameter
+- Fetch the website's `custom_domain` and `dns_verification_code`
+- Perform DNS lookups to verify:
+  - **CNAME record**: Domain points to `site.auraintercept.app`
+  - **TXT record**: `_aura-verify.[domain]` contains the verification code
+- Update `domain_verified` to `true` if both records are correct
+- Return verification status with detailed feedback
+
 ```typescript
-const AGENT_DISPLAY_NAMES: Record<string, string> = {
-  triage: 'AI Receptionist',
-  booking: 'Scheduling',
-  followup: 'Follow-up',
-  review: 'Review',
-  dispatch: 'Dispatch',
-  route: 'Route',
-  eta: 'ETA',
-  checkin: 'Check-in',
-  admin: 'Admin',
-  quoting: 'Quoting',
-  invoice: 'Invoice',
-  inventory: 'Inventory',
-  campaign: 'Campaign',
-  lead: 'Lead',
-  marketing: 'Marketing',  // Changed from promo
-  social_content: 'Content',
-  social_scheduler: 'Scheduler',
-  social_analytics: 'Analytics',
-  creative: 'Creative',
-  web_presence: 'Web Presence',
-  insights: 'Insights',
-  performance: 'Performance',
-  revenue: 'Revenue',
-  forecast: 'Forecast',
-};
-```
+// DNS lookup using Deno's built-in DNS resolver
+const txtRecords = await Deno.resolveDns(`_aura-verify.${domain}`, "TXT");
+const cnameRecords = await Deno.resolveDns(domain, "CNAME");
 
-**B. Update DEPENDENCY_MAP (lines 64-87) to match subscriptionAgentConfig.ts:**
-```typescript
-const DEPENDENCY_MAP: Record<string, string[]> = {
-  // Customer Portal
-  triage: [],
-  booking: ['triage'],
-  followup: ['triage'],
-  review: ['triage'],
-  // Field Operations
-  dispatch: ['triage', 'booking'],
-  route: ['dispatch'],
-  eta: ['dispatch', 'route'],
-  checkin: ['dispatch'],
-  // Business Operations
-  admin: [],
-  quoting: ['triage'],
-  invoice: ['quoting'],
-  inventory: [],
-  // Marketing & Sales
-  campaign: [],
-  lead: [],
-  marketing: ['campaign'],
-  // Social Media & Web Presence
-  social_content: [],
-  social_scheduler: ['social_content'],
-  social_analytics: ['social_content'],
-  creative: [],
-  web_presence: ['creative'],
-  // Analytics
-  insights: [],
-  performance: ['insights'],
-  revenue: ['insights'],
-  forecast: ['insights', 'revenue'],
-};
+// Check TXT record contains verification code
+// Check CNAME points to site.auraintercept.app
 ```
 
 ---
 
-## 2. subscriptionAgentConfig.ts AGENT_DEPENDENCIES Sync
+### 2. Update SmartWebsiteManager.tsx
 
-### Current Issues:
-- `lead` has `['triage']` but documentationConfig shows no dependencies
-- Missing `admin` agent dependency entry
-- `marketing` should depend on `campaign` (marketing extends campaign functionality)
+**File:** `src/pages/SmartWebsiteManager.tsx`
 
-### Changes to AGENT_DEPENDENCIES (lines 105-122):
+**A. Add verification mutation (after line ~200):**
 ```typescript
-export const AGENT_DEPENDENCIES: Record<string, string[]> = {
-  // Customer Portal
-  booking: ['triage'],
-  followup: ['triage'],
-  review: ['triage'],
-  // Field Operations
-  dispatch: ['triage', 'booking'],
-  route: ['dispatch'],
-  eta: ['dispatch', 'route'],
-  checkin: ['dispatch'],
-  // Business Operations
-  invoice: ['quoting'],
-  // Marketing & Sales
-  marketing: ['campaign'],
-  // Social Media & Web Presence
-  social_scheduler: ['social_content'],
-  social_analytics: ['social_content'],
-  web_presence: ['creative'],
-  // Analytics
-  performance: ['insights'],
-  revenue: ['insights'],
-  forecast: ['insights', 'revenue'],
-};
+const verifyDomain = useMutation({
+  mutationFn: async () => {
+    const { data, error } = await supabase.functions.invoke('verify-domain', {
+      body: { websiteId: website.id }
+    });
+    if (error) throw error;
+    return data;
+  },
+  onSuccess: (data) => {
+    if (data.verified) {
+      toast.success('Domain verified successfully!');
+      queryClient.invalidateQueries({ queryKey: ['smart-website'] });
+    } else {
+      toast.error(data.message || 'DNS records not found yet');
+    }
+  },
+  onError: () => {
+    toast.error('Failed to verify domain');
+  }
+});
+```
+
+**B. Add "Check Verification" button (after line ~996):**
+```tsx
+{!website.domain_verified && (
+  <div className="text-sm space-y-2">
+    <p>Add the following DNS records to your domain:</p>
+    {/* DNS record instructions... */}
+    
+    <Button
+      onClick={() => verifyDomain.mutate()}
+      disabled={verifyDomain.isPending}
+      className="mt-4"
+    >
+      {verifyDomain.isPending ? (
+        <>
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          Checking...
+        </>
+      ) : (
+        <>
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Check Verification
+        </>
+      )}
+    </Button>
+    
+    <p className="text-muted-foreground text-xs mt-2">
+      DNS changes typically take 15 minutes to 48 hours to propagate.
+    </p>
+  </div>
+)}
 ```
 
 ---
 
-## 3. PricingComparisonTable.tsx Updates
+### 3. Edge Function Implementation Details
 
-### Issues:
-- Missing Creative Agent and Web Presence Agent from AI Agents list
-- Comment says "22 total" but we have 24 agents
-- Agent count header shows wrong numbers
-
-### Changes:
-
-**A. Update section title comment (line 116):**
 ```typescript
-// Command tier adds (14 more = 24 total)
-```
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-**B. Add missing agents to AI Agents section (after line 128):**
-```typescript
-{ name: 'Creative Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-{ name: 'Web Presence Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-```
-
-**C. Add feature descriptions (lines 31-37):**
-```typescript
-'Creative Agent': 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing.',
-'Web Presence Agent': 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts.',
+Deno.serve(async (req) => {
+  const { websiteId } = await req.json();
+  
+  // 1. Fetch website data
+  const { data: website } = await supabase
+    .from('smart_websites')
+    .select('custom_domain, dns_verification_code')
+    .eq('id', websiteId)
+    .single();
+  
+  // 2. Verify CNAME record
+  let cnameValid = false;
+  try {
+    const cname = await Deno.resolveDns(website.custom_domain, "CNAME");
+    cnameValid = cname.some(r => r.includes('site.auraintercept.app'));
+  } catch { /* Not found */ }
+  
+  // 3. Verify TXT record
+  let txtValid = false;
+  try {
+    const txt = await Deno.resolveDns(`_aura-verify.${website.custom_domain}`, "TXT");
+    txtValid = txt.flat().some(r => r.includes(website.dns_verification_code));
+  } catch { /* Not found */ }
+  
+  // 4. Update database if both valid
+  if (cnameValid && txtValid) {
+    await supabase
+      .from('smart_websites')
+      .update({ domain_verified: true })
+      .eq('id', websiteId);
+    
+    return Response.json({ verified: true });
+  }
+  
+  return Response.json({
+    verified: false,
+    cnameValid,
+    txtValid,
+    message: !cnameValid && !txtValid 
+      ? 'No DNS records found yet. Please wait for propagation.'
+      : !cnameValid 
+        ? 'CNAME record not found or incorrect'
+        : 'TXT verification record not found'
+  });
+});
 ```
 
 ---
 
-## 4. Subscription.tsx "See More Details" Updates
+## Files to Create/Modify
 
-### Issues:
-- AI Agents section missing Creative Agent and Web Presence Agent
-- Section title shows "(0 / 3 / 10 / 24)" which is incomplete (missing express/halo/flow counts)
-
-### Changes:
-
-**A. Update sections array - AI Agents title (line 226):**
-```typescript
-title: 'AI Agents (0 / 3-4 / 3 / 10 / 24)',
-```
-
-**B. Add missing agents to features array (after line 246):**
-```typescript
-{ name: 'Creative Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-{ name: 'Web Presence Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-```
-
-**C. Add feature descriptions (lines 46-47):**
-```typescript
-'Creative Agent': 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, and blogs.',
-'Web Presence Agent': 'AI-powered website and blog management. Auto-optimizes SEO, monitors site performance, and auto-publishes blog posts from the Content Engine.',
-```
+| File | Action |
+|------|--------|
+| `supabase/functions/verify-domain/index.ts` | Create new edge function |
+| `src/pages/SmartWebsiteManager.tsx` | Add verify button and mutation |
 
 ---
 
-## 5. Update Primary Customer Flow in OperativeDependencyGraph
+## User Experience
 
-### Current (line 230):
-Shows linear flow: triage → booking → dispatch → route → eta → checkin → followup → review
-
-### Updated Flow:
-Keep current flow but ensure it aligns with dependency structure
-
----
-
-## Files to Modify
-
-| File | Changes |
-|------|---------|
-| `src/components/ai/agents/OperativeDependencyGraph.tsx` | Add missing agents, fix dependencies, remove `promo` reference |
-| `src/lib/subscriptionAgentConfig.ts` | Sync AGENT_DEPENDENCIES with documentationConfig |
-| `src/components/landing/PricingComparisonTable.tsx` | Add Creative & Web Presence agents, fix count |
-| `src/pages/Subscription.tsx` | Add missing agents to "See More Details" table |
-
----
-
-## Dependency Visualization (Final State)
-
-```text
-Customer Portal:
-  triage (root) ─┬─► booking ─► dispatch ─┬─► route ─► eta
-                 ├─► followup             └─► checkin
-                 └─► review
-
-Business Operations:
-  admin (root)
-  quoting ─► invoice
-  inventory (root)
-
-Marketing & Sales:
-  campaign (root) ─► marketing
-  lead (root)
-
-Social Media & Web Presence:
-  social_content (root) ─┬─► social_scheduler
-                         └─► social_analytics
-  creative (root) ─► web_presence
-
-Analytics:
-  insights (root) ─┬─► performance
-                   └─► revenue ─► forecast
-```
-
----
-
-## Validation Checklist
-- [ ] All 24 agents have entries in AGENT_DISPLAY_NAMES
-- [ ] DEPENDENCY_MAP matches AGENT_DEPENDENCIES in subscriptionAgentConfig.ts
-- [ ] PricingComparisonTable lists all 24 agents
-- [ ] Subscription.tsx "See More Details" lists all 24 agents
-- [ ] No references to `promo` agent remain (all changed to `marketing`)
+1. User enters custom domain → sees "Verification Pending"
+2. User adds DNS records at their registrar
+3. User clicks **"Check Verification"** button
+4. System checks DNS and provides feedback:
+   - ✅ Both records valid → "Domain verified successfully!"
+   - ⚠️ Partial → Shows which record is missing
+   - ❌ None found → "DNS records not found yet. Please wait for propagation."
+5. On success, status changes to "Domain Verified" with green checkmark
