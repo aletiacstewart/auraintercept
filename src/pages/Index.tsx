@@ -563,8 +563,8 @@ export default function Index() {
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-4">Multi-Channel</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Connect Everywhere Your Customers Are</h2>
-            <p className="text-foreground max-w-2xl mx-auto">
-              In the service industry, the first company to respond wins the job. Our Aura Intercept AI platform ensures your business is always first, synchronizing Ask Aura, SMS, Email, and Ai Chat into a single, proactive workforce. Unlike basic chatbots, our intelligent AI agents maintain full context across every channel—meaning a customer can start a request via text and finish it over the phone without ever repeating a detail. It's a 24/7 automated dispatch solution that captures leads, handles bookings, and keeps your brand responsive while your team is in the field.
+            <p className="text-foreground/80 max-w-2xl mx-auto">
+              Aura Intercept AI synchronizes your voice, chat, email, and SMS into a 24/7 proactive workforce that captures every lead and booking while your team is in the field.
             </p>
           </div>
 
