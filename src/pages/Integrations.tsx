@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CRMConnectionSettings } from '@/components/integrations/CRMConnectionSettings';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,15 +41,6 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { cn } from '@/lib/utils';
-
-// CRM Provider display names
-const CRM_PROVIDER_NAMES: Record<string, string> = {
-  salesforce: 'Salesforce',
-  hubspot: 'HubSpot',
-  zoho: 'Zoho CRM',
-  pipedrive: 'Pipedrive',
-  freshsales: 'Freshsales',
-};
 
 interface Integration {
   id: string;
@@ -161,23 +151,6 @@ export default function Integrations() {
         .from('tenant_integrations')
         .select('*')
         .eq('company_id', companyId)
-        .maybeSingle();
-      if (error && error.code !== 'PGRST116') throw error;
-      return data;
-    },
-    enabled: !!companyId,
-  });
-
-  // Fetch CRM connection status
-  const { data: crmConnection } = useQuery({
-    queryKey: ['crm-connection', companyId],
-    queryFn: async () => {
-      if (!companyId) return null;
-      const { data, error } = await supabase
-        .from('crm_connections')
-        .select('provider, status')
-        .eq('company_id', companyId)
-        .eq('status', 'connected')
         .maybeSingle();
       if (error && error.code !== 'PGRST116') throw error;
       return data;

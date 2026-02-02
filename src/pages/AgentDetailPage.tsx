@@ -588,8 +588,7 @@ const AGENT_DEFINITIONS: Record<string, {
       'Lead capture & intake',
       'Lead qualification scoring',
       'Source tracking',
-      'Automated follow-up assignment',
-      'CRM integration'
+      'Automated follow-up assignment'
     ],
     configFields: [
       { key: 'auto_qualify', label: 'Auto-Qualify Leads', type: 'switch', defaultValue: true, description: 'Automatically score and qualify incoming leads' },

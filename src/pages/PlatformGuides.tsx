@@ -49,7 +49,6 @@ const NAVIGATION_ROUTES: Record<string, string> = {
   'Integrations → Email': '/dashboard/settings/integrations',
   'Integrations → Payment Connections': '/dashboard/settings/integrations',
   'Integrations → Website Embed': '/dashboard/settings/integrations',
-  'Integrations → CRM': '/dashboard/settings/integrations',
   'Field Operations': '/dashboard/ai-consoles/field-ops',
   'Field Operations Console': '/dashboard/ai-consoles/field-ops',
   'Business Ops Hub': '/dashboard/ai-consoles/business-ops',

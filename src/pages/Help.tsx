@@ -800,7 +800,6 @@ export default function Help() {
                             <li><strong className="text-card-foreground">Stripe:</strong> Payment processing</li>
                             <li><strong className="text-card-foreground">Resend:</strong> Email delivery</li>
                             <li><strong className="text-card-foreground">Google Calendar:</strong> Calendar sync</li>
-                            <li><strong className="text-card-foreground">CRM:</strong> HubSpot and Salesforce (coming soon)</li>
                           </ul>
                           <p className="mt-2">Configure integrations in <strong className="text-card-foreground">Settings → Integrations</strong>.</p>
                         </div>

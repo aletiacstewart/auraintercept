@@ -52,7 +52,6 @@ export function DashboardSetupNav() {
           businessHoursRes,
           agentConfigsRes,
           smartWebsiteRes,
-          crmConnectionsRes,
           googleCalendarConnectionsRes,
         ] = await Promise.all([
           supabase.from('companies').select('*').eq('id', companyId).single(),
@@ -66,7 +65,6 @@ export function DashboardSetupNav() {
           supabase.from('business_hours').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
           supabase.from('ai_agent_configs').select('id, is_enabled', { count: 'exact' }).eq('company_id', companyId),
           supabase.from('smart_websites').select('*').eq('company_id', companyId).maybeSingle(),
-          supabase.from('crm_connections').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
           supabase.from('google_calendar_connections').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         ]);
 
@@ -107,7 +105,6 @@ export function DashboardSetupNav() {
 
         // 3rd Party Overview progress (connections)
         const overviewSteps = [
-          (crmConnectionsRes.count || 0) > 0, // CRM connected
           (googleCalendarConnectionsRes.count || 0) > 0, // Calendar connected
         ];
         const overviewProgress = (overviewSteps.filter(Boolean).length / overviewSteps.length) * 100;

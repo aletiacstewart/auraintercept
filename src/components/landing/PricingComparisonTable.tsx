@@ -63,7 +63,6 @@ const featureDescriptions: Record<string, string> = {
   
   // Platform features
   'Calendar Sync': 'Sync appointments with Google Calendar or any iCal-compatible calendar.',
-  'CRM Integration': 'Connect with popular CRM systems to keep customer data synchronized.',
   'API Access': 'Full API access for custom integrations and automation workflows.',
 };
 
@@ -167,7 +166,6 @@ const sections: FeatureSection[] = [
     title: 'Integration & Support',
     features: [
       { name: 'Calendar Sync', express: 'x', halo: 'check', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'CRM Integration', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'API Access', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Priority Support', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Dedicated Account Manager', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },

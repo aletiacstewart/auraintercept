@@ -466,7 +466,6 @@ const CONSOLES = [
       'Add New Leads',
       'Manage Appointments',
       'Track Inventory',
-      'Handle Warranties',
     ],
     agents: [
       {
