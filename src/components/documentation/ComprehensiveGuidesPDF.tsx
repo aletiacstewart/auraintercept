@@ -218,7 +218,7 @@ const guideCategories = [
         steps: [
           'Aura Halo ($397/mo): Salons/Wellness - AI Receptionist, Scheduling, Follow-up + Talk to Aura (Voice)',
           'Aura Core ($500/mo): AI-Assisted foundation with 3 AI Tools (no automation)',
-          'Single-Point ($1,500/mo): AI Receptionist, Follow-up, Review + Proxy Voice Chat',
+          'Single-Point ($1,500/mo): AI Receptionist, Follow-up, Review + Talk to Aura (Voice)',
           'Multi-Track ($3,997/mo): 10 operatives - adds Scheduling, Dispatch, ETA, Quoting, Invoicing',
           'Aura Pro Command ($5,997/mo): Full 23 operative suite with all 7 consoles (15+ technicians)'
         ],
@@ -244,7 +244,7 @@ const guideCategories = [
           'Single-Point: Call to Book, Emergency, Services, Hours, Feedback',
           'Multi-Track+: Book Appointment, Get Quote, Track, Billing',
           'Portal supports multi-company access',
-          'Proxy Voice Chat included for Single-Point+ tiers'
+          'Talk to Aura (Voice) included for Single-Point+ tiers'
         ],
         tips: ['Widget works on WordPress, Wix, and any HTML site']
       }
@@ -349,10 +349,10 @@ const guideCategories = [
         tips: ['Use form-based interfaces for structured reports']
       },
       {
-        title: 'Proxy Voice Chat (ElevenLabs)',
+        title: 'Talk to Aura (Voice)',
         duration: '8 min',
         steps: [
-          'Proxy Voice Chat powered by ElevenLabs included in Single-Point+ tiers',
+          'Talk to Aura (Voice) powered by ElevenLabs included in Single-Point+ tiers',
           'Customers can speak naturally with AI agents',
           'Supports inbound and outbound voice interactions',
           'Configure voice settings in Integrations → Voice Agent',

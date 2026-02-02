@@ -94,7 +94,7 @@ export function SmartWebsiteVoiceButton({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Mic className="w-5 h-5" style={{ color: primaryColor }} />
-              Voice Chat with {companyName}
+              Talk to Aura - {companyName}
             </DialogTitle>
           </DialogHeader>
           
