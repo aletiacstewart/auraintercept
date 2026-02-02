@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMultiAgentChat } from '@/hooks/useMultiAgentChat';
 import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GlassHeader } from '@/components/ai/chat/GlassHeader';
 import { MobileTabNav } from '@/components/ai/chat/MobileTabNav';
 import { FloatingInput } from '@/components/ai/chat/FloatingInput';
@@ -15,6 +16,9 @@ import { SocialContentCalendar } from './SocialContentCalendar';
 import { SocialBatchWizard } from './SocialBatchWizard';
 import { SocialScheduleQueue } from './SocialScheduleQueue';
 import { MultiChannelGenerator } from '@/components/content-engine/MultiChannelGenerator';
+import { ContentEngineDashboard } from '@/components/content-engine/ContentEngineDashboard';
+import { ContentEngineCalendar } from '@/components/content-engine/ContentEngineCalendar';
+import { AIContentProfileManager } from '@/components/knowledge/AIContentProfileManager';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Share2, 
@@ -61,6 +65,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const [showBatchWizard, setShowBatchWizard] = useState(false);
   const [showScheduleQueue, setShowScheduleQueue] = useState(false);
   const [showContentEngine, setShowContentEngine] = useState(false);
+  const [contentEngineTab, setContentEngineTab] = useState('generator');
   
   // Feed filter state
   const [feedFilter, setFeedFilter] = useState<'pending' | 'scheduled'>('pending');
@@ -268,10 +273,30 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                     />
                   )}
 
-                  {/* Content Engine */}
+                  {/* Content Engine with nested tabs */}
                   {showContentEngine && effectiveCompanyId && (
-                    <div className="p-2">
-                      <MultiChannelGenerator />
+                    <div className="space-y-4">
+                      <Tabs value={contentEngineTab} onValueChange={setContentEngineTab}>
+                        <TabsList>
+                          <TabsTrigger value="settings">Brand Voice</TabsTrigger>
+                          <TabsTrigger value="generator">Generate</TabsTrigger>
+                          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+                          <TabsTrigger value="calendar">Calendar</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="settings">
+                          <AIContentProfileManager />
+                        </TabsContent>
+                        <TabsContent value="generator">
+                          <MultiChannelGenerator />
+                        </TabsContent>
+                        <TabsContent value="dashboard">
+                          <ContentEngineDashboard />
+                        </TabsContent>
+                        <TabsContent value="calendar">
+                          <ContentEngineCalendar />
+                        </TabsContent>
+                      </Tabs>
                     </div>
                   )}
 
