@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
-import { SmartWebsiteVoiceButton } from '@/components/smartwebsite/SmartWebsiteVoiceButton';
 interface WebsiteData {
   id: string;
   company_id: string;
@@ -208,7 +207,6 @@ export default function SmartWebsite() {
   // Voice and Chat require paid subscription (Single-Point+) or active trial
   const isInTrial = website?.trial_ends_at && new Date(website.trial_ends_at) > new Date();
   const isPaidTier = ['single_point', 'multi_track', 'command'].includes(website?.subscription_tier || '');
-  const canShowVoice = website?.show_voice_widget && (isInTrial || isPaidTier);
   const canShowChat = website?.show_chat_widget && (isInTrial || isPaidTier);
 
   if (isLoading) {
@@ -598,17 +596,6 @@ export default function SmartWebsite() {
           </p>
         </div>
       </footer>
-
-      {/* Voice Widget - only for paid tiers or trial */}
-      {canShowVoice && (
-        <SmartWebsiteVoiceButton
-          websiteId={website.id}
-          companyId={website.company_id}
-          companyName={website.company_name}
-          visitorFingerprint={visitorFingerprint}
-          primaryColor={primaryColor}
-        />
-      )}
 
       {/* Chat Widget - only for paid tiers or trial */}
       {canShowChat && (
