@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
 import DOMPurify from 'dompurify';
+import { FloatingChatWidget } from '@/components/landing/FloatingChatWidget';
 
 interface BlogPost {
   id: string;
@@ -216,6 +217,13 @@ export default function CompanyBlogPost() {
           <p>© {new Date().getFullYear()} {website.company_name}. All rights reserved.</p>
         </div>
       </footer>
+
+      {/* Chat Widget */}
+      <FloatingChatWidget
+        websiteId={website.id}
+        companyId={website.company_id}
+        primaryColor={primaryColor}
+      />
     </div>
   );
 }
