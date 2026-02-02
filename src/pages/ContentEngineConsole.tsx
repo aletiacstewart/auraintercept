@@ -33,7 +33,7 @@ const CHANNEL_STATS_CONFIG = [
 ];
 
 export default function ContentEngineConsole() {
-  const [activeTab, setActiveTab] = useState('generator');
+  const [activeTab, setActiveTab] = useState('settings');
   const { companyId } = useAuth();
 
   // Fetch content history stats
@@ -102,6 +102,10 @@ export default function ContentEngineConsole() {
           {/* Main Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList>
+              <TabsTrigger value="settings" className="flex items-center gap-1.5">
+                <Settings className="h-3.5 w-3.5" />
+                Brand Voice
+              </TabsTrigger>
               <TabsTrigger value="generator" className="flex items-center gap-1.5">
                 <Sparkles className="h-3.5 w-3.5" />
                 Generate
@@ -114,11 +118,11 @@ export default function ContentEngineConsole() {
                 <Calendar className="h-3.5 w-3.5" />
                 Calendar
               </TabsTrigger>
-              <TabsTrigger value="settings" className="flex items-center gap-1.5">
-                <Settings className="h-3.5 w-3.5" />
-                Brand Voice
-              </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="settings" className="space-y-6">
+              <AIContentProfileManager />
+            </TabsContent>
 
             <TabsContent value="generator" className="space-y-6">
               <MultiChannelGenerator />
@@ -130,10 +134,6 @@ export default function ContentEngineConsole() {
 
             <TabsContent value="calendar" className="space-y-6">
               <ContentEngineCalendar />
-            </TabsContent>
-
-            <TabsContent value="settings" className="space-y-6">
-              <AIContentProfileManager />
             </TabsContent>
           </Tabs>
         </div>
