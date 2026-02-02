@@ -5,7 +5,7 @@ import { useSubscription, SubscriptionTier } from '@/hooks/useSubscription';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageContainer } from '@/components/ui/page-container';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, MessageSquare, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, Download, Copy, UserCircle, ExternalLink, Target, Package, Shield, Megaphone, LayoutDashboard, Share2, Globe, PenTool } from 'lucide-react';
+import { Users, Calendar, MessageSquare, Puzzle, FileText, Receipt, DollarSign, Activity, TrendingUp, Download, Copy, UserCircle, ExternalLink, Target, Package, Megaphone, LayoutDashboard, Share2, Globe, PenTool } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
@@ -55,7 +55,7 @@ export function CompanyAdminDashboard() {
       
       const employeeIds = (employeeProfiles ?? []).map(p => p.id);
 
-      const [employees, customers, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs, leads, inventory, warranties, campaigns, socialPosts, blogPosts, siteMetrics] = await Promise.all([
+      const [employees, customers, appointments, quotes, invoices, monthlyRevenue, feedback, reminderLogs, leads, inventory, campaigns, socialPosts, blogPosts, siteMetrics] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('customer_profiles').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
         supabase.from('appointments').select('id, status').eq('company_id', companyId),
@@ -66,7 +66,6 @@ export function CompanyAdminDashboard() {
         supabase.from('reminder_logs').select('id, channel', { count: 'exact' }).eq('company_id', companyId).gte('created_at', monthStart).lte('created_at', monthEnd),
         supabase.from('leads').select('id, status').eq('company_id', companyId),
         supabase.from('inventory_items').select('id, quantity, min_quantity').eq('company_id', companyId),
-        supabase.from('warranty_policies').select('id').eq('company_id', companyId),
         supabase.from('marketing_campaigns').select('id, status').eq('company_id', companyId),
         supabase.from('scheduled_social_posts').select('id, status').eq('company_id', companyId),
         // Filter blog_posts by company employees (author_id)
@@ -121,9 +120,6 @@ export function CompanyAdminDashboard() {
         item.quantity !== null && item.min_quantity !== null && item.quantity <= item.min_quantity
       ).length;
 
-      // Warranty policies count
-      const warrantyCount = warranties.data?.length ?? 0;
-
       // Marketing campaigns stats
       const allCampaigns = campaigns.data ?? [];
       const activeCampaigns = allCampaigns.filter(c => c.status === 'active').length;
@@ -163,7 +159,6 @@ export function CompanyAdminDashboard() {
         messagesCount,
         inventoryCount,
         lowStockItems,
-        warrantyCount,
         activeCampaigns,
         totalCampaigns,
         publishedSocialPosts,
@@ -266,15 +261,6 @@ export function CompanyAdminDashboard() {
       requiredTier: 'multi_track' as SubscriptionTier
     },
     { 
-      title: 'Warranties', 
-      value: stats?.warrantyCount ?? 0, 
-      icon: Shield, 
-      description: 'Active policies',
-      colorClass: 'bg-feature-warranties/15 text-feature-warranties',
-      href: '/dashboard/warranties',
-      requiredTier: 'command' as SubscriptionTier
-    },
-    { 
       title: 'Campaigns', 
       value: stats?.activeCampaigns ?? 0, 
       icon: Megaphone, 
@@ -321,7 +307,6 @@ export function CompanyAdminDashboard() {
     { label: 'Communication Logs', icon: MessageSquare, colorClass: 'bg-channel-sms/15 text-channel-sms', href: '/dashboard/messages' },
     { label: 'Knowledge Base', icon: FileText, colorClass: 'bg-primary/15 text-primary', href: '/dashboard/knowledge' },
     { label: 'Inventory', icon: Package, colorClass: 'bg-feature-inventory/15 text-feature-inventory', href: '/dashboard/inventory', requiredTier: 'multi_track' as SubscriptionTier },
-    { label: 'Warranties', icon: Shield, colorClass: 'bg-feature-warranties/15 text-feature-warranties', href: '/dashboard/warranties', requiredTier: 'command' as SubscriptionTier },
     { label: 'Campaigns', icon: Megaphone, colorClass: 'bg-feature-marketing/15 text-feature-marketing', href: '/dashboard/campaigns', requiredTier: 'command' as SubscriptionTier },
     { label: 'Calculators', icon: DollarSign, colorClass: 'bg-feature-analytics/15 text-feature-analytics', href: '/dashboard/calculators' },
     { label: 'Integrations', icon: Puzzle, colorClass: 'bg-muted text-muted-foreground', href: '/dashboard/3rd-party-overview' },

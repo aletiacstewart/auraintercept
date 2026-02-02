@@ -63,13 +63,6 @@ export const FEATURE_COLORS = {
     iconClass: 'icon-feature-inventory',
     badgeClass: 'badge-feature-inventory',
   },
-  warranties: { 
-    cssVar: '--feature-warranties', 
-    text: 'text-feature-warranties', 
-    bg: 'bg-feature-warranties',
-    iconClass: 'icon-feature-warranties',
-    badgeClass: 'badge-feature-warranties',
-  },
   
   // Platform & System Features
   analytics: { 
