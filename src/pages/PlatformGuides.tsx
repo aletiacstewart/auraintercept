@@ -508,20 +508,6 @@ const guideCategories = [
           'Verify messages reach your dashboard'
         ],
         tips: ['Iframe works on most website builders', 'Test on mobile devices too']
-      },
-      {
-        title: 'CRM Integration',
-        duration: '12 min',
-        steps: [
-          'Navigate to Integrations → CRM (Multi-Track+ tier)',
-          'Select your CRM provider from supported options',
-          'Authenticate with your CRM account credentials',
-          'Map customer fields between platforms',
-          'Configure sync direction (one-way or two-way)',
-          'Set sync frequency (real-time or scheduled)',
-          'Verify customer data appears in both systems'
-        ],
-        tips: ['Start with one-way sync to avoid conflicts', 'Review field mappings carefully before enabling']
       }
     ]
   },
