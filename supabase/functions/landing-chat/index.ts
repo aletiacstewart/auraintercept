@@ -9,7 +9,7 @@ const AURA_SYSTEM_PROMPT = `You are Aura, the helpful and knowledgeable AI assis
 
 About Aura Intercept:
 - Aura Intercept is a Multi-Agent Orchestration Engine designed for appointment-based service businesses (HVAC, plumbing, electrical, landscaping, restaurants, salons, etc.)
-- It provides 23 specialized AI operatives organized into 7 Control Centers: Customer Portal, Field Operations, Business Management, Marketing & Sales, Social Media Signal, Analytics & Reports, and Web Presence
+- It provides 24 specialized AI operatives organized into 7 Control Centers: Customer Portal, Field Operations, Business Management, Outreach & Sales Ops, Social Media Signal, Analytics & Reports, and Web Presence
 - Key features include: AI-powered scheduling, automated reminders via SMS/email/voice, customer portal, technician dispatch, quote generation, inventory management, Social Media Signal content, and business analytics
 - The platform offers 24/7 AI automation for handling customer inquiries, booking appointments, and managing operations
 
@@ -20,7 +20,7 @@ Pricing Tiers (7 Total):
 - Aura Core ($500/mo): AI-assisted tools only (no automation), Message Aura (Text), Social Media Signal, Web Presence, 2 employees. No external dependencies required.
 - Single-Point ($1,500/mo): 3 AI operatives (Receptionist, Follow-up, Review), 1 console (Customer Portal), Talk to Aura Voice + Calling, 5 employees. Saves 10+ hours/week in lead intake.
 - Multi-Track ($3,997/mo): 10 AI operatives including Field Operations, 2 consoles, online booking & scheduling, 10 employees. Manages field techs automatically.
-- Aura Pro Command ($5,997/mo): All 23 AI operatives, all 7 Control Centers, total business automation, 25 employees. For enterprises with 15+ technicians or multi-location.
+- Aura Pro Command ($5,997/mo): All 24 AI operatives, all 7 Control Centers, total business automation, 25 employees. For enterprises with 15+ technicians or multi-location.
 - Annual billing saves 16% (implementation fee waived for annual plans)
 - Additional employees: $10/mo per employee beyond included amount
 

@@ -417,7 +417,7 @@ const SUBSCRIPTION_TIERS = {
     annualPrice: 59970,
     annualSavings: 11994,
     implementationFee: 'Custom',
-    operatives: 23,
+    operatives: 24,
     consoles: 7,
     employees: 25,
     bestFor: 'Large service companies with 15+ technicians or multi-location operations requiring full enterprise automation.',
@@ -470,7 +470,7 @@ const PricingSummaryPDF = () => (
           <Text style={styles.coverStatLabel}>Pricing Tiers</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>23</Text>
+          <Text style={styles.coverStatNumber}>24</Text>
           <Text style={styles.coverStatLabel}>AI Operatives</Text>
         </View>
         <View style={styles.coverStat}>
@@ -498,14 +498,15 @@ const PricingSummaryPDF = () => (
           { title: 'Executive Pricing Summary', page: '3' },
           { title: '7-Tier Comparison Table', page: '4' },
           { title: 'Aura Express Tier (Restaurants)', page: '5' },
-          { title: 'Aura Halo Tier (Salons/Wellness)', page: '6' },
-          { title: 'Aura Core Tier (AI-Assisted Tools)', page: '7' },
-          { title: 'Single-Point Tier Details', page: '8' },
-          { title: 'Multi-Track Tier Details', page: '9' },
-          { title: 'Aura Pro Command Tier (Enterprise)', page: '10' },
-          { title: 'Annual Discount Savings', page: '11' },
-          { title: '3rd Party Integration Requirements', page: '12' },
-          { title: 'Add-Ons & Implementation Fees', page: '13' },
+          { title: 'Aura Flow Tier (Personal Assistant)', page: '6' },
+          { title: 'Aura Halo Tier (Salons/Wellness)', page: '7' },
+          { title: 'Aura Core Tier (AI-Assisted Tools)', page: '8' },
+          { title: 'Single-Point Tier Details', page: '9' },
+          { title: 'Multi-Track Tier Details', page: '10' },
+          { title: 'Aura Pro Command Tier (Enterprise)', page: '11' },
+          { title: 'Annual Discount Savings', page: '12' },
+          { title: '3rd Party Integration Requirements', page: '13' },
+          { title: 'Add-Ons & Implementation Fees', page: '14' },
         ].map((item, i) => (
           <View key={i} style={styles.tocItem}>
             <Text style={styles.tocTitle}>{item.title}</Text>
@@ -583,7 +584,7 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { feature: 'AI Operatives', express: '1', halo: '3', core: '0', single: '3', multi: '10', command: '23' },
+          { feature: 'AI Operatives', express: '1', halo: '3', core: '0', single: '3', multi: '10', command: '24' },
           { feature: 'Consoles', express: '0', halo: '1', core: '0', single: '1', multi: '2', command: '7' },
           { feature: 'Employees', express: '2', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
           { feature: 'AI Automation', express: '-', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
@@ -619,7 +620,7 @@ const PricingSummaryPDF = () => (
     {/* 6-Tier Comparison Table */}
     <Page size="A4" style={styles.page}>
       <Header title="Aura Intercept - Pricing Guide" />
-      <Text style={styles.sectionTitle}>Complete 6-Tier Comparison</Text>
+      <Text style={styles.sectionTitle}>Complete 7-Tier Comparison</Text>
 
       <View style={styles.table}>
         <View style={styles.tableHeader}>
