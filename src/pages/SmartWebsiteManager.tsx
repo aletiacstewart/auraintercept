@@ -56,6 +56,7 @@ import { SmartWebsiteHoursEditor } from '@/components/smartwebsite/SmartWebsiteH
 import { SmartWebsiteContactEditor } from '@/components/smartwebsite/SmartWebsiteContactEditor';
 import { AIContentButton } from '@/components/ai/AIContentButton';
 import { TavilyStatusBadge } from '@/components/ai/TavilyStatusBadge';
+import { BlogManagementTab } from '@/components/blog/BlogManagementTab';
 
 // Extended type for website data with new night mode fields
 interface ExtendedWebsiteData {
@@ -242,8 +243,11 @@ export default function SmartWebsiteManager() {
     }
   });
 
+  // Use custom domain if verified, otherwise fallback to subdomain URL
   const websiteUrl = website?.subdomain 
-    ? `${window.location.origin}/site/${website.subdomain}`
+    ? website.domain_verified && website.custom_domain
+      ? `https://${website.custom_domain}`
+      : `${window.location.origin}/site/${website.subdomain}`
     : null;
 
   const usagePercentage = website?.monthly_visitor_limit 
@@ -346,6 +350,7 @@ export default function SmartWebsiteManager() {
             <TabsTrigger value="content" className="flex-shrink-0">Content</TabsTrigger>
             <TabsTrigger value="media" className="flex-shrink-0">Media</TabsTrigger>
             <TabsTrigger value="sections" className="flex-shrink-0 whitespace-nowrap">Visibility</TabsTrigger>
+            <TabsTrigger value="blog" className="flex-shrink-0">Blog</TabsTrigger>
             <TabsTrigger value="analytics" className="flex-shrink-0">Analytics</TabsTrigger>
             <TabsTrigger value="domain" className="flex-shrink-0">Domain</TabsTrigger>
           </TabsList>
@@ -963,6 +968,10 @@ export default function SmartWebsiteManager() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="blog">
+            <BlogManagementTab />
           </TabsContent>
 
           <TabsContent value="analytics">

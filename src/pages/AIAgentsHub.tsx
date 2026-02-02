@@ -83,10 +83,16 @@ const CATEGORY_INFO: Record<string, {
     cssVar: '--feature-marketing'
   },
   social_media: { 
-    label: 'Social Media & Web Presence',
-    icon: Globe, 
+    label: 'Social Media Signal Ops',
+    icon: Activity, 
     colorClass: 'text-pink-400',
     cssVar: '--feature-marketing'
+  },
+  creative_web_presence: { 
+    label: 'Creative & Web Presence',
+    icon: Globe, 
+    colorClass: 'text-purple-400',
+    cssVar: '--feature-analytics'
   },
   analytics_reports: { 
     label: 'Analytics & Reports', 
