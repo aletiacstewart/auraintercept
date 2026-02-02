@@ -1,52 +1,124 @@
 
-# Remove Duplicate Voice Button from SmartWebsite
+# Company-Configurable Console Features
 
-## Problem
-There are two voice buttons on the SmartWebsite page:
-1. **Mic icon in chat widget header** (inside UnifiedCustomerConsole) - opens voice dialog
-2. **Separate floating mic button** (SmartWebsiteVoiceButton component at bottom-right)
+## Current Problem
+The `UnifiedCustomerConsole` displays features (Appt, Quote, Track, Billing, Emergency, etc.) based on the **subscription tier** only. This means:
+- All companies on Multi-Track+ see all features
+- Aura Intercept (a platform/SaaS company) shows irrelevant features like Emergency and Track
+- No way for companies to hide features that don't apply to their business type
 
-These are duplicates providing the same functionality.
-
-## Solution
-Remove the separate `SmartWebsiteVoiceButton` from the SmartWebsite page since the voice feature is already accessible through the chat widget header.
-
----
-
-## Changes
-
-### File: `src/pages/SmartWebsite.tsx`
-
-**Remove the import (line 12):**
-```typescript
-// DELETE: import { SmartWebsiteVoiceButton } from '@/components/smartwebsite/SmartWebsiteVoiceButton';
-```
-
-**Remove the component rendering (lines 602-611):**
-```typescript
-// DELETE entire block:
-{/* Voice Widget - only for paid tiers or trial */}
-{canShowVoice && (
-  <SmartWebsiteVoiceButton
-    websiteId={website.id}
-    companyId={website.company_id}
-    companyName={website.company_name}
-    visitorFingerprint={visitorFingerprint}
-    primaryColor={primaryColor}
-  />
-)}
-```
-
-**Optionally remove the unused variable (line 211):**
-```typescript
-// DELETE: const canShowVoice = website?.show_voice_widget && (isInTrial || isPaidTier);
-```
+## Solution Overview
+Add per-company visibility toggles to the `smart_websites` table and update the console to respect them.
 
 ---
 
-## Result
-After this change, only the voice button in the chat widget header will remain. Users will:
-1. Click the chat button → Opens chat popup
-2. Click mic icon in header → Opens voice chat dialog
+## Database Changes
 
-No functionality is lost - voice chat is still fully accessible through the chat widget.
+Add new columns to `smart_websites` table:
+
+| Column | Type | Default | Purpose |
+|--------|------|---------|---------|
+| `show_console_appointments` | boolean | true | Appt tab and quick action |
+| `show_console_quotes` | boolean | true | Quote tab and quick action |
+| `show_console_tracking` | boolean | true | Track quick action |
+| `show_console_billing` | boolean | true | Billing quick action |
+| `show_console_emergency` | boolean | true | Emergency section at bottom |
+| `show_console_feedback` | boolean | true | Feedback quick action |
+
+These work **in conjunction** with subscription tier - a feature must be both:
+1. Included in the company's subscription tier, AND
+2. Enabled by the company in their settings
+
+---
+
+## Technical Changes
+
+### 1. Database Migration
+
+```sql
+ALTER TABLE smart_websites
+ADD COLUMN show_console_appointments BOOLEAN DEFAULT true,
+ADD COLUMN show_console_quotes BOOLEAN DEFAULT true,
+ADD COLUMN show_console_tracking BOOLEAN DEFAULT true,
+ADD COLUMN show_console_billing BOOLEAN DEFAULT true,
+ADD COLUMN show_console_emergency BOOLEAN DEFAULT true,
+ADD COLUMN show_console_feedback BOOLEAN DEFAULT true;
+```
+
+### 2. Update UnifiedCustomerConsole.tsx
+
+**Modify the config fetch** to include the new visibility settings from `smart_websites`:
+
+```typescript
+// Add to fetchConfigById
+const { data: websiteSettings } = await supabase
+  .from('smart_websites')
+  .select('show_console_*')
+  .eq('company_id', companyId)
+  .maybeSingle();
+```
+
+**Update visibility logic** to combine tier + company settings:
+
+```typescript
+// Current: only tier-based
+const visibleQuickActions = getQuickActionsForTier(effectiveTier);
+
+// New: tier-based AND company settings
+const visibleQuickActions = getQuickActionsForTier(effectiveTier).filter(action => {
+  if (action.id === 'schedule' && !websiteSettings?.show_console_appointments) return false;
+  if (action.id === 'quote' && !websiteSettings?.show_console_quotes) return false;
+  if (action.id === 'track' && !websiteSettings?.show_console_tracking) return false;
+  if (action.id === 'billing' && !websiteSettings?.show_console_billing) return false;
+  if (action.id === 'emergency' && !websiteSettings?.show_console_emergency) return false;
+  if (action.id === 'feedback' && !websiteSettings?.show_console_feedback) return false;
+  return true;
+});
+```
+
+### 3. Add Settings UI in SmartWebsiteManager.tsx
+
+Add a new "Console Features" section in the Settings tab:
+
+```text
++------------------------------------------+
+| Console Features                         |
+| Configure which features appear in your  |
+| embedded chat widget                     |
++------------------------------------------+
+| Appointments      [Toggle]               |
+| Quotes            [Toggle]               |
+| Tracking          [Toggle]               |
+| Billing           [Toggle]               |
+| Emergency         [Toggle]               |
+| Feedback          [Toggle]               |
++------------------------------------------+
+```
+
+---
+
+## Files to Modify
+
+| File | Changes |
+|------|---------|
+| `smart_websites` table | Add 6 new boolean columns |
+| `src/components/customer/UnifiedCustomerConsole.tsx` | Fetch website settings, filter actions/tabs by company toggles |
+| `src/pages/SmartWebsiteManager.tsx` | Add Console Features settings section |
+
+---
+
+## User Experience
+
+**For Aura Intercept:**
+- Go to Web Presence Manager > Settings tab
+- In new "Console Features" section, disable:
+  - Tracking (not applicable for SaaS)
+  - Emergency (no dispatch services)
+  - Billing (if not using invoice system for customers)
+
+**Result:** The embedded console only shows relevant features for your business type.
+
+---
+
+## Note on Subscription Tiers
+This doesn't bypass tier restrictions - it only allows companies to **hide** features they have access to. A Single-Point company still can't enable Appt/Quote even if they toggle them on (they're filtered out at the tier level first).
