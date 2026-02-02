@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { MessageCircle, X } from 'lucide-react';
+import { MessageCircle, X, AlertTriangle } from 'lucide-react';
+import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 import { Button } from '@/components/ui/button';
 import { LandingAIChat } from './LandingAIChat';
 import { UnifiedCustomerConsole } from '@/components/customer/UnifiedCustomerConsole';
@@ -109,6 +110,18 @@ export const FloatingChatWidget = React.forwardRef<HTMLDivElement, FloatingChatW
                   />
                 </div>
               )}
+              
+              {/* Report Issue Footer */}
+              <div className="px-3 py-2 border-t border-border/30 bg-muted/30">
+                <ReportIssueDialog
+                  trigger={
+                    <button className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1.5 transition-colors">
+                      <AlertTriangle className="w-3 h-3" />
+                      Report Issue
+                    </button>
+                  }
+                />
+              </div>
             </div>
           </div>
         )}
