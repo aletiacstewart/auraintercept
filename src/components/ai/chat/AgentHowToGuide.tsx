@@ -16,13 +16,10 @@ import {
   Navigation,
   Truck,
   Phone,
-  Bot,
   FileText,
   Receipt,
   Package,
-  Shield,
   ClipboardList,
-  Megaphone,
   Tag,
   Gift,
   TrendingUp,
@@ -380,19 +377,6 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
       { step: 4, title: 'Update Stock', description: 'Adjust quantities or add new items' },
     ],
     tips: ['Set low-stock alerts to avoid shortages', 'Track inventory usage per job']
-  },
-  {
-    id: 'warranty',
-    label: 'Warranty',
-    icon: Shield,
-    description: 'Manage warranty records and claims',
-    steps: [
-      { step: 1, title: 'Click Warranty Tab', description: 'Open warranty management' },
-      { step: 2, title: 'Search Records', description: 'Find by serial number or customer' },
-      { step: 3, title: 'View Coverage', description: 'Check warranty terms and expiration' },
-      { step: 4, title: 'Process Claim', description: 'Submit or review warranty claims' },
-    ],
-    tips: ['Register products promptly after installation', 'Keep warranty documentation updated']
   },
   {
     id: 'companies',
