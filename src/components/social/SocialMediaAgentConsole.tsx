@@ -22,25 +22,16 @@ import { AIContentProfileManager } from '@/components/knowledge/AIContentProfile
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Share2, 
-  PenSquare,
-  FileText,
-  Calendar,
-  CalendarDays,
-  Sparkles,
   Wand2,
 } from 'lucide-react';
 
-// Quick actions for Social Media Ops - removed Analytics (moved to Analytics console)
+// Simplified quick actions - consolidated into 2 main sections
 const QUICK_ACTIONS = [
-  { id: 'create', label: 'Single Post', icon: PenSquare, message: 'Create a new social media post', featureColor: 'text-pink-400' },
-  { id: 'batch', label: 'Batch Posts', icon: Sparkles, message: 'Generate batch of posts', featureColor: 'text-pink-400' },
+  { id: 'social-posts', label: 'Social Posts', icon: Share2, message: 'Manage social posts', featureColor: 'text-pink-400' },
   { id: 'content-engine', label: 'Content Engine', icon: Wand2, message: 'Open multi-channel generator', featureColor: 'text-pink-400' },
-  { id: 'drafts', label: 'Drafts', icon: FileText, message: 'Show me pending social media drafts', featureColor: 'text-pink-400' },
-  { id: 'scheduled', label: 'Scheduled', icon: Calendar, message: 'Show my scheduled posts', featureColor: 'text-pink-400' },
-  { id: 'calendar', label: 'Calendar', icon: CalendarDays, message: 'Open content calendar', featureColor: 'text-pink-400' },
 ];
 
-// Tab configuration
+// Tab configuration - simplified to 3 main tabs
 const TABS = [
   { id: 'chat', label: 'Home', icon: Share2, featureColor: 'text-pink-400' },
   ...QUICK_ACTIONS.map(action => ({ id: action.id, label: action.label, icon: action.icon, featureColor: action.featureColor })),
@@ -59,16 +50,11 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [lastAgent, setLastAgent] = useState<string>('social_content');
   
-  // Form visibility states
-  const [showPostForm, setShowPostForm] = useState(false);
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [showBatchWizard, setShowBatchWizard] = useState(false);
-  const [showScheduleQueue, setShowScheduleQueue] = useState(false);
+  // Consolidated visibility states
+  const [showSocialPosts, setShowSocialPosts] = useState(false);
+  const [socialPostsTab, setSocialPostsTab] = useState('create');
   const [showContentEngine, setShowContentEngine] = useState(false);
   const [contentEngineTab, setContentEngineTab] = useState('generator');
-  
-  // Feed filter state
-  const [feedFilter, setFeedFilter] = useState<'pending' | 'scheduled'>('pending');
 
   // Company branding
   const { data: company } = useQuery({
@@ -101,10 +87,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   }, [messages]);
 
   const hideAllForms = () => {
-    setShowPostForm(false);
-    setShowCalendar(false);
-    setShowBatchWizard(false);
-    setShowScheduleQueue(false);
+    setShowSocialPosts(false);
     setShowContentEngine(false);
   };
 
@@ -118,40 +101,17 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   };
 
   const handleQuickAction = async (message: string, actionId?: string) => {
-    // Show appropriate form or switch tab based on action
-    if (actionId === 'create') {
+    if (actionId === 'social-posts') {
       hideAllForms();
-      setShowPostForm(true);
-      setActiveTab('chat');
-      return;
-    }
-    if (actionId === 'batch') {
-      hideAllForms();
-      setShowBatchWizard(true);
+      setShowSocialPosts(true);
+      setSocialPostsTab('create');
       setActiveTab('chat');
       return;
     }
     if (actionId === 'content-engine') {
       hideAllForms();
       setShowContentEngine(true);
-      setActiveTab('chat');
-      return;
-    }
-    if (actionId === 'drafts') {
-      hideAllForms();
-      setFeedFilter('pending');
-      setActiveTab('feed');
-      return;
-    }
-    if (actionId === 'scheduled') {
-      hideAllForms();
-      setShowScheduleQueue(true);
-      setActiveTab('chat');
-      return;
-    }
-    if (actionId === 'calendar') {
-      hideAllForms();
-      setShowCalendar(true);
+      setContentEngineTab('generator');
       setActiveTab('chat');
       return;
     }
@@ -177,18 +137,31 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     setLastAgent('social_content');
   };
 
-  const isShowingForm = showPostForm || showCalendar || showScheduleQueue || showBatchWizard || showContentEngine;
+  const isShowingForm = showSocialPosts || showContentEngine;
   const showWelcome = messages.length === 0 && !isShowingForm && activeTab === 'chat';
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
   // Get active label based on form type
   const getActiveLabel = () => {
-    if (activeTab === 'feed') return feedFilter === 'scheduled' ? 'Scheduled Posts' : 'Content Queue';
-    if (showPostForm) return 'Single Post';
-    if (showBatchWizard) return 'Batch Posts';
-    if (showContentEngine) return 'Content Engine';
-    if (showCalendar) return 'Content Calendar';
-    if (showScheduleQueue) return 'Scheduled Posts';
+    if (showSocialPosts) {
+      const labels: Record<string, string> = {
+        create: 'Create Post',
+        batch: 'Batch Posts',
+        drafts: 'Drafts',
+        scheduled: 'Scheduled',
+        calendar: 'Calendar'
+      };
+      return labels[socialPostsTab] || 'Social Posts';
+    }
+    if (showContentEngine) {
+      const labels: Record<string, string> = {
+        settings: 'Brand Voice',
+        generator: 'Content Engine',
+        dashboard: 'Dashboard',
+        calendar: 'Calendar'
+      };
+      return labels[contentEngineTab] || 'Content Engine';
+    }
     if (messages.length > 0) return agentStyle.label;
     return 'Home';
   };
@@ -207,13 +180,12 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
         useDefaultLogo={true}
       />
 
-
       <MobileTabNav
         tabs={TABS}
         activeTab={activeTab}
         onTabChange={(tabId) => {
           handleTabChange(tabId);
-          if (tabId !== 'chat' && tabId !== 'feed') {
+          if (tabId !== 'chat') {
             const action = QUICK_ACTIONS.find(a => a.id === tabId);
             if (action) {
               handleQuickAction(action.message, action.id);
@@ -225,13 +197,6 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
 
       {/* Content Area */}
       <div className="flex-1 flex flex-col min-h-0 relative console-surface">
-        {/* Feed Tab */}
-        {activeTab === 'feed' && effectiveCompanyId && (
-          <div className="flex-1 overflow-y-auto p-4">
-            <SocialFeedQueue companyId={effectiveCompanyId} initialFilter={feedFilter} />
-          </div>
-        )}
-
         {/* Chat Tab */}
         {activeTab === 'chat' && (
           <>
@@ -248,29 +213,53 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                 />
               ) : (
                 <div className="space-y-4">
-                  {/* Forms */}
-                  {showPostForm && effectiveCompanyId && (
-                    <SocialContentWizard
-                      companyId={effectiveCompanyId}
-                      onCancel={handleHome}
-                      onSuccess={() => {
-                        hideAllForms();
-                        setFeedFilter('pending');
-                        setActiveTab('feed');
-                      }}
-                    />
-                  )}
+                  {/* Social Posts - Consolidated with nested tabs */}
+                  {showSocialPosts && effectiveCompanyId && (
+                    <div className="space-y-4">
+                      <Tabs value={socialPostsTab} onValueChange={setSocialPostsTab}>
+                        <TabsList>
+                          <TabsTrigger value="create">Create</TabsTrigger>
+                          <TabsTrigger value="batch">Batch</TabsTrigger>
+                          <TabsTrigger value="drafts">Drafts</TabsTrigger>
+                          <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
+                          <TabsTrigger value="calendar">Calendar</TabsTrigger>
+                        </TabsList>
 
-                  {/* Batch Wizard (inline) */}
-                  {showBatchWizard && effectiveCompanyId && (
-                    <SocialBatchWizard
-                      companyId={effectiveCompanyId}
-                      onCancel={handleHome}
-                      onSuccess={() => {
-                        hideAllForms();
-                        setShowScheduleQueue(true);
-                      }}
-                    />
+                        <TabsContent value="create">
+                          <SocialContentWizard
+                            companyId={effectiveCompanyId}
+                            onCancel={handleHome}
+                            onSuccess={() => {
+                              setSocialPostsTab('drafts');
+                            }}
+                          />
+                        </TabsContent>
+                        <TabsContent value="batch">
+                          <SocialBatchWizard
+                            companyId={effectiveCompanyId}
+                            onCancel={handleHome}
+                            onSuccess={() => {
+                              setSocialPostsTab('scheduled');
+                            }}
+                          />
+                        </TabsContent>
+                        <TabsContent value="drafts">
+                          <SocialFeedQueue companyId={effectiveCompanyId} initialFilter="pending" />
+                        </TabsContent>
+                        <TabsContent value="scheduled">
+                          <SocialScheduleQueue
+                            companyId={effectiveCompanyId}
+                            onClose={handleHome}
+                          />
+                        </TabsContent>
+                        <TabsContent value="calendar">
+                          <SocialContentCalendar
+                            companyId={effectiveCompanyId}
+                            onClose={handleHome}
+                          />
+                        </TabsContent>
+                      </Tabs>
+                    </div>
                   )}
 
                   {/* Content Engine with nested tabs */}
@@ -298,22 +287,6 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                         </TabsContent>
                       </Tabs>
                     </div>
-                  )}
-
-                  {/* Calendar View */}
-                  {showCalendar && effectiveCompanyId && (
-                    <SocialContentCalendar
-                      companyId={effectiveCompanyId}
-                      onClose={handleHome}
-                    />
-                  )}
-
-                  {/* Schedule Queue View */}
-                  {showScheduleQueue && effectiveCompanyId && (
-                    <SocialScheduleQueue
-                      companyId={effectiveCompanyId}
-                      onClose={handleHome}
-                    />
                   )}
 
                   {/* Chat Messages */}
