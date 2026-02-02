@@ -17,7 +17,6 @@ import {
   Sparkles,
   UserPlus,
   Calendar,
-  Shield,
   Megaphone,
   CreditCard,
   XCircle
@@ -116,20 +115,7 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
     enabled: !!companyId,
   });
 
-  // Fetch active warranties count
-  const { data: activeWarranties = 0 } = useQuery({
-    queryKey: ['active-warranties-count', companyId],
-    queryFn: async () => {
-      const now = new Date().toISOString();
-      const { count } = await supabase
-        .from('warranty_records')
-        .select('id', { count: 'exact', head: true })
-        .eq('company_id', companyId)
-        .gte('warranty_end_date', now);
-      return count || 0;
-    },
-    enabled: !!companyId,
-  });
+  // Active warranties removed - feature discontinued
 
   // Fetch active campaigns count
   const { data: campaignStats } = useQuery({
@@ -259,18 +245,6 @@ export function FinancialPulseDashboard({ companyId, onNavigate, userRole }: Fin
           </CardContent>
         </Card>
 
-        <Card 
-          className="border-border/50 hover:border-feature-warranties/40 transition-colors cursor-pointer" 
-          onClick={() => navigate('/dashboard/warranties')}
-        >
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <Shield className="h-5 w-5 text-feature-warranties" />
-            </div>
-            <p className="text-2xl font-bold mt-2 text-feature-warranties">{activeWarranties}</p>
-            <p className="text-xs text-muted-foreground">Active Warranties</p>
-          </CardContent>
-        </Card>
 
         <Card 
           className="border-border/50 hover:border-feature-marketing/40 transition-colors cursor-pointer" 
