@@ -387,7 +387,7 @@ const howItWorks = [{
 }, {
   step: 2,
   title: 'Activate AI Operatives',
-  description: 'Enable 23 specialized AI operatives and configure your knowledge base for your business.',
+  description: 'Enable 24 specialized AI operatives and configure your knowledge base for your business.',
   icon: Bot
 }, {
   step: 3,
@@ -401,7 +401,7 @@ const howItWorks = [{
   icon: Zap
 }];
 const heroStats = [{
-  value: '23',
+  value: '24',
   label: 'AI Agents'
 }, {
   value: '24/7',
@@ -522,7 +522,7 @@ export default function Index() {
         <div className="container max-w-6xl mx-auto px-6">
           <div className="text-center mb-6">
             <Badge variant="secondary" className="mb-2">Aura Intelligence Network</Badge>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">23 Specialized AI Operatives</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">24 Specialized AI Operatives</h2>
             <p className="text-muted-foreground text-sm max-w-xl mx-auto">
               Intercept Every Lead. Automate Every Move.
             </p>

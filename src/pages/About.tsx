@@ -124,7 +124,7 @@ export default function About() {
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-primary" />
-                      <span>23 specialized AI operatives</span>
+                      <span>24 specialized AI operatives</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-primary" />
