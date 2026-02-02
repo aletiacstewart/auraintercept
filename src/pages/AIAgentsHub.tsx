@@ -83,7 +83,7 @@ const CATEGORY_INFO: Record<string, {
     cssVar: '--feature-marketing'
   },
   social_media: { 
-    label: 'Social Media Signal',
+    label: 'Social Media & Web Presence',
     icon: Globe, 
     colorClass: 'text-pink-400',
     cssVar: '--feature-marketing'
@@ -93,18 +93,6 @@ const CATEGORY_INFO: Record<string, {
     icon: Activity, 
     colorClass: 'text-feature-analytics',
     cssVar: '--feature-analytics'
-  },
-  content_engine: { 
-    label: 'Content Engine',
-    icon: Sparkles, 
-    colorClass: 'text-violet-400',
-    cssVar: '--feature-marketing'
-  },
-  web_presence: { 
-    label: 'Web Presence',
-    icon: Globe, 
-    colorClass: 'text-cyan-400',
-    cssVar: '--feature-customers'
   },
 };
 
@@ -125,7 +113,7 @@ const JOB_TYPE_TO_AGENTS: Record<string, string[]> = {
   customer_service: ['triage', 'followup', 'review', 'booking'],
   manager: ['triage', 'followup', 'review', 'booking', 'insights', 'performance', 'revenue', 'forecast'], // Includes analytics
   billing: ['quoting', 'invoice'],
-  marketing: ['campaign', 'lead', 'promo', 'social_content', 'social_scheduler', 'social_analytics'],
+  marketing: ['campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
   analytics: ['insights', 'performance', 'revenue', 'forecast'], // Analytics role
   inventory: ['inventory'],
 };

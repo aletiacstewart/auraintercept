@@ -93,7 +93,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       // Web Presence (1)
       'web_presence'
     ],
-    consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports', 'content_engine', 'web_presence'],
+    consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports', 'ai_operatives_hub'],
     label: 'Aura Pro Command',
     price: '$5,997/mo',
     description: 'Full business automation suite',
@@ -127,10 +127,9 @@ export const CONSOLE_REQUIRED_AGENTS: Record<string, string[]> = {
   field_operations: ['dispatch'],
   business_management: ['admin', 'quoting'],
   marketing_sales: ['campaign'],
-  social_media: ['social_content'],
+  social_media: ['social_content', 'creative', 'web_presence'],
   analytics_reports: ['insights'],
-  content_engine: ['creative'],
-  web_presence: ['web_presence'],
+  ai_operatives_hub: [],
 };
 
 // Get the minimum tier required for a specific agent

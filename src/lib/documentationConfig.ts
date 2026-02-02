@@ -446,34 +446,23 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     isCore: false,
     worksAlone: true,
   },
-  // Virtual Assistant - 1 agent (available to all tiers with Talk to Aura)
-  {
-    id: 'assistant',
-    name: 'Aura Assistant',
-    description: 'Voice and text-based virtual assistant for platform navigation and quick actions.',
-    console: 'all',
-    tier: 'core',
-    dependencies: [],
-    isCore: true,
-    worksAlone: true,
-  },
-  // Content Engine Console - 1 agent
+  // Content Engine (Creative Agent) - Part of Social Media & Web Presence
   {
     id: 'creative',
     name: 'Creative Agent',
     description: 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing with consistent voice and messaging.',
-    console: 'content_engine',
+    console: 'social_media',
     tier: 'command',
     dependencies: [],
     isCore: true,
     worksAlone: true,
   },
-  // Web Presence Console - 1 agent
+  // Web Presence Agent - Part of Social Media & Web Presence
   {
     id: 'web_presence',
     name: 'Web Presence Agent',
     description: 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts from the Content Engine.',
-    console: 'web_presence',
+    console: 'social_media',
     tier: 'command',
     dependencies: ['creative'],
     isCore: true,
@@ -534,11 +523,11 @@ export const CONSOLES: ConsoleConfig[] = [
   },
   {
     id: 'social_media',
-    name: 'Social Media Signal Ops',
-    description: 'AI-powered social media signal management with content creation for 6 platforms, scheduling, and visual content calendar.',
+    name: 'Social Media & Web Presence',
+    description: 'AI-powered social media signal management, web presence builder, content engine, and blog management with content creation for 6 platforms.',
     tier: 'command',
-    agentCount: 3,
-    tabs: ['New Post', 'Drafts', 'Scheduled', 'Calendar'],
+    agentCount: 5,
+    tabs: ['Social Posts', 'Content Engine', 'Web Presence', 'Blog', 'Calendar'],
     color: 'pink',
   },
   {
@@ -558,15 +547,6 @@ export const CONSOLES: ConsoleConfig[] = [
     agentCount: 0,
     tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],
     color: 'indigo',
-  },
-  {
-    id: 'content_engine',
-    name: 'Content Engine',
-    description: 'Unified AI content generation console. Create on-brand content for website, social media, campaigns, blogs, and SMS from a single topic.',
-    tier: 'command',
-    agentCount: 1,
-    tabs: ['Generate', 'Dashboard', 'Calendar', 'Brand Voice'],
-    color: 'violet',
   },
 ];
 
@@ -633,7 +613,7 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
 
 export const PLATFORM_STATS = {
   totalOperatives: 24,
-  totalConsoles: 8,
+  totalConsoles: 7,
   totalTiers: 7,
   startingPrice: 197,
   maxEmployees: 25,
