@@ -10,7 +10,8 @@ import { DocumentsManager } from '@/components/knowledge/DocumentsManager';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { AIContentProfileManager } from '@/components/knowledge/AIContentProfileManager';
 import { KnowledgeBaseWizard } from '@/components/knowledge/KnowledgeBaseWizard';
-import { Briefcase, HelpCircle, Clock, FileText, Package, BookOpen, Sparkles } from 'lucide-react';
+import { SmartLinksManager } from '@/components/knowledge/SmartLinksManager';
+import { Briefcase, HelpCircle, Clock, FileText, Package, BookOpen, Sparkles, Link2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
@@ -76,6 +77,10 @@ export default function KnowledgeBase() {
               <FileText className="w-3.5 h-3.5 hidden sm:block" />
               Documents
             </TabsTrigger>
+            <TabsTrigger value="smart-links" className="flex items-center gap-1.5">
+              <Link2 className="w-3.5 h-3.5 hidden sm:block" />
+              Smart Links
+            </TabsTrigger>
             {isPlatformAdmin && (
               <TabsTrigger value="inventory" className="flex items-center gap-1.5">
                 <Package className="w-3.5 h-3.5 hidden sm:block" />
@@ -102,6 +107,10 @@ export default function KnowledgeBase() {
 
           <TabsContent value="documents">
             <DocumentsManager />
+          </TabsContent>
+
+          <TabsContent value="smart-links">
+            <SmartLinksManager />
           </TabsContent>
 
           {isPlatformAdmin && (
