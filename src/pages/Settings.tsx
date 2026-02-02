@@ -72,7 +72,7 @@ export default function Settings() {
               <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
               <TabsTrigger value="voice" className="flex items-center gap-1">
                 <Mic className="w-3 h-3" />
-                Talk to Aura
+                Ask Aura
               </TabsTrigger>
               <TabsTrigger value="system" className="flex items-center gap-1">
                 <HardDrive className="w-3 h-3" />
