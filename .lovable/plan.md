@@ -1,69 +1,39 @@
 
-# Plan: Separate Creative & Web Presence as Its Own Console
+# Plan: Enable White-Label Branding for All Tiers
 
-## Current Issue
-On the homepage, the **Creative Agent** and **Web Presence Agent** are incorrectly grouped under "Social Media & Web Presence" instead of being in their own dedicated console category.
+## Current State
+The "White-Label Branding" row in the pricing comparison table currently shows:
+- Express: ✗
+- Halo: ✗
+- Core: ✗
+- Single-Point: ✗
+- Multi-Track: ✗
+- Command: ✓ (only tier with checkmark)
 
-## Required Changes
+## Required Change
+Update the row to show checkmarks (✓) for **all tiers**.
 
-### File: `src/pages/Index.tsx`
+## Files to Modify
 
-**1. Update `agentCategories` array (lines 121-147)**
-
-Split the current "Social Media & Web Presence" category into two separate categories:
-
-- **Social Media Signal Ops** - Contains only:
-  - Social Media Signal Agent
-  - Signal Scheduler
-  - Signal Analytics
-
-- **Creative & Web Presence** (NEW) - Contains:
-  - Creative Agent
-  - Web Presence Agent
-
-**2. Update `agentConsoles` array (lines 189-203)**
-
-Replace the separate "Social Media Signal Console" and "Web Presence Console" entries with properly labeled consoles:
-
-- Keep **Social Media Signal Console** (for social media signal operations)
-- Replace **Web Presence Console** with **Creative & Web Presence Console** (consolidating Creative Agent + Web Presence Agent functions)
-
-## Technical Details
-
+### 1. `src/components/landing/PricingComparisonTable.tsx` (Line 153)
+Change the White-Label Branding row from:
 ```typescript
-// agentCategories - Split into two categories:
+{ name: 'White-Label Branding', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' }
+```
+To:
+```typescript
+{ name: 'White-Label Branding', express: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' }
+```
 
-// Category 1: Social Media Signal Ops
-{
-  id: 'social',
-  name: 'Social Media Signal Ops',
-  icon: Send,
-  color: 'from-pink-500 to-rose-500',
-  agents: [
-    { name: 'Social Media Signal Agent', ... },
-    { name: 'Signal Scheduler', ... },
-    { name: 'Signal Analytics', ... }
-  ]
-}
-
-// Category 2: Creative & Web Presence (NEW)
-{
-  id: 'creative_web_presence',
-  name: 'Creative & Web Presence',
-  icon: Palette,
-  color: 'from-teal-500 to-cyan-500',
-  agents: [
-    { name: 'Creative Agent', ... },
-    { name: 'Web Presence Agent', ... }
-  ]
-}
+### 2. `src/pages/Subscription.tsx` (Line 284)
+Change the White-Label Branding row from:
+```typescript
+{ name: 'White-Label Branding', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' }
+```
+To:
+```typescript
+{ name: 'White-Label Branding', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' }
 ```
 
 ## Result
-- Homepage will display **7 distinct console categories** as intended
-- "Creative & Web Presence" will be its own section with Creative Agent and Web Presence Agent
-- "Social Media Signal Ops" will contain only the social media-specific agents
-- Aligns with the platform architecture standard from memory
-
-## Files to Modify
-- `src/pages/Index.tsx`
+All subscription tiers will display a green checkmark (✓) for White-Label Branding in both the landing page and subscription page comparison tables.
