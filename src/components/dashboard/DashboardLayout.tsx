@@ -329,6 +329,19 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const roleBadge = getRoleBadge();
 
+  // Get current page title from navigation config
+  const getCurrentPageTitle = () => {
+    const pathname = location.pathname;
+    for (const group of navGroups) {
+      for (const item of group.items) {
+        if (item.href === pathname) {
+          return item.label;
+        }
+      }
+    }
+    return 'Ask Aura';
+  };
+
   return (
     <div className="min-h-screen flex bg-background">
       {/* Sidebar */}
@@ -499,7 +512,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       </main>
       
       {/* Unified Aura Floating Button */}
-      <AuraFloatingButton />
+      <AuraFloatingButton pageTitle={getCurrentPageTitle()} />
     </div>
   );
 }
