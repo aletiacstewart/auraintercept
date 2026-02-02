@@ -132,7 +132,6 @@ const navGroups: NavGroup[] = [
     label: 'Configuration',
     items: [
       { label: 'AI Operatives Hub', icon: Cpu, href: '/dashboard/ai-agents', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
-      { label: 'Content Engine', icon: Megaphone, href: '/dashboard/content-engine', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-marketing', requiredTier: 'command' },
       { label: 'Knowledge Base', icon: BookOpen, href: '/dashboard/knowledge', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'Calculators', icon: BarChart3, href: '/dashboard/calculators', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics' },
       { label: 'Profile', icon: User, href: '/technician/profile', roles: ['employee'] },
