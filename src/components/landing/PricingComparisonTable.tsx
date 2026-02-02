@@ -150,7 +150,7 @@ const sections: FeatureSection[] = [
       { name: 'Appointments', express: 'x', halo: 'Unlimited', core: 'x', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
       { name: 'Employee Accounts', express: '2 included', halo: '3 included', core: '2 included', singlePoint: '5 included', multiTrack: '10 included', command: '25 included' },
       { name: 'Additional Employees', express: '$10/employee', halo: '$10/employee', core: '$10/employee', singlePoint: '$10/employee', multiTrack: '$10/employee', command: '$10/employee' },
-      { name: 'White-Label Branding', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'White-Label Branding', express: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Embeddable Chat Widget', express: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
     ],
   },
