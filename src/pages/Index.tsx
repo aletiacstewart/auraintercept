@@ -995,7 +995,7 @@ export default function Index() {
                 </Badge>
                 <h3 className="text-lg font-bold mb-1">Aura Flow</h3>
                 <p className="text-[10px] text-card-foreground/60 mb-1">
-                  Service Pros • Calendar-Based Booking
+                  Individual/Home Assistant • Calendar-Based Booking
                 </p>
                 <div className="flex items-baseline gap-1 mb-3">
                   <span className="text-2xl font-bold text-cyan-400">$297</span>
