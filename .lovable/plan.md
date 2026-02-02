@@ -1,133 +1,70 @@
 
-# Option A: Consolidate Social Tools into "Social Posts" Tab
+# Create Social-Marketing Console & Mobile App Menu Category
 
 ## Overview
-Simplify the Social Media Signal Ops console by consolidating 5 social-specific tools (Single Post, Batch Posts, Drafts, Scheduled, Calendar) into a single "Social Posts" tab with sub-navigation. This reduces the main navigation from 7 tabs to 3 cleaner options.
+Create a new sidebar menu category called "Social-Marketing Console & Mobile App" and move the Social Media Signal Ops and Outreach & Sales Ops consoles under it, separating them from the Business Management section.
 
-## New Navigation Structure
+## Current State
+The "Business Mgt Console & Mobile App" category currently contains 5 items:
+- Business Mgt Ops Console
+- Business Mgt Ops Install
+- Analytics & Reports Ops
+- Outreach & Sales Ops ← will move
+- Social Media Signal Ops ← will move
 
-**Before (7 tabs):**
-```
-Home | Single Post | Batch Posts | Content Engine | Drafts | Scheduled | Calendar
-```
+## New Structure
 
-**After (3 tabs):**
-```
-Home | Social Posts | Content Engine
-```
+**Business Mgt Console & Mobile App** (3 items):
+- Business Mgt Ops Console
+- Business Mgt Ops Install
+- Analytics & Reports Ops
 
-**Social Posts sub-tabs:**
-```
-Create | Batch | Drafts | Scheduled | Calendar
-```
+**Social-Marketing Console & Mobile App** (2 items):
+- Outreach & Sales Ops
+- Social Media Signal Ops
 
 ---
 
 ## Technical Changes
 
-### File: `src/components/social/SocialMediaAgentConsole.tsx`
+### File: `src/components/dashboard/DashboardLayout.tsx`
 
-**1. Simplify QUICK_ACTIONS array:**
-Replace 5 individual actions with 1 consolidated "Social Posts" action:
+**1. Update "Business Mgt Console & Mobile App" group (lines 96-106):**
+Remove the two social/marketing items, keeping only:
 ```typescript
-const QUICK_ACTIONS = [
-  { id: 'social-posts', label: 'Social Posts', icon: Share2, message: 'Manage social posts', featureColor: 'text-pink-400' },
-  { id: 'content-engine', label: 'Content Engine', icon: Wand2, message: 'Open multi-channel generator', featureColor: 'text-pink-400' },
-];
+{
+  label: 'Business Mgt Console & Mobile App',
+  requiredTier: 'command',
+  items: [
+    { label: 'Business Mgt Ops Console', icon: Briefcase, href: '/dashboard/ai-consoles/business-mgt-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['billing_specialist'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+    { label: 'Business Mgt Ops Install', icon: Smartphone, href: '/dashboard/business-mgt-ops-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+    { label: 'Analytics & Reports Ops', icon: BarChart3, href: '/dashboard/ai-consoles/analytics', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+  ],
+},
 ```
 
-**2. Add Social Posts sub-tab state:**
+**2. Add new "Social-Marketing Console & Mobile App" group after Business Mgt:**
 ```typescript
-const [showSocialPosts, setShowSocialPosts] = useState(false);
-const [socialPostsTab, setSocialPostsTab] = useState('create');
-```
-
-**3. Simplify form visibility states:**
-Remove individual states (`showPostForm`, `showBatchWizard`, etc.) and rely on `socialPostsTab` value instead.
-
-**4. Update handleQuickAction:**
-```typescript
-if (actionId === 'social-posts') {
-  hideAllForms();
-  setShowSocialPosts(true);
-  setSocialPostsTab('create'); // Default to Create tab
-  setActiveTab('chat');
-  return;
-}
-```
-
-**5. Create Social Posts nested tabs UI:**
-```typescript
-{showSocialPosts && effectiveCompanyId && (
-  <div className="space-y-4">
-    <Tabs value={socialPostsTab} onValueChange={setSocialPostsTab}>
-      <TabsList>
-        <TabsTrigger value="create">Create</TabsTrigger>
-        <TabsTrigger value="batch">Batch</TabsTrigger>
-        <TabsTrigger value="drafts">Drafts</TabsTrigger>
-        <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
-        <TabsTrigger value="calendar">Calendar</TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="create">
-        <SocialContentWizard ... />
-      </TabsContent>
-      <TabsContent value="batch">
-        <SocialBatchWizard ... />
-      </TabsContent>
-      <TabsContent value="drafts">
-        <SocialFeedQueue initialFilter="pending" ... />
-      </TabsContent>
-      <TabsContent value="scheduled">
-        <SocialScheduleQueue ... />
-      </TabsContent>
-      <TabsContent value="calendar">
-        <SocialContentCalendar ... />
-      </TabsContent>
-    </Tabs>
-  </div>
-)}
-```
-
-**6. Update getActiveLabel function:**
-```typescript
-const getActiveLabel = () => {
-  if (showSocialPosts) {
-    const labels = {
-      create: 'Create Post',
-      batch: 'Batch Posts', 
-      drafts: 'Drafts',
-      scheduled: 'Scheduled',
-      calendar: 'Calendar'
-    };
-    return labels[socialPostsTab] || 'Social Posts';
-  }
-  if (showContentEngine) return 'Content Engine';
-  // ... rest
-};
-```
-
-**7. Remove unused states and update hideAllForms:**
-```typescript
-const hideAllForms = () => {
-  setShowSocialPosts(false);
-  setShowContentEngine(false);
-};
+{
+  label: 'Social-Marketing Console & Mobile App',
+  requiredTier: 'command',
+  items: [
+    { label: 'Outreach & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+    { label: 'Social Media Signal Ops', icon: Share2, href: '/dashboard/ai-consoles/social-media', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+  ],
+},
 ```
 
 ---
 
 ## Result
 
-| Area | Before | After |
-|------|--------|-------|
-| Main tabs | 7 items | 3 items |
-| Social tools | Scattered across tabs | Unified under "Social Posts" |
-| Content Engine | Nested tabs | Unchanged (nested tabs) |
-| Navigation depth | Mix of flat and nested | Consistent 2-level hierarchy |
+| Sidebar Section | Items |
+|-----------------|-------|
+| Business Mgt Console & Mobile App | Business Mgt Ops Console, Install, Analytics & Reports Ops |
+| Social-Marketing Console & Mobile App | Outreach & Sales Ops, Social Media Signal Ops |
 
 ## Benefits
-- Cleaner, less cluttered main navigation
-- Logical grouping of related social media tools
-- Consistent pattern with Content Engine (both use nested tabs)
-- Easier to find all social post management in one place
+- Clearer separation of business operations vs marketing/social functions
+- Logical grouping of outreach and social media tools together
+- Easier navigation for users focused on marketing activities
