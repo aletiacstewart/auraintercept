@@ -178,12 +178,12 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualSavings: 11994,
     implementationFee: 'Custom',
     employees: 25,
-    operatives: 23,
+    operatives: 24,
     consoles: 7,
-    description: 'Enterprise automation with full 23-operative suite.',
+    description: 'Enterprise automation with full 24-operative suite.',
     bestFor: 'Large service companies with 15+ technicians or multi-location operations.',
     highlights: [
-      'All 23 AI Operatives',
+      'All 24 AI Operatives',
       'All 7 Consoles',
       'Everything in Multi-Track',
       'Business Operations console',
@@ -205,7 +205,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
 export const TIER_ORDER = ['express', 'aura_flow', 'halo', 'core', 'single_point', 'multi_track', 'command'] as const;
 
 // ============================================
-// AI OPERATIVES - 23 TOTAL
+// AI OPERATIVES - 24 TOTAL
 // ============================================
 
 export interface OperativeConfig {
@@ -465,6 +465,17 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     console: 'content_engine',
     tier: 'command',
     dependencies: [],
+    isCore: true,
+    worksAlone: true,
+  },
+  // Web Presence Console - 1 agent
+  {
+    id: 'web_presence',
+    name: 'Web Presence Agent',
+    description: 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts from the Content Engine.',
+    console: 'web_presence',
+    tier: 'command',
+    dependencies: ['creative'],
     isCore: true,
     worksAlone: true,
   },
