@@ -26,6 +26,15 @@ import {
   type QuickActionConfig 
 } from '@/lib/customerPortalConfig';
 
+interface ConsoleFeatureSettings {
+  show_console_appointments: boolean;
+  show_console_quotes: boolean;
+  show_console_tracking: boolean;
+  show_console_billing: boolean;
+  show_console_emergency: boolean;
+  show_console_feedback: boolean;
+}
+
 interface CompanyConfig {
   company: {
     id: string;
@@ -50,6 +59,7 @@ interface CompanyConfig {
     price: number | null;
     description: string | null;
   }>;
+  consoleFeatures?: ConsoleFeatureSettings;
 }
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -155,6 +165,13 @@ export function UnifiedCustomerConsole({
 
       if (companyError) throw companyError;
 
+      // Fetch console feature visibility settings from smart_websites
+      const { data: websiteSettings } = await supabase
+        .from('smart_websites')
+        .select('show_console_appointments, show_console_quotes, show_console_tracking, show_console_billing, show_console_emergency, show_console_feedback')
+        .eq('company_id', companyId)
+        .maybeSingle();
+
       const { data: hoursData } = await supabase
         .from('business_hours')
         .select('day_of_week, open_time, close_time, is_closed')
@@ -178,6 +195,14 @@ export function UnifiedCustomerConsole({
         },
         business_hours: hoursData || [],
         services: servicesData || [],
+        consoleFeatures: websiteSettings ? {
+          show_console_appointments: websiteSettings.show_console_appointments ?? true,
+          show_console_quotes: websiteSettings.show_console_quotes ?? true,
+          show_console_tracking: websiteSettings.show_console_tracking ?? true,
+          show_console_billing: websiteSettings.show_console_billing ?? true,
+          show_console_emergency: websiteSettings.show_console_emergency ?? true,
+          show_console_feedback: websiteSettings.show_console_feedback ?? true,
+        } : undefined,
       });
     } catch (err) {
       console.error('Config error:', err);
@@ -231,12 +256,45 @@ export function UnifiedCustomerConsole({
 
   const visibleQuickActions = useMemo(() => {
     const hasPhone = !!config?.company?.dispatch_phone;
-    return getQuickActionsForTier(effectiveTier, hasPhone);
-  }, [effectiveTier, config?.company?.dispatch_phone]);
+    const tierActions = getQuickActionsForTier(effectiveTier, hasPhone);
+    const features = config?.consoleFeatures;
+    
+    // If no console features configured, return tier-based actions
+    if (!features) return tierActions;
+    
+    // Filter based on company console feature settings
+    return tierActions.filter(action => {
+      if (action.id === 'schedule' && !features.show_console_appointments) return false;
+      if (action.id === 'quote' && !features.show_console_quotes) return false;
+      if (action.id === 'track' && !features.show_console_tracking) return false;
+      if (action.id === 'billing' && !features.show_console_billing) return false;
+      if (action.id === 'emergency' && !features.show_console_emergency) return false;
+      if (action.id === 'feedback' && !features.show_console_feedback) return false;
+      return true;
+    });
+  }, [effectiveTier, config?.company?.dispatch_phone, config?.consoleFeatures]);
 
   const visibleTabs = useMemo(() => {
-    return getTabsForTier(effectiveTier);
-  }, [effectiveTier]);
+    const tierTabs = getTabsForTier(effectiveTier);
+    const features = config?.consoleFeatures;
+    
+    // If no console features configured, return tier-based tabs
+    if (!features) return tierTabs;
+    
+    // Filter based on company console feature settings
+    return tierTabs.filter(tab => {
+      if (tab.value === 'schedule' && !features.show_console_appointments) return false;
+      if (tab.value === 'quote' && !features.show_console_quotes) return false;
+      return true;
+    });
+  }, [effectiveTier, config?.consoleFeatures]);
+  
+  // Determine if emergency section should be shown
+  const showEmergencySection = useMemo(() => {
+    const hasPhone = !!config?.company?.dispatch_phone;
+    const features = config?.consoleFeatures;
+    return hasPhone && (features?.show_console_emergency !== false);
+  }, [config?.company?.dispatch_phone, config?.consoleFeatures]);
 
   const handleQuickAction = useCallback((action: QuickActionConfig) => {
     if (action.isCallAction && config?.company?.dispatch_phone) {
@@ -422,7 +480,7 @@ export function UnifiedCustomerConsole({
                     I'm the virtual assistant for {config.company.name}. How can I help you today?
                   </p>
                   
-                  {/* Quick Actions - filtered by subscription tier */}
+                  {/* Quick Actions - filtered by subscription tier and company settings */}
                   <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto">
                     {visibleQuickActions.filter(a => a.id !== 'emergency').map((action) => (
                       <Button 
@@ -438,8 +496,8 @@ export function UnifiedCustomerConsole({
                     ))}
                   </div>
                   
-                  {/* Emergency Section */}
-                  {config?.company.dispatch_phone && (
+                  {/* Emergency Section - only if enabled in company settings */}
+                  {showEmergencySection && (
                     <div className="mt-4 p-4 rounded-lg bg-destructive/10 border border-destructive/20 max-w-sm mx-auto">
                       <div className="flex items-center justify-between gap-3">
                         <div className="text-left">

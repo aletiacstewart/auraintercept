@@ -93,6 +93,13 @@ interface ExtendedWebsiteData {
   background_image_url?: string | null;
   logo_transparency_mode?: 'none' | 'multiply' | 'contrast';
   show_gallery?: boolean;
+  // Console feature visibility toggles
+  show_console_appointments?: boolean;
+  show_console_quotes?: boolean;
+  show_console_tracking?: boolean;
+  show_console_billing?: boolean;
+  show_console_emergency?: boolean;
+  show_console_feedback?: boolean;
 }
 
 export default function SmartWebsiteManager() {
@@ -844,6 +851,76 @@ export default function SmartWebsiteManager() {
                   <Switch
                     checked={website.show_voice_widget}
                     onCheckedChange={(checked) => updateWebsite.mutate({ show_voice_widget: checked })}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Console Features Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Console Features</CardTitle>
+                <CardDescription>Configure which features appear in your embedded chat widget</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-card-foreground">Appointments</p>
+                    <p className="text-sm text-card-foreground/70">Allow customers to schedule appointments</p>
+                  </div>
+                  <Switch
+                    checked={website.show_console_appointments ?? true}
+                    onCheckedChange={(checked) => updateWebsite.mutate({ show_console_appointments: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-card-foreground">Quotes</p>
+                    <p className="text-sm text-card-foreground/70">Allow customers to request quotes</p>
+                  </div>
+                  <Switch
+                    checked={website.show_console_quotes ?? true}
+                    onCheckedChange={(checked) => updateWebsite.mutate({ show_console_quotes: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-card-foreground">Tracking</p>
+                    <p className="text-sm text-card-foreground/70">Allow customers to track service status</p>
+                  </div>
+                  <Switch
+                    checked={website.show_console_tracking ?? true}
+                    onCheckedChange={(checked) => updateWebsite.mutate({ show_console_tracking: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-card-foreground">Billing</p>
+                    <p className="text-sm text-card-foreground/70">Allow customers to view billing information</p>
+                  </div>
+                  <Switch
+                    checked={website.show_console_billing ?? true}
+                    onCheckedChange={(checked) => updateWebsite.mutate({ show_console_billing: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-card-foreground">Emergency</p>
+                    <p className="text-sm text-card-foreground/70">Show emergency contact section</p>
+                  </div>
+                  <Switch
+                    checked={website.show_console_emergency ?? true}
+                    onCheckedChange={(checked) => updateWebsite.mutate({ show_console_emergency: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-card-foreground">Feedback</p>
+                    <p className="text-sm text-card-foreground/70">Allow customers to submit feedback</p>
+                  </div>
+                  <Switch
+                    checked={website.show_console_feedback ?? true}
+                    onCheckedChange={(checked) => updateWebsite.mutate({ show_console_feedback: checked })}
                   />
                 </div>
               </CardContent>
