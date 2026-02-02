@@ -553,7 +553,7 @@ export const CONSOLES: ConsoleConfig[] = [
   {
     id: 'ai_operatives_hub',
     name: 'AI Operatives Hub',
-    description: 'Central management console for the Aura Intelligence Network. Configure, monitor, and analyze all 23 AI operatives.',
+    description: 'Central management console for the Aura Intelligence Network. Configure, monitor, and analyze all 24 AI operatives.',
     tier: 'halo',
     agentCount: 0,
     tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],

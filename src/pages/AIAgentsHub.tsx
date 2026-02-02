@@ -100,6 +100,12 @@ const CATEGORY_INFO: Record<string, {
     colorClass: 'text-violet-400',
     cssVar: '--feature-marketing'
   },
+  web_presence: { 
+    label: 'Web Presence',
+    icon: Globe, 
+    colorClass: 'text-cyan-400',
+    cssVar: '--feature-customers'
+  },
 };
 
 
@@ -137,7 +143,7 @@ const AGENT_NAMES: Record<string, string> = {
   route: 'Route Agent',
   eta: 'ETA Agent',
   checkin: 'Check-in Agent',
-  // Business Operations (5)
+  // Business Operations (4)
   admin: 'Admin Agent',
   quoting: 'Quoting Agent',
   invoice: 'Invoice Agent',
@@ -157,6 +163,8 @@ const AGENT_NAMES: Record<string, string> = {
   forecast: 'Forecast Agent',
   // Content Engine (1)
   creative: 'Creative Agent',
+  // Web Presence (1)
+  web_presence: 'Web Presence Agent',
 };
 
 export default function AIAgentsHub() {
@@ -366,7 +374,7 @@ export default function AIAgentsHub() {
                 {inTrial ? (
                   <>You're in trial mode with full access to all agents.</>
                 ) : subscriptionTier === 'command' ? (
-                  <>Your <strong>Command</strong> plan includes all 23 AI agents.</>
+                  <>Your <strong>Command</strong> plan includes all 24 AI agents.</>
                 ) : (
                   <>
                     Your <strong>{getTierInfo(subscriptionTier).label}</strong> plan includes {availableAgentTypes.length} AI agents.

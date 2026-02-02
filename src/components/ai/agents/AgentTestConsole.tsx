@@ -50,6 +50,7 @@ const AGENT_NAMES: Record<string, string> = {
   invoice: 'Invoice Agent',
   inventory: 'Inventory Agent',
   campaign: 'Campaign Agent',
+  lead: 'Lead Agent',
   marketing: 'Marketing Agent',
   social_content: 'Social Media Signal Agent',
   social_scheduler: 'Signal Scheduler',
@@ -59,6 +60,8 @@ const AGENT_NAMES: Record<string, string> = {
   revenue: 'Revenue Agent',
   forecast: 'Forecast Agent',
   analytics: 'Analytics Agent',
+  creative: 'Creative Agent',
+  web_presence: 'Web Presence Agent',
 };
 
 interface NextSteps {
