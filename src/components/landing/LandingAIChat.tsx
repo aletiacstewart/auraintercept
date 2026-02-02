@@ -162,7 +162,7 @@ export const LandingAIChat: React.FC<LandingAIChatProps> = ({
           <Bot className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h3 className="font-semibold text-primary">Talk to Aura</h3>
+          <h3 className="font-semibold text-primary">Message Aura</h3>
           <p className="text-xs text-muted-foreground">Always available to help</p>
         </div>
       </div>
