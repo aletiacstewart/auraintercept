@@ -20,7 +20,7 @@ import { PageContainer } from '@/components/ui/page-container';
 export default function KnowledgeBase() {
   const [searchParams] = useSearchParams();
   const { userRole, companyId } = useAuth();
-  const defaultTab = searchParams.get('tab') || 'services';
+  const defaultTab = searchParams.get('tab') || 'ai-profile';
   const [showWizard, setShowWizard] = useState(false);
   
   const isPlatformAdmin = userRole === 'platform_admin';
