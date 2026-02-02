@@ -74,7 +74,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
   },
   command: {
     // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
-    // 23 Total Agents: 4 Customer Portal + 4 Field Ops + 4 Business Ops + 3 Marketing + 3 Social Media Signal + 4 Analytics + 1 Content Engine
+    // 24 Total Agents: 4 Customer Portal + 4 Field Ops + 4 Business Ops + 3 Marketing + 3 Social Media Signal + 4 Analytics + 1 Content Engine + 1 Web Presence
     agents: [
       // Customer Portal (4)
       'triage', 'booking', 'followup', 'review',
@@ -89,9 +89,11 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       // Analytics & Reports (4)
       'insights', 'performance', 'revenue', 'forecast',
       // Content Engine (1)
-      'creative'
+      'creative',
+      // Web Presence (1)
+      'web_presence'
     ],
-    consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports', 'content_engine'],
+    consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports', 'content_engine', 'web_presence'],
     label: 'Aura Pro Command',
     price: '$5,997/mo',
     description: 'Full business automation suite',
@@ -115,6 +117,8 @@ export const AGENT_DEPENDENCIES: Record<string, string[]> = {
   // Social media agent dependencies
   social_scheduler: ['social_content'],
   social_analytics: ['social_content'],
+  // Web presence depends on creative
+  web_presence: ['creative'],
 };
 
 // Console to required agents mapping - consoles need these agents enabled to work
@@ -125,6 +129,8 @@ export const CONSOLE_REQUIRED_AGENTS: Record<string, string[]> = {
   marketing_sales: ['campaign'],
   social_media: ['social_content'],
   analytics_reports: ['insights'],
+  content_engine: ['creative'],
+  web_presence: ['web_presence'],
 };
 
 // Get the minimum tier required for a specific agent

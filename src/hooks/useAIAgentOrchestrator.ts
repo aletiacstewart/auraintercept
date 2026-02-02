@@ -57,7 +57,7 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'route', name: 'Route Agent', category: 'field_operations', phase: 2, is_enabled: false, settings: {} },
   { type: 'eta', name: 'ETA Agent', category: 'field_operations', phase: 3, is_enabled: false, settings: {} },
   { type: 'checkin', name: 'Check-in Agent', category: 'field_operations', phase: 4, is_enabled: false, settings: {} },
-  // Business Operations (Phases 1-5) - 5 agents
+  // Business Operations (Phases 1-4) - 4 agents
   { type: 'admin', name: 'Admin Agent', category: 'business_operations', phase: 1, is_enabled: false, settings: {} },
   { type: 'quoting', name: 'Quoting Agent', category: 'business_operations', phase: 2, is_enabled: false, settings: {} },
   { type: 'invoice', name: 'Invoice Agent', category: 'business_operations', phase: 3, is_enabled: false, settings: {} },
@@ -77,6 +77,8 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'forecast', name: 'Forecast Agent', category: 'analytics_reports', phase: 4, is_enabled: false, settings: {} },
   // Content Engine (Phase 1) - 1 agent
   { type: 'creative', name: 'Creative Agent', category: 'content_engine', phase: 1, is_enabled: false, settings: {} },
+  // Web Presence (Phase 1) - 1 agent
+  { type: 'web_presence', name: 'Web Presence Agent', category: 'web_presence', phase: 1, is_enabled: false, settings: {} },
 ];
 
 function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo[]> {
