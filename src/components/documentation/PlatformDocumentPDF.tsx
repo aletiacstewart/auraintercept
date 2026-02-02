@@ -877,7 +877,7 @@ const PlatformDocumentPDF = () => (
       ))}
 
       <Text style={styles.categoryHeader}>Social Media Signal Add-ons (3 Agents)</Text>
-      <Text style={styles.paragraph}>Premium add-on available for Aura Pro Command tier ($150/mo)</Text>
+      <Text style={styles.paragraph}>Premium add-on available for Single-Point/Multi-Track tiers ($150/mo)</Text>
       {agents.socialMediaAddons.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>
@@ -1145,48 +1145,73 @@ const PlatformDocumentPDF = () => (
       <Text style={styles.sectionTitle}>Pricing & ROI Calculator</Text>
       
       <View style={styles.pricingCard}>
+        <Text style={styles.pricingTier}>Aura Express (Restaurants)</Text>
+        <Text style={styles.pricingPrice}>$197/month</Text>
+        <Text style={styles.pricingFeature}>- AI Voice + Chat for restaurants</Text>
+        <Text style={styles.pricingFeature}>- Smart link sharing to menu/ordering</Text>
+        <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
+        <Text style={styles.pricingFeature}>- Up to 2 employees</Text>
+        <Text style={styles.pricingFeature}>- $299 implementation fee</Text>
+      </View>
+
+      <View style={styles.pricingCard}>
+        <Text style={styles.pricingTier}>Aura Flow (AI Personal Assistant)</Text>
+        <Text style={styles.pricingPrice}>$297/month</Text>
+        <Text style={styles.pricingFeature}>- AI Personal Assistant with scheduling</Text>
+        <Text style={styles.pricingFeature}>- Direct calendar sync (no portal)</Text>
+        <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
+        <Text style={styles.pricingFeature}>- Up to 2 employees</Text>
+        <Text style={styles.pricingFeature}>- $399 implementation fee</Text>
+      </View>
+
+      <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Halo (Salons & Wellness)</Text>
         <Text style={styles.pricingPrice}>$397/month</Text>
-        <Text style={styles.pricingFeature}>- 4 AI Operatives (Receptionist, Scheduling, Follow-up, Voice Chat)</Text>
+        <Text style={styles.pricingFeature}>- 3 AI Operatives for salons/wellness</Text>
         <Text style={styles.pricingFeature}>- Customer Portal Console</Text>
         <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
         <Text style={styles.pricingFeature}>- Up to 3 employees</Text>
+        <Text style={styles.pricingFeature}>- $499 implementation fee</Text>
       </View>
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Core (AI-Assisted Foundation)</Text>
         <Text style={styles.pricingPrice}>$500/month</Text>
-        <Text style={styles.pricingFeature}>- 0 AI Operatives (AI Tools Only - No Automation)</Text>
-        <Text style={styles.pricingFeature}>- Message Aura (Text), Social Media Signal, Web Presence</Text>
+        <Text style={styles.pricingFeature}>- 0 AI Operatives (No Automation)</Text>
+        <Text style={styles.pricingFeature}>- Message Aura + Social Media Signal + Web Presence</Text>
         <Text style={styles.pricingFeature}>- Manual workflow with AI assistance</Text>
         <Text style={styles.pricingFeature}>- Up to 2 employees</Text>
+        <Text style={styles.pricingFeature}>- $499 implementation fee</Text>
       </View>
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Single-Point</Text>
         <Text style={styles.pricingPrice}>$1,500/month</Text>
         <Text style={styles.pricingFeature}>- 3 AI Operatives (Receptionist, Follow-up, Review)</Text>
-        <Text style={styles.pricingFeature}>- Customer Portal Console</Text>
+        <Text style={styles.pricingFeature}>- 1 Console</Text>
         <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
         <Text style={styles.pricingFeature}>- Up to 5 employees</Text>
+        <Text style={styles.pricingFeature}>- Premium Add-Ons available: Social Media Signal, Web Presence ($150/mo each)</Text>
       </View>
 
       <View style={[styles.pricingCard, { borderWidth: 2, borderColor: colors.primary }]}>
         <Text style={styles.pricingTier}>Multi-Track (Most Popular)</Text>
         <Text style={styles.pricingPrice}>$3,997/month</Text>
-        <Text style={styles.pricingFeature}>- 10 AI Operatives (All Single-Point + Field Operations + Business)</Text>
-        <Text style={styles.pricingFeature}>- 2 Control Consoles</Text>
-        <Text style={styles.pricingFeature}>- Email + SMS + Voice</Text>
+        <Text style={styles.pricingFeature}>- 10 AI Operatives + 2 Consoles</Text>
+        <Text style={styles.pricingFeature}>- Online Booking + Field Ops</Text>
+        <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
         <Text style={styles.pricingFeature}>- Up to 10 employees</Text>
+        <Text style={styles.pricingFeature}>- Premium Add-Ons available: Social Media Signal, Web Presence ($150/mo each)</Text>
       </View>
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Pro Command (Enterprise)</Text>
         <Text style={styles.pricingPrice}>$5,997/month</Text>
-        <Text style={styles.pricingFeature}>- All 24 AI Operatives</Text>
-        <Text style={styles.pricingFeature}>- All 7 Control Consoles</Text>
-        <Text style={styles.pricingFeature}>- Email + SMS + Voice + Full Automation</Text>
-        <Text style={styles.pricingFeature}>- 15+ technicians / Multi-location</Text>
+        <Text style={styles.pricingFeature}>- All 24 AI Operatives + All 7 Consoles</Text>
+        <Text style={styles.pricingFeature}>- Enterprise Features + Full Automation</Text>
+        <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
+        <Text style={styles.pricingFeature}>- Up to 25 employees</Text>
+        <Text style={styles.pricingFeature}>- Custom implementation</Text>
       </View>
 
       <Text style={styles.subsectionTitle}>ROI Quick Calculator</Text>

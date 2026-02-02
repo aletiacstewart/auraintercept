@@ -193,7 +193,7 @@ const guideCategories = [
         steps: [
           'Log in to your admin dashboard at /auth',
           'Explore the main navigation sidebar on the left',
-          'Review your subscription tier (Single-Point, Multi-Track, or Command)',
+          'Review your subscription tier (Express, Flow, Halo, Core, Single-Point, Multi-Track, or Command)',
           'Navigate to Dashboard for company overview and KPIs',
           'Check the DashboardSetupNav bar for Quick Setup progress'
         ],
@@ -214,15 +214,21 @@ const guideCategories = [
       },
       {
         title: 'Subscription Tiers',
-        duration: '8 min',
+        duration: '10 min',
         steps: [
-          'Aura Halo ($397/mo): Salons/Wellness - AI Receptionist, Scheduling, Follow-up + Talk to Aura (Voice)',
-          'Aura Core ($500/mo): AI-Assisted foundation with 3 AI Tools (no automation)',
-          'Single-Point ($1,500/mo): AI Receptionist, Follow-up, Review + Talk to Aura (Voice)',
-          'Multi-Track ($3,997/mo): 10 operatives - adds Scheduling, Dispatch, ETA, Quoting, Invoicing',
-          'Aura Pro Command ($5,997/mo): Full 24 operative suite with all 7 consoles (15+ technicians)'
+          'Aura Express ($197/mo): AI Voice + Chat for restaurants with smart link sharing to menu/ordering',
+          'Aura Flow ($297/mo): AI Personal Assistant with scheduling via direct calendar sync (no portal)',
+          'Aura Halo ($397/mo): 3 AI Operatives for salons/wellness + Customer Portal Console',
+          'Aura Core ($500/mo): AI-Assisted (No Automation) - Message Aura + Social Media Signal + Web Presence',
+          'Single-Point ($1,500/mo): 3 AI Operatives (Receptionist, Follow-up, Review) + 1 Console',
+          'Multi-Track ($3,997/mo): 10 AI Operatives + 2 Consoles + Online Booking + Field Ops',
+          'Aura Pro Command ($5,997/mo): All 24 AI Operatives + 7 Consoles + Enterprise Features',
+          'Talk to Aura (Voice) included on Express, Flow, Halo, Single-Point, Multi-Track, and Command tiers',
+          'Employee limits: 2 (Express/Flow), 3 (Halo), 2 (Core), 5 (Single-Point), 10 (Multi-Track), 25 (Command)',
+          'Premium Add-Ons: Social Media Signal ($150/mo), Web Presence ($150/mo) for Single-Point/Multi-Track',
+          'Implementation fees: $299 (Express), $399 (Flow), $499 (others), Custom for Command'
         ],
-        tips: ['Trial users get full Command tier access']
+        tips: ['Trial users get full Command tier access', 'Annual billing saves 16% (~$800-$12,000/year)']
       },
       {
         title: 'User Roles & Permissions',

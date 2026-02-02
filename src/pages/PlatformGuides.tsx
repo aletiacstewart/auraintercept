@@ -94,7 +94,7 @@ const guideCategories = [
         steps: [
           'Log in to your admin dashboard at /auth',
           'Explore the main navigation sidebar on the left',
-          'Review your subscription tier in the bottom left (Single-Point, Multi-Track, or Command)',
+          'Review your subscription tier in the bottom left (Express, Flow, Halo, Core, Single-Point, Multi-Track, or Command)',
           'Navigate to Dashboard for company overview and KPIs',
           'Check the DashboardSetupNav bar for Quick Setup progress'
         ],
