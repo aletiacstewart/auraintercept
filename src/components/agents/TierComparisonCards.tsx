@@ -25,6 +25,8 @@ const AGENT_NAMES: Record<string, string> = {
   social_content: 'Social Media Signal Agent',
   social_scheduler: 'Signal Scheduler',
   social_analytics: 'Signal Analytics',
+  creative: 'Creative Agent',
+  web_presence: 'Web Presence Agent',
   insights: 'Insights Agent',
   performance: 'Performance Agent',
   revenue: 'Revenue Agent',
@@ -132,7 +134,7 @@ const TierCard: React.FC<TierCardProps> = ({
           <div>
             <h4 className="text-sm font-semibold text-card-foreground mb-2 flex items-center gap-1">
               <Users className="h-4 w-4" />
-              Control Centers ({config.consoles.length})
+              Control Centers (Consoles) ({config.consoles.length})
             </h4>
             <div className="space-y-1">
               {config.consoles.map(console => (

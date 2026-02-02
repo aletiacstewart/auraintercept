@@ -139,14 +139,14 @@ const AIAgentGuide: React.FC = () => {
             
             <Card className="bg-card border-border">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base text-card-foreground">Understanding Control Centers</CardTitle>
+                <CardTitle className="text-base text-card-foreground">Understanding Control Centers (Consoles)</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-card-foreground/80 space-y-2">
                 <p>
-                  Control Centers are unified interfaces that group related agents together. Each center requires an "anchor agent" to unlock.
+                  Control Centers (Consoles) are unified interfaces that group related operatives together. Each center requires an "anchor operative" to unlock.
                 </p>
                 <p>
-                  For example, enabling the <strong className="text-card-foreground">Dispatch Agent</strong> automatically unlocks access to the <strong className="text-card-foreground">Field Operations</strong> console, which includes Route, ETA, and Check-in agents.
+                  For example, enabling the <strong className="text-card-foreground">Dispatch Agent</strong> automatically unlocks access to the <strong className="text-card-foreground">Field Operations</strong> console, which includes Route, ETA, and Check-in operatives.
                 </p>
               </CardContent>
             </Card>

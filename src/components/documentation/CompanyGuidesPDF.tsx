@@ -764,7 +764,7 @@ export function CompanyGuidesPDF() {
           <Text style={styles.bulletText}>Settings: /dashboard/aura-quick-start - Configuration</Text>
         </View>
 
-        <Text style={styles.categoryTitle}>5 AI Control Centers</Text>
+        <Text style={styles.categoryTitle}>7 Control Centers (Consoles)</Text>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
           <Text style={styles.bulletText}>Customer Portal Console - Booking, support, communication</Text>
@@ -775,7 +775,7 @@ export function CompanyGuidesPDF() {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Business Management Ops Console - Quotes, invoices, inventory</Text>
+          <Text style={styles.bulletText}>Business Management Console - Quotes, invoices, inventory</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
@@ -783,7 +783,15 @@ export function CompanyGuidesPDF() {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Analytics & Reports Ops Console - KPIs, performance, forecasting</Text>
+          <Text style={styles.bulletText}>Social Media & Web Presence Console - Content, website, blog</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>-</Text>
+          <Text style={styles.bulletText}>Analytics & Reports Console - KPIs, performance, forecasting</Text>
+        </View>
+        <View style={styles.bulletRow}>
+          <Text style={styles.bullet}>-</Text>
+          <Text style={styles.bulletText}>AI Operatives Hub - Configure, monitor, analyze all 24 operatives</Text>
         </View>
 
         <Text style={styles.categoryTitle}>Support Resources</Text>

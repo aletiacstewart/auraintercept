@@ -117,14 +117,10 @@ const agentCategories = [{
     name: 'Marketing Agent',
     description: 'Manages customer segments, promo codes, and referral programs',
     icon: Target
-  }, {
-    name: 'Creative Agent',
-    description: 'AI-powered multi-channel content generation for blogs, campaigns, and websites',
-    icon: Palette
   }]
 }, {
   id: 'social',
-  name: 'Social Media Signal Ops',
+  name: 'Social Media & Web Presence',
   icon: Send,
   color: 'from-pink-500 to-rose-500',
   agents: [{
@@ -140,8 +136,12 @@ const agentCategories = [{
     description: 'Engagement metrics and performance tracking',
     icon: BarChart3
   }, {
-    name: 'Smart Website Manager',
-    description: 'AI-powered branded website with chat, voice & booking',
+    name: 'Creative Agent',
+    description: 'AI-powered multi-channel content generation for blogs, campaigns, and websites',
+    icon: Palette
+  }, {
+    name: 'Web Presence Agent',
+    description: 'AI-powered website and blog management with SEO optimization',
     icon: Globe
   }]
 }];
@@ -402,13 +402,13 @@ const howItWorks = [{
 }];
 const heroStats = [{
   value: '24',
-  label: 'AI Agents'
+  label: 'AI Operatives'
 }, {
   value: '24/7',
   label: 'Automation'
 }, {
   value: '7',
-  label: 'Control Centers'
+  label: 'Control Centers (Consoles)'
 }, {
   value: '40%',
   label: 'Less No-Shows'
@@ -479,9 +479,9 @@ export default function Index() {
         <div className="container max-w-6xl mx-auto px-6">
           <div className="text-center mb-8">
             <Badge variant="secondary" className="mb-3">Aura Agent Consoles</Badge>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">7 Powerful Intercept Control Centers</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">7 Powerful Control Centers (Consoles)</h2>
             <p className="text-foreground/80 text-sm max-w-xl mx-auto">
-              Purpose-built consoles give your team full control over AI agent operations.
+              Purpose-built consoles give your team full control over AI operative operations.
             </p>
           </div>
 
