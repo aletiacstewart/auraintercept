@@ -1,92 +1,192 @@
 
-# Fix Missing Agent Definitions in AgentDetailPage
 
-## Problem
-When clicking "Configure" on the Web Presence Agent, the page shows "Agent Not Found" because the `AGENT_DEFINITIONS` object in `AgentDetailPage.tsx` doesn't include definitions for `web_presence` and `lead` agents.
+# Consolidate Web Presence Console under Social-Marketing Console
 
----
-
-## Solution
-Add the missing agent definitions to the `AGENT_DEFINITIONS` object in `AgentDetailPage.tsx`.
+## Summary
+Move Web Presence Manager and Blog Management from a separate sidebar category into the "Social-Marketing Console & Mobile App" category. This maintains 7 consoles while keeping the Web Presence Agent as the 24th operative.
 
 ---
 
-## Changes
+## Current Structure
 
-**File:** `src/pages/AgentDetailPage.tsx`
-
-### 1. Add Import for Globe icon (line 27)
-Add `Globe` to the existing lucide-react imports for the web_presence agent icon.
-
-### 2. Add `lead` Agent Definition (after creative agent ~line 578)
-```typescript
-lead: {
-  name: 'Lead Agent',
-  description: 'Captures and qualifies incoming leads, manages lead scoring, and routes prospects to appropriate follow-up workflows.',
-  category: 'marketing_sales',
-  phase: 2,
-  icon: Users,
-  color: 'text-feature-marketing',
-  capabilities: [
-    'Lead capture & intake',
-    'Lead qualification scoring',
-    'Source tracking',
-    'Automated follow-up assignment',
-    'CRM integration'
-  ],
-  configFields: [
-    { key: 'auto_qualify', label: 'Auto-Qualify Leads', type: 'switch', defaultValue: true, description: 'Automatically score and qualify incoming leads' },
-    { key: 'qualification_threshold', label: 'Qualification Score Threshold', type: 'slider', min: 1, max: 100, step: 5, defaultValue: 50, description: 'Minimum score to be considered qualified' },
-    { key: 'response_time_hours', label: 'Target Response Time (hours)', type: 'number', min: 1, max: 48, defaultValue: 2 },
-    { key: 'auto_assign', label: 'Auto-Assign to Sales Rep', type: 'switch', defaultValue: false },
-    { key: 'notify_on_high_value', label: 'Alert on High-Value Leads', type: 'switch', defaultValue: true }
-  ]
-}
+```text
+Sidebar Categories:
+├── Social-Marketing Console & Mobile App
+│   ├── Outreach & Sales Ops
+│   └── Social Media Signal Ops
+├── Web Presence (SEPARATE)
+│   ├── Web Presence Manager
+│   └── Blog Management
 ```
 
-### 3. Add `web_presence` Agent Definition (after lead agent)
-```typescript
-web_presence: {
-  name: 'Web Presence Agent',
-  description: 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts from the Content Engine.',
-  category: 'content_engine',
-  phase: 2,
-  icon: Globe,
-  color: 'text-purple-400',
-  capabilities: [
-    'SEO optimization suggestions',
-    'Site performance monitoring',
-    'Content freshness alerts',
-    'Auto-publish blog posts',
-    'Meta tag optimization',
-    'Broken link detection'
-  ],
-  configFields: [
-    { key: 'auto_publish_blog', label: 'Auto-Publish Blog Posts', type: 'switch', defaultValue: false, description: 'Automatically publish approved blog content' },
-    { key: 'seo_scan_frequency', label: 'SEO Scan Frequency', type: 'select', options: [
-      { value: 'daily', label: 'Daily' },
-      { value: 'weekly', label: 'Weekly' },
-      { value: 'monthly', label: 'Monthly' }
-    ], defaultValue: 'weekly' },
-    { key: 'performance_alert_threshold', label: 'Performance Alert Threshold (ms)', type: 'number', min: 500, max: 5000, defaultValue: 2000, description: 'Alert when page load exceeds this time' },
-    { key: 'check_broken_links', label: 'Check for Broken Links', type: 'switch', defaultValue: true },
-    { key: 'content_freshness_days', label: 'Content Freshness Alert (days)', type: 'number', min: 30, max: 365, defaultValue: 90, description: 'Alert when content is older than this' },
-    { key: 'auto_meta_suggestions', label: 'Auto-Generate Meta Suggestions', type: 'switch', defaultValue: true }
-  ]
-}
+## Proposed Structure
+
+```text
+Sidebar Categories:
+├── Social-Marketing Console & Mobile App
+│   ├── Outreach & Sales Ops
+│   ├── Social Media Signal Ops
+│   ├── Web Presence Manager (MOVED)
+│   └── Blog Management (MOVED)
 ```
 
 ---
 
-## Technical Details
+## Changes Required
 
-The `AGENT_DEFINITIONS` object (starting at line 29) is used by `AgentDetailPage` to:
-1. Validate that an agent exists (line 591)
-2. Display the agent's name, description, and capabilities
-3. Render the configuration form fields
+### 1. Sidebar Navigation (DashboardLayout.tsx)
 
-Without an entry in this object, the page returns "Agent Not Found" on line 598-619.
+**File:** `src/components/dashboard/DashboardLayout.tsx`
 
-Both new agents follow the existing pattern:
-- `lead` is categorized under `marketing_sales` (alongside `campaign`)
-- `web_presence` is categorized under `content_engine` (alongside `creative`)
+Move the Web Presence items from their own category into the "Social-Marketing Console" category:
+
+**Before (lines 95-100, 111-118):**
+```typescript
+{
+  label: 'Web Presence',
+  items: [
+    { label: 'Web Presence Manager', ... },
+    { label: 'Blog Management', ... },
+  ],
+},
+...
+{
+  label: 'Social-Marketing Console & Mobile App',
+  items: [
+    { label: 'Outreach & Sales Ops', ... },
+    { label: 'Social Media Signal Ops', ... },
+  ],
+},
+```
+
+**After:**
+```typescript
+{
+  label: 'Social-Marketing Console & Mobile App',
+  requiredTier: 'command',
+  items: [
+    { label: 'Outreach & Sales Ops', ... },
+    { label: 'Social Media Signal Ops', ... },
+    { label: 'Web Presence Manager', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config', requiredTier: 'command' },
+    { label: 'Blog Management', icon: FileText, href: '/dashboard/blog-management', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config', requiredTier: 'command' },
+  ],
+},
+// Remove the separate 'Web Presence' category entirely
+```
+
+---
+
+### 2. Console Configuration (documentationConfig.ts)
+
+**File:** `src/lib/documentationConfig.ts`
+
+Update the CONSOLES array to consolidate web_presence under social_media:
+
+**Changes:**
+- Modify `social_media` console to include Web Presence tabs and increase agent count to 4
+- Remove `content_engine` as a separate console (it's a feature within Social Media Signal Ops)
+- Keep console count at 7
+
+**Updated social_media console definition:**
+```typescript
+{
+  id: 'social_media',
+  name: 'Social Media Signal Ops & Web Presence',
+  description: 'AI-powered social media signal management, web presence builder, and blog management with content creation for 6 platforms.',
+  tier: 'command',
+  agentCount: 4,  // social_content, social_scheduler, social_analytics, web_presence
+  tabs: ['Social Posts', 'Content Engine', 'Web Presence', 'Blog', 'Calendar'],
+  color: 'pink',
+},
+```
+
+**Remove content_engine console (lines 562-570)** - Content Engine is already embedded in Social Media Signal Ops
+
+---
+
+### 3. Subscription Agent Config (subscriptionAgentConfig.ts)
+
+**File:** `src/lib/subscriptionAgentConfig.ts`
+
+Update console arrays to reflect the consolidation:
+
+**Before (line 96):**
+```typescript
+consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports', 'content_engine', 'web_presence'],
+```
+
+**After:**
+```typescript
+consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports', 'ai_operatives_hub'],
+```
+
+Update `CONSOLE_REQUIRED_AGENTS` to merge web_presence into social_media:
+```typescript
+social_media: ['social_content', 'web_presence'],  // Add web_presence here
+// Remove: web_presence: ['web_presence'],
+// Remove: content_engine: ['creative'],
+```
+
+---
+
+### 4. AI Operatives Hub (AIAgentsHub.tsx)
+
+**File:** `src/pages/AIAgentsHub.tsx`
+
+Move the web_presence agent from its own category into social_media:
+
+**Update AI_OPERATIVES in documentationConfig.ts:**
+Change `console: 'web_presence'` to `console: 'social_media'` for the web_presence agent (line 476)
+
+**Update CATEGORY_INFO** - Remove web_presence and content_engine categories, keep agents under social_media
+
+---
+
+### 5. Platform Stats (documentationConfig.ts)
+
+**File:** `src/lib/documentationConfig.ts`
+
+Update `PLATFORM_STATS.totalConsoles` from 8 to 7:
+```typescript
+export const PLATFORM_STATS = {
+  totalOperatives: 24,
+  totalConsoles: 7,  // Keep at 7
+  ...
+};
+```
+
+---
+
+## Final Console Structure (7 Consoles)
+
+| # | Console ID | Console Name | Agents |
+|---|------------|--------------|--------|
+| 1 | customer_portal | Customer Portal | 4 (triage, booking, followup, review) |
+| 2 | field_operations | Field Operations | 4 (dispatch, route, eta, checkin) |
+| 3 | business_management | Business Operations | 4 (admin, quoting, invoice, inventory) |
+| 4 | marketing_sales | Outreach & Sales Ops | 3 (campaign, lead, marketing) |
+| 5 | social_media | Social Media & Web Presence | 5 (social_content, social_scheduler, social_analytics, creative, web_presence) |
+| 6 | analytics_reports | Analytics & Reports | 4 (insights, performance, revenue, forecast) |
+| 7 | ai_operatives_hub | AI Operatives Hub | 0 (management only) |
+
+**Total: 24 AI Operatives across 7 Consoles**
+
+---
+
+## Files to Modify
+
+1. `src/components/dashboard/DashboardLayout.tsx` - Move sidebar items
+2. `src/lib/documentationConfig.ts` - Update console definitions and move agents
+3. `src/lib/subscriptionAgentConfig.ts` - Update console arrays
+4. `src/pages/AIAgentsHub.tsx` - Update category mappings
+
+---
+
+## What Stays the Same
+
+- 24 AI Operatives total (no change)
+- Web Presence Manager page still accessible at `/dashboard/smart-website`
+- Blog Management still accessible at `/dashboard/blog-management`
+- All agent functionality remains unchanged
+- Only the organizational grouping changes
+
