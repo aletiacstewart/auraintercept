@@ -14,6 +14,42 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 // Common industry categories (similar to Google My Business)
 const INDUSTRY_OPTIONS = [
+  // Food & Hospitality (Aura Express)
+  'Restaurant',
+  'Cafe & Coffee Shop',
+  'Fine Dining',
+  'Fast Casual Restaurant',
+  'Food Truck',
+  'Bakery & Pastry Shop',
+  'Bar & Lounge',
+  'Catering Services',
+  'Brewery & Taproom',
+  'Ice Cream & Dessert Shop',
+  // Beauty & Wellness (Aura Halo)
+  'Hair Salon',
+  'Barbershop',
+  'Nail Salon',
+  'Day Spa',
+  'Med Spa & Aesthetics',
+  'Massage Therapy',
+  'Skincare & Facials',
+  'Lash & Brow Studio',
+  'Makeup Artist',
+  'Tanning Salon',
+  'Wellness Center',
+  'Yoga & Pilates Studio',
+  'Fitness & Personal Training',
+  // Personal Services (Aura Flow)
+  'Life Coaching',
+  'Business Coaching',
+  'Personal Assistant Services',
+  'Concierge Services',
+  'Travel Planning',
+  'Executive Assistant',
+  'Virtual Assistant',
+  'Personal Styling',
+  'Personal Shopper',
+  'Career Counseling',
   // Home Services
   'HVAC & Air Conditioning',
   'Plumbing',
@@ -40,25 +76,17 @@ const INDUSTRY_OPTIONS = [
   'Marketing & Advertising',
   'IT Services',
   'Web Design & Development',
-  // Health & Wellness
+  // Health & Medical
   'Medical Practice',
   'Dental Practice',
   'Chiropractic',
   'Physical Therapy',
   'Veterinary Services',
-  'Fitness & Personal Training',
-  'Salon & Spa',
   // Automotive
   'Auto Repair',
   'Auto Detailing',
   'Towing Services',
   'Car Dealership',
-  // Food & Hospitality
-  'Restaurant',
-  'Catering',
-  'Food Truck',
-  'Bakery',
-  'Coffee Shop',
   // Retail
   'Retail Store',
   'E-commerce',
@@ -100,17 +128,39 @@ interface AIContentProfile {
   updated_at: string;
 }
 
-// Default content topic suggestions
+// Default content topic suggestions by industry type
 const DEFAULT_CONTENT_TOPICS = [
-  'Home maintenance tips',
-  'Seasonal reminders',
+  // General topics
   'Customer success stories',
   'Behind the scenes',
-  'Industry news and trends',
   'Team spotlights',
+  'Industry news and trends',
+  'Seasonal promotions',
+  // Restaurant & Food topics
+  'Daily specials & menu highlights',
+  'Chef features & recipes',
+  'Local sourcing & ingredients',
+  'Happy hour promotions',
+  'Private events & catering',
+  // Beauty & Wellness topics
+  'Beauty tips & tutorials',
+  'Skincare routines',
+  'Treatment spotlights',
+  'Before & after transformations',
+  'Self-care & wellness tips',
+  'Seasonal beauty trends',
+  // Personal Services topics
+  'Productivity tips',
+  'Work-life balance',
+  'Time management strategies',
+  'Goal setting & achievement',
+  'Professional development',
+  // Home Services topics
+  'Home maintenance tips',
   'DIY tips for homeowners',
   'Safety tips',
   'Energy saving tips',
+  'Seasonal reminders',
   'Product/equipment highlights',
 ];
 

@@ -97,8 +97,7 @@ const navGroups: NavGroup[] = [
     label: 'Business Management',
     requiredTier: 'command',
     items: [
-      { label: 'Business Ops Overview', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics', requiredTier: 'command' },
-      { label: 'Business Ops Hub', icon: Briefcase, href: '/dashboard/business-ops-hub', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+      { label: 'Business Mgt Ops Overview', icon: Briefcase, href: '/dashboard/business-operations', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics', requiredTier: 'command' },
       { label: 'Analytics & Reports', icon: Cpu, href: '/dashboard/analytics-reports', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-analytics', requiredTier: 'command' },
     ],
   },
