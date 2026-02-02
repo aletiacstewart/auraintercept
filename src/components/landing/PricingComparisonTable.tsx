@@ -92,14 +92,6 @@ const sections: FeatureSection[] = [
     ],
   },
   {
-    title: 'AI Tools (Core Only)',
-    features: [
-      { name: 'Message Aura (Text) (Chat Tool)', express: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Social Media Signal (Content Tool)', express: 'x', halo: 'x', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
-      { name: 'Web Presence (Site Tool)', express: 'x', halo: 'x', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
-    ],
-  },
-  {
     title: 'AI Agents (Automated)',
     features: [
       // Single-Point tier (3 agents) - Halo has triage, booking, followup
