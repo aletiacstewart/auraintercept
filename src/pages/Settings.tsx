@@ -85,6 +85,13 @@ export default function Settings() {
                 Next: 3rd Party Setup
                 <ArrowRight className="w-3 h-3" />
               </Link>
+              <Link 
+                to="/dashboard/knowledge" 
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 ml-2 text-xs font-medium rounded-md bg-accent/20 text-accent-foreground hover:bg-accent/30 border border-accent/40 transition-all hover:scale-105"
+              >
+                Knowledge Base Setup
+                <ArrowRight className="w-3 h-3" />
+              </Link>
             </TabsList>
             <TabsContent value="branding">
               <BrandingSettings />
