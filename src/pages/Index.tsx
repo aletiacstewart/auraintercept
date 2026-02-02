@@ -212,7 +212,7 @@ const platformFeatures = [{
   description: 'AI-powered branded web presence with Message Aura (Text), Talk to Aura (Voice), and booking.'
 }, {
   icon: Target,
-  title: 'Lead Capture & CRM',
+  title: 'Lead Capture & Scoring',
   description: 'Automatically capture and score leads from AI interactions with smart follow-up automation.'
 }, {
   icon: Bell,

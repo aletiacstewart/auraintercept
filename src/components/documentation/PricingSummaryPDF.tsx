@@ -957,7 +957,7 @@ const PricingSummaryPDF = () => (
       <View style={styles.featureList}>
         <FeatureItem>Customer Portal Console - Complete self-service experience</FeatureItem>
         <FeatureItem>Field Operations Console - Full dispatch and routing</FeatureItem>
-        <FeatureItem>Business Operations Console - Invoicing, inventory, warranties</FeatureItem>
+        <FeatureItem>Business Operations Console - Invoicing, inventory management</FeatureItem>
         <FeatureItem>Outreach & Sales Ops Console - Campaigns, leads, referrals</FeatureItem>
         <FeatureItem>Social Media Signal Ops Console - 6-platform content management</FeatureItem>
         <FeatureItem>Analytics & Reports Console - KPIs, forecasting, performance</FeatureItem>

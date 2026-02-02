@@ -108,7 +108,7 @@ flowchart TB
     
     class Triage,Followup,Review singlePoint
     class Booking,Dispatch,Route,ETA,Checkin,Quoting,Invoice multiTrack
-    class Admin,Inventory,Warranty,Campaign,Lead,SocialContent,SocialScheduler,SocialAnalytics,Insights,Performance,Revenue,Forecast command
+    class Admin,Inventory,Campaign,Lead,SocialContent,SocialScheduler,SocialAnalytics,Insights,Performance,Revenue,Forecast command
 `;
         
         try {

@@ -160,8 +160,6 @@ export const PAGE_ROUTES: Record<string, string> = {
   'email': '/dashboard/integrations/email',
   'email integration': '/dashboard/integrations/email',
   'email settings': '/dashboard/integrations/email',
-  'crm': '/dashboard/integrations/crm',
-  'crm integration': '/dashboard/integrations/crm',
   'calendar integration': '/dashboard/integrations/calendar',
   
   // Platform Resources Section
