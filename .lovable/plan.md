@@ -1,34 +1,27 @@
 
-# Rename "Talk to Aura" to "Ask Aura" in Quick Setup
+# Fix Knowledge Base Setup Button Visibility
 
-## Overview
-Simple text change to align with the platform's naming standards where "Ask Aura" is the internal staff-only voice navigation tool.
+## Issue
+The "Knowledge Base Setup" button text is not visible due to low contrast with the `bg-accent/20 text-accent-foreground` color scheme.
 
 ---
 
-## Change Required
+## Solution
+Change the button styling to use a more visible color scheme that matches the visual distinction from the "3rd Party Setup" button while ensuring readable text.
 
-**File:** `src/pages/Settings.tsx`
+**File:** `src/pages/Settings.tsx` (line 90)
 
-**Line 75:** Change `Talk to Aura` → `Ask Aura`
-
+**Current styling:**
 ```typescript
-// Before
-<TabsTrigger value="voice" className="flex items-center gap-1">
-  <Mic className="w-3 h-3" />
-  Talk to Aura
-</TabsTrigger>
-
-// After
-<TabsTrigger value="voice" className="flex items-center gap-1">
-  <Mic className="w-3 h-3" />
-  Ask Aura
-</TabsTrigger>
+className="... bg-accent/20 text-accent-foreground hover:bg-accent/30 border border-accent/40 ..."
 ```
 
----
+**New styling (using teal/emerald theme for Knowledge Base):**
+```typescript
+className="... bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border border-emerald-500/30 ..."
+```
 
-## Naming Standards Reference
-- **Ask Aura** = Internal staff-only voice navigation (this setting)
-- **Talk to Aura (Voice)** = Customer-facing speech feature (ElevenLabs/Twilio)
-- **Message Aura (Text)** = Customer-facing text chat
+This will provide:
+- Clear visual distinction from the primary-colored "3rd Party Setup" button
+- Strong text contrast with emerald/teal coloring
+- Consistent with the Knowledge Base feature color palette
