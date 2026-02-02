@@ -281,7 +281,7 @@ const sections: FeatureSection[] = [
       { name: 'Appointments', core: 'x', singlePoint: 'Unlimited', multiTrack: 'Unlimited', command: 'Unlimited' },
       { name: 'Employee Accounts', core: '2 included', singlePoint: '5 included', multiTrack: '10 included', command: '25 included' },
       { name: 'Additional Employees', core: '$10/employee', singlePoint: '$10/employee', multiTrack: '$10/employee', command: '$10/employee' },
-      { name: 'White-Label Branding', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'White-Label Branding', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Aura Web Presence', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
       { name: 'Social Media Signal', core: 'check', singlePoint: 'Choice of 1', multiTrack: 'check', command: 'check' },
       { name: 'Embeddable Chat Widget', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
