@@ -1,188 +1,276 @@
 
-# Platform-Wide Aura Naming Standardization & Tooltip Enhancement
+# Aura Protocol Switching System Implementation Plan
 
 ## Overview
-This plan addresses naming inconsistencies across the entire platform and adds helpful tooltips to improve user understanding of the Aura feature set.
+This plan implements a comprehensive protocol switching system for Aura that enables dynamic behavioral changes based on customer urgency, sentiment, and information needs. The system will support Emergency Mode, De-escalation Mode, and Contextual Sharing Mode across both voice and text channels.
 
 ---
 
-## Standardized Naming Convention
+## Phase 1: Database Schema
 
-| Feature ID | Correct Name | Description | Dependencies |
-|------------|--------------|-------------|--------------|
-| Text Chat | **Message Aura (Text)** | Customer-facing text chat widget | None (all tiers) |
-| Voice Chat | **Talk to Aura (Voice)** | Customer-facing speech conversations | ElevenLabs + Twilio |
-| Internal Voice | **Ask Aura** | Staff-only voice navigation tool | Internal only |
-| SMS/Email | **Reminders** | Appointment & campaign notifications | Twilio (SMS only) |
+### 1.1 Smart Links Table
+Create a new `smart_links` table to store company-specific URL mappings:
 
----
-
-## Phase 1: Core Settings Fixes
-
-### 1.1 SmartWebsiteManager.tsx (Critical)
-**Current (Wrong):**
-- `show_chat_widget` labeled "Talk to Aura"
-- `show_voice_widget` labeled "Proxy Voice Chat"
-
-**Fix:**
-```typescript
-// Line ~838: Change toggle label
-<p className="font-medium text-card-foreground">Message Aura (Text)</p>
-<p className="text-sm text-card-foreground/70">Enable text chat widget for visitors</p>
-
-// Line ~848: Change toggle label  
-<p className="font-medium text-card-foreground">Talk to Aura (Voice)</p>
-<p className="text-sm text-card-foreground/70">Enable voice conversations for visitors (requires ElevenLabs + Twilio)</p>
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                      smart_links                            │
+├─────────────────────────────────────────────────────────────┤
+│ id                  UUID (PK)                               │
+│ company_id          UUID (FK → companies)                   │
+│ category            TEXT (scheduling, pricing, reviews,     │
+│                          invoicing, emergency, custom)      │
+│ name                TEXT                                    │
+│ description         TEXT                                    │
+│ url                 TEXT                                    │
+│ intent_triggers     TEXT[] (keywords that trigger this link)│
+│ is_active           BOOLEAN                                 │
+│ sort_order          INTEGER                                 │
+│ created_at          TIMESTAMP                               │
+│ updated_at          TIMESTAMP                               │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-Add HelpTooltip imports and wrap labels with explanatory tooltips.
+### 1.2 Protocol Switch Events Table
+Track all protocol mode changes for analytics:
 
----
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                  protocol_switch_events                     │
+├─────────────────────────────────────────────────────────────┤
+│ id                  UUID (PK)                               │
+│ company_id          UUID (FK → companies)                   │
+│ conversation_id     TEXT                                    │
+│ channel             TEXT (voice, text)                      │
+│ previous_mode       TEXT                                    │
+│ new_mode            TEXT (emergency, de_escalation,         │
+│                          contextual_sharing, normal)        │
+│ trigger_type        TEXT (keyword, sentiment, manual)       │
+│ trigger_value       TEXT (the specific trigger detected)    │
+│ confidence_score    DECIMAL                                 │
+│ customer_phone      TEXT                                    │
+│ customer_email      TEXT                                    │
+│ metadata            JSONB                                   │
+│ created_at          TIMESTAMP                               │
+└─────────────────────────────────────────────────────────────┘
+```
 
-## Phase 2: Help Content Configuration
+### 1.3 Emergency Settings (Companies Table Extension)
+Add emergency configuration fields to the companies table:
 
-### 2.1 helpContentConfig.ts
-**Replace all instances of:**
-- "Talk to Aura (Text-Based)" → "Message Aura (Text)"
-- "Proxy Voice Chat" → "Talk to Aura (Voice)"
-- "Proxy Voice Chat (Speech-Based)" → "Talk to Aura (Voice)"
-
-**Lines to update:**
-- Line 58, 68, 70, 71, 393, 402, 406, 452, 457
-
-### 2.2 PLATFORM_HIGHLIGHTS section
-```typescript
-aiChatWidget: {
-  title: 'Message Aura (Text)',  // was "Talk to Aura (Text-Based)"
-  description: 'Text-based chat using keyboard input - no external dependencies',
-},
-aiVoice: {
-  title: 'Talk to Aura (Voice)',  // was "Proxy Voice Chat (Speech-Based)"
-  description: 'Speech conversations via microphone/speakers - requires ElevenLabs + Twilio',
-},
+```text
+New columns for companies table:
+- emergency_phone TEXT (direct emergency line)
+- emergency_sms_enabled BOOLEAN
+- emergency_notification_emails TEXT[]
+- emergency_keywords TEXT[] (custom keywords beyond defaults)
+- de_escalation_manager_contact TEXT
+- de_escalation_auto_ticket BOOLEAN
 ```
 
 ---
 
-## Phase 3: Documentation PDFs
+## Phase 2: Knowledge Base - Smart Links Tab
 
-### Files to Update:
-1. **PricingSummaryPDF.tsx** - Already correct, verify consistency
-2. **ComprehensiveGuidesPDF.tsx** - Fix "Proxy Voice Chat" references (lines ~221, 247, 352, 355)
-3. **CompanyGuidesPDF.tsx** - Standardize terminology
-4. **PlatformDocumentPDF.tsx** - Fix "Voice Chat" reference (line ~1150)
-5. **IndustryMarketingKitPDF.tsx** - Check for inconsistencies
-6. **AIAgentGuidesPDF.tsx** - Verify naming
+### 2.1 New Component: SmartLinksManager
+Location: `src/components/knowledge/SmartLinksManager.tsx`
+
+Features:
+- CRUD operations for smart links
+- Predefined categories with icons
+- Intent trigger keyword management (comma-separated or tag input)
+- Drag-and-drop reordering
+- CSV import/export
+- Toggle active/inactive state
+
+### 2.2 Update Knowledge Base Page
+Modify `src/pages/KnowledgeBase.tsx`:
+- Add new "Smart Links" tab with Link2 icon
+- Position after Documents tab
+
+### 2.3 UI Design
+Each smart link card displays:
+- Category badge (color-coded)
+- Link name and description
+- URL (with copy button)
+- Intent triggers as tags
+- Active/Inactive toggle
+
+Default categories with preset triggers:
+| Category | Default Triggers | Icon |
+|----------|-----------------|------|
+| Scheduling | "book", "schedule", "appointment", "availability" | Calendar |
+| Pricing | "how much", "price", "cost", "quote", "estimate" | DollarSign |
+| Reviews | "reviews", "ratings", "reputation", "good" | Star |
+| Invoicing | "pay", "invoice", "bill", "payment" | Receipt |
+| Emergency | "emergency", "urgent", "after hours" | AlertTriangle |
+| Custom | (user-defined) | Link |
 
 ---
 
-## Phase 4: Audit & Other Components
+## Phase 3: Protocol Switching Logic
 
-### 4.1 audit/types.ts
-- Line 491: "Proxy Voice Chat (ElevenLabs)" → "Talk to Aura (Voice)"
-- Line 509: "Proxy Voice Chat (ElevenLabs/Twilio)" → "Talk to Aura (Voice)"
+### 3.1 Update AI Agent Chat Edge Function
+Modify `supabase/functions/ai-agent-chat/index.ts`:
 
-### 4.2 IntegrationDocs.tsx
-- Line 27: Already correct ("AI Chat Widget (Text-Based)")
-- Add clarifying tooltip
-
-### 4.3 SmartWebsiteVoiceButton.tsx
-- Line 97: "Voice Chat with {companyName}" → "Talk to Aura - {companyName}"
-
-### 4.4 Contact.tsx
-- Line 276: "Start Voice Chat" → "Talk to Aura"
-
-### 4.5 VoiceChat.tsx
-- Lines 71, 110: Update toast messages
-
----
-
-## Phase 5: Tooltip Enhancements
-
-### 5.1 Create Tooltip Definitions File
-Create `src/lib/featureTooltips.ts`:
-
-```typescript
-export const FEATURE_TOOLTIPS = {
-  messageAura: {
-    label: 'Message Aura (Text)',
-    tooltip: 'Text-based chat where customers type questions and receive text responses. Works on ALL tiers with no external integrations needed.',
-  },
-  talkToAura: {
-    label: 'Talk to Aura (Voice)',
-    tooltip: 'Speech-based conversations using microphone and speakers. Customers speak naturally and hear AI voice responses. Requires ElevenLabs (voice synthesis) and Twilio (telephony).',
-  },
-  askAura: {
-    label: 'Ask Aura',
-    tooltip: 'Internal voice navigation for staff. Use voice commands to navigate the dashboard hands-free.',
-  },
-  smsReminders: {
-    label: 'SMS Reminders',
-    tooltip: 'Automated text message reminders for appointments, follow-ups, and campaigns. Requires Twilio integration.',
-  },
-  emailReminders: {
-    label: 'Email Reminders',
-    tooltip: 'Automated email notifications for appointments, confirmations, and marketing campaigns.',
-  },
-};
+```text
+Protocol Detection Flow:
+┌──────────────────────────────────────────────────────────┐
+│                   Incoming Message                        │
+└────────────────────────┬─────────────────────────────────┘
+                         │
+          ┌──────────────▼──────────────┐
+          │    Emergency Detection      │
+          │    (Highest Priority)       │
+          └──────────────┬──────────────┘
+                         │
+         ┌───────────────┴────────────────┐
+         │                                │
+    ┌────▼────┐                     ┌─────▼─────┐
+    │  YES    │                     │    NO     │
+    └────┬────┘                     └─────┬─────┘
+         │                                │
+    ┌────▼────────────────┐    ┌──────────▼──────────┐
+    │  EMERGENCY MODE     │    │ Sentiment Analysis  │
+    │  - Short responses  │    │ (De-escalation)     │
+    │  - Safety first     │    └──────────┬──────────┘
+    │  - Send emergency   │               │
+    │    smart link       │    ┌──────────┴───────────┐
+    │  - Notify on-call   │    │                      │
+    └─────────────────────┘    ▼                      ▼
+                          Frustrated              Neutral
+                               │                      │
+                    ┌──────────▼─────────┐  ┌─────────▼────────┐
+                    │  DE-ESCALATION     │  │ Intent Detection │
+                    │  - Empathy mode    │  │ (Smart Links)    │
+                    │  - Log ticket      │  └─────────┬────────┘
+                    │  - Manager contact │            │
+                    └────────────────────┘   ┌───────▼────────┐
+                                             │  Match Found?  │
+                                             └───────┬────────┘
+                                                     │
+                                        ┌────────────┴────────────┐
+                                        ▼                         ▼
+                                    ┌───────┐                ┌────────┐
+                                    │  YES  │                │   NO   │
+                                    └───┬───┘                └────┬───┘
+                                        │                         │
+                              ┌─────────▼──────────┐    ┌─────────▼─────────┐
+                              │ CONTEXTUAL SHARING │    │   NORMAL MODE     │
+                              │ - Send smart link  │    │   (Continue as    │
+                              │ - Verbal confirm   │    │    standard)      │
+                              └────────────────────┘    └───────────────────┘
 ```
 
-### 5.2 Add Tooltips to Key Settings Pages
+### 3.2 New Functions to Add
 
-**SmartWebsiteManager.tsx** - Add to each feature toggle:
-```typescript
-import { HelpTooltip } from '@/components/ui/HelpTooltip';
+**detectProtocolMode()**: Analyzes message for emergency keywords, sentiment triggers, and intent patterns
 
-<div className="flex items-center gap-1">
-  <HelpTooltip 
-    term="Message Aura (Text)" 
-    tooltip={FEATURE_TOOLTIPS.messageAura.tooltip}
-  />
-</div>
+**logProtocolSwitch()**: Records mode changes to `protocol_switch_events` table
+
+**getSmartLinkForIntent()**: Queries `smart_links` table to find matching URL based on detected intent
+
+**triggerMessageAura()**: Programmatically sends SMS via Twilio with the appropriate smart link (for voice channel)
+
+### 3.3 Emergency Mode Implementation
+- Expand existing `isEmergencyRequest()` function
+- Load company-specific emergency keywords from database
+- Add safety guardrail that blocks scheduling for life-safety issues
+- Integrate with notification system for on-call alerts
+
+### 3.4 De-escalation Mode Implementation
+Sentiment triggers to detect:
+- Profanity detection (word list)
+- Escalation phrases: "cancel my service", "speak to manager", "third time", "not happy", "horrible", "worst"
+- Tone patterns (multiple exclamation points, ALL CAPS)
+
+Actions:
+- Switch to empathy-first responses
+- Auto-create priority support ticket
+- Provide manager contact via Message Aura
+
+### 3.5 Contextual Sharing Mode Implementation
+- Match user intent against `smart_links.intent_triggers`
+- Use fuzzy matching for variations ("book" matches "booking", "schedule")
+- Channel-aware delivery:
+  - **Text channel**: Embed link inline in response
+  - **Voice channel**: Confirm verbally + trigger Message Aura SMS
+
+---
+
+## Phase 4: Emergency Configuration Settings
+
+### 4.1 New Settings Section
+Add to company settings page (or create dedicated section):
+
+**Emergency Contact Settings**:
+- Emergency phone number
+- On-call notification emails (multi-select)
+- Custom emergency keywords (tag input)
+- Enable/disable emergency SMS
+
+**De-escalation Settings**:
+- Manager contact phone/email
+- Auto-create ticket toggle
+- Custom de-escalation phrases
+
+---
+
+## Phase 5: Analytics Dashboard
+
+### 5.1 Protocol Switch Analytics
+New dashboard card showing:
+- Protocol switches by mode (pie chart)
+- Switches over time (line chart)
+- Top trigger keywords
+- Channel breakdown (voice vs text)
+- Resolution outcomes
+
+### 5.2 Query for Analytics
+```sql
+SELECT 
+  new_mode,
+  channel,
+  COUNT(*) as count,
+  DATE_TRUNC('day', created_at) as date
+FROM protocol_switch_events
+WHERE company_id = $1
+GROUP BY new_mode, channel, date
+ORDER BY date DESC;
 ```
 
-### 5.3 Console Header Tooltips
-Add tooltips to console headers explaining each console's purpose:
-- Customer Portal Console
-- Field Operations Console
-- Business Management Console
-- Marketing & Sales Console (→ "Outreach & Sales Ops")
-- Analytics & Reports Console
-- Social Media Signal Console
+---
+
+## Technical Summary
+
+### Files to Create
+1. `src/components/knowledge/SmartLinksManager.tsx` - New Knowledge Base tab component
+2. Database migration for `smart_links` table
+3. Database migration for `protocol_switch_events` table
+4. Database migration for companies table extension
+
+### Files to Modify
+1. `src/pages/KnowledgeBase.tsx` - Add Smart Links tab
+2. `supabase/functions/ai-agent-chat/index.ts` - Protocol switching logic
+3. Company settings component - Emergency configuration
+
+### RLS Policies Required
+- `smart_links`: Company-scoped access (users can only see their company's links)
+- `protocol_switch_events`: Company-scoped access for viewing, system insert for logging
+
+### Default Smart Link Templates
+On first company setup, auto-populate with empty templates:
+- Scheduling (booking_url)
+- Pricing (price_sheet_url)  
+- Reviews (google_review_url)
+- Invoicing (payment_portal)
+- Emergency (emergency_contact_url)
 
 ---
 
-## Phase 6: AgentHowToGuide Enhancement
-
-### 6.1 Update AgentHowToGuide.tsx
-Add a "Communication Methods" section explaining:
-- Message Aura (Text) - How to use text chat
-- Talk to Aura (Voice) - How to use voice (if enabled)
-- Ask Aura - How staff can use voice navigation
-
----
-
-## Files Summary
-
-| File | Changes |
-|------|---------|
-| `src/pages/SmartWebsiteManager.tsx` | Fix toggle labels, add tooltips |
-| `src/lib/helpContentConfig.ts` | Standardize all naming (9+ instances) |
-| `src/lib/featureTooltips.ts` | NEW - Centralized tooltip definitions |
-| `src/components/documentation/*.tsx` | Update 6 PDF files |
-| `src/components/audit/types.ts` | Fix 2 naming instances |
-| `src/pages/IntegrationDocs.tsx` | Add clarifying tooltips |
-| `src/components/smartwebsite/SmartWebsiteVoiceButton.tsx` | Update dialog title |
-| `src/pages/Contact.tsx` | Update button label |
-| `src/components/ai/VoiceChat.tsx` | Update toast messages |
-| `src/components/ai/chat/AgentHowToGuide.tsx` | Add communication methods section |
-
----
-
-## Expected Outcome
-
-After implementation:
-1. **Consistent naming** - "Message Aura (Text)" and "Talk to Aura (Voice)" used everywhere
-2. **Clear tooltips** - Users understand what each feature does and what it requires
-3. **No confusion** - Companies and customers know exactly which Aura feature they're using
-4. **Documentation aligned** - All PDFs and guides use standardized terminology
+## Implementation Order
+1. Database migrations (smart_links, protocol_switch_events, companies extension)
+2. SmartLinksManager component + Knowledge Base integration
+3. Protocol detection functions in edge function
+4. Protocol switch logging
+5. Emergency configuration settings UI
+6. Analytics dashboard integration
