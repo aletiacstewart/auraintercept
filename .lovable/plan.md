@@ -1,124 +1,31 @@
 
-# Company-Configurable Console Features
+# Company-Configurable Console Features ✅ IMPLEMENTED
 
-## Current Problem
-The `UnifiedCustomerConsole` displays features (Appt, Quote, Track, Billing, Emergency, etc.) based on the **subscription tier** only. This means:
-- All companies on Multi-Track+ see all features
-- Aura Intercept (a platform/SaaS company) shows irrelevant features like Emergency and Track
-- No way for companies to hide features that don't apply to their business type
+## Summary
+Added per-company visibility toggles to the `smart_websites` table so companies can hide irrelevant console features (like Emergency, Tracking, Billing) from their embedded chat widget.
 
-## Solution Overview
-Add per-company visibility toggles to the `smart_websites` table and update the console to respect them.
+## Changes Made
 
----
+### 1. Database Migration ✅
+Added 6 new boolean columns to `smart_websites`:
+- `show_console_appointments` (default: true)
+- `show_console_quotes` (default: true)
+- `show_console_tracking` (default: true)
+- `show_console_billing` (default: true)
+- `show_console_emergency` (default: true)
+- `show_console_feedback` (default: true)
 
-## Database Changes
+### 2. UnifiedCustomerConsole.tsx ✅
+- Fetches console feature settings from `smart_websites`
+- Filters quick actions AND tabs based on company settings (in conjunction with tier)
+- Emergency section only shows if `show_console_emergency` is enabled
 
-Add new columns to `smart_websites` table:
+### 3. SmartWebsiteManager.tsx ✅
+- Added "Console Features" card in Visibility tab
+- 6 toggle switches for each feature
 
-| Column | Type | Default | Purpose |
-|--------|------|---------|---------|
-| `show_console_appointments` | boolean | true | Appt tab and quick action |
-| `show_console_quotes` | boolean | true | Quote tab and quick action |
-| `show_console_tracking` | boolean | true | Track quick action |
-| `show_console_billing` | boolean | true | Billing quick action |
-| `show_console_emergency` | boolean | true | Emergency section at bottom |
-| `show_console_feedback` | boolean | true | Feedback quick action |
-
-These work **in conjunction** with subscription tier - a feature must be both:
-1. Included in the company's subscription tier, AND
-2. Enabled by the company in their settings
-
----
-
-## Technical Changes
-
-### 1. Database Migration
-
-```sql
-ALTER TABLE smart_websites
-ADD COLUMN show_console_appointments BOOLEAN DEFAULT true,
-ADD COLUMN show_console_quotes BOOLEAN DEFAULT true,
-ADD COLUMN show_console_tracking BOOLEAN DEFAULT true,
-ADD COLUMN show_console_billing BOOLEAN DEFAULT true,
-ADD COLUMN show_console_emergency BOOLEAN DEFAULT true,
-ADD COLUMN show_console_feedback BOOLEAN DEFAULT true;
-```
-
-### 2. Update UnifiedCustomerConsole.tsx
-
-**Modify the config fetch** to include the new visibility settings from `smart_websites`:
-
-```typescript
-// Add to fetchConfigById
-const { data: websiteSettings } = await supabase
-  .from('smart_websites')
-  .select('show_console_*')
-  .eq('company_id', companyId)
-  .maybeSingle();
-```
-
-**Update visibility logic** to combine tier + company settings:
-
-```typescript
-// Current: only tier-based
-const visibleQuickActions = getQuickActionsForTier(effectiveTier);
-
-// New: tier-based AND company settings
-const visibleQuickActions = getQuickActionsForTier(effectiveTier).filter(action => {
-  if (action.id === 'schedule' && !websiteSettings?.show_console_appointments) return false;
-  if (action.id === 'quote' && !websiteSettings?.show_console_quotes) return false;
-  if (action.id === 'track' && !websiteSettings?.show_console_tracking) return false;
-  if (action.id === 'billing' && !websiteSettings?.show_console_billing) return false;
-  if (action.id === 'emergency' && !websiteSettings?.show_console_emergency) return false;
-  if (action.id === 'feedback' && !websiteSettings?.show_console_feedback) return false;
-  return true;
-});
-```
-
-### 3. Add Settings UI in SmartWebsiteManager.tsx
-
-Add a new "Console Features" section in the Settings tab:
-
-```text
-+------------------------------------------+
-| Console Features                         |
-| Configure which features appear in your  |
-| embedded chat widget                     |
-+------------------------------------------+
-| Appointments      [Toggle]               |
-| Quotes            [Toggle]               |
-| Tracking          [Toggle]               |
-| Billing           [Toggle]               |
-| Emergency         [Toggle]               |
-| Feedback          [Toggle]               |
-+------------------------------------------+
-```
-
----
-
-## Files to Modify
-
-| File | Changes |
-|------|---------|
-| `smart_websites` table | Add 6 new boolean columns |
-| `src/components/customer/UnifiedCustomerConsole.tsx` | Fetch website settings, filter actions/tabs by company toggles |
-| `src/pages/SmartWebsiteManager.tsx` | Add Console Features settings section |
-
----
-
-## User Experience
-
-**For Aura Intercept:**
-- Go to Web Presence Manager > Settings tab
-- In new "Console Features" section, disable:
-  - Tracking (not applicable for SaaS)
-  - Emergency (no dispatch services)
-  - Billing (if not using invoice system for customers)
-
-**Result:** The embedded console only shows relevant features for your business type.
-
----
-
-## Note on Subscription Tiers
-This doesn't bypass tier restrictions - it only allows companies to **hide** features they have access to. A Single-Point company still can't enable Appt/Quote even if they toggle them on (they're filtered out at the tier level first).
+## How to Use
+1. Go to **Web Presence Manager** > **Visibility** tab
+2. Find the **Console Features** section
+3. Toggle off features you don't need (e.g., Tracking, Emergency, Billing)
+4. Your embedded chat widget will only show enabled features

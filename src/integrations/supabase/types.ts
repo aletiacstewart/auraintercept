@@ -4797,6 +4797,12 @@ export type Database = {
           show_about_section: boolean
           show_blog: boolean | null
           show_chat_widget: boolean
+          show_console_appointments: boolean | null
+          show_console_billing: boolean | null
+          show_console_emergency: boolean | null
+          show_console_feedback: boolean | null
+          show_console_quotes: boolean | null
+          show_console_tracking: boolean | null
           show_contact: boolean
           show_emergency_hours: boolean
           show_field_hours: boolean
@@ -4852,6 +4858,12 @@ export type Database = {
           show_about_section?: boolean
           show_blog?: boolean | null
           show_chat_widget?: boolean
+          show_console_appointments?: boolean | null
+          show_console_billing?: boolean | null
+          show_console_emergency?: boolean | null
+          show_console_feedback?: boolean | null
+          show_console_quotes?: boolean | null
+          show_console_tracking?: boolean | null
           show_contact?: boolean
           show_emergency_hours?: boolean
           show_field_hours?: boolean
@@ -4907,6 +4919,12 @@ export type Database = {
           show_about_section?: boolean
           show_blog?: boolean | null
           show_chat_widget?: boolean
+          show_console_appointments?: boolean | null
+          show_console_billing?: boolean | null
+          show_console_emergency?: boolean | null
+          show_console_feedback?: boolean | null
+          show_console_quotes?: boolean | null
+          show_console_tracking?: boolean | null
           show_contact?: boolean
           show_emergency_hours?: boolean
           show_field_hours?: boolean
