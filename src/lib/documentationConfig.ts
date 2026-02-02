@@ -446,23 +446,23 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     isCore: false,
     worksAlone: true,
   },
-  // Content Engine (Creative Agent) - Part of Social Media & Web Presence
+  // Creative & Web Presence Console - 2 agents
   {
     id: 'creative',
     name: 'Creative Agent',
     description: 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing with consistent voice and messaging.',
-    console: 'social_media',
+    console: 'creative_web_presence',
     tier: 'command',
     dependencies: [],
     isCore: true,
     worksAlone: true,
   },
-  // Web Presence Agent - Part of Social Media & Web Presence
+  // Web Presence Agent - Part of Creative & Web Presence
   {
     id: 'web_presence',
     name: 'Web Presence Agent',
     description: 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts from the Content Engine.',
-    console: 'social_media',
+    console: 'creative_web_presence',
     tier: 'command',
     dependencies: ['creative'],
     isCore: true,
@@ -523,12 +523,21 @@ export const CONSOLES: ConsoleConfig[] = [
   },
   {
     id: 'social_media',
-    name: 'Social Media & Web Presence',
-    description: 'AI-powered social media signal management, web presence builder, content engine, and blog management with content creation for 6 platforms.',
+    name: 'Social Media Signal Ops',
+    description: 'AI-powered social media signal management with content creation for 6 platforms, scheduling, and visual content calendar.',
     tier: 'command',
-    agentCount: 5,
-    tabs: ['Social Posts', 'Content Engine', 'Web Presence', 'Blog', 'Calendar'],
+    agentCount: 3,
+    tabs: ['Social Posts', 'Calendar', 'Analytics'],
     color: 'pink',
+  },
+  {
+    id: 'creative_web_presence',
+    name: 'Creative & Web Presence',
+    description: 'Content Engine for unified multi-channel generation plus AI-powered website builder, blog management, and SEO optimization.',
+    tier: 'command',
+    agentCount: 2,
+    tabs: ['Content Engine', 'Web Presence', 'Blog'],
+    color: 'violet',
   },
   {
     id: 'analytics_reports',
@@ -538,15 +547,6 @@ export const CONSOLES: ConsoleConfig[] = [
     agentCount: 4,
     tabs: ['Performance', 'Revenue', 'Insights', 'Forecast', 'KPIs', 'Social', 'Reminders', 'Export'],
     color: 'cyan',
-  },
-  {
-    id: 'ai_operatives_hub',
-    name: 'AI Operatives Hub',
-    description: 'Central management console for the Aura Intelligence Network. Configure, monitor, and analyze all 24 AI operatives.',
-    tier: 'halo',
-    agentCount: 0,
-    tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],
-    color: 'indigo',
   },
 ];
 
