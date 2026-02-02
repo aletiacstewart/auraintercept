@@ -187,7 +187,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       'All 7 Consoles',
       'Everything in Multi-Track',
       'Business Operations console',
-      'Marketing & Sales automation',
+      'Outreach & Sales Ops automation',
       'Social Media Signal Ops (6 platforms)',
       'Analytics & Reports (8 tabs)',
       'Inventory management with reorder alerts',

@@ -584,19 +584,19 @@ const guideCategories = [
     ]
   },
   {
-    title: 'Marketing & Campaigns',
+    title: 'Outreach & Campaigns',
     guides: [
       {
-        title: 'Marketing & Sales Console',
+        title: 'Outreach & Sales Ops Console',
         duration: '10 min',
         steps: [
-          'Navigate to Marketing & Sales Ops (Command tier)',
-          'Quick Action Tabs: Campaigns, Promos, Leads, Segments, Referrals',
+          'Navigate to Outreach & Sales Ops (Command tier)',
+          'Quick Action Tabs: Campaign, Leads, Marketing',
           'Create and manage marketing campaigns',
           'Configure promo codes and discounts',
           'Manage lead pipeline and segmentation'
         ],
-        tips: ['Focus on Campaigns and Segments first']
+        tips: ['Focus on Campaign and Leads tabs first']
       },
       {
         title: 'Creating Campaigns',
@@ -974,7 +974,7 @@ export const ComprehensiveGuidesPDF: React.FC = () => {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Marketing & Sales (2 agents): Campaign, Marketing</Text>
+          <Text style={styles.bulletText}>Outreach & Sales Ops (3 agents): Campaign, Lead, Marketing</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>

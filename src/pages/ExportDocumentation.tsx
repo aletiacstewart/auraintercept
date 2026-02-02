@@ -318,9 +318,9 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
           </Card>
         </div>
 
-        {/* Marketing & Sales Documents Section */}
+        {/* Outreach & Sales Documents Section */}
         <div className="mt-8">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Marketing & Sales Toolkit</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">Outreach & Sales Toolkit</h2>
           <p className="text-muted-foreground mb-6">Content generation resources for digital marketing, video production, and graphic design</p>
           
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

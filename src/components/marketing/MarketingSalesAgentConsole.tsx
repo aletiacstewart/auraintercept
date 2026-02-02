@@ -167,7 +167,7 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
       {/* Glass Header */}
       <GlassHeader
         logoUrl={company?.logo_url}
-        companyName={company?.name || 'Marketing & Sales'}
+        companyName={company?.name || 'Outreach & Sales Ops'}
         agentLabel={activeLabel}
         agentColor={agentStyle.color}
         agentBgColor={agentStyle.bgColor}
@@ -199,8 +199,8 @@ export const MarketingSalesAgentConsole: React.FC<MarketingSalesAgentConsoleProp
             <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
               {showWelcome ? (
                 <WelcomeScreen
-                  companyName={company?.name || 'Marketing & Sales'}
-                  title="Marketing & Sales"
+                  companyName={company?.name || 'Outreach & Sales Ops'}
+                  title="Outreach & Sales Ops"
                   subtitle="I can help you with campaigns, promotions, referrals, and lead management. How can I assist you today?"
                   actions={QUICK_ACTIONS}
                   onAction={handleQuickAction}

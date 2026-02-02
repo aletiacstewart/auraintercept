@@ -44,7 +44,7 @@ flowchart LR
         CP["🌐 Customer Portal"]
         FO["🚛 Field Operations"]
         BM["📋 Business Management"]
-        MS["📣 Marketing & Sales"]
+        MS["📣 Outreach & Sales Ops"]
         SM["📱 Social Media"]
         AR["📊 Analytics & Reports"]
     end

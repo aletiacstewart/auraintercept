@@ -500,7 +500,7 @@ const CONSOLES = [
     ],
   },
   {
-    name: 'Marketing & Sales',
+    name: 'Outreach & Sales Ops',
     color: colors.orange,
     colorLight: colors.orangeLight,
     description: 'Customer outreach and campaign management. Create targeted campaigns to grow your customer base.',
@@ -813,7 +813,7 @@ const AIAgentGuidesPDF = () => (
           { title: 'Console 1: Customer Portal', page: '5' },
           { title: 'Console 2: Field Operations', page: '6' },
           { title: 'Console 3: Business Management', page: '7' },
-          { title: 'Console 4: Marketing & Sales', page: '8' },
+          { title: 'Console 4: Outreach & Sales Ops', page: '8' },
           { title: 'Console 5: Analytics & Reports', page: '9' },
           { title: 'Complete Agent Summary Table', page: '10' },
           { title: 'Subscription Tiers & Agent Access', page: '11' },
@@ -1088,10 +1088,10 @@ const AIAgentGuidesPDF = () => (
       <Footer />
     </Page>
 
-    {/* Console 4: Marketing & Sales */}
+    {/* Console 4: Outreach & Sales Ops */}
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent & Console Reference Guide" />
-      <Text style={styles.sectionTitle}>Console 4: Marketing & Sales</Text>
+      <Text style={styles.sectionTitle}>Console 4: Outreach & Sales Ops</Text>
       
       <View style={[styles.consoleCard, { borderLeftColor: CONSOLES[3].color, backgroundColor: CONSOLES[3].colorLight }]}>
         <Text style={[styles.consoleTitle, { color: CONSOLES[3].color }]}>{CONSOLES[3].name}</Text>

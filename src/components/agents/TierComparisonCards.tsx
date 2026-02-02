@@ -36,7 +36,7 @@ const CONSOLE_NAMES: Record<string, string> = {
   customer_portal: 'Customer Portal',
   field_operations: 'Field Operations',
   business_management: 'Business Management',
-  marketing_sales: 'Marketing & Sales',
+  marketing_sales: 'Outreach & Sales Ops',
   social_media: 'Social Media Signal',
   analytics_reports: 'Analytics & Reports',
 };

@@ -290,7 +290,7 @@ const AIAgent = () => {
                   {userRole === 'platform_admin' && (
                     <TabsTrigger value="marketing">
                       <Megaphone className="h-4 w-4 mr-2" />
-                      Marketing & Sales
+                      Outreach & Sales
                     </TabsTrigger>
                   )}
                   {userRole === 'platform_admin' && (
@@ -314,7 +314,7 @@ const AIAgent = () => {
                         : consoleType === 'businessops'
                           ? 'Business & Accounting Console'
                           : consoleType === 'marketing'
-                            ? 'Marketing & Sales Console'
+                            ? 'Outreach & Sales Ops Console'
                             : consoleType === 'analytics'
                               ? 'Analytics & Reports Ops Console'
                               : 'Customer Portal Console'}

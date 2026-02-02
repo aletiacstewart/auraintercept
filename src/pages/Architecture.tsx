@@ -241,7 +241,7 @@ const diagrams = {
         FieldOps[FieldOpsAgentConsole<br/>Technician Support]
         Billing[BillingAgentConsole<br/>Financial Operations]
         BizOps[BusinessOpsAgentConsole<br/>Business & Accounting]
-        Marketing[MarketingSalesAgentConsole<br/>Marketing & Sales]
+        Marketing[MarketingSalesAgentConsole<br/>Outreach & Sales Ops]
         Analytics[AnalyticsAgentConsole<br/>Analytics & Optimization]
     end
     

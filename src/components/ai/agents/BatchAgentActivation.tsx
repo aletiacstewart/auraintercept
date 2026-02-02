@@ -46,7 +46,7 @@ const PHASE_CONFIG = [
   },
   {
     phase: 4,
-    name: 'Marketing & Sales',
+    name: 'Outreach & Sales Ops',
     description: 'Campaigns, leads, and customer segments',
     icon: Megaphone,
     color: 'text-orange-500',

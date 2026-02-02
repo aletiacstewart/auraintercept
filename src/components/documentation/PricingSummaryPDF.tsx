@@ -949,7 +949,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Included AI Operatives (All 24)</Text>
       <Text style={styles.paragraph}>
         Full access to all 24 AI operatives including Customer Portal (4), Field Operations (4), 
-        Business Management (4), Marketing & Sales (3), Social Media & Web Presence (5), and Analytics (4) operatives.
+        Business Management (4), Outreach & Sales Ops (3), Social Media & Web Presence (5), and Analytics (4) operatives.
       </Text>
 
       <Text style={styles.subsectionTitle}>Consoles (All 7)</Text>
@@ -957,7 +957,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Customer Portal Console - Complete self-service experience</FeatureItem>
         <FeatureItem>Field Operations Console - Full dispatch and routing</FeatureItem>
         <FeatureItem>Business Operations Console - Invoicing, inventory, warranties</FeatureItem>
-        <FeatureItem>Marketing & Sales Console - Campaigns, leads, referrals</FeatureItem>
+        <FeatureItem>Outreach & Sales Ops Console - Campaigns, leads, referrals</FeatureItem>
         <FeatureItem>Social Media Signal Ops Console - 6-platform content management</FeatureItem>
         <FeatureItem>Analytics & Reports Console - KPIs, forecasting, performance</FeatureItem>
         <FeatureItem>AI Operatives Hub - Central operative management</FeatureItem>

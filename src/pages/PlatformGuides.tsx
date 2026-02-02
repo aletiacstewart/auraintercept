@@ -54,7 +54,7 @@ const NAVIGATION_ROUTES: Record<string, string> = {
   'Field Operations Console': '/dashboard/ai-consoles/field-ops',
   'Business Ops Hub': '/dashboard/ai-consoles/business-ops',
   'Business Ops Console': '/dashboard/ai-consoles/business-ops',
-  'Marketing & Sales Ops': '/dashboard/ai-consoles/marketing',
+  'Outreach & Sales Ops': '/dashboard/ai-consoles/marketing',
   'Marketing Console': '/dashboard/ai-consoles/marketing',
   'Social Media Signal Ops': '/dashboard/ai-consoles/social-media',
   'Social Media Signal Console': '/dashboard/ai-consoles/social-media',
@@ -258,15 +258,16 @@ const guideCategories = [
         tips: ['Link Quote Forge to your service catalog', 'Configure low-stock thresholds for proactive ordering']
       },
       {
-        title: 'Marketing & Campaign Agents',
+        title: 'Outreach & Sales Ops Agents',
         duration: '10 min',
         steps: [
           'Campaign Agent: Creates and sends marketing campaigns',
+          'Lead Agent: Qualifies and scores leads',
           'Marketing Agent: Manages segments and promo codes',
           'Winback automation for inactive customers',
           'Referral program management',
           'All marketing agents require Command tier',
-          'Access via Marketing & Sales Ops Console'
+          'Access via Outreach & Sales Ops Console'
         ],
         tips: ['A/B test subject lines for better performance', 'Start with simple campaigns before automation']
       },
@@ -693,16 +694,16 @@ const guideCategories = [
   },
   {
     id: 'marketing',
-    title: 'Marketing & Campaigns',
+    title: 'Outreach & Campaigns',
     icon: Megaphone,
     featureColor: 'feature-marketing',
     guides: [
       {
-        title: 'Marketing & Sales Console',
+        title: 'Outreach & Sales Ops Console',
         duration: '10 min',
         steps: [
-          'Navigate to Marketing & Sales Ops from sidebar (Command tier)',
-          'Quick Action Tabs: Campaigns, Promos, Leads, Segments, Referrals, Review',
+          'Navigate to Outreach & Sales Ops from sidebar (Command tier)',
+          'Quick Action Tabs: Campaign, Leads, Marketing',
           'Create and manage marketing campaigns',
           'Configure promo codes and discounts',
           'Manage lead pipeline and segmentation',

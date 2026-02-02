@@ -914,7 +914,7 @@ const CONSOLE_TITLES: Record<ConsoleType, string> = {
   fieldops: 'How to use Technician-Field Ops Console and App',
   businessops: 'How to use Business Mgt Ops Console',
   businessops_admin: 'How to use Business Mgt Ops Console',
-  marketing: 'How to use Marketing & Sales AI',
+  marketing: 'How to use Outreach & Sales Ops AI',
   analytics: 'How to use Analytics & Optimization AI',
   dispatch: 'How to use Dispatch-Field Ops Console',
   social: 'How to use Social Media Ops AI',
