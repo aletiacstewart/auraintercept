@@ -1,192 +1,233 @@
 
-
-# Consolidate Web Presence Console under Social-Marketing Console
+# Update Operative Dependencies & Subscription Plans
 
 ## Summary
-Move Web Presence Manager and Blog Management from a separate sidebar category into the "Social-Marketing Console & Mobile App" category. This maintains 7 consoles while keeping the Web Presence Agent as the 24th operative.
+This plan addresses inconsistencies in operative dependencies across three key files and ensures subscription plan agent listings match the 24-agent total.
 
 ---
 
-## Current Structure
+## 1. OperativeDependencyGraph.tsx Updates
 
-```text
-Sidebar Categories:
-├── Social-Marketing Console & Mobile App
-│   ├── Outreach & Sales Ops
-│   └── Social Media Signal Ops
-├── Web Presence (SEPARATE)
-│   ├── Web Presence Manager
-│   └── Blog Management
-```
+### Issues Found:
+- `AGENT_DISPLAY_NAMES` missing: `admin`, `creative`, `web_presence`, `marketing`
+- Still references `promo` instead of `marketing`
+- `DEPENDENCY_MAP` missing entries for new agents
+- No category config for consolidated social_media with web_presence
 
-## Proposed Structure
+### Changes:
 
-```text
-Sidebar Categories:
-├── Social-Marketing Console & Mobile App
-│   ├── Outreach & Sales Ops
-│   ├── Social Media Signal Ops
-│   ├── Web Presence Manager (MOVED)
-│   └── Blog Management (MOVED)
-```
-
----
-
-## Changes Required
-
-### 1. Sidebar Navigation (DashboardLayout.tsx)
-
-**File:** `src/components/dashboard/DashboardLayout.tsx`
-
-Move the Web Presence items from their own category into the "Social-Marketing Console" category:
-
-**Before (lines 95-100, 111-118):**
+**A. Update AGENT_DISPLAY_NAMES (lines 38-61):**
 ```typescript
-{
-  label: 'Web Presence',
-  items: [
-    { label: 'Web Presence Manager', ... },
-    { label: 'Blog Management', ... },
-  ],
-},
-...
-{
-  label: 'Social-Marketing Console & Mobile App',
-  items: [
-    { label: 'Outreach & Sales Ops', ... },
-    { label: 'Social Media Signal Ops', ... },
-  ],
-},
+const AGENT_DISPLAY_NAMES: Record<string, string> = {
+  triage: 'AI Receptionist',
+  booking: 'Scheduling',
+  followup: 'Follow-up',
+  review: 'Review',
+  dispatch: 'Dispatch',
+  route: 'Route',
+  eta: 'ETA',
+  checkin: 'Check-in',
+  admin: 'Admin',
+  quoting: 'Quoting',
+  invoice: 'Invoice',
+  inventory: 'Inventory',
+  campaign: 'Campaign',
+  lead: 'Lead',
+  marketing: 'Marketing',  // Changed from promo
+  social_content: 'Content',
+  social_scheduler: 'Scheduler',
+  social_analytics: 'Analytics',
+  creative: 'Creative',
+  web_presence: 'Web Presence',
+  insights: 'Insights',
+  performance: 'Performance',
+  revenue: 'Revenue',
+  forecast: 'Forecast',
+};
 ```
 
-**After:**
+**B. Update DEPENDENCY_MAP (lines 64-87) to match subscriptionAgentConfig.ts:**
 ```typescript
-{
-  label: 'Social-Marketing Console & Mobile App',
-  requiredTier: 'command',
-  items: [
-    { label: 'Outreach & Sales Ops', ... },
-    { label: 'Social Media Signal Ops', ... },
-    { label: 'Web Presence Manager', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config', requiredTier: 'command' },
-    { label: 'Blog Management', icon: FileText, href: '/dashboard/blog-management', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config', requiredTier: 'command' },
-  ],
-},
-// Remove the separate 'Web Presence' category entirely
-```
-
----
-
-### 2. Console Configuration (documentationConfig.ts)
-
-**File:** `src/lib/documentationConfig.ts`
-
-Update the CONSOLES array to consolidate web_presence under social_media:
-
-**Changes:**
-- Modify `social_media` console to include Web Presence tabs and increase agent count to 4
-- Remove `content_engine` as a separate console (it's a feature within Social Media Signal Ops)
-- Keep console count at 7
-
-**Updated social_media console definition:**
-```typescript
-{
-  id: 'social_media',
-  name: 'Social Media Signal Ops & Web Presence',
-  description: 'AI-powered social media signal management, web presence builder, and blog management with content creation for 6 platforms.',
-  tier: 'command',
-  agentCount: 4,  // social_content, social_scheduler, social_analytics, web_presence
-  tabs: ['Social Posts', 'Content Engine', 'Web Presence', 'Blog', 'Calendar'],
-  color: 'pink',
-},
-```
-
-**Remove content_engine console (lines 562-570)** - Content Engine is already embedded in Social Media Signal Ops
-
----
-
-### 3. Subscription Agent Config (subscriptionAgentConfig.ts)
-
-**File:** `src/lib/subscriptionAgentConfig.ts`
-
-Update console arrays to reflect the consolidation:
-
-**Before (line 96):**
-```typescript
-consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports', 'content_engine', 'web_presence'],
-```
-
-**After:**
-```typescript
-consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports', 'ai_operatives_hub'],
-```
-
-Update `CONSOLE_REQUIRED_AGENTS` to merge web_presence into social_media:
-```typescript
-social_media: ['social_content', 'web_presence'],  // Add web_presence here
-// Remove: web_presence: ['web_presence'],
-// Remove: content_engine: ['creative'],
-```
-
----
-
-### 4. AI Operatives Hub (AIAgentsHub.tsx)
-
-**File:** `src/pages/AIAgentsHub.tsx`
-
-Move the web_presence agent from its own category into social_media:
-
-**Update AI_OPERATIVES in documentationConfig.ts:**
-Change `console: 'web_presence'` to `console: 'social_media'` for the web_presence agent (line 476)
-
-**Update CATEGORY_INFO** - Remove web_presence and content_engine categories, keep agents under social_media
-
----
-
-### 5. Platform Stats (documentationConfig.ts)
-
-**File:** `src/lib/documentationConfig.ts`
-
-Update `PLATFORM_STATS.totalConsoles` from 8 to 7:
-```typescript
-export const PLATFORM_STATS = {
-  totalOperatives: 24,
-  totalConsoles: 7,  // Keep at 7
-  ...
+const DEPENDENCY_MAP: Record<string, string[]> = {
+  // Customer Portal
+  triage: [],
+  booking: ['triage'],
+  followup: ['triage'],
+  review: ['triage'],
+  // Field Operations
+  dispatch: ['triage', 'booking'],
+  route: ['dispatch'],
+  eta: ['dispatch', 'route'],
+  checkin: ['dispatch'],
+  // Business Operations
+  admin: [],
+  quoting: ['triage'],
+  invoice: ['quoting'],
+  inventory: [],
+  // Marketing & Sales
+  campaign: [],
+  lead: [],
+  marketing: ['campaign'],
+  // Social Media & Web Presence
+  social_content: [],
+  social_scheduler: ['social_content'],
+  social_analytics: ['social_content'],
+  creative: [],
+  web_presence: ['creative'],
+  // Analytics
+  insights: [],
+  performance: ['insights'],
+  revenue: ['insights'],
+  forecast: ['insights', 'revenue'],
 };
 ```
 
 ---
 
-## Final Console Structure (7 Consoles)
+## 2. subscriptionAgentConfig.ts AGENT_DEPENDENCIES Sync
 
-| # | Console ID | Console Name | Agents |
-|---|------------|--------------|--------|
-| 1 | customer_portal | Customer Portal | 4 (triage, booking, followup, review) |
-| 2 | field_operations | Field Operations | 4 (dispatch, route, eta, checkin) |
-| 3 | business_management | Business Operations | 4 (admin, quoting, invoice, inventory) |
-| 4 | marketing_sales | Outreach & Sales Ops | 3 (campaign, lead, marketing) |
-| 5 | social_media | Social Media & Web Presence | 5 (social_content, social_scheduler, social_analytics, creative, web_presence) |
-| 6 | analytics_reports | Analytics & Reports | 4 (insights, performance, revenue, forecast) |
-| 7 | ai_operatives_hub | AI Operatives Hub | 0 (management only) |
+### Current Issues:
+- `lead` has `['triage']` but documentationConfig shows no dependencies
+- Missing `admin` agent dependency entry
+- `marketing` should depend on `campaign` (marketing extends campaign functionality)
 
-**Total: 24 AI Operatives across 7 Consoles**
+### Changes to AGENT_DEPENDENCIES (lines 105-122):
+```typescript
+export const AGENT_DEPENDENCIES: Record<string, string[]> = {
+  // Customer Portal
+  booking: ['triage'],
+  followup: ['triage'],
+  review: ['triage'],
+  // Field Operations
+  dispatch: ['triage', 'booking'],
+  route: ['dispatch'],
+  eta: ['dispatch', 'route'],
+  checkin: ['dispatch'],
+  // Business Operations
+  invoice: ['quoting'],
+  // Marketing & Sales
+  marketing: ['campaign'],
+  // Social Media & Web Presence
+  social_scheduler: ['social_content'],
+  social_analytics: ['social_content'],
+  web_presence: ['creative'],
+  // Analytics
+  performance: ['insights'],
+  revenue: ['insights'],
+  forecast: ['insights', 'revenue'],
+};
+```
+
+---
+
+## 3. PricingComparisonTable.tsx Updates
+
+### Issues:
+- Missing Creative Agent and Web Presence Agent from AI Agents list
+- Comment says "22 total" but we have 24 agents
+- Agent count header shows wrong numbers
+
+### Changes:
+
+**A. Update section title comment (line 116):**
+```typescript
+// Command tier adds (14 more = 24 total)
+```
+
+**B. Add missing agents to AI Agents section (after line 128):**
+```typescript
+{ name: 'Creative Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+{ name: 'Web Presence Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+```
+
+**C. Add feature descriptions (lines 31-37):**
+```typescript
+'Creative Agent': 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing.',
+'Web Presence Agent': 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts.',
+```
+
+---
+
+## 4. Subscription.tsx "See More Details" Updates
+
+### Issues:
+- AI Agents section missing Creative Agent and Web Presence Agent
+- Section title shows "(0 / 3 / 10 / 24)" which is incomplete (missing express/halo/flow counts)
+
+### Changes:
+
+**A. Update sections array - AI Agents title (line 226):**
+```typescript
+title: 'AI Agents (0 / 3-4 / 3 / 10 / 24)',
+```
+
+**B. Add missing agents to features array (after line 246):**
+```typescript
+{ name: 'Creative Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+{ name: 'Web Presence Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+```
+
+**C. Add feature descriptions (lines 46-47):**
+```typescript
+'Creative Agent': 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, and blogs.',
+'Web Presence Agent': 'AI-powered website and blog management. Auto-optimizes SEO, monitors site performance, and auto-publishes blog posts from the Content Engine.',
+```
+
+---
+
+## 5. Update Primary Customer Flow in OperativeDependencyGraph
+
+### Current (line 230):
+Shows linear flow: triage → booking → dispatch → route → eta → checkin → followup → review
+
+### Updated Flow:
+Keep current flow but ensure it aligns with dependency structure
 
 ---
 
 ## Files to Modify
 
-1. `src/components/dashboard/DashboardLayout.tsx` - Move sidebar items
-2. `src/lib/documentationConfig.ts` - Update console definitions and move agents
-3. `src/lib/subscriptionAgentConfig.ts` - Update console arrays
-4. `src/pages/AIAgentsHub.tsx` - Update category mappings
+| File | Changes |
+|------|---------|
+| `src/components/ai/agents/OperativeDependencyGraph.tsx` | Add missing agents, fix dependencies, remove `promo` reference |
+| `src/lib/subscriptionAgentConfig.ts` | Sync AGENT_DEPENDENCIES with documentationConfig |
+| `src/components/landing/PricingComparisonTable.tsx` | Add Creative & Web Presence agents, fix count |
+| `src/pages/Subscription.tsx` | Add missing agents to "See More Details" table |
 
 ---
 
-## What Stays the Same
+## Dependency Visualization (Final State)
 
-- 24 AI Operatives total (no change)
-- Web Presence Manager page still accessible at `/dashboard/smart-website`
-- Blog Management still accessible at `/dashboard/blog-management`
-- All agent functionality remains unchanged
-- Only the organizational grouping changes
+```text
+Customer Portal:
+  triage (root) ─┬─► booking ─► dispatch ─┬─► route ─► eta
+                 ├─► followup             └─► checkin
+                 └─► review
 
+Business Operations:
+  admin (root)
+  quoting ─► invoice
+  inventory (root)
+
+Marketing & Sales:
+  campaign (root) ─► marketing
+  lead (root)
+
+Social Media & Web Presence:
+  social_content (root) ─┬─► social_scheduler
+                         └─► social_analytics
+  creative (root) ─► web_presence
+
+Analytics:
+  insights (root) ─┬─► performance
+                   └─► revenue ─► forecast
+```
+
+---
+
+## Validation Checklist
+- [ ] All 24 agents have entries in AGENT_DISPLAY_NAMES
+- [ ] DEPENDENCY_MAP matches AGENT_DEPENDENCIES in subscriptionAgentConfig.ts
+- [ ] PricingComparisonTable lists all 24 agents
+- [ ] Subscription.tsx "See More Details" lists all 24 agents
+- [ ] No references to `promo` agent remain (all changed to `marketing`)
