@@ -60,11 +60,7 @@ export const SetupProgressBar = forwardRef<HTMLDivElement, object>(function Setu
           .select('*', { count: 'exact', head: true })
           .eq('company_id', companyId);
 
-        // Fetch warranty policies count
-        const { count: warrantyPoliciesCount } = await supabase
-          .from('warranty_policies')
-          .select('*', { count: 'exact', head: true })
-          .eq('company_id', companyId);
+        // Fetch marketing campaigns count
 
         // Fetch marketing campaigns count
         const { count: campaignsCount } = await supabase
@@ -136,14 +132,8 @@ export const SetupProgressBar = forwardRef<HTMLDivElement, object>(function Setu
           },
         ];
 
-        // Warranties and Campaigns are available for both company admin and platform admin
+        // Additional admin steps
         const adminSteps: SetupStep[] = [
-          {
-            id: 'warranties',
-            label: 'Warranties',
-            // Check if warranty settings have been configured (any warranty policies exist)
-            completed: (warrantyPoliciesCount || 0) > 0,
-          },
           {
             id: 'campaigns',
             label: 'Campaigns',
