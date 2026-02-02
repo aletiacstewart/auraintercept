@@ -1,276 +1,236 @@
 
-# Aura Protocol Switching System Implementation Plan
+# Aura Intelligence Settings - Streamlined Implementation Plan
 
 ## Overview
-This plan implements a comprehensive protocol switching system for Aura that enables dynamic behavioral changes based on customer urgency, sentiment, and information needs. The system will support Emergency Mode, De-escalation Mode, and Contextual Sharing Mode across both voice and text channels.
+Create a unified "Aura Intelligence" settings section that consolidates all AI-related company configuration, following the Master Logic pattern from the prompt. This will be a new tab in the existing Settings page with sections for Identity, Operations, Smart Links, and Emergency/Escalation settings, plus a Developer JSON Export.
 
 ---
 
-## Phase 1: Database Schema
+## Phase 1: Database Schema Extension
 
-### 1.1 Smart Links Table
-Create a new `smart_links` table to store company-specific URL mappings:
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                      smart_links                            │
-├─────────────────────────────────────────────────────────────┤
-│ id                  UUID (PK)                               │
-│ company_id          UUID (FK → companies)                   │
-│ category            TEXT (scheduling, pricing, reviews,     │
-│                          invoicing, emergency, custom)      │
-│ name                TEXT                                    │
-│ description         TEXT                                    │
-│ url                 TEXT                                    │
-│ intent_triggers     TEXT[] (keywords that trigger this link)│
-│ is_active           BOOLEAN                                 │
-│ sort_order          INTEGER                                 │
-│ created_at          TIMESTAMP                               │
-│ updated_at          TIMESTAMP                               │
-└─────────────────────────────────────────────────────────────┘
+### New Fields for `companies` Table
+```sql
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS brand_tone TEXT DEFAULT 'professional';
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS emergency_surcharge DECIMAL(10,2);
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS manager_name TEXT;
 ```
 
-### 1.2 Protocol Switch Events Table
-Track all protocol mode changes for analytics:
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                  protocol_switch_events                     │
-├─────────────────────────────────────────────────────────────┤
-│ id                  UUID (PK)                               │
-│ company_id          UUID (FK → companies)                   │
-│ conversation_id     TEXT                                    │
-│ channel             TEXT (voice, text)                      │
-│ previous_mode       TEXT                                    │
-│ new_mode            TEXT (emergency, de_escalation,         │
-│                          contextual_sharing, normal)        │
-│ trigger_type        TEXT (keyword, sentiment, manual)       │
-│ trigger_value       TEXT (the specific trigger detected)    │
-│ confidence_score    DECIMAL                                 │
-│ customer_phone      TEXT                                    │
-│ customer_email      TEXT                                    │
-│ metadata            JSONB                                   │
-│ created_at          TIMESTAMP                               │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### 1.3 Emergency Settings (Companies Table Extension)
-Add emergency configuration fields to the companies table:
-
-```text
-New columns for companies table:
-- emergency_phone TEXT (direct emergency line)
-- emergency_sms_enabled BOOLEAN
-- emergency_notification_emails TEXT[]
-- emergency_keywords TEXT[] (custom keywords beyond defaults)
-- de_escalation_manager_contact TEXT
-- de_escalation_auto_ticket BOOLEAN
-```
+| Field | Type | Purpose |
+|-------|------|---------|
+| `brand_tone` | TEXT | Controls AI response style (professional, friendly, technical) |
+| `emergency_surcharge` | DECIMAL | After-hours/emergency service fee for AI to reference |
+| `manager_name` | TEXT | Name of escalation manager (pairs with existing `de_escalation_manager_contact`) |
 
 ---
 
-## Phase 2: Knowledge Base - Smart Links Tab
+## Phase 2: New Settings Component
 
-### 2.1 New Component: SmartLinksManager
-Location: `src/components/knowledge/SmartLinksManager.tsx`
+### File: `src/components/settings/AuraIntelligenceSettings.tsx`
+
+A single-page configuration with collapsible sections using the existing Accordion component.
+
+### Section 1: Identity ("The Who")
+Using icons: User, MessageSquare
+
+| Field | Type | Maps To |
+|-------|------|---------|
+| Company Name | Display only | `companies.name` |
+| Brand Tone | Select | `companies.brand_tone` |
+| Primary Office Phone | Phone input | `companies.contact_phone` |
+
+Brand Tone Options:
+- **Professional/Polite** - Formal, business-appropriate language
+- **Friendly/Casual** - Warm, conversational style
+- **Technical/Direct** - Concise, industry-specific terminology
+
+### Section 2: Operations ("The Where and When")
+Using icons: MapPin, Clock, DollarSign
+
+| Field | Type | Maps To |
+|-------|------|---------|
+| Service ZIP Codes | Tag input | `companies.service_area_zip_codes` |
+| Business Hours | Link to existing tab | Settings > Contact |
+| Emergency Surcharge | Currency input | `companies.emergency_surcharge` |
+
+### Section 3: Smart Links ("The How")
+Using icon: Zap
+
+| Content | Type |
+|---------|------|
+| Link to Knowledge Base | Button → `/knowledge-base?tab=smart-links` |
+| Quick status display | Shows count of configured vs empty links |
+
+This section links to the existing SmartLinksManager rather than duplicating functionality.
+
+### Section 4: Emergency and Escalation ("Critical")
+Using icons: ShieldAlert, Smile
+
+| Field | Type | Maps To |
+|-------|------|---------|
+| Emergency Dispatch Line | Phone input | `companies.emergency_phone` |
+| Emergency SMS Enabled | Toggle | `companies.emergency_sms_enabled` |
+| Custom Emergency Keywords | Tag input | `companies.emergency_keywords` |
+| Notification Emails | Multi-input | `companies.emergency_notification_emails` |
+| Manager Name | Text input | `companies.manager_name` |
+| Manager Direct Line | Phone input | `companies.de_escalation_manager_contact` |
+| Auto-Create Ticket | Toggle | `companies.de_escalation_auto_ticket` |
+
+### Section 5: Developer Export
+Using icon: Code
 
 Features:
-- CRUD operations for smart links
-- Predefined categories with icons
-- Intent trigger keyword management (comma-separated or tag input)
-- Drag-and-drop reordering
-- CSV import/export
-- Toggle active/inactive state
+- Read-only JSON preview showing all Master Logic + Custom Variables
+- Copy to clipboard button
+- Download as `.json` file button
 
-### 2.2 Update Knowledge Base Page
-Modify `src/pages/KnowledgeBase.tsx`:
-- Add new "Smart Links" tab with Link2 icon
-- Position after Documents tab
-
-### 2.3 UI Design
-Each smart link card displays:
-- Category badge (color-coded)
-- Link name and description
-- URL (with copy button)
-- Intent triggers as tags
-- Active/Inactive toggle
-
-Default categories with preset triggers:
-| Category | Default Triggers | Icon |
-|----------|-----------------|------|
-| Scheduling | "book", "schedule", "appointment", "availability" | Calendar |
-| Pricing | "how much", "price", "cost", "quote", "estimate" | DollarSign |
-| Reviews | "reviews", "ratings", "reputation", "good" | Star |
-| Invoicing | "pay", "invoice", "bill", "payment" | Receipt |
-| Emergency | "emergency", "urgent", "after hours" | AlertTriangle |
-| Custom | (user-defined) | Link |
-
----
-
-## Phase 3: Protocol Switching Logic
-
-### 3.1 Update AI Agent Chat Edge Function
-Modify `supabase/functions/ai-agent-chat/index.ts`:
-
-```text
-Protocol Detection Flow:
-┌──────────────────────────────────────────────────────────┐
-│                   Incoming Message                        │
-└────────────────────────┬─────────────────────────────────┘
-                         │
-          ┌──────────────▼──────────────┐
-          │    Emergency Detection      │
-          │    (Highest Priority)       │
-          └──────────────┬──────────────┘
-                         │
-         ┌───────────────┴────────────────┐
-         │                                │
-    ┌────▼────┐                     ┌─────▼─────┐
-    │  YES    │                     │    NO     │
-    └────┬────┘                     └─────┬─────┘
-         │                                │
-    ┌────▼────────────────┐    ┌──────────▼──────────┐
-    │  EMERGENCY MODE     │    │ Sentiment Analysis  │
-    │  - Short responses  │    │ (De-escalation)     │
-    │  - Safety first     │    └──────────┬──────────┘
-    │  - Send emergency   │               │
-    │    smart link       │    ┌──────────┴───────────┐
-    │  - Notify on-call   │    │                      │
-    └─────────────────────┘    ▼                      ▼
-                          Frustrated              Neutral
-                               │                      │
-                    ┌──────────▼─────────┐  ┌─────────▼────────┐
-                    │  DE-ESCALATION     │  │ Intent Detection │
-                    │  - Empathy mode    │  │ (Smart Links)    │
-                    │  - Log ticket      │  └─────────┬────────┘
-                    │  - Manager contact │            │
-                    └────────────────────┘   ┌───────▼────────┐
-                                             │  Match Found?  │
-                                             └───────┬────────┘
-                                                     │
-                                        ┌────────────┴────────────┐
-                                        ▼                         ▼
-                                    ┌───────┐                ┌────────┐
-                                    │  YES  │                │   NO   │
-                                    └───┬───┘                └────┬───┘
-                                        │                         │
-                              ┌─────────▼──────────┐    ┌─────────▼─────────┐
-                              │ CONTEXTUAL SHARING │    │   NORMAL MODE     │
-                              │ - Send smart link  │    │   (Continue as    │
-                              │ - Verbal confirm   │    │    standard)      │
-                              └────────────────────┘    └───────────────────┘
+JSON Export Structure:
+```json
+{
+  "masterLogic": {
+    "safety_first": {
+      "keywords": ["smoke", "fire", "gas", "flood", ...],
+      "action": "emergency_response_mode"
+    },
+    "sentiment_guard": {
+      "triggers": ["cancel", "not happy", "manager", ...],
+      "action": "de_escalation_mode"
+    },
+    "proactive_link": {
+      "triggers": ["pricing", "booking", "reviews"],
+      "action": "send_smart_link"
+    }
+  },
+  "customVariables": {
+    "company_name": "...",
+    "brand_tone": "professional",
+    "primary_office_phone": "...",
+    "service_zips": [...],
+    "emergency_surcharge": 150,
+    "booking_url": "...",
+    "quote_request_url": "...",
+    "review_url": "...",
+    "payment_portal_url": "...",
+    "emergency_dispatch_line": "...",
+    "manager_name": "...",
+    "manager_direct_line": "..."
+  },
+  "generatedAt": "2026-02-02T..."
+}
 ```
 
-### 3.2 New Functions to Add
-
-**detectProtocolMode()**: Analyzes message for emergency keywords, sentiment triggers, and intent patterns
-
-**logProtocolSwitch()**: Records mode changes to `protocol_switch_events` table
-
-**getSmartLinkForIntent()**: Queries `smart_links` table to find matching URL based on detected intent
-
-**triggerMessageAura()**: Programmatically sends SMS via Twilio with the appropriate smart link (for voice channel)
-
-### 3.3 Emergency Mode Implementation
-- Expand existing `isEmergencyRequest()` function
-- Load company-specific emergency keywords from database
-- Add safety guardrail that blocks scheduling for life-safety issues
-- Integrate with notification system for on-call alerts
-
-### 3.4 De-escalation Mode Implementation
-Sentiment triggers to detect:
-- Profanity detection (word list)
-- Escalation phrases: "cancel my service", "speak to manager", "third time", "not happy", "horrible", "worst"
-- Tone patterns (multiple exclamation points, ALL CAPS)
-
-Actions:
-- Switch to empathy-first responses
-- Auto-create priority support ticket
-- Provide manager contact via Message Aura
-
-### 3.5 Contextual Sharing Mode Implementation
-- Match user intent against `smart_links.intent_triggers`
-- Use fuzzy matching for variations ("book" matches "booking", "schedule")
-- Channel-aware delivery:
-  - **Text channel**: Embed link inline in response
-  - **Voice channel**: Confirm verbally + trigger Message Aura SMS
-
 ---
 
-## Phase 4: Emergency Configuration Settings
+## Phase 3: Settings Page Integration
 
-### 4.1 New Settings Section
-Add to company settings page (or create dedicated section):
+### Update: `src/pages/Settings.tsx`
 
-**Emergency Contact Settings**:
-- Emergency phone number
-- On-call notification emails (multi-select)
-- Custom emergency keywords (tag input)
-- Enable/disable emergency SMS
-
-**De-escalation Settings**:
-- Manager contact phone/email
-- Auto-create ticket toggle
-- Custom de-escalation phrases
-
----
-
-## Phase 5: Analytics Dashboard
-
-### 5.1 Protocol Switch Analytics
-New dashboard card showing:
-- Protocol switches by mode (pie chart)
-- Switches over time (line chart)
-- Top trigger keywords
-- Channel breakdown (voice vs text)
-- Resolution outcomes
-
-### 5.2 Query for Analytics
-```sql
-SELECT 
-  new_mode,
-  channel,
-  COUNT(*) as count,
-  DATE_TRUNC('day', created_at) as date
-FROM protocol_switch_events
-WHERE company_id = $1
-GROUP BY new_mode, channel, date
-ORDER BY date DESC;
+Add new tab after existing tabs:
+```typescript
+<TabsTrigger value="aura-intelligence" className="flex items-center gap-1">
+  <Brain className="w-3 h-3" />
+  Aura Intelligence
+</TabsTrigger>
 ```
+
+Add to VALID_TABS array: `'aura-intelligence'`
+
+---
+
+## Phase 4: AI Agent Integration
+
+### Update: `supabase/functions/ai-agent-chat/index.ts`
+
+Modify the system prompt builder to incorporate `brand_tone`:
+
+```typescript
+function getBrandToneModifier(brandTone: string): string {
+  switch (brandTone) {
+    case 'friendly':
+      return `COMMUNICATION STYLE: Be warm, conversational, and approachable. 
+              Use casual language, contractions, and friendly expressions.
+              Example: "Hey there! I'd be happy to help you out with that!"`;
+    case 'technical':
+      return `COMMUNICATION STYLE: Be direct, precise, and industry-focused.
+              Use technical terminology when appropriate. Be concise.
+              Example: "I can schedule that diagnostic for you. What's your availability?"`;
+    case 'professional':
+    default:
+      return `COMMUNICATION STYLE: Be professional, courteous, and business-appropriate.
+              Use formal but warm language. Maintain professionalism throughout.
+              Example: "Thank you for contacting us. I would be pleased to assist you."`;
+  }
+}
+```
+
+Add `emergency_surcharge` to AI context when relevant:
+- Include in pricing discussions
+- Reference during after-hours/emergency calls
 
 ---
 
 ## Technical Summary
 
 ### Files to Create
-1. `src/components/knowledge/SmartLinksManager.tsx` - New Knowledge Base tab component
-2. Database migration for `smart_links` table
-3. Database migration for `protocol_switch_events` table
-4. Database migration for companies table extension
+1. `src/components/settings/AuraIntelligenceSettings.tsx` - Main settings component
 
 ### Files to Modify
-1. `src/pages/KnowledgeBase.tsx` - Add Smart Links tab
-2. `supabase/functions/ai-agent-chat/index.ts` - Protocol switching logic
-3. Company settings component - Emergency configuration
+1. `src/pages/Settings.tsx` - Add new tab
+2. `supabase/functions/ai-agent-chat/index.ts` - Brand tone modifier, emergency surcharge context
 
-### RLS Policies Required
-- `smart_links`: Company-scoped access (users can only see their company's links)
-- `protocol_switch_events`: Company-scoped access for viewing, system insert for logging
+### Database Migration
+```sql
+-- Add missing fields for Aura Intelligence configuration
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS brand_tone TEXT DEFAULT 'professional';
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS emergency_surcharge DECIMAL(10,2);
+ALTER TABLE companies ADD COLUMN IF NOT EXISTS manager_name TEXT;
 
-### Default Smart Link Templates
-On first company setup, auto-populate with empty templates:
-- Scheduling (booking_url)
-- Pricing (price_sheet_url)  
-- Reviews (google_review_url)
-- Invoicing (payment_portal)
-- Emergency (emergency_contact_url)
+-- Add comments for documentation
+COMMENT ON COLUMN companies.brand_tone IS 'AI communication style: professional, friendly, or technical';
+COMMENT ON COLUMN companies.emergency_surcharge IS 'After-hours/emergency service fee displayed by AI';
+COMMENT ON COLUMN companies.manager_name IS 'Name of manager for de-escalation routing';
+```
+
+---
+
+## UI Component Structure
+
+```text
+AuraIntelligenceSettings
+├── Card: Identity Section
+│   ├── Company Name (readonly display)
+│   ├── Brand Tone (Select)
+│   └── Primary Phone (Input)
+│
+├── Card: Operations Section
+│   ├── Service ZIP Codes (TagInput)
+│   ├── Business Hours (Link to existing)
+│   └── Emergency Surcharge (CurrencyInput)
+│
+├── Card: Smart Links Section
+│   ├── Status Summary (X of Y configured)
+│   └── "Manage Smart Links" Button → Knowledge Base
+│
+├── Card: Emergency & Escalation Section
+│   ├── Emergency Dispatch Line (Input)
+│   ├── Emergency SMS Toggle (Switch)
+│   ├── Custom Keywords (TagInput)
+│   ├── Notification Emails (MultiInput)
+│   ├── Manager Name (Input)
+│   ├── Manager Direct Line (Input)
+│   └── Auto-Create Ticket (Switch)
+│
+└── Card: Developer Export Section
+    ├── JSON Preview (CodeBlock, readonly)
+    ├── Copy Button
+    └── Download Button
+```
 
 ---
 
 ## Implementation Order
-1. Database migrations (smart_links, protocol_switch_events, companies extension)
-2. SmartLinksManager component + Knowledge Base integration
-3. Protocol detection functions in edge function
-4. Protocol switch logging
-5. Emergency configuration settings UI
-6. Analytics dashboard integration
+
+1. Database migration (add brand_tone, emergency_surcharge, manager_name)
+2. Create AuraIntelligenceSettings component
+3. Integrate into Settings page
+4. Update AI agent edge function with brand tone modifier
+5. Test end-to-end configuration flow
