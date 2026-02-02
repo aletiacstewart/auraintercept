@@ -79,7 +79,7 @@ export default function Settings() {
                 System
               </TabsTrigger>
               <Link 
-                to="/dashboard/integrations" 
+                to="/dashboard/3rd-party-overview" 
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 ml-2 text-xs font-medium rounded-full bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30 transition-all hover:scale-105"
               >
                 Next: 3rd Party Setup
