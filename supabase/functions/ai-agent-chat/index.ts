@@ -2105,6 +2105,25 @@ const AGENT_TOOLS: Record<string, any[]> = {
   ],
 };
 
+// Helper function to get brand tone modifier for AI communication style
+function getBrandToneModifier(brandTone: string | null): string {
+  switch (brandTone) {
+    case 'friendly':
+      return `COMMUNICATION STYLE: Be warm, conversational, and approachable. 
+Use casual language, contractions, and friendly expressions.
+Example: "Hey there! I'd be happy to help you out with that!"`;
+    case 'technical':
+      return `COMMUNICATION STYLE: Be direct, precise, and industry-focused.
+Use technical terminology when appropriate. Be concise.
+Example: "I can schedule that diagnostic for you. What's your availability?"`;
+    case 'professional':
+    default:
+      return `COMMUNICATION STYLE: Be professional, courteous, and business-appropriate.
+Use formal but warm language. Maintain professionalism throughout.
+Example: "Thank you for contacting us. I would be pleased to assist you."`;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -2183,10 +2202,10 @@ serve(async (req) => {
       return null;
     };
 
-    // Fetch company's subscription tier
+    // Fetch company's subscription tier and brand settings
     const { data: companyTierData, error: tierError } = await supabase
       .from('companies')
-      .select('name, subscription_tier, trial_ends_at')
+      .select('name, subscription_tier, trial_ends_at, brand_tone, emergency_surcharge, manager_name')
       .eq('id', companyId)
       .single();
 
@@ -2471,7 +2490,19 @@ ${pageContext}
 Use the query_business_data tool to answer questions about any data mentioned in the page context.`;
     }
     
+    // Get brand tone modifier for non-internal agents
+    const brandToneModifier = !isInternalAgent ? getBrandToneModifier(company?.brand_tone) : '';
+    
+    // Add emergency surcharge context if configured
+    const pricingContext = company?.emergency_surcharge ? 
+      `\nEMERGENCY/AFTER-HOURS SURCHARGE: $${company.emergency_surcharge} additional fee applies for emergency or after-hours service calls.` : '';
+    
+    // Add manager info for de-escalation
+    const managerContext = company?.manager_name ? 
+      `\nESCALATION MANAGER: ${company.manager_name}` : '';
+    
     const systemPrompt = `${basePrompt}
+${brandToneModifier}
 ${protocolPromptModifier}
 ${handoffInstructions}
 ${pageContextInstructions}
@@ -2479,6 +2510,8 @@ ${internalAgentInstructions}
 
 Company Name: ${company?.name || 'Our Company'}
 ${dateTimeContext}
+${pricingContext}
+${managerContext}
 
 ${knowledgeBaseContext}
 
