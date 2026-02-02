@@ -86,6 +86,8 @@ import PlatformIssues from "./pages/PlatformIssues";
 import OAuthGoogleCalendar from "./pages/OAuthGoogleCalendar";
 import SmartWebsite from "./pages/SmartWebsite";
 import SmartWebsiteManager from "./pages/SmartWebsiteManager";
+import CompanyBlog from "./pages/CompanyBlog";
+import CompanyBlogPost from "./pages/CompanyBlogPost";
 import TalkToAura from "./pages/TalkToAura";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
@@ -244,6 +246,8 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 
                 {/* Smart Website Routes */}
                 <Route path="/site/:subdomain" element={<SmartWebsite />} />
+                <Route path="/site/:subdomain/blog" element={<CompanyBlog />} />
+                <Route path="/site/:subdomain/blog/:slug" element={<CompanyBlogPost />} />
                 
                 {/* Technician Dashboard Routes - Protected */}
                 <Route path="/technician" element={<ProtectedRoute><TechnicianDashboard /></ProtectedRoute>} />

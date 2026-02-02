@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { Phone, Mail, MapPin, Clock, AlertCircle, ChevronLeft, ChevronRight, X } from 'lucide-react';
@@ -25,6 +25,7 @@ interface WebsiteData {
   show_contact: boolean;
   show_chat_widget: boolean;
   show_voice_widget: boolean;
+  show_blog: boolean | null;
   background_style: string | null;
   is_published: boolean;
   subscription_tier: string | null;
@@ -278,6 +279,12 @@ export default function SmartWebsite() {
             <span className="font-semibold text-lg">{website.company_name}</span>
           </div>
           <div className="flex items-center gap-2">
+            {/* Blog link */}
+            {website.show_blog && (
+              <Button variant="ghost" size="sm" asChild>
+                <Link to={`/site/${subdomain}/blog`}>Blog</Link>
+              </Button>
+            )}
             {/* Emergency CTA (shown during night mode) */}
             {isNightMode && website.night_cta_text && (
               <Button
@@ -574,6 +581,17 @@ export default function SmartWebsite() {
       {/* Footer */}
       <footer className="py-8 px-4 border-t">
         <div className="container mx-auto text-center text-sm text-muted-foreground">
+          {website.show_blog && (
+            <div className="mb-4">
+              <Link 
+                to={`/site/${subdomain}/blog`} 
+                className="hover:underline font-medium"
+                style={{ color: primaryColor }}
+              >
+                Blog
+              </Link>
+            </div>
+          )}
           <p>© {new Date().getFullYear()} {website.company_name}. All rights reserved.</p>
           <p className="mt-2">
             Powered by <a href="/" className="hover:underline" style={{ color: primaryColor }}>Aura Intercept</a>
