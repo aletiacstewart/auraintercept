@@ -12,6 +12,7 @@ import { ChatBubble } from '@/components/ai/chat/ChatBubble';
 import { WelcomeScreen } from '@/components/ai/chat/WelcomeScreen';
 import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { AppointmentsManager } from '@/components/appointments/AppointmentsManager';
+import { AuraLiveStream } from '@/components/aura/AuraLiveStream';
 import { QuotesManager } from '@/components/quotes/QuotesManager';
 import { InvoicesManager } from '@/components/invoices/InvoicesManager';
 import { LeadsManager } from '@/components/leads';
@@ -246,14 +247,19 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
           {showWelcome ? (
-            <WelcomeScreen
-              companyName={company?.name || 'Business Mgt Ops Console'}
-              title="Business Mgt Ops Console"
-              subtitle="I can help you with quotes, invoices, leads, and business insights. How can I assist you today?"
-              actions={QUICK_ACTIONS}
-              onAction={handleQuickAction}
-              consoleType={isPlatformAdmin ? 'businessops_admin' : 'businessops'}
-            />
+            <div className="space-y-6">
+              {effectiveCompanyId && (
+                <AuraLiveStream companyId={effectiveCompanyId} />
+              )}
+              <WelcomeScreen
+                companyName={company?.name || 'Business Mgt Ops Console'}
+                title="Business Mgt Ops Console"
+                subtitle="I can help you with quotes, invoices, leads, and business insights. How can I assist you today?"
+                actions={QUICK_ACTIONS}
+                onAction={handleQuickAction}
+                consoleType={isPlatformAdmin ? 'businessops_admin' : 'businessops'}
+              />
+            </div>
           ) : (
             <div className="space-y-4">
               {/* Embedded Managers */}

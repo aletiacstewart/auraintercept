@@ -47,7 +47,7 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
     
     // Map routes to context descriptions
     const pageContextMap: Record<string, string> = {
-      '/dashboard/business-operations': 'Business Mgt Ops Overview page showing: financial metrics dashboard, sales (leads, quotes, invoices), appointments, inventory, and people management in unified tabs.',
+      '/dashboard/ai-consoles/business-mgt-ops': 'Business Mgt Ops Console showing: financial metrics dashboard, sales (leads, quotes, invoices), appointments, inventory, people management, and real-time Aura Live activity stream.',
       '/dashboard/leads': 'Leads management page showing all leads with status, priority, source, and contact info.',
       '/dashboard/appointments': 'Appointments management page showing scheduled, confirmed, and completed appointments.',
       '/dashboard/calendar': 'Calendar view showing appointments by day/week/month.',
