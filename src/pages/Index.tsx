@@ -120,7 +120,7 @@ const agentCategories = [{
   }]
 }, {
   id: 'social',
-  name: 'Social Media & Web Presence',
+  name: 'Social Media Signal Ops',
   icon: Send,
   color: 'from-pink-500 to-rose-500',
   agents: [{
@@ -135,7 +135,13 @@ const agentCategories = [{
     name: 'Signal Analytics',
     description: 'Engagement metrics and performance tracking',
     icon: BarChart3
-  }, {
+  }]
+}, {
+  id: 'creative_web_presence',
+  name: 'Creative & Web Presence',
+  icon: Palette,
+  color: 'from-teal-500 to-cyan-500',
+  agents: [{
     name: 'Creative Agent',
     description: 'AI-powered multi-channel content generation for blogs, campaigns, and websites',
     icon: Palette
@@ -194,13 +200,13 @@ const agentConsoles = [{
   iconColor: 'text-pink-500',
   features: ['AI content generation', 'Multi-platform scheduling', 'Analytics dashboard', 'Brand voice consistency']
 }, {
-  name: 'Web Presence Console',
-  description: 'Branded Web Presence page with AI chat and voice.',
-  icon: Globe,
+  name: 'Creative & Web Presence Console',
+  description: 'AI-powered content creation and website management.',
+  icon: Palette,
   gradient: 'from-teal-500 to-cyan-500',
   iconBg: 'bg-teal-500/10',
   iconColor: 'text-teal-500',
-  features: ['AI Chat & Voice', 'Content editor', 'Visitor analytics', 'Domain management']
+  features: ['Multi-channel content', 'Website builder', 'Blog management', 'SEO optimization']
 }];
 const platformFeatures = [{
   icon: Globe,
