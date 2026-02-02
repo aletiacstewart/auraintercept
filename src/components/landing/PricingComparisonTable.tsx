@@ -22,7 +22,7 @@ const featureDescriptions: Record<string, string> = {
   'Quote Agent': 'Generates professional quotes instantly based on job requirements and pricing rules.',
   'Invoice Agent': 'Creates and sends invoices automatically, with payment tracking and reminders.',
   
-  // AI Agents - Command adds (12 more = 22 total)
+  // AI Agents - Command adds (14 more = 24 total)
   'Admin Agent': 'User management, company settings, and access control.',
   'Inventory Agent': 'Tracks parts and materials, manages stock levels, and alerts on low inventory.',
   'Campaign Agent': 'Creates and manages marketing campaigns with automated targeting and scheduling.',
@@ -31,6 +31,8 @@ const featureDescriptions: Record<string, string> = {
   'Social Media Signal Agent': 'AI-powered content creation for all social platforms.',
   'Signal Scheduler': 'Automated post scheduling across 6 platforms.',
   'Signal Analytics': 'Engagement metrics and performance tracking.',
+  'Creative Agent': 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing.',
+  'Web Presence Agent': 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts.',
   'Performance Agent': 'Analyzes team and individual performance metrics with actionable insights.',
   'Revenue Agent': 'Tracks revenue trends, forecasts income, and identifies growth opportunities.',
   'Insights Agent': 'Generates business intelligence reports and identifies patterns in your data.',
@@ -113,7 +115,7 @@ const sections: FeatureSection[] = [
       { name: 'Check-in Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Quote Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Invoice Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
-      // Command tier adds (12 more = 22 total)
+      // Command tier adds (14 more = 24 total)
       { name: 'Admin Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Inventory Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Campaign Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
@@ -122,6 +124,8 @@ const sections: FeatureSection[] = [
       { name: 'Social Media Signal Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Signal Scheduler', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Signal Analytics', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Creative Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Web Presence Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Performance Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Revenue Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Insights Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
