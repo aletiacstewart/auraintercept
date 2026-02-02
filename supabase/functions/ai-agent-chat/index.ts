@@ -2404,6 +2404,48 @@ YOUR FIRST MESSAGE MUST:
 
     const dateTimeContext = getDateTimeContext();
     
+    // === PROTOCOL DETECTION ===
+    // Detect if we need to switch operational modes based on message content
+    const channel: 'voice' | 'text' = 'text'; // Default to text for chat; voice would be set by caller
+    const protocolResult = detectProtocolMode(message, []);
+    let protocolPromptModifier = '';
+    
+    if (protocolResult.mode !== 'normal' && !isInternalAgent) {
+      console.log(`[AI Agent Chat] Protocol mode detected: ${protocolResult.mode} (trigger: ${protocolResult.triggerValue})`);
+      
+      // Log the protocol switch
+      await logProtocolSwitch(
+        supabase,
+        companyId,
+        contextId,
+        channel,
+        'normal',
+        protocolResult.mode,
+        protocolResult.triggerType,
+        protocolResult.triggerValue,
+        protocolResult.confidence,
+        customerInfo?.phone,
+        customerInfo?.email,
+        { agent_type: agentType, message_preview: message.substring(0, 100) }
+      );
+      
+      // Get protocol-specific prompt modifications
+      protocolPromptModifier = getProtocolPromptModifier(protocolResult.mode, protocolResult.triggerValue);
+      
+      // For contextual sharing, try to fetch relevant smart link
+      if (protocolResult.mode === 'contextual_sharing' && protocolResult.triggerValue) {
+        const [category, trigger] = protocolResult.triggerValue.split(':');
+        const smartLink = await getSmartLinkForIntent(supabase, companyId, category, trigger || '');
+        if (smartLink && smartLink.url) {
+          protocolPromptModifier += `\n\nRELEVANT SMART LINK TO SHARE:
+- Name: ${smartLink.name}
+- URL: ${smartLink.url}
+${smartLink.description ? `- Description: ${smartLink.description}` : ''}
+Include this link in your response when appropriate.`;
+        }
+      }
+    }
+    
     // Special instructions for internal agents (admins, not customers)
     let internalAgentInstructions = '';
     if (isInternalAgent) {
@@ -2430,6 +2472,7 @@ Use the query_business_data tool to answer questions about any data mentioned in
     }
     
     const systemPrompt = `${basePrompt}
+${protocolPromptModifier}
 ${handoffInstructions}
 ${pageContextInstructions}
 ${internalAgentInstructions}
@@ -2852,6 +2895,292 @@ function isEmergencyRequest(text: string) {
     'no a/c',
     'leaking everywhere',
   ].some((kw) => t.includes(kw));
+}
+
+// === PROTOCOL SWITCHING SYSTEM ===
+// Detects when to switch operational modes based on urgency, sentiment, and information needs
+
+type ProtocolMode = 'normal' | 'emergency' | 'de_escalation' | 'contextual_sharing';
+type TriggerType = 'keyword' | 'sentiment' | 'manual';
+
+interface ProtocolDetectionResult {
+  mode: ProtocolMode;
+  triggerType: TriggerType;
+  triggerValue: string | null;
+  confidence: number;
+}
+
+// Emergency keywords - highest priority detection
+const DEFAULT_EMERGENCY_KEYWORDS = [
+  'emergency', 'urgent', 'flood', 'flooding', 'fire', 'gas smell', 'smell gas',
+  'sparks', 'smoke', 'no heat', 'no ac', 'no a/c', 'burst pipe', 'water everywhere',
+  'dangerous', 'help', 'leaking everywhere', 'electrical burning'
+];
+
+// De-escalation sentiment triggers
+const DE_ESCALATION_TRIGGERS = [
+  'cancel my service', 'cancel service', 'not happy', 'horrible', 'worst',
+  'third time', 'speak to manager', 'talk to manager', 'supervisor',
+  'unacceptable', 'ridiculous', 'frustrated', 'furious', 'angry',
+  'terrible', 'disgusting', 'never again', 'refund', 'complaint'
+];
+
+// Profanity indicators for de-escalation
+const PROFANITY_PATTERNS = [
+  /\b(damn|hell|crap|suck|pissed|bs|b\.s\.)\b/i,
+  /(!{3,})/,  // Multiple exclamation marks indicate frustration
+];
+
+// Contextual sharing intent triggers (mapped to smart link categories)
+const CONTEXTUAL_INTENT_PATTERNS: Record<string, string[]> = {
+  scheduling: ['book', 'schedule', 'appointment', 'availability', 'when can', 'available times'],
+  pricing: ['how much', 'price', 'cost', 'quote', 'estimate', 'rate', 'pricing'],
+  reviews: ['reviews', 'ratings', 'reputation', 'good', 'recommend', 'testimonials'],
+  invoicing: ['pay', 'invoice', 'bill', 'payment', 'balance', 'owe'],
+  emergency: ['emergency', 'urgent', 'after hours', '24/7', 'emergency number'],
+};
+
+/**
+ * Detects the current protocol mode based on message content
+ * Priority: Emergency > De-escalation > Contextual Sharing > Normal
+ */
+function detectProtocolMode(
+  text: string,
+  customEmergencyKeywords: string[] = []
+): ProtocolDetectionResult {
+  const t = text.toLowerCase();
+  
+  // 1. EMERGENCY MODE - Highest priority
+  const allEmergencyKeywords = [...DEFAULT_EMERGENCY_KEYWORDS, ...customEmergencyKeywords];
+  for (const keyword of allEmergencyKeywords) {
+    if (t.includes(keyword.toLowerCase())) {
+      return {
+        mode: 'emergency',
+        triggerType: 'keyword',
+        triggerValue: keyword,
+        confidence: 0.95,
+      };
+    }
+  }
+  
+  // 2. DE-ESCALATION MODE - Check sentiment triggers
+  for (const trigger of DE_ESCALATION_TRIGGERS) {
+    if (t.includes(trigger.toLowerCase())) {
+      return {
+        mode: 'de_escalation',
+        triggerType: 'sentiment',
+        triggerValue: trigger,
+        confidence: 0.85,
+      };
+    }
+  }
+  
+  // Check profanity/frustration patterns
+  for (const pattern of PROFANITY_PATTERNS) {
+    if (pattern.test(text)) {
+      return {
+        mode: 'de_escalation',
+        triggerType: 'sentiment',
+        triggerValue: 'frustration_detected',
+        confidence: 0.75,
+      };
+    }
+  }
+  
+  // Check for ALL CAPS (indicates shouting/frustration)
+  const words = text.split(/\s+/);
+  const capsWords = words.filter(w => w.length > 3 && w === w.toUpperCase() && /[A-Z]/.test(w));
+  if (capsWords.length >= 3) {
+    return {
+      mode: 'de_escalation',
+      triggerType: 'sentiment',
+      triggerValue: 'caps_detected',
+      confidence: 0.70,
+    };
+  }
+  
+  // 3. CONTEXTUAL SHARING MODE - Check for info-seeking intent
+  for (const [category, triggers] of Object.entries(CONTEXTUAL_INTENT_PATTERNS)) {
+    for (const trigger of triggers) {
+      if (t.includes(trigger.toLowerCase())) {
+        return {
+          mode: 'contextual_sharing',
+          triggerType: 'keyword',
+          triggerValue: `${category}:${trigger}`,
+          confidence: 0.80,
+        };
+      }
+    }
+  }
+  
+  // 4. NORMAL MODE - Default
+  return {
+    mode: 'normal',
+    triggerType: 'manual',
+    triggerValue: null,
+    confidence: 1.0,
+  };
+}
+
+/**
+ * Logs a protocol mode switch event for analytics
+ */
+async function logProtocolSwitch(
+  supabase: any,
+  companyId: string,
+  conversationId: string | null,
+  channel: 'voice' | 'text',
+  previousMode: ProtocolMode,
+  newMode: ProtocolMode,
+  triggerType: TriggerType,
+  triggerValue: string | null,
+  confidence: number,
+  customerPhone?: string | null,
+  customerEmail?: string | null,
+  metadata?: Record<string, any>
+): Promise<void> {
+  try {
+    await supabase.from('protocol_switch_events').insert({
+      company_id: companyId,
+      conversation_id: conversationId,
+      channel,
+      previous_mode: previousMode,
+      new_mode: newMode,
+      trigger_type: triggerType,
+      trigger_value: triggerValue,
+      confidence_score: confidence,
+      customer_phone: customerPhone,
+      customer_email: customerEmail,
+      metadata: metadata || {},
+    });
+    console.log(`[Protocol Switch] Logged: ${previousMode} -> ${newMode} (${triggerType}: ${triggerValue})`);
+  } catch (error) {
+    console.error('[Protocol Switch] Failed to log switch event:', error);
+  }
+}
+
+/**
+ * Fetches matching smart link based on detected intent
+ */
+async function getSmartLinkForIntent(
+  supabase: any,
+  companyId: string,
+  intentCategory: string,
+  intentTrigger: string
+): Promise<{ url: string; name: string; description: string | null } | null> {
+  try {
+    // First try exact category match
+    const { data: exactMatch } = await supabase
+      .from('smart_links')
+      .select('url, name, description, intent_triggers')
+      .eq('company_id', companyId)
+      .eq('category', intentCategory)
+      .eq('is_active', true)
+      .limit(1)
+      .maybeSingle();
+    
+    if (exactMatch && exactMatch.url) {
+      return {
+        url: exactMatch.url,
+        name: exactMatch.name,
+        description: exactMatch.description,
+      };
+    }
+    
+    // Fall back to searching intent_triggers across all links
+    const { data: links } = await supabase
+      .from('smart_links')
+      .select('url, name, description, intent_triggers')
+      .eq('company_id', companyId)
+      .eq('is_active', true);
+    
+    if (links) {
+      for (const link of links) {
+        const triggers = link.intent_triggers || [];
+        if (triggers.some((t: string) => intentTrigger.toLowerCase().includes(t.toLowerCase()))) {
+          if (link.url) {
+            return {
+              url: link.url,
+              name: link.name,
+              description: link.description,
+            };
+          }
+        }
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('[Smart Links] Error fetching smart link:', error);
+    return null;
+  }
+}
+
+/**
+ * Gets protocol-specific system prompt modifications
+ */
+function getProtocolPromptModifier(mode: ProtocolMode, triggerValue: string | null): string {
+  switch (mode) {
+    case 'emergency':
+      return `
+EMERGENCY MODE ACTIVE - HIGHEST PRIORITY
+===========================================
+The customer has indicated an EMERGENCY situation (detected: "${triggerValue}").
+
+CRITICAL RULES:
+1. Use SHORT, DECLARATIVE sentences - no long explanations
+2. Do NOT offer multiple options - provide ONE clear path to help
+3. Do NOT attempt to troubleshoot or schedule a standard appointment
+4. IMMEDIATELY provide emergency contact information
+5. Confirm location/safety if not already known
+6. Express urgency and reassurance: "I understand this is urgent. Let me get you help immediately."
+
+SAFETY GUARDRAIL: For gas leaks, fire, or electrical hazards, ONLY provide the emergency phone number and tell them to evacuate if necessary. Do NOT attempt any other assistance.
+`;
+
+    case 'de_escalation':
+      return `
+DE-ESCALATION MODE ACTIVE - EMPATHY FIRST
+==========================================
+The customer appears FRUSTRATED or UPSET (detected: "${triggerValue}").
+
+CRITICAL RULES:
+1. Lead with EMPATHY - "I hear your frustration" or "I understand this has been difficult"
+2. Do NOT defend the company or make excuses
+3. Do NOT provide explanations before acknowledging their feelings
+4. SUMMARIZE their issue back to show you listened
+5. Offer a DIRECT PATH to resolution or human manager contact
+6. Use calming language: "I'm going to make this right"
+
+PHRASES TO USE:
+- "I completely understand why you're frustrated"
+- "I hear you, and I'm sorry this has been your experience"
+- "Let me personally make sure this gets resolved"
+- "I'm escalating this to ensure you get the attention you deserve"
+
+PHRASES TO AVOID:
+- "Unfortunately..." or "Our policy is..."
+- "I understand, but..."
+- Anything that sounds defensive
+`;
+
+    case 'contextual_sharing':
+      return `
+CONTEXTUAL SHARING MODE ACTIVE - PROACTIVE INFO
+================================================
+The customer is seeking specific information (detected: "${triggerValue}").
+
+CRITICAL RULES:
+1. Be PROACTIVE - don't wait until end of conversation to share relevant links
+2. VERBALLY CONFIRM when sending information: "I'm sending that link to you now"
+3. For VOICE calls: Trigger SMS with the link while confirming verbally
+4. For TEXT chat: Embed the link directly in your response
+5. Match the info to their exact request - scheduling link for booking, payment link for invoices, etc.
+`;
+
+    default:
+      return '';
+  }
 }
 
 // Execute agent-specific tools

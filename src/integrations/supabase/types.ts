@@ -853,11 +853,17 @@ export type Database = {
           cost_alert_threshold: number | null
           created_at: string
           customer_prefs_enabled: boolean | null
+          de_escalation_auto_ticket: boolean | null
+          de_escalation_manager_contact: string | null
           default_call_enabled: boolean
           default_email_enabled: boolean
           default_sms_enabled: boolean
           dispatch_phone: string | null
           email: string | null
+          emergency_keywords: string[] | null
+          emergency_notification_emails: string[] | null
+          emergency_phone: string | null
+          emergency_sms_enabled: boolean | null
           id: string
           last_bounce_alert_at: string | null
           last_cost_alert_at: string | null
@@ -959,11 +965,17 @@ export type Database = {
           cost_alert_threshold?: number | null
           created_at?: string
           customer_prefs_enabled?: boolean | null
+          de_escalation_auto_ticket?: boolean | null
+          de_escalation_manager_contact?: string | null
           default_call_enabled?: boolean
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
           dispatch_phone?: string | null
           email?: string | null
+          emergency_keywords?: string[] | null
+          emergency_notification_emails?: string[] | null
+          emergency_phone?: string | null
+          emergency_sms_enabled?: boolean | null
           id?: string
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
@@ -1065,11 +1077,17 @@ export type Database = {
           cost_alert_threshold?: number | null
           created_at?: string
           customer_prefs_enabled?: boolean | null
+          de_escalation_auto_ticket?: boolean | null
+          de_escalation_manager_contact?: string | null
           default_call_enabled?: boolean
           default_email_enabled?: boolean
           default_sms_enabled?: boolean
           dispatch_phone?: string | null
           email?: string | null
+          emergency_keywords?: string[] | null
+          emergency_notification_emails?: string[] | null
+          emergency_phone?: string | null
+          emergency_sms_enabled?: boolean | null
           id?: string
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
@@ -3862,6 +3880,69 @@ export type Database = {
           },
         ]
       }
+      protocol_switch_events: {
+        Row: {
+          channel: string
+          company_id: string
+          confidence_score: number | null
+          conversation_id: string | null
+          created_at: string
+          customer_email: string | null
+          customer_phone: string | null
+          id: string
+          metadata: Json | null
+          new_mode: string
+          previous_mode: string | null
+          trigger_type: string
+          trigger_value: string | null
+        }
+        Insert: {
+          channel: string
+          company_id: string
+          confidence_score?: number | null
+          conversation_id?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_phone?: string | null
+          id?: string
+          metadata?: Json | null
+          new_mode: string
+          previous_mode?: string | null
+          trigger_type: string
+          trigger_value?: string | null
+        }
+        Update: {
+          channel?: string
+          company_id?: string
+          confidence_score?: number | null
+          conversation_id?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_phone?: string | null
+          id?: string
+          metadata?: Json | null
+          new_mode?: string
+          previous_mode?: string | null
+          trigger_type?: string
+          trigger_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "protocol_switch_events_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "protocol_switch_events_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       push_subscriptions: {
         Row: {
           auth_key: string
@@ -4681,6 +4762,63 @@ export type Database = {
             columns: ["website_id"]
             isOneToOne: false
             referencedRelation: "smart_websites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      smart_links: {
+        Row: {
+          category: string
+          company_id: string
+          created_at: string
+          description: string | null
+          id: string
+          intent_triggers: string[] | null
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          category: string
+          company_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          intent_triggers?: string[] | null
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          category?: string
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          intent_triggers?: string[] | null
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smart_links_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "smart_links_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
             referencedColumns: ["id"]
           },
         ]
