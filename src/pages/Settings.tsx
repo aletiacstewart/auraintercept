@@ -16,18 +16,17 @@ import { ContactInfoSettings } from '@/components/company/ContactInfoSettings';
 import { SetupProgressBar } from '@/components/company/SetupProgressBar';
 import { VoiceOnboardingSettings } from '@/components/settings/VoiceOnboardingSettings';
 import { SystemSettings } from '@/components/settings/SystemSettings';
-import { AuraIntelligenceSettings } from '@/components/settings/AuraIntelligenceSettings';
 import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
-import { Settings as SettingsIcon, Mic, HardDrive, Brain } from 'lucide-react';
+import { Settings as SettingsIcon, Mic, HardDrive } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
 const VALID_TABS = [
   'branding', 'contact', 'app-url', 'reminders', 'missed-calls', 
   'default-prefs', 'reports', 'alerts', 'customer-prefs', 
-  'emails', 'sms', 'reviews', 'campaigns', 'voice', 'aura-intelligence', 'system'
+  'emails', 'sms', 'reviews', 'campaigns', 'voice', 'system'
 ];
 
 export default function Settings() {
@@ -75,10 +74,6 @@ export default function Settings() {
                 <Mic className="w-3 h-3" />
                 Talk to Aura
               </TabsTrigger>
-              <TabsTrigger value="aura-intelligence" className="flex items-center gap-1">
-                <Brain className="w-3 h-3" />
-                Aura Intelligence
-              </TabsTrigger>
               <TabsTrigger value="system" className="flex items-center gap-1">
                 <HardDrive className="w-3 h-3" />
                 System
@@ -125,9 +120,6 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="voice">
               <VoiceOnboardingSettings />
-            </TabsContent>
-            <TabsContent value="aura-intelligence">
-              <AuraIntelligenceSettings />
             </TabsContent>
             <TabsContent value="system">
               <SystemSettings />

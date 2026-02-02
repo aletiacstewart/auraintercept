@@ -11,7 +11,8 @@ import { InventoryManager } from '@/components/knowledge/InventoryManager';
 import { AIContentProfileManager } from '@/components/knowledge/AIContentProfileManager';
 import { KnowledgeBaseWizard } from '@/components/knowledge/KnowledgeBaseWizard';
 import { SmartLinksManager } from '@/components/knowledge/SmartLinksManager';
-import { Briefcase, HelpCircle, Clock, FileText, Package, BookOpen, Sparkles, Link2 } from 'lucide-react';
+import { AuraIntelligenceSettings } from '@/components/settings/AuraIntelligenceSettings';
+import { Briefcase, HelpCircle, Clock, FileText, Package, BookOpen, Sparkles, Link2, Brain } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
@@ -61,6 +62,10 @@ export default function KnowledgeBase() {
               <Sparkles className="w-3.5 h-3.5 hidden sm:block" />
               AI Profile
             </TabsTrigger>
+            <TabsTrigger value="aura-intelligence" className="flex items-center gap-1.5">
+              <Brain className="w-3.5 h-3.5 hidden sm:block" />
+              Aura Intelligence
+            </TabsTrigger>
             <TabsTrigger value="services" className="flex items-center gap-1.5">
               <Briefcase className="w-3.5 h-3.5 hidden sm:block" />
               Services
@@ -91,6 +96,10 @@ export default function KnowledgeBase() {
 
           <TabsContent value="ai-profile">
             <AIContentProfileManager />
+          </TabsContent>
+
+          <TabsContent value="aura-intelligence">
+            <AuraIntelligenceSettings />
           </TabsContent>
 
           <TabsContent value="services">
