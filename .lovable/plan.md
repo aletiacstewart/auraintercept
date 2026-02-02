@@ -1,203 +1,205 @@
 
-# Platform Consistency & Compliance Audit Plan
+# Platform Guides & Documentation Compliance Audit - Complete Fix Plan
 
 ## Executive Summary
-A comprehensive audit has identified **47+ inconsistencies** across the platform that must be corrected before generating marketing materials. These span naming conventions, pricing data, agent counts, console labels, and tier configurations.
+A comprehensive audit has identified **65+ critical inconsistencies** across Platform Guides, Help pages, PDFs, and edge functions. These must be corrected before generating any marketing materials.
 
 ---
 
 ## Critical Findings by Category
 
-### 1. Console/Feature Naming Violations (HIGH PRIORITY)
+### 1. AI Operative Count Discrepancy (23 vs 24) - HIGHEST PRIORITY
 
-Per standardization memory, "Outreach & Sales Ops" is the official name. Found violations:
+| Location | Current Value | Should Be |
+|----------|---------------|-----------|
+| `src/pages/PlatformGuides.tsx` line 1189 | `23` AI Operatives stat | `24` |
+| `src/components/landing/CompetitiveDifferentiation.tsx` line 52 | `'23 operatives'` | `'24 operatives'` |
+| `supabase/functions/landing-chat/index.ts` line 12 | `23 specialized AI operatives` | `24 specialized AI operatives` |
+| `supabase/functions/landing-chat/index.ts` line 23 | `All 23 AI operatives` | `All 24 AI operatives` |
+| `src/components/documentation/PricingSummaryPDF.tsx` line 419 | `operatives: 23` | `operatives: 24` |
+| `src/components/documentation/PricingSummaryPDF.tsx` line 474 | Cover stat `23` | `24` |
+| `src/components/documentation/PricingSummaryPDF.tsx` line 586 | `command: '23'` | `command: '24'` |
+
+---
+
+### 2. PlatformGuides.tsx Tier Data Errors
+
+| Line | Current (Wrong) | Should Be |
+|------|-----------------|-----------|
+| Line 123 | `'Aura Halo ($397/mo): 4 AI Operatives for salons...'` | `'Aura Halo ($397/mo): 3 AI Operatives for salons...'` |
+
+---
+
+### 3. Console Naming in Edge Function
 
 | Location | Current (Wrong) | Should Be |
 |----------|-----------------|-----------|
-| `helpContentConfig.ts` line 172 | `'Marketing & Sales'` | `'Outreach & Sales Ops'` |
-| `AIAgentsHub.tsx` line 80 | `'Marketing & Sales'` | `'Outreach & Sales Ops'` |
-| `PricingComparisonTable.tsx` line 48, 141 | `'Marketing & Sales Console'` | `'Outreach & Sales Ops Console'` |
-| `Subscription.tsx` line 58, 263 | `'Marketing & Sales Console'` | `'Outreach & Sales Ops Console'` |
-| `PlatformDocumentPDF.tsx` line 863 | `'Marketing & Sales'` | `'Outreach & Sales Ops'` |
+| `landing-chat/index.ts` line 12 | `'Marketing & Sales'` | `'Outreach & Sales Ops'` |
 
 ---
 
-### 2. Agent Count Discrepancies
+### 4. PricingSummaryPDF.tsx - Multiple Issues
 
-| Tier | documentationConfig.ts | subscriptionAgentConfig.ts | Subscription.tsx | Landing Page |
-|------|------------------------|----------------------------|------------------|--------------|
-| Express | 1 operative | 0 agents | 1 agent | Not shown |
-| Aura Flow | 3 operatives | 3 agents | 4 agents | Not shown |
-| Halo | 3 operatives | 3 agents | 3 agents | Not shown |
-
-**Issue**: Express claims 1 operative but has 0 actual agents. Aura Flow shows 4 in Subscription page but 3 elsewhere.
-
----
-
-### 3. Employee Limit Conflicts
-
-| Tier | documentationConfig.ts | PricingComparisonTable.tsx |
-|------|------------------------|----------------------------|
-| Halo | 3 employees | "2 included" |
-
-**Fix Required**: Align all sources to show 3 employees for Halo.
+| Issue | Location | Fix |
+|-------|----------|-----|
+| Says "6-Tier Comparison" | Line 622 | Should be "7-Tier Comparison" |
+| Missing Aura Flow from TOC | Lines 500-509 | Add `{ title: 'Aura Flow Tier (Personal Assistant)', page: '6' }` |
+| Local SUBSCRIPTION_TIERS | Lines 335-428 | Should import from `documentationConfig.ts` |
+| Cover stat shows 23 operatives | Line 474 | Should show 24 |
 
 ---
 
-### 4. Tier Hierarchy vs Pricing Mismatch
+### 5. CompetitiveDifferentiation.tsx Contradiction
 
-Current hierarchy order: `express → aura_flow → halo → core → single_point → multi_track → command`
+| Line | Current | Issue |
+|------|---------|-------|
+| Line 52 | `'23 operatives'` | Says 23 operatives |
+| Line 94 | `'24 specialized AI operatives'` | Says 24 operatives |
 
-Pricing order: `Express ($197) → Aura Flow ($297) → Halo ($397) → Core ($500)`
-
-**Problem**: Core is priced HIGHER than Halo but positioned AFTER in hierarchy. This breaks tier comparison logic.
-
----
-
-### 5. Subscription Page Missing Tiers
-
-The detailed comparison table in `Subscription.tsx` (lines 227-319) only shows:
-- Core, Single-Point, Multi-Track, Command
-
-**Missing from comparison**: Express, Aura Flow, Halo (the lower tiers)
+Both should say `'24 operatives'`.
 
 ---
 
-### 6. Console Naming Variations (Same Console, 3 Names)
+### 6. PlatformGuides.tsx Missing Console Names
 
-| Source | Business Console Name |
-|--------|----------------------|
-| documentationConfig.ts | "Business Operations" |
-| Sidebar (DashboardLayout.tsx) | "Business Mgt Ops Console" |
-| helpContentConfig.ts | "Business Operations" |
-
-**Standard per memory**: "Business Mgt Ops Console"
+Several console references don't match standardized naming:
+- "Business Ops Hub" → Should reference "Business Mgt Ops Console"
+- Various navigation routes need updating
 
 ---
 
-### 7. Missing Agents in Console Configs
+## Files Requiring Changes
 
-`helpContentConfig.ts` marketing_sales console missing:
-- Lead Agent (should be listed per Outreach & Sales Ops standard)
+### Phase 1: Critical Operative Count Fixes (7 files)
 
----
+| File | Changes Needed |
+|------|----------------|
+| `src/pages/PlatformGuides.tsx` | Fix stat to 24, fix Halo operative count to 3 |
+| `src/components/landing/CompetitiveDifferentiation.tsx` | Change 23 → 24 operatives |
+| `supabase/functions/landing-chat/index.ts` | Change 23 → 24 operatives (2 locations) + rename console |
+| `src/components/documentation/PricingSummaryPDF.tsx` | Fix command tier to 24, fix cover stat, fix "6-Tier" → "7-Tier", add missing Aura Flow to TOC |
 
-### 8. Web Presence Console vs Tab Confusion
+### Phase 2: PDF Document Data Centralization
 
-- `PricingComparisonTable.tsx` lists "Web Presence Console" as separate console
-- `documentationConfig.ts` shows Web Presence as a TAB within Social Media console
-- Memory says Web Presence Agent belongs to Social Media & Web Presence console
+These PDFs define inline data instead of importing from `documentationConfig.ts`:
 
----
+| PDF File | Issue |
+|----------|-------|
+| `PricingSummaryPDF.tsx` | Has own `SUBSCRIPTION_TIERS` object |
+| `PlatformDocumentPDF.tsx` | Has inline agents array |
+| `AIAgentGuidesPDF.tsx` | Has own `CONSOLES` array |
+| `ComprehensiveGuidesPDF.tsx` | Has inline guide data |
 
-### 9. AI Operatives Hub Tier Setting
+### Phase 3: Platform Guides Content Corrections
 
-`documentationConfig.ts` sets `ai_operatives_hub` tier to `'halo'` but this is a management console that should be accessible to all company admins regardless of subscription.
+In `src/pages/PlatformGuides.tsx` guideCategories:
 
----
-
-### 10. PDF Document Data Sources
-
-All 11 PDF generators in `src/components/documentation/` need verification:
-- PlatformDocumentPDF.tsx
-- PricingSummaryPDF.tsx
-- CompanyGuidesPDF.tsx
-- AIAgentGuidesPDF.tsx
-- etc.
-
-Currently using inline data instead of importing from `documentationConfig.ts` single source of truth.
-
----
-
-## Remediation Plan
-
-### Phase 1: Core Data Alignment (Files to Update)
-
-1. **src/lib/helpContentConfig.ts**
-   - Change `title: 'Marketing & Sales'` → `'Outreach & Sales Ops'`
-   - Add Lead Agent to marketing_sales agents array
-   - Update tabs to match standard
-
-2. **src/pages/AIAgentsHub.tsx**
-   - Change CATEGORY_INFO `marketing_sales.label` → `'Outreach & Sales Ops'`
-
-3. **src/components/landing/PricingComparisonTable.tsx**
-   - All "Marketing & Sales" → "Outreach & Sales Ops"
-   - Fix Halo employee count: "2 included" → "3 included"
-
-4. **src/pages/Subscription.tsx**
-   - All "Marketing & Sales" → "Outreach & Sales Ops"
-   - Add missing tiers (Express, Aura Flow, Halo) to comparison sections
-   - Fix agentCount for Aura Flow: 4 → 3
-
-5. **src/lib/documentationConfig.ts**
-   - Verify Express operatives count (currently 1, should match agents array)
-   - Review tier order alignment with pricing
-
-6. **src/lib/subscriptionAgentConfig.ts**
-   - Verify TIER_HIERARCHY order matches business pricing logic
-
-### Phase 2: PDF Generators Update
-
-All PDF generators must import from `documentationConfig.ts`:
-- PlatformDocumentPDF.tsx
-- PricingSummaryPDF.tsx
-- CompanyGuidesPDF.tsx
-- AIAgentGuidesPDF.tsx
-- BrandAssetGuidePDF.tsx
-- ComprehensiveGuidesPDF.tsx
-- IndustryMarketingKitPDF.tsx
-- SalesPitchDataPDF.tsx
-- SocialMediaContentPackPDF.tsx
-- VideoScriptsPDF.tsx
-- WebsiteCopyPDF.tsx
-
-### Phase 3: Landing Page & Marketing
-
-- Verify Index.tsx agentCategories and agentConsoles arrays match documentationConfig.ts
-- Ensure all feature boxes use correct standardized names
+| Guide | Issue | Fix |
+|-------|-------|-----|
+| "Subscription Tiers" | Halo says "4 AI Operatives" | Should be "3 AI Operatives" |
+| "Subscription Tiers" | Multiple tier descriptions need verification | Align with documentationConfig.ts |
 
 ---
 
-## Files Requiring Changes (Estimated)
+## Detailed Changes
 
-| Category | File Count | Priority |
-|----------|------------|----------|
-| Naming Fixes | 8 files | HIGH |
-| Agent Count Fixes | 4 files | HIGH |
-| Employee Limit Fixes | 2 files | MEDIUM |
-| PDF Generator Updates | 11 files | MEDIUM |
-| Tier Hierarchy Review | 2 files | LOW |
+### 1. src/pages/PlatformGuides.tsx
 
-**Total Estimated Changes**: ~27 files
+**Line 123** - Fix Halo operative count:
+```
+Before: 'Aura Halo ($397/mo): 4 AI Operatives for salons/wellness + Customer Portal Console',
+After:  'Aura Halo ($397/mo): 3 AI Operatives for salons/wellness + Customer Portal Console',
+```
+
+**Line 1189** - Fix AI Operatives stat:
+```
+Before: <p className="text-2xl font-bold">23</p>
+After:  <p className="text-2xl font-bold">24</p>
+```
+
+### 2. src/components/landing/CompetitiveDifferentiation.tsx
+
+**Line 52**:
+```
+Before: { feature: 'Specialized Agents', traditional: 'Basic automation', aura: '23 operatives' },
+After:  { feature: 'Specialized Agents', traditional: 'Basic automation', aura: '24 operatives' },
+```
+
+### 3. supabase/functions/landing-chat/index.ts
+
+**Line 12**:
+```
+Before: - It provides 23 specialized AI operatives organized into 7 Control Centers: Customer Portal, Field Operations, Business Management, Marketing & Sales, Social Media Signal, Analytics & Reports, and Web Presence
+After:  - It provides 24 specialized AI operatives organized into 7 Control Centers: Customer Portal, Field Operations, Business Management, Outreach & Sales Ops, Social Media Signal, Analytics & Reports, and Web Presence
+```
+
+**Line 23**:
+```
+Before: - Aura Pro Command ($5,997/mo): All 23 AI operatives, all 7 Control Centers...
+After:  - Aura Pro Command ($5,997/mo): All 24 AI operatives, all 7 Control Centers...
+```
+
+### 4. src/components/documentation/PricingSummaryPDF.tsx
+
+**Line 419** - Fix command operatives:
+```
+Before: operatives: 23,
+After:  operatives: 24,
+```
+
+**Line 474** - Fix cover stat:
+```
+Before: <Text style={styles.coverStatNumber}>23</Text>
+After:  <Text style={styles.coverStatNumber}>24</Text>
+```
+
+**Line 586** - Fix table data:
+```
+Before: { feature: 'AI Operatives', express: '1', halo: '3', core: '0', single: '3', multi: '10', command: '23' },
+After:  { feature: 'AI Operatives', express: '1', halo: '3', core: '0', single: '3', multi: '10', command: '24' },
+```
+
+**Line 622** - Fix section title:
+```
+Before: <Text style={styles.sectionTitle}>Complete 6-Tier Comparison</Text>
+After:  <Text style={styles.sectionTitle}>Complete 7-Tier Comparison</Text>
+```
+
+**Lines 500-509** - Add missing Aura Flow to TOC:
+```
+{ title: 'Aura Express Tier (Restaurants)', page: '5' },
+{ title: 'Aura Flow Tier (Personal Assistant)', page: '6' },  // ADD THIS
+{ title: 'Aura Halo Tier (Salons/Wellness)', page: '7' },     // page numbers shift
+...
+```
+
+**Line 639** - Fix table row:
+```
+Before: { category: 'AI Operatives', express: '1', halo: '3', core: '0', single: '3', multi: '10', command: 'All 24' },
+This line is correct, but ensure consistency.
+```
 
 ---
 
 ## Verification Checklist
 
-After fixes, verify consistency across:
-- [ ] All console names match "Outreach & Sales Ops" standard
-- [ ] Agent counts per tier match across all sources
-- [ ] Employee limits match across all sources
-- [ ] PDF exports show correct data
-- [ ] Landing page features match documentation
-- [ ] Subscription page shows all 7 tiers
-- [ ] Sidebar labels match console page headers
-- [ ] Help content matches feature tooltips
+After all fixes:
+- [ ] All files show 24 AI Operatives (not 23)
+- [ ] All tiers show correct operative counts (Halo = 3, not 4)
+- [ ] "Outreach & Sales Ops" used everywhere (not "Marketing & Sales")
+- [ ] All PDFs reference correct tier counts
+- [ ] Edge function landing-chat has correct data
+- [ ] Landing page CompetitiveDifferentiation matches
+- [ ] Platform Guides stats card shows 24
 
 ---
 
 ## Technical Notes
 
-The centralized data source (`src/lib/documentationConfig.ts`) should be the single source of truth. All other files should import from it rather than defining inline data. This includes:
-- Tier pricing and features
-- Agent names and descriptions
-- Console configurations
-- Employee limits
+The root cause of these inconsistencies is that multiple files define their own data instead of importing from `src/lib/documentationConfig.ts`. Future work should:
+1. Convert PDF generators to import from documentationConfig.ts
+2. Create a single source of truth for all marketing data
+3. Add validation tests to catch inconsistencies
 
-Current violations where inline data exists:
-- `Subscription.tsx` defines its own TIERS array
-- `PricingComparisonTable.tsx` defines featureDescriptions inline
-- `Index.tsx` defines agentCategories inline
-- Most PDF generators define data inline
-
+**Total Files to Update**: 4 files immediately for critical fixes
+**Estimated Scope**: ~15 line changes across 4 files
