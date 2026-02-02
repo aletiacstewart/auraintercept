@@ -124,7 +124,7 @@ const guideCategories = [
           'Aura Core ($500/mo): AI-Assisted (No Automation) - Message Aura + Social Media Signal + Web Presence',
           'Single-Point ($1,500/mo): 3 AI Operatives (Receptionist, Follow-up, Review) + 1 Console',
           'Multi-Track ($3,997/mo): 10 AI Operatives + 2 Consoles + Online Booking + Field Ops',
-          'Aura Pro Command ($5,997/mo): All 23 AI Operatives + 7 Consoles + Enterprise Features',
+          'Aura Pro Command ($5,997/mo): All 24 AI Operatives + 7 Consoles + Enterprise Features',
           'Talk to Aura (Voice) included on Express, Flow, Halo, Single-Point, Multi-Track, and Command tiers',
           'Employee limits: 2 (Express/Flow), 3 (Halo), 2 (Core), 5 (Single-Point), 10 (Multi-Track), 25 (Command)',
           'Premium Add-Ons: Social Media Signal ($150/mo), Web Presence ($150/mo) for Single-Point/Multi-Track',
@@ -171,7 +171,7 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to AI Agents Hub from the sidebar',
-          'View all 23 AI agents organized by 6 Control Centers',
+          'View all 24 AI agents organized by 6 Control Centers',
           'Agents locked by tier show "Locked" badge with upgrade path',
           'Click any agent card to view settings and dependencies',
           'Enable/disable agents with the toggle switch',

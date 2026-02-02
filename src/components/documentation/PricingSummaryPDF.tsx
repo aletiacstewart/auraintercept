@@ -636,7 +636,7 @@ const PricingSummaryPDF = () => (
           { category: 'Annual Price', express: '$1,970', halo: '$3,970', core: '$5,000', single: '$15,000', multi: '$39,970', command: '$59,970' },
           { category: 'Annual Savings', express: '~$400', halo: '~$800', core: '~$1,000', single: '~$3,000', multi: '~$8,000', command: '~$12,000' },
           { category: '', express: '', halo: '', core: '', single: '', multi: '', command: '' },
-          { category: 'AI Operatives', express: '1', halo: '3', core: '0', single: '3', multi: '10', command: 'All 23' },
+          { category: 'AI Operatives', express: '1', halo: '3', core: '0', single: '3', multi: '10', command: 'All 24' },
           { category: 'Consoles', express: '0', halo: '1', core: '0', single: '1', multi: '2', command: 'All 7' },
           { category: 'Employees', express: '2', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
           { category: '', express: '', halo: '', core: '', single: '', multi: '', command: '' },
@@ -946,10 +946,10 @@ const PricingSummaryPDF = () => (
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>Included AI Operatives (All 23)</Text>
+      <Text style={styles.subsectionTitle}>Included AI Operatives (All 24)</Text>
       <Text style={styles.paragraph}>
-        Full access to all 23 AI operatives including Customer Portal (4), Field Operations (4), 
-        Business Management (5), Marketing & Sales (2), Social Media Signal (3), and Analytics (4) operatives, plus Aura Assistant.
+        Full access to all 24 AI operatives including Customer Portal (4), Field Operations (4), 
+        Business Management (4), Marketing & Sales (3), Social Media & Web Presence (5), and Analytics (4) operatives.
       </Text>
 
       <Text style={styles.subsectionTitle}>Consoles (All 7)</Text>

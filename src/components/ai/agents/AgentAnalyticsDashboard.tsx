@@ -50,7 +50,7 @@ const AGENT_DISPLAY_NAMES: Record<string, string> = {
   inventory: 'Inventory Agent',
   campaign: 'Campaign Agent',
   lead: 'Lead Agent',
-  promo: 'Promo Agent',
+  marketing: 'Marketing Agent',
   social_content: 'Social Media Signal Agent',
   social_scheduler: 'Social Media Signal Scheduler',
   social_analytics: 'Social Media Signal Analytics',

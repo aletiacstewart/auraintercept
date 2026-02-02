@@ -42,31 +42,39 @@ const PHASE_CONFIG = [
     description: 'Quotes, invoices, and inventory',
     icon: Briefcase,
     color: 'text-purple-500',
-    agents: ['quoting', 'invoice', 'inventory', 'warranty'],
+    agents: ['admin', 'quoting', 'invoice', 'inventory'],
   },
   {
     phase: 4,
     name: 'Marketing & Sales',
-    description: 'Promotions and customer retention',
+    description: 'Campaigns, leads, and customer segments',
     icon: Megaphone,
     color: 'text-orange-500',
-    agents: ['campaign'],
+    agents: ['campaign', 'lead', 'marketing'],
   },
   {
     phase: 5,
+    name: 'Social Media & Web Presence',
+    description: 'Content creation, scheduling, and web management',
+    icon: BarChart3,
+    color: 'text-pink-500',
+    agents: ['social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
+  },
+  {
+    phase: 6,
     name: 'Analytics & Optimization',
     description: 'Business intelligence and forecasting',
     icon: BarChart3,
     color: 'text-cyan-500',
-    agents: ['insights', 'forecast'],
+    agents: ['insights', 'performance', 'revenue', 'forecast'],
   },
 ];
 
 // Agents hidden from non-platform-admin roles
-const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty', 'campaign', 'marketing'];
+const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'campaign', 'marketing'];
 
 // Phases hidden entirely from non-platform-admin roles
-const HIDDEN_PHASES_FOR_NON_PLATFORM_ADMIN = [4, 5]; // Marketing & Sales, Analytics & Optimization
+const HIDDEN_PHASES_FOR_NON_PLATFORM_ADMIN = [4, 6]; // Marketing & Sales, Analytics & Optimization
 
 interface BatchAgentActivationProps {
   agents: AgentInfo[];
