@@ -87,7 +87,7 @@ export default function Settings() {
               </Link>
               <Link 
                 to="/dashboard/knowledge" 
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 ml-2 text-xs font-medium rounded-md bg-accent/20 text-accent-foreground hover:bg-accent/30 border border-accent/40 transition-all hover:scale-105"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 ml-2 text-xs font-medium rounded-md bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border border-emerald-500/30 transition-all hover:scale-105"
               >
                 Knowledge Base Setup
                 <ArrowRight className="w-3 h-3" />
