@@ -185,7 +185,8 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/dashboard/ai-consoles/social-media" element={<ProtectedRoute><SocialMediaConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/analytics" element={<ProtectedRoute><AnalyticsConsole /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/new-lead" element={<ProtectedRoute><NewLeadPage /></ProtectedRoute>} />
-                <Route path="/dashboard/analytics-reports" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
+                {/* Analytics & Reports now consolidated into Business Operations */}
+                <Route path="/dashboard/analytics-reports" element={<ProtectedRoute><BusinessOperations /></ProtectedRoute>} />
                 {/* Legacy routes redirect to Analytics & Reports */}
                 <Route path="/dashboard/ask-aura" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />
                 <Route path="/dashboard/ai-consoles/performance-report" element={<ProtectedRoute><AskAura /></ProtectedRoute>} />

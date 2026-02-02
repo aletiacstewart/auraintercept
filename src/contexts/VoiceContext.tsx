@@ -230,7 +230,7 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
         navigate('/auth');
       },
       onAuraActivate: () => {
-        navigate('/dashboard/analytics-reports');
+        navigate('/dashboard/business-operations?tab=analytics');
       },
       onStopListening: () => {
         setIsVoiceModeEnabled(false);

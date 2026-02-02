@@ -4,15 +4,31 @@ import { PageContainer } from '@/components/ui/page-container';
 import { PageHeader } from '@/components/ui/page-header';
 import { BusinessOpsConsole } from '@/components/businessops';
 import { BusinessOpsHubTabs } from '@/components/businessops/BusinessOpsHubTabs';
+import { AuraTabs } from '@/components/aura/AuraTabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Briefcase, LayoutDashboard, FolderKanban, ShieldAlert } from 'lucide-react';
+import { Briefcase, LayoutDashboard, FolderKanban, BarChart3, ShieldAlert } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 export default function BusinessOperations() {
   const { companyId, userRole } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Get initial tab from URL parameter
+  const tabParam = searchParams.get('tab');
+  const defaultTab = tabParam === 'analytics' ? 'analytics' : 'overview';
 
   // Role-based access
   const hasAccess = userRole === 'platform_admin' || userRole === 'company_admin';
+
+  // Handle tab change to update URL
+  const handleTabChange = (value: string) => {
+    if (value === 'analytics') {
+      setSearchParams({ tab: 'analytics' });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   // Access denied
   if (!hasAccess) {
@@ -46,7 +62,7 @@ export default function BusinessOperations() {
             showAuraBar
           />
 
-          <Tabs defaultValue="overview" className="w-full">
+          <Tabs defaultValue={defaultTab} className="w-full" onValueChange={handleTabChange}>
             <TabsList>
               <TabsTrigger value="overview" className="flex items-center gap-1.5">
                 <LayoutDashboard className="h-3.5 w-3.5" />
@@ -56,6 +72,10 @@ export default function BusinessOperations() {
                 <FolderKanban className="h-3.5 w-3.5" />
                 <span>Operations Hub</span>
               </TabsTrigger>
+              <TabsTrigger value="analytics" className="flex items-center gap-1.5">
+                <BarChart3 className="h-3.5 w-3.5" />
+                <span>Analytics & Reports</span>
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="mt-6">
@@ -64,6 +84,10 @@ export default function BusinessOperations() {
 
             <TabsContent value="operations" className="mt-6">
               <BusinessOpsHubTabs />
+            </TabsContent>
+
+            <TabsContent value="analytics" className="mt-6">
+              <AuraTabs companyId={companyId} />
             </TabsContent>
           </Tabs>
         </div>

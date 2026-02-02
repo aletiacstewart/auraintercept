@@ -92,12 +92,12 @@ export const PAGE_ROUTES: Record<string, string> = {
   'inventory': '/dashboard/inventory',
   'warranties': '/dashboard/warranties',
   
-  // Analytics & Reports Section
-  'ask aura': '/dashboard/analytics-reports',
-  'aura': '/dashboard/analytics-reports',
-  'analytics': '/dashboard/analytics-reports',
-  'analytics and reports': '/dashboard/analytics-reports',
-  'analytics reports': '/dashboard/analytics-reports',
+  // Analytics & Reports Section (now part of Business Operations)
+  'ask aura': '/dashboard/business-operations?tab=analytics',
+  'aura': '/dashboard/business-operations?tab=analytics',
+  'analytics': '/dashboard/business-operations?tab=analytics',
+  'analytics and reports': '/dashboard/business-operations?tab=analytics',
+  'analytics reports': '/dashboard/business-operations?tab=analytics',
   'subscription analytics': '/dashboard/subscription-analytics',
   
   // Business Mobile Consoles Section
