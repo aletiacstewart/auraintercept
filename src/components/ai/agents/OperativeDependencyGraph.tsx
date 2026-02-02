@@ -44,46 +44,56 @@ const AGENT_DISPLAY_NAMES: Record<string, string> = {
   route: 'Route',
   eta: 'ETA',
   checkin: 'Check-in',
+  admin: 'Admin',
   quoting: 'Quoting',
   invoice: 'Invoice',
   inventory: 'Inventory',
-  warranty: 'Warranty',
   campaign: 'Campaign',
   lead: 'Lead',
-  promo: 'Promo',
+  marketing: 'Marketing',
   social_content: 'Content',
   social_scheduler: 'Scheduler',
   social_analytics: 'Analytics',
+  creative: 'Creative',
+  web_presence: 'Web Presence',
   insights: 'Insights',
   performance: 'Performance',
   revenue: 'Revenue',
   forecast: 'Forecast',
 };
 
-// Define the dependency structure
+// Define the dependency structure - Keep in sync with subscriptionAgentConfig.ts AGENT_DEPENDENCIES
 const DEPENDENCY_MAP: Record<string, string[]> = {
+  // Customer Portal
   triage: [], // Root - no dependencies
   booking: ['triage'],
   followup: ['triage'],
-  review: ['triage', 'followup'],
+  review: ['triage'],
+  // Field Operations
   dispatch: ['triage', 'booking'],
   route: ['dispatch'],
   eta: ['dispatch', 'route'],
   checkin: ['dispatch'],
+  // Business Operations
+  admin: [],
   quoting: ['triage'],
   invoice: ['quoting'],
   inventory: [],
-  warranty: [],
+  // Marketing & Sales
   campaign: [],
-  lead: ['triage'],
-  promo: ['campaign'],
+  lead: [],
+  marketing: ['campaign'],
+  // Social Media & Web Presence
   social_content: [],
   social_scheduler: ['social_content'],
-  social_analytics: ['social_scheduler'],
+  social_analytics: ['social_content'],
+  creative: [],
+  web_presence: ['creative'],
+  // Analytics
   insights: [],
-  performance: [],
-  revenue: [],
-  forecast: ['revenue'],
+  performance: ['insights'],
+  revenue: ['insights'],
+  forecast: ['insights', 'revenue'],
 };
 
 export function OperativeDependencyGraph({ agents }: OperativeDependencyGraphProps) {

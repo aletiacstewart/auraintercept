@@ -101,24 +101,29 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
 };
 
 // Agent dependencies - some agents require others to work properly
-// IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts
+// IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts and OperativeDependencyGraph.tsx
 export const AGENT_DEPENDENCIES: Record<string, string[]> = {
+  // Customer Portal
   booking: ['triage'],
-  // followup and review now depend on triage (not booking) so Single-Point can use them
   followup: ['triage'],
   review: ['triage'],
+  // Field Operations
+  dispatch: ['triage', 'booking'],
   route: ['dispatch'],
   eta: ['dispatch', 'route'],
   checkin: ['dispatch'],
+  // Business Operations
   invoice: ['quoting'],
+  // Marketing & Sales
+  marketing: ['campaign'],
+  // Social Media & Web Presence
+  social_scheduler: ['social_content'],
+  social_analytics: ['social_content'],
+  web_presence: ['creative'],
+  // Analytics
   performance: ['insights'],
   revenue: ['insights'],
   forecast: ['insights', 'revenue'],
-  // Social media agent dependencies
-  social_scheduler: ['social_content'],
-  social_analytics: ['social_content'],
-  // Web presence depends on creative
-  web_presence: ['creative'],
 };
 
 // Console to required agents mapping - consoles need these agents enabled to work
