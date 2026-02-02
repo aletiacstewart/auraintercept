@@ -55,7 +55,7 @@ export function AuraQuickResponsePopup({ response, onDismiss }: AuraQuickRespons
   };
   
   const handleViewFull = () => {
-    navigate('/dashboard/analytics-reports');
+    navigate('/dashboard/business-operations?tab=analytics');
     onDismiss();
   };
 
