@@ -102,7 +102,7 @@ const agentCategories = [{
   }]
 }, {
   id: 'marketing',
-  name: 'Marketing & Sales',
+  name: 'Outreach & Sales Ops',
   icon: Megaphone,
   color: 'from-orange-500 to-amber-500',
   agents: [{
@@ -166,7 +166,7 @@ const agentConsoles = [{
   iconColor: 'text-orange-500',
   features: ['Invoice generation', 'Inventory tracking', 'Quote builder', 'Lead management']
 }, {
-  name: 'Marketing & Sales Console',
+  name: 'Outreach & Sales Ops Console',
   description: 'Lead management and campaign automation.',
   icon: Megaphone,
   gradient: 'from-purple-500 to-pink-500',
@@ -199,21 +199,21 @@ const agentConsoles = [{
   features: ['AI Chat & Voice', 'Content editor', 'Visitor analytics', 'Domain management']
 }];
 const platformFeatures = [{
-  icon: MessageSquare,
-  title: 'Multi-Channel AI',
-  description: 'Voice calls, SMS, email, and web chat - customers connect on their preferred channel.'
-}, {
   icon: Globe,
   title: 'Customer Portal',
   description: 'Self-service portal where customers book, track appointments, and chat with AI agents.'
 }, {
-  icon: Target,
-  title: 'Lead Capture',
-  description: 'Automatically capture and score leads from AI agent interactions with smart follow-up automation.'
-}, {
   icon: Globe,
-  title: 'Web Presence',
-  description: 'AI-powered branded web presence with integrated chat, voice, and booking capabilities.'
+  title: 'Web Presence Manager',
+  description: 'AI-powered branded web presence with Message Aura (Text), Talk to Aura (Voice), and booking.'
+}, {
+  icon: Target,
+  title: 'Lead Capture & CRM',
+  description: 'Automatically capture and score leads from AI interactions with smart follow-up automation.'
+}, {
+  icon: Bell,
+  title: 'Smart Reminders',
+  description: 'Email, SMS, and voice reminders help reduce no-shows and appointment issues.'
 }, {
   icon: Smartphone,
   title: 'Mobile-First Design',
@@ -222,10 +222,6 @@ const platformFeatures = [{
   icon: Brain,
   title: 'AI Powered Ops',
   description: 'Intelligent agent handoffs with context preservation across conversations.'
-}, {
-  icon: Bell,
-  title: 'Smart Reminders',
-  description: 'Email, SMS, and voice reminders help reduce no-shows and appointment issues.'
 }, {
   icon: Lock,
   title: 'Enterprise Security',
@@ -247,14 +243,6 @@ const platformFeatures = [{
   title: 'Route Optimization',
   description: 'Intelligent routing for field technicians to minimize drive time and maximize efficiency.'
 }, {
-  icon: Brain,
-  title: 'AI Content Generation',
-  description: 'Gemini-powered blog posts, social media, emails & marketing campaigns with brand voice.'
-}, {
-  icon: Search,
-  title: 'AI Research Engine',
-  description: 'Tavily-enhanced content with real-time industry trends, statistics & expert insights.'
-}, {
   icon: Bot,
   title: 'Personal Assistant',
   description: 'AI-powered scheduling assistant with direct calendar sync for booking appointments.'
@@ -262,25 +250,25 @@ const platformFeatures = [{
 const communicationChannels = [{
   icon: Mic,
   title: 'Talk to Aura (Voice)',
-  description: 'Natural voice conversations with AI agents for phone-based customer service.',
+  description: 'Natural voice conversations with AI agents for phone-based customer service. Requires ElevenLabs + Twilio.',
   color: 'bg-channel-voice',
   gradientClass: 'from-[hsl(var(--channel-voice))] to-[hsl(348,83%,50%)]'
 }, {
   icon: MessageSquare,
-  title: 'Aura SMS/Text AI',
-  description: 'Two-way text messaging for appointment reminders and quick updates.',
+  title: 'SMS Reminders',
+  description: 'Automated text message reminders for appointments, follow-ups, and campaigns. Requires Twilio.',
   color: 'bg-channel-sms',
   gradientClass: 'from-[hsl(var(--channel-sms))] to-[hsl(142,71%,35%)]'
 }, {
   icon: Mail,
-  title: 'Aura Email AI',
-  description: 'Automated email campaigns, confirmations, and digest reports.',
+  title: 'Email Reminders',
+  description: 'Automated email notifications for appointments, confirmations, and marketing campaigns.',
   color: 'bg-channel-email',
   gradientClass: 'from-[hsl(var(--channel-email))] to-[hsl(199,89%,38%)]'
 }, {
   icon: Headphones,
-  title: 'Aura Chat AI',
-  description: 'Message Aura (Text) chat for website visitor engagement.',
+  title: 'Message Aura (Text)',
+  description: 'Text-based chat where customers type questions and receive AI responses. Works on ALL tiers.',
   color: 'bg-channel-chat',
   gradientClass: 'from-[hsl(var(--channel-chat))] to-[hsl(270,67%,48%)]'
 }];
