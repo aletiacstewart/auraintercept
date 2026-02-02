@@ -120,7 +120,7 @@ const guideCategories = [
         steps: [
           'Aura Express ($197/mo): AI Voice + Chat for restaurants with smart link sharing to menu/ordering',
           'Aura Flow ($297/mo): AI Personal Assistant with scheduling via direct calendar sync (no portal)',
-          'Aura Halo ($397/mo): 4 AI Operatives for salons/wellness + Customer Portal Console',
+          'Aura Halo ($397/mo): 3 AI Operatives for salons/wellness + Customer Portal Console',
           'Aura Core ($500/mo): AI-Assisted (No Automation) - Message Aura + Social Media Signal + Web Presence',
           'Single-Point ($1,500/mo): 3 AI Operatives (Receptionist, Follow-up, Review) + 1 Console',
           'Multi-Track ($3,997/mo): 10 AI Operatives + 2 Consoles + Online Booking + Field Ops',
@@ -1186,7 +1186,7 @@ const PlatformGuides: React.FC = () => {
                   <Bot className="h-5 w-5 text-accent" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">23</p>
+                  <p className="text-2xl font-bold">24</p>
                   <p className="text-xs text-card-foreground/70">AI Operatives</p>
                 </div>
               </div>
