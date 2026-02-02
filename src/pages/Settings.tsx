@@ -20,8 +20,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageHeader } from '@/components/ui/page-header';
 import { PageContainer } from '@/components/ui/page-container';
-import { Settings as SettingsIcon, Mic, HardDrive } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { Settings as SettingsIcon, Mic, HardDrive, ArrowRight } from 'lucide-react';
+import { useSearchParams, Link } from 'react-router-dom';
 
 const VALID_TABS = [
   'branding', 'contact', 'app-url', 'reminders', 'missed-calls', 
@@ -78,6 +78,13 @@ export default function Settings() {
                 <HardDrive className="w-3 h-3" />
                 System
               </TabsTrigger>
+              <Link 
+                to="/dashboard/integrations" 
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 ml-2 text-xs font-medium rounded-full bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30 transition-all hover:scale-105"
+              >
+                Next: 3rd Party Setup
+                <ArrowRight className="w-3 h-3" />
+              </Link>
             </TabsList>
             <TabsContent value="branding">
               <BrandingSettings />
