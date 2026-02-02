@@ -33,7 +33,8 @@ import {
   AlertCircle,
   Lightbulb,
   Share2,
-  Home
+  Home,
+  Activity
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -313,6 +314,19 @@ const FIELD_OPS_GUIDES: AgentGuide[] = [
 
 // Business Operations Guides - Updated to match console features
 const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
+  {
+    id: 'aura-live',
+    label: 'Aura Live',
+    icon: Activity,
+    description: 'Monitor real-time AI agent activity and events',
+    steps: [
+      { step: 1, title: 'Click Aura Live Tab', description: 'Open the real-time activity stream' },
+      { step: 2, title: 'View Events', description: 'See live AI agent actions and decisions' },
+      { step: 3, title: 'Track Handoffs', description: 'Monitor agent-to-agent handoffs and routing' },
+      { step: 4, title: 'Review Confidence', description: 'Check confidence scores for AI decisions' },
+    ],
+    tips: ['Use to monitor AI decision quality', 'Track agent activity patterns for optimization']
+  },
   {
     id: 'quote',
     label: 'Quote',
