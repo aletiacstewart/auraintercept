@@ -335,10 +335,10 @@ const companyGuideCategories = [
         tips: ['Use AI for quick price lookups']
       },
       {
-        title: 'Marketing & Sales Ops Console',
+        title: 'Outreach & Sales Ops Console',
         duration: '10 min',
         steps: [
-          'Access via AI Consoles → Marketing & Sales Ops',
+          'Access via AI Consoles → Outreach & Sales Ops',
           'Manage campaigns, leads, and promo codes',
           'Create marketing campaigns with AI assistance',
           'Track lead conversion and customer segments',
@@ -779,7 +779,7 @@ export function CompanyGuidesPDF() {
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>
-          <Text style={styles.bulletText}>Marketing & Sales Ops Console - Campaigns, leads, referrals</Text>
+          <Text style={styles.bulletText}>Outreach & Sales Ops Console - Campaigns, leads, referrals</Text>
         </View>
         <View style={styles.bulletRow}>
           <Text style={styles.bullet}>-</Text>

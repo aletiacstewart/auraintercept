@@ -169,13 +169,14 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
   },
   {
     id: 'marketing_sales',
-    title: 'Marketing & Sales',
+    title: 'Outreach & Sales Ops',
     icon: Megaphone,
     description: 'AI-powered marketing automation with campaign management, customer segmentation, promotional tools, and lead nurturing.',
     requiredTier: 'command',
-    tabs: ['Campaigns', 'Promo Codes', 'Segments', 'Referrals', 'Leads', 'Win-back'],
+    tabs: ['Campaign', 'Leads', 'Marketing'],
     agents: [
       { name: 'Campaign Agent', tier: 'command' },
+      { name: 'Lead Agent', tier: 'command' },
       { name: 'Marketing Agent', tier: 'command' },
     ],
     features: [
@@ -433,7 +434,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
       'All 24 AI Operatives',
       'All 7 Consoles',
       'Business Operations console',
-      'Marketing & Sales automation',
+      'Outreach & Sales Ops automation',
       'Social Media Signal Ops (6 platforms)',
       'Analytics & Reports (8 tabs)',
       'Inventory management with reorder alerts',
@@ -489,7 +490,7 @@ export const PLATFORM_HIGHLIGHTS = {
     tiers: ['command'] as SubscriptionTier[],
   },
   marketing: {
-    title: 'Marketing & Sales',
+    title: 'Outreach & Sales Ops',
     description: 'Campaigns, promos, and lead nurturing',
     tiers: ['command'] as SubscriptionTier[],
   },

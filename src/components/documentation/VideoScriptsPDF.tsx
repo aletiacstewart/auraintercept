@@ -569,7 +569,7 @@ export const VideoScriptsPDF: React.FC = () => (
             Customer Portal—this is where every customer interaction starts. AI Receptionist, Follow-up, Review, and Triage agents working together.{'\n\n'}
             Field Operations—your dispatch hub. Real-time technician tracking, optimized routing, and automated ETA updates.{'\n\n'}
             Business Operations—the financial pulse. Quoting, invoicing, and inventory management.{'\n\n'}
-            Marketing & Sales—lead scoring, campaign automation, and referral tracking.{'\n\n'}
+            Outreach & Sales Ops—lead scoring, campaign automation, and referral tracking.{'\n\n'}
             Analytics & Reports—everything measured. Performance, revenue, customer insights."
           </Text>
         </View>

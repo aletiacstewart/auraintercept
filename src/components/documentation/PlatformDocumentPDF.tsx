@@ -860,7 +860,7 @@ const PlatformDocumentPDF = () => (
         </View>
       ))}
       
-      <Text style={styles.categoryHeader}>Marketing & Sales (3 Agents)</Text>
+      <Text style={styles.categoryHeader}>Outreach & Sales Ops (3 Agents)</Text>
       {agents.marketingSales.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
           <Text style={styles.agentName}>{agent.name}</Text>

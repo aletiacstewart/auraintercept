@@ -60,7 +60,7 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
       '/dashboard/ask-aura': 'Ask Aura analytics page for deep-dive data queries and business intelligence.',
       '/dashboard/knowledge': 'Knowledge Base page with services catalog, FAQs, business hours, and documents.',
       '/dashboard/field-ops': 'Field Ops console for technician management, job assignments, and dispatch.',
-      '/dashboard/marketing': 'Marketing & Sales console for campaigns, promotions, and lead management.',
+      '/dashboard/marketing': 'Outreach & Sales Ops console for campaigns, promotions, and lead management.',
     };
     
     // Find matching context or generate generic one

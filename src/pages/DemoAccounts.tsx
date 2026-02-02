@@ -191,7 +191,7 @@ const tierFeatures: Record<string, string[]> = {
     'All Multi-Track features',
     'Business Management Console',
     'Analytics & Reports',
-    'Marketing & Sales Ops',
+    'Outreach & Sales Ops',
     'Social Media Signal Ops',
     'Full enterprise support',
   ],

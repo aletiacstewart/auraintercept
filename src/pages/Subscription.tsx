@@ -55,7 +55,7 @@ const featureDescriptions: Record<string, string> = {
   'Customer Portal Console': 'Self-service portal where customers can book appointments, view history, and communicate with your team.',
   'Field Operations Console': 'Real-time dashboard for dispatchers to manage technicians, routes, and job assignments.',
   'Business Management Console': 'Central hub for quotes, invoices, inventory, and customer relationship management.',
-  'Marketing & Sales Console': 'Tools for campaigns, lead management, and sales pipeline tracking.',
+  'Outreach & Sales Ops Console': 'Tools for campaigns, lead management, and sales pipeline tracking.',
   'Analytics & Reports Console': 'Comprehensive dashboards with KPIs, performance metrics, and business insights.',
   'Social Media Signal Console': 'Unified dashboard to manage all your social media accounts and content calendar.',
   // Communication Channels - Chat vs Voice distinction
@@ -94,7 +94,7 @@ const TIERS = [
     annualSavings: 'Save $594',
     description: 'AI scheduling with calendar sync',
     popular: false,
-    agentCount: 4,
+    agentCount: 3,
     consoleCount: 0,
     highlights: [
       'AI Receptionist (Triage)',
@@ -260,7 +260,7 @@ const sections: FeatureSection[] = [
       { name: 'Customer Portal Console', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Field Operations Console', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Business Management Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Marketing & Sales Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Outreach & Sales Ops Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Analytics & Reports Console', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Social Media Signal Console', core: 'check', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
       { name: 'Web Presence Console', core: 'check', singlePoint: 'Add-on', multiTrack: 'check', command: 'check' },
