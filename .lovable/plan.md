@@ -1,131 +1,52 @@
 
-# Move Blog Management Under Web Presence & Create Company Blog Page
+# Remove Duplicate Voice Button from SmartWebsite
 
-## Overview
-1. Create a new **"Web Presence"** sidebar category containing the existing Web Presence manager and Blog Management
-2. Create a company-specific blog page at `/site/:subdomain/blog` that displays posts authored by users from that company
-3. Add blog navigation to the SmartWebsite header/footer
+## Problem
+There are two voice buttons on the SmartWebsite page:
+1. **Mic icon in chat widget header** (inside UnifiedCustomerConsole) - opens voice dialog
+2. **Separate floating mic button** (SmartWebsiteVoiceButton component at bottom-right)
+
+These are duplicates providing the same functionality.
+
+## Solution
+Remove the separate `SmartWebsiteVoiceButton` from the SmartWebsite page since the voice feature is already accessible through the chat widget header.
 
 ---
 
-## Technical Changes
+## Changes
 
-### 1. Sidebar Reorganization (`src/components/dashboard/DashboardLayout.tsx`)
+### File: `src/pages/SmartWebsite.tsx`
 
-**Current State:**
-- "Web Presence" is a single item under "Overview"
-- "Blog Management" is under "Platform Resources"
-
-**New Structure:**
-Create a new "Web Presence" group:
-```
-Web Presence (group)
-├── Web Presence (manager) - /dashboard/smart-website
-└── Blog Management - /dashboard/blog-management
-```
-
-**Changes:**
-- Remove "Web Presence" from "Overview" items
-- Remove "Blog Management" from "Platform Resources" items
-- Add new "Web Presence" group after "Overview" with both items
-
-### 2. Create Company Blog Page (`src/pages/CompanyBlog.tsx`)
-
-New page at route `/site/:subdomain/blog` that:
-- Fetches the company ID from the website subdomain
-- Queries blog posts where `author_id` matches profiles with that `company_id`
-- Displays posts in a grid format matching the SmartWebsite styling
-- Uses the company's primary color for branding
-- Links back to the main SmartWebsite
-
-### 3. Create Company Blog Post Page (`src/pages/CompanyBlogPost.tsx`)
-
-New page at route `/site/:subdomain/blog/:slug` that:
-- Displays a single blog post with full content
-- Matches the SmartWebsite styling
-- Has navigation back to the blog list
-
-### 4. Add Routes (`src/App.tsx`)
-
-Add two new public routes:
+**Remove the import (line 12):**
 ```typescript
-<Route path="/site/:subdomain/blog" element={<CompanyBlog />} />
-<Route path="/site/:subdomain/blog/:slug" element={<CompanyBlogPost />} />
+// DELETE: import { SmartWebsiteVoiceButton } from '@/components/smartwebsite/SmartWebsiteVoiceButton';
 ```
 
-### 5. Add Blog Link to SmartWebsite (`src/pages/SmartWebsite.tsx`)
-
-Add optional blog navigation:
-- Add `show_blog` toggle to website data interface
-- Add "Blog" link in header navigation (next to CTA button)
-- Add "Blog" link in footer
-
-### 6. Add Blog Toggle to SmartWebsiteManager (`src/pages/SmartWebsiteManager.tsx`)
-
-Add a switch to enable/disable the blog section on the public website.
-
-### 7. Database Migration
-
-Add `show_blog` column to `company_websites` table:
-```sql
-ALTER TABLE company_websites 
-ADD COLUMN show_blog boolean DEFAULT false;
+**Remove the component rendering (lines 602-611):**
+```typescript
+// DELETE entire block:
+{/* Voice Widget - only for paid tiers or trial */}
+{canShowVoice && (
+  <SmartWebsiteVoiceButton
+    websiteId={website.id}
+    companyId={website.company_id}
+    companyName={website.company_name}
+    visitorFingerprint={visitorFingerprint}
+    primaryColor={primaryColor}
+  />
+)}
 ```
 
----
-
-## New Files to Create
-
-| File | Purpose |
-|------|---------|
-| `src/pages/CompanyBlog.tsx` | Company-specific blog listing page |
-| `src/pages/CompanyBlogPost.tsx` | Company-specific single blog post page |
-
----
-
-## Files to Modify
-
-| File | Changes |
-|------|---------|
-| `src/components/dashboard/DashboardLayout.tsx` | Reorganize sidebar nav |
-| `src/App.tsx` | Add new routes |
-| `src/pages/SmartWebsite.tsx` | Add blog navigation links |
-| `src/pages/SmartWebsiteManager.tsx` | Add blog toggle switch |
+**Optionally remove the unused variable (line 211):**
+```typescript
+// DELETE: const canShowVoice = website?.show_voice_widget && (isInTrial || isPaidTier);
+```
 
 ---
 
 ## Result
+After this change, only the voice button in the chat widget header will remain. Users will:
+1. Click the chat button → Opens chat popup
+2. Click mic icon in header → Opens voice chat dialog
 
-**Sidebar (Before):**
-```
-Overview
-├── Dashboard
-├── Quick Setup
-├── Web Presence  ← single item
-├── ...
-
-Platform Resources
-├── ...
-├── Blog Management  ← here
-├── ...
-```
-
-**Sidebar (After):**
-```
-Overview
-├── Dashboard
-├── Quick Setup
-├── ...
-
-Web Presence  ← new group
-├── Web Presence Manager
-├── Blog Management
-
-Platform Resources
-├── ...  ← Blog Management removed
-```
-
-**Public Site URLs:**
-- `/site/company-name` - Main website
-- `/site/company-name/blog` - Company blog listing
-- `/site/company-name/blog/article-slug` - Individual blog post
+No functionality is lost - voice chat is still fully accessible through the chat widget.
