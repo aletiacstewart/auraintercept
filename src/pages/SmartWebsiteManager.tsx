@@ -36,7 +36,8 @@ import {
   Type,
   Info,
   X,
-  Image as ImageIcon
+  Image as ImageIcon,
+  RefreshCw
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -217,6 +218,28 @@ export default function SmartWebsiteManager() {
     onError: (error: any) => {
       toast.error(error.message || 'Failed to update website');
     },
+  });
+
+  // Verify domain mutation
+  const verifyDomain = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke('verify-domain', {
+        body: { websiteId: website!.id }
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.verified) {
+        toast.success('Domain verified successfully!');
+        queryClient.invalidateQueries({ queryKey: ['smart-website-admin'] });
+      } else {
+        toast.error(data.message || 'DNS records not found yet');
+      }
+    },
+    onError: () => {
+      toast.error('Failed to verify domain');
+    }
   });
 
   const websiteUrl = website?.subdomain 
@@ -981,7 +1004,7 @@ export default function SmartWebsiteManager() {
                     </div>
                     
                     {!website.domain_verified && (
-                      <div className="text-sm space-y-2">
+                      <div className="text-sm space-y-3">
                         <p>Add the following DNS records to your domain:</p>
                         <div className="bg-background p-3 rounded font-mono text-xs space-y-1">
                           <p>Type: CNAME</p>
@@ -993,6 +1016,29 @@ export default function SmartWebsiteManager() {
                           <p>Name: _aura-verify.{website.custom_domain}</p>
                           <p>Value: {website.dns_verification_code}</p>
                         </div>
+                        
+                        <Button
+                          onClick={() => verifyDomain.mutate()}
+                          disabled={verifyDomain.isPending}
+                          variant="outline"
+                          className="mt-2"
+                        >
+                          {verifyDomain.isPending ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Checking...
+                            </>
+                          ) : (
+                            <>
+                              <RefreshCw className="w-4 h-4 mr-2" />
+                              Check Verification
+                            </>
+                          )}
+                        </Button>
+                        
+                        <p className="text-muted-foreground text-xs">
+                          DNS changes typically take 15 minutes to 48 hours to propagate.
+                        </p>
                       </div>
                     )}
                   </div>
