@@ -4,7 +4,7 @@
  */
 
 // Business entity keywords for matching
-const BUSINESS_ENTITIES = /customers?|leads?|appointments?|quotes?|invoices?|warranties?|campaigns?|inventory|items?|jobs?|technicians?|employees?|feedback|services?/i;
+const BUSINESS_ENTITIES = /customers?|leads?|appointments?|quotes?|invoices?|campaigns?|inventory|items?|jobs?|technicians?|employees?|feedback|services?/i;
 
 // Analytics/data query patterns
 const ANALYTICS_PATTERNS = [
@@ -26,11 +26,11 @@ const ANALYTICS_PATTERNS = [
   /leads? (conversion|status|count|new)/i,
   /bookings? (rate|count|today|this week)/i,
   // NEW: Natural question patterns with business entities
-  /how many\s+(customers?|leads?|appointments?|quotes?|invoices?|warranties?|campaigns?|items?)/i,
-  /what('?s| is| are)?\s+(my |our |the )?(customer|lead|appointment|quote|invoice|warranty|campaign|inventory)\s*(count|total|number)?/i,
-  /(count|number|total|amount)\s+of\s+(customers?|leads?|appointments?|quotes?|invoices?|warranties?)/i,
+  /how many\s+(customers?|leads?|appointments?|quotes?|invoices?|campaigns?|items?)/i,
+  /what('?s| is| are)?\s+(my |our |the )?(customer|lead|appointment|quote|invoice|campaign|inventory)\s*(count|total|number)?/i,
+  /(count|number|total|amount)\s+of\s+(customers?|leads?|appointments?|quotes?|invoices?)/i,
   /do i have\s+.*(customers?|leads?|appointments?|quotes?|invoices?)/i,
-  /(active|pending|open|new|overdue|expired|expiring)\s+(customers?|leads?|quotes?|invoices?|warranties?)/i,
+  /(active|pending|open|new|overdue|expired|expiring)\s+(customers?|leads?|quotes?|invoices?)/i,
 ];
 
 // Navigation/action command patterns

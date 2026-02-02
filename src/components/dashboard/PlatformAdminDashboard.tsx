@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageContainer } from '@/components/ui/page-container';
-import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone, Package, Shield, Target, UserCircle, ChevronDown, ChevronUp, ExternalLink, Smartphone, LayoutDashboard } from 'lucide-react';
+import { Building2, Users, Calendar, Bot, TrendingUp, Activity, DollarSign, FileText, Megaphone, Package, Target, UserCircle, ChevronDown, ChevronUp, ExternalLink, Smartphone, LayoutDashboard } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { startOfMonth, endOfMonth, subDays } from 'date-fns';
@@ -40,7 +40,7 @@ export function PlatformAdminDashboard() {
 
       const weekAgo = subDays(now, 7).toISOString();
 
-      const [companies, profiles, appointments, allQuotes, invoices, campaigns, customers, leads, inventory, warranties, recentCompanies, integrations, agentEvents] = await Promise.all([
+    const [companies, profiles, appointments, allQuotes, invoices, campaigns, customers, leads, inventory, recentCompanies, integrations, agentEvents] = await Promise.all([
         supabase.from('companies').select('id', { count: 'exact', head: true }),
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('appointments').select('id, status'),
@@ -50,7 +50,6 @@ export function PlatformAdminDashboard() {
         supabase.from('customer_profiles').select('id', { count: 'exact', head: true }),
         supabase.from('leads').select('id, status'),
         supabase.from('inventory_items').select('id, quantity, min_quantity'),
-        supabase.from('warranty_policies').select('id', { count: 'exact', head: true }),
         supabase.from('companies').select('id', { count: 'exact', head: true }).gte('created_at', weekAgo),
         supabase.from('tenant_integrations').select('id, twilio_account_sid, elevenlabs_api_key, resend_api_key'),
         supabase.from('ai_agent_events').select('id', { count: 'exact', head: true }).gte('created_at', weekAgo),
@@ -116,7 +115,6 @@ export function PlatformAdminDashboard() {
         activeCampaigns: campaigns.data?.length ?? 0,
         inventoryCount,
         lowStockItems,
-        warranties: warranties.count ?? 0,
         leadConversionRate,
         quoteConversionRate,
         appointmentCompletionRate,
@@ -257,13 +255,6 @@ export function PlatformAdminDashboard() {
       icon: Package, 
       description: stats?.lowStockItems ? `${stats.lowStockItems} low stock` : 'Items tracked',
       colorClass: 'text-feature-inventory'
-    },
-    { 
-      title: 'Warranties', 
-      value: stats?.warranties ?? 0, 
-      icon: Shield, 
-      description: 'Active policies',
-      colorClass: 'text-feature-warranties'
     },
     { 
       title: 'Active Campaigns', 

@@ -90,7 +90,6 @@ export const PAGE_ROUTES: Record<string, string> = {
   'quotes': '/dashboard/quotes',
   'invoices': '/dashboard/invoices',
   'inventory': '/dashboard/inventory',
-  'warranties': '/dashboard/warranties',
   
   // Analytics & Reports Section (now part of Business Operations)
   'ask aura': '/dashboard/business-operations?tab=analytics',

@@ -603,7 +603,7 @@ export default function Auth() {
                     </div>
                     <div>
                       <h4 className="font-semibold text-sm text-card-foreground">AI Field Ops Assistant</h4>
-                      <p className="text-xs text-card-foreground/70">Get AI-powered support for job details, inventory, and warranty lookups.</p>
+                      <p className="text-xs text-card-foreground/70">Get AI-powered support for job details, inventory lookups, and more.</p>
                     </div>
                   </div>
                 </div>

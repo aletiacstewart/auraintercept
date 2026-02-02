@@ -17,7 +17,6 @@ export interface FeaturePermissions {
   can_access_campaigns: boolean;
   can_access_analytics: boolean;
   can_access_field_ops: boolean;
-  can_access_warranties: boolean;
   can_create: boolean;
   can_edit: boolean;
   can_delete: boolean;
@@ -71,7 +70,6 @@ export const PLATFORM_DEFAULT_PERMISSIONS: Record<DbJobType, Partial<FeaturePerm
     can_access_quotes: true,
     can_access_leads: true,
     can_access_invoices: true,
-    can_access_warranties: true,
     can_create: true,
     can_edit: true,
     can_delete: true,
@@ -83,7 +81,6 @@ export const PLATFORM_DEFAULT_PERMISSIONS: Record<DbJobType, Partial<FeaturePerm
     can_access_quotes: true,
     can_access_leads: true,
     can_access_invoices: true,
-    can_access_warranties: true,
     can_access_inventory: true,
     can_access_analytics: true,
     can_access_field_ops: true,
@@ -95,7 +92,6 @@ export const PLATFORM_DEFAULT_PERMISSIONS: Record<DbJobType, Partial<FeaturePerm
   billing: {
     can_access_invoices: true,
     can_access_quotes: true,
-    can_access_warranties: true,
     can_create: true,
     can_edit: true,
   },
@@ -109,7 +105,6 @@ export const PLATFORM_DEFAULT_PERMISSIONS: Record<DbJobType, Partial<FeaturePerm
   },
   inventory: {
     can_access_inventory: true,
-    can_access_warranties: true,
     can_create: true,
     can_edit: true,
   },
@@ -121,16 +116,15 @@ export const PLATFORM_DEFAULT_PERMISSIONS: Record<DbJobType, Partial<FeaturePerm
   },
 };
 
-// Platform default AI agents for each role
 export const PLATFORM_DEFAULT_AGENTS: Record<DbJobType, string[]> = {
   technician: ['dispatch', 'route', 'eta', 'checkin', 'inventory'],
   booking_agent: ['triage', 'booking', 'followup', 'review'],
   dispatch: ['dispatch', 'route', 'eta', 'triage', 'inventory'],
-  customer_service: ['triage', 'followup', 'review', 'booking', 'quoting', 'warranty'],
-  manager: ['triage', 'booking', 'followup', 'review', 'quoting', 'warranty', 'dispatch', 'route', 'eta', 'insights', 'forecast', 'social_content', 'social_scheduler', 'social_analytics', 'marketing'],
-  billing: ['quoting', 'invoice', 'warranty'],
+  customer_service: ['triage', 'followup', 'review', 'booking', 'quoting'],
+  manager: ['triage', 'booking', 'followup', 'review', 'quoting', 'dispatch', 'route', 'eta', 'insights', 'forecast', 'social_content', 'social_scheduler', 'social_analytics', 'marketing'],
+  billing: ['quoting', 'invoice'],
   marketing: ['campaign', 'insights', 'social_content', 'social_scheduler', 'social_analytics'],
-  inventory: ['inventory', 'warranty'],
+  inventory: ['inventory'],
   analytics: ['insights', 'forecast', 'social_analytics'],
 };
 
@@ -163,7 +157,6 @@ export const ALL_FEATURES = [
   { id: 'campaigns', field: 'can_access_campaigns', name: 'Campaigns', description: 'View and manage marketing campaigns' },
   { id: 'analytics', field: 'can_access_analytics', name: 'Analytics', description: 'View analytics and reports' },
   { id: 'field_ops', field: 'can_access_field_ops', name: 'Field Operations', description: 'View and manage field operations' },
-  { id: 'warranties', field: 'can_access_warranties', name: 'Warranties', description: 'View and manage warranties' },
 ];
 
 export const GRANULAR_PERMISSIONS = [
@@ -220,7 +213,6 @@ export function useRolePermissions(companyId: string | undefined) {
         can_access_campaigns: customPermission.can_access_campaigns,
         can_access_analytics: customPermission.can_access_analytics,
         can_access_field_ops: customPermission.can_access_field_ops,
-        can_access_warranties: customPermission.can_access_warranties,
         can_create: customPermission.can_create,
         can_edit: customPermission.can_edit,
         can_delete: customPermission.can_delete,
@@ -239,7 +231,6 @@ export function useRolePermissions(companyId: string | undefined) {
       can_access_campaigns: defaults.can_access_campaigns ?? false,
       can_access_analytics: defaults.can_access_analytics ?? false,
       can_access_field_ops: defaults.can_access_field_ops ?? false,
-      can_access_warranties: defaults.can_access_warranties ?? false,
       can_create: defaults.can_create ?? false,
       can_edit: defaults.can_edit ?? false,
       can_delete: defaults.can_delete ?? false,

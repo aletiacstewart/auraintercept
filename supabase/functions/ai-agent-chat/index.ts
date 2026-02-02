@@ -792,7 +792,6 @@ After getting tool results, present the data clearly in a conversational respons
 - Generate and manage customer quotes
 - Create and send invoices
 - Track inventory and parts
-- Manage warranty claims and lookups
 - Handle pricing inquiries
 - Support administrative tasks
 
@@ -819,7 +818,7 @@ const AGENT_TOOLS: Record<string, any[]> = {
         parameters: {
           type: 'object',
           properties: {
-            target_agent: { type: 'string', enum: ['booking', 'dispatch', 'quoting', 'followup', 'review', 'warranty', 'eta'] },
+            target_agent: { type: 'string', enum: ['booking', 'dispatch', 'quoting', 'followup', 'review', 'eta'] },
             reason: { type: 'string', description: 'Why the handoff is happening' },
             urgency: { type: 'string', enum: ['low', 'medium', 'high', 'emergency'] },
             customer_intent: { type: 'string', description: 'What the customer wants to do' },

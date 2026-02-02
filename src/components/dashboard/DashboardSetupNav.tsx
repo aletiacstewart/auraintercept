@@ -45,7 +45,6 @@ export function DashboardSetupNav() {
           reminderSettingsRes,
           emailTemplatesRes,
           smsTemplatesRes,
-          warrantyPoliciesRes,
           campaignsRes,
           servicesRes,
           faqsRes,
@@ -60,7 +59,6 @@ export function DashboardSetupNav() {
           supabase.from('reminder_settings').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
           supabase.from('email_templates').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
           supabase.from('sms_templates').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
-          supabase.from('warranty_policies').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
           supabase.from('marketing_campaigns').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
           supabase.from('services').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
           supabase.from('faqs').select('id', { count: 'exact', head: true }).eq('company_id', companyId),
@@ -74,7 +72,7 @@ export function DashboardSetupNav() {
 
         const company = companyRes.data;
 
-        // Quick Setup progress calculation (14 steps)
+        // Quick Setup progress calculation (13 steps)
         const quickSetupSteps = [
           !!(company?.logo_url || company?.primary_color), // Branding
           !!(company?.contact_email || company?.contact_phone || company?.contact_address), // Contact Info
@@ -89,7 +87,6 @@ export function DashboardSetupNav() {
           (emailTemplatesRes.count || 0) > 0, // Email Templates
           (smsTemplatesRes.count || 0) > 0, // SMS Templates
           !!(company?.review_request_enabled || company?.review_google_url), // Reviews
-          (warrantyPoliciesRes.count || 0) > 0, // Warranties
           (campaignsRes.count || 0) > 0, // Campaigns
         ];
         const quickSetupProgress = (quickSetupSteps.filter(Boolean).length / quickSetupSteps.length) * 100;

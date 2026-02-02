@@ -118,10 +118,10 @@ const JOB_TYPE_TO_AGENTS: Record<string, string[]> = {
   dispatch: ['dispatch', 'route', 'eta', 'triage'],
   customer_service: ['triage', 'followup', 'review', 'booking'],
   manager: ['triage', 'followup', 'review', 'booking', 'insights', 'performance', 'revenue', 'forecast'], // Includes analytics
-  billing: ['quoting', 'invoice', 'warranty'],
+  billing: ['quoting', 'invoice'],
   marketing: ['campaign', 'lead', 'promo', 'social_content', 'social_scheduler', 'social_analytics'],
   analytics: ['insights', 'performance', 'revenue', 'forecast'], // Analytics role
-  inventory: ['inventory', 'warranty'],
+  inventory: ['inventory'],
 };
 
 // Agent name mapping for display
@@ -234,7 +234,7 @@ export default function AIAgentsHub() {
   }, [companyId, canManageAgents, loading, subscriptionTier, inTrial]);
 
   // Agents hidden from non-platform-admin roles
-  const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'warranty', 'campaign'];
+  const HIDDEN_AGENTS_FOR_NON_PLATFORM_ADMIN = ['inventory', 'campaign'];
   
   // Categories hidden from non-platform-admin roles
   const HIDDEN_CATEGORIES_FOR_NON_PLATFORM_ADMIN = ['marketing_sales'];

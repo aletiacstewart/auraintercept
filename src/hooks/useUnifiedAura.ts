@@ -54,7 +54,6 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
       '/dashboard/quotes': 'Quotes management page showing draft, sent, accepted, and rejected quotes with totals.',
       '/dashboard/invoices': 'Invoices management page showing draft, sent, paid, and overdue invoices with totals.',
       '/dashboard/inventory': 'Inventory management page showing items, stock levels, and low stock alerts.',
-      '/dashboard/warranties': 'Warranties management page showing active, expiring soon, and expired warranties.',
       '/dashboard/customers': 'Customer profiles page showing customer list with contact info and history.',
       '/dashboard/campaigns': 'Marketing campaigns page showing active, scheduled, and completed campaigns.',
       '/dashboard/analytics': 'Analytics dashboard showing performance metrics, revenue trends, and forecasts.',
@@ -72,7 +71,7 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
     }
     
     // Generic context for unknown pages
-    return `Dashboard page at ${path}. User can ask about any business data including leads, appointments, quotes, invoices, inventory, warranties, campaigns, customers, and feedback.`;
+    return `Dashboard page at ${path}. User can ask about any business data including leads, appointments, quotes, invoices, inventory, campaigns, customers, and feedback.`;
   }, [location.pathname]);
   
   // Use the multi-agent chat for analytics queries with page context
@@ -109,7 +108,7 @@ export function useUnifiedAura(options: UnifiedAuraOptions = {}) {
     }
     
     // PRIORITY FAST-PATH: Questions with "do I have" about business entities are data queries
-    const businessEntities = /customers?|leads?|appointments?|quotes?|invoices?|warranties?|campaigns?|inventory|items?/i;
+    const businessEntities = /customers?|leads?|appointments?|quotes?|invoices?|campaigns?|inventory|items?/i;
     if (/\bdo i have\b/i.test(normalizedInput) && businessEntities.test(normalizedInput)) {
       return {
         intent: 'data_query',

@@ -24,7 +24,6 @@ const AGENT_TYPES = {
   quoting: { name: 'Quoting Agent', category: 'business_operations', phase: 3 },
   invoice: { name: 'Invoice Agent', category: 'business_operations', phase: 3 },
   inventory: { name: 'Inventory Agent', category: 'business_operations', phase: 3 },
-  warranty: { name: 'Warranty Agent', category: 'business_operations', phase: 3 },
   admin: { name: 'Admin Agent', category: 'business_operations', phase: 3 },
   
   // Marketing & Sales (Phase 4)

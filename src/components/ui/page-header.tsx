@@ -12,7 +12,6 @@ export type FeatureColor =
   | 'quotes' 
   | 'invoices' 
   | 'inventory' 
-  | 'warranties' 
   | 'analytics' 
   | 'marketing' 
   | 'fieldops'
@@ -44,7 +43,6 @@ const featureColorClasses: Record<FeatureColor, { bg: string; text: string; ring
   quotes: { bg: 'bg-feature-quotes/20', text: 'text-feature-quotes', ringColor: 'var(--feature-quotes)' },
   invoices: { bg: 'bg-feature-invoices/20', text: 'text-feature-invoices', ringColor: 'var(--feature-invoices)' },
   inventory: { bg: 'bg-feature-inventory/20', text: 'text-feature-inventory', ringColor: 'var(--feature-inventory)' },
-  warranties: { bg: 'bg-feature-warranties/20', text: 'text-feature-warranties', ringColor: 'var(--feature-warranties)' },
   analytics: { bg: 'bg-feature-analytics/20', text: 'text-feature-analytics', ringColor: 'var(--feature-analytics)' },
   marketing: { bg: 'bg-feature-marketing/20', text: 'text-feature-marketing', ringColor: 'var(--feature-marketing)' },
   fieldops: { bg: 'bg-feature-fieldops/20', text: 'text-feature-fieldops', ringColor: 'var(--feature-fieldops)' },

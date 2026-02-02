@@ -554,7 +554,7 @@ const guideCategories = [
           'Add notes about work performed',
           'Mark job complete to trigger follow-up'
         ],
-        tips: ['Photos document work for warranty purposes', 'GPS location captured with each status update']
+        tips: ['Photos document work for future reference', 'GPS location captured with each status update']
       },
       {
         title: 'Dispatch & Route Optimization',
@@ -597,11 +597,11 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to Business Ops Hub from sidebar',
-          'Quick Action Tabs: Companies, Employees, Customers, Inventory, Warranties',
+          'Quick Action Tabs: Companies, Employees, Customers, Inventory',
           'View real-time KPIs for quotes, invoices, and revenue',
           'Access Quote Forge for AI-powered quote generation',
           'Monitor payment status and outstanding invoices',
-          'Inventory and Warranty tabs require Command tier'
+          'Inventory tab requires Command tier'
         ],
         tips: ['Use Business Ops Overview for executive dashboard', 'Quote Forge saves time on complex quotes']
       },
@@ -979,7 +979,7 @@ const guideCategories = [
           'AI parses content automatically',
           'Review and approve extracted information',
           'Documents enhance AI agent knowledge',
-          'Product manuals improve warranty support'
+          'Product manuals improve support'
         ],
         tips: ['Upload service manuals for better support', 'Keep documents current']
       },
@@ -1019,8 +1019,6 @@ const guideCategories = [
 const RESTRICTED_GUIDE_TITLES = [
   'Inventory Tracking', 
   'Inventory Management', 
-  'Warranty Management',
-  'Warranty Policies', 
   'Social Media Agents',
   'Analytics & Reporting Agents',
   'Analytics Console',
