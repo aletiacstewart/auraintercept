@@ -1,31 +1,114 @@
 
-# Company-Configurable Console Features ✅ IMPLEMENTED
+# Dynamic Page Title for Ask Aura Modal
 
-## Summary
-Added per-company visibility toggles to the `smart_websites` table so companies can hide irrelevant console features (like Emergency, Tracking, Billing) from their embedded chat widget.
+## Problem
+The Ask Aura modal (AuraUnifiedModal) has a hardcoded title "Analytics & Reports" regardless of which page the user is currently on.
 
-## Changes Made
+## Solution
+Pass the current page title through the component chain and display it dynamically in the modal header.
 
-### 1. Database Migration ✅
-Added 6 new boolean columns to `smart_websites`:
-- `show_console_appointments` (default: true)
-- `show_console_quotes` (default: true)
-- `show_console_tracking` (default: true)
-- `show_console_billing` (default: true)
-- `show_console_emergency` (default: true)
-- `show_console_feedback` (default: true)
+---
 
-### 2. UnifiedCustomerConsole.tsx ✅
-- Fetches console feature settings from `smart_websites`
-- Filters quick actions AND tabs based on company settings (in conjunction with tier)
-- Emergency section only shows if `show_console_emergency` is enabled
+## Technical Changes
 
-### 3. SmartWebsiteManager.tsx ✅
-- Added "Console Features" card in Visibility tab
-- 6 toggle switches for each feature
+### 1. Update `AuraUnifiedModal.tsx`
 
-## How to Use
-1. Go to **Web Presence Manager** > **Visibility** tab
-2. Find the **Console Features** section
-3. Toggle off features you don't need (e.g., Tracking, Emergency, Billing)
-4. Your embedded chat widget will only show enabled features
+Add a `pageTitle` prop and use it in the header:
+
+```typescript
+interface AuraUnifiedModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  pageTitle?: string; // NEW
+}
+
+export function AuraUnifiedModal({ open, onOpenChange, pageTitle }: AuraUnifiedModalProps) {
+  // ...
+  return (
+    <Dialog>
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-2">
+          {/* icon */}
+          <span>{pageTitle || 'Ask Aura'}</span>  {/* Use pageTitle with fallback */}
+          {/* badges */}
+        </DialogTitle>
+      </DialogHeader>
+    </Dialog>
+  );
+}
+```
+
+### 2. Update `AuraFloatingButton.tsx`
+
+Add a `pageTitle` prop and pass it to the modal:
+
+```typescript
+interface AuraFloatingButtonProps {
+  className?: string;
+  pageTitle?: string; // NEW
+}
+
+export function AuraFloatingButton({ className, pageTitle }: AuraFloatingButtonProps) {
+  // ...
+  return (
+    <>
+      {/* floating button */}
+      <AuraUnifiedModal 
+        open={isModalOpen} 
+        onOpenChange={setIsModalOpen}
+        pageTitle={pageTitle}  // NEW
+      />
+    </>
+  );
+}
+```
+
+Also update the tooltip to use the pageTitle:
+```typescript
+<TooltipContent side="left">
+  <p className="font-medium">{pageTitle || 'Ask Aura'}</p>
+  <p className="text-xs text-muted-foreground">Click to chat • Hold for voice</p>
+</TooltipContent>
+```
+
+### 3. Update `DashboardLayout.tsx`
+
+Derive the current page title from the pathname and pass it to `AuraFloatingButton`:
+
+```typescript
+// Add helper function to get page title from current path
+const getCurrentPageTitle = () => {
+  const pathname = location.pathname;
+  for (const group of navGroups) {
+    for (const item of group.items) {
+      if (item.href === pathname) {
+        return item.label;
+      }
+    }
+  }
+  return 'Ask Aura'; // Default fallback
+};
+
+// In render:
+<AuraFloatingButton pageTitle={getCurrentPageTitle()} />
+```
+
+---
+
+## Files to Modify
+
+| File | Changes |
+|------|---------|
+| `src/components/aura/AuraUnifiedModal.tsx` | Add `pageTitle` prop, use in header |
+| `src/components/aura/AuraFloatingButton.tsx` | Add `pageTitle` prop, pass to modal + tooltip |
+| `src/components/dashboard/DashboardLayout.tsx` | Derive current page title, pass to floating button |
+
+---
+
+## Result
+
+When user opens Ask Aura from:
+- Dashboard → Title shows "Dashboard"
+- Web Presence Manager → Title shows "Web Presence Manager"
+- Analytics & Reports Ops → Title shows "Analytics & Reports Ops"
+- Any other page → Falls back to "Ask Aura"
