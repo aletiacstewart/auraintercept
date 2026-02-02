@@ -55,7 +55,7 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
     id: 'customer_portal',
     title: 'Customer Portal',
     icon: HeadphonesIcon,
-    description: 'AI-powered customer engagement hub with Talk to Aura (all tiers), Proxy Voice Chat (Single-Point+), automated follow-ups, and review collection.',
+    description: 'AI-powered customer engagement hub with Message Aura (Text) on all tiers, Talk to Aura (Voice) on Single-Point+, automated follow-ups, and review collection.',
     requiredTier: 'single_point',
     tabs: ['Chat', 'Voice', 'Services', 'Hours', 'Feedback', 'Track', 'Billing'],
     agents: [
@@ -65,10 +65,10 @@ export const CONSOLE_HELP_CONFIG: ConsoleHelpConfig[] = [
       { name: 'Scheduling Agent', tier: 'multi_track' },
     ],
     features: [
-      { text: 'Talk to Aura (Text-Based) - keyboard input, no dependencies required', tier: 'core' },
+      { text: 'Message Aura (Text) - keyboard input, no dependencies required', tier: 'core' },
       { text: 'Intelligent customer triage and routing', tier: 'single_point' },
-      { text: 'Proxy Voice Chat (Speech-Based) - microphone/speaker, requires ElevenLabs', tier: 'single_point' },
-      { text: 'Proxy Outbound Voice Calls for reminders - requires ElevenLabs + Twilio', tier: 'single_point' },
+      { text: 'Talk to Aura (Voice) - microphone/speaker, requires ElevenLabs + Twilio', tier: 'single_point' },
+      { text: 'Voice Reminders for appointments - requires ElevenLabs + Twilio', tier: 'single_point' },
       { text: 'Answer questions using your Knowledge Base', tier: 'single_point' },
       { text: 'Automated follow-up sequences via Email/SMS', tier: 'single_point' },
       { text: 'Review collection and Google/Yelp/Facebook integration', tier: 'single_point' },
@@ -373,9 +373,9 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   core: {
     title: 'Aura Core',
-    description: 'Entry-level plan with Talk to Aura (Text-Based), Social Media Signal, and Web Presence.',
+    description: 'Entry-level plan with Message Aura (Text), Social Media Signal, and Web Presence.',
     highlights: [
-      'Talk to Aura (Text-Based) - customers type, AI responds in text',
+      'Message Aura (Text) - customers type, AI responds in text',
       'No voice features - text chat only (no ElevenLabs/Twilio needed)',
       'Social Media Signal (6 platforms)',
       'Web Presence (1pg)',
@@ -390,7 +390,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
       'AI Receptionist for 24/7 customer engagement',
       'Scheduling Agent for online booking',
       'Follow-up Agent for SMS/Email confirmations',
-      'Talk to Aura (Text-Based) + Proxy Voice Chat',
+      'Message Aura (Text) + Talk to Aura (Voice)',
       'Customer Portal Console',
       'Designed for nail salons, hair salons, barbers, massage centers',
     ],
@@ -399,12 +399,12 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     title: 'Aura Single-Point',
     description: 'Perfect for businesses focused on lead intake and reputation management.',
     highlights: [
-      'Talk to Aura (Text-Based) + Proxy Voice Chat (Speech-Based)',
+      'Message Aura (Text) + Talk to Aura (Voice)',
       'AI Receptionist for 24/7 customer engagement',
       'Automated follow-up sequences (Email, SMS, Voice)',
       'Review collection with Google/Yelp/Facebook integration',
-      'Proxy Voice Chat - speech via microphone/speakers (requires ElevenLabs)',
-      'AI Outbound Calls for reminders (requires Twilio)',
+      'Talk to Aura (Voice) - speech via microphone/speakers (requires ElevenLabs + Twilio)',
+      'Voice Reminders for appointments (requires ElevenLabs + Twilio)',
       'Knowledge Base for intelligent responses',
       'Call to Book (no online scheduling)',
       'Up to 5 employees',
@@ -449,18 +449,18 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
 // Platform feature highlights for quick reference
 export const PLATFORM_HIGHLIGHTS = {
   aiChatWidget: {
-    title: 'Talk to Aura (Text-Based)',
+    title: 'Message Aura (Text)',
     description: 'Text-based chat interface using keyboard input - no external dependencies required',
     tiers: ['core', 'single_point', 'multi_track', 'command'] as SubscriptionTier[],
   },
   aiVoice: {
-    title: 'Proxy Voice Chat (Speech-Based)',
-    description: 'Speech-to-speech conversations via microphone/speakers - requires ElevenLabs',
+    title: 'Talk to Aura (Voice)',
+    description: 'Speech-to-speech conversations via microphone/speakers - requires ElevenLabs + Twilio',
     tiers: ['single_point', 'multi_track', 'command'] as SubscriptionTier[],
   },
   askAura: {
     title: 'Ask Aura',
-    description: 'Hands-free voice control for the entire platform',
+    description: 'Internal staff-only voice navigation for hands-free dashboard control',
     tiers: ['single_point', 'multi_track', 'command'] as SubscriptionTier[],
   },
   knowledgeBase: {

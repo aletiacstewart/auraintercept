@@ -48,6 +48,7 @@ import { AboutSectionEditor } from '@/components/smartwebsite/AboutSectionEditor
 import { HolidayMessageManager } from '@/components/smartwebsite/HolidayMessageManager';
 import { GalleryManager } from '@/components/smartwebsite/GalleryManager';
 import { LogoEditor } from '@/components/smartwebsite/LogoEditor';
+import { HelpTooltip } from '@/components/ui/HelpTooltip';
 import { HeroBackgroundUpload } from '@/components/smartwebsite/HeroBackgroundUpload';
 import { SmartWebsiteServicesEditor } from '@/components/smartwebsite/SmartWebsiteServicesEditor';
 import { SmartWebsiteHoursEditor } from '@/components/smartwebsite/SmartWebsiteHoursEditor';
@@ -835,8 +836,15 @@ export default function SmartWebsiteManager() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-card-foreground">Talk to Aura</p>
-                    <p className="text-sm text-card-foreground/70">Enable Talk to Aura chat</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-medium text-card-foreground">Message Aura (Text)</p>
+                      <HelpTooltip 
+                        term="" 
+                        tooltip="Text-based chat where customers type questions and receive text responses. Works on ALL tiers with no external integrations needed."
+                        showIcon={true}
+                      />
+                    </div>
+                    <p className="text-sm text-card-foreground/70">Enable text chat widget for visitors</p>
                   </div>
                   <Switch
                     checked={website.show_chat_widget}
@@ -845,8 +853,15 @@ export default function SmartWebsiteManager() {
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-card-foreground">Proxy Voice Chat</p>
-                    <p className="text-sm text-card-foreground/70">Enable voice chat for visitors</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-medium text-card-foreground">Talk to Aura (Voice)</p>
+                      <HelpTooltip 
+                        term="" 
+                        tooltip="Speech-based conversations using microphone and speakers. Customers speak naturally and hear AI voice responses. Requires ElevenLabs + Twilio."
+                        showIcon={true}
+                      />
+                    </div>
+                    <p className="text-sm text-card-foreground/70">Enable voice conversations for visitors</p>
                   </div>
                   <Switch
                     checked={website.show_voice_widget}

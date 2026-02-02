@@ -33,7 +33,10 @@ import {
   AlertCircle,
   Share2,
   Home,
-  Activity
+  Activity,
+  MessageSquare,
+  Mic,
+  Mail
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -58,6 +61,99 @@ interface AgentGuide {
   steps: HowToStep[];
   tips?: string[];
 }
+
+// Communication Methods Guides (Aura Features)
+const COMMUNICATION_METHODS_GUIDES: AgentGuide[] = [
+  {
+    id: 'message-aura',
+    label: 'Message Aura (Text)',
+    icon: MessageSquare,
+    description: 'Text-based chat for customer inquiries - available on all tiers',
+    steps: [
+      { step: 1, title: 'Open Chat Widget', description: 'Click the chat icon in the bottom right corner of the website or portal' },
+      { step: 2, title: 'Type Your Message', description: 'Enter your question or request using your keyboard' },
+      { step: 3, title: 'Get AI Response', description: 'Receive instant text responses from the AI assistant' },
+      { step: 4, title: 'Continue Conversation', description: 'Ask follow-up questions or request specific actions like booking' },
+    ],
+    tips: [
+      'No microphone or special setup needed - just type!',
+      'Works on all subscription tiers',
+      'AI can help with scheduling, quotes, and general inquiries'
+    ]
+  },
+  {
+    id: 'talk-to-aura',
+    label: 'Talk to Aura (Voice)',
+    icon: Mic,
+    description: 'Speech-based conversations with AI - requires ElevenLabs + Twilio',
+    steps: [
+      { step: 1, title: 'Click Voice Button', description: 'Tap the microphone icon to start a voice conversation' },
+      { step: 2, title: 'Allow Microphone', description: 'Grant permission for the browser to use your microphone' },
+      { step: 3, title: 'Speak Naturally', description: 'Talk to the AI as you would to a person' },
+      { step: 4, title: 'Listen to Response', description: 'Hear the AI\'s spoken response through your speakers' },
+    ],
+    tips: [
+      'Requires Single-Point tier or higher',
+      'Uses ElevenLabs for natural-sounding voice',
+      'Great for hands-free interactions',
+      'Transcripts are available after the call'
+    ]
+  },
+  {
+    id: 'ask-aura',
+    label: 'Ask Aura (Staff Only)',
+    icon: Mic,
+    description: 'Internal voice navigation for dashboard control - staff only',
+    steps: [
+      { step: 1, title: 'Open Ask Aura', description: 'Click the floating Aura button or use the keyboard shortcut' },
+      { step: 2, title: 'Speak Command', description: 'Say what you want to do, like "Go to appointments" or "Show today\'s schedule"' },
+      { step: 3, title: 'Navigate Hands-Free', description: 'Aura will navigate you to the requested page or perform the action' },
+      { step: 4, title: 'Ask Questions', description: 'Get quick answers like "How many appointments today?" without navigating' },
+    ],
+    tips: [
+      'Only available within the staff dashboard',
+      'Use for quick navigation and queries',
+      'Supports commands like "Show appointments", "Open analytics"',
+      'Great for multitasking and hands-free operation'
+    ]
+  },
+  {
+    id: 'sms-reminders',
+    label: 'SMS Reminders',
+    icon: Smartphone,
+    description: 'Automated text message notifications for appointments',
+    steps: [
+      { step: 1, title: 'Automatic Setup', description: 'SMS reminders are automatically sent based on your settings' },
+      { step: 2, title: '24-Hour Reminder', description: 'Customers receive a reminder 24 hours before their appointment' },
+      { step: 3, title: '1-Hour Reminder', description: 'A final reminder is sent 1 hour before the scheduled time' },
+      { step: 4, title: 'Confirmation Links', description: 'Customers can confirm or reschedule via links in the message' },
+    ],
+    tips: [
+      'Requires Twilio integration',
+      'Customers can opt-out via reply',
+      'Configure timing in Notification Settings',
+      'Reduces no-shows by up to 50%'
+    ]
+  },
+  {
+    id: 'email-reminders',
+    label: 'Email Reminders',
+    icon: Mail,
+    description: 'Automated email notifications for appointments and campaigns',
+    steps: [
+      { step: 1, title: 'Automatic Delivery', description: 'Email reminders are sent automatically based on your schedule' },
+      { step: 2, title: 'Professional Templates', description: 'Branded templates include your company logo and colors' },
+      { step: 3, title: 'Action Buttons', description: 'Customers can confirm, reschedule, or cancel directly from email' },
+      { step: 4, title: 'Track Engagement', description: 'View open rates and clicks in the Analytics console' },
+    ],
+    tips: [
+      'No external integration required',
+      'Customize templates in Settings',
+      'Works alongside SMS for maximum reach',
+      'Include directions and preparation instructions'
+    ]
+  },
+];
 
 // Customer Portal Guides
 const CUSTOMER_ENGAGEMENT_GUIDES: AgentGuide[] = [
@@ -799,7 +895,7 @@ const DISPATCH_FIELD_OPS_GUIDES: AgentGuide[] = [
   },
 ];
 
-export type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'businessops_admin' | 'marketing' | 'analytics' | 'dispatch' | 'social';
+export type ConsoleType = 'customer' | 'fieldops' | 'businessops' | 'businessops_admin' | 'marketing' | 'analytics' | 'dispatch' | 'social' | 'communication';
 
 const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
   customer: CUSTOMER_ENGAGEMENT_GUIDES,
@@ -810,6 +906,7 @@ const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
   analytics: ANALYTICS_GUIDES,
   dispatch: DISPATCH_FIELD_OPS_GUIDES,
   social: SOCIAL_MEDIA_GUIDES,
+  communication: COMMUNICATION_METHODS_GUIDES,
 };
 
 const CONSOLE_TITLES: Record<ConsoleType, string> = {
@@ -821,6 +918,7 @@ const CONSOLE_TITLES: Record<ConsoleType, string> = {
   analytics: 'How to use Analytics & Optimization AI',
   dispatch: 'How to use Dispatch-Field Ops Console',
   social: 'How to use Social Media Ops AI',
+  communication: 'Aura Communication Methods',
 };
 
 interface AgentHowToGuideProps {

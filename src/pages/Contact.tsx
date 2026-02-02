@@ -269,7 +269,7 @@ export default function Contact() {
                   <CardContent>
                     <Button 
                       variant="outline" 
-                      className="w-full"
+                      className="w-full gap-2"
                       onClick={() => navigate('/talk-to-aura')}
                     >
                       <Mic className="mr-2 h-4 w-4" />

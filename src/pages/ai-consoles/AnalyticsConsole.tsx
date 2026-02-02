@@ -22,7 +22,7 @@ export default function AnalyticsConsole() {
             <PageHeader
               icon={BarChart3}
               title="Analytics & Reports Ops"
-              description="AI-powered analytics, reporting, and business insights"
+              description="AI-powered analytics, reporting, and business insights. Includes performance metrics, revenue analysis, forecasting, and multi-format exports."
               featureColor="platform"
               showAuraBar
               action={

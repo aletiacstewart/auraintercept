@@ -68,7 +68,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       wasConnectedRef.current = true;
       setIsConnecting(false);
       toast({
-        title: "Voice Chat Started",
+        title: "Talk to Aura Connected",
         description: "You can now speak with the AI assistant",
       });
     },
@@ -107,8 +107,8 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
 
       if (wasConnectedRef.current) {
         toast({
-          title: "Voice Chat Ended",
-          description: "The conversation has been disconnected",
+          title: "Talk to Aura Ended",
+          description: "The voice conversation has been disconnected",
         });
       }
 
@@ -282,7 +282,7 @@ export const VoiceChat: React.FC<VoiceChatProps> = ({
       wasConnectedRef.current = false;
       await conversation.endSession();
       toast({
-        title: "Voice Chat Ended",
+        title: "Talk to Aura Ended",
         description: "The conversation has been disconnected",
       });
     } catch (e) {
