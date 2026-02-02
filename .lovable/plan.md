@@ -1,96 +1,50 @@
 
-# Dynamic Page Title for Ask Aura Modal
+# Add Report Issue Link to Message Aura Chat Widget
 
-## Problem
-The Ask Aura modal (AuraUnifiedModal) has a hardcoded title "Analytics & Reports" regardless of which page the user is currently on.
-
-## Solution
-Pass the current page title through the component chain and display it dynamically in the modal header.
+## Overview
+Add a "Report Issue" link at the bottom of the floating chat widget that opens the existing `ReportIssueDialog`, allowing visitors to report bugs or request features directly to the platform admin dashboard.
 
 ---
 
-## Technical Changes
+## Technical Implementation
 
-### 1. Update `AuraUnifiedModal.tsx`
+### 1. Update `FloatingChatWidget.tsx`
 
-Add a `pageTitle` prop and use it in the header:
-
-```typescript
-interface AuraUnifiedModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  pageTitle?: string; // NEW
-}
-
-export function AuraUnifiedModal({ open, onOpenChange, pageTitle }: AuraUnifiedModalProps) {
-  // ...
-  return (
-    <Dialog>
-      <DialogHeader>
-        <DialogTitle className="flex items-center gap-2">
-          {/* icon */}
-          <span>{pageTitle || 'Ask Aura'}</span>  {/* Use pageTitle with fallback */}
-          {/* badges */}
-        </DialogTitle>
-      </DialogHeader>
-    </Dialog>
-  );
-}
-```
-
-### 2. Update `AuraFloatingButton.tsx`
-
-Add a `pageTitle` prop and pass it to the modal:
+Add the Report Issue link at the bottom of the chat panel, visible when the widget is open:
 
 ```typescript
-interface AuraFloatingButtonProps {
-  className?: string;
-  pageTitle?: string; // NEW
-}
+import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
+import { AlertTriangle } from 'lucide-react';
 
-export function AuraFloatingButton({ className, pageTitle }: AuraFloatingButtonProps) {
-  // ...
-  return (
-    <>
-      {/* floating button */}
-      <AuraUnifiedModal 
-        open={isModalOpen} 
-        onOpenChange={setIsModalOpen}
-        pageTitle={pageTitle}  // NEW
-      />
-    </>
-  );
-}
-```
-
-Also update the tooltip to use the pageTitle:
-```typescript
-<TooltipContent side="left">
-  <p className="font-medium">{pageTitle || 'Ask Aura'}</p>
-  <p className="text-xs text-muted-foreground">Click to chat • Hold for voice</p>
-</TooltipContent>
-```
-
-### 3. Update `DashboardLayout.tsx`
-
-Derive the current page title from the pathname and pass it to `AuraFloatingButton`:
-
-```typescript
-// Add helper function to get page title from current path
-const getCurrentPageTitle = () => {
-  const pathname = location.pathname;
-  for (const group of navGroups) {
-    for (const item of group.items) {
-      if (item.href === pathname) {
-        return item.label;
-      }
+// Inside the chat panel div, after the content area:
+<div className="px-3 py-2 border-t border-border/30 bg-muted/30">
+  <ReportIssueDialog
+    trigger={
+      <button className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1.5 transition-colors">
+        <AlertTriangle className="w-3 h-3" />
+        Report Issue
+      </button>
     }
-  }
-  return 'Ask Aura'; // Default fallback
-};
+  />
+</div>
+```
 
-// In render:
-<AuraFloatingButton pageTitle={getCurrentPageTitle()} />
+### 2. Component Structure Update
+
+The chat panel layout will be:
+
+```text
+┌─────────────────────────────────┐
+│  [X] Close button               │
+├─────────────────────────────────┤
+│                                 │
+│  UnifiedCustomerConsole         │
+│        or                       │
+│  LandingAIChat                  │
+│                                 │
+├─────────────────────────────────┤
+│  ⚠ Report Issue                 │  ← NEW footer link
+└─────────────────────────────────┘
 ```
 
 ---
@@ -99,16 +53,14 @@ const getCurrentPageTitle = () => {
 
 | File | Changes |
 |------|---------|
-| `src/components/aura/AuraUnifiedModal.tsx` | Add `pageTitle` prop, use in header |
-| `src/components/aura/AuraFloatingButton.tsx` | Add `pageTitle` prop, pass to modal + tooltip |
-| `src/components/dashboard/DashboardLayout.tsx` | Derive current page title, pass to floating button |
+| `src/components/landing/FloatingChatWidget.tsx` | Add ReportIssueDialog with custom trigger at bottom of chat panel |
 
 ---
 
-## Result
+## Behavior
 
-When user opens Ask Aura from:
-- Dashboard → Title shows "Dashboard"
-- Web Presence Manager → Title shows "Web Presence Manager"
-- Analytics & Reports Ops → Title shows "Analytics & Reports Ops"
-- Any other page → Falls back to "Ask Aura"
+- Link appears at the bottom of the chat widget whenever it's open
+- Clicking opens the existing Report Issue dialog
+- Reports go to the `platform_issues` table
+- Platform admins can view all reports in `/dashboard/platform-issues`
+- Works for both authenticated and unauthenticated visitors
