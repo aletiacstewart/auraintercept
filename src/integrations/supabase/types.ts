@@ -840,6 +840,7 @@ export type Database = {
           bounce_alert_email: string | null
           bounce_alert_enabled: boolean | null
           bounce_alert_threshold: number | null
+          brand_tone: string | null
           calendar_feed_token: string | null
           callback_delay_seconds: number | null
           callback_retry_count: number | null
@@ -864,6 +865,7 @@ export type Database = {
           emergency_notification_emails: string[] | null
           emergency_phone: string | null
           emergency_sms_enabled: boolean | null
+          emergency_surcharge: number | null
           id: string
           last_bounce_alert_at: string | null
           last_cost_alert_at: string | null
@@ -873,6 +875,7 @@ export type Database = {
           last_unsubscribe_alert_at: string | null
           last_weekly_digest_at: string | null
           logo_url: string | null
+          manager_name: string | null
           missed_call_action: string | null
           monthly_digest_day: number | null
           monthly_digest_email: string | null
@@ -952,6 +955,7 @@ export type Database = {
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
+          brand_tone?: string | null
           calendar_feed_token?: string | null
           callback_delay_seconds?: number | null
           callback_retry_count?: number | null
@@ -976,6 +980,7 @@ export type Database = {
           emergency_notification_emails?: string[] | null
           emergency_phone?: string | null
           emergency_sms_enabled?: boolean | null
+          emergency_surcharge?: number | null
           id?: string
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
@@ -985,6 +990,7 @@ export type Database = {
           last_unsubscribe_alert_at?: string | null
           last_weekly_digest_at?: string | null
           logo_url?: string | null
+          manager_name?: string | null
           missed_call_action?: string | null
           monthly_digest_day?: number | null
           monthly_digest_email?: string | null
@@ -1064,6 +1070,7 @@ export type Database = {
           bounce_alert_email?: string | null
           bounce_alert_enabled?: boolean | null
           bounce_alert_threshold?: number | null
+          brand_tone?: string | null
           calendar_feed_token?: string | null
           callback_delay_seconds?: number | null
           callback_retry_count?: number | null
@@ -1088,6 +1095,7 @@ export type Database = {
           emergency_notification_emails?: string[] | null
           emergency_phone?: string | null
           emergency_sms_enabled?: boolean | null
+          emergency_surcharge?: number | null
           id?: string
           last_bounce_alert_at?: string | null
           last_cost_alert_at?: string | null
@@ -1097,6 +1105,7 @@ export type Database = {
           last_unsubscribe_alert_at?: string | null
           last_weekly_digest_at?: string | null
           logo_url?: string | null
+          manager_name?: string | null
           missed_call_action?: string | null
           monthly_digest_day?: number | null
           monthly_digest_email?: string | null
