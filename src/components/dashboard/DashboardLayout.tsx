@@ -105,7 +105,7 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'Field-Dispatch Mobile Apps',
+    label: 'Tech-Field Console & Mobile App',
     requiredTier: 'multi_track',
     items: [
       { label: 'Technician-Field Ops', icon: Truck, href: '/dashboard/ai-consoles/field-ops', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['technician', 'dispatch'], featureColor: 'text-feature-fieldops', requiredTier: 'multi_track' },
