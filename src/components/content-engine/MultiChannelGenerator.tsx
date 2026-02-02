@@ -289,6 +289,52 @@ export function MultiChannelGenerator() {
     }
   };
 
+  const saveToWebPresence = async (content: Record<string, string>) => {
+    setSavingChannel('website');
+    try {
+      // Map content keys to smart_websites fields
+      const updates: Record<string, string> = {};
+      
+      if (content.headline) updates.hero_headline = content.headline;
+      if (content.subheadline) updates.hero_subheadline = content.subheadline;
+      if (content.cta || content.cta_text) updates.cta_button_text = content.cta || content.cta_text;
+      if (content.about_header) updates.about_header = content.about_header;
+      if (content.about_subheader) updates.about_subheader = content.about_subheader;
+      if (content.about_paragraph) updates.about_paragraph = content.about_paragraph;
+
+      // Check if website exists, create or update
+      const { data: existing } = await supabase
+        .from('smart_websites')
+        .select('id')
+        .eq('company_id', effectiveCompanyId!)
+        .single();
+
+      if (existing) {
+        const { error } = await supabase
+          .from('smart_websites')
+          .update(updates)
+          .eq('company_id', effectiveCompanyId!);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('smart_websites')
+          .insert({
+            company_id: effectiveCompanyId!,
+            ...updates,
+          });
+        if (error) throw error;
+      }
+
+      toast({ title: 'Saved!', description: 'Web Presence updated with new content' });
+      queryClient.invalidateQueries({ queryKey: ['smart-website'] });
+    } catch (error) {
+      console.error('Error saving to Web Presence:', error);
+      toast({ title: 'Error', description: 'Failed to update Web Presence', variant: 'destructive' });
+    } finally {
+      setSavingChannel(null);
+    }
+  };
+
   const renderSaveAction = (channel: string, content: unknown) => {
     if (!content || (typeof content === 'object' && 'error' in (content as Record<string, unknown>))) return null;
 
@@ -352,11 +398,12 @@ export function MultiChannelGenerator() {
           <Button
             size="sm"
             variant="outline"
-            onClick={() => navigate('/dashboard/web-presence')}
+            onClick={() => saveToWebPresence(content as Record<string, string>)}
+            disabled={isSaving}
             className="gap-2"
           >
-            <ArrowRight className="h-3 w-3" />
-            Go to Website
+            {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Globe className="h-3 w-3" />}
+            Push to Web Presence
           </Button>
         );
       default:
