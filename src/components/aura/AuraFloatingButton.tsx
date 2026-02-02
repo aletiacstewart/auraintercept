@@ -8,9 +8,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 
 interface AuraFloatingButtonProps {
   className?: string;
+  pageTitle?: string;
 }
 
-export function AuraFloatingButton({ className }: AuraFloatingButtonProps) {
+export function AuraFloatingButton({ className, pageTitle }: AuraFloatingButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isVoiceModeEnabled, isListening, toggleVoiceMode, isSupported } = useVoice();
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -74,7 +75,7 @@ export function AuraFloatingButton({ className }: AuraFloatingButtonProps) {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="left">
-            <p className="font-medium">Analytics & Reports</p>
+            <p className="font-medium">{pageTitle || 'Ask Aura'}</p>
             <p className="text-xs text-muted-foreground">Click to chat • Hold for voice</p>
           </TooltipContent>
         </Tooltip>
@@ -88,6 +89,7 @@ export function AuraFloatingButton({ className }: AuraFloatingButtonProps) {
       <AuraUnifiedModal 
         open={isModalOpen} 
         onOpenChange={setIsModalOpen}
+        pageTitle={pageTitle}
       />
     </>
   );

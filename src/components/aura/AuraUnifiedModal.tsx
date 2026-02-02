@@ -17,9 +17,10 @@ import { Badge } from '@/components/ui/badge';
 interface AuraUnifiedModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  pageTitle?: string;
 }
 
-export function AuraUnifiedModal({ open, onOpenChange }: AuraUnifiedModalProps) {
+export function AuraUnifiedModal({ open, onOpenChange, pageTitle }: AuraUnifiedModalProps) {
   const { user, companyId } = useAuth();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   
@@ -67,7 +68,7 @@ export function AuraUnifiedModal({ open, onOpenChange }: AuraUnifiedModalProps) 
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
-            <span>Analytics & Reports</span>
+            <span>{pageTitle || 'Ask Aura'}</span>
             {currentAgent && (
               <Badge variant="outline" className="ml-2 text-xs">
                 {currentAgent}
