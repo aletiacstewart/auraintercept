@@ -140,7 +140,7 @@ const agentCategories = [{
     description: 'Engagement metrics and performance tracking',
     icon: BarChart3
   }, {
-    name: 'Web Presence Manager',
+    name: 'Smart Website Manager',
     description: 'AI-powered branded website with chat, voice & booking',
     icon: Globe
   }]
