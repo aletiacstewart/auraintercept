@@ -290,7 +290,7 @@ export const WebsiteCopyPDF: React.FC = () => (
 
       <View style={styles.copyCard}>
         <Text style={styles.copyLabel}>Hero Variation 2 - Solution-Focused</Text>
-        <Text style={styles.copyHeadline}>23 AI Operatives. One Mission: Grow Your Business.</Text>
+        <Text style={styles.copyHeadline}>24 AI Operatives. One Mission: Grow Your Business.</Text>
         <Text style={styles.copySubhead}>From answering calls to dispatching technicians, Aura Intercept handles every operational task while you focus on what matters.</Text>
       </View>
 
@@ -566,7 +566,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Homepage</Text>
         <Text style={styles.seoText}>
           Title: Aura Intercept | AI Business Automation for Service Companies{'\n'}
-          Meta: 23 AI operatives handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start growing revenue. Try free for 14 days.
+          Meta: 24 AI operatives handle calls, scheduling, dispatch & more 24/7. Stop missing leads. Start growing revenue. Try free for 14 days.
         </Text>
       </View>
 
@@ -582,7 +582,7 @@ export const WebsiteCopyPDF: React.FC = () => (
         <Text style={styles.seoLabel}>Pricing Page</Text>
         <Text style={styles.seoText}>
           Title: Pricing Plans | Aura Intercept AI Business Automation{'\n'}
-          Meta: Plans from $197/mo. 23 AI operatives, 24/7 call answering, scheduling automation & more. 23x average ROI. Start your free trial today.
+          Meta: Plans from $197/mo. 24 AI operatives, 24/7 call answering, scheduling automation & more. 24x average ROI. Start your free trial today.
         </Text>
       </View>
 

@@ -427,10 +427,10 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
   },
   command: {
     title: 'Aura Pro Command',
-    description: 'Enterprise automation with full 23-operative suite for 15+ technicians or multi-location.',
+    description: 'Enterprise automation with full 24-operative suite for 15+ technicians or multi-location.',
     highlights: [
       'Everything in Multi-Track',
-      'All 23 AI Operatives',
+      'All 24 AI Operatives',
       'All 7 Consoles',
       'Business Operations console',
       'Marketing & Sales automation',

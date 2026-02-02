@@ -942,7 +942,7 @@ export default function Auth() {
                       </div>
                     </div>
                     <div className="flex gap-2 mt-1.5 ml-5 text-[10px] text-card-foreground/70">
-                      <span>23 Agents</span>
+                      <span>24 Agents</span>
                       <span>•</span>
                       <span>7 Consoles</span>
                       <span>•</span>

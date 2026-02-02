@@ -651,7 +651,7 @@ export default function Help() {
                       </AccordionTrigger>
                       <AccordionContent>
                         <p className="text-card-foreground/70">
-                          Your 30-day free trial includes <strong className="text-card-foreground">full access to all Aura Pro Command tier features</strong>. This means all 23 AI agents, all 6 Control Centers, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
+                          Your 30-day free trial includes <strong className="text-card-foreground">full access to all Aura Pro Command tier features</strong>. This means all 24 AI agents, all 7 Control Centers, and all platform features. After your trial ends, you'll be prompted to select a subscription plan.
                         </p>
                       </AccordionContent>
                     </AccordionItem>

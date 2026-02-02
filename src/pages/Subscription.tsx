@@ -44,7 +44,7 @@ const featureDescriptions: Record<string, string> = {
   'Inventory Agent': 'Tracks parts and materials, manages stock levels, and alerts on low inventory.',
   'Campaign Agent': 'Creates and manages marketing campaigns with automated targeting and scheduling.',
   'Lead Agent': 'Qualifies and scores leads, assigns to sales reps, and tracks conversion progress.',
-  'Promo Agent': 'Manages promotional codes, discounts, and special offers across channels.',
+  'Marketing Agent': 'Manages customer segments, promo codes, referral tracking, and win-back targeting for inactive customers.',
   'Performance Agent': 'Analyzes team and individual performance metrics with actionable insights.',
   'Revenue Agent': 'Tracks revenue trends, forecasts income, and identifies growth opportunities.',
   'Insights Agent': 'Generates business intelligence reports and identifies patterns in your data.',
@@ -183,10 +183,10 @@ const TIERS = [
     annualSavings: 'Save $11,994',
     description: 'Full business automation suite',
     popular: false,
-    agentCount: 23,
+    agentCount: 24,
     consoleCount: 7,
     highlights: [
-      'All 23 AI Agents',
+      'All 24 AI Agents',
       'All 7 Control Centers',
       'White-Label Branding',
       '25 Employee Accounts',
@@ -224,7 +224,7 @@ interface FeatureSection {
 
 const sections: FeatureSection[] = [
   {
-    title: 'AI Agents (0 / 3 / 10 / 23)',
+    title: 'AI Agents (0 / 3 / 10 / 24)',
     features: [
       { name: 'AI Receptionist (Triage)', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Follow-up Agent', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
@@ -239,7 +239,7 @@ const sections: FeatureSection[] = [
       { name: 'Inventory Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Campaign Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Lead Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Promo Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Marketing Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Performance Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Revenue Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Insights Agent', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },

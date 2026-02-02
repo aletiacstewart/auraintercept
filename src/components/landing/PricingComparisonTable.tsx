@@ -27,7 +27,7 @@ const featureDescriptions: Record<string, string> = {
   'Inventory Agent': 'Tracks parts and materials, manages stock levels, and alerts on low inventory.',
   'Campaign Agent': 'Creates and manages marketing campaigns with automated targeting and scheduling.',
   'Lead Agent': 'Qualifies and scores leads, assigns to sales reps, and tracks conversion progress.',
-  'Promo Agent': 'Manages promotional codes, discounts, and special offers across channels.',
+  'Marketing Agent': 'Manages customer segments, promo codes, referral tracking, and win-back targeting for inactive customers.',
   'Social Media Signal Agent': 'AI-powered content creation for all social platforms.',
   'Signal Scheduler': 'Automated post scheduling across 6 platforms.',
   'Signal Analytics': 'Engagement metrics and performance tracking.',
@@ -37,7 +37,7 @@ const featureDescriptions: Record<string, string> = {
   'Forecast Agent': 'Predicts demand, resource needs, and revenue based on historical data.',
   
   // Summary
-  'All 23 AI Agents': 'Full access to all 23 specialized AI agents for complete business automation.',
+  'All 24 AI Agents': 'Full access to all 24 specialized AI agents for complete business automation.',
   
   // Control Centers
   'Customer Portal Console': 'Self-service portal where customers can book appointments, view history, and communicate with your team.',
@@ -118,7 +118,7 @@ const sections: FeatureSection[] = [
       { name: 'Inventory Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Campaign Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Lead Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
-      { name: 'Promo Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
+      { name: 'Marketing Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Social Media Signal Agent', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Signal Scheduler', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Signal Analytics', express: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },

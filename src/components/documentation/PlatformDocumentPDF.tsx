@@ -496,7 +496,7 @@ const agents = {
   marketingSales: [
     { name: 'Campaign Agent', desc: 'Creates and manages promotional, referral, win-back, seasonal, and loyalty campaigns.' },
     { name: 'Lead Agent', desc: 'AI-powered lead scoring and customer segmentation for targeted marketing with higher conversion rates.' },
-    { name: 'Promo Agent', desc: 'Creates promotional codes, seasonal discounts, and special offers. Tracks redemption and ROI.' },
+    { name: 'Marketing Agent', desc: 'Manages customer segments, promo codes, referral tracking, and win-back targeting for inactive customers.' },
   ],
   analytics: [
     { name: 'Insights Agent', desc: 'Business data analysis and trend identification for strategic decisions.' },
@@ -684,7 +684,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.solutionCard}>
         <Text style={styles.solutionTitle}>The Aura Intercept Solution</Text>
         <Text style={styles.solutionText}>
-          Our 23 AI operatives work 24/7 to answer every call, book every appointment, remind every customer, 
+          Our 24 AI operatives work 24/7 to answer every call, book every appointment, remind every customer, 
           dispatch every technician, and collect every payment - automatically. One platform. Zero missed opportunities.
         </Text>
       </View>
@@ -825,7 +825,7 @@ const PlatformDocumentPDF = () => (
     {/* AI Agent Ecosystem - Page 1 */}
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent Ecosystem" />
-      <Text style={styles.sectionTitle}>23 AI Operatives Working Together</Text>
+      <Text style={styles.sectionTitle}>24 AI Operatives Working Together</Text>
       <Text style={styles.paragraph}>
         Each agent is specialized for a specific task but seamlessly hands off to others when needed.
         This creates an intelligent, always-on workforce that handles your entire operation.
@@ -1183,7 +1183,7 @@ const PlatformDocumentPDF = () => (
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Pro Command (Enterprise)</Text>
         <Text style={styles.pricingPrice}>$5,997/month</Text>
-        <Text style={styles.pricingFeature}>- All 23 AI Operatives</Text>
+        <Text style={styles.pricingFeature}>- All 24 AI Operatives</Text>
         <Text style={styles.pricingFeature}>- All 7 Control Consoles</Text>
         <Text style={styles.pricingFeature}>- Email + SMS + Voice + Full Automation</Text>
         <Text style={styles.pricingFeature}>- 15+ technicians / Multi-location</Text>

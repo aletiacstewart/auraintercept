@@ -220,7 +220,7 @@ const guideCategories = [
           'Aura Core ($500/mo): AI-Assisted foundation with 3 AI Tools (no automation)',
           'Single-Point ($1,500/mo): AI Receptionist, Follow-up, Review + Talk to Aura (Voice)',
           'Multi-Track ($3,997/mo): 10 operatives - adds Scheduling, Dispatch, ETA, Quoting, Invoicing',
-          'Aura Pro Command ($5,997/mo): Full 23 operative suite with all 7 consoles (15+ technicians)'
+          'Aura Pro Command ($5,997/mo): Full 24 operative suite with all 7 consoles (15+ technicians)'
         ],
         tips: ['Trial users get full Command tier access']
       },
@@ -258,7 +258,7 @@ const guideCategories = [
         duration: '10 min',
         steps: [
           'Navigate to AI Agents Hub from the sidebar',
-          'View all 23 specialized agents organized by 6 Control Centers',
+          'View all 24 specialized agents organized by 6 Control Centers',
           'Agents locked by tier show "Locked" badge',
           'Click any agent card to view settings and dependencies',
           'Enable/disable agents with the toggle switch'
