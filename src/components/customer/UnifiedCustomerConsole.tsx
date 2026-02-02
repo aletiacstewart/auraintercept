@@ -145,6 +145,27 @@ export function UnifiedCustomerConsole({
       const data = await response.json();
       
       if (data.error) throw new Error(data.error);
+      
+      // Fetch console feature visibility settings from smart_websites using company_id from response
+      if (data.company?.id) {
+        const { data: websiteSettings } = await supabase
+          .from('smart_websites')
+          .select('show_console_appointments, show_console_quotes, show_console_tracking, show_console_billing, show_console_emergency, show_console_feedback')
+          .eq('company_id', data.company.id)
+          .maybeSingle();
+        
+        if (websiteSettings) {
+          data.consoleFeatures = {
+            show_console_appointments: websiteSettings.show_console_appointments ?? true,
+            show_console_quotes: websiteSettings.show_console_quotes ?? true,
+            show_console_tracking: websiteSettings.show_console_tracking ?? true,
+            show_console_billing: websiteSettings.show_console_billing ?? true,
+            show_console_emergency: websiteSettings.show_console_emergency ?? true,
+            show_console_feedback: websiteSettings.show_console_feedback ?? true,
+          };
+        }
+      }
+      
       setConfig(data);
     } catch (err) {
       console.error('Config error:', err);
