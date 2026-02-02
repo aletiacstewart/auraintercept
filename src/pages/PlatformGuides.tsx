@@ -167,17 +167,17 @@ const guideCategories = [
     featureColor: 'feature-config',
     guides: [
       {
-        title: 'AI Agents Hub Overview',
+        title: 'AI Operatives Hub Overview',
         duration: '10 min',
         steps: [
-          'Navigate to AI Agents Hub from the sidebar',
-          'View all 24 AI agents organized by 6 Control Centers',
-          'Agents locked by tier show "Locked" badge with upgrade path',
-          'Click any agent card to view settings and dependencies',
-          'Enable/disable agents with the toggle switch',
-          'Monitor agent activity in console-specific event logs'
+          'Navigate to AI Operatives Hub from the sidebar',
+          'View all 24 AI operatives organized across 7 Control Centers (Consoles)',
+          'Operatives locked by tier show "Locked" badge with upgrade path',
+          'Click any operative card to view settings and dependencies',
+          'Enable/disable operatives with the toggle switch',
+          'Monitor operative activity in console-specific event logs'
         ],
-        tips: ['Start with Customer Portal agents', 'Locked agents show required tier for upgrade planning']
+        tips: ['Start with Customer Portal operatives', 'Locked operatives show required tier for upgrade planning']
       },
       {
         title: 'AI Agent Workflow Guide',
@@ -280,9 +280,38 @@ const guideCategories = [
           'Signal Analytics: Tracks engagement metrics',
           'Uses 3-step Content Wizard: Template → Customize → Schedule',
           'All Social Media Signal agents require Aura Pro Command tier',
-          'Access via Social Media Signal Ops Console'
+          'Access via Social Media & Web Presence Console'
         ],
         tips: ['Respects platform character limits automatically', 'Queue posts for optimal engagement times']
+      },
+      {
+        title: 'Creative Agent (Content Engine)',
+        duration: '10 min',
+        steps: [
+          'Creative Agent is the unified AI content generation hub',
+          'Access via Social Media & Web Presence Console → Content Engine tab',
+          'Enter a single topic to generate content for all channels',
+          'Generates: Social posts, Blog content, Email campaigns, SMS templates, Website copy',
+          'All content uses your Brand Voice from AI Content Profile',
+          'Push content directly to Web Presence, Blog, or Outreach campaigns',
+          'Requires Aura Pro Command tier'
+        ],
+        tips: ['Set up AI Content Profile first for best results', 'Generate from one topic for consistent messaging across channels']
+      },
+      {
+        title: 'Web Presence Agent',
+        duration: '8 min',
+        steps: [
+          'Web Presence Agent manages your AI-powered website and blog',
+          'Access via Social Media & Web Presence Console → Web Presence tab',
+          'Auto-optimizes SEO for all pages and blog posts',
+          'Monitors site performance and suggests improvements',
+          'Auto-publishes blog posts from the Content Engine',
+          'Manages custom domain verification and SSL',
+          'Requires Aura Pro Command tier',
+          'Has dependency on Creative Agent being enabled'
+        ],
+        tips: ['Connect custom domain for professional branding', 'Enable auto-publish for hands-off content management']
       },
       {
         title: 'Analytics & Reporting Agents',
@@ -293,7 +322,7 @@ const guideCategories = [
           'Revenue Agent: Analyzes financial trends and forecasts',
           'Forecast Agent: Predicts demand and capacity needs',
           'All analytics agents require Command tier',
-          'Access via Analytics & Reports Ops Console'
+          'Access via Analytics & Reports Console'
         ],
         tips: ['Use form-based interfaces for structured reports', 'Export to CSV/PDF from Reports tab']
       },

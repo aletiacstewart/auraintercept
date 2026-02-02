@@ -535,12 +535,57 @@ const CONSOLES = [
         worksAlone: false,
         requires: ['Campaign Agent'],
       },
+    ],
+  },
+  {
+    name: 'Social Media & Web Presence',
+    color: colors.purple,
+    colorLight: colors.purpleLight,
+    description: 'Content creation, social media management, website builder, and blog publishing. Your complete digital presence hub.',
+    features: [
+      'Multi-platform content creation (6 platforms)',
+      'Content Engine for unified messaging',
+      'Smart Website Manager',
+      'Blog Management with auto-publish',
+      'SEO optimization',
+      'Content calendar',
+      'Brand voice consistency',
+    ],
+    agents: [
       {
         name: 'Social Media Signal Agent',
         description: 'AI-generated content for 6 platforms (Instagram, Facebook, LinkedIn, TikTok, GMB, SMS). Respects character limits and platform styles.',
-        isCore: false,
+        isCore: true,
         worksAlone: true,
         requires: [],
+      },
+      {
+        name: 'Signal Scheduler',
+        description: 'Queues and publishes social media content at optimal times across all platforms.',
+        isCore: false,
+        worksAlone: false,
+        requires: ['Social Media Signal Agent'],
+      },
+      {
+        name: 'Signal Analytics',
+        description: 'Tracks engagement metrics across all social platforms. Measures reach, clicks, and conversions.',
+        isCore: false,
+        worksAlone: false,
+        requires: ['Social Media Signal Agent'],
+      },
+      {
+        name: 'Creative Agent',
+        description: 'Unified AI content generation for all channels. Creates on-brand content for web, social, campaigns, and blogs.',
+        isCore: true,
+        worksAlone: true,
+        requires: [],
+      },
+      {
+        name: 'Web Presence Agent',
+        description: 'AI-powered website and blog management. Auto-optimizes SEO, monitors performance, auto-publishes blogs.',
+        isCore: true,
+        worksAlone: false,
+        requires: ['Creative Agent'],
       },
     ],
   },
@@ -589,6 +634,21 @@ const CONSOLES = [
         requires: ['Insights Agent', 'Revenue Agent'],
       },
     ],
+  },
+  {
+    name: 'AI Operatives Hub',
+    color: colors.blue,
+    colorLight: colors.blueLight,
+    description: 'Central management console for configuring, monitoring, and analyzing all 24 AI operatives.',
+    features: [
+      'Operative configuration and activation',
+      'Quick Start batch activation',
+      'Real-time workflow monitoring',
+      'Analytics dashboard',
+      'Conversation history browser',
+      'Dependency visualization',
+    ],
+    agents: [],
   },
 ];
 
@@ -693,6 +753,26 @@ const COMMUNICATION_CHANNELS = [
 // Subscription tiers
 const TIERS = [
   {
+    name: 'Aura Express',
+    price: '$197/month',
+    annualPrice: '$1,970/year',
+    consoles: ['None (Voice & Chat Only)'],
+    agentCount: 0,
+    agents: ['Talk to Aura (Voice)', 'Message Aura (Text)', 'Smart Link Sharing'],
+    voiceIncluded: true,
+    note: 'AI Voice & Chat for restaurants with smart link sharing to menu/ordering/website.',
+  },
+  {
+    name: 'Aura Flow',
+    price: '$297/month',
+    annualPrice: '$2,970/year',
+    consoles: ['None (Calendar Sync Only)'],
+    agentCount: 3,
+    agents: ['AI Receptionist', 'Scheduling Agent', 'Follow-up Agent'],
+    voiceIncluded: true,
+    note: 'AI Personal Assistant with direct calendar sync. No customer portal - books directly to calendar.',
+  },
+  {
     name: 'Aura Halo',
     price: '$397/month',
     annualPrice: '$3,970/year',
@@ -708,7 +788,7 @@ const TIERS = [
     annualPrice: '$5,000/year',
     consoles: ['None (AI Tools Only)'],
     agentCount: 0,
-    agents: ['Talk to Aura (Chat Tool)', 'Social Media Signal (Content Tool)', 'Web Presence (1-Page Site)'],
+    agents: ['Message Aura (Text)', 'Social Media Signal', 'Web Presence (1-Page Site)'],
     voiceIncluded: false,
     note: 'AI-Assisted Digital Foundation. No automation - manual workflow with AI tools.',
   },
@@ -734,13 +814,13 @@ const TIERS = [
       'Quoting Agent', 'Invoice Agent',
     ],
     voiceIncluded: true,
-    note: 'Full field operations with 10 AI operatives and 2 consoles.',
+    note: 'Full field operations with 10 AI operatives and 2 Control Centers (Consoles).',
   },
   {
     name: 'Aura Pro Command',
     price: '$5,997/month',
     annualPrice: '$59,970/year',
-    consoles: ['All 7 Control Centers'],
+    consoles: ['All 7 Control Centers (Consoles)'],
     agentCount: 24,
     agents: ['All 24 AI Operatives'],
     voiceIncluded: true,
@@ -780,10 +860,10 @@ const AIAgentGuidesPDF = () => (
       <View style={styles.coverStats}>
         <View style={styles.coverStat}>
           <Text style={styles.coverStatNumber}>7</Text>
-          <Text style={styles.coverStatLabel}>Control Centers</Text>
+          <Text style={styles.coverStatLabel}>Control Centers (Consoles)</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>23</Text>
+          <Text style={styles.coverStatNumber}>24</Text>
           <Text style={styles.coverStatLabel}>AI Operatives</Text>
         </View>
         <View style={styles.coverStat}>
@@ -791,7 +871,7 @@ const AIAgentGuidesPDF = () => (
           <Text style={styles.coverStatLabel}>Integrations</Text>
         </View>
         <View style={styles.coverStat}>
-          <Text style={styles.coverStatNumber}>5</Text>
+          <Text style={styles.coverStatNumber}>7</Text>
           <Text style={styles.coverStatLabel}>Pricing Tiers</Text>
         </View>
       </View>
@@ -814,11 +894,13 @@ const AIAgentGuidesPDF = () => (
           { title: 'Console 2: Field Operations', page: '6' },
           { title: 'Console 3: Business Management', page: '7' },
           { title: 'Console 4: Outreach & Sales Ops', page: '8' },
-          { title: 'Console 5: Analytics & Reports', page: '9' },
-          { title: 'Complete Agent Summary Table', page: '10' },
-          { title: 'Subscription Tiers & Agent Access', page: '11' },
-          { title: '3rd Party Integrations (Required & Optional)', page: '12' },
-          { title: 'Glossary & FAQ', page: '13' },
+          { title: 'Console 5: Social Media & Web Presence', page: '9' },
+          { title: 'Console 6: Analytics & Reports', page: '10' },
+          { title: 'Console 7: AI Operatives Hub', page: '11' },
+          { title: 'Complete Operative Summary Table', page: '12' },
+          { title: 'Subscription Tiers & Operative Access', page: '13' },
+          { title: '3rd Party Integrations (Required & Optional)', page: '14' },
+          { title: 'Glossary & FAQ', page: '15' },
         ].map((item, i) => (
           <View key={i} style={styles.tocItem}>
             <Text style={styles.tocTitle}>{item.title}</Text>
@@ -836,9 +918,9 @@ const AIAgentGuidesPDF = () => (
       <Text style={styles.sectionTitle}>Introduction</Text>
       
       <Text style={styles.paragraph}>
-        Aura Intercept uses AI Agents to automate your service business. Think of each agent as a 
-        virtual employee that specializes in a specific task. These agents work together within 
-        Consoles - control centers for different areas of your business.
+        Aura Intercept uses AI Operatives to automate your service business. Think of each operative as a 
+        virtual employee that specializes in a specific task. These operatives work together within 
+        Control Centers (Consoles) - specialized hubs for different areas of your business.
       </Text>
 
       <Text style={styles.subsectionTitle}>What are AI Agents?</Text>

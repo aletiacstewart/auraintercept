@@ -254,16 +254,16 @@ const guideCategories = [
     title: 'AI Agents Configuration',
     guides: [
       {
-        title: 'AI Agents Hub Overview',
+        title: 'AI Operatives Hub Overview',
         duration: '10 min',
         steps: [
-          'Navigate to AI Agents Hub from the sidebar',
-          'View all 24 specialized agents organized by 6 Control Centers',
-          'Agents locked by tier show "Locked" badge',
-          'Click any agent card to view settings and dependencies',
-          'Enable/disable agents with the toggle switch'
+          'Navigate to AI Operatives Hub from the sidebar',
+          'View all 24 specialized operatives organized across 7 Control Centers (Consoles)',
+          'Operatives locked by tier show "Locked" badge',
+          'Click any operative card to view settings and dependencies',
+          'Enable/disable operatives with the toggle switch'
         ],
-        tips: ['Start with Customer Portal agents first']
+        tips: ['Start with Customer Portal operatives first']
       },
       {
         title: 'AI Receptionist (Triage)',
