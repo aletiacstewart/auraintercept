@@ -14,6 +14,7 @@ import { SocialFeedQueue } from '@/components/marketing/SocialFeedQueue';
 import { SocialContentCalendar } from './SocialContentCalendar';
 import { SocialBatchWizard } from './SocialBatchWizard';
 import { SocialScheduleQueue } from './SocialScheduleQueue';
+import { MultiChannelGenerator } from '@/components/content-engine/MultiChannelGenerator';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Share2, 
@@ -22,12 +23,14 @@ import {
   Calendar,
   CalendarDays,
   Sparkles,
+  Wand2,
 } from 'lucide-react';
 
 // Quick actions for Social Media Ops - removed Analytics (moved to Analytics console)
 const QUICK_ACTIONS = [
   { id: 'create', label: 'Single Post', icon: PenSquare, message: 'Create a new social media post', featureColor: 'text-pink-400' },
   { id: 'batch', label: 'Batch Posts', icon: Sparkles, message: 'Generate batch of posts', featureColor: 'text-pink-400' },
+  { id: 'content-engine', label: 'Content Engine', icon: Wand2, message: 'Open multi-channel generator', featureColor: 'text-pink-400' },
   { id: 'drafts', label: 'Drafts', icon: FileText, message: 'Show me pending social media drafts', featureColor: 'text-pink-400' },
   { id: 'scheduled', label: 'Scheduled', icon: Calendar, message: 'Show my scheduled posts', featureColor: 'text-pink-400' },
   { id: 'calendar', label: 'Calendar', icon: CalendarDays, message: 'Open content calendar', featureColor: 'text-pink-400' },
@@ -57,6 +60,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
   const [showCalendar, setShowCalendar] = useState(false);
   const [showBatchWizard, setShowBatchWizard] = useState(false);
   const [showScheduleQueue, setShowScheduleQueue] = useState(false);
+  const [showContentEngine, setShowContentEngine] = useState(false);
   
   // Feed filter state
   const [feedFilter, setFeedFilter] = useState<'pending' | 'scheduled'>('pending');
@@ -96,6 +100,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     setShowCalendar(false);
     setShowBatchWizard(false);
     setShowScheduleQueue(false);
+    setShowContentEngine(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -118,6 +123,12 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     if (actionId === 'batch') {
       hideAllForms();
       setShowBatchWizard(true);
+      setActiveTab('chat');
+      return;
+    }
+    if (actionId === 'content-engine') {
+      hideAllForms();
+      setShowContentEngine(true);
       setActiveTab('chat');
       return;
     }
@@ -161,7 +172,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     setLastAgent('social_content');
   };
 
-  const isShowingForm = showPostForm || showCalendar || showScheduleQueue || showBatchWizard;
+  const isShowingForm = showPostForm || showCalendar || showScheduleQueue || showBatchWizard || showContentEngine;
   const showWelcome = messages.length === 0 && !isShowingForm && activeTab === 'chat';
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -170,6 +181,7 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
     if (activeTab === 'feed') return feedFilter === 'scheduled' ? 'Scheduled Posts' : 'Content Queue';
     if (showPostForm) return 'Single Post';
     if (showBatchWizard) return 'Batch Posts';
+    if (showContentEngine) return 'Content Engine';
     if (showCalendar) return 'Content Calendar';
     if (showScheduleQueue) return 'Scheduled Posts';
     if (messages.length > 0) return agentStyle.label;
@@ -254,6 +266,13 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                         setShowScheduleQueue(true);
                       }}
                     />
+                  )}
+
+                  {/* Content Engine */}
+                  {showContentEngine && effectiveCompanyId && (
+                    <div className="p-2">
+                      <MultiChannelGenerator />
+                    </div>
                   )}
 
                   {/* Calendar View */}
