@@ -6259,6 +6259,7 @@ export type Database = {
           night_subheadline: string
           primary_color: string
           show_about_section: boolean
+          show_blog: boolean
           show_chat_widget: boolean
           show_contact: boolean
           show_gallery: boolean
