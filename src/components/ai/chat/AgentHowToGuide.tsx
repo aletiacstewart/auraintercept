@@ -31,7 +31,6 @@ import {
   Smartphone,
   Bell,
   AlertCircle,
-  Lightbulb,
   Share2,
   Home,
   Activity
@@ -433,35 +432,6 @@ const BUSINESS_OPS_BASE_GUIDES: AgentGuide[] = [
   },
 ];
 
-// Platform admin only Business Ops guides (Analytics features)
-const BUSINESS_OPS_ADMIN_GUIDES: AgentGuide[] = [
-  {
-    id: 'performance',
-    label: 'Performance Report',
-    icon: BarChart3,
-    description: 'Analyze team and business performance',
-    steps: [
-      { step: 1, title: 'Select Period', description: 'Choose date range for analysis' },
-      { step: 2, title: 'Choose Metrics', description: 'Select KPIs to include' },
-      { step: 3, title: 'Generate Report', description: 'Create comprehensive report' },
-      { step: 4, title: 'Review Insights', description: 'Analyze trends and patterns' },
-    ],
-    tips: ['Compare to previous periods', 'Set up automated weekly reports']
-  },
-  {
-    id: 'insights',
-    label: 'Business Insights',
-    icon: Lightbulb,
-    description: 'Get AI-powered business recommendations',
-    steps: [
-      { step: 1, title: 'Ask Aura', description: 'Type your business question' },
-      { step: 2, title: 'Get Analysis', description: 'AI analyzes your data in real-time' },
-      { step: 3, title: 'View Results', description: 'See charts, metrics, and insights' },
-      { step: 4, title: 'Take Action', description: 'Implement recommendations' },
-    ],
-    tips: ['Ask specific questions for better insights', 'Review insights weekly for trends']
-  },
-];
 
 // Marketing & Sales Guides
 const MARKETING_SALES_GUIDES: AgentGuide[] = [
@@ -835,7 +805,7 @@ const CONSOLE_GUIDES: Record<ConsoleType, AgentGuide[]> = {
   customer: CUSTOMER_ENGAGEMENT_GUIDES,
   fieldops: FIELD_OPS_GUIDES,
   businessops: BUSINESS_OPS_BASE_GUIDES,
-  businessops_admin: [...BUSINESS_OPS_BASE_GUIDES, ...BUSINESS_OPS_ADMIN_GUIDES],
+  businessops_admin: BUSINESS_OPS_BASE_GUIDES,
   marketing: MARKETING_SALES_GUIDES,
   analytics: ANALYTICS_GUIDES,
   dispatch: DISPATCH_FIELD_OPS_GUIDES,
