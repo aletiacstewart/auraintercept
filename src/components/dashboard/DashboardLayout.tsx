@@ -84,13 +84,19 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-overview' },
       { label: 'Quick Setup', icon: Settings, href: '/dashboard/quick-setup', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
-      { label: 'Web Presence', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
       { label: 'My Schedule', icon: Calendar, href: '/dashboard/appointments', roles: ['employee'] },
       { label: 'AI Console', icon: Bot, href: '/technician/ai-console', roles: ['employee'] },
       { label: 'My Jobs', icon: ClipboardList, href: '/technician/jobs', roles: ['employee'] },
       { label: 'Calendar', icon: Calendar, href: '/technician/calendar', roles: ['employee'] },
       { label: 'Job History', icon: History, href: '/technician/history', roles: ['employee'] },
       { label: 'Availability', icon: Clock, href: '/technician/availability', roles: ['employee'] },
+    ],
+  },
+  {
+    label: 'Web Presence',
+    items: [
+      { label: 'Web Presence Manager', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
+      { label: 'Blog Management', icon: FileText, href: '/dashboard/blog-management', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-config' },
     ],
   },
   {
@@ -164,7 +170,6 @@ const navGroups: NavGroup[] = [
       { label: 'Subscription Analytics', icon: Crown, href: '/dashboard/subscription-analytics', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Platform Issues', icon: AlertTriangle, href: '/dashboard/platform-issues', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Platform Guides', icon: FileText, href: '/dashboard/platform-guides', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
-      { label: 'Blog Management', icon: FileText, href: '/dashboard/blog-management', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Demo Accounts', icon: Users, href: '/dashboard/demo-accounts', roles: ['platform_admin'], featureColor: 'text-feature-overview' },
       { label: 'Help', icon: HelpCircle, href: '/dashboard/help', roles: ['platform_admin', 'company_admin', 'employee'], featureColor: 'text-feature-overview' },
       { label: 'Architecture', icon: Map, href: '/dashboard/architecture', roles: ['platform_admin'], featureColor: 'text-feature-overview' },

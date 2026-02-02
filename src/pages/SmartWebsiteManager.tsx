@@ -69,6 +69,7 @@ interface ExtendedWebsiteData {
   show_contact: boolean;
   show_chat_widget: boolean;
   show_voice_widget: boolean;
+  show_blog: boolean | null;
   is_published: boolean;
   monthly_visitor_limit: number;
   custom_domain: string | null;
@@ -813,6 +814,16 @@ export default function SmartWebsiteManager() {
                   <Switch
                     checked={website.show_gallery ?? true}
                     onCheckedChange={(checked) => updateWebsite.mutate({ show_gallery: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-card-foreground">Blog</p>
+                    <p className="text-sm text-card-foreground/70">Show blog link in header and display company blog posts</p>
+                  </div>
+                  <Switch
+                    checked={website.show_blog ?? false}
+                    onCheckedChange={(checked) => updateWebsite.mutate({ show_blog: checked })}
                   />
                 </div>
                 <div className="flex items-center justify-between">

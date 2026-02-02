@@ -4795,6 +4795,7 @@ export type Database = {
           night_start_hour: number | null
           night_subheadline: string | null
           show_about_section: boolean
+          show_blog: boolean | null
           show_chat_widget: boolean
           show_contact: boolean
           show_emergency_hours: boolean
@@ -4849,6 +4850,7 @@ export type Database = {
           night_start_hour?: number | null
           night_subheadline?: string | null
           show_about_section?: boolean
+          show_blog?: boolean | null
           show_chat_widget?: boolean
           show_contact?: boolean
           show_emergency_hours?: boolean
@@ -4903,6 +4905,7 @@ export type Database = {
           night_start_hour?: number | null
           night_subheadline?: string | null
           show_about_section?: boolean
+          show_blog?: boolean | null
           show_chat_widget?: boolean
           show_contact?: boolean
           show_emergency_hours?: boolean
