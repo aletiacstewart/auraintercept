@@ -75,10 +75,9 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { type: 'performance', name: 'Performance Agent', category: 'analytics_reports', phase: 2, is_enabled: false, settings: {} },
   { type: 'revenue', name: 'Revenue Agent', category: 'analytics_reports', phase: 3, is_enabled: false, settings: {} },
   { type: 'forecast', name: 'Forecast Agent', category: 'analytics_reports', phase: 4, is_enabled: false, settings: {} },
-  // Content Engine (Phase 1) - 1 agent
-  { type: 'creative', name: 'Creative Agent', category: 'content_engine', phase: 1, is_enabled: false, settings: {} },
-  // Web Presence (Phase 1) - 1 agent
-  { type: 'web_presence', name: 'Web Presence Agent', category: 'web_presence', phase: 1, is_enabled: false, settings: {} },
+  // Creative & Web Presence (Phases 1-2) - 2 agents
+  { type: 'creative', name: 'Creative Agent', category: 'creative_web_presence', phase: 1, is_enabled: false, settings: {} },
+  { type: 'web_presence', name: 'Web Presence Agent', category: 'creative_web_presence', phase: 2, is_enabled: false, settings: {} },
 ];
 
 function groupAgentsByCategory(agentList: AgentInfo[]): Record<string, AgentInfo[]> {
