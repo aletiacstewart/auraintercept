@@ -29,7 +29,8 @@ import {
   Calendar,
   Building2,
   UserCheck,
-  UsersRound
+  UsersRound,
+  Activity
 } from 'lucide-react';
 
 // Quick actions for Business Operations
@@ -47,6 +48,7 @@ const BASE_QUICK_ACTIONS = [
 // Tab configuration - includes quick actions as tabs
 const TABS = [
   { id: 'chat', label: 'Home', icon: Briefcase, featureColor: 'text-feature-platform' },
+  { id: 'aura-live', label: 'Aura Live', icon: Activity, featureColor: 'text-feature-ai' },
   ...BASE_QUICK_ACTIONS.map(action => ({ id: action.id, label: action.label, icon: action.icon, featureColor: action.featureColor })),
 ];
 
@@ -66,7 +68,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [lastAgent, setLastAgent] = useState<string>('quoting');
   const [activeFormType, setActiveFormType] = useState<
-    'quote' | 'invoice' | 'lead' | 'inventory' | 'appointments' | 'companies' | 'employees' | 'customers' | null
+    'quote' | 'invoice' | 'lead' | 'inventory' | 'appointments' | 'companies' | 'employees' | 'customers' | 'aura-live' | null
   >(null);
   
   // Form visibility states
@@ -78,6 +80,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
   const [showCompaniesManager, setShowCompaniesManager] = useState(false);
   const [showEmployeesManager, setShowEmployeesManager] = useState(false);
   const [showCustomersManager, setShowCustomersManager] = useState(false);
+  const [showAuraLive, setShowAuraLive] = useState(false);
 
   // Company branding
   const { data: company } = useQuery({
@@ -118,6 +121,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setShowCompaniesManager(false);
     setShowEmployeesManager(false);
     setShowCustomersManager(false);
+    setShowAuraLive(false);
     setActiveFormType(null);
   };
 
@@ -180,6 +184,12 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
       setActiveFormType('customers');
       return;
     }
+    if (actionId === 'aura-live') {
+      hideAllForms();
+      setShowAuraLive(true);
+      setActiveFormType('aura-live');
+      return;
+    }
     
     // Default: send message to AI
     hideAllForms();
@@ -194,7 +204,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     setLastAgent('quoting');
   };
 
-  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showInventoryManager || showAppointmentsManager || showCompaniesManager || showEmployeesManager || showCustomersManager;
+  const isShowingForm = showQuoteForm || showInvoiceForm || showLeadForm || showInventoryManager || showAppointmentsManager || showCompaniesManager || showEmployeesManager || showCustomersManager || showAuraLive;
   const showWelcome = messages.length === 0 && !isShowingForm;
   const agentStyle = getAgentStyle(currentAgent || lastAgent);
   
@@ -208,6 +218,7 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
     if (activeFormType === 'companies') return 'Companies';
     if (activeFormType === 'employees') return 'Employees';
     if (activeFormType === 'customers') return 'Customers';
+    if (activeFormType === 'aura-live') return 'Aura Live';
     if (messages.length > 0) return agentStyle.label; // Show agent label during chat
     return 'Home';
   };
@@ -233,9 +244,13 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
         onTabChange={(tabId) => {
           setActiveTab(tabId);
           if (tabId !== 'chat') {
-            const action = BASE_QUICK_ACTIONS.find(a => a.id === tabId);
-            if (action) {
-              handleQuickAction(action.message, action.id);
+            if (tabId === 'aura-live') {
+              handleQuickAction('', 'aura-live');
+            } else {
+              const action = BASE_QUICK_ACTIONS.find(a => a.id === tabId);
+              if (action) {
+                handleQuickAction(action.message, action.id);
+              }
             }
           }
         }}
@@ -247,21 +262,21 @@ export const BusinessOpsAgentConsole: React.FC<BusinessOpsAgentConsoleProps> = (
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
           {showWelcome ? (
-            <div className="space-y-6">
-              {effectiveCompanyId && (
-                <AuraLiveStream companyId={effectiveCompanyId} />
-              )}
-              <WelcomeScreen
-                companyName={company?.name || 'Business Mgt Ops Console'}
-                title="Business Mgt Ops Console"
-                subtitle="I can help you with quotes, invoices, leads, and business insights. How can I assist you today?"
-                actions={QUICK_ACTIONS}
-                onAction={handleQuickAction}
-                consoleType={isPlatformAdmin ? 'businessops_admin' : 'businessops'}
-              />
-            </div>
+            <WelcomeScreen
+              companyName={company?.name || 'Business Mgt Ops Console'}
+              title="Business Mgt Ops Console"
+              subtitle="I can help you with quotes, invoices, leads, and business insights. How can I assist you today?"
+              actions={QUICK_ACTIONS}
+              onAction={handleQuickAction}
+              consoleType={isPlatformAdmin ? 'businessops_admin' : 'businessops'}
+            />
           ) : (
             <div className="space-y-4">
+              {/* Aura Live Stream */}
+              {showAuraLive && effectiveCompanyId && (
+                <AuraLiveStream companyId={effectiveCompanyId} />
+              )}
+
               {/* Embedded Managers */}
               {showQuoteForm && (
                 <div className="bg-muted/50 rounded-lg border border-border p-4">
