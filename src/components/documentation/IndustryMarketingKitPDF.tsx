@@ -15,6 +15,9 @@ const colors = {
   plumbing: '#3b82f6',
   electrical: '#f59e0b',
   general: '#10b981',
+  beauty: '#ec4899',
+  food: '#f97316',
+  personal: '#14b8a6',
 };
 
 const styles = StyleSheet.create({
@@ -270,7 +273,7 @@ const Header = ({ title, pageNum }: { title: string; pageNum: number }) => (
 const Footer = () => (
   <View style={styles.footer}>
     <Text style={styles.footerText}>Aura Intercept Industry Marketing Kits</Text>
-    <Text style={styles.footerText}>© 2025 Aura Intercept</Text>
+    <Text style={styles.footerText}>© 2026 Aura Intercept</Text>
   </View>
 );
 
@@ -280,12 +283,12 @@ export const IndustryMarketingKitPDF: React.FC = () => (
     <Page size="A4" style={styles.coverPage}>
       <Text style={styles.coverTitle}>Industry{'\n'}Marketing Kits</Text>
       <Text style={styles.coverSubtitle}>
-        Targeted Content for 4 Key Verticals{'\n'}
+        Targeted Content for 7 Key Verticals{'\n'}
         HVAC • Plumbing • Electrical • General Contracting{'\n'}
-        Pain Points • Social Templates • Video Scripts
+        Beauty/Wellness • Food Service • Personal Services
       </Text>
       <View style={styles.coverBadge}>
-        <Text style={styles.coverBadgeText}>4 Complete Kits</Text>
+        <Text style={styles.coverBadgeText}>7 Complete Kits</Text>
       </View>
     </Page>
 
@@ -633,6 +636,255 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           <Text style={styles.bulletItem}>- Automated client status updates</Text>
           <Text style={styles.bulletItem}>- Sub-contractor communication hub</Text>
           <Text style={styles.bulletItem}>- Long-term lead nurturing for big projects</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Beauty & Wellness Industry Kit - Page 1 */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Beauty & Wellness Kit" pageNum={7} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.beauty }]}>
+        <Text style={styles.industryBadgeText}>BEAUTY & WELLNESS (AURA HALO)</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What salon and spa owners struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.beauty }]}>
+            <Text style={styles.painPointTitle}>No-Shows & Late Cancellations</Text>
+            <Text style={styles.painPointText}>Empty chairs cost $75-$200 per hour. Last-minute cancellations leave no time to fill slots. Revenue evaporates.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.beauty }]}>
+            <Text style={styles.painPointTitle}>Double-Booking Chaos</Text>
+            <Text style={styles.painPointText}>Peak hours mean overlapping appointments. Staff stressed, clients waiting, and reviews suffering.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.beauty }]}>
+            <Text style={styles.painPointTitle}>After-Hours Requests</Text>
+            <Text style={styles.painPointText}>Clients want to book at 10 PM or during your busiest hours. Missed calls = lost appointments to competitors.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Smart Reminders</Text>
+            <Text style={styles.solutionText}>Automated SMS/email reminders 24h and 2h before. Reduce no-shows by 40% with zero effort.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: AI Scheduling</Text>
+            <Text style={styles.solutionText}>AI manages your calendar perfectly. No overlaps, optimal spacing, and automatic waitlist management.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: 24/7 Booking</Text>
+            <Text style={styles.solutionText}>AI Receptionist books appointments round the clock. Clients book when convenient, you fill every slot.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Self-Care Hook</Text>
+        <Text style={styles.templateText}>
+          Your next glam appointment is one text away. [sparkle]{'\n\n'}
+          We answer at 11 PM because self-care doesn't wait.{'\n\n'}
+          While other salons are sending you to voicemail, we're confirming your booking.{'\n\n'}
+          Try it: Text "BOOK" to [Number]{'\n\n'}
+          #SalonLife #BeautyAppointment #SelfCareSunday #HairGoals
+        </Text>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Beauty & Wellness - Page 2 */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Beauty & Wellness Content" pageNum={8} />
+
+      <View style={[styles.industryBadge, { backgroundColor: colors.beauty }]}>
+        <Text style={styles.industryBadgeText}>BEAUTY CONTENT TEMPLATES</Text>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Instagram Post - Review Focus</Text>
+        <Text style={styles.templateText}>
+          [5-STAR] "I booked my appointment at midnight and got a confirmation in seconds. No waiting, no phone tag. Just glam."—Sarah M.{'\n\n'}
+          That's the Aura difference. 24/7 booking that works while you sleep.{'\n\n'}
+          Ready to level up your salon experience?{'\n\n'}
+          #SalonReviews #HappyClients #BeautyTech
+        </Text>
+      </View>
+
+      <View style={styles.videoCard}>
+        <Text style={styles.videoLabel}>VIDEO SCRIPT (30 seconds)</Text>
+        <Text style={styles.videoTitle}>"The Last-Minute Booking"</Text>
+        <Text style={styles.videoScript}>
+          [Scene: Client looking at phone at 9:45 PM]{'\n'}
+          "Ugh, I need my nails done for tomorrow's event."{'\n'}
+          [Shows texting salon]{'\n'}
+          [Instant response from AI: "I have 10 AM available!"]{'\n'}
+          "Wait, they actually answered?"{'\n'}
+          [Show confirmation]{'\n'}
+          "AI doesn't sleep. Neither does your booking calendar."
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Beauty & Wellness</Text>
+        <Text style={styles.landingSubhead}>
+          Fill Every Chair. Miss No Appointment.{'\n\n'}
+          AI-powered booking and reminders designed for salons, spas, and wellness businesses.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>- 24/7 appointment booking via text or call</Text>
+          <Text style={styles.bulletItem}>- Automated reminders reduce no-shows 40%</Text>
+          <Text style={styles.bulletItem}>- Review collection after every service</Text>
+          <Text style={styles.bulletItem}>- Client rebooking campaigns</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Food Service Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Food Service Kit" pageNum={9} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.food }]}>
+        <Text style={styles.industryBadgeText}>FOOD SERVICE (AURA EXPRESS)</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What restaurant and cafe owners struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.food }]}>
+            <Text style={styles.painPointTitle}>Missed Reservation Calls</Text>
+            <Text style={styles.painPointText}>Rush hour = phones ringing constantly. Staff can't cook AND answer. Empty tables while calls go to voicemail.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.food }]}>
+            <Text style={styles.painPointTitle}>Menu Questions Overload</Text>
+            <Text style={styles.painPointText}>"Do you have gluten-free?" "What's in the special?" Same questions 50 times a day, clogging your phone lines.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.food }]}>
+            <Text style={styles.painPointTitle}>Online Ordering Confusion</Text>
+            <Text style={styles.painPointText}>Customers can't find your ordering link. Staff texts it manually. Orders get lost. Revenue walks out the door.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: AI Voice</Text>
+            <Text style={styles.solutionText}>AI handles peak call volume instantly. Books reservations, answers questions, never puts anyone on hold.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Knowledge Base</Text>
+            <Text style={styles.solutionText}>Train AI on your menu, hours, specials. Answers every FAQ accurately and instantly—24/7.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Smart Links</Text>
+            <Text style={styles.solutionText}>AI automatically shares your menu, ordering links, and reservation page. One text, instant access.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: AI Menu Expert</Text>
+        <Text style={styles.templateText}>
+          Ask us anything—our AI knows the menu better than the chef. [wink]{'\n\n'}
+          "What's gluten-free?" Answered.{'\n'}
+          "What time do you close?" Answered.{'\n'}
+          "Can I order ahead?" Link sent.{'\n\n'}
+          Text or call anytime. We're always here.{'\n\n'}
+          #RestaurantLife #FoodService #SmartDining
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Food Service</Text>
+        <Text style={styles.landingSubhead}>
+          Never Miss a Reservation Again{'\n\n'}
+          AI-powered phone answering designed specifically for restaurants, cafes, and food service.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>- Instant reservation booking</Text>
+          <Text style={styles.bulletItem}>- Menu and hours FAQ answered 24/7</Text>
+          <Text style={styles.bulletItem}>- Smart link sharing for online ordering</Text>
+          <Text style={styles.bulletItem}>- Peak hour call handling</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Personal Services Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Personal Services Kit" pageNum={10} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.personal }]}>
+        <Text style={styles.industryBadgeText}>PERSONAL SERVICES (AURA FLOW)</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What personal service providers struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.personal }]}>
+            <Text style={styles.painPointTitle}>Calendar Chaos</Text>
+            <Text style={styles.painPointText}>Multiple clients, multiple calendars. Double-bookings happen. Appointments fall through the cracks.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.personal }]}>
+            <Text style={styles.painPointTitle}>Missed Appointment Requests</Text>
+            <Text style={styles.painPointText}>You're with a client when another one calls. By the time you call back, they've booked someone else.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.personal }]}>
+            <Text style={styles.painPointTitle}>Manual Follow-Up Burnout</Text>
+            <Text style={styles.painPointText}>Chasing clients for rebooking. Sending reminders manually. Administrative work eating your billable hours.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Direct Calendar Sync</Text>
+            <Text style={styles.solutionText}>AI syncs directly with your calendar. Real-time availability, no conflicts, perfect scheduling.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: 24/7 Scheduling</Text>
+            <Text style={styles.solutionText}>AI Receptionist and Scheduling Agent book appointments while you're busy or sleeping. Never miss a lead.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Automated Follow-ups</Text>
+            <Text style={styles.solutionText}>Intelligent rebooking reminders. Automated SMS/email sequences. Clients stay engaged without your effort.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Time Saver</Text>
+        <Text style={styles.templateText}>
+          Your time is precious. Aura manages the calendar so you don't have to.{'\n\n'}
+          24/7 booking. Zero missed appointments. Pure flow.{'\n\n'}
+          While you're focused on clients, AI is:{'\n'}
+          - Booking new appointments{'\n'}
+          - Sending reminders{'\n'}
+          - Following up on no-shows{'\n'}
+          - Managing your schedule{'\n\n'}
+          #PersonalAssistant #TimeManagement #ProductivityHacks
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Personal Services</Text>
+        <Text style={styles.landingSubhead}>
+          Your AI-Powered Scheduling Assistant{'\n\n'}
+          Direct calendar sync and 24/7 booking for personal service providers.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>- Real-time calendar synchronization</Text>
+          <Text style={styles.bulletItem}>- 24/7 scheduling via voice and chat</Text>
+          <Text style={styles.bulletItem}>- Automated SMS/Email reminders</Text>
+          <Text style={styles.bulletItem}>- Intelligent rebooking suggestions</Text>
         </View>
       </View>
 
