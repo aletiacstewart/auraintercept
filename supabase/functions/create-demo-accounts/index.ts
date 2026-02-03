@@ -2,40 +2,70 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-admin-secret',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-// Admin secret for invoking without JWT - only for initial setup
-const ADMIN_SECRET = 'create-demo-setup-2024';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Check for admin secret header as alternative auth
-  const adminSecret = req.headers.get('x-admin-secret');
-  if (adminSecret !== ADMIN_SECRET) {
-    // If no admin secret, require proper JWT auth
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-  }
-
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     
+    // Verify the caller is authenticated and is a platform admin
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - No valid token provided' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Create client with user's auth to verify their identity
+    const supabaseAuth = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Invalid token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+
+    // Create admin client to check user roles
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
       },
     });
+
+    // Verify user has platform_admin role
+    const { data: roleData, error: roleError } = await supabaseAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'platform_admin')
+      .maybeSingle();
+
+    if (roleError || !roleData) {
+      console.error('User does not have platform_admin role:', userId);
+      return new Response(
+        JSON.stringify({ error: 'Forbidden - Platform admin access required' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`Platform admin ${userId} authorized to create demo accounts`);
 
     const results: any[] = [];
     const password = 'aidemo*!';
@@ -91,7 +121,7 @@ Deno.serve(async (req) => {
           continue;
         }
 
-        const userId = authData.user.id;
+        const newUserId = authData.user.id;
 
         // Update profile with company_id
         await supabaseAdmin
@@ -100,13 +130,13 @@ Deno.serve(async (req) => {
             company_id: account.companyId,
             full_name: account.name,
           })
-          .eq('id', userId);
+          .eq('id', newUserId);
 
         // Assign role
         await supabaseAdmin
           .from('user_roles')
           .insert({
-            user_id: userId,
+            user_id: newUserId,
             role: account.role,
           });
 
@@ -140,13 +170,13 @@ Deno.serve(async (req) => {
           await supabaseAdmin
             .from('customer_company_associations')
             .insert({
-              customer_user_id: userId,
+              customer_user_id: newUserId,
               company_id: account.companyId,
               customer_profile_id: customerProfileId,
             });
         }
 
-        results.push({ email: account.email, success: true, userId });
+        results.push({ email: account.email, success: true, userId: newUserId });
         console.log(`Successfully created: ${account.email}`);
 
       } catch (err) {
