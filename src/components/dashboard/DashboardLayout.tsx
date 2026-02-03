@@ -58,6 +58,7 @@ import { differenceInDays, parseISO } from 'date-fns';
 import { ReportIssueDialog } from '@/components/error/ReportIssueDialog';
 import { AuraFloatingButton } from '@/components/aura/AuraFloatingButton';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { AIHelpCenter } from '@/components/help/AIHelpCenter';
 
 type UserRole = 'platform_admin' | 'company_admin' | 'employee';
 
@@ -451,6 +452,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <span className="text-xs font-medium text-white">{roleBadge.label}</span>
             </div>
           )}
+          
+          {/* AI Help Center */}
+          {!collapsed && <AIHelpCenter />}
           
           {/* Report Issue Button */}
           <ReportIssueDialog
