@@ -1,47 +1,34 @@
 
-# Plan: Update Business Size Employee Counts
+# Plan: Add Smart Link Sharing to All Plans
 
 ## Overview
-Update the "Business Size" row in the pricing comparison table with new employee limits.
+Add "Smart Link Sharing" as a feature row in the "See More Details" pricing comparison table, enabled for all 7 subscription tiers.
 
 ---
 
-## Changes Required
+## Change Required
 
-### File: `src/components/landing/PricingComparisonTable.tsx` (Line 91)
+### File: `src/components/landing/PricingComparisonTable.tsx`
 
-**Current values:**
-| Tier | Current Value |
-|------|---------------|
-| Express | Restaurants |
-| Flow | Individual/Home |
-| Halo | Salons & Spas |
-| Core | 1-2 employees |
-| Single-Point | 3-5 employees |
-| Multi-Track | 6-10 employees |
-| Command | 15+ technicians |
+**Location**: "Platform Limits & Features" section (after line 155)
 
-**New values:**
-| Tier | New Value |
-|------|-----------|
-| Express | Single Restaurants |
-| Flow | Individual/Home (unchanged) |
-| Halo | Salons & Spas (unchanged) |
-| Core | Up to 4 employees |
-| Single-Point | Up to 8 employees |
-| Multi-Track | Up to 16 employees |
-| Command | Up to 32 technicians |
-
----
-
-## Code Change
-
+**Add new row**:
 ```typescript
-// Line 91 - Update Business Size row
-{ name: 'Business Size', express: 'Single Restaurants', flow: 'Individual/Home', halo: 'Salons & Spas', core: 'Up to 4 employees', singlePoint: 'Up to 8 employees', multiTrack: 'Up to 16 employees', command: 'Up to 32 technicians' }
+{ name: 'Smart Link Sharing', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' }
 ```
 
 ---
 
+## Result
+
+The "Platform Limits & Features" section will show:
+| Feature | All 7 Tiers |
+|---------|-------------|
+| Smart Link Sharing | ✓ |
+
+This feature enables Aura to automatically share relevant business links (website, menu, booking, reviews) during conversations.
+
+---
+
 ## Technical Details
-Single line modification at line 91 in `src/components/landing/PricingComparisonTable.tsx`.
+Single line addition in `src/components/landing/PricingComparisonTable.tsx` at line 156.
