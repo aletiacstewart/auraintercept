@@ -32,12 +32,12 @@ const ALL_FEATURES = [
 // Feature mapping for all 7 tiers
 export const TIER_FEATURES: Record<SubscriptionTier, string[]> = {
   free: ['basic_dashboard'],
-  express: ['voice_reminders', 'widget', 'smart_links'],
-  aura_flow: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'calendar_sync'],
-  halo: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal'],
-  core: ['email_reminders', 'advanced_dashboard', 'widget', 'social_media', 'web_presence'],
-  single_point: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal', 'quotes'],
-  multi_track: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'advanced_ai', 'widget', 'field_ops', 'invoices', 'customer_portal'],
+  express: ['voice_reminders', 'widget', 'smart_links', 'social_media', 'marketing_automation', 'creative_tools'],
+  aura_flow: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'calendar_sync', 'social_media', 'marketing_automation', 'creative_tools'],
+  halo: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal', 'social_media', 'marketing_automation', 'creative_tools'],
+  core: ['email_reminders', 'advanced_dashboard', 'widget', 'social_media', 'web_presence', 'marketing_automation', 'creative_tools'],
+  single_point: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal', 'quotes', 'social_media', 'marketing_automation', 'creative_tools'],
+  multi_track: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'advanced_ai', 'widget', 'field_ops', 'invoices', 'customer_portal', 'social_media', 'marketing_automation', 'creative_tools'],
   command: ALL_FEATURES,
 };
 

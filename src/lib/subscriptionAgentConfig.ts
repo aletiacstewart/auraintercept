@@ -21,53 +21,81 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access - upgrade to unlock AI agents',
   },
   express: {
-    // Aura Express ($197/mo): Voice & Chat only for restaurants with smart link sharing
-    agents: [],
-    consoles: [],
+    // Aura Express ($197/mo): Voice & Chat + Universal agents for restaurants
+    agents: [
+      'triage',  // AI Receptionist
+      'campaign', 'lead', 'marketing',  // Outreach & Sales
+      'social_content', 'social_scheduler', 'social_analytics',  // Social Media
+      'creative'  // Creative Agent
+    ],
+    consoles: ['marketing_sales', 'social_media'],
     label: 'Aura Express',
     price: '$197/mo',
     description: 'AI Voice & Chat for restaurants with smart link sharing',
   },
   aura_flow: {
-    // Aura Flow ($297/mo): AI voice, chat, and scheduling with calendar sync (no customer portal)
-    agents: ['triage', 'booking', 'followup'],
-    consoles: [],
+    // Aura Flow ($297/mo): AI voice, chat, scheduling + universal agents
+    agents: [
+      'triage', 'booking', 'followup',  // Customer Portal
+      'campaign', 'lead', 'marketing',  // Outreach & Sales
+      'social_content', 'social_scheduler', 'social_analytics',  // Social Media
+      'creative'  // Creative Agent
+    ],
+    consoles: ['marketing_sales', 'social_media'],
     label: 'Aura Flow',
     price: '$297/mo',
     description: 'AI voice, chat, and scheduling with direct calendar sync',
   },
   core: {
-    // Core: Talk to Aura only (no agents), Social Media + Web Presence included
-    agents: [],
-    consoles: [],
+    // Core: AI Chat + Social Media + Web Presence + universal agents
+    agents: [
+      'triage',  // AI Receptionist
+      'campaign', 'lead', 'marketing',  // Outreach & Sales
+      'social_content', 'social_scheduler', 'social_analytics',  // Social Media
+      'creative'  // Creative Agent
+    ],
+    consoles: ['marketing_sales', 'social_media'],
     label: 'Core',
     price: '$500/mo',
-    description: 'Talk to Aura + Social Media + Web Presence',
+    description: 'AI Chat + Social Media + Web Presence',
   },
   halo: {
-    // Aura Halo ($397/mo): AI Receptionist + Scheduling + Follow-up for salons/wellness
-    agents: ['triage', 'booking', 'followup'],
-    consoles: ['customer_portal'],
+    // Aura Halo ($397/mo): AI Receptionist + Scheduling + universal agents for salons/wellness
+    agents: [
+      'triage', 'booking', 'followup',  // Customer Portal
+      'campaign', 'lead', 'marketing',  // Outreach & Sales
+      'social_content', 'social_scheduler', 'social_analytics',  // Social Media
+      'creative'  // Creative Agent
+    ],
+    consoles: ['customer_portal', 'marketing_sales', 'social_media'],
     label: 'Aura Halo',
     price: '$397/mo',
     description: 'AI Receptionist, Scheduling, Voice & SMS/Email for salons & wellness',
   },
   single_point: {
-    // Voice AI (chat + outbound calling) included, but NO booking (call to book)
-    agents: ['triage', 'followup', 'review'],
-    consoles: ['customer_portal'],
+    // Single-Point: Customer engagement + AI Voice + universal agents
+    agents: [
+      'triage', 'followup', 'review',  // Customer Portal
+      'campaign', 'lead', 'marketing',  // Outreach & Sales
+      'social_content', 'social_scheduler', 'social_analytics',  // Social Media
+      'creative'  // Creative Agent
+    ],
+    consoles: ['customer_portal', 'marketing_sales', 'social_media'],
     label: 'Single-Point',
     price: '$1,500/mo',
     description: 'Customer engagement + AI Voice',
   },
   multi_track: {
-    // Adds booking, field ops, and quoting/invoicing
+    // Multi-Track: Field ops + booking + universal agents
     agents: [
-      'triage', 'booking', 'followup', 'review',
-      'dispatch', 'route', 'eta', 'checkin',
-      'quoting', 'invoice'
+      'triage', 'booking', 'followup', 'review',  // Customer Portal
+      'dispatch', 'route', 'eta', 'checkin',  // Field Operations
+      'quoting', 'invoice',  // Business Operations
+      'campaign', 'lead', 'marketing',  // Outreach & Sales
+      'social_content', 'social_scheduler', 'social_analytics',  // Social Media
+      'creative'  // Creative Agent
     ],
-    consoles: ['customer_portal', 'field_operations'],
+    consoles: ['customer_portal', 'field_operations', 'marketing_sales', 'social_media'],
     label: 'Multi-Track',
     price: '$3,997/mo',
     description: 'Customer + Field operations + Online booking',
@@ -132,14 +160,14 @@ export const CONSOLE_REQUIRED_AGENTS: Record<string, string[]> = {
   field_operations: ['dispatch'],
   business_management: ['admin', 'quoting'],
   marketing_sales: ['campaign'],
-  social_media: ['social_content', 'creative', 'web_presence'],
+  social_media: ['social_content'],  // social_content is the core agent for this console
   analytics_reports: ['insights'],
   ai_operatives_hub: [],
 };
 
 // Get the minimum tier required for a specific agent
 export function getRequiredTierForAgent(agentType: string): SubscriptionTier | null {
-  const tiers: SubscriptionTier[] = ['aura_flow', 'core', 'halo', 'single_point', 'multi_track', 'command'];
+  const tiers: SubscriptionTier[] = ['express', 'aura_flow', 'core', 'halo', 'single_point', 'multi_track', 'command'];
   
   for (const tier of tiers) {
     if (TIER_AGENT_CONFIG[tier].agents.includes(agentType)) {
@@ -152,7 +180,7 @@ export function getRequiredTierForAgent(agentType: string): SubscriptionTier | n
 
 // Get the minimum tier required for a specific console
 export function getRequiredTierForConsole(consoleType: string): SubscriptionTier | null {
-  const tiers: SubscriptionTier[] = ['aura_flow', 'core', 'halo', 'single_point', 'multi_track', 'command'];
+  const tiers: SubscriptionTier[] = ['express', 'aura_flow', 'core', 'halo', 'single_point', 'multi_track', 'command'];
   
   for (const tier of tiers) {
     if (TIER_AGENT_CONFIG[tier].consoles.includes(consoleType)) {
@@ -205,7 +233,7 @@ export function getTierDisplayInfo(tier: SubscriptionTier): { label: string; pri
 
 // Get upgrade path - what tier to upgrade to for a specific agent
 export function getUpgradeTierForAgent(currentTier: SubscriptionTier, agentType: string): SubscriptionTier | null {
-  const tiers: SubscriptionTier[] = ['aura_flow', 'core', 'halo', 'single_point', 'multi_track', 'command'];
+  const tiers: SubscriptionTier[] = ['express', 'aura_flow', 'core', 'halo', 'single_point', 'multi_track', 'command'];
   const currentIndex = tiers.indexOf(currentTier);
   
   // If already on command, no upgrade available
@@ -242,27 +270,37 @@ export function isTierAtLeast(currentTier: SubscriptionTier, requiredTier: Subsc
 export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
   free: [],
   express: [
-    // Express tier: Voice & Chat only, customers for restaurants
+    // Express tier: Voice & Chat + Marketing + Social
     'can_access_customers',
+    'can_access_leads',
+    'can_access_campaigns',
   ],
   aura_flow: [
-    // Aura Flow tier: Voice & Chat + Scheduling with calendar sync
+    // Aura Flow tier: Voice & Chat + Scheduling + Marketing + Social
     'can_access_appointments',
     'can_access_customers',
+    'can_access_leads',
+    'can_access_campaigns',
   ],
   core: [
-    // Core tier: AI Chat only, limited features
+    // Core tier: AI Chat + Marketing + Social
     'can_access_customers',
+    'can_access_leads',
+    'can_access_campaigns',
   ],
   halo: [
-    // Halo tier: Appointments + Customers for salons
+    // Halo tier: Appointments + Customers + Marketing + Social
     'can_access_appointments',
     'can_access_customers',
+    'can_access_leads',
+    'can_access_campaigns',
   ],
   single_point: [
     'can_access_appointments',
     'can_access_customers',
     'can_access_quotes',
+    'can_access_leads',
+    'can_access_campaigns',
   ],
   multi_track: [
     'can_access_appointments',
@@ -272,6 +310,7 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
     'can_access_invoices',
     'can_access_field_ops',
     'can_access_inventory',
+    'can_access_campaigns',
   ],
   command: [
     'can_access_appointments',
@@ -288,7 +327,7 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
 
 // Get the minimum tier required for a specific feature area
 export function getRequiredTierForFeature(featureField: string): SubscriptionTier | null {
-  const tiers: SubscriptionTier[] = ['aura_flow', 'core', 'halo', 'single_point', 'multi_track', 'command'];
+  const tiers: SubscriptionTier[] = ['express', 'aura_flow', 'core', 'halo', 'single_point', 'multi_track', 'command'];
   
   for (const tier of tiers) {
     if (TIER_FEATURE_CONFIG[tier].includes(featureField)) {
