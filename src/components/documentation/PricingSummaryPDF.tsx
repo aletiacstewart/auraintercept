@@ -381,7 +381,7 @@ const SUBSCRIPTION_TIERS = {
     operatives: 0,
     consoles: 0,
     employees: 2,
-    bestFor: 'Businesses wanting AI-ready tools (Message Aura (Text), Social Media Signal, Web Presence) without automated workflows.',
+    bestFor: 'Businesses wanting AI-ready tools (Message Aura (Text), Social Media, Web Presence) without automated workflows.',
     hasVoice: false,
     hasAutomation: false,
   },
@@ -433,7 +433,7 @@ const THIRD_PARTY_INTEGRATIONS = [
   { name: 'Resend', purpose: 'Email Notifications', cost: '$0-20+/month based on volume', required: 'All Tiers' },
   { name: 'Google Calendar', purpose: 'Calendar Sync', cost: 'Free', required: 'Optional (Halo+)' },
   { name: 'Stripe', purpose: 'Invoice Payments', cost: '2.9% + $0.30/transaction', required: 'All Tiers' },
-  { name: 'Social Media Accounts', purpose: 'Content Publishing', cost: 'Free (platform accounts)', required: 'Core+ (Social Signal)' },
+  { name: 'Social Media Accounts', purpose: 'Content Publishing', cost: 'Free (platform accounts)', required: 'Core+ (Social Media)' },
 ];
 
 const Header = ({ title }: { title: string }) => (
@@ -789,7 +789,7 @@ const PricingSummaryPDF = () => (
       <Text style={styles.subsectionTitle}>Included AI Tools (3 Tools - No Automation)</Text>
       <View style={styles.featureList}>
         <FeatureItem>Message Aura (Text) (Chat Tool) - AI chat for customer inquiries</FeatureItem>
-        <FeatureItem>Social Media Signal - AI content creation for 6 platforms</FeatureItem>
+        <FeatureItem>Social Media - AI content creation for 6 platforms</FeatureItem>
         <FeatureItem>Web Presence - 1-page professional website</FeatureItem>
       </View>
 
@@ -859,7 +859,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Message Aura (Text)</FeatureItem>
         <FeatureItem>Talk to Aura (Voice) - requires ElevenLabs</FeatureItem>
         <FeatureItem>AI Outbound Calls for reminders - requires Twilio</FeatureItem>
-        <FeatureItem>Choice of Social Media Signal OR Web Presence (included)</FeatureItem>
+        <FeatureItem>Choice of Social Media OR Web Presence (included)</FeatureItem>
         <FeatureItem>5 employees included ($25/month per 10 additional)</FeatureItem>
         <FeatureItem>Call to Book (no online scheduling - use Multi-Track for that)</FeatureItem>
         <FeatureItem>$499 implementation fee</FeatureItem>
@@ -959,7 +959,7 @@ const PricingSummaryPDF = () => (
         <FeatureItem>Field Operations Console - Full dispatch and routing</FeatureItem>
         <FeatureItem>Business Operations Console - Invoicing, inventory management</FeatureItem>
         <FeatureItem>Outreach & Sales Ops Console - Campaigns, leads, referrals</FeatureItem>
-        <FeatureItem>Social Media Signal Ops Console - 6-platform content management</FeatureItem>
+        <FeatureItem>Social Media Ops Console - 6-platform content management</FeatureItem>
         <FeatureItem>Analytics & Reports Console - KPIs, forecasting, performance</FeatureItem>
         <FeatureItem>AI Operatives Hub - Central operative management</FeatureItem>
       </View>
@@ -1081,7 +1081,7 @@ const PricingSummaryPDF = () => (
           <View style={styles.columnCard}>
             <Text style={styles.columnTitle}>Content Features (Core+)</Text>
             <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 8 }}>
-              Required for Social Media Signal:
+              Required for Social Media:
             </Text>
             <BulletPoint>Connect social accounts via OAuth</BulletPoint>
             <BulletPoint>IG, FB, LinkedIn, TikTok, GMB, SMS</BulletPoint>
@@ -1113,7 +1113,7 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Description</Text>
         </View>
         {[
-          { addon: 'Social Media Signal', price: '$150/mo', desc: 'AI content creation for 6 platforms' },
+          { addon: 'Social Media', price: '$150/mo', desc: 'AI content creation for 6 platforms' },
           { addon: 'Web Presence', price: '$150/mo', desc: '1-page professional website' },
           { addon: 'Additional Employees', price: '$25/mo', desc: 'Per 10 additional employees' },
         ].map((row, i) => (

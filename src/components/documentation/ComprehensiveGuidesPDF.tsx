@@ -219,13 +219,13 @@ const guideCategories = [
           'Aura Express ($197/mo): AI Voice + Chat for restaurants with smart link sharing to menu/ordering',
           'Aura Flow ($297/mo): AI Personal Assistant with scheduling via direct calendar sync (no portal)',
           'Aura Halo ($397/mo): 3 AI Operatives for salons/wellness + Customer Portal Console',
-          'Aura Core ($500/mo): AI-Assisted (No Automation) - Message Aura + Social Media Signal + Web Presence',
+          'Aura Core ($500/mo): AI-Assisted (No Automation) - Message Aura + Social Media + Web Presence',
           'Single-Point ($1,500/mo): 3 AI Operatives (Receptionist, Follow-up, Review) + 1 Console',
           'Multi-Track ($3,997/mo): 10 AI Operatives + 2 Consoles + Online Booking + Field Ops',
           'Aura Pro Command ($5,997/mo): All 24 AI Operatives + 7 Consoles + Enterprise Features',
           'Talk to Aura (Voice) included on Express, Flow, Halo, Single-Point, Multi-Track, and Command tiers',
           'Employee limits: 2 (Express/Flow), 3 (Halo), 2 (Core), 5 (Single-Point), 10 (Multi-Track), 25 (Command)',
-          'Premium Add-Ons: Social Media Signal ($150/mo), Web Presence ($150/mo) for Single-Point/Multi-Track',
+          'Premium Add-Ons: Social Media ($150/mo), Web Presence ($150/mo) for Single-Point/Multi-Track',
           'Implementation fees: $299 (Express), $399 (Flow), $499 (others), Custom for Command'
         ],
         tips: ['Trial users get full Command tier access', 'Annual billing saves 16% (~$800-$12,000/year)']
@@ -331,14 +331,14 @@ const guideCategories = [
         tips: ['Link Quote Forge to your service catalog']
       },
       {
-        title: 'Social Media Signal Agents',
+        title: 'Social Media Agents',
         duration: '12 min',
         steps: [
-          'Social Media Signal Agent: Creates posts for 6 platforms',
-          'Signal Scheduler: Queues and publishes content',
-          'Signal Analytics: Tracks engagement metrics',
+          'Social Media Agent: Creates posts for 6 platforms',
+          'Social Media Scheduler: Queues and publishes content',
+          'Social Media Analytics: Tracks engagement metrics',
           'Uses 3-step Content Wizard: Template → Customize → Schedule',
-          'All Social Media Signal agents require Pro Command tier'
+          'All Social Media agents require Pro Command tier'
         ],
         tips: ['Respects platform character limits automatically']
       },

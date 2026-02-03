@@ -320,7 +320,7 @@ export const QUESTIONS: AuditQuestion[] = [
   {
     id: 'social_media_activity',
     question: 'How active is your business on social media?',
-    description: 'Core includes Social Media Signal AI for content creation',
+    description: 'Core includes Social Media AI for content creation',
     section: 'Social Media & Web Presence',
     options: [
       { label: 'Very active (daily posts)', tierScores: { EXPRESS: 50, FLOW: 50, CORE: 70, HALO: 50, SINGLE_POINT: 45, MULTI_TRACK: 60, COMMAND: 80 } },
@@ -468,7 +468,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
     description: 'AI-assisted tools for digital presence — you stay in control, no automation',
     keyFeatures: [
       'Talk to Aura (Chat Tool)',
-      'Social Media Signal (Content Tool)',
+      'Social Media (Content Tool)',
       'Web Presence (1-Page Site)',
       'Basic Lead Capture',
       'Email Notifications',
@@ -509,7 +509,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
       'Talk to Aura (Voice)',
       'Customer Portal Console',
       'Email + SMS + Voice Reminders',
-      'Choice of Social Media Signal OR Web Presence',
+      'Choice of Social Media OR Web Presence',
     ],
     agentCount: 3,
     consoleCount: 1,
@@ -526,7 +526,7 @@ export const TIER_RECOMMENDATIONS: Record<TierType, TierRecommendation> = {
       '+6 Field Ops Agents (Dispatch, Route, ETA, Check-in, Quote, Invoice)',
       'Online Booking Agent',
       'Field Ops Console',
-      'Social Media Signal + Web Presence included',
+      'Social Media + Web Presence included',
       'API Access',
     ],
     agentCount: 10,

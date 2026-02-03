@@ -192,7 +192,7 @@ const tierFeatures: Record<string, string[]> = {
     'Business Management Console',
     'Analytics & Reports',
     'Outreach & Sales Ops',
-    'Social Media Signal Ops',
+    'Social Media Ops',
     'Full enterprise support',
   ],
 };

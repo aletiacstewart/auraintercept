@@ -106,7 +106,7 @@ const navGroups: NavGroup[] = [
     requiredTier: 'command',
     items: [
       { label: 'Outreach & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
-      { label: 'Social Media Signal Ops', icon: Share2, href: '/dashboard/ai-consoles/social-media', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+      { label: 'Social Media Ops', icon: Share2, href: '/dashboard/ai-consoles/social-media', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
       { label: 'Web Presence Manager', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
     ],
   },

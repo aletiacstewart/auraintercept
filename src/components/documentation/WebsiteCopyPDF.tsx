@@ -504,7 +504,7 @@ export const WebsiteCopyPDF: React.FC = () => (
           Full command of your business. The complete 19-agent suite handles every operational task from marketing to analytics. For businesses ready to dominate their market.{'\n\n'}
           - Everything in Multi-Track, plus:{'\n'}
           - Lead scoring and Campaign automation{'\n'}
-          - Social Media Signal management (all 6 platforms){'\n'}
+          - Social Media management (all 6 platforms){'\n'}
           - Advanced analytics and reporting{'\n'}
           - Customer insights AI{'\n'}
           - Unlimited team members{'\n'}

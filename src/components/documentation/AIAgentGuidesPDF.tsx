@@ -552,25 +552,25 @@ const CONSOLES = [
     ],
     agents: [
       {
-        name: 'Social Media Signal Agent',
+        name: 'Social Media Agent',
         description: 'AI-generated content for 6 platforms (Instagram, Facebook, LinkedIn, TikTok, GMB, SMS). Respects character limits and platform styles.',
         isCore: true,
         worksAlone: true,
         requires: [],
       },
       {
-        name: 'Signal Scheduler',
+        name: 'Social Media Scheduler',
         description: 'Queues and publishes social media content at optimal times across all platforms.',
         isCore: false,
         worksAlone: false,
-        requires: ['Social Media Signal Agent'],
+        requires: ['Social Media Agent'],
       },
       {
-        name: 'Signal Analytics',
+        name: 'Social Media Analytics',
         description: 'Tracks engagement metrics across all social platforms. Measures reach, clicks, and conversions.',
         isCore: false,
         worksAlone: false,
-        requires: ['Social Media Signal Agent'],
+        requires: ['Social Media Agent'],
       },
       {
         name: 'Creative Agent',
@@ -787,7 +787,7 @@ const TIERS = [
     annualPrice: '$5,000/year',
     consoles: ['None (AI Tools Only)'],
     agentCount: 0,
-    agents: ['Message Aura (Text)', 'Social Media Signal', 'Web Presence (1-Page Site)'],
+    agents: ['Message Aura (Text)', 'Social Media', 'Web Presence (1-Page Site)'],
     voiceIncluded: false,
     note: 'AI-Assisted Digital Foundation. No automation - manual workflow with AI tools.',
   },
@@ -799,7 +799,7 @@ const TIERS = [
     agentCount: 3,
     agents: ['AI Receptionist (Triage)', 'Follow-up Agent', 'Review Agent'],
     voiceIncluded: true,
-    note: 'AI-Automated lead intake and reputation management. Choice of Social Media Signal or Web Presence.',
+    note: 'AI-Automated lead intake and reputation management. Choice of Social Media or Web Presence.',
   },
   {
     name: 'Multi-Track',
