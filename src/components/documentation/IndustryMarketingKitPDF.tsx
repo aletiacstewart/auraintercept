@@ -11,10 +11,27 @@ const colors = {
   gray: '#64748b',
   success: '#10b981',
   warning: '#f59e0b',
+  // Essential Trades
   hvac: '#ef4444',
   plumbing: '#3b82f6',
   electrical: '#f59e0b',
-  general: '#10b981',
+  solar: '#eab308',
+  // Exterior & Structural
+  roofing: '#78716c',
+  fencing: '#a16207',
+  // Property & Estate
+  landscape: '#22c55e',
+  pool: '#0ea5e9',
+  pest: '#dc2626',
+  // Specialized Home
+  appliance: '#6366f1',
+  handyman: '#f97316',
+  construction: '#059669',
+  // Mobile & Commercial
+  auto: '#7c3aed',
+  security: '#334155',
+  realestate: '#0891b2',
+  // Wellness & Personal
   beauty: '#ec4899',
   food: '#f97316',
   personal: '#14b8a6',
@@ -41,11 +58,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   coverSubtitle: {
-    fontSize: 18,
+    fontSize: 14,
     color: 'white',
     opacity: 0.9,
     textAlign: 'center',
-    marginBottom: 40,
+    marginBottom: 30,
+    lineHeight: 1.6,
+  },
+  coverCategories: {
+    marginBottom: 30,
+  },
+  coverCategory: {
+    fontSize: 11,
+    color: 'white',
+    opacity: 0.85,
+    textAlign: 'center',
+    marginBottom: 6,
   },
   coverBadge: {
     backgroundColor: 'white',
@@ -283,14 +311,22 @@ export const IndustryMarketingKitPDF: React.FC = () => (
     <Page size="A4" style={styles.coverPage}>
       <Text style={styles.coverTitle}>Industry{'\n'}Marketing Kits</Text>
       <Text style={styles.coverSubtitle}>
-        Targeted Content for 7 Key Verticals{'\n'}
-        HVAC • Plumbing • Electrical • General Contracting{'\n'}
-        Beauty/Wellness • Food Service • Personal Services
+        Targeted Content for 18 Key Industry Verticals
       </Text>
+      <View style={styles.coverCategories}>
+        <Text style={styles.coverCategory}>⚡ Essential Trades: HVAC • Plumbing • Electrical • Solar Energy</Text>
+        <Text style={styles.coverCategory}>🏠 Exterior & Structural: Roofing • Fencing & Decking</Text>
+        <Text style={styles.coverCategory}>🌿 Property & Estate: Landscape & Trees • Pool & Spa • Pest Control</Text>
+        <Text style={styles.coverCategory}>🛠 Specialized Home: Appliance Repair • Handyman & Cleaning • Construction</Text>
+        <Text style={styles.coverCategory}>🚗 Mobile & Commercial: Auto Care • Security Systems • Real Estate</Text>
+        <Text style={styles.coverCategory}>💆 Wellness & Personal: Beauty & Wellness • Restaurants • Personal Assistant</Text>
+      </View>
       <View style={styles.coverBadge}>
-        <Text style={styles.coverBadgeText}>7 Complete Kits</Text>
+        <Text style={styles.coverBadgeText}>18 Complete Kits</Text>
       </View>
     </Page>
+
+    {/* ==================== ESSENTIAL TRADES ==================== */}
 
     {/* HVAC Industry Kit - Page 1 */}
     <Page size="A4" style={styles.page}>
@@ -384,18 +420,6 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         </Text>
       </View>
 
-      <View style={styles.templateCard}>
-        <Text style={styles.templateLabel}>LinkedIn Thought Leadership</Text>
-        <Text style={styles.templateText}>
-          HVAC owners: How many calls did you miss during last summer's first heat wave?{'\n\n'}
-          Industry data shows the average HVAC company misses 40% of calls during peak season.{'\n'}
-          At $500-$800 per missed emergency call, that's $50,000+ in lost revenue—annually.{'\n\n'}
-          AI doesn't get overwhelmed. It scales instantly.{'\n'}
-          Every call answered. Every lead captured. Even when your human staff is maxed out.{'\n\n'}
-          The HVAC companies adopting AI now will own their markets in 3 years.
-        </Text>
-      </View>
-
       <View style={styles.videoCard}>
         <Text style={styles.videoLabel}>VIDEO SCRIPT (30 seconds)</Text>
         <Text style={styles.videoTitle}>"The Heat Wave Test"</Text>
@@ -417,10 +441,10 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           AI-powered reception that scales with demand. Book every AC emergency, furnace breakdown, and maintenance request 24/7.
         </Text>
         <View style={styles.bulletList}>
-          <Text style={styles.bulletItem}>- Unlimited simultaneous calls during heat waves</Text>
-          <Text style={styles.bulletItem}>- After-hours emergency dispatch</Text>
-          <Text style={styles.bulletItem}>- Seasonal maintenance reminders</Text>
-          <Text style={styles.bulletItem}>- Route optimization for faster response</Text>
+          <Text style={styles.bulletItem}>• Unlimited simultaneous calls during heat waves</Text>
+          <Text style={styles.bulletItem}>• After-hours emergency dispatch</Text>
+          <Text style={styles.bulletItem}>• Seasonal maintenance reminders</Text>
+          <Text style={styles.bulletItem}>• Route optimization for faster response</Text>
         </View>
       </View>
 
@@ -474,7 +498,6 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           5-STAR REVIEW:{'\n\n'}
           "They answered at 11 PM when my basement was flooding. Sent someone within the hour. Saved my house."—Sarah M.{'\n\n'}
           When plumbing disasters strike, we're there. 24/7 AI reception means you ALWAYS reach us. No voicemail. No waiting.{'\n\n'}
-          That's why we have 200+ 5-star reviews.{'\n\n'}
           #EmergencyPlumber #LocalBusiness #TrustMatters
         </Text>
       </View>
@@ -489,7 +512,6 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           "Option A: Voicemail. Wait until morning. Pray."{'\n'}
           [New phone ringing... AI answers immediately]{'\n'}
           "Option B: Someone answers. Help is coming."{'\n'}
-          [Plumber arriving, relieved homeowner]{'\n'}
           "Which plumber would you call next time?"
         </Text>
       </View>
@@ -545,7 +567,6 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           Sparking outlet at 10 PM? Burning smell from the panel?{'\n'}
           Our AI answers immediately. Assesses the situation. Dispatches emergency help if needed.{'\n\n'}
           Because electrical safety isn't a 9-5 issue.{'\n\n'}
-          Call or text anytime. We're always here.{'\n\n'}
           #ElectricalSafety #24HourService #LicensedElectrician
         </Text>
       </View>
@@ -555,96 +576,897 @@ export const IndustryMarketingKitPDF: React.FC = () => (
         <Text style={styles.emailBody}>
           Subject: Your Home EV Charger Estimate{'\n\n'}
           Hi [Name],{'\n\n'}
-          Thanks for reaching out about EV charger installation! Just wanted to follow up on your inquiry.{'\n\n'}
+          Thanks for reaching out about EV charger installation!{'\n\n'}
           Most home installations take 2-4 hours and include:{'\n'}
-          - Level 2 charger installation{'\n'}
-          - Panel assessment{'\n'}
-          - Permit handling{'\n'}
-          - 3-year warranty{'\n\n'}
-          Would you like to schedule a quick site visit for an exact quote? I have availability [Day/Time].{'\n\n'}
-          Best,{'\n'}
-          [Business Name]
+          • Level 2 charger installation{'\n'}
+          • Panel assessment{'\n'}
+          • Permit handling{'\n'}
+          • 3-year warranty{'\n\n'}
+          Would you like to schedule a quick site visit?
         </Text>
       </View>
 
       <Footer />
     </Page>
 
-    {/* General Contractor Kit */}
+    {/* Solar Energy Industry Kit */}
     <Page size="A4" style={styles.page}>
-      <Header title="General Contractor Kit" pageNum={6} />
+      <Header title="Solar Energy Industry Kit" pageNum={6} />
       
-      <View style={[styles.industryBadge, { backgroundColor: colors.general }]}>
-        <Text style={styles.industryBadgeText}>GENERAL CONTRACTING</Text>
+      <View style={[styles.industryBadge, { backgroundColor: colors.solar }]}>
+        <Text style={styles.industryBadgeText}>SOLAR ENERGY</Text>
       </View>
 
       <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What solar installation companies struggle with most</Text>
 
       <View style={styles.twoColumn}>
         <View style={styles.column}>
-          <View style={[styles.painPointCard, { borderLeftColor: colors.general }]}>
-            <Text style={styles.painPointTitle}>Multi-Trade Coordination</Text>
-            <Text style={styles.painPointText}>Juggling subs, inspections, material deliveries. One delay cascades. Need real-time visibility across everything.</Text>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.solar }]}>
+            <Text style={styles.painPointTitle}>Long Sales Cycles</Text>
+            <Text style={styles.painPointText}>Solar is a major investment. Leads need months of nurturing. Manual follow-up falls through the cracks.</Text>
           </View>
-          <View style={[styles.painPointCard, { borderLeftColor: colors.general }]}>
-            <Text style={styles.painPointTitle}>Project Communication</Text>
-            <Text style={styles.painPointText}>Clients want updates constantly. "When will tile arrive?" "Is the inspector coming?" Drowning in questions.</Text>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.solar }]}>
+            <Text style={styles.painPointTitle}>Complex Questions</Text>
+            <Text style={styles.painPointText}>ROI calculations, tax credits, net metering—prospects have endless questions before committing.</Text>
           </View>
-          <View style={[styles.painPointCard, { borderLeftColor: colors.general }]}>
-            <Text style={styles.painPointTitle}>Quote-to-Close Cycle</Text>
-            <Text style={styles.painPointText}>Big projects = long sales cycles. Leads go cold if not nurtured properly over weeks/months.</Text>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.solar }]}>
+            <Text style={styles.painPointTitle}>Seasonal Demand</Text>
+            <Text style={styles.painPointText}>Spring/summer rush overwhelms staff. Winter slow periods mean wasted capacity and revenue gaps.</Text>
           </View>
         </View>
         <View style={styles.column}>
           <View style={styles.solutionCard}>
-            <Text style={styles.solutionTitle}>Aura Solution: Project Hub</Text>
-            <Text style={styles.solutionText}>All trades, all schedules, all updates in one place. AI tracks milestones and flags delays before they cascade.</Text>
-          </View>
-          <View style={styles.solutionCard}>
-            <Text style={styles.solutionTitle}>Aura Solution: Client Portal</Text>
-            <Text style={styles.solutionText}>Automated status updates. Clients check progress anytime. Fewer phone calls, happier customers.</Text>
-          </View>
-          <View style={styles.solutionCard}>
             <Text style={styles.solutionTitle}>Aura Solution: Long-Term Nurture</Text>
-            <Text style={styles.solutionText}>AI maintains contact over months. Check-ins, project tips, seasonal reminders. Leads stay warm until ready.</Text>
+            <Text style={styles.solutionText}>AI maintains contact over months with educational content, ROI updates, and incentive reminders.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Knowledge Base</Text>
+            <Text style={styles.solutionText}>Train AI on tax credits, rebates, financing options. Answers complex questions accurately 24/7.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Demand Smoothing</Text>
+            <Text style={styles.solutionText}>AI campaigns fill slow periods with maintenance contracts and referral programs.</Text>
           </View>
         </View>
       </View>
 
       <View style={styles.templateCard}>
-        <Text style={styles.templateLabel}>Social Post: Project Showcase</Text>
+        <Text style={styles.templateLabel}>Social Post: ROI Focus</Text>
         <Text style={styles.templateText}>
-          [PROJECT] 12 weeks. 8 trades. 1 seamless renovation.{'\n\n'}
-          Our secret? AI-powered coordination.{'\n\n'}
-          While other contractors are juggling phone calls and spreadsheets, we're running projects with military precision:{'\n\n'}
-          - Real-time scheduling across all trades{'\n'}
-          - Automatic client updates{'\n'}
-          - Zero communication gaps{'\n\n'}
-          The result? On-time, on-budget, happy clients.{'\n\n'}
-          #GeneralContractor #HomeRenovation #SmartBuilding
+          [SUN] "How long until solar pays for itself?"{'\n\n'}
+          Great question. Our AI can calculate your specific ROI in 30 seconds.{'\n\n'}
+          Just text "SOLAR" to [Number] and answer 3 questions:{'\n'}
+          • Monthly electric bill{'\n'}
+          • Roof direction{'\n'}
+          • State/utility{'\n\n'}
+          Instant ROI estimate. No salespeople. No pressure.{'\n\n'}
+          #SolarEnergy #CleanEnergy #SolarROI
         </Text>
       </View>
 
       <View style={styles.landingCard}>
-        <Text style={styles.landingHeadline}>Landing Page: General Contractors</Text>
+        <Text style={styles.landingHeadline}>Landing Page: Solar Energy</Text>
         <Text style={styles.landingSubhead}>
-          Coordinate Complex Projects Without the Chaos{'\n\n'}
-          AI-powered project management that keeps subs on schedule, clients informed, and your sanity intact.
+          Turn Sunlight Into Savings—With AI-Powered Sales{'\n\n'}
+          Nurture leads for months, answer complex questions instantly, and close more deals.
         </Text>
         <View style={styles.bulletList}>
-          <Text style={styles.bulletItem}>- Multi-trade scheduling coordination</Text>
-          <Text style={styles.bulletItem}>- Automated client status updates</Text>
-          <Text style={styles.bulletItem}>- Sub-contractor communication hub</Text>
-          <Text style={styles.bulletItem}>- Long-term lead nurturing for big projects</Text>
+          <Text style={styles.bulletItem}>• Automated ROI calculators and lead nurturing</Text>
+          <Text style={styles.bulletItem}>• Tax credit and rebate information 24/7</Text>
+          <Text style={styles.bulletItem}>• Maintenance scheduling and reminders</Text>
+          <Text style={styles.bulletItem}>• Referral program management</Text>
         </View>
       </View>
 
       <Footer />
     </Page>
 
+    {/* ==================== EXTERIOR & STRUCTURAL ==================== */}
+
+    {/* Roofing Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Roofing Industry Kit" pageNum={7} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.roofing }]}>
+        <Text style={styles.industryBadgeText}>ROOFING</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What roofing contractors struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.roofing }]}>
+            <Text style={styles.painPointTitle}>Storm Surge Chaos</Text>
+            <Text style={styles.painPointText}>One hailstorm = 200 calls in 48 hours. Miss calls during the surge, lose $15,000+ jobs to faster competitors.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.roofing }]}>
+            <Text style={styles.painPointTitle}>Insurance Coordination</Text>
+            <Text style={styles.painPointText}>Homeowners don't understand claims process. Need hand-holding through adjusters, inspections, approvals.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.roofing }]}>
+            <Text style={styles.painPointTitle}>Weather Dependencies</Text>
+            <Text style={styles.painPointText}>Rain delays cascade. Customers frustrated. Rescheduling manually is a nightmare during busy season.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Storm Response</Text>
+            <Text style={styles.solutionText}>AI handles unlimited storm calls simultaneously. Books inspections, captures damage details, sends tech immediately.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Claim Guidance</Text>
+            <Text style={styles.solutionText}>AI walks homeowners through insurance process. Automated status updates at each claim stage.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Weather Alerts</Text>
+            <Text style={styles.solutionText}>Automatic rescheduling when weather changes. Customers notified instantly with new timeframes.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Storm Response</Text>
+        <Text style={styles.templateText}>
+          [STORM] Hail damage? Here's what to do:{'\n\n'}
+          1. Document damage with photos{'\n'}
+          2. Don't sign anything yet{'\n'}
+          3. Call us for a FREE inspection{'\n\n'}
+          We handle insurance companies every day. Our AI books your inspection instantly—even at 2 AM after a storm.{'\n\n'}
+          Text "HAIL" to [Number] for immediate response.{'\n\n'}
+          #StormDamage #RoofRepair #InsuranceClaims
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Roofing</Text>
+        <Text style={styles.landingSubhead}>
+          Never Miss a Storm Call Again{'\n\n'}
+          AI-powered response that captures every lead during weather events and guides homeowners through insurance.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>• Unlimited simultaneous storm calls</Text>
+          <Text style={styles.bulletItem}>• Insurance claim guidance and tracking</Text>
+          <Text style={styles.bulletItem}>• Weather-based rescheduling</Text>
+          <Text style={styles.bulletItem}>• Emergency tarp dispatch</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Fencing & Decking Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Fencing & Decking Kit" pageNum={8} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.fencing }]}>
+        <Text style={styles.industryBadgeText}>FENCING & DECKING</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What fence and deck contractors struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.fencing }]}>
+            <Text style={styles.painPointTitle}>Quote-Heavy Business</Text>
+            <Text style={styles.painPointText}>Every job needs on-site measurement. Scheduling quotes is tedious. 50% of quotes never close.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.fencing }]}>
+            <Text style={styles.painPointTitle}>Seasonal Crush</Text>
+            <Text style={styles.painPointText}>Spring = everyone wants a fence before summer. 3-month backlog while still answering new inquiries.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.fencing }]}>
+            <Text style={styles.painPointTitle}>Material Coordination</Text>
+            <Text style={styles.painPointText}>Custom orders, lead times, delivery coordination. One delay pushes entire schedule.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Smart Quote Booking</Text>
+            <Text style={styles.solutionText}>AI schedules measurement appointments efficiently. Routes estimators by location to minimize travel.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Waitlist Management</Text>
+            <Text style={styles.solutionText}>AI manages overflow during peak season. Keeps leads warm with progress updates until slot opens.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Project Tracking</Text>
+            <Text style={styles.solutionText}>Automated updates when materials arrive. Customer notified at each milestone.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Before/After</Text>
+        <Text style={styles.templateText}>
+          [FENCE] From quote to completion in 10 days.{'\n\n'}
+          [Before: old, broken fence]{'\n'}
+          [After: beautiful new cedar fence]{'\n\n'}
+          Ready to upgrade your backyard? Our AI schedules your free estimate instantly.{'\n\n'}
+          Text "FENCE" to [Number] or call anytime—we answer 24/7.{'\n\n'}
+          #FenceInstallation #BackyardGoals #HomeImprovement
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Fencing & Decking</Text>
+        <Text style={styles.landingSubhead}>
+          Book Your Backyard Upgrade Today{'\n\n'}
+          AI-powered scheduling that handles the spring rush and keeps every project on track.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>• Instant estimate appointment booking</Text>
+          <Text style={styles.bulletItem}>• Material arrival notifications</Text>
+          <Text style={styles.bulletItem}>• Project milestone updates</Text>
+          <Text style={styles.bulletItem}>• Peak season waitlist management</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* ==================== PROPERTY & ESTATE ==================== */}
+
+    {/* Landscape & Trees Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Landscape & Trees Kit" pageNum={9} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.landscape }]}>
+        <Text style={styles.industryBadgeText}>LANDSCAPE & TREES</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What landscapers and tree services struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.landscape }]}>
+            <Text style={styles.painPointTitle}>Storm Emergency Calls</Text>
+            <Text style={styles.painPointText}>Fallen trees = panic calls at all hours. Tree on house is a $3,000+ emergency job. Miss it, competitor gets it.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.landscape }]}>
+            <Text style={styles.painPointTitle}>Recurring Service Chaos</Text>
+            <Text style={styles.painPointText}>Lawn maintenance = weekly visits for 50+ clients. One reschedule cascades. Manual coordination nightmare.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.landscape }]}>
+            <Text style={styles.painPointTitle}>Seasonal Timing</Text>
+            <Text style={styles.painPointText}>Spring cleanup, fall leaf removal, winter pruning—different services need different outreach timing.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Emergency Dispatch</Text>
+            <Text style={styles.solutionText}>AI triages storm calls, prioritizes by urgency, dispatches crews immediately with customer ETA updates.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Route Optimization</Text>
+            <Text style={styles.solutionText}>AI manages recurring routes. Automatically reschedules weather delays and notifies affected customers.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Seasonal Campaigns</Text>
+            <Text style={styles.solutionText}>Automated outreach for each season's services. Right message at right time to entire customer base.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Storm Response</Text>
+        <Text style={styles.templateText}>
+          [TREE] Storm damage? We're already on it.{'\n\n'}
+          Tree on your roof? Blocking your driveway?{'\n'}
+          Our AI answers 24/7 and dispatches crews immediately.{'\n\n'}
+          Last night's storm = 47 calls answered, 23 emergency jobs scheduled—all before sunrise.{'\n\n'}
+          Call or text anytime. We're here.{'\n\n'}
+          #TreeService #StormDamage #EmergencyResponse
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Landscape & Trees</Text>
+        <Text style={styles.landingSubhead}>
+          Storm Response + Year-Round Service Management{'\n\n'}
+          AI-powered scheduling for emergencies and recurring maintenance.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>• 24/7 emergency tree removal dispatch</Text>
+          <Text style={styles.bulletItem}>• Recurring lawn care route management</Text>
+          <Text style={styles.bulletItem}>• Seasonal service campaigns</Text>
+          <Text style={styles.bulletItem}>• Weather-based rescheduling</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Pool & Spa Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Pool & Spa Kit" pageNum={10} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.pool }]}>
+        <Text style={styles.industryBadgeText}>POOL & SPA</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What pool service companies struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.pool }]}>
+            <Text style={styles.painPointTitle}>Opening Season Rush</Text>
+            <Text style={styles.painPointText}>Everyone wants their pool open the same 3 weeks. Staff overwhelmed. Calls go unanswered. Revenue lost.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.pool }]}>
+            <Text style={styles.painPointTitle}>Equipment Emergencies</Text>
+            <Text style={styles.painPointText}>Pump dies on July 4th weekend = frantic homeowner. Party in 6 hours. Need immediate response.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.pool }]}>
+            <Text style={styles.painPointTitle}>Recurring Service Coordination</Text>
+            <Text style={styles.painPointText}>Weekly chemical service for 100+ pools. Route optimization, access issues, weather delays—constant juggling.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Season Booking</Text>
+            <Text style={styles.solutionText}>AI handles spring opening rush. Books appointments efficiently, manages waitlist during peak weeks.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Emergency Response</Text>
+            <Text style={styles.solutionText}>AI triages equipment failures, books emergency visits, and dispatches techs with customer notification.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Route Management</Text>
+            <Text style={styles.solutionText}>Optimized recurring routes. Automatic rescheduling for rain days. Customer notifications included.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Opening Season</Text>
+        <Text style={styles.templateText}>
+          [POOL] Pool opening season is HERE.{'\n\n'}
+          Don't wait until May 15th when everyone else calls.{'\n'}
+          Book now and pick your date.{'\n\n'}
+          Our AI schedules 24/7—even at midnight when you suddenly remember "oh, the pool!"{'\n\n'}
+          Text "OPEN" to [Number]{'\n\n'}
+          #PoolSeason #PoolService #SummerReady
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Pool & Spa</Text>
+        <Text style={styles.landingSubhead}>
+          Crystal Clear Service, Year-Round{'\n\n'}
+          AI-powered scheduling for openings, closings, maintenance, and equipment emergencies.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>• Spring opening and fall closing booking</Text>
+          <Text style={styles.bulletItem}>• Weekly service route optimization</Text>
+          <Text style={styles.bulletItem}>• Equipment emergency dispatch</Text>
+          <Text style={styles.bulletItem}>• Chemistry issue triage</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Pest Control Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Pest Control Kit" pageNum={11} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.pest }]}>
+        <Text style={styles.industryBadgeText}>PEST CONTROL</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What pest control companies struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.pest }]}>
+            <Text style={styles.painPointTitle}>Panic Calls</Text>
+            <Text style={styles.painPointText}>Bed bugs, roaches, rats—customers in emotional distress need calm, immediate response. Voicemail = lost job.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.pest }]}>
+            <Text style={styles.painPointTitle}>Recurring Revenue</Text>
+            <Text style={styles.painPointText}>Quarterly treatments = stable income. But customers forget to rebook. Manual reminders are tedious.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.pest }]}>
+            <Text style={styles.painPointTitle}>Commercial Accounts</Text>
+            <Text style={styles.painPointText}>Restaurants, hotels need proof of service for health inspections. Documentation requirements are heavy.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Calm Response</Text>
+            <Text style={styles.solutionText}>AI provides reassuring responses, gathers pest details, and schedules urgent inspection immediately.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Auto-Rebooking</Text>
+            <Text style={styles.solutionText}>Automated reminders for quarterly treatments. Easy one-click rebooking via text. Zero manual effort.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Service Reports</Text>
+            <Text style={styles.solutionText}>Automatic documentation after every visit. Commercial clients get inspection-ready reports.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Seasonal Prevention</Text>
+        <Text style={styles.templateText}>
+          [BUG] Spring = bugs are waking up.{'\n\n'}
+          Ants in the kitchen? Spiders in the garage?{'\n'}
+          Don't wait until you have an infestation.{'\n\n'}
+          Text "BUGS" for a free prevention assessment.{'\n'}
+          Our AI responds instantly—even at 11 PM when you see that spider.{'\n\n'}
+          #PestControl #SpringCleaning #BugFree
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Pest Control</Text>
+        <Text style={styles.landingSubhead}>
+          Fast Response, Lasting Protection{'\n\n'}
+          AI-powered scheduling that handles emergency calls and maintains recurring treatment programs.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>• Calm, immediate emergency response</Text>
+          <Text style={styles.bulletItem}>• Quarterly treatment auto-rebooking</Text>
+          <Text style={styles.bulletItem}>• Commercial service documentation</Text>
+          <Text style={styles.bulletItem}>• Seasonal prevention campaigns</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* ==================== SPECIALIZED HOME ==================== */}
+
+    {/* Appliance Repair Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Appliance Repair Kit" pageNum={12} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.appliance }]}>
+        <Text style={styles.industryBadgeText}>APPLIANCE REPAIR</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What appliance repair technicians struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.appliance }]}>
+            <Text style={styles.painPointTitle}>Diagnostic Challenges</Text>
+            <Text style={styles.painPointText}>Customer says "it's broken." Need to know brand, model, symptoms to bring right parts. Phone tag wastes time.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.appliance }]}>
+            <Text style={styles.painPointTitle}>Part Availability</Text>
+            <Text style={styles.painPointText}>Nothing worse than diagnosing, then saying "I need to order the part." Customer frustrated. Second trip required.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.appliance }]}>
+            <Text style={styles.painPointTitle}>Weekend Warriors</Text>
+            <Text style={styles.painPointText}>Refrigerator dies Friday night. Wedding Saturday. Customer desperate. Premium pricing available if you answer.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Smart Intake</Text>
+            <Text style={styles.solutionText}>AI asks right questions: brand, model, symptoms, age. Tech arrives prepared with likely parts.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Parts Prep</Text>
+            <Text style={styles.solutionText}>Common part inventory tracked. AI knows what's in the van. Can promise same-day fix for common issues.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Weekend Premium</Text>
+            <Text style={styles.solutionText}>AI quotes weekend rates automatically. Books emergency visits. Captures high-value jobs others miss.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Same-Day Service</Text>
+        <Text style={styles.templateText}>
+          [FRIDGE] Refrigerator making weird noises?{'\n\n'}
+          Text us the brand and model number.{'\n'}
+          Our AI will tell you if we can fix it TODAY.{'\n\n'}
+          Most common repairs = same-day. Parts in the van.{'\n'}
+          No waiting for parts. No second visit.{'\n\n'}
+          Text "FIX" + your appliance type to [Number]{'\n\n'}
+          #ApplianceRepair #SameDayService #FixItFast
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Appliance Repair</Text>
+        <Text style={styles.landingSubhead}>
+          Same-Day Fixes, Smart Diagnostics{'\n\n'}
+          AI-powered intake that gets the right info so we show up prepared.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>• Smart diagnostic questions before arrival</Text>
+          <Text style={styles.bulletItem}>• Same-day service for common repairs</Text>
+          <Text style={styles.bulletItem}>• Weekend and evening availability</Text>
+          <Text style={styles.bulletItem}>• All major brands and appliances</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Handyman & Cleaning Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Handyman & Cleaning Kit" pageNum={13} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.handyman }]}>
+        <Text style={styles.industryBadgeText}>HANDYMAN & CLEANING</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What handymen and cleaning services struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.handyman }]}>
+            <Text style={styles.painPointTitle}>Scope Creep</Text>
+            <Text style={styles.painPointText}>"While you're here..." turns a 1-hour job into 4 hours. Hard to quote accurately. Profitability suffers.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.handyman }]}>
+            <Text style={styles.painPointTitle}>Recurring Booking</Text>
+            <Text style={styles.painPointText}>Cleaning clients need regular service. Manual rebooking = missed appointments. Revenue gaps.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.handyman }]}>
+            <Text style={styles.painPointTitle}>Trust & Access</Text>
+            <Text style={styles.painPointText}>Clients give you keys. Need reliable communication. Late without notice = lost client forever.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Clear Quoting</Text>
+            <Text style={styles.solutionText}>AI gathers detailed task list upfront. Sets expectations before arrival. Reduces surprise add-ons.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Auto-Schedule</Text>
+            <Text style={styles.solutionText}>Recurring appointments booked automatically. Reminders sent. Clients confirm or reschedule via text.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: ETA Updates</Text>
+            <Text style={styles.solutionText}>Real-time arrival notifications. Running late? Customer knows automatically. Trust maintained.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Honey-Do List</Text>
+        <Text style={styles.templateText}>
+          [TOOLS] Got a honey-do list a mile long?{'\n\n'}
+          Text us everything. We'll quote it all.{'\n'}
+          • Leaky faucet{'\n'}
+          • Squeaky door{'\n'}
+          • Picture hanging{'\n'}
+          • Whatever's been bugging you{'\n\n'}
+          One visit. Everything fixed.{'\n\n'}
+          Text "FIX" to [Number] with your list.{'\n\n'}
+          #Handyman #HomeRepair #HoneyDoList
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Handyman & Cleaning</Text>
+        <Text style={styles.landingSubhead}>
+          Reliable Service, Clear Communication{'\n\n'}
+          AI-powered booking with automatic reminders and real-time updates.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>• Detailed task intake for accurate quotes</Text>
+          <Text style={styles.bulletItem}>• Recurring service auto-scheduling</Text>
+          <Text style={styles.bulletItem}>• Real-time arrival notifications</Text>
+          <Text style={styles.bulletItem}>• Easy rebooking via text</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Construction Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Construction Kit" pageNum={14} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.construction }]}>
+        <Text style={styles.industryBadgeText}>CONSTRUCTION (PAINTING, FLOORING, TILE)</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What construction contractors struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.construction }]}>
+            <Text style={styles.painPointTitle}>Multi-Trade Coordination</Text>
+            <Text style={styles.painPointText}>Flooring can't go in until painting's done. Tile waits for plumbing. One delay = domino effect.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.construction }]}>
+            <Text style={styles.painPointTitle}>Client Communication</Text>
+            <Text style={styles.painPointText}>"When will you be done?" "What color did I pick?" Constant questions while trying to work.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.construction }]}>
+            <Text style={styles.painPointTitle}>Quote Follow-Through</Text>
+            <Text style={styles.painPointText}>Big projects = long decision cycles. Leads go cold without consistent follow-up.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Project Timeline</Text>
+            <Text style={styles.solutionText}>AI manages dependencies. Notifies next trade when ready. Customers see progress without asking.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Client Portal</Text>
+            <Text style={styles.solutionText}>Selections, schedule, progress photos—all in one place. Questions answered automatically.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Lead Nurture</Text>
+            <Text style={styles.solutionText}>AI maintains contact during decision period. Design tips, project examples, gentle follow-ups.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Before/After</Text>
+        <Text style={styles.templateText}>
+          [PAINT] Same room. Completely different vibe.{'\n\n'}
+          [Before: dated beige walls]{'\n'}
+          [After: modern slate gray accent wall]{'\n\n'}
+          Ready to transform your space?{'\n'}
+          Our AI schedules your free color consultation instantly.{'\n\n'}
+          Text "COLOR" to [Number]{'\n\n'}
+          #HomeRenovation #PaintingPros #BeforeAndAfter
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Construction</Text>
+        <Text style={styles.landingSubhead}>
+          From Quote to Completion, Seamlessly{'\n\n'}
+          AI-powered project coordination for painting, flooring, tile, and trim work.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>• Multi-trade scheduling coordination</Text>
+          <Text style={styles.bulletItem}>• Client portal with progress updates</Text>
+          <Text style={styles.bulletItem}>• Selection tracking and reminders</Text>
+          <Text style={styles.bulletItem}>• Lead nurturing for larger projects</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* ==================== MOBILE & COMMERCIAL ==================== */}
+
+    {/* Auto Care Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Auto Care Kit" pageNum={15} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.auto }]}>
+        <Text style={styles.industryBadgeText}>AUTO CARE (DETAILING & REPAIR)</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What auto service businesses struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.auto }]}>
+            <Text style={styles.painPointTitle}>Mobile Logistics</Text>
+            <Text style={styles.painPointText}>Detailing at customer locations = route complexity. Travel time eats into profitable hours.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.auto }]}>
+            <Text style={styles.painPointTitle}>No-Show Losses</Text>
+            <Text style={styles.painPointText}>Drive 30 minutes to location. Customer forgot. Wasted trip. Lost revenue. No way to fill slot.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.auto }]}>
+            <Text style={styles.painPointTitle}>Upsell Opportunities</Text>
+            <Text style={styles.painPointText}>Customer gets basic wash. Doesn't know you offer ceramic coating. Leaving money on the table.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Route Optimization</Text>
+            <Text style={styles.solutionText}>AI clusters appointments by location. Minimizes drive time. Maximizes billable hours.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Reminder System</Text>
+            <Text style={styles.solutionText}>Automated confirmations 24h and 2h before. Customers reschedule easily. No-shows plummet.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Service Education</Text>
+            <Text style={styles.solutionText}>AI shares service options during booking. "Would you like to add interior detail?" Upsells naturally.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Convenience</Text>
+        <Text style={styles.templateText}>
+          [CAR] We come to you.{'\n\n'}
+          While you're at work, at home, wherever—we detail your car.{'\n\n'}
+          Book in 30 seconds:{'\n'}
+          Text "DETAIL" + your address to [Number]{'\n\n'}
+          AI schedules instantly. Pick your time. We show up.{'\n'}
+          Come out to a showroom-clean car.{'\n\n'}
+          #MobileDetailing #AutoCare #Convenience
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Auto Care</Text>
+        <Text style={styles.landingSubhead}>
+          Mobile Service, Maximum Convenience{'\n\n'}
+          AI-powered scheduling that optimizes routes and eliminates no-shows.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>• Location-based route optimization</Text>
+          <Text style={styles.bulletItem}>• Automated confirmations and reminders</Text>
+          <Text style={styles.bulletItem}>• Service upsell suggestions</Text>
+          <Text style={styles.bulletItem}>• Fleet account management</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Security Systems Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Security Systems Kit" pageNum={16} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.security }]}>
+        <Text style={styles.industryBadgeText}>SECURITY SYSTEMS (CAMERAS & ALARMS)</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What security installers struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.security }]}>
+            <Text style={styles.painPointTitle}>Fear-Based Sales</Text>
+            <Text style={styles.painPointText}>Break-in happens = neighbor wants security NOW. Speed matters. First to respond wins the job.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.security }]}>
+            <Text style={styles.painPointTitle}>Technical Questions</Text>
+            <Text style={styles.painPointText}>DIY vs pro install? Wired vs wireless? Cloud vs local? Prospects need education before committing.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.security }]}>
+            <Text style={styles.painPointTitle}>Monitoring Revenue</Text>
+            <Text style={styles.painPointText}>Install is one-time. Monitoring is recurring. Hard to convert customers to monthly plans.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Instant Response</Text>
+            <Text style={styles.solutionText}>AI answers concerned homeowners 24/7. Books consultations immediately while urgency is high.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Knowledge Base</Text>
+            <Text style={styles.solutionText}>Train AI on your products and options. Answers technical questions accurately. Builds confidence.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Monitoring Pitch</Text>
+            <Text style={styles.solutionText}>AI educates on monitoring benefits during booking. Converts more installs to recurring revenue.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Neighborhood Alert</Text>
+        <Text style={styles.templateText}>
+          [ALERT] Break-in reported on [Neighborhood] last night.{'\n\n'}
+          Don't wait until it happens to you.{'\n\n'}
+          Free security assessment:{'\n'}
+          • Camera placement recommendations{'\n'}
+          • Entry point vulnerabilities{'\n'}
+          • Monitoring options{'\n\n'}
+          Text "SECURE" to [Number] or call 24/7.{'\n\n'}
+          #HomeSecurity #ProtectYourFamily #SecurityCamera
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Security Systems</Text>
+        <Text style={styles.landingSubhead}>
+          Peace of Mind, Installed by Pros{'\n\n'}
+          AI-powered consultations that answer questions and book installations fast.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>• 24/7 response to security concerns</Text>
+          <Text style={styles.bulletItem}>• Technical Q&A about camera systems</Text>
+          <Text style={styles.bulletItem}>• Free security assessment booking</Text>
+          <Text style={styles.bulletItem}>• Monitoring plan education</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Real Estate Industry Kit */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Real Estate Kit" pageNum={17} />
+      
+      <View style={[styles.industryBadge, { backgroundColor: colors.realestate }]}>
+        <Text style={styles.industryBadgeText}>REAL ESTATE</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Industry Pain Points</Text>
+      <Text style={styles.sectionSubtitle}>What real estate professionals struggle with most</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.realestate }]}>
+            <Text style={styles.painPointTitle}>Lead Response Time</Text>
+            <Text style={styles.painPointText}>Zillow lead comes in at 9 PM. Call back tomorrow = lead already talked to 3 other agents.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.realestate }]}>
+            <Text style={styles.painPointTitle}>Showing Coordination</Text>
+            <Text style={styles.painPointText}>Multiple buyers, multiple properties, overlapping schedules. Manual coordination is chaos.</Text>
+          </View>
+          <View style={[styles.painPointCard, { borderLeftColor: colors.realestate }]}>
+            <Text style={styles.painPointTitle}>Long-Term Nurture</Text>
+            <Text style={styles.painPointText}>Most leads aren't ready to buy for 6-12 months. Staying top-of-mind without being annoying is hard.</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Instant Response</Text>
+            <Text style={styles.solutionText}>AI responds to new leads within seconds. Qualifies interest, books consultation, captures while hot.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Showing Scheduler</Text>
+            <Text style={styles.solutionText}>AI coordinates showings across multiple properties. Optimizes routes. Sends confirmations automatically.</Text>
+          </View>
+          <View style={styles.solutionCard}>
+            <Text style={styles.solutionTitle}>Aura Solution: Drip Campaigns</Text>
+            <Text style={styles.solutionText}>Automated market updates, new listings, and check-ins. Stay present without manual effort.</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.templateCard}>
+        <Text style={styles.templateLabel}>Social Post: Market Update</Text>
+        <Text style={styles.templateText}>
+          [HOME] [City] Market Update:{'\n\n'}
+          • Median price: [X]% vs last year{'\n'}
+          • Days on market: [X] days{'\n'}
+          • Best time to list: NOW{'\n\n'}
+          Thinking about buying or selling?{'\n'}
+          Text "MARKET" for a personalized analysis.{'\n\n'}
+          Our AI responds instantly—even at midnight.{'\n\n'}
+          #RealEstate #MarketUpdate #HomeValue
+        </Text>
+      </View>
+
+      <View style={styles.landingCard}>
+        <Text style={styles.landingHeadline}>Landing Page: Real Estate</Text>
+        <Text style={styles.landingSubhead}>
+          Never Miss Another Lead, Never Lose Another Sale{'\n\n'}
+          AI-powered response that captures leads instantly and nurtures until they're ready.
+        </Text>
+        <View style={styles.bulletList}>
+          <Text style={styles.bulletItem}>• Instant lead response 24/7</Text>
+          <Text style={styles.bulletItem}>• Multi-property showing coordination</Text>
+          <Text style={styles.bulletItem}>• Long-term drip campaign automation</Text>
+          <Text style={styles.bulletItem}>• Market update distribution</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* ==================== WELLNESS & PERSONAL ==================== */}
+
     {/* Beauty & Wellness Industry Kit - Page 1 */}
     <Page size="A4" style={styles.page}>
-      <Header title="Beauty & Wellness Kit" pageNum={7} />
+      <Header title="Beauty & Wellness Kit" pageNum={18} />
       
       <View style={[styles.industryBadge, { backgroundColor: colors.beauty }]}>
         <Text style={styles.industryBadgeText}>BEAUTY & WELLNESS (AURA HALO)</Text>
@@ -700,7 +1522,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
 
     {/* Beauty & Wellness - Page 2 */}
     <Page size="A4" style={styles.page}>
-      <Header title="Beauty & Wellness Content" pageNum={8} />
+      <Header title="Beauty & Wellness Content" pageNum={19} />
 
       <View style={[styles.industryBadge, { backgroundColor: colors.beauty }]}>
         <Text style={styles.industryBadgeText}>BEAUTY CONTENT TEMPLATES</Text>
@@ -737,10 +1559,10 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           AI-powered booking and reminders designed for salons, spas, and wellness businesses.
         </Text>
         <View style={styles.bulletList}>
-          <Text style={styles.bulletItem}>- 24/7 appointment booking via text or call</Text>
-          <Text style={styles.bulletItem}>- Automated reminders reduce no-shows 40%</Text>
-          <Text style={styles.bulletItem}>- Review collection after every service</Text>
-          <Text style={styles.bulletItem}>- Client rebooking campaigns</Text>
+          <Text style={styles.bulletItem}>• 24/7 appointment booking via text or call</Text>
+          <Text style={styles.bulletItem}>• Automated reminders reduce no-shows 40%</Text>
+          <Text style={styles.bulletItem}>• Review collection after every service</Text>
+          <Text style={styles.bulletItem}>• Client rebooking campaigns</Text>
         </View>
       </View>
 
@@ -749,7 +1571,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
 
     {/* Food Service Industry Kit */}
     <Page size="A4" style={styles.page}>
-      <Header title="Food Service Kit" pageNum={9} />
+      <Header title="Food Service Kit" pageNum={20} />
       
       <View style={[styles.industryBadge, { backgroundColor: colors.food }]}>
         <Text style={styles.industryBadgeText}>FOOD SERVICE (AURA EXPRESS)</Text>
@@ -808,10 +1630,10 @@ export const IndustryMarketingKitPDF: React.FC = () => (
           AI-powered phone answering designed specifically for restaurants, cafes, and food service.
         </Text>
         <View style={styles.bulletList}>
-          <Text style={styles.bulletItem}>- Instant reservation booking</Text>
-          <Text style={styles.bulletItem}>- Menu and hours FAQ answered 24/7</Text>
-          <Text style={styles.bulletItem}>- Smart link sharing for online ordering</Text>
-          <Text style={styles.bulletItem}>- Peak hour call handling</Text>
+          <Text style={styles.bulletItem}>• Instant reservation booking</Text>
+          <Text style={styles.bulletItem}>• Menu and hours FAQ answered 24/7</Text>
+          <Text style={styles.bulletItem}>• Smart link sharing for online ordering</Text>
+          <Text style={styles.bulletItem}>• Peak hour call handling</Text>
         </View>
       </View>
 
@@ -820,7 +1642,7 @@ export const IndustryMarketingKitPDF: React.FC = () => (
 
     {/* Personal Services Industry Kit */}
     <Page size="A4" style={styles.page}>
-      <Header title="Personal Services Kit" pageNum={10} />
+      <Header title="Personal Services Kit" pageNum={21} />
       
       <View style={[styles.industryBadge, { backgroundColor: colors.personal }]}>
         <Text style={styles.industryBadgeText}>PERSONAL SERVICES (AURA FLOW)</Text>
@@ -836,175 +1658,57 @@ export const IndustryMarketingKitPDF: React.FC = () => (
             <Text style={styles.painPointText}>Multiple clients, multiple calendars. Double-bookings happen. Appointments fall through the cracks.</Text>
           </View>
           <View style={[styles.painPointCard, { borderLeftColor: colors.personal }]}>
-            <Text style={styles.painPointTitle}>Missed Appointment Requests</Text>
-            <Text style={styles.painPointText}>You're with a client when another one calls. By the time you call back, they've booked someone else.</Text>
+            <Text style={styles.painPointTitle}>Booking Friction</Text>
+            <Text style={styles.painPointText}>Back-and-forth texts to find a time. 5 messages to book 1 appointment. Prospects give up.</Text>
           </View>
           <View style={[styles.painPointCard, { borderLeftColor: colors.personal }]}>
-            <Text style={styles.painPointTitle}>Manual Follow-Up Burnout</Text>
-            <Text style={styles.painPointText}>Chasing clients for rebooking. Sending reminders manually. Administrative work eating your billable hours.</Text>
+            <Text style={styles.painPointTitle}>No-Show Losses</Text>
+            <Text style={styles.painPointText}>Your time is your inventory. One no-show = lost hour you can't recover.</Text>
           </View>
         </View>
         <View style={styles.column}>
           <View style={styles.solutionCard}>
-            <Text style={styles.solutionTitle}>Aura Solution: Direct Calendar Sync</Text>
-            <Text style={styles.solutionText}>AI syncs directly with your calendar. Real-time availability, no conflicts, perfect scheduling.</Text>
+            <Text style={styles.solutionTitle}>Aura Solution: Calendar Sync</Text>
+            <Text style={styles.solutionText}>AI integrates with your calendar. Shows real availability. No conflicts, no manual updates.</Text>
           </View>
           <View style={styles.solutionCard}>
-            <Text style={styles.solutionTitle}>Aura Solution: 24/7 Scheduling</Text>
-            <Text style={styles.solutionText}>AI Receptionist and Scheduling Agent book appointments while you're busy or sleeping. Never miss a lead.</Text>
+            <Text style={styles.solutionTitle}>Aura Solution: One-Text Booking</Text>
+            <Text style={styles.solutionText}>Client texts "book." AI shows times. Client picks. Done. One interaction, appointment confirmed.</Text>
           </View>
           <View style={styles.solutionCard}>
-            <Text style={styles.solutionTitle}>Aura Solution: Automated Follow-ups</Text>
-            <Text style={styles.solutionText}>Intelligent rebooking reminders. Automated SMS/email sequences. Clients stay engaged without your effort.</Text>
+            <Text style={styles.solutionTitle}>Aura Solution: Smart Reminders</Text>
+            <Text style={styles.solutionText}>Automated confirmations and reminders. Easy reschedule via text. No-shows reduced dramatically.</Text>
           </View>
         </View>
       </View>
 
       <View style={styles.templateCard}>
-        <Text style={styles.templateLabel}>Social Post: Time Saver</Text>
+        <Text style={styles.templateLabel}>Social Post: Effortless Booking</Text>
         <Text style={styles.templateText}>
-          Your time is precious. Aura manages the calendar so you don't have to.{'\n\n'}
-          24/7 booking. Zero missed appointments. Pure flow.{'\n\n'}
-          While you're focused on clients, AI is:{'\n'}
-          - Booking new appointments{'\n'}
-          - Sending reminders{'\n'}
-          - Following up on no-shows{'\n'}
-          - Managing your schedule{'\n\n'}
-          #PersonalAssistant #TimeManagement #ProductivityHacks
+          [CALENDAR] Booking an appointment shouldn't take 10 texts.{'\n\n'}
+          With our AI:{'\n'}
+          1. You text "book"{'\n'}
+          2. AI shows available times{'\n'}
+          3. You pick one{'\n'}
+          4. Done.{'\n\n'}
+          No phone tag. No waiting. No back-and-forth.{'\n\n'}
+          Try it: Text "BOOK" to [Number]{'\n\n'}
+          #PersonalAssistant #EasyBooking #TimeManagement
         </Text>
       </View>
 
       <View style={styles.landingCard}>
         <Text style={styles.landingHeadline}>Landing Page: Personal Services</Text>
         <Text style={styles.landingSubhead}>
-          Your AI-Powered Scheduling Assistant{'\n\n'}
-          Direct calendar sync and 24/7 booking for personal service providers.
+          Your AI Scheduling Assistant{'\n\n'}
+          Effortless booking that syncs with your calendar and eliminates no-shows.
         </Text>
         <View style={styles.bulletList}>
-          <Text style={styles.bulletItem}>- Real-time calendar synchronization</Text>
-          <Text style={styles.bulletItem}>- 24/7 scheduling via voice and chat</Text>
-          <Text style={styles.bulletItem}>- Automated SMS/Email reminders</Text>
-          <Text style={styles.bulletItem}>- Intelligent rebooking suggestions</Text>
+          <Text style={styles.bulletItem}>• Real-time calendar integration</Text>
+          <Text style={styles.bulletItem}>• One-text appointment booking</Text>
+          <Text style={styles.bulletItem}>• Automated reminders and confirmations</Text>
+          <Text style={styles.bulletItem}>• Easy client rescheduling</Text>
         </View>
-      </View>
-
-      <Footer />
-    </Page>
-
-    {/* Email Campaign Templates */}
-    <Page size="A4" style={styles.page}>
-      <Header title="Email Campaign Templates" pageNum={7} />
-      
-      <Text style={styles.sectionTitle}>Industry Email Sequences</Text>
-      <Text style={styles.sectionSubtitle}>Pre-written email flows for each vertical</Text>
-
-      <View style={styles.emailCard}>
-        <Text style={styles.emailSubject}>HVAC: Seasonal Maintenance Reminder</Text>
-        <Text style={styles.emailBody}>
-          Subject: Is Your AC Ready for Summer? [First Name]?{'\n\n'}
-          Hi [Name],{'\n\n'}
-          Spring is here, which means summer heat isn't far behind.{'\n\n'}
-          Last year, we saw a 300% spike in emergency AC calls during the first heat wave. Don't be one of those calls.{'\n\n'}
-          Schedule your pre-season tune-up now:{'\n'}
-          {'>'} Avoid emergency rates{'\n'}
-          {'>'} Extend system life{'\n'}
-          {'>'} Lock in priority scheduling{'\n\n'}
-          [Book Now Button]{'\n\n'}
-          Stay cool,{'\n'}
-          [Business Name]
-        </Text>
-      </View>
-
-      <View style={styles.emailCard}>
-        <Text style={styles.emailSubject}>Plumbing: Quote Follow-Up (Day 3)</Text>
-        <Text style={styles.emailBody}>
-          Subject: Quick question about your plumbing estimate{'\n\n'}
-          Hi [Name],{'\n\n'}
-          Just wanted to check in on the estimate we provided for [Service Type].{'\n\n'}
-          I know comparing quotes can be overwhelming. Happy to answer any questions or walk through the details.{'\n\n'}
-          One thing worth knowing: We're booking [X] weeks out right now. If you want work done before [upcoming date/event], scheduling soon would guarantee your spot.{'\n\n'}
-          Any questions? Just reply to this email.{'\n\n'}
-          [Business Name]
-        </Text>
-      </View>
-
-      <View style={styles.emailCard}>
-        <Text style={styles.emailSubject}>Electrical: Commercial Project Nurture</Text>
-        <Text style={styles.emailBody}>
-          Subject: Electrical planning for your [Building Type]?{'\n\n'}
-          Hi [Name],{'\n\n'}
-          Following up on our conversation about [Project]. Commercial electrical projects have a lot of moving parts—want to make sure you have everything you need.{'\n\n'}
-          Quick resources that might help:{'\n'}
-          - Our commercial project checklist (attached){'\n'}
-          - Permit timeline for [City]{'\n'}
-          - Financing options for larger jobs{'\n\n'}
-          When you're ready to move forward, we can start with a site assessment. Takes about an hour and gives you a complete scope and timeline.{'\n\n'}
-          Let me know what works.{'\n\n'}
-          [Business Name]
-        </Text>
-      </View>
-
-      <View style={styles.emailCard}>
-        <Text style={styles.emailSubject}>General Contractor: Project Completion Follow-Up</Text>
-        <Text style={styles.emailBody}>
-          Subject: How's everything holding up, [Name]?{'\n\n'}
-          Hi [Name],{'\n\n'}
-          It's been 30 days since we completed your [Project Type]. Wanted to check in and make sure everything is working perfectly.{'\n\n'}
-          Any questions about:{'\n'}
-          - Warranty coverage?{'\n'}
-          - Maintenance tips?{'\n'}
-          - Future project ideas?{'\n\n'}
-          Also, if you're happy with the work, we'd love a quick Google review. It helps other homeowners find reliable contractors:{'\n'}
-          [Review Link]{'\n\n'}
-          Thanks for choosing us!{'\n'}
-          [Business Name]
-        </Text>
-      </View>
-
-      <Footer />
-    </Page>
-
-    {/* Competitor Positioning by Industry */}
-    <Page size="A4" style={styles.page}>
-      <Header title="Competitor Positioning" pageNum={8} />
-      
-      <Text style={styles.sectionTitle}>Industry-Specific Differentiators</Text>
-      <Text style={styles.sectionSubtitle}>How to position against competitors in each vertical</Text>
-
-      <View style={styles.templateCard}>
-        <Text style={[styles.templateLabel, { color: colors.hvac }]}>HVAC: vs. Traditional Answering Services</Text>
-        <Text style={styles.templateText}>
-          "Traditional answering services take messages. We book appointments.{'\n\n'}
-          When a customer calls at 9 PM with a broken AC, they don't want to leave a message and hope someone calls back. They want the problem solved.{'\n\n'}
-          Our AI books the emergency service call, dispatches your on-call tech, and sends the customer an ETA—all before a human answering service would finish taking the message."
-        </Text>
-      </View>
-
-      <View style={styles.templateCard}>
-        <Text style={[styles.templateLabel, { color: colors.plumbing }]}>PLUMBING: vs. Cheap Online Leads</Text>
-        <Text style={styles.templateText}>
-          "Buying leads from HomeAdvisor means competing with 5 other plumbers for the same customer.{'\n\n'}
-          What if you captured every lead yourself—directly from your own phone line?{'\n\n'}
-          Aura ensures every call to YOUR number becomes YOUR booking. No competing. No lead fees. Just direct customer relationships."
-        </Text>
-      </View>
-
-      <View style={styles.templateCard}>
-        <Text style={[styles.templateLabel, { color: colors.electrical }]}>ELECTRICAL: vs. DIY Scheduling Tools</Text>
-        <Text style={styles.templateText}>
-          "Calendly is fine for simple appointments. But electrical jobs aren't simple.{'\n\n'}
-          You need to know: Is this residential or commercial? Panel upgrade or outlet repair? Urgent or routine?{'\n\n'}
-          Our AI asks the right questions, routes to the right technician, and schedules with the right time allocation. No more showing up to a 'quick repair' that's actually a full rewire."
-        </Text>
-      </View>
-
-      <View style={styles.templateCard}>
-        <Text style={[styles.templateLabel, { color: colors.general }]}>GC: vs. Project Management Software</Text>
-        <Text style={styles.templateText}>
-          "Buildertrend is great—if you have time to update it.{'\n\n'}
-          Reality: You're on the job site, not at a computer. Subs don't log in. Clients forget their passwords.{'\n\n'}
-          Aura works through the phone. Subs text updates. Clients get automatic notifications. Everything syncs without anyone logging into anything. Project management that actually gets used."
-        </Text>
       </View>
 
       <Footer />
