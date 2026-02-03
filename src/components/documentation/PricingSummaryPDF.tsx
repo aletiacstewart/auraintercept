@@ -5,7 +5,7 @@ import {
   View,
   StyleSheet,
 } from '@react-pdf/renderer';
-import { sanitizePdfText } from './pdfSanitize';
+import { SUBSCRIPTION_TIERS } from '@/lib/documentationConfig';
 
 const colors = {
   primary: '#214ebb',
@@ -331,102 +331,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// Updated 7-Tier subscription data
-const SUBSCRIPTION_TIERS = {
-  express: {
-    name: 'Aura Express',
-    monthlyPrice: 197,
-    annualPrice: 1970,
-    annualSavings: 394,
-    implementationFee: 299,
-    operatives: 1,
-    consoles: 0,
-    employees: 2,
-    bestFor: 'Restaurants, cafes, food trucks, and food service businesses.',
-    hasVoice: true,
-    hasAutomation: false,
-  },
-  aura_flow: {
-    name: 'Aura Flow',
-    monthlyPrice: 297,
-    annualPrice: 2970,
-    annualSavings: 594,
-    implementationFee: 399,
-    operatives: 3,
-    consoles: 0,
-    employees: 2,
-    bestFor: 'Service businesses needing automated booking via calendar sync without a customer portal.',
-    hasVoice: true,
-    hasAutomation: true,
-  },
-  halo: {
-    name: 'Aura Halo',
-    monthlyPrice: 397,
-    annualPrice: 3970,
-    annualSavings: 794,
-    implementationFee: 499,
-    operatives: 3,
-    consoles: 1,
-    employees: 3,
-    bestFor: 'Nail salons, hair salons, barbers, massage centers, spas, and wellness businesses.',
-    hasVoice: true,
-    hasAutomation: true,
-  },
-  core: {
-    name: 'Aura Core',
-    monthlyPrice: 500,
-    annualPrice: 5000,
-    annualSavings: 1000,
-    implementationFee: 499,
-    operatives: 0,
-    consoles: 0,
-    employees: 2,
-    bestFor: 'Businesses wanting AI-ready tools (Message Aura (Text), Social Media, Web Presence) without automated workflows.',
-    hasVoice: false,
-    hasAutomation: false,
-  },
-  singlePoint: {
-    name: 'Single-Point',
-    monthlyPrice: 1500,
-    annualPrice: 15000,
-    annualSavings: 3000,
-    implementationFee: 499,
-    operatives: 3,
-    consoles: 1,
-    employees: 5,
-    bestFor: 'Small service companies focused on lead capture, reputation management, and AI voice/chat engagement.',
-    hasVoice: true,
-    hasAutomation: true,
-  },
-  multiTrack: {
-    name: 'Multi-Track',
-    monthlyPrice: 3997,
-    annualPrice: 39970,
-    annualSavings: 7994,
-    implementationFee: 499,
-    operatives: 10,
-    consoles: 2,
-    employees: 10,
-    bestFor: 'Growing companies with field technicians needing dispatch automation, online booking, and route optimization.',
-    hasVoice: true,
-    hasAutomation: true,
-  },
-  command: {
-    name: 'Aura Pro Command',
-    monthlyPrice: 5997,
-    annualPrice: 59970,
-    annualSavings: 11994,
-    implementationFee: 'Custom',
-    operatives: 24,
-    consoles: 7,
-    employees: 25,
-    bestFor: 'Large service companies with 15+ technicians or multi-location operations requiring full enterprise automation.',
-    hasVoice: true,
-    hasAutomation: true,
-    isEnterprise: true,
-  },
-};
-
 const THIRD_PARTY_INTEGRATIONS = [
   { name: 'Twilio', purpose: 'SMS & Voice Calls', cost: '$1.15/number + ~$30-100/mo usage', required: 'Halo+ (for Voice)' },
   { name: 'ElevenLabs', purpose: 'AI Voice Synthesis', cost: '$0-99+/month based on usage', required: 'Halo+ (for Voice)' },
@@ -535,39 +439,45 @@ const PricingSummaryPDF = () => (
       <View style={styles.summaryGrid}>
         <View style={[styles.summaryCard, { backgroundColor: colors.amberLight }]}> 
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA EXPRESS</Text>
-          <Text style={styles.summaryPrice}>$197</Text>
+          <Text style={styles.summaryPrice}>${SUBSCRIPTION_TIERS.express.price}</Text>
           <Text style={styles.summaryLabel}>per month</Text>
           <Text style={{ fontSize: 8, color: colors.amber, marginTop: 4 }}>Restaurants</Text>
         </View>
+        <View style={[styles.summaryCard, { backgroundColor: colors.greenLight }]}>
+          <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA FLOW</Text>
+          <Text style={styles.summaryPrice}>${SUBSCRIPTION_TIERS.aura_flow.price}</Text>
+          <Text style={styles.summaryLabel}>per month</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>Personal Assistant</Text>
+        </View>
         <View style={[styles.summaryCard, { backgroundColor: colors.roseLight }]}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA HALO</Text>
-          <Text style={styles.summaryPrice}>$397</Text>
+          <Text style={styles.summaryPrice}>${SUBSCRIPTION_TIERS.halo.price}</Text>
           <Text style={styles.summaryLabel}>per month</Text>
           <Text style={{ fontSize: 8, color: colors.rose, marginTop: 4 }}>Salons/Wellness</Text>
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AURA CORE</Text>
-          <Text style={styles.summaryPrice}>$500</Text>
+          <Text style={styles.summaryPrice}>${SUBSCRIPTION_TIERS.core.price}</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.gray, marginTop: 4 }}>Tools Only</Text>
+          <Text style={{ fontSize: 8, color: colors.gray, marginTop: 4 }}>{SUBSCRIPTION_TIERS.core.operatives} Operatives</Text>
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>SINGLE-POINT</Text>
-          <Text style={styles.summaryPrice}>$1,500</Text>
+          <Text style={styles.summaryPrice}>${SUBSCRIPTION_TIERS.single_point.price.toLocaleString()}</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>AI-Automated</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>{SUBSCRIPTION_TIERS.single_point.operatives} Operatives</Text>
         </View>
         <View style={[styles.summaryCard, { borderWidth: 2, borderColor: colors.accent }]}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6, color: colors.accent }}>MULTI-TRACK</Text>
-          <Text style={styles.summaryPrice}>$3,997</Text>
+          <Text style={styles.summaryPrice}>${SUBSCRIPTION_TIERS.multi_track.price.toLocaleString()}</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>Popular</Text>
+          <Text style={{ fontSize: 8, color: colors.green, marginTop: 4 }}>{SUBSCRIPTION_TIERS.multi_track.operatives} Operatives</Text>
         </View>
         <View style={styles.summaryCard}>
           <Text style={{ fontSize: 10, fontWeight: 700, marginBottom: 6 }}>PRO COMMAND</Text>
-          <Text style={styles.summaryPrice}>$5,997</Text>
+          <Text style={styles.summaryPrice}>${SUBSCRIPTION_TIERS.command.price.toLocaleString()}</Text>
           <Text style={styles.summaryLabel}>per month</Text>
-          <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>Enterprise</Text>
+          <Text style={{ fontSize: 8, color: colors.primary, marginTop: 4 }}>All {SUBSCRIPTION_TIERS.command.operatives} Operatives</Text>
         </View>
       </View>
 
@@ -577,6 +487,7 @@ const PricingSummaryPDF = () => (
         <View style={styles.tableHeader}>
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Feature</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Express</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Flow</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Halo</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Core</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Single</Text>
@@ -584,16 +495,17 @@ const PricingSummaryPDF = () => (
           <Text style={[styles.tableHeaderCell, { flex: 1 }]}>Command</Text>
         </View>
         {[
-          { feature: 'AI Operatives', express: '1', halo: '3', core: '0', single: '3', multi: '10', command: '24' },
-          { feature: 'Consoles', express: '0', halo: '1', core: '0', single: '1', multi: '2', command: '7' },
-          { feature: 'Employees', express: '2', halo: '3', core: '2', single: '5', multi: '10', command: '25' },
-          { feature: 'AI Automation', express: '-', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
-          { feature: 'Talk to Aura (Voice)', express: 'Yes', halo: 'Yes', core: '-', single: 'Yes', multi: 'Yes', command: 'Yes' },
-          { feature: 'Online Booking', express: '-', halo: 'Yes', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
+          { feature: 'AI Operatives', express: String(SUBSCRIPTION_TIERS.express.operatives), flow: String(SUBSCRIPTION_TIERS.aura_flow.operatives), halo: String(SUBSCRIPTION_TIERS.halo.operatives), core: String(SUBSCRIPTION_TIERS.core.operatives), single: String(SUBSCRIPTION_TIERS.single_point.operatives), multi: String(SUBSCRIPTION_TIERS.multi_track.operatives), command: String(SUBSCRIPTION_TIERS.command.operatives) },
+          { feature: 'Consoles', express: String(SUBSCRIPTION_TIERS.express.consoles), flow: String(SUBSCRIPTION_TIERS.aura_flow.consoles), halo: String(SUBSCRIPTION_TIERS.halo.consoles), core: String(SUBSCRIPTION_TIERS.core.consoles), single: String(SUBSCRIPTION_TIERS.single_point.consoles), multi: String(SUBSCRIPTION_TIERS.multi_track.consoles), command: String(SUBSCRIPTION_TIERS.command.consoles) },
+          { feature: 'Employees', express: String(SUBSCRIPTION_TIERS.express.employees), flow: String(SUBSCRIPTION_TIERS.aura_flow.employees), halo: String(SUBSCRIPTION_TIERS.halo.employees), core: String(SUBSCRIPTION_TIERS.core.employees), single: String(SUBSCRIPTION_TIERS.single_point.employees), multi: String(SUBSCRIPTION_TIERS.multi_track.employees), command: String(SUBSCRIPTION_TIERS.command.employees) },
+          { feature: 'AI Automation', express: '-', flow: 'Yes', halo: 'Yes', core: 'Yes', single: 'Yes', multi: 'Yes', command: 'Yes' },
+          { feature: 'Talk to Aura (Voice)', express: SUBSCRIPTION_TIERS.express.hasVoice ? 'Yes' : '-', flow: SUBSCRIPTION_TIERS.aura_flow.hasVoice ? 'Yes' : '-', halo: SUBSCRIPTION_TIERS.halo.hasVoice ? 'Yes' : '-', core: SUBSCRIPTION_TIERS.core.hasVoice ? 'Yes' : '-', single: SUBSCRIPTION_TIERS.single_point.hasVoice ? 'Yes' : '-', multi: SUBSCRIPTION_TIERS.multi_track.hasVoice ? 'Yes' : '-', command: SUBSCRIPTION_TIERS.command.hasVoice ? 'Yes' : '-' },
+          { feature: 'Online Booking', express: '-', flow: 'Calendar', halo: 'Yes', core: '-', single: '-', multi: 'Yes', command: 'Yes' },
         ].map((row, i) => (
           <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
             <Text style={[styles.tableCellLeft, { flex: 2, fontWeight: 600 }]}>{row.feature}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>{(row as any).express}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.express}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>{row.flow}</Text>
             <Text style={[styles.tableCell, { flex: 1 }]}>{row.halo}</Text>
             <Text style={[styles.tableCell, { flex: 1 }]}>{row.core}</Text>
             <Text style={[styles.tableCell, { flex: 1 }]}>{row.single}</Text>
@@ -774,11 +686,11 @@ const PricingSummaryPDF = () => (
       <Text style={styles.sectionTitle}>Aura Core Tier</Text>
 
       <View style={styles.pricingCard}>
-        <Text style={{ fontSize: 9, color: colors.gray, fontWeight: 700, marginBottom: 4 }}>AI-ASSISTED (NO AUTOMATION)</Text>
+        <Text style={{ fontSize: 9, color: colors.gray, fontWeight: 700, marginBottom: 4 }}>AI-ASSISTED DIGITAL FOUNDATION</Text>
         <Text style={styles.pricingTierName}>Aura Core</Text>
-        <Text style={styles.pricingPrice}>$500/month</Text>
-        <Text style={styles.pricingAnnual}>or $5,000/year (billed annually)</Text>
-        <Text style={styles.pricingSavings}>Save ~$1,000 with annual billing</Text>
+        <Text style={styles.pricingPrice}>${SUBSCRIPTION_TIERS.core.price}/month</Text>
+        <Text style={styles.pricingAnnual}>or ${SUBSCRIPTION_TIERS.core.annualPrice.toLocaleString()}/year (billed annually)</Text>
+        <Text style={styles.pricingSavings}>Save ~${SUBSCRIPTION_TIERS.core.annualSavings.toLocaleString()} with annual billing</Text>
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
@@ -786,37 +698,42 @@ const PricingSummaryPDF = () => (
         </Text>
       </View>
 
-      <Text style={styles.subsectionTitle}>Included AI Tools (3 Tools - No Automation)</Text>
+      <Text style={styles.subsectionTitle}>Included AI Operatives ({SUBSCRIPTION_TIERS.core.operatives})</Text>
       <View style={styles.featureList}>
-        <FeatureItem>Message Aura (Text) (Chat Tool) - AI chat for customer inquiries</FeatureItem>
-        <FeatureItem>Social Media - AI content creation for 6 platforms</FeatureItem>
-        <FeatureItem>Web Presence - 1-page professional website</FeatureItem>
+        <FeatureItem>Message Aura (Text) - AI chat for customer inquiries</FeatureItem>
+        <FeatureItem>Social Media Console - AI content creation for 6 platforms</FeatureItem>
+        <FeatureItem>Web Presence Console - 1-page professional website</FeatureItem>
+        <FeatureItem>Creative Agent - Unified content generation</FeatureItem>
       </View>
 
-      <View style={styles.noticeBox}>
-        <Text style={styles.noticeTitle}>[WARNING] Important: No AI Automation</Text>
+      <Text style={styles.subsectionTitle}>Included Consoles ({SUBSCRIPTION_TIERS.core.consoles})</Text>
+      <View style={styles.featureList}>
+        <FeatureItem>Social Media Console</FeatureItem>
+        <FeatureItem>Web Presence Console</FeatureItem>
+        <FeatureItem>Creative Console</FeatureItem>
+      </View>
+
+      <View style={styles.infoBox}>
+        <Text style={styles.noticeTitle}>AI-Assisted Tier</Text>
         <Text style={styles.noticeText}>
-          Aura Core is an AI-assisted tier with tools that require manual operation. It does NOT 
-          include automated workflows, AI operatives, or Talk to Aura (Voice). All tools are manually 
-          operated by your team. This tier is designed for businesses that want AI-ready tools 
-          without automated customer engagement.
+          Aura Core is an AI-assisted tier with {SUBSCRIPTION_TIERS.core.operatives} operatives and {SUBSCRIPTION_TIERS.core.consoles} consoles. 
+          It does NOT include Talk to Aura (Voice) or customer-facing automation like scheduling. 
+          This tier is designed for businesses that want AI-powered content and digital presence tools.
         </Text>
       </View>
 
       <Text style={styles.subsectionTitle}>What's NOT Included</Text>
       <View style={styles.featureList}>
-        <FeatureItem>No AI Operatives (0 automation)</FeatureItem>
-        <FeatureItem>No Consoles</FeatureItem>
         <FeatureItem>No Talk to Aura (Voice) - text only</FeatureItem>
-        <FeatureItem>No automated follow-ups or reminders</FeatureItem>
-        <FeatureItem>No automated booking</FeatureItem>
+        <FeatureItem>No Customer Portal Console</FeatureItem>
+        <FeatureItem>No automated scheduling or follow-ups</FeatureItem>
+        <FeatureItem>No Field Operations</FeatureItem>
       </View>
 
       <Text style={styles.subsectionTitle}>Platform Features</Text>
       <View style={styles.featureList}>
-        <FeatureItem>2 employee accounts included</FeatureItem>
-        <FeatureItem>$499 implementation fee</FeatureItem>
-        <FeatureItem>Manual workflow operation</FeatureItem>
+        <FeatureItem>{`${SUBSCRIPTION_TIERS.core.employees} employee accounts included`}</FeatureItem>
+        <FeatureItem>{`$${SUBSCRIPTION_TIERS.core.implementationFee} implementation fee`}</FeatureItem>
       </View>
 
       <View style={styles.footer}>

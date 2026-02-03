@@ -5,7 +5,7 @@ import {
   View,
   StyleSheet,
 } from '@react-pdf/renderer';
-import { sanitizePdfText } from './pdfSanitize';
+import { SUBSCRIPTION_TIERS } from '@/lib/documentationConfig';
 
 const colors = {
   primary: '#6366f1',
@@ -1176,41 +1176,41 @@ const PlatformDocumentPDF = () => (
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Core (AI-Assisted Foundation)</Text>
-        <Text style={styles.pricingPrice}>$500/month</Text>
-        <Text style={styles.pricingFeature}>- 0 AI Operatives (No Automation)</Text>
+        <Text style={styles.pricingPrice}>${SUBSCRIPTION_TIERS.core.price}/month</Text>
+        <Text style={styles.pricingFeature}>- {SUBSCRIPTION_TIERS.core.operatives} AI Operatives + {SUBSCRIPTION_TIERS.core.consoles} Consoles</Text>
         <Text style={styles.pricingFeature}>- Message Aura + Social Media + Web Presence</Text>
-        <Text style={styles.pricingFeature}>- Manual workflow with AI assistance</Text>
-        <Text style={styles.pricingFeature}>- Up to 2 employees</Text>
-        <Text style={styles.pricingFeature}>- $499 implementation fee</Text>
+        <Text style={styles.pricingFeature}>- AI-assisted content creation</Text>
+        <Text style={styles.pricingFeature}>- Up to {SUBSCRIPTION_TIERS.core.employees} employees</Text>
+        <Text style={styles.pricingFeature}>- ${SUBSCRIPTION_TIERS.core.implementationFee} implementation fee</Text>
       </View>
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Single-Point</Text>
-        <Text style={styles.pricingPrice}>$1,500/month</Text>
-        <Text style={styles.pricingFeature}>- 3 AI Operatives (Receptionist, Follow-up, Review)</Text>
-        <Text style={styles.pricingFeature}>- 1 Console</Text>
+        <Text style={styles.pricingPrice}>${SUBSCRIPTION_TIERS.single_point.price.toLocaleString()}/month</Text>
+        <Text style={styles.pricingFeature}>- {SUBSCRIPTION_TIERS.single_point.operatives} AI Operatives + {SUBSCRIPTION_TIERS.single_point.consoles} Consoles</Text>
+        <Text style={styles.pricingFeature}>- Customer Portal + Choice of Social Media OR Web Presence</Text>
         <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
-        <Text style={styles.pricingFeature}>- Up to 5 employees</Text>
+        <Text style={styles.pricingFeature}>- Up to {SUBSCRIPTION_TIERS.single_point.employees} employees</Text>
         <Text style={styles.pricingFeature}>- Premium Add-Ons available: Social Media, Web Presence ($150/mo each)</Text>
       </View>
 
       <View style={[styles.pricingCard, { borderWidth: 2, borderColor: colors.primary }]}>
         <Text style={styles.pricingTier}>Multi-Track (Most Popular)</Text>
-        <Text style={styles.pricingPrice}>$3,997/month</Text>
-        <Text style={styles.pricingFeature}>- 10 AI Operatives + 2 Consoles</Text>
+        <Text style={styles.pricingPrice}>${SUBSCRIPTION_TIERS.multi_track.price.toLocaleString()}/month</Text>
+        <Text style={styles.pricingFeature}>- {SUBSCRIPTION_TIERS.multi_track.operatives} AI Operatives + {SUBSCRIPTION_TIERS.multi_track.consoles} Consoles</Text>
         <Text style={styles.pricingFeature}>- Online Booking + Field Ops</Text>
         <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
-        <Text style={styles.pricingFeature}>- Up to 10 employees</Text>
+        <Text style={styles.pricingFeature}>- Up to {SUBSCRIPTION_TIERS.multi_track.employees} employees</Text>
         <Text style={styles.pricingFeature}>- Premium Add-Ons available: Social Media, Web Presence ($150/mo each)</Text>
       </View>
 
       <View style={styles.pricingCard}>
         <Text style={styles.pricingTier}>Aura Pro Command (Enterprise)</Text>
-        <Text style={styles.pricingPrice}>$5,997/month</Text>
-        <Text style={styles.pricingFeature}>- All 24 AI Operatives + All 7 Consoles</Text>
+        <Text style={styles.pricingPrice}>${SUBSCRIPTION_TIERS.command.price.toLocaleString()}/month</Text>
+        <Text style={styles.pricingFeature}>- All {SUBSCRIPTION_TIERS.command.operatives} AI Operatives + All {SUBSCRIPTION_TIERS.command.consoles} Consoles</Text>
         <Text style={styles.pricingFeature}>- Enterprise Features + Full Automation</Text>
         <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
-        <Text style={styles.pricingFeature}>- Up to 25 employees</Text>
+        <Text style={styles.pricingFeature}>- Up to {SUBSCRIPTION_TIERS.command.employees} employees</Text>
         <Text style={styles.pricingFeature}>- Custom implementation</Text>
       </View>
 
