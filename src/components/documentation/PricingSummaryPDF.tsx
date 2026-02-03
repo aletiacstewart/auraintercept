@@ -755,7 +755,7 @@ const PricingSummaryPDF = () => (
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
-          {SUBSCRIPTION_TIERS.singlePoint.bestFor}
+          {SUBSCRIPTION_TIERS.single_point.bestFor}
         </Text>
       </View>
 
@@ -802,7 +802,7 @@ const PricingSummaryPDF = () => (
         
         <Text style={{ fontSize: 10, fontWeight: 600, marginBottom: 8 }}>Best For:</Text>
         <Text style={{ fontSize: 9, color: colors.gray, marginBottom: 12 }}>
-          {SUBSCRIPTION_TIERS.multiTrack.bestFor}
+          {SUBSCRIPTION_TIERS.multi_track.bestFor}
         </Text>
       </View>
 
