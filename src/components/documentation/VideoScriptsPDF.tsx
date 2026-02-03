@@ -261,7 +261,7 @@ const Header = ({ title, pageNum }: { title: string; pageNum: number }) => (
 const Footer = () => (
   <View style={styles.footer}>
     <Text style={styles.footerText}>Aura Intercept Video Script Library</Text>
-    <Text style={styles.footerText}>© 2025 Aura Intercept</Text>
+    <Text style={styles.footerText}>© 2026 Aura Intercept</Text>
   </View>
 );
 
@@ -276,7 +276,7 @@ export const VideoScriptsPDF: React.FC = () => (
         B-Roll Lists • Voiceover Directions
       </Text>
       <View style={styles.coverBadge}>
-        <Text style={styles.coverBadgeText}>25+ Scripts Included</Text>
+        <Text style={styles.coverBadgeText}>35+ Scripts Included</Text>
       </View>
     </Page>
 

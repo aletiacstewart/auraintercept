@@ -252,7 +252,7 @@ const Header = ({ title, pageNum }: { title: string; pageNum: number }) => (
 const Footer = () => (
   <View style={styles.footer}>
     <Text style={styles.footerText}>Web Presence Copy Pack</Text>
-    <Text style={styles.footerText}>© 2025 Aura Intercept</Text>
+    <Text style={styles.footerText}>© 2026 Aura Intercept</Text>
   </View>
 );
 
@@ -369,7 +369,7 @@ export const WebsiteCopyPDF: React.FC = () => (
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent Descriptions" pageNum={4} />
       
-      <Text style={styles.sectionTitle}>19 AI Agent Copy Blocks</Text>
+      <Text style={styles.sectionTitle}>24 AI Agent Copy Blocks</Text>
       <Text style={styles.sectionSubtitle}>Short descriptions for feature pages and marketing</Text>
 
       <View style={styles.twoColumn}>
@@ -456,59 +456,137 @@ export const WebsiteCopyPDF: React.FC = () => (
             <Text style={styles.agentName}>Report Agent</Text>
             <Text style={styles.agentDesc}>Beautiful reports, zero effort. Automated weekly/monthly summaries delivered to your inbox.</Text>
           </View>
+          <View style={styles.agentCard}>
+            <Text style={styles.agentName}>Admin Agent</Text>
+            <Text style={styles.agentDesc}>Back-office automation. Handles administrative tasks, data entry, and system management behind the scenes.</Text>
+          </View>
+          <View style={styles.agentCard}>
+            <Text style={styles.agentName}>Forecast Agent</Text>
+            <Text style={styles.agentDesc}>Predict demand and revenue. AI-powered forecasting for staffing, inventory, and growth planning.</Text>
+          </View>
+          <View style={styles.agentCard}>
+            <Text style={styles.agentName}>Creative Agent</Text>
+            <Text style={styles.agentDesc}>Content generation on demand. Multi-channel marketing copy, social posts, and email campaigns in seconds.</Text>
+          </View>
+          <View style={styles.agentCard}>
+            <Text style={styles.agentName}>Web Presence Agent</Text>
+            <Text style={styles.agentDesc}>Autonomous website management. SEO optimization, content freshness, and blog auto-publishing.</Text>
+          </View>
+          <View style={styles.agentCard}>
+            <Text style={styles.agentName}>Marketing Agent</Text>
+            <Text style={styles.agentDesc}>Promo codes and referral programs. Automated customer segmentation and campaign targeting.</Text>
+          </View>
         </View>
       </View>
 
       <Footer />
     </Page>
 
-    {/* Pricing Page Copy */}
+    {/* Pricing Page Copy - Page 1 */}
     <Page size="A4" style={styles.page}>
       <Header title="Pricing Page Copy" pageNum={5} />
       
-      <Text style={styles.sectionTitle}>Tier Headlines & Descriptions</Text>
-      <Text style={styles.sectionSubtitle}>Copy for pricing tables and plan comparisons</Text>
+      <Text style={styles.sectionTitle}>7-Tier Subscription Lineup</Text>
+      <Text style={styles.sectionSubtitle}>Complete copy for all subscription tiers</Text>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Single-Point Tier - $1,500/mo</Text>
-        <Text style={styles.copyHeadline}>Perfect for Solo Operators</Text>
+        <Text style={styles.copyLabel}>Aura Express - $197/mo</Text>
+        <Text style={styles.copyHeadline}>AI Reception for Restaurants</Text>
         <Text style={styles.copyBody}>
-          Stop missing calls and start building your reputation. The Single-Point tier gives you 24/7 AI reception, automated follow-up, and review collection—everything you need to capture every lead and grow your reviews.{'\n\n'}
-          - AI Receptionist (24/7 call answering){'\n'}
-          - Follow-up Agent (automated lead nurturing){'\n'}
-          - Review Agent (5-star collection){'\n'}
-          - Up to 5 team members{'\n'}
-          - AI Voice capabilities included
+          Designed specifically for restaurants and cafes. Handle peak call volume, answer menu questions, and share ordering links instantly.{'\n\n'}
+          - Message Aura (Text/Chat){'\n'}
+          - Talk to Aura (Voice){'\n'}
+          - Smart Link Sharing{'\n'}
+          - Knowledge Base for FAQs{'\n'}
+          - Single location
         </Text>
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Multi-Track Tier - $3,997/mo</Text>
-        <Text style={styles.copyHeadline}>Built for Growing Teams</Text>
+        <Text style={styles.copyLabel}>Aura Flow - $297/mo</Text>
+        <Text style={styles.copyHeadline}>AI Personal Assistant</Text>
         <Text style={styles.copyBody}>
-          You're scaling. Your operations should too. Multi-Track adds intelligent scheduling, dispatch optimization, and financial automation—so you can handle more jobs without more chaos.{'\n\n'}
-          - Everything in Single-Point, plus:{'\n'}
-          - Scheduling and Booking automation{'\n'}
-          - Dispatch and Route optimization{'\n'}
-          - ETA and Check-in tracking{'\n'}
+          Your intelligent scheduling companion with direct calendar sync. Perfect for personal service providers.{'\n\n'}
+          - AI Receptionist (24/7){'\n'}
+          - Scheduling Agent (calendar sync){'\n'}
+          - Talk to Aura (Voice){'\n'}
+          - Automated reminders{'\n'}
+          - Up to 2 employees
+        </Text>
+      </View>
+
+      <View style={styles.copyCard}>
+        <Text style={styles.copyLabel}>Aura Halo - $397/mo</Text>
+        <Text style={styles.copyHeadline}>Beauty & Wellness Suite</Text>
+        <Text style={styles.copyBody}>
+          Built for salons, spas, and wellness businesses. Reduce no-shows, fill every chair, and build your reputation.{'\n\n'}
+          - AI Receptionist (24/7 booking){'\n'}
+          - Customer Portal Console{'\n'}
+          - Talk to Aura (Voice){'\n'}
+          - Message Aura (Text){'\n'}
+          - Up to 3 employees
+        </Text>
+      </View>
+
+      <View style={styles.copyCard}>
+        <Text style={styles.copyLabel}>Aura Core - $500/mo</Text>
+        <Text style={styles.copyHeadline}>Digital Foundation</Text>
+        <Text style={styles.copyBody}>
+          AI-assisted operations for growing businesses. Build your digital presence with intelligent automation.{'\n\n'}
+          - Up to 3 AI Operatives{'\n'}
+          - 3 Control Centers{'\n'}
+          - Message Aura (Chat){'\n'}
+          - Social Media Console{'\n'}
+          - Up to 4 employees
+        </Text>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* Pricing Page Copy - Page 2 */}
+    <Page size="A4" style={styles.page}>
+      <Header title="Pricing Page Copy (Continued)" pageNum={6} />
+
+      <View style={styles.copyCard}>
+        <Text style={styles.copyLabel}>Single-Point - $1,500/mo</Text>
+        <Text style={styles.copyHeadline}>Lead Capture Excellence</Text>
+        <Text style={styles.copyBody}>
+          Stop missing calls and start building your reputation. 24/7 AI reception with automated follow-up and review collection.{'\n\n'}
+          - Up to 6 AI Operatives{'\n'}
+          - 6 Control Centers{'\n'}
+          - AI Receptionist (24/7){'\n'}
+          - Talk to Aura (Voice){'\n'}
+          - Customer Portal Console{'\n'}
+          - Up to 8 employees
+        </Text>
+      </View>
+
+      <View style={styles.copyCard}>
+        <Text style={styles.copyLabel}>Multi-Track - $3,997/mo</Text>
+        <Text style={styles.copyHeadline}>Field Operations Command</Text>
+        <Text style={styles.copyBody}>
+          Scale your operations without the chaos. Intelligent scheduling, dispatch optimization, and complete financial automation.{'\n\n'}
+          - Up to 12 AI Operatives{'\n'}
+          - 7 Control Centers{'\n'}
+          - Full Field Operations suite{'\n'}
+          - Scheduling and Dispatch{'\n'}
           - Quoting and Invoicing{'\n'}
-          - Inventory management{'\n'}
-          - Up to 10 team members
+          - Up to 16 employees
         </Text>
       </View>
 
       <View style={styles.copyCard}>
-        <Text style={styles.copyLabel}>Aura Pro Command Tier - $5,997/mo</Text>
+        <Text style={styles.copyLabel}>Aura Pro Command - $5,997/mo</Text>
         <Text style={styles.copyHeadline}>Complete AI Operations Suite</Text>
         <Text style={styles.copyBody}>
-          Full command of your business. The complete 19-agent suite handles every operational task from marketing to analytics. For businesses ready to dominate their market.{'\n\n'}
-          - Everything in Multi-Track, plus:{'\n'}
-          - Lead scoring and Campaign automation{'\n'}
-          - Social Media management (all 6 platforms){'\n'}
-          - Advanced analytics and reporting{'\n'}
-          - Customer insights AI{'\n'}
-          - Unlimited team members{'\n'}
-          - Priority support
+          Full command of your business. The complete 24-agent suite handles every operational task from marketing to analytics.{'\n\n'}
+          - All 24 AI Operatives{'\n'}
+          - All 7 Control Centers{'\n'}
+          - Creative and Web Presence{'\n'}
+          - Advanced Analytics{'\n'}
+          - Priority Support{'\n'}
+          - Up to 32 employees
         </Text>
       </View>
 

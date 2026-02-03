@@ -373,7 +373,7 @@ const Header = ({ title, pageNum }: { title: string; pageNum: number }) => (
 const Footer = () => (
   <View style={styles.footer}>
     <Text style={styles.footerText}>Aura Intercept Sales Pitch Data</Text>
-    <Text style={styles.footerText}>© 2025 Aura Intercept</Text>
+    <Text style={styles.footerText}>© 2026 Aura Intercept</Text>
   </View>
 );
 
@@ -453,11 +453,11 @@ export const SalesPitchDataPDF: React.FC = () => (
       <View style={styles.roiCard}>
         <Text style={styles.roiTitle}>ROI Calculator: Multi-Track Tier ($3,997/mo)</Text>
         <View style={styles.roiRow}>
-          <Text style={styles.roiLabel}>Missed calls recovered (23/mo × $500)</Text>
+          <Text style={styles.roiLabel}>Missed calls recovered (23/mo x $500)</Text>
           <Text style={styles.roiValue}>+$11,500</Text>
         </View>
         <View style={styles.roiRow}>
-          <Text style={styles.roiLabel}>Admin time saved (40 hrs × $50)</Text>
+          <Text style={styles.roiLabel}>Admin time saved (40 hrs x $50)</Text>
           <Text style={styles.roiValue}>+$2,000</Text>
         </View>
         <View style={styles.roiRow}>
@@ -498,6 +498,109 @@ export const SalesPitchDataPDF: React.FC = () => (
         <View style={styles.statBox}>
           <Text style={styles.statValue}>$165K</Text>
           <Text style={styles.statLabel}>Annual Value</Text>
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+
+    {/* 7-Tier ROI Calculator */}
+    <Page size="A4" style={styles.page}>
+      <Header title="7-Tier ROI Calculators" pageNum={4} />
+      
+      <Text style={styles.sectionTitle}>ROI by Subscription Tier</Text>
+      <Text style={styles.sectionSubtitle}>Expected monthly return for each pricing tier</Text>
+
+      <View style={styles.twoColumn}>
+        <View style={styles.column}>
+          <View style={styles.tierCard}>
+            <View style={styles.tierHeader}>
+              <Text style={styles.tierName}>Aura Express</Text>
+              <Text style={styles.tierPrice}>$197/mo</Text>
+            </View>
+            <Text style={styles.tierDesc}>Restaurants & Cafes</Text>
+            <Text style={styles.tierBullet}>- Reservations captured: +$2,000</Text>
+            <Text style={styles.tierBullet}>- Order links shared: +$500</Text>
+            <Text style={styles.tierBullet}>- Cost: -$197</Text>
+            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$2,303/mo</Text>
+          </View>
+
+          <View style={styles.tierCard}>
+            <View style={styles.tierHeader}>
+              <Text style={styles.tierName}>Aura Flow</Text>
+              <Text style={styles.tierPrice}>$297/mo</Text>
+            </View>
+            <Text style={styles.tierDesc}>Personal Assistant</Text>
+            <Text style={styles.tierBullet}>- Appointments booked: +$1,500</Text>
+            <Text style={styles.tierBullet}>- Time saved (10h): +$500</Text>
+            <Text style={styles.tierBullet}>- Cost: -$297</Text>
+            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$1,703/mo</Text>
+          </View>
+
+          <View style={styles.tierCard}>
+            <View style={styles.tierHeader}>
+              <Text style={styles.tierName}>Aura Halo</Text>
+              <Text style={styles.tierPrice}>$397/mo</Text>
+            </View>
+            <Text style={styles.tierDesc}>Beauty & Wellness</Text>
+            <Text style={styles.tierBullet}>- No-shows reduced: +$1,200</Text>
+            <Text style={styles.tierBullet}>- After-hours bookings: +$800</Text>
+            <Text style={styles.tierBullet}>- Reviews generated: +$400</Text>
+            <Text style={styles.tierBullet}>- Cost: -$397</Text>
+            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$2,003/mo</Text>
+          </View>
+
+          <View style={styles.tierCard}>
+            <View style={styles.tierHeader}>
+              <Text style={styles.tierName}>Aura Core</Text>
+              <Text style={styles.tierPrice}>$500/mo</Text>
+            </View>
+            <Text style={styles.tierDesc}>Digital Foundation</Text>
+            <Text style={styles.tierBullet}>- Leads captured: +$2,500</Text>
+            <Text style={styles.tierBullet}>- Social engagement: +$300</Text>
+            <Text style={styles.tierBullet}>- Cost: -$500</Text>
+            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$2,300/mo</Text>
+          </View>
+        </View>
+        <View style={styles.column}>
+          <View style={styles.tierCard}>
+            <View style={styles.tierHeader}>
+              <Text style={styles.tierName}>Single-Point</Text>
+              <Text style={styles.tierPrice}>$1,500/mo</Text>
+            </View>
+            <Text style={styles.tierDesc}>Lead Capture</Text>
+            <Text style={styles.tierBullet}>- Missed calls recovered: +$5,000</Text>
+            <Text style={styles.tierBullet}>- Follow-up conversions: +$1,800</Text>
+            <Text style={styles.tierBullet}>- Review revenue: +$500</Text>
+            <Text style={styles.tierBullet}>- Cost: -$1,500</Text>
+            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$5,800/mo</Text>
+          </View>
+
+          <View style={styles.tierCard}>
+            <View style={styles.tierHeader}>
+              <Text style={styles.tierName}>Multi-Track</Text>
+              <Text style={styles.tierPrice}>$3,997/mo</Text>
+            </View>
+            <Text style={styles.tierDesc}>Field Operations</Text>
+            <Text style={styles.tierBullet}>- Calls recovered: +$11,500</Text>
+            <Text style={styles.tierBullet}>- Route savings: +$400</Text>
+            <Text style={styles.tierBullet}>- Admin time: +$2,000</Text>
+            <Text style={styles.tierBullet}>- Cost: -$3,997</Text>
+            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$9,903/mo</Text>
+          </View>
+
+          <View style={styles.tierCard}>
+            <View style={styles.tierHeader}>
+              <Text style={styles.tierName}>Pro Command</Text>
+              <Text style={styles.tierPrice}>$5,997/mo</Text>
+            </View>
+            <Text style={styles.tierDesc}>Enterprise Suite</Text>
+            <Text style={styles.tierBullet}>- Full operations: +$17,000</Text>
+            <Text style={styles.tierBullet}>- Marketing automation: +$3,000</Text>
+            <Text style={styles.tierBullet}>- Analytics insights: +$2,000</Text>
+            <Text style={styles.tierBullet}>- Cost: -$5,997</Text>
+            <Text style={[styles.tierBullet, { fontWeight: 'bold', color: colors.success }]}>Net ROI: +$16,003/mo</Text>
+          </View>
         </View>
       </View>
 

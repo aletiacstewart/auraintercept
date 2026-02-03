@@ -362,7 +362,7 @@ const Header = ({ title, pageNum }: { title: string; pageNum: number }) => (
 const Footer = () => (
   <View style={styles.footer}>
     <Text style={styles.footerText}>Aura Intercept Brand Asset Guide</Text>
-    <Text style={styles.footerText}>© 2025 Aura Intercept</Text>
+    <Text style={styles.footerText}>© 2026 Aura Intercept</Text>
   </View>
 );
 
@@ -494,22 +494,40 @@ export const BrandAssetGuidePDF: React.FC = () => (
           <View style={styles.colorCard}>
             <Text style={styles.colorCardTitle}>Subscription Tiers</Text>
             <ColorSwatch 
+              color="#f97316" 
+              name="Aura Express Orange" 
+              hex="#f97316" 
+              usage="Aura Express tier ($197/mo)"
+            />
+            <ColorSwatch 
+              color="#14b8a6" 
+              name="Aura Flow Teal" 
+              hex="#14b8a6" 
+              usage="Aura Flow tier ($297/mo)"
+            />
+            <ColorSwatch 
               color="#ec4899" 
               name="Aura Halo Rose" 
               hex="#ec4899" 
-              usage="Aura Halo tier indicators ($397/mo)"
+              usage="Aura Halo tier ($397/mo)"
+            />
+            <ColorSwatch 
+              color="#3b82f6" 
+              name="Aura Core Blue" 
+              hex="#3b82f6" 
+              usage="Aura Core tier ($500/mo)"
             />
             <ColorSwatch 
               color="#8b5cf6" 
               name="Multi-Track Purple" 
               hex="#8b5cf6" 
-              usage="Multi-Track tier indicators"
+              usage="Multi-Track tier ($3,997/mo)"
             />
             <ColorSwatch 
               color="#f59e0b" 
-              name="Aura Pro Command Gold" 
+              name="Pro Command Gold" 
               hex="#f59e0b" 
-              usage="Aura Pro Command tier indicators"
+              usage="Pro Command tier ($5,997/mo)"
             />
           </View>
         </View>
@@ -618,8 +636,8 @@ export const BrandAssetGuidePDF: React.FC = () => (
     <Page size="A4" style={styles.page}>
       <Header title="AI Agent Icon Concepts" pageNum={5} />
       
-      <Text style={styles.sectionTitle}>19 Agent Icon System</Text>
-      <Text style={styles.sectionSubtitle}>Visual concepts for agent identification</Text>
+      <Text style={styles.sectionTitle}>24 Agent Icon System</Text>
+      <Text style={styles.sectionSubtitle}>Visual concepts for agent identification across 7 consoles</Text>
 
       <View style={styles.threeColumn}>
         <View style={styles.columnThird}>
@@ -713,7 +731,34 @@ export const BrandAssetGuidePDF: React.FC = () => (
             <Text style={styles.iconName}>Report Agent</Text>
             <Text style={styles.iconDesc}>Document + chart. Represents analysis.</Text>
           </View>
+          <View style={[styles.iconCard, { borderLeftColor: colors.accent }]}>
+            <Text style={styles.iconName}>Admin Agent</Text>
+            <Text style={styles.iconDesc}>Cog + shield. Back-office automation.</Text>
+          </View>
+          <View style={[styles.iconCard, { borderLeftColor: colors.success }]}>
+            <Text style={styles.iconName}>Forecast Agent</Text>
+            <Text style={styles.iconDesc}>Crystal ball + chart. Demand prediction.</Text>
+          </View>
+          <View style={[styles.iconCard, { borderLeftColor: colors.warning }]}>
+            <Text style={styles.iconName}>Creative Agent</Text>
+            <Text style={styles.iconDesc}>Palette + sparkle. Content generation.</Text>
+          </View>
+          <View style={[styles.iconCard, { borderLeftColor: colors.primary }]}>
+            <Text style={styles.iconName}>Web Presence</Text>
+            <Text style={styles.iconDesc}>Globe + code. Website management.</Text>
+          </View>
+          <View style={[styles.iconCard, { borderLeftColor: colors.secondary }]}>
+            <Text style={styles.iconName}>Marketing Agent</Text>
+            <Text style={styles.iconDesc}>Tag + gift. Promos and referrals.</Text>
+          </View>
         </View>
+      </View>
+
+      <View style={styles.guidelinesCard}>
+        <Text style={styles.guidelinesTitle}>24 AI OPERATIVES ACROSS 7 CONSOLES</Text>
+        <Text style={styles.guidelinesText}>
+          The complete Aura Intelligence Network includes 24 specialized AI operatives organized across 7 Control Centers: Customer Portal, Field Operations, Business Management, Outreach and Sales, Social Media, Creative and Web Presence, and Analytics and Reports. Each operative has a unique icon combining a primary symbol with a secondary indicator.
+        </Text>
       </View>
 
       <Footer />

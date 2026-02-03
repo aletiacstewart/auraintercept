@@ -283,7 +283,7 @@ const Header = ({ title, pageNum }: { title: string; pageNum: number }) => (
 const Footer = () => (
   <View style={styles.footer}>
     <Text style={styles.footerText}>Aura Intercept Social Media Content Pack</Text>
-    <Text style={styles.footerText}>© 2025 Aura Intercept</Text>
+    <Text style={styles.footerText}>© 2026 Aura Intercept</Text>
   </View>
 );
 
@@ -303,7 +303,7 @@ export const SocialMediaContentPackPDF: React.FC = () => (
         Hashtags - CTAs - 30-Day Calendar - AI Prompts
       </Text>
       <View style={styles.coverBadge}>
-        <Text style={styles.coverBadgeText}>60+ Templates Included</Text>
+        <Text style={styles.coverBadgeText}>80+ Templates Included</Text>
       </View>
     </Page>
 
