@@ -1,126 +1,136 @@
 
-# Add Core AI Agents to All Subscription Plans
+# Update PricingComparisonTable with New Plan Information
 
 ## Overview
-This update adds 10 AI agents to every subscription tier, creating a stronger value proposition across all plans:
-
-| Agent Category | Agents Being Added to All Plans |
-|----------------|--------------------------------|
-| **Customer Engagement** | AI Receptionist (triage) |
-| **Outreach & Sales** | Campaign Agent, Lead Agent, Marketing Agent |
-| **Social Media** | Social Media Agent, Social Media Scheduler, Social Media Analytics |
-| **Creative** | Creative Agent |
+Update the "See More Details" comparison table to accurately reflect the new universal agent distribution, console access, and 3rd party integration requirements for all subscription tiers.
 
 ---
 
-## Current vs. Proposed Agent Distribution
+## Changes Required
 
-### Before (Current State)
-| Tier | Agents |
-|------|--------|
-| Express | 0 agents |
-| Aura Flow | 3 agents (triage, booking, followup) |
-| Core | 0 agents |
-| Halo | 3 agents (triage, booking, followup) |
-| Single-Point | 3 agents (triage, followup, review) |
-| Multi-Track | 10 agents |
-| Command | 24 agents (all) |
+### 1. AI Agents Section (Lines 96-125)
 
-### After (Proposed)
-| Tier | Current | + New | Total | New Agents Added |
-|------|---------|-------|-------|------------------|
-| Express | 0 | +8 | **8** | triage, campaign, lead, marketing, social_content, social_scheduler, social_analytics, creative |
-| Aura Flow | 3 | +7 | **10** | campaign, lead, marketing, social_content, social_scheduler, social_analytics, creative |
-| Core | 0 | +8 | **8** | triage, campaign, lead, marketing, social_content, social_scheduler, social_analytics, creative |
-| Halo | 3 | +7 | **10** | campaign, lead, marketing, social_content, social_scheduler, social_analytics, creative |
-| Single-Point | 3 | +7 | **10** | campaign, lead, marketing, social_content, social_scheduler, social_analytics, creative |
-| Multi-Track | 10 | +7 | **17** | campaign, lead, marketing, social_content, social_scheduler, social_analytics, creative |
-| Command | 24 | 0 | **24** | (already has all) |
+**Universal Agents → ALL tiers get ✓:**
+| Agent | Current | Updated |
+|-------|---------|---------|
+| AI Receptionist (Triage) | Express ❌, Core ❌ | ALL ✓ |
+| Campaign Agent | Command only | ALL ✓ |
+| Lead Agent | Command only | ALL ✓ |
+| Marketing Agent | Command only | ALL ✓ |
+| Social Media Agent | Command only | ALL ✓ |
+| Social Media Scheduler | Command only | ALL ✓ |
+| Social Media Analytics | Command only | ALL ✓ |
+| Creative Agent | Command only | ALL ✓ |
+
+**Tier-Specific Agents (remain as-is):**
+| Agent | Express | Flow | Halo | Core | Single | Multi | Command |
+|-------|---------|------|------|------|--------|-------|---------|
+| Follow-up Agent | ❌ | ❌ | ✓ | ❌ | ✓ | ✓ | ✓ |
+| Review Agent | ❌ | ❌ | ❌ | ❌ | ✓ | ✓ | ✓ |
+| Scheduling Agent | ❌ | ✓ | ✓ | ❌ | ❌ | ✓ | ✓ |
+| Dispatch/Route/ETA/Checkin | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ | ✓ |
+| Quote/Invoice Agent | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ | ✓ |
+| Admin/Inventory | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ |
+| Analytics Agents | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ |
+| Web Presence Agent | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ |
 
 ---
 
-## Files to Modify
+### 2. Control Centers Section (Lines 128-137)
 
-### 1. `src/lib/subscriptionAgentConfig.ts` (Primary Configuration)
-Update `TIER_AGENT_CONFIG` for each tier:
+**Update title from:** `Control Centers (0 / 0 / 1 / 0 / 1 / 2 / 7)`  
+**To:** `Control Centers (2 / 2 / 3 / 2 / 3 / 4 / 7)`
 
+**Updated Console Access:**
+| Console | Express | Flow | Halo | Core | Single | Multi | Command |
+|---------|---------|------|------|------|--------|-------|---------|
+| Customer Portal | ❌ | ❌ | ✓ | ❌ | ✓ | ✓ | ✓ |
+| Field Operations | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ | ✓ |
+| Business Management | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ |
+| Outreach & Sales Ops | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Analytics & Reports | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ |
+| Social Media | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Web Presence | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ |
+
+---
+
+### 3. Required 3rd Party Integrations Section (Lines 169-177)
+
+**Based on `INTEGRATION_REQUIREMENTS` from documentationConfig.ts:**
+
+| Integration | Express | Flow | Halo | Core | Single | Multi | Command |
+|-------------|---------|------|------|------|--------|-------|---------|
+| Resend (Email) | Optional | Required | Optional | Optional | Required | Required | Required |
+| Stripe (Payments) | Optional | Optional | Optional | Optional | Optional | Required | Required |
+| Twilio (SMS/Voice) | Required | Required | Required | Optional | Required | Required | Required |
+| ElevenLabs (Voice) | Required | Required | Required | Optional | Required | Required | Required |
+| Calendar Sync | Optional | Required | Required | Optional | Optional | Required | Required |
+| Social Media Accounts | Required | Required | Required | Required | Required | Required | Required |
+| Tavily (AI Research) | Optional | Optional | Optional | Optional | Optional | Optional | Optional |
+
+---
+
+## Technical Implementation
+
+### File: `src/components/landing/PricingComparisonTable.tsx`
+
+**Section 1 - AI Agents (lines 97-125):**
 ```typescript
-express: {
-  agents: [
-    'triage',  // NEW: AI Receptionist
-    'campaign', 'lead', 'marketing',  // NEW: Outreach & Sales
-    'social_content', 'social_scheduler', 'social_analytics',  // NEW: Social Media
-    'creative'  // NEW: Creative Agent
-  ],
-  consoles: ['marketing_sales', 'social_media'],  // NEW: Add console access
-  ...
-},
-// Similar updates for aura_flow, core, halo, single_point, multi_track
+// Universal agents - ALL tiers
+{ name: 'AI Receptionist (Triage)', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+{ name: 'Campaign Agent', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+{ name: 'Lead Agent', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+{ name: 'Marketing Agent', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+{ name: 'Social Media Agent', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+{ name: 'Social Media Scheduler', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+{ name: 'Social Media Analytics', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+{ name: 'Creative Agent', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
 ```
 
-### 2. `src/lib/documentationConfig.ts` (Documentation Source of Truth)
-- Update `AI_OPERATIVES` tier assignments (change `tier: 'command'` to `tier: 'express'` for the 8 universal agents)
-- Update `SUBSCRIPTION_TIERS` highlights arrays to reflect new inclusions
-- Update `CONSOLES` tier assignments for marketing_sales and social_media
+**Section 2 - Control Centers title (line 128):**
+```typescript
+title: 'Control Centers (2 / 2 / 3 / 2 / 3 / 4 / 7)',
+```
 
-### 3. `src/hooks/useSubscription.ts`
-- Update `TIER_FEATURES` to include new capabilities for lower tiers
+**Section 3 - Control Centers features (lines 129-137):**
+```typescript
+{ name: 'Outreach & Sales Ops Console', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+{ name: 'Social Media Console', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+```
 
-### 4. PDF Export Files (Reflect New Configuration)
-- `PricingSummaryPDF.tsx` - Update tier comparison tables
-- `AIAgentGuidesPDF.tsx` - Update agent-to-tier mappings
-- `ComprehensiveGuidesPDF.tsx` - Update tier descriptions
-
----
-
-## Console Access Updates
-
-With the new agents, these consoles need to be available at lower tiers:
-
-| Console | Current Min Tier | New Min Tier |
-|---------|------------------|--------------|
-| Outreach & Sales Ops | Command | Express |
-| Social Media Ops | Command | Express |
-| Creative & Web Presence | Command | Express (partial) |
+**Section 4 - Required 3rd Party Integrations (lines 169-177):**
+```typescript
+{ name: 'Resend (Email)', express: 'Optional', flow: 'Required', halo: 'Optional', core: 'Optional', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+{ name: 'Stripe (Payments)', express: 'Optional', flow: 'Optional', halo: 'Optional', core: 'Optional', singlePoint: 'Optional', multiTrack: 'Required', command: 'Required' },
+{ name: 'Twilio (SMS & Voice)', express: 'Required', flow: 'Required', halo: 'Required', core: 'Optional', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+{ name: 'ElevenLabs (Voice)', express: 'Required', flow: 'Required', halo: 'Required', core: 'Optional', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+{ name: 'Calendar Sync', express: 'Optional', flow: 'Required', halo: 'Required', core: 'Optional', singlePoint: 'Optional', multiTrack: 'Required', command: 'Required' },
+{ name: 'Social Media Accounts', express: 'Required', flow: 'Required', halo: 'Required', core: 'Required', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
+{ name: 'Tavily (AI Research)', express: 'Optional', flow: 'Optional', halo: 'Optional', core: 'Optional', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
+```
 
 ---
 
-## Technical Implementation Steps
+## Summary of Agent Counts per Tier
 
-### Step 1: Update subscriptionAgentConfig.ts
-Add the 8 universal agents to each tier's `agents` array and update `consoles` arrays.
-
-### Step 2: Update documentationConfig.ts
-- Change tier assignments for: `triage`, `campaign`, `lead`, `marketing`, `social_content`, `social_scheduler`, `social_analytics`, `creative`
-- Update tier highlights to include new features
-
-### Step 3: Update Console Tier Requirements
-- `marketing_sales` console: Change tier from `command` to `express`
-- `social_media` console: Change tier from `command` to `express`
-
-### Step 4: Update PDFs
-All PDF exports will automatically pull from the updated config (per previous synchronization work).
+| Tier | Agents | Consoles |
+|------|--------|----------|
+| Express | 8 | 2 |
+| Flow | 10 | 2 |
+| Halo | 10 | 3 |
+| Core | 8 | 2 |
+| Single-Point | 10 | 3 |
+| Multi-Track | 17 | 4 |
+| Command | 24 | 7 |
 
 ---
 
-## Validation Checklist
+## Validation After Implementation
 
-After implementation:
-- [ ] All 7 tiers show AI Receptionist in agent list
-- [ ] All 7 tiers show Outreach & Sales agents
-- [ ] All 7 tiers show Social Media agents
-- [ ] All 7 tiers show Creative Agent
-- [ ] Sidebar navigation shows Outreach & Sales console for all tiers
-- [ ] Sidebar navigation shows Social Media console for all tiers
-- [ ] FeatureGate components correctly grant access
-- [ ] PDF exports reflect updated agent/tier mappings
-
----
-
-## Business Impact
-
-This change:
-- **Increases value** at every price point
-- **Simplifies marketing** - all plans include engagement, marketing, and social tools
-- **Creates differentiation** through Field Ops, Analytics, and advanced Business Management (still tier-locked)
-- **Reduces friction** - customers don't need to upgrade just to use basic marketing tools
+- [ ] All 7 tiers show ✓ for 8 universal agents
+- [ ] Control Centers title shows correct counts (2/2/3/2/3/4/7)
+- [ ] Outreach & Sales console shows ✓ for all tiers
+- [ ] Social Media console shows ✓ for all tiers
+- [ ] 3rd Party Integrations match INTEGRATION_REQUIREMENTS config
+- [ ] Social Media Accounts shows "Required" for all tiers (they have social agents)
+- [ ] Tavily shows "Optional" for all tiers (AI research is optional)
