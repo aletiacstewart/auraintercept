@@ -22,9 +22,9 @@ const AGENT_NAMES: Record<string, string> = {
   campaign: 'Campaign Agent',
   lead: 'Lead Agent',
   marketing: 'Marketing Agent',
-  social_content: 'Social Media Signal Agent',
-  social_scheduler: 'Signal Scheduler',
-  social_analytics: 'Signal Analytics',
+  social_content: 'Social Media Agent',
+  social_scheduler: 'Social Media Scheduler',
+  social_analytics: 'Social Media Analytics',
   creative: 'Creative Agent',
   web_presence: 'Web Presence Agent',
   insights: 'Insights Agent',
@@ -39,7 +39,7 @@ const CONSOLE_NAMES: Record<string, string> = {
   field_operations: 'Field Operations',
   business_management: 'Business Management',
   marketing_sales: 'Outreach & Sales Ops',
-  social_media: 'Social Media Signal',
+  social_media: 'Social Media',
   analytics_reports: 'Analytics & Reports',
 };
 
@@ -177,7 +177,7 @@ const TierComparisonCards: React.FC = () => {
           borderColor="border-emerald-600/50"
           additionalFeatures={[
             'Talk to Aura',
-            'Social Media Signal',
+            'Social Media',
             'Web Presence (1pg)',
             '2 Employee Accounts',
           ]}
@@ -200,7 +200,7 @@ const TierComparisonCards: React.FC = () => {
           borderColor="border-sky-600/50"
           upgradeFrom={{ tier: 'Single-Point', priceDiff: 2497 }}
           additionalFeatures={[
-            'Social Media Signal',
+            'Social Media',
             'Web Presence (1pg)',
           ]}
         />
@@ -213,7 +213,7 @@ const TierComparisonCards: React.FC = () => {
           borderColor="border-violet-600/50"
           upgradeFrom={{ tier: 'Multi-Track', priceDiff: 3000 }}
           additionalFeatures={[
-            'Social Media Signal',
+            'Social Media',
             'Web Presence (1pg)',
           ]}
         />

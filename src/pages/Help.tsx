@@ -696,7 +696,7 @@ export default function Help() {
                             </li>
                             <li>
                       <strong className="text-card-foreground">Aura Pro Command ($5,997/mo):</strong>
-                              <p className="mt-1">Full suite of 17+ agents including Marketing, Social Media Signal (3 agents), Analytics (4 agents), Inventory, and Admin.</p>
+                              <p className="mt-1">Full suite of 17+ agents including Marketing, Social Media (3 agents), Analytics (4 agents), Inventory, and Admin.</p>
                             </li>
                           </ul>
                         </div>
@@ -755,7 +755,7 @@ export default function Help() {
                       </AccordionTrigger>
                       <AccordionContent>
                         <div className="text-card-foreground/70 space-y-2">
-                          <p>Social Media Signal Ops (Aura Pro Command tier) supports 6 platforms:</p>
+                          <p>Social Media Ops (Aura Pro Command tier) supports 6 platforms:</p>
                           <ul className="list-disc ml-5 space-y-1">
                             <li><strong className="text-card-foreground">Instagram</strong> - Posts with character optimization</li>
                             <li><strong className="text-card-foreground">Facebook</strong> - Posts and business updates</li>

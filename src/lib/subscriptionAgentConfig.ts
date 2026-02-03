@@ -37,12 +37,12 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'AI voice, chat, and scheduling with direct calendar sync',
   },
   core: {
-    // Core: Talk to Aura only (no agents), Social Media Signal + Web Presence included
+    // Core: Talk to Aura only (no agents), Social Media + Web Presence included
     agents: [],
     consoles: [],
     label: 'Core',
     price: '$500/mo',
-    description: 'Talk to Aura + Social Media Signal + Web Presence',
+    description: 'Talk to Aura + Social Media + Web Presence',
   },
   halo: {
     // Aura Halo ($397/mo): AI Receptionist + Scheduling + Follow-up for salons/wellness
@@ -74,7 +74,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
   },
   command: {
     // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
-    // 24 Total Agents: 4 Customer Portal + 4 Field Ops + 4 Business Ops + 3 Marketing + 3 Social Media Signal + 4 Analytics + 1 Content Engine + 1 Web Presence
+    // 24 Total Agents: 4 Customer Portal + 4 Field Ops + 4 Business Ops + 3 Marketing + 3 Social Media + 4 Analytics + 1 Content Engine + 1 Web Presence
     agents: [
       // Customer Portal (4)
       'triage', 'booking', 'followup', 'review',
@@ -84,7 +84,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       'admin', 'quoting', 'invoice', 'inventory',
       // Marketing & Sales (3)
       'campaign', 'lead', 'marketing',
-      // Social Media Signal (3)
+      // Social Media (3)
       'social_content', 'social_scheduler', 'social_analytics',
       // Analytics & Reports (4)
       'insights', 'performance', 'revenue', 'forecast',

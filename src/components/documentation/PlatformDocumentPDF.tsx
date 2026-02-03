@@ -876,7 +876,7 @@ const PlatformDocumentPDF = () => (
         </View>
       ))}
 
-      <Text style={styles.categoryHeader}>Social Media Signal Add-ons (3 Agents)</Text>
+      <Text style={styles.categoryHeader}>Social Media Add-ons (3 Agents)</Text>
       <Text style={styles.paragraph}>Premium add-on available for Single-Point/Multi-Track tiers ($150/mo)</Text>
       {agents.socialMediaAddons.map((agent, i) => (
         <View key={i} style={styles.agentCard}>
@@ -1178,7 +1178,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingTier}>Aura Core (AI-Assisted Foundation)</Text>
         <Text style={styles.pricingPrice}>$500/month</Text>
         <Text style={styles.pricingFeature}>- 0 AI Operatives (No Automation)</Text>
-        <Text style={styles.pricingFeature}>- Message Aura + Social Media Signal + Web Presence</Text>
+        <Text style={styles.pricingFeature}>- Message Aura + Social Media + Web Presence</Text>
         <Text style={styles.pricingFeature}>- Manual workflow with AI assistance</Text>
         <Text style={styles.pricingFeature}>- Up to 2 employees</Text>
         <Text style={styles.pricingFeature}>- $499 implementation fee</Text>
@@ -1191,7 +1191,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingFeature}>- 1 Console</Text>
         <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
         <Text style={styles.pricingFeature}>- Up to 5 employees</Text>
-        <Text style={styles.pricingFeature}>- Premium Add-Ons available: Social Media Signal, Web Presence ($150/mo each)</Text>
+        <Text style={styles.pricingFeature}>- Premium Add-Ons available: Social Media, Web Presence ($150/mo each)</Text>
       </View>
 
       <View style={[styles.pricingCard, { borderWidth: 2, borderColor: colors.primary }]}>
@@ -1201,7 +1201,7 @@ const PlatformDocumentPDF = () => (
         <Text style={styles.pricingFeature}>- Online Booking + Field Ops</Text>
         <Text style={styles.pricingFeature}>- Talk to Aura (Voice) included</Text>
         <Text style={styles.pricingFeature}>- Up to 10 employees</Text>
-        <Text style={styles.pricingFeature}>- Premium Add-Ons available: Social Media Signal, Web Presence ($150/mo each)</Text>
+        <Text style={styles.pricingFeature}>- Premium Add-Ons available: Social Media, Web Presence ($150/mo each)</Text>
       </View>
 
       <View style={styles.pricingCard}>

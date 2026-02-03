@@ -110,10 +110,10 @@ export const PAGE_ROUTES: Record<string, string> = {
   'sales ops': '/dashboard/ai-consoles/marketing-sales',
   'social signal': '/dashboard/ai-consoles/social-media',
   'social signal ops': '/dashboard/ai-consoles/social-media',
-  'social media signal': '/dashboard/ai-consoles/social-media',
-  'social media signal ops': '/dashboard/ai-consoles/social-media',
-  'aura social signal': '/dashboard/ai-consoles/social-media',
-  'aura social signal ops': '/dashboard/ai-consoles/social-media',
+  'social media': '/dashboard/ai-consoles/social-media',
+  'social media ops': '/dashboard/ai-consoles/social-media',
+  'aura social': '/dashboard/ai-consoles/social-media',
+  'aura social ops': '/dashboard/ai-consoles/social-media',
   'business mgt ops install': '/dashboard/business-mgt-ops-install',
   
   // Field Ops Consoles & Apps Section

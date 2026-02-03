@@ -59,7 +59,7 @@ export const FEATURE_TOOLTIPS = {
       tooltip: 'Marketing automation with campaigns, promo codes, customer segments, referrals, and win-back programs.',
     },
     socialMedia: {
-      label: 'Social Media Signal Ops',
+      label: 'Social Media Ops',
       tooltip: 'AI-powered content creation for 6 platforms: Instagram, Facebook, LinkedIn, TikTok, Google My Business, and SMS.',
     },
     analyticsReports: {

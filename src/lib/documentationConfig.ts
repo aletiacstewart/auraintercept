@@ -110,7 +110,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       'Up to 3 AI Operatives',
       'Up to 3 Consoles',
       'Message Aura (Text)',
-      'Social Media Signal content',
+      'Social Media content',
       'Web Presence (1-page site)',
       '2 Employee Accounts',
     ],
@@ -133,7 +133,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       'Up to 6 AI Operatives',
       'Up to 6 Consoles',
       'Message Aura (Text) + Talk to Aura (Voice) included',
-      'Choice of Social Media Signal OR Web Presence',
+      'Choice of Social Media OR Web Presence',
       'AI Outbound Calls for reminders (requires Twilio)',
       'Knowledge Base for intelligent responses',
       'Up to 5 employees',
@@ -185,7 +185,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       'Everything in Multi-Track',
       'Business Operations console',
       'Outreach & Sales Ops automation',
-      'Social Media Signal Ops (6 platforms)',
+      'Social Media Ops (6 platforms)',
       'Analytics & Reports (8 tabs)',
       'Inventory management with reorder alerts',
       'Multi-location support',
@@ -374,7 +374,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
   // Social Media Console - 3 agents
   {
     id: 'social_content',
-    name: 'Social Media Signal Agent',
+    name: 'Social Media Agent',
     description: 'Creates posts for 6 platforms: Instagram, Facebook, LinkedIn, TikTok, Google My Business, and SMS.',
     console: 'social_media',
     tier: 'command',
@@ -384,7 +384,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
   },
   {
     id: 'social_scheduler',
-    name: 'Signal Scheduler',
+    name: 'Social Media Scheduler',
     description: 'Queues and publishes social media content at optimal times. Manages content calendar and scheduling.',
     console: 'social_media',
     tier: 'command',
@@ -394,7 +394,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
   },
   {
     id: 'social_analytics',
-    name: 'Signal Analytics',
+    name: 'Social Media Analytics',
     description: 'Tracks engagement metrics across all social platforms. Provides insights on post performance and audience growth.',
     console: 'social_media',
     tier: 'command',
@@ -520,8 +520,8 @@ export const CONSOLES: ConsoleConfig[] = [
   },
   {
     id: 'social_media',
-    name: 'Social Media Signal Ops',
-    description: 'AI-powered social media signal management with content creation for 6 platforms, scheduling, and visual content calendar.',
+    name: 'Social Media Ops',
+    description: 'AI-powered social media management with content creation for 6 platforms, scheduling, and visual content calendar.',
     tier: 'command',
     agentCount: 3,
     tabs: ['Social Posts', 'Calendar', 'Analytics'],
@@ -599,7 +599,7 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
     name: 'Social Media Accounts',
     purpose: 'Content Publishing',
     cost: 'Free (platform accounts)',
-    requiredFor: 'Core+ (for Social Media Signal)',
+    requiredFor: 'Core+ (for Social Media)',
     optional: true,
   },
 ];
@@ -624,8 +624,8 @@ export const PLATFORM_STATS = {
 // ============================================
 
 export const ADDON_PRICING = {
-  socialMediaSignal: {
-    name: 'Social Media Signal',
+  socialMedia: {
+    name: 'Social Media',
     price: 150,
     description: 'AI-powered content creation for 6 platforms',
     availableFor: ['single_point', 'multi_track'],

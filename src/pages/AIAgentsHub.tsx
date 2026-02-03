@@ -83,7 +83,7 @@ const CATEGORY_INFO: Record<string, {
     cssVar: '--feature-marketing'
   },
   social_media: { 
-    label: 'Social Media Signal Ops',
+    label: 'Social Media Ops',
     icon: Activity, 
     colorClass: 'text-pink-400',
     cssVar: '--feature-marketing'
@@ -146,10 +146,10 @@ const AGENT_NAMES: Record<string, string> = {
   campaign: 'Campaign Agent',
   lead: 'Lead Agent',
   marketing: 'Marketing Agent',
-  // Social Media Signal (3)
-  social_content: 'Social Media Signal Agent',
-  social_scheduler: 'Signal Scheduler',
-  social_analytics: 'Signal Analytics',
+  // Social Media (3)
+  social_content: 'Social Media Agent',
+  social_scheduler: 'Social Media Scheduler',
+  social_analytics: 'Social Media Analytics',
   // Analytics & Reports (4)
   insights: 'Insights Agent',
   performance: 'Performance Agent',
