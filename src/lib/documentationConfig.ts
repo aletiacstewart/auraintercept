@@ -707,3 +707,90 @@ export function formatEmployees(employees: number | 'Unlimited'): string {
   if (employees === 'Unlimited') return 'Unlimited';
   return `${employees}`;
 }
+
+// ============================================
+// INTEGRATION REQUIREMENTS BY TIER
+// ============================================
+
+export type IntegrationId = 'stripe' | 'twilio' | 'elevenlabs' | 'resend' | 'tavily' | 'calendar';
+
+export interface IntegrationRequirement {
+  required: boolean; // true = auto-enabled + locked, false = optional (soft lock)
+  reason?: string; // Why it's required/optional
+}
+
+// Maps integration ID to tier requirements
+// 'required: true' = auto-enabled and cannot be disabled
+// 'required: false' = optional, user can enable if they want
+export const INTEGRATION_REQUIREMENTS: Record<string, Record<IntegrationId, IntegrationRequirement>> = {
+  express: {
+    stripe: { required: false, reason: 'Optional for accepting payments' },
+    twilio: { required: true, reason: 'Required for Talk to Aura voice calls' },
+    elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
+    resend: { required: false, reason: 'Optional for email notifications' },
+    tavily: { required: false, reason: 'Not included in your plan' },
+    calendar: { required: false, reason: 'Optional for appointment sync' },
+  },
+  aura_flow: {
+    stripe: { required: false, reason: 'Optional for accepting payments' },
+    twilio: { required: true, reason: 'Required for voice calls and SMS reminders' },
+    elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
+    resend: { required: true, reason: 'Required for email follow-ups' },
+    tavily: { required: false, reason: 'Not included in your plan' },
+    calendar: { required: true, reason: 'Required for Scheduling Agent calendar sync' },
+  },
+  halo: {
+    stripe: { required: false, reason: 'Optional for accepting payments' },
+    twilio: { required: true, reason: 'Required for Talk to Aura voice calls' },
+    elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
+    resend: { required: false, reason: 'Optional for email notifications' },
+    tavily: { required: false, reason: 'Not included in your plan' },
+    calendar: { required: true, reason: 'Required for Customer Portal scheduling' },
+  },
+  core: {
+    stripe: { required: false, reason: 'Optional for accepting payments' },
+    twilio: { required: false, reason: 'Voice not included - use Message Aura (text)' },
+    elevenlabs: { required: false, reason: 'Voice not included in your plan' },
+    resend: { required: false, reason: 'Optional for email notifications' },
+    tavily: { required: false, reason: 'Optional for AI content research' },
+    calendar: { required: false, reason: 'Optional for appointment sync' },
+  },
+  single_point: {
+    stripe: { required: false, reason: 'Optional for invoice payments' },
+    twilio: { required: true, reason: 'Required for voice calls and SMS reminders' },
+    elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
+    resend: { required: true, reason: 'Required for email reminders' },
+    tavily: { required: false, reason: 'Optional for AI content research' },
+    calendar: { required: false, reason: 'Optional for appointment sync' },
+  },
+  multi_track: {
+    stripe: { required: true, reason: 'Required for invoicing and payments' },
+    twilio: { required: true, reason: 'Required for dispatch notifications and voice' },
+    elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
+    resend: { required: true, reason: 'Required for email notifications' },
+    tavily: { required: false, reason: 'Optional for AI content research' },
+    calendar: { required: true, reason: 'Required for field operations scheduling' },
+  },
+  command: {
+    stripe: { required: true, reason: 'Required for invoicing and payments' },
+    twilio: { required: true, reason: 'Required for full communication suite' },
+    elevenlabs: { required: true, reason: 'Required for AI voice synthesis' },
+    resend: { required: true, reason: 'Required for email campaigns' },
+    tavily: { required: false, reason: 'Optional for AI content research' },
+    calendar: { required: true, reason: 'Required for enterprise scheduling' },
+  },
+  // Fallback for free/unknown tiers
+  free: {
+    stripe: { required: false, reason: 'Subscribe to enable payments' },
+    twilio: { required: false, reason: 'Subscribe to enable voice/SMS' },
+    elevenlabs: { required: false, reason: 'Subscribe to enable AI voice' },
+    resend: { required: false, reason: 'Subscribe to enable email' },
+    tavily: { required: false, reason: 'Subscribe to enable AI research' },
+    calendar: { required: false, reason: 'Subscribe to enable calendar sync' },
+  },
+};
+
+// Get integration requirements for a specific tier
+export function getIntegrationRequirements(tier: string | null): Record<IntegrationId, IntegrationRequirement> {
+  return INTEGRATION_REQUIREMENTS[tier || 'free'] || INTEGRATION_REQUIREMENTS.free;
+}

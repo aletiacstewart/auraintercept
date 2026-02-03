@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
 type AppRole = Database['public']['Enums']['app_role'];
-export type SubscriptionTier = 'free' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
+export type SubscriptionTier = 'free' | 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
 
 interface AuthContextType {
   user: User | null;
