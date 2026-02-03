@@ -1,136 +1,171 @@
 
-# Update PricingComparisonTable with New Plan Information
+# Company Onboarding Questionnaire PDF
 
 ## Overview
-Update the "See More Details" comparison table to accurately reflect the new universal agent distribution, console access, and 3rd party integration requirements for all subscription tiers.
+Create a printable PDF document that collects all information needed to onboard companies to the Aura Intercept platform. This document will serve as a discovery questionnaire that can be emailed, printed, or completed during sales calls.
 
 ---
 
-## Changes Required
+## PDF Structure
 
-### 1. AI Agents Section (Lines 96-125)
+### Cover Page
+- Aura Intercept branding with logo placeholder
+- Title: "Company Onboarding Questionnaire"
+- Subtitle: "Complete this form to help us configure your AI platform"
+- Date field and version number (2026)
 
-**Universal Agents → ALL tiers get ✓:**
-| Agent | Current | Updated |
-|-------|---------|---------|
-| AI Receptionist (Triage) | Express ❌, Core ❌ | ALL ✓ |
-| Campaign Agent | Command only | ALL ✓ |
-| Lead Agent | Command only | ALL ✓ |
-| Marketing Agent | Command only | ALL ✓ |
-| Social Media Agent | Command only | ALL ✓ |
-| Social Media Scheduler | Command only | ALL ✓ |
-| Social Media Analytics | Command only | ALL ✓ |
-| Creative Agent | Command only | ALL ✓ |
+### Section 1: Company Profile (2 pages)
+Fillable fields for core company information:
 
-**Tier-Specific Agents (remain as-is):**
-| Agent | Express | Flow | Halo | Core | Single | Multi | Command |
-|-------|---------|------|------|------|--------|-------|---------|
-| Follow-up Agent | ❌ | ❌ | ✓ | ❌ | ✓ | ✓ | ✓ |
-| Review Agent | ❌ | ❌ | ❌ | ❌ | ✓ | ✓ | ✓ |
-| Scheduling Agent | ❌ | ✓ | ✓ | ❌ | ❌ | ✓ | ✓ |
-| Dispatch/Route/ETA/Checkin | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ | ✓ |
-| Quote/Invoice Agent | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ | ✓ |
-| Admin/Inventory | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ |
-| Analytics Agents | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ |
-| Web Presence Agent | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ |
+| Field | Purpose |
+|-------|---------|
+| Company Name | Dashboard display |
+| Primary Contact Name | Admin account |
+| Primary Contact Email | Login credentials |
+| Primary Contact Phone | SMS notifications |
+| Business Address | Service area setup |
+| Website URL | Widget integration |
+| Industry/Business Type | Tier recommendation |
+| Years in Business | Context for setup |
+| Logo (attach separately) | Branding |
+| Brand Colors (Primary/Secondary) | Theme customization |
 
----
+### Section 2: Business Operations Info (1 page)
+| Field | Purpose |
+|-------|---------|
+| Total Employee Count | Tier limits |
+| Number of Technicians/Field Staff | Field ops setup |
+| Number of Locations | Multi-location config |
+| Approximate Annual Revenue | Tier recommendation |
+| Business Hours (per day) | Availability config |
+| Emergency/After-Hours Contact | Emergency routing |
+| Service Categories (list) | Knowledge base |
+| Service Area (cities/zip codes) | Dispatch zones |
 
-### 2. Control Centers Section (Lines 128-137)
+### Section 3: AI Opportunity Audit Questions (6-8 pages)
+All 30 questions from the online audit, organized by section with checkbox options:
 
-**Update title from:** `Control Centers (0 / 0 / 1 / 0 / 1 / 2 / 7)`  
-**To:** `Control Centers (2 / 2 / 3 / 2 / 3 / 4 / 7)`
+**Section A: Business Basics (4 questions)**
+1. Employee count
+2. Multi-location status
+3. Annual revenue
+4. Industry type
 
-**Updated Console Access:**
-| Console | Express | Flow | Halo | Core | Single | Multi | Command |
-|---------|---------|------|------|------|--------|-------|---------|
-| Customer Portal | ❌ | ❌ | ✓ | ❌ | ✓ | ✓ | ✓ |
-| Field Operations | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ | ✓ |
-| Business Management | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ |
-| Outreach & Sales Ops | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Analytics & Reports | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ |
-| Social Media | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Web Presence | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✓ |
+**Section B: Industry & Services (2 questions)**
+5. Appointment model
+6. Service location
 
----
+**Section C: Lead Intake & Response (3 questions)**
+7. Lead response time
+8. After-hours call handling
+9. Weekly lead volume
 
-### 3. Required 3rd Party Integrations Section (Lines 169-177)
+**Section D: Communication Preferences (4 questions)**
+10. AI interaction mode (text vs voice)
+11. Preferred communication channels
+12. Weekly missed calls
+13. Reservation/booking call needs
 
-**Based on `INTEGRATION_REQUIREMENTS` from documentationConfig.ts:**
+**Section E: Scheduling & Operations (5 questions)**
+14. Current booking process
+15. Calendar sync vs portal preference
+16. Daily appointment volume
+17. Dispatch/routing method
+18. Customer ETA communication
 
-| Integration | Express | Flow | Halo | Core | Single | Multi | Command |
-|-------------|---------|------|------|------|--------|-------|---------|
-| Resend (Email) | Optional | Required | Optional | Optional | Required | Required | Required |
-| Stripe (Payments) | Optional | Optional | Optional | Optional | Optional | Required | Required |
-| Twilio (SMS/Voice) | Required | Required | Required | Optional | Required | Required | Required |
-| ElevenLabs (Voice) | Required | Required | Required | Optional | Required | Required | Required |
-| Calendar Sync | Optional | Required | Required | Optional | Optional | Required | Required |
-| Social Media Accounts | Required | Required | Required | Required | Required | Required | Required |
-| Tavily (AI Research) | Optional | Optional | Optional | Optional | Optional | Optional | Optional |
+**Section F: Customer Retention & Reviews (3 questions)**
+19. Review collection process
+20. Customer reactivation strategy
+21. Appointment reminder method
+
+**Section G: Social Media & Web Presence (3 questions)**
+22. Social media activity level
+23. Content creation method
+24. Website status
+
+**Section H: Business Operations (3 questions)**
+25. Quoting process
+26. Inventory tracking
+27. Walk-in vs appointment model
+
+**Section I: Analytics & Growth (2 questions)**
+28. Performance tracking method
+29. Marketing automation status
+
+### Section 4: Integration Requirements Checklist (1 page)
+Pre-onboarding checklist for 3rd party accounts:
+
+| Integration | Required For | Account Ready? |
+|-------------|--------------|----------------|
+| Twilio | Voice & SMS | [ ] Yes [ ] No [ ] Need Help |
+| ElevenLabs | AI Voice | [ ] Yes [ ] No [ ] Need Help |
+| Resend | Email Delivery | [ ] Yes [ ] No [ ] Need Help |
+| Stripe | Payments | [ ] Yes [ ] No [ ] Need Help |
+| Google Calendar | Scheduling | [ ] Yes [ ] No [ ] Need Help |
+| Social Media Accounts | Social Tools | [ ] Yes [ ] No [ ] Need Help |
+
+### Section 5: Knowledge Base Setup (2 pages)
+Forms to collect:
+- **Services List**: Name, description, duration, price (table with 10 rows)
+- **FAQs**: Question/Answer pairs (10 rows)
+- **Common Customer Questions**: Free-form list
+- **Competitor Differentiators**: What makes you unique
+
+### Section 6: Employee Information (1 page)
+Table for initial employee accounts:
+| Name | Email | Phone | Role | Job Type |
+|------|-------|-------|------|----------|
+| (5-10 blank rows) |
+
+### Section 7: Additional Notes & Goals (1 page)
+- "What are your top 3 pain points?"
+- "What would success look like in 90 days?"
+- "Any specific features you're most excited about?"
+- Signature and date line
 
 ---
 
 ## Technical Implementation
 
-### File: `src/components/landing/PricingComparisonTable.tsx`
+### New File
+`src/components/documentation/CompanyOnboardingPDF.tsx`
 
-**Section 1 - AI Agents (lines 97-125):**
-```typescript
-// Universal agents - ALL tiers
-{ name: 'AI Receptionist (Triage)', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-{ name: 'Campaign Agent', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-{ name: 'Lead Agent', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-{ name: 'Marketing Agent', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-{ name: 'Social Media Agent', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-{ name: 'Social Media Scheduler', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-{ name: 'Social Media Analytics', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-{ name: 'Creative Agent', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-```
+### Key Features
+- Uses @react-pdf/renderer (existing dependency)
+- Applies sanitizePdfText() for all text content
+- Professional styling matching existing PDFs
+- Checkbox-style options for audit questions
+- Fillable line spaces for form fields
+- Page numbers and headers
 
-**Section 2 - Control Centers title (line 128):**
-```typescript
-title: 'Control Centers (2 / 2 / 3 / 2 / 3 / 4 / 7)',
-```
+### Export Integration
+Add to existing PDF export dialog (likely in Export Documentation section)
 
-**Section 3 - Control Centers features (lines 129-137):**
-```typescript
-{ name: 'Outreach & Sales Ops Console', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-{ name: 'Social Media Console', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-```
-
-**Section 4 - Required 3rd Party Integrations (lines 169-177):**
-```typescript
-{ name: 'Resend (Email)', express: 'Optional', flow: 'Required', halo: 'Optional', core: 'Optional', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-{ name: 'Stripe (Payments)', express: 'Optional', flow: 'Optional', halo: 'Optional', core: 'Optional', singlePoint: 'Optional', multiTrack: 'Required', command: 'Required' },
-{ name: 'Twilio (SMS & Voice)', express: 'Required', flow: 'Required', halo: 'Required', core: 'Optional', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-{ name: 'ElevenLabs (Voice)', express: 'Required', flow: 'Required', halo: 'Required', core: 'Optional', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-{ name: 'Calendar Sync', express: 'Optional', flow: 'Required', halo: 'Required', core: 'Optional', singlePoint: 'Optional', multiTrack: 'Required', command: 'Required' },
-{ name: 'Social Media Accounts', express: 'Required', flow: 'Required', halo: 'Required', core: 'Required', singlePoint: 'Required', multiTrack: 'Required', command: 'Required' },
-{ name: 'Tavily (AI Research)', express: 'Optional', flow: 'Optional', halo: 'Optional', core: 'Optional', singlePoint: 'Optional', multiTrack: 'Optional', command: 'Optional' },
-```
+### Data Sources
+- Import `QUESTIONS`, `SECTION_ORDER` from `src/components/audit/types.ts`
+- Import `INTEGRATION_REQUIREMENTS` from `src/lib/documentationConfig.ts`
+- Import `SUBSCRIPTION_TIERS` for tier reference
 
 ---
 
-## Summary of Agent Counts per Tier
+## Page Count Estimate
+- Cover: 1 page
+- Company Profile: 2 pages
+- Business Operations: 1 page
+- Audit Questions: 7 pages (4-5 questions per page)
+- Integration Checklist: 1 page
+- Knowledge Base: 2 pages
+- Employee Info: 1 page
+- Notes & Goals: 1 page
 
-| Tier | Agents | Consoles |
-|------|--------|----------|
-| Express | 8 | 2 |
-| Flow | 10 | 2 |
-| Halo | 10 | 3 |
-| Core | 8 | 2 |
-| Single-Point | 10 | 3 |
-| Multi-Track | 17 | 4 |
-| Command | 24 | 7 |
+**Total: ~16 pages**
 
 ---
 
-## Validation After Implementation
+## Files to Create/Modify
 
-- [ ] All 7 tiers show ✓ for 8 universal agents
-- [ ] Control Centers title shows correct counts (2/2/3/2/3/4/7)
-- [ ] Outreach & Sales console shows ✓ for all tiers
-- [ ] Social Media console shows ✓ for all tiers
-- [ ] 3rd Party Integrations match INTEGRATION_REQUIREMENTS config
-- [ ] Social Media Accounts shows "Required" for all tiers (they have social agents)
-- [ ] Tavily shows "Optional" for all tiers (AI research is optional)
+| File | Action |
+|------|--------|
+| `src/components/documentation/CompanyOnboardingPDF.tsx` | CREATE - Main PDF component |
+| `src/pages/Dashboard.tsx` or Export page | MODIFY - Add export button |
+
