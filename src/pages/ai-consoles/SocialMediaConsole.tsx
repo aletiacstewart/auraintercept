@@ -17,7 +17,7 @@ export default function SocialMediaConsole() {
   return (
     <DashboardLayout>
       <PageContainer>
-        <FeatureGate requiredTier="command">
+        <FeatureGate requiredConsole="social_media">
           <div className="space-y-6">
             <PageHeader
               icon={Share2}

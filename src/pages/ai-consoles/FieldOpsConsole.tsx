@@ -17,7 +17,7 @@ export default function FieldOpsConsole() {
   return (
     <DashboardLayout>
       <PageContainer>
-        <FeatureGate requiredTier="multi_track">
+        <FeatureGate requiredConsole="field_operations">
           <div className="space-y-6 animate-fade-in">
             <PageHeader
               icon={HardHat}

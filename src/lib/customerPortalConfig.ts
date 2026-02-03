@@ -2,6 +2,9 @@
  * Customer Portal Tier Configuration
  * 
  * Maps quick actions and features to subscription tiers.
+ * Express/Core: No customer portal access (redirects to chat only)
+ * Aura Flow: No customer portal (scheduling via calendar sync)
+ * Halo: Customer portal with scheduling for salons/wellness
  * Single-Point: Basic chat, emergency, hours, services, feedback, call-to-book
  * Multi-Track: All Single-Point + schedule, quote, track, billing
  * Command: Same as Multi-Track for customer-facing features
@@ -9,7 +12,7 @@
 
 import { Calendar, Clock, DollarSign, AlertTriangle, Star, MapPin, Sparkles, Phone, FileText } from 'lucide-react';
 
-export type SubscriptionTier = 'core' | 'single_point' | 'multi_track' | 'command';
+export type SubscriptionTier = 'free' | 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
 
 export interface QuickActionConfig {
   id: string;
@@ -101,13 +104,37 @@ export const CALL_TO_BOOK_ACTION: QuickActionConfig = {
   isCallAction: true,
 };
 
-// Tier hierarchy for comparison
+// Tier hierarchy for comparison - lower tiers with portal access mapped appropriately
 const TIER_LEVELS: Record<SubscriptionTier, number> = {
-  core: 1,
+  free: 0,
+  express: 0, // No customer portal
+  aura_flow: 0, // No customer portal (direct calendar)
+  core: 1, // Basic chat only
+  halo: 2, // Has customer portal with scheduling
   single_point: 2,
   multi_track: 3,
   command: 4,
 };
+
+// Tiers that have customer portal access
+const PORTAL_ACCESS_TIERS: SubscriptionTier[] = ['halo', 'single_point', 'multi_track', 'command'];
+
+// Tiers that have online booking (not call-to-book)
+const ONLINE_BOOKING_TIERS: SubscriptionTier[] = ['halo', 'multi_track', 'command'];
+
+/**
+ * Check if a company's tier includes customer portal access
+ */
+export function hasPortalAccess(tier: string | null | undefined): boolean {
+  return PORTAL_ACCESS_TIERS.includes((tier || 'free') as SubscriptionTier);
+}
+
+/**
+ * Check if a company's tier includes online booking (vs call-to-book)
+ */
+export function hasOnlineBooking(tier: string | null | undefined): boolean {
+  return ONLINE_BOOKING_TIERS.includes((tier || 'free') as SubscriptionTier);
+}
 
 /**
  * Check if a company's tier includes access to a specific feature tier

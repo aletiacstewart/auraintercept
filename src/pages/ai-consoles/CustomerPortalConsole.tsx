@@ -23,7 +23,7 @@ export default function CustomerPortalConsole() {
   return (
     <DashboardLayout>
       <PageContainer>
-        <FeatureGate requiredTier="single_point">
+        <FeatureGate requiredConsole="customer_portal">
           <div className="space-y-6">
             {/* Admin Preview Mode Banner */}
             {canManageSettings && (

@@ -17,7 +17,7 @@ export default function BusinessManagementConsole() {
   return (
     <DashboardLayout>
       <PageContainer>
-        <FeatureGate requiredTier="command">
+        <FeatureGate requiredConsole="business_management">
           <div className="space-y-6">
             <PageHeader
               icon={Briefcase}
