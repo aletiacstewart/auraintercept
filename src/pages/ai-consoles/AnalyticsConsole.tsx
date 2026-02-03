@@ -17,7 +17,7 @@ export default function AnalyticsConsole() {
   return (
     <DashboardLayout>
       <PageContainer>
-        <FeatureGate requiredTier="command">
+        <FeatureGate requiredConsole="analytics_reports">
           <div className="space-y-6">
             <PageHeader
               icon={BarChart3}

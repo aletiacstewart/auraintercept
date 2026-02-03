@@ -69,13 +69,13 @@ interface NavItem {
   requiredJobTypes?: string[];
   external?: boolean;
   featureColor?: string;
-  requiredTier?: 'single_point' | 'multi_track' | 'command';
+  requiredTier?: 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
 }
 
 interface NavGroup {
   label: string;
   items: NavItem[];
-  requiredTier?: 'single_point' | 'multi_track' | 'command';
+  requiredTier?: 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
 }
 
 const navGroups: NavGroup[] = [

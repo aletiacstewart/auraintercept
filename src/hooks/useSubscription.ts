@@ -16,9 +16,11 @@ import {
   getUpgradeTierForAgent,
   isTierAtLeast,
   TIER_HIERARCHY,
+  TIER_FEATURE_CONFIG,
 } from '@/lib/subscriptionAgentConfig';
 
-export type SubscriptionTier = 'free' | 'single_point' | 'multi_track' | 'command';
+// Updated to include all 7 subscription tiers
+export type SubscriptionTier = 'free' | 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
 
 // All features available on Command tier
 const ALL_FEATURES = [
@@ -27,10 +29,15 @@ const ALL_FEATURES = [
   'custom_branding', 'widget', 'api_access', 'white_label', 'priority_support'
 ];
 
+// Feature mapping for all 7 tiers
 export const TIER_FEATURES: Record<SubscriptionTier, string[]> = {
-  free: ['email_reminders', 'basic_dashboard', 'appointments_10'],
-  single_point: ['email_reminders', 'sms_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget'],
-  multi_track: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'advanced_ai', 'widget'],
+  free: ['basic_dashboard'],
+  express: ['voice_reminders', 'widget', 'smart_links'],
+  aura_flow: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'calendar_sync'],
+  halo: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal'],
+  core: ['email_reminders', 'advanced_dashboard', 'widget', 'social_media', 'web_presence'],
+  single_point: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal', 'quotes'],
+  multi_track: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'advanced_ai', 'widget', 'field_ops', 'invoices', 'customer_portal'],
   command: ALL_FEATURES,
 };
 
@@ -39,15 +46,15 @@ export type Feature = string;
 export const useSubscription = () => {
   const { subscribed, subscriptionTier: authTier, subscriptionEnd, inTrial, trialEndsAt, checkSubscription } = useAuth();
 
-  // Normalize tier to our new tier system
+  // Normalize tier to our 7-tier system
   const normalizeSubscriptionTier = (tier: string | null): SubscriptionTier => {
     if (!tier) return 'free';
     
     // Map legacy 'enterprise' to 'command' for backwards compatibility
     if (tier === 'enterprise') return 'command';
     
-    // Check if it's a valid tier
-    if (['free', 'single_point', 'multi_track', 'command'].includes(tier)) {
+    // Check if it's a valid tier (all 7 tiers)
+    if (['free', 'express', 'aura_flow', 'halo', 'core', 'single_point', 'multi_track', 'command'].includes(tier)) {
       return tier as SubscriptionTier;
     }
     
@@ -136,7 +143,7 @@ export const useSubscription = () => {
 
   // Get all tiers for display
   const getAllTiers = (): { tier: SubscriptionTier; label: string; price: string; description: string }[] => {
-    return (['single_point', 'multi_track', 'command'] as SubscriptionTier[]).map(tier => ({
+    return (['express', 'aura_flow', 'halo', 'core', 'single_point', 'multi_track', 'command'] as SubscriptionTier[]).map(tier => ({
       tier,
       ...getTierDisplayInfo(tier as ConfigTier),
     }));

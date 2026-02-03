@@ -17,6 +17,8 @@ function normalizeRequiredTier(tier: RequiredTierType): SubscriptionTier {
 interface FeatureGateProps {
   requiredTier?: RequiredTierType;
   requiredFeature?: Feature;
+  requiredConsole?: string; // NEW: Check console access (e.g., 'customer_portal', 'field_operations')
+  requiredAgent?: string; // NEW: Check agent access
   children: React.ReactNode;
   fallback?: React.ReactNode;
   showUpgradePrompt?: boolean;
@@ -25,20 +27,33 @@ interface FeatureGateProps {
 export const FeatureGate: React.FC<FeatureGateProps> = ({
   requiredTier,
   requiredFeature,
+  requiredConsole,
+  requiredAgent,
   children,
   fallback,
   showUpgradePrompt = true,
 }) => {
-  const { isAtLeastTier, hasFeature, subscriptionTier, getTierInfo } = useSubscription();
+  const { isAtLeastTier, hasFeature, canAccessConsole, canAccessAgent, subscriptionTier, getTierInfo, getConsoleRequiredTier, getAgentRequiredTier } = useSubscription();
   const navigate = useNavigate();
 
   const normalizedTier = requiredTier ? normalizeRequiredTier(requiredTier) : undefined;
 
-  const hasAccess = normalizedTier 
-    ? isAtLeastTier(normalizedTier) 
-    : requiredFeature 
-      ? hasFeature(requiredFeature) 
-      : true;
+  // Determine access based on what's required
+  let hasAccess = true;
+  let requiredTierForDisplay: SubscriptionTier | null = null;
+
+  if (requiredConsole) {
+    hasAccess = canAccessConsole(requiredConsole);
+    requiredTierForDisplay = getConsoleRequiredTier(requiredConsole);
+  } else if (requiredAgent) {
+    hasAccess = canAccessAgent(requiredAgent);
+    requiredTierForDisplay = getAgentRequiredTier(requiredAgent);
+  } else if (normalizedTier) {
+    hasAccess = isAtLeastTier(normalizedTier);
+    requiredTierForDisplay = normalizedTier;
+  } else if (requiredFeature) {
+    hasAccess = hasFeature(requiredFeature);
+  }
 
   if (hasAccess) {
     return <>{children}</>;
@@ -52,7 +67,7 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
     return null;
   }
 
-  const tierInfo = normalizedTier ? getTierInfo(normalizedTier) : null;
+  const tierInfo = requiredTierForDisplay ? getTierInfo(requiredTierForDisplay) : null;
   const tierLabel = tierInfo?.label ?? 'a higher';
   const currentTierInfo = getTierInfo(subscriptionTier);
 
@@ -81,18 +96,25 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
 export const FeatureGateInline: React.FC<{
   requiredTier?: RequiredTierType;
   requiredFeature?: Feature;
+  requiredConsole?: string;
+  requiredAgent?: string;
   children: React.ReactNode;
-}> = ({ requiredTier, requiredFeature, children }) => {
-  const { isAtLeastTier, hasFeature } = useSubscription();
+}> = ({ requiredTier, requiredFeature, requiredConsole, requiredAgent, children }) => {
+  const { isAtLeastTier, hasFeature, canAccessConsole, canAccessAgent } = useSubscription();
   const navigate = useNavigate();
 
   const normalizedTier = requiredTier ? normalizeRequiredTier(requiredTier) : undefined;
 
-  const hasAccess = normalizedTier 
-    ? isAtLeastTier(normalizedTier) 
-    : requiredFeature 
-      ? hasFeature(requiredFeature) 
-      : true;
+  let hasAccess = true;
+  if (requiredConsole) {
+    hasAccess = canAccessConsole(requiredConsole);
+  } else if (requiredAgent) {
+    hasAccess = canAccessAgent(requiredAgent);
+  } else if (normalizedTier) {
+    hasAccess = isAtLeastTier(normalizedTier);
+  } else if (requiredFeature) {
+    hasAccess = hasFeature(requiredFeature);
+  }
 
   if (hasAccess) {
     return <>{children}</>;
