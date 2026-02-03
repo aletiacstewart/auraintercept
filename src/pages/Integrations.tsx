@@ -38,9 +38,12 @@ import {
   ArrowRight,
   Puzzle,
   Search,
+  Lock,
+  Unlock,
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import { cn } from '@/lib/utils';
+import { getIntegrationRequirements } from '@/lib/documentationConfig';
 
 interface Integration {
   id: string;
@@ -137,11 +140,14 @@ const INTEGRATIONS: Integration[] = [
 ];
 
 export default function Integrations() {
-  const { companyId, userRole } = useAuth();
+  const { companyId, subscriptionTier } = useAuth();
   const queryClient = useQueryClient();
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
+
+  // Get tier-based integration requirements
+  const integrationRequirements = getIntegrationRequirements(subscriptionTier);
 
   const { data: integrations, isLoading } = useQuery({
     queryKey: ['integrations', companyId],
@@ -229,9 +235,6 @@ export default function Integrations() {
   const togglePasswordVisibility = (key: string) => {
     setShowPasswords((prev) => ({ ...prev, [key]: !prev[key] }));
   };
-
-   // Get TTS connection status
-  const hasElevenLabs = !!integrations?.elevenlabs_api_key;
 
   return (
     <DashboardLayout>
@@ -375,14 +378,36 @@ export default function Integrations() {
           {INTEGRATIONS.map((integration) => {
             const isConnected = getConnectionStatus(integration);
             const Icon = integration.icon;
+            const requirement = integrationRequirements[integration.id as keyof typeof integrationRequirements];
+            const isRequired = requirement?.required ?? false;
+            const requirementReason = requirement?.reason ?? '';
+            
             return (
-              <Card key={integration.id} className="border-border/50 relative">
-                {isConnected && (
-                  <Badge className="absolute top-3 right-3 bg-green-500/10 text-green-600 border-green-500/30">
-                    <Check className="w-3 h-3 mr-1" />
-                    Connected
-                  </Badge>
-                )}
+              <Card key={integration.id} className={cn(
+                "border-border/50 relative transition-all",
+                !isRequired && !isConnected && "opacity-75"
+              )}>
+                {/* Status Badges */}
+                <div className="absolute top-3 right-3 flex flex-col gap-1 items-end">
+                  {isRequired ? (
+                    <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px]">
+                      <Lock className="w-2.5 h-2.5 mr-1" />
+                      Required
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-muted-foreground border-border/50 text-[10px]">
+                      <Unlock className="w-2.5 h-2.5 mr-1" />
+                      Optional
+                    </Badge>
+                  )}
+                  {isConnected && (
+                    <Badge className="bg-green-500/10 text-green-600 border-green-500/30 text-[10px]">
+                      <Check className="w-2.5 h-2.5 mr-1" />
+                      Connected
+                    </Badge>
+                  )}
+                </div>
+                
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-3">
                     <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', integration.color)}>
@@ -392,23 +417,35 @@ export default function Integrations() {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <p className="text-sm text-muted-foreground mb-2">{integration.description}</p>
+                  <p className="text-sm text-muted-foreground mb-1">{integration.description}</p>
+                  
+                  {/* Tier-specific reason */}
+                  {requirementReason && (
+                    <p className={cn(
+                      "text-xs mb-2 italic",
+                      isRequired ? "text-primary/80" : "text-muted-foreground/70"
+                    )}>
+                      {requirementReason}
+                    </p>
+                  )}
+                  
                   {integration.note && (
-                    <p className="text-xs text-white/80 mb-3 p-2 rounded bg-slate-600/50 border border-slate-500/30">
+                    <p className="text-xs text-foreground/80 mb-3 p-2 rounded bg-muted/50 border border-border/30">
                       {integration.note}
                     </p>
                   )}
+                  
                   {isLoading ? (
                     <Skeleton className="h-9 w-full" />
                   ) : (
                     <div className="flex gap-2">
                       <Button
-                        variant={isConnected ? 'outline' : 'default'}
+                        variant={isConnected ? 'outline' : isRequired ? 'default' : 'secondary'}
                         size="sm"
                         className="flex-1"
                         onClick={() => handleOpenSetup(integration)}
                       >
-                        {isConnected ? 'Update' : 'Connect'}
+                        {isConnected ? 'Update' : isRequired ? 'Set Up Now' : 'Enable'}
                       </Button>
                       <Button variant="ghost" size="sm" asChild>
                         <a href={integration.docsUrl} target="_blank" rel="noopener noreferrer">
