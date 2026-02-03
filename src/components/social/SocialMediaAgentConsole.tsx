@@ -19,6 +19,7 @@ import { MultiChannelGenerator } from '@/components/content-engine/MultiChannelG
 import { ContentEngineDashboard } from '@/components/content-engine/ContentEngineDashboard';
 import { ContentEngineCalendar } from '@/components/content-engine/ContentEngineCalendar';
 import { AIContentProfileManager } from '@/components/knowledge/AIContentProfileManager';
+import { IndustryTemplateSelector } from '@/components/social/IndustryTemplateSelector';
 import { getAgentStyle } from '@/lib/agentStyles';
 import { 
   Share2, 
@@ -210,6 +211,13 @@ export const SocialMediaAgentConsole: React.FC<SocialMediaAgentConsoleProps> = (
                   actions={QUICK_ACTIONS}
                   onAction={handleQuickAction}
                   consoleType="social"
+                  headerAction={
+                    <IndustryTemplateSelector
+                      onSelectTemplate={(template) => {
+                        setInputValue(template);
+                      }}
+                    />
+                  }
                 />
               ) : (
                 <div className="space-y-4">

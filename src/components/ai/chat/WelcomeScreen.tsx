@@ -19,6 +19,7 @@ interface WelcomeScreenProps {
   onAction: (message: string, actionId: string) => void;
   showHowToGuide?: boolean;
   consoleType?: ConsoleType;
+  headerAction?: React.ReactNode;
 }
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
@@ -29,11 +30,19 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   onAction,
   showHowToGuide = true,
   consoleType = 'customer',
+  headerAction,
 }) => {
   return (
     <div className="py-4 px-4 animate-fade-in w-full">
       {/* Full Width Layout */}
       <div className="w-full space-y-4">
+        {/* Header Action (e.g., Industry Templates) */}
+        {headerAction && (
+          <div className="w-full max-w-4xl mx-auto flex justify-end">
+            {headerAction}
+          </div>
+        )}
+        
         {/* How To Guide - Collapsible at top */}
         {showHowToGuide && (
           <div className="w-full max-w-4xl mx-auto">
