@@ -4,13 +4,14 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown, Share2, Video, BarChart3, Palette, Globe, Factory } from 'lucide-react';
+import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown, Share2, Video, BarChart3, Palette, Globe, Factory, ClipboardList } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import PlatformDocumentPDF from '@/components/documentation/PlatformDocumentPDF';
 import PricingSummaryPDF from '@/components/documentation/PricingSummaryPDF';
 import AIAgentGuidesPDF from '@/components/documentation/AIAgentGuidesPDF';
 import { ComprehensiveGuidesPDF } from '@/components/documentation/ComprehensiveGuidesPDF';
 import CompanyGuidesPDF from '@/components/documentation/CompanyGuidesPDF';
+import CompanyOnboardingPDF from '@/components/documentation/CompanyOnboardingPDF';
 import SocialMediaContentPackPDF from '@/components/documentation/SocialMediaContentPackPDF';
 import VideoScriptsPDF from '@/components/documentation/VideoScriptsPDF';
 import SalesPitchDataPDF from '@/components/documentation/SalesPitchDataPDF';
@@ -310,6 +311,63 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                     <Button className="w-full" variant="outline">
                       <Download className="mr-2 h-4 w-4" />
                       Download Admin Guide
+                    </Button>
+                  );
+                }}
+              </PDFDownloadLink>
+            </CardContent>
+          </Card>
+
+          {/* Company Onboarding Questionnaire PDF */}
+          <Card className="border-cyan-500/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ClipboardList className="h-5 w-5 text-cyan-600" />
+                Company Onboarding Questionnaire
+              </CardTitle>
+              <CardDescription>
+                Comprehensive questionnaire for new company onboarding with audit and setup forms
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm text-card-foreground/70">
+                <p className="font-medium text-card-foreground">Document includes:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Company Profile & Branding</li>
+                  <li>Business Operations Details</li>
+                  <li>30-Question AI Opportunity Audit</li>
+                  <li>Integration Requirements Checklist</li>
+                  <li>Knowledge Base Setup Forms</li>
+                  <li>Employee Account Information</li>
+                </ul>
+              </div>
+
+              <PDFDownloadLink
+                document={<CompanyOnboardingPDF />}
+                fileName={`company-onboarding-questionnaire-${new Date().toISOString().split('T')[0]}.pdf`}
+              >
+                {({ loading, error }) => {
+                  if (loading) {
+                    return (
+                      <Button disabled className="w-full">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating PDF...
+                      </Button>
+                    );
+                  }
+                  
+                  if (error) {
+                    return (
+                      <Button variant="destructive" disabled className="w-full">
+                        Error generating PDF
+                      </Button>
+                    );
+                  }
+
+                  return (
+                    <Button className="w-full" variant="outline">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Onboarding Questionnaire
                     </Button>
                   );
                 }}
