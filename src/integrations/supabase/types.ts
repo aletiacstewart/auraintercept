@@ -329,6 +329,7 @@ export type Database = {
           customer_name: string
           customer_phone: string | null
           customer_token: string | null
+          customer_token_expires_at: string | null
           customer_user_id: string | null
           datetime: string
           deal_stage: string | null
@@ -360,6 +361,7 @@ export type Database = {
           customer_name: string
           customer_phone?: string | null
           customer_token?: string | null
+          customer_token_expires_at?: string | null
           customer_user_id?: string | null
           datetime: string
           deal_stage?: string | null
@@ -391,6 +393,7 @@ export type Database = {
           customer_name?: string
           customer_phone?: string | null
           customer_token?: string | null
+          customer_token_expires_at?: string | null
           customer_user_id?: string | null
           datetime?: string
           deal_stage?: string | null
@@ -6223,9 +6226,85 @@ export type Database = {
         }
         Relationships: []
       }
+      tenant_integrations_safe: {
+        Row: {
+          company_id: string | null
+          created_at: string | null
+          elevenlabs_agent_id: string | null
+          elevenlabs_voice_id: string | null
+          google_calendar_id: string | null
+          has_elevenlabs: boolean | null
+          has_google: boolean | null
+          has_openai: boolean | null
+          has_resend: boolean | null
+          has_stripe: boolean | null
+          has_tavily: boolean | null
+          has_twilio: boolean | null
+          id: string | null
+          stripe_publishable_key: string | null
+          twilio_phone_number: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string | null
+          elevenlabs_agent_id?: string | null
+          elevenlabs_voice_id?: string | null
+          google_calendar_id?: string | null
+          has_elevenlabs?: never
+          has_google?: never
+          has_openai?: never
+          has_resend?: never
+          has_stripe?: never
+          has_tavily?: never
+          has_twilio?: never
+          id?: string | null
+          stripe_publishable_key?: string | null
+          twilio_phone_number?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string | null
+          elevenlabs_agent_id?: string | null
+          elevenlabs_voice_id?: string | null
+          google_calendar_id?: string | null
+          has_elevenlabs?: never
+          has_google?: never
+          has_openai?: never
+          has_resend?: never
+          has_stripe?: never
+          has_tavily?: never
+          has_twilio?: never
+          id?: string | null
+          stripe_publishable_key?: string | null
+          twilio_phone_number?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_integrations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_integrations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       can_view_company: { Args: { _company_id: string }; Returns: boolean }
+      check_integration_configured: {
+        Args: { p_company_id: string; p_integration_type: string }
+        Returns: boolean
+      }
       check_visitor_limit: {
         Args: { p_website_id: string }
         Returns: {
@@ -6474,6 +6553,10 @@ export type Database = {
           p_user_agent?: string
         }
         Returns: undefined
+      }
+      regenerate_customer_token: {
+        Args: { p_appointment_id: string }
+        Returns: string
       }
       validate_registration_code: {
         Args: { p_code: string; p_company_id?: string }
