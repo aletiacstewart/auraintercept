@@ -1,10 +1,11 @@
 import { forwardRef } from 'react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
+import { Link } from 'react-router-dom';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown, Share2, Video, BarChart3, Palette, Globe, Factory, ClipboardList } from 'lucide-react';
+import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown, Share2, Video, BarChart3, Palette, Globe, Factory, ClipboardList, ExternalLink } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import PlatformDocumentPDF from '@/components/documentation/PlatformDocumentPDF';
 import PricingSummaryPDF from '@/components/documentation/PricingSummaryPDF';
@@ -342,36 +343,45 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                 </ul>
               </div>
 
-              <PDFDownloadLink
-                document={<CompanyOnboardingPDF />}
-                fileName={`company-onboarding-questionnaire-${new Date().toISOString().split('T')[0]}.pdf`}
-              >
-                {({ loading, error }) => {
-                  if (loading) {
-                    return (
-                      <Button disabled className="w-full">
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Generating PDF...
-                      </Button>
-                    );
-                  }
-                  
-                  if (error) {
-                    return (
-                      <Button variant="destructive" disabled className="w-full">
-                        Error generating PDF
-                      </Button>
-                    );
-                  }
+              <div className="flex flex-col gap-2">
+                <Button asChild className="w-full">
+                  <Link to="/onboarding" target="_blank">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    Open Digital Form
+                  </Link>
+                </Button>
 
-                  return (
-                    <Button className="w-full" variant="outline">
-                      <Download className="mr-2 h-4 w-4" />
-                      Download Onboarding Questionnaire
-                    </Button>
-                  );
-                }}
-              </PDFDownloadLink>
+                <PDFDownloadLink
+                  document={<CompanyOnboardingPDF />}
+                  fileName={`company-onboarding-questionnaire-${new Date().toISOString().split('T')[0]}.pdf`}
+                >
+                  {({ loading, error }) => {
+                    if (loading) {
+                      return (
+                        <Button disabled className="w-full" variant="outline">
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Generating PDF...
+                        </Button>
+                      );
+                    }
+                    
+                    if (error) {
+                      return (
+                        <Button variant="destructive" disabled className="w-full">
+                          Error generating PDF
+                        </Button>
+                      );
+                    }
+
+                    return (
+                      <Button className="w-full" variant="outline">
+                        <Download className="mr-2 h-4 w-4" />
+                        Download PDF Version
+                      </Button>
+                    );
+                  }}
+                </PDFDownloadLink>
+              </div>
             </CardContent>
           </Card>
         </div>

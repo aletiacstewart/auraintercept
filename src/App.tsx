@@ -78,6 +78,7 @@ import FieldOpsApp from "./pages/FieldOpsApp";
 import DispatchFieldOpsApp from "./pages/DispatchFieldOpsApp";
 import BusinessMgtOpsApp from "./pages/BusinessMgtOpsApp";
 import OpportunityAudit from "./pages/OpportunityAudit";
+import OnboardingForm from "./pages/OnboardingForm";
 import CustomerPortalAppInstall from "./pages/CustomerPortalAppInstall";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -147,6 +148,7 @@ const AppContent = ({ isEmbedMode }: { isEmbedMode: boolean }) => {
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/audit" element={<OpportunityAudit />} />
+                <Route path="/onboarding" element={<OnboardingForm />} />
                 <Route path="/field-ops-app" element={<FieldOpsApp />} />
                 <Route path="/dispatch-field-ops-app" element={<DispatchFieldOpsApp />} />
                 <Route path="/business-mgt-ops-app" element={<BusinessMgtOpsApp />} />
