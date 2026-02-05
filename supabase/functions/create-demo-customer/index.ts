@@ -1,8 +1,47 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+// Demo company configurations
+const DEMO_COMPANIES = {
+  flow: {
+    id: 'b7d8e9f0-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
+    name: 'Demo Flow Company',
+    slug: 'demo-flow'
+  },
+  core: {
+    id: 'c8e9f0a1-2b3c-4d5e-6f7a-8b9c0d1e2f3a',
+    name: 'Demo Core Company',
+    slug: 'demo-core'
+  },
+  solo: {
+    id: '8fafcec0-4b2a-45a1-8663-f9ccb5afc545',
+    name: 'Demo Solo Company',
+    slug: 'demo-solo'
+  },
+  multi: {
+    id: '4f85ed98-0e98-480c-b904-1c33424e26ad',
+    name: 'Demo Multi Company',
+    slug: 'demo-multi'
+  },
+  cmd: {
+    id: '298a7275-0a1f-4bd8-a0ae-b692fdbcd3af',
+    name: 'Demo Command Company',
+    slug: 'demo-cmd'
+  },
+  halo: {
+    id: '56c0a3a8-a2a1-4689-9c18-d115080a816d',
+    name: 'Demo Halo Company',
+    slug: 'demo-halo'
+  },
+  xprs: {
+    id: 'd4a6c195-c89a-4208-a818-981902af6c51',
+    name: 'Demo Express Company',
+    slug: 'demo-xprs'
+  }
 };
 
 Deno.serve(async (req) => {
@@ -19,7 +58,7 @@ Deno.serve(async (req) => {
       auth: { autoRefreshToken: false, persistSession: false }
     });
 
-    const { email, password, fullName, companyIds } = await req.json();
+    const { email, password, fullName, companyIds, demoCompanyKey, role } = await req.json();
 
     if (!email || !password) {
       return new Response(
@@ -45,29 +84,41 @@ Deno.serve(async (req) => {
     }
 
     const userId = userData.user.id;
+    const userRole = role || 'customer';
 
-    // Update profile (no company_id for customers - they can be associated with multiple companies)
+    // Determine company IDs
+    let targetCompanyIds = companyIds || [];
+    if (demoCompanyKey && DEMO_COMPANIES[demoCompanyKey as keyof typeof DEMO_COMPANIES]) {
+      targetCompanyIds = [DEMO_COMPANIES[demoCompanyKey as keyof typeof DEMO_COMPANIES].id];
+    }
+
+    // Update profile
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
-      .update({ full_name: fullName || 'Demo Customer' })
+      .update({ 
+        full_name: fullName || 'Demo User',
+        company_id: userRole === 'employee' || userRole === 'company_admin' 
+          ? targetCompanyIds[0] || null 
+          : null
+      })
       .eq('id', userId);
 
     if (profileError) {
       console.error('Error updating profile:', profileError);
     }
 
-    // Assign customer role
+    // Assign role
     const { error: roleError } = await supabaseAdmin
       .from('user_roles')
-      .insert({ user_id: userId, role: 'customer' });
+      .insert({ user_id: userId, role: userRole });
 
     if (roleError) {
       console.error('Error assigning role:', roleError);
     }
 
-    // Create company associations if companyIds provided
-    if (companyIds && Array.isArray(companyIds) && companyIds.length > 0) {
-      for (const companyId of companyIds) {
+    // Create company associations for customers
+    if (userRole === 'customer' && targetCompanyIds.length > 0) {
+      for (const companyId of targetCompanyIds) {
         // First, check if a customer_profile exists for this company
         const { data: existingProfile } = await supabaseAdmin
           .from('customer_profiles')
@@ -117,7 +168,8 @@ Deno.serve(async (req) => {
         success: true, 
         userId, 
         email,
-        message: 'Demo customer account created successfully' 
+        role: userRole,
+        message: `Demo ${userRole} account created successfully` 
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
