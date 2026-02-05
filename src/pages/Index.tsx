@@ -700,7 +700,12 @@ export default function Index() {
             </Link>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
+          {/* Flex wrapper to enable ordering - Industry first, General second */}
+          <div className="flex flex-col">
+            {/* General Business Plans - Order 2 */}
+            <div className="order-2">
+              <h3 className="text-xl font-semibold text-center mt-10 mb-4 text-foreground/80">General Business Plans</h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
             {/* Aura Core Plan - AI-Assisted (No Automation) */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-emerald-500/30 dark-card-surface border-emerald-500/20">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
@@ -933,9 +938,12 @@ export default function Index() {
               </CardContent>
             </Card>
           </div>
+          </div>
 
-          {/* Industry-Specific Packages */}
-          <div className="mt-8 grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+          {/* Industry-Specific Packages - Order 1 (appears first) */}
+          <div className="order-1">
+            <h3 className="text-xl font-semibold text-center mb-4 text-foreground/80">Industry-Specific Packages</h3>
+            <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
             {/* Aura Express - Restaurant Package */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-amber-400/30 dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
@@ -1107,6 +1115,8 @@ export default function Index() {
                 <p className="text-[9px] text-rose-400/70 mt-2 text-center">Requires: ElevenLabs + Twilio + Resend</p>
               </CardContent>
             </Card>
+          </div>
+          </div>
           </div>
 
           {/* Comprehensive Comparison Chart */}
