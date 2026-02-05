@@ -18,6 +18,7 @@ import { AgentAnalyticsDashboard } from '@/components/ai/agents/AgentAnalyticsDa
 import { ConversationHistoryBrowser } from '@/components/ai/agents/ConversationHistoryBrowser';
 import { OperativeDependencyGraph } from '@/components/ai/agents/OperativeDependencyGraph';
 import { AgentReviewQueue } from '@/components/ai/agents/AgentReviewQueue';
+import { AIAgentTestSuite } from '@/components/ai/AIAgentTestSuite';
 import { useAgentReviewCount } from '@/hooks/useAgentReviewCount';
 import { useAgentLatestEvents } from '@/hooks/useAgentLatestEvents';
 import { DecisionModeBadge } from '@/components/ai/agents/DecisionModeBadge';
@@ -43,7 +44,8 @@ import {
   Info,
   Globe,
   Eye,
-  Clock
+  Clock,
+  FlaskConical
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/page-header';
@@ -426,6 +428,12 @@ export default function AIAgentsHub() {
                 </Badge>
               )}
             </TabsTrigger>
+            {canManageAgents && (
+              <TabsTrigger value="testing" className="flex items-center gap-1.5">
+                <FlaskConical className="h-3.5 w-3.5" />
+                Testing
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Agents Tab */}
@@ -578,6 +586,13 @@ export default function AIAgentsHub() {
               </Card>
             )}
           </TabsContent>
+
+          {/* Testing Tab */}
+          {canManageAgents && (
+            <TabsContent value="testing" className="space-y-4">
+              <AIAgentTestSuite />
+            </TabsContent>
+          )}
         </Tabs>
         </div>
       </PageContainer>
