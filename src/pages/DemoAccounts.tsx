@@ -29,12 +29,31 @@ const DEMO_PASSWORD = 'aidemo*!';
 
 const demoAccounts = [
   {
+    tier: 'Free (Flow)',
+    tierColor: 'bg-gray-500/20 text-gray-600',
+    price: 'Free',
+    companyAdmin: 'companyflow@demo.com',
+    employee: 'employeeflow@demo.com',
+    customer: 'customerflow@demo.com',
+    businessType: 'Personal Assistant',
+  },
+  {
+    tier: 'Aura Core',
+    tierColor: 'bg-cyan-500/20 text-cyan-600',
+    price: '$97/mo',
+    companyAdmin: 'companycore@demo.com',
+    employee: 'employeecore@demo.com',
+    customer: 'customercore@demo.com',
+    businessType: 'Real Estate',
+  },
+  {
     tier: 'Aura Express',
     tierColor: 'bg-amber-500/20 text-amber-600',
     price: '$197/mo',
     companyAdmin: 'companyxprs@demo.com',
     employee: 'employeexprs@demo.com',
     customer: 'customerxprs@demo.com',
+    businessType: 'Restaurant',
   },
   {
     tier: 'Aura Halo',
@@ -43,6 +62,7 @@ const demoAccounts = [
     companyAdmin: 'companyhalo@demo.com',
     employee: 'employeehalo@demo.com',
     customer: 'customerhalo@demo.com',
+    businessType: 'Nail & Hair Salon',
   },
   {
     tier: 'Single-Point',
@@ -51,6 +71,7 @@ const demoAccounts = [
     companyAdmin: 'companysolo@demo.com',
     employee: 'employeesolo@demo.com',
     customer: 'customersolo@demo.com',
+    businessType: 'HVAC',
   },
   {
     tier: 'Multi-Track',
@@ -59,6 +80,7 @@ const demoAccounts = [
     companyAdmin: 'companymulti@demo.com',
     employee: 'employeemulti@demo.com',
     customer: 'customermulti@demo.com',
+    businessType: 'Plumbing',
   },
   {
     tier: 'Command',
@@ -67,6 +89,7 @@ const demoAccounts = [
     companyAdmin: 'companycmd@demo.com',
     employee: 'employeecmd@demo.com',
     customer: 'customercmd@demo.com',
+    businessType: 'Electrical',
   },
 ];
 
@@ -159,6 +182,20 @@ const employeeOnboardingSteps = [
 ];
 
 const tierFeatures: Record<string, string[]> = {
+  'Free (Flow)': [
+    'Basic scheduling',
+    'Personal calendar integration',
+    'Task management',
+    'Basic reminders',
+    'Self-service only',
+  ],
+  'Aura Core': [
+    'Talk to Aura (Voice)',
+    'Message Aura (Text)',
+    'Basic AI assistance',
+    'Customer portal access',
+    'Email reminders',
+  ],
   'Aura Express': [
     'Talk to Aura (Voice)',
     'Message Aura (Text)',
@@ -278,6 +315,7 @@ export default function DemoAccounts() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Tier</TableHead>
+                      <TableHead>Business Type</TableHead>
                       <TableHead>Company Admin</TableHead>
                       <TableHead>Employee</TableHead>
                       <TableHead>Customer</TableHead>
@@ -293,6 +331,9 @@ export default function DemoAccounts() {
                             </Badge>
                             <span className="text-xs text-muted-foreground">{account.price}</span>
                           </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm font-medium">{account.businessType}</span>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center">
