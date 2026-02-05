@@ -93,7 +93,7 @@ const sections: FeatureSection[] = [
     ],
   },
   {
-    title: 'AI Agents (1 / 7 / 11 / 8 / 12 / 18 / 24)',
+    title: 'AI Agents (1 / 7 / 12 / 8 / 12 / 18 / 24)',
     features: [
       // AI Receptionist - ALL tiers
       { name: 'AI Receptionist (Triage)', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
@@ -112,7 +112,7 @@ const sections: FeatureSection[] = [
       { name: 'Social Media Analytics', express: 'x', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       // Creative & Web Presence - NOT in Express
       { name: 'Creative Agent', express: 'x', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Web Presence Agent', express: 'x', flow: 'x', halo: 'x', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Web Presence Agent', express: 'x', flow: 'x', halo: 'check', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       // Field Operations
       { name: 'Dispatch Agent', express: 'x', flow: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Route Agent', express: 'x', flow: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
@@ -131,12 +131,12 @@ const sections: FeatureSection[] = [
     ],
   },
   {
-    title: 'Control Centers (0 / 1 / 3 / 2 / 4 / 5 / 7)',
+    title: 'Control Centers (0 / 1 / 4 / 2 / 4 / 5 / 7)',
     features: [
       { name: 'Customer Portal Console', express: 'x', flow: 'x', halo: 'check', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Outreach & Sales Ops Console', express: 'x', flow: 'x', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Social Media Console', express: 'x', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
-      { name: 'Web Presence Console', express: 'x', flow: 'x', halo: 'x', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
+      { name: 'Web Presence Console', express: 'x', flow: 'x', halo: 'check', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Field Operations Console', express: 'x', flow: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'check', command: 'check' },
       { name: 'Business Management Console', express: 'x', flow: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },
       { name: 'Analytics & Reports Console', express: 'x', flow: 'x', halo: 'x', core: 'x', singlePoint: 'x', multiTrack: 'x', command: 'check' },

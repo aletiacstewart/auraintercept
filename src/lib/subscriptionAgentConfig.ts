@@ -56,14 +56,14 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'AI Chat + Social Media + Web Presence',
   },
   halo: {
-    // Aura Halo ($397/mo): AI Receptionist + Scheduling + Review Agent for salons/wellness
+    // Aura Halo ($397/mo): AI Receptionist + Scheduling + Review Agent + Web Presence for salons/wellness
     agents: [
       'triage', 'booking', 'followup', 'review',  // Customer Portal (added review)
       'campaign', 'lead', 'marketing',  // Outreach & Sales
       'social_content', 'social_scheduler', 'social_analytics',  // Social Media
-      'creative'  // Creative Agent
+      'creative', 'web_presence'  // Creative & Web Presence
     ],
-    consoles: ['customer_portal', 'marketing_sales', 'social_media'],
+    consoles: ['customer_portal', 'marketing_sales', 'social_media', 'creative_web_presence'],
     label: 'Aura Halo',
     price: '$397/mo',
     description: 'AI Receptionist, Scheduling, Voice & SMS/Email for salons & wellness',
