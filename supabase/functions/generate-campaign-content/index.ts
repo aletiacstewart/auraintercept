@@ -70,31 +70,49 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    // Fetch Tavily research if companyId provided
+    // Initialize context variables
     let researchContext = '';
+    let aiProfile: any = null;
+    let services: string[] = [];
+    let faqs: any[] = [];
+    let resolvedCompanyName = companyName;
+    let resolvedIndustry = industry;
     
     if (companyId) {
       const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
       const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
       const supabase = createClient(supabaseUrl, supabaseKey);
 
-      const { data: integrations } = await supabase
-        .from('tenant_integrations')
-        .select('tavily_api_key')
-        .eq('company_id', companyId)
-        .single();
+      // Fetch company info, AI profile, services, FAQs, and integrations in parallel
+      const [companyRes, aiProfileRes, servicesRes, faqsRes, integrationsRes] = await Promise.all([
+        supabase.from('companies').select('name, service_categories, brand_tone').eq('id', companyId).maybeSingle(),
+        supabase.from('company_ai_content_profiles').select('*').eq('company_id', companyId).maybeSingle(),
+        supabase.from('services').select('name, description').eq('company_id', companyId).eq('is_active', true).limit(10),
+        supabase.from('faqs').select('question, answer').eq('company_id', companyId).limit(10),
+        supabase.from('tenant_integrations').select('tavily_api_key').eq('company_id', companyId).maybeSingle(),
+      ]);
 
-      if (integrations?.tavily_api_key) {
-        console.log('Tavily API key found, performing campaign research...');
-        
-        const searchQuery = buildSearchQuery(campaignType, industry);
+      // Set company name and industry from database if not provided
+      if (companyRes.data) {
+        resolvedCompanyName = companyName || companyRes.data.name;
+        resolvedIndustry = industry || companyRes.data.service_categories?.join(', ');
+      }
+
+      aiProfile = aiProfileRes.data;
+      services = servicesRes.data?.map(s => s.name) || [];
+      faqs = faqsRes.data || [];
+
+      // Tavily research
+      if (integrationsRes.data?.tavily_api_key) {
+        console.log('[generate-campaign-content] Tavily connected, researching...');
+        const searchQuery = buildSearchQuery(campaignType, aiProfile?.primary_industry || resolvedIndustry);
         
         try {
           const tavilyResponse = await fetch('https://api.tavily.com/search', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              api_key: integrations.tavily_api_key,
+              api_key: integrationsRes.data.tavily_api_key,
               query: searchQuery,
               search_depth: 'basic',
               max_results: 3,
@@ -105,12 +123,32 @@ serve(async (req) => {
           if (tavilyResponse.ok) {
             const research: TavilyResponse = await tavilyResponse.json();
             researchContext = formatResearchForPrompt(research);
-            console.log('Tavily research completed for campaign');
+            console.log('[generate-campaign-content] Tavily research added');
           }
         } catch (tavilyError) {
-          console.error('Tavily search failed:', tavilyError);
+          console.error('[generate-campaign-content] Tavily error:', tavilyError);
         }
       }
+    }
+
+    // Build AI profile context
+    const aiProfileContext: string[] = [];
+    if (aiProfile) {
+      if (aiProfile.primary_industry) aiProfileContext.push(`Industry: ${aiProfile.primary_industry}`);
+      if (aiProfile.tone) aiProfileContext.push(`Brand Tone: ${aiProfile.tone}`);
+      if (aiProfile.brand_voice) aiProfileContext.push(`Brand Voice: ${aiProfile.brand_voice}`);
+      if (aiProfile.target_audience) aiProfileContext.push(`Target Audience: ${aiProfile.target_audience}`);
+      if (aiProfile.unique_selling_points?.length) aiProfileContext.push(`USPs: ${aiProfile.unique_selling_points.join(', ')}`);
+      if (aiProfile.keywords?.length) aiProfileContext.push(`Keywords to use: ${aiProfile.keywords.join(', ')}`);
+      if (aiProfile.avoid_keywords?.length) aiProfileContext.push(`Keywords to AVOID: ${aiProfile.avoid_keywords.join(', ')}`);
+    }
+
+    // Build knowledge base context
+    const knowledgeContext: string[] = [];
+    if (services.length > 0) knowledgeContext.push(`Services: ${services.join(', ')}`);
+    if (faqs.length > 0) {
+      const faqSummary = faqs.slice(0, 3).map(f => `Q: ${f.question} A: ${f.answer.substring(0, 100)}`).join(' | ');
+      knowledgeContext.push(`FAQs: ${faqSummary}`);
     }
 
     // Build discount string if provided
@@ -125,7 +163,18 @@ serve(async (req) => {
       ? 'Generate a compelling email subject line (max 60 characters) that will get high open rates.'
       : 'Generate an engaging marketing message template. Use {customer_name} as a placeholder for personalization. Keep it concise but persuasive (2-3 short paragraphs max).';
 
-    const systemPrompt = `You are a marketing copywriter specializing in service-based businesses. Create compelling campaign content that drives engagement and conversions. Be direct, use action-oriented language, and create urgency when appropriate.`;
+    // Build tone guidance from AI profile
+    const toneGuidance = aiProfile?.tone ? `Write in a ${aiProfile.tone} tone.` : '';
+    const voiceGuidance = aiProfile?.brand_voice ? `Brand voice: ${aiProfile.brand_voice}` : '';
+    const avoidanceGuidance = aiProfile?.avoid_keywords?.length 
+      ? `IMPORTANT: Do NOT use these words: ${aiProfile.avoid_keywords.join(', ')}`
+      : '';
+
+    const systemPrompt = `You are a marketing copywriter for ${resolvedCompanyName || 'a service business'}. Create compelling campaign content that drives engagement and conversions.
+${toneGuidance}
+${voiceGuidance}
+Be direct, use action-oriented language, and create urgency when appropriate.
+${avoidanceGuidance}`;
 
     // Build context from form data
     let contextDetails = [];
@@ -134,7 +183,7 @@ serve(async (req) => {
     if (discountInfo) contextDetails.push(`Offer: ${discountInfo}`);
     if (inactivePeriod) contextDetails.push(`Targeting customers inactive for ${inactivePeriod} days`);
 
-    const userPrompt = `${researchContext ? `=== CURRENT MARKET RESEARCH ===\n${researchContext}\n\n` : ''}Create content for a ${campaignType} campaign targeting ${targetSegment} customers for ${companyName || 'our company'}.
+    const userPrompt = `${researchContext ? `=== CURRENT MARKET RESEARCH ===\n${researchContext}\n\n` : ''}${aiProfileContext.length > 0 ? `=== BRAND PROFILE ===\n${aiProfileContext.join('\n')}\n\n` : ''}${knowledgeContext.length > 0 ? `=== KNOWLEDGE BASE ===\n${knowledgeContext.join('\n')}\n\n` : ''}Create content for a ${campaignType} campaign targeting ${targetSegment} customers for ${resolvedCompanyName || 'our company'}.
 
 ${contextDetails.length > 0 ? `Campaign Details:\n${contextDetails.join('\n')}\n` : ''}
 Campaign Type: ${campaignType}
@@ -152,7 +201,8 @@ Target: ${targetSegment}
 ${fieldPrompt}
 ${promoCode ? `Include the promo code "${promoCode}" in the message.` : ''}
 ${discountInfo ? `Highlight the ${discountInfo} offer.` : ''}
-${researchContext ? 'Incorporate relevant trends or insights from the market research above to make the message timely and compelling.' : ''}
+${researchContext ? 'Incorporate relevant trends or insights from the market research above.' : ''}
+${knowledgeContext.length > 0 ? 'Reference actual services from the knowledge base when relevant.' : ''}
 
 Respond with ONLY the content, no explanations or quotes around it.`;
 

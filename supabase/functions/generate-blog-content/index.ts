@@ -59,34 +59,57 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    // Initialize Supabase client if companyId provided
+    // Initialize context variables
     let researchContext = '';
+    let aiProfile: any = null;
+    let services: any[] = [];
+    let faqs: any[] = [];
+    let resolvedCompanyName = companyName;
+    let resolvedIndustry = industry;
+    let resolvedTone = tone;
     
     if (companyId) {
       const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
       const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
       const supabase = createClient(supabaseUrl, supabaseKey);
 
-      // Fetch Tavily API key from tenant_integrations
-      const { data: integrations } = await supabase
-        .from('tenant_integrations')
-        .select('tavily_api_key')
-        .eq('company_id', companyId)
-        .single();
+      // Fetch all data in parallel: company, AI profile, services, FAQs, integrations
+      const [companyRes, aiProfileRes, servicesRes, faqsRes, integrationsRes] = await Promise.all([
+        supabase.from('companies').select('name, service_categories, brand_tone').eq('id', companyId).maybeSingle(),
+        supabase.from('company_ai_content_profiles').select('*').eq('company_id', companyId).maybeSingle(),
+        supabase.from('services').select('name, description, base_price').eq('company_id', companyId).eq('is_active', true).limit(15),
+        supabase.from('faqs').select('question, answer, category').eq('company_id', companyId).limit(15),
+        supabase.from('tenant_integrations').select('tavily_api_key').eq('company_id', companyId).maybeSingle(),
+      ]);
 
-      if (integrations?.tavily_api_key) {
-        console.log('Tavily API key found, performing research...');
+      // Set resolved values from database
+      if (companyRes.data) {
+        resolvedCompanyName = companyName || companyRes.data.name;
+        resolvedIndustry = industry || companyRes.data.service_categories?.join(', ');
+      }
+
+      aiProfile = aiProfileRes.data;
+      services = servicesRes.data || [];
+      faqs = faqsRes.data || [];
+
+      // Use AI profile tone if available
+      if (aiProfile?.tone && tone === 'professional') {
+        resolvedTone = aiProfile.tone;
+      }
+
+      // Tavily research
+      if (integrationsRes.data?.tavily_api_key) {
+        console.log('[generate-blog-content] Tavily connected, researching...');
         
-        // Build search query
         const keywordStr = keywords.length > 0 ? keywords.join(' ') : '';
-        const searchQuery = `${topic} ${keywordStr} latest trends insights best practices`.trim();
+        const searchQuery = `${topic} ${keywordStr} ${aiProfile?.primary_industry || resolvedIndustry || ''} latest trends insights`.trim();
         
         try {
           const tavilyResponse = await fetch('https://api.tavily.com/search', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              api_key: integrations.tavily_api_key,
+              api_key: integrationsRes.data.tavily_api_key,
               query: searchQuery,
               search_depth: 'advanced',
               max_results: 5,
@@ -97,25 +120,62 @@ serve(async (req) => {
           if (tavilyResponse.ok) {
             const research: TavilyResponse = await tavilyResponse.json();
             researchContext = formatResearchForPrompt(research);
-            console.log('Tavily research completed successfully');
+            console.log('[generate-blog-content] Tavily research added');
           } else {
-            console.error('Tavily API error:', await tavilyResponse.text());
+            console.error('[generate-blog-content] Tavily API error:', await tavilyResponse.text());
           }
         } catch (tavilyError) {
-          console.error('Tavily search failed:', tavilyError);
+          console.error('[generate-blog-content] Tavily error:', tavilyError);
         }
       }
     }
 
-    const systemPrompt = `You are an expert content writer specializing in creating engaging, SEO-optimized blog articles for service-based businesses. Write in a ${tone} tone that connects with readers while incorporating relevant keywords naturally.`;
+    // Build AI profile context
+    const aiProfileContext: string[] = [];
+    if (aiProfile) {
+      if (aiProfile.primary_industry) aiProfileContext.push(`Primary Industry: ${aiProfile.primary_industry}`);
+      if (aiProfile.brand_voice) aiProfileContext.push(`Brand Voice: ${aiProfile.brand_voice}`);
+      if (aiProfile.target_audience) aiProfileContext.push(`Target Audience: ${aiProfile.target_audience}`);
+      if (aiProfile.unique_selling_points?.length) aiProfileContext.push(`USPs: ${aiProfile.unique_selling_points.join(', ')}`);
+      if (aiProfile.content_topics?.length) aiProfileContext.push(`Content Themes: ${aiProfile.content_topics.join(', ')}`);
+    }
 
-    const userPrompt = `${researchContext ? `=== CURRENT INDUSTRY RESEARCH ===\n${researchContext}\n\n` : ''}=== TASK ===
+    // Build knowledge base context
+    const knowledgeContext: string[] = [];
+    if (services.length > 0) {
+      const servicesList = services.map(s => `${s.name}${s.base_price ? ` ($${s.base_price})` : ''}`).join(', ');
+      knowledgeContext.push(`Services: ${servicesList}`);
+    }
+    if (faqs.length > 0) {
+      const faqSummary = faqs.slice(0, 5).map(f => `Q: ${f.question}`).join(' | ');
+      knowledgeContext.push(`Common Questions: ${faqSummary}`);
+    }
+
+    // Merge keywords from profile
+    const allKeywords = [...keywords];
+    if (aiProfile?.keywords?.length) {
+      aiProfile.keywords.forEach((kw: string) => {
+        if (!allKeywords.includes(kw)) allKeywords.push(kw);
+      });
+    }
+
+    // Build avoidance instructions
+    const avoidKeywords = aiProfile?.avoid_keywords?.length 
+      ? `\nIMPORTANT: Do NOT use these words/phrases: ${aiProfile.avoid_keywords.join(', ')}`
+      : '';
+
+    const systemPrompt = `You are an expert content writer for ${resolvedCompanyName || 'a service business'}. Create engaging, SEO-optimized blog articles.
+Write in a ${resolvedTone} tone that connects with readers.
+${aiProfile?.brand_voice ? `Brand voice: ${aiProfile.brand_voice}` : ''}
+Incorporate keywords naturally without keyword stuffing.${avoidKeywords}`;
+
+    const userPrompt = `${researchContext ? `=== CURRENT INDUSTRY RESEARCH ===\n${researchContext}\n\n` : ''}${aiProfileContext.length > 0 ? `=== BRAND PROFILE ===\n${aiProfileContext.join('\n')}\n\n` : ''}${knowledgeContext.length > 0 ? `=== KNOWLEDGE BASE ===\n${knowledgeContext.join('\n')}\n\n` : ''}=== TASK ===
 Write a comprehensive blog article about: ${topic}
 
-${keywords.length > 0 ? `Keywords to include naturally: ${keywords.join(', ')}` : ''}
-${companyName ? `Company: ${companyName}` : ''}
-${industry ? `Industry: ${industry}` : ''}
-Tone: ${tone}
+${allKeywords.length > 0 ? `Keywords to include naturally: ${allKeywords.join(', ')}` : ''}
+${resolvedCompanyName ? `Company: ${resolvedCompanyName}` : ''}
+${resolvedIndustry ? `Industry: ${resolvedIndustry}` : ''}
+Tone: ${resolvedTone}
 Target length: approximately ${wordCount} words
 
 Generate a complete blog article with:
@@ -129,7 +189,8 @@ Generate a complete blog article with:
    - A conclusion with a call-to-action
 5. A description for a suggested featured image
 
-${researchContext ? 'Incorporate relevant statistics, trends, or insights from the research provided above to make the content current and authoritative.' : ''}
+${researchContext ? 'Incorporate statistics, trends, or insights from the research above.' : ''}
+${knowledgeContext.length > 0 ? 'Reference actual services from the knowledge base when relevant.' : ''}
 
 Respond in valid JSON format:
 {
