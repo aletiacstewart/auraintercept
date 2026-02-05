@@ -5,7 +5,7 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { PageContainer } from '@/components/ui/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown, Share2, Video, BarChart3, Palette, Globe, Factory, ClipboardList, ExternalLink } from 'lucide-react';
+import { FileText, Download, Loader2, CheckCircle, DollarSign, Bot, BookOpen, Building2, FileDown, Share2, Video, BarChart3, Palette, Globe, Factory, ClipboardList, ExternalLink, HelpCircle } from 'lucide-react';
 import { PageHeader } from '@/components/ui/page-header';
 import PlatformDocumentPDF from '@/components/documentation/PlatformDocumentPDF';
 import PricingSummaryPDF from '@/components/documentation/PricingSummaryPDF';
@@ -19,6 +19,7 @@ import SalesPitchDataPDF from '@/components/documentation/SalesPitchDataPDF';
 import BrandAssetGuidePDF from '@/components/documentation/BrandAssetGuidePDF';
 import WebsiteCopyPDF from '@/components/documentation/WebsiteCopyPDF';
 import IndustryMarketingKitPDF from '@/components/documentation/IndustryMarketingKitPDF';
+import PlatformFAQPDF from '@/components/documentation/PlatformFAQPDF';
 
 const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
 
@@ -312,6 +313,63 @@ const ExportDocumentation = forwardRef<HTMLDivElement>((_, ref) => {
                     <Button className="w-full" variant="outline">
                       <Download className="mr-2 h-4 w-4" />
                       Download Admin Guide
+                    </Button>
+                  );
+                }}
+              </PDFDownloadLink>
+            </CardContent>
+          </Card>
+
+          {/* Platform FAQ PDF */}
+          <Card className="border-purple-500/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <HelpCircle className="h-5 w-5 text-purple-600" />
+                Platform FAQ Document
+              </CardTitle>
+              <CardDescription>
+                Comprehensive FAQ covering all platform features, pricing, and troubleshooting
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm text-card-foreground/70">
+                <p className="font-medium text-card-foreground">Document includes:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Getting Started FAQs</li>
+                  <li>Subscription & Pricing</li>
+                  <li>AI Operatives & Features</li>
+                  <li>Consoles & Dashboards</li>
+                  <li>Integrations & Setup</li>
+                  <li>Troubleshooting Guide</li>
+                </ul>
+              </div>
+
+              <PDFDownloadLink
+                document={<PlatformFAQPDF />}
+                fileName={`platform-faq-${new Date().toISOString().split('T')[0]}.pdf`}
+              >
+                {({ loading, error }) => {
+                  if (loading) {
+                    return (
+                      <Button disabled className="w-full">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating PDF...
+                      </Button>
+                    );
+                  }
+                  
+                  if (error) {
+                    return (
+                      <Button variant="destructive" disabled className="w-full">
+                        Error generating PDF
+                      </Button>
+                    );
+                  }
+
+                  return (
+                    <Button className="w-full" variant="outline">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Platform FAQ
                     </Button>
                   );
                 }}
