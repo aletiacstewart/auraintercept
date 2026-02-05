@@ -1,51 +1,69 @@
 
-# Fix AI Agent Test Suite Performance
 
-## Status: ✅ IMPLEMENTED (Partial)
+# Fix Tavily AI Content Research Integration
 
-### Completed Changes
+## Problem Summary
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| `AIAgentTestSuite.tsx` | ✅ Done | Parallel execution, thresholds, modes, timeouts |
-| `ai-agent-health/index.ts` | ⚠️ Pending | Created but deployment timing out |
+Tavily AI is properly configured with an API key, but the 6 edge functions that use it for content research cannot deploy due to bundle generation timeouts caused by unstable `esm.sh` imports.
 
 ---
 
-## Implemented Features
+## Affected Edge Functions
 
-### 1. Adjusted Test Thresholds ✅
-
-| Threshold | Before | After |
-|-----------|--------|-------|
-| Pass | < 3s | < 8s |
-| Slow warning | > 3s | 8-15s |
-| Timeout | None | 15s |
-
-### 2. Parallel Test Execution ✅
-
-- Batch size: 5 agents processed concurrently
-- Uses `Promise.all` for parallel requests
-- Reduces total test time by ~80%
-
-### 3. Test Modes ✅
-
-| Mode | Description |
-|------|-------------|
-| Quick Health | Ping health endpoint only (requires edge function) |
-| Standard | Single prompt per agent |
-| Comprehensive | Multiple prompts per agent |
-
-### 4. Request Timeout ✅
-
-- AbortController with 15s timeout
-- Prevents hanging tests
-- Graceful abort on "Stop" button
+| Function | Uses Tavily | Status |
+|----------|-------------|--------|
+| `generate-social-variations` | Yes | ❌ Not deployed |
+| `generate-social-batch` | Yes | ❌ Not deployed |
+| `generate-blog-content` | Yes | ❌ Not deployed |
+| `generate-blog-batch` | Yes | ❌ Not deployed |
+| `generate-campaign-content` | Yes | ❌ Not deployed |
+| `generate-website-content` | Yes | ❌ Not deployed |
 
 ---
 
-## Pending: Edge Function Deployment
+## Solution
 
-The `ai-agent-health` edge function was created but deployment is timing out due to bundler issues. Quick Health mode will show errors until deployed.
+Update all 6 edge functions to use the stable `npm:` import specifier instead of `esm.sh`:
 
-**Workaround:** Use Standard mode for testing until health endpoint is available.
+```text
+BEFORE: import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+AFTER:  import { createClient } from "npm:@supabase/supabase-js@2";
+```
+
+---
+
+## Files to Modify
+
+| File | Change |
+|------|--------|
+| `supabase/functions/generate-social-variations/index.ts` | Update import on line 2 |
+| `supabase/functions/generate-social-batch/index.ts` | Update import on line 2 |
+| `supabase/functions/generate-blog-content/index.ts` | Update import on line 2 |
+| `supabase/functions/generate-blog-batch/index.ts` | Update import on line 2 |
+| `supabase/functions/generate-campaign-content/index.ts` | Update import on line 2 |
+| `supabase/functions/generate-website-content/index.ts` | Update import on line 2 |
+
+---
+
+## Expected Outcome
+
+After this fix:
+- All 6 content generation edge functions will deploy successfully
+- Tavily AI research will enhance content for:
+  - Social media posts (trending insights)
+  - Blog articles (industry research)
+  - Marketing campaigns (market data)
+  - Website content (SEO trends)
+- The TavilyStatusBadge will accurately reflect the working integration
+
+---
+
+## AI Agents Enabled by This Fix
+
+| Agent | Category | Research Capability |
+|-------|----------|---------------------|
+| Social Media Agent | Social Media | Trending topics & hashtags |
+| Creative Agent | Creative & Web | Industry insights & statistics |
+| Campaign Agent | Marketing & Sales | Market trends & competitor data |
+| Web Presence Agent | Creative & Web | SEO trends & best practices |
+
