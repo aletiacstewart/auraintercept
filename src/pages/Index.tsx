@@ -705,71 +705,7 @@ export default function Index() {
             {/* General Business Plans - Order 2 */}
             <div className="order-2">
               <h3 className="text-xl font-semibold text-center mt-10 mb-4 text-foreground/80">General Business Plans</h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
-            {/* Aura Core Plan - AI-Assisted (No Automation) */}
-            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-emerald-500/30 dark-card-surface border-emerald-500/20">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
-              <CardContent className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge className="bg-emerald-600 text-white border-0 text-[10px]">AI-Assisted</Badge>
-                  <Badge variant="outline" className="border-emerald-500/50 text-emerald-400 text-[10px]">0 Agents • 3 Tools</Badge>
-                </div>
-                <h3 className="text-lg font-bold mb-1">Aura Core</h3>
-                <p className="text-[10px] text-card-foreground/60 mb-1">(Digital Foundation)</p>
-                <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-3xl font-bold text-emerald-400">$500</span>
-                  <span className="text-card-foreground/60 text-sm">/month</span>
-                </div>
-                <p className="text-xs text-secondary mb-3">$5,000/year (Save $1,000)</p>
-                <p className="text-xs text-card-foreground/70 mb-4">AI-powered tools for content & presence. <span className="text-emerald-400">You stay in control.</span></p>
-                
-                {/* AI Tools Section */}
-                <p className="text-[10px] text-emerald-400 font-medium mb-1.5 uppercase tracking-wide">AI Tools Included</p>
-                <div className="space-y-1.5 text-left mb-3">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Message Aura (Text) <span className="text-card-foreground/50">(Chat Tool)</span></span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Social Media <span className="text-card-foreground/50">(Content Tool)</span></span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">Web Presence <span className="text-card-foreground/50">(1-Page Site)</span></span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span className="text-xs">2 Employee Accounts</span>
-                  </div>
-                </div>
-                
-                {/* What's NOT included */}
-                <p className="text-[10px] text-muted-foreground font-medium mb-1.5 uppercase tracking-wide">No Automation</p>
-                <div className="space-y-1.5 text-left mb-4">
-                  <div className="flex items-center gap-2">
-                    <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-                    <span className="text-xs text-muted-foreground">No AI Agents (manual operations)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-                    <span className="text-xs text-muted-foreground">No Voice/SMS (text only)</span>
-                  </div>
-                </div>
-
-                <Button variant="outline" size="sm" className="w-full border-emerald-500/50 hover:bg-emerald-500/10" onClick={() => navigate('/auth?mode=company')}>
-                  Start Free Trial
-                </Button>
-                <button 
-                  onClick={() => setShowPlanComparison(!showPlanComparison)}
-                  className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
-                >
-                  See More Details
-                  {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                </button>
-                <p className="text-[9px] text-emerald-400/70 mt-2 text-center">Requires: Social Media Accounts</p>
-              </CardContent>
-            </Card>
+              <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
 
             {/* Single-Point Plan - Updated */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/30 dark-card-surface">
@@ -943,7 +879,7 @@ export default function Index() {
           {/* Industry-Specific Packages - Order 1 (appears first) */}
           <div className="order-1">
             <h3 className="text-xl font-semibold text-center mb-4 text-foreground/80">Industry-Specific Packages</h3>
-            <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
             {/* Aura Express - Restaurant Package */}
             <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 border-amber-400/30 dark-card-surface">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
@@ -1113,6 +1049,71 @@ export default function Index() {
                   {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </button>
                 <p className="text-[9px] text-rose-400/70 mt-2 text-center">Requires: ElevenLabs + Twilio + Resend</p>
+              </CardContent>
+            </Card>
+
+            {/* Aura Core Plan - AI-Assisted (No Automation) */}
+            <Card className="relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-emerald-500/30 dark-card-surface border-emerald-500/20">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
+              <CardContent className="p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge className="bg-emerald-600 text-white border-0 text-[10px]">AI-Assisted</Badge>
+                  <Badge variant="outline" className="border-emerald-500/50 text-emerald-400 text-[10px]">0 Agents • 3 Tools</Badge>
+                </div>
+                <h3 className="text-lg font-bold mb-1">Aura Core</h3>
+                <p className="text-[10px] text-card-foreground/60 mb-1">(Digital Foundation)</p>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-3xl font-bold text-emerald-400">$500</span>
+                  <span className="text-card-foreground/60 text-sm">/month</span>
+                </div>
+                <p className="text-xs text-secondary mb-3">$5,000/year (Save $1,000)</p>
+                <p className="text-xs text-card-foreground/70 mb-4">AI-powered tools for content & presence. <span className="text-emerald-400">You stay in control.</span></p>
+                
+                {/* AI Tools Section */}
+                <p className="text-[10px] text-emerald-400 font-medium mb-1.5 uppercase tracking-wide">AI Tools Included</p>
+                <div className="space-y-1.5 text-left mb-3">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">Message Aura (Text) <span className="text-card-foreground/50">(Chat Tool)</span></span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">Social Media <span className="text-card-foreground/50">(Content Tool)</span></span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">Web Presence <span className="text-card-foreground/50">(1-Page Site)</span></span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                    <span className="text-xs">2 Employee Accounts</span>
+                  </div>
+                </div>
+                
+                {/* What's NOT included */}
+                <p className="text-[10px] text-muted-foreground font-medium mb-1.5 uppercase tracking-wide">No Automation</p>
+                <div className="space-y-1.5 text-left mb-4">
+                  <div className="flex items-center gap-2">
+                    <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                    <span className="text-xs text-muted-foreground">No AI Agents (manual operations)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <X className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                    <span className="text-xs text-muted-foreground">No Voice/SMS (text only)</span>
+                  </div>
+                </div>
+
+                <Button variant="outline" size="sm" className="w-full border-emerald-500/50 hover:bg-emerald-500/10" onClick={() => navigate('/auth?mode=company')}>
+                  Start Free Trial
+                </Button>
+                <button 
+                  onClick={() => setShowPlanComparison(!showPlanComparison)}
+                  className="w-full mt-2 text-xs text-white hover:text-white/80 flex items-center justify-center gap-1 transition-colors"
+                >
+                  See More Details
+                  {showPlanComparison ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                </button>
+                <p className="text-[9px] text-emerald-400/70 mt-2 text-center">Requires: Social Media Accounts</p>
               </CardContent>
             </Card>
           </div>
