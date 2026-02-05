@@ -103,12 +103,24 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: 'Social-Marketing Console & Mobile App',
-    requiredTier: 'command',
+    label: 'Marketing Console',
+    requiredTier: 'halo',  // Changed from command to halo
     items: [
-      { label: 'Outreach & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
-      { label: 'Social Media Ops', icon: Share2, href: '/dashboard/ai-consoles/social-media', roles: ['platform_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
-      { label: 'Web Presence Manager', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'command' },
+      { label: 'Outreach & Sales Ops', icon: Megaphone, href: '/dashboard/ai-consoles/marketing-sales', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'halo' },  // Changed from command to halo
+    ],
+  },
+  {
+    label: 'Social Media Console',
+    requiredTier: 'aura_flow',  // Changed from command to aura_flow
+    items: [
+      { label: 'Social Media Ops', icon: Share2, href: '/dashboard/ai-consoles/social-media', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'aura_flow' },  // Changed from command to aura_flow
+    ],
+  },
+  {
+    label: 'Web Presence Console',
+    requiredTier: 'single_point',  // Changed from command to single_point
+    items: [
+      { label: 'Web Presence Manager', icon: Globe, href: '/dashboard/smart-website', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-platform', requiredTier: 'single_point' },  // Changed from command to single_point
     ],
   },
   {
@@ -129,10 +141,11 @@ const navGroups: NavGroup[] = [
   },
   {
     label: 'Customer Console & Mobile App',
+    requiredTier: 'halo',  // Added tier requirement
     items: [
-      { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'], featureColor: 'text-feature-customers' },
-      { label: 'Customer Website App', icon: Globe, href: '/dashboard/customer-website-app', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers' },
-      { label: 'Customer Portal App Install', icon: Smartphone, href: '/dashboard/customer-portal-app-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers' },
+      { label: 'Customer Portal', icon: HeadphonesIcon, href: '/dashboard/ai-consoles/customer-portal', roles: ['platform_admin', 'company_admin', 'employee'], requiredJobTypes: ['customer_service', 'booking_agent', 'dispatch'], featureColor: 'text-feature-customers', requiredTier: 'halo' },
+      { label: 'Customer Website App', icon: Globe, href: '/dashboard/customer-website-app', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers', requiredTier: 'halo' },
+      { label: 'Customer Portal App Install', icon: Smartphone, href: '/dashboard/customer-portal-app-install', roles: ['platform_admin', 'company_admin'], featureColor: 'text-feature-customers', requiredTier: 'halo' },
     ],
   },
   {

@@ -35,22 +35,20 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualSavings: 394,
     implementationFee: 299,
     employees: 2,
-    operatives: 8,
-    consoles: 2,
+    operatives: 1,  // Only AI Receptionist
+    consoles: 0,  // No consoles
     description: 'AI voice and chat for restaurants with smart link sharing.',
     bestFor: 'Restaurants, cafes, food trucks, and food service businesses.',
     highlights: [
       'AI Receptionist for 24/7 engagement',
       'Message Aura (Text) + Talk to Aura (Voice)',
-      'Outreach & Sales Ops (Campaign, Lead, Marketing agents)',
-      'Social Media Ops (Content, Scheduler, Analytics agents)',
-      'Creative Agent for content generation',
       'Smart Link Sharing (Website, Menu, Ordering)',
       'Knowledge Base for FAQs',
       'Embeddable Chat Widget',
+      'API Access',
     ],
     hasVoice: true,
-    hasAutomation: true,
+    hasAutomation: false,  // No automation consoles
   },
   aura_flow: {
     id: 'aura_flow',
@@ -59,9 +57,9 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualPrice: 2970,
     annualSavings: 594,
     implementationFee: 399,
-    employees: 2,
-    operatives: 10,
-    consoles: 2,
+    employees: 1,  // Changed from 2 to 1
+    operatives: 7,  // triage, booking, followup, social_content, social_scheduler, social_analytics, creative
+    consoles: 1,  // Social Media only
     description: 'AI voice, chat, and scheduling with calendar sync.',
     bestFor: 'Service businesses needing automated booking without a customer portal.',
     highlights: [
@@ -69,11 +67,12 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       'Message Aura (Text) + Talk to Aura (Voice)',
       'Scheduling Agent with calendar sync',
       'Follow-up Agent (SMS + Email)',
-      'Outreach & Sales Ops (Campaign, Lead, Marketing agents)',
       'Social Media Ops (Content, Scheduler, Analytics agents)',
       'Creative Agent for content generation',
       'Smart Link Sharing',
       'Knowledge Base for FAQs',
+      'API Access',
+      '1 Employee Account',
     ],
     hasVoice: true,
     hasAutomation: true,
@@ -86,19 +85,20 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualSavings: 794,
     implementationFee: 499,
     employees: 3,
-    operatives: 10,
+    operatives: 11,  // Added review agent
     consoles: 3,
     description: 'AI-automated for salons and wellness businesses.',
     bestFor: 'Nail salons, hair salons, barbers, massage centers, spas, and wellness businesses.',
     highlights: [
       'AI Receptionist for 24/7 customer engagement',
       'Message Aura (Text) + Talk to Aura (Voice)',
-      'Scheduling Agent + Follow-up Agent',
+      'Scheduling Agent + Follow-up Agent + Review Agent',
       'Customer Portal Console',
       'Outreach & Sales Ops (Campaign, Lead, Marketing agents)',
       'Social Media Ops (Content, Scheduler, Analytics agents)',
       'Creative Agent for content generation',
       'Designed specifically for beauty & wellness',
+      'API Access',
     ],
     hasVoice: true,
     hasAutomation: true,
@@ -123,6 +123,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       'Creative Agent for content generation',
       'Web Presence (1-page site)',
       '2 Employee Accounts',
+      'API Access',
     ],
     hasVoice: false,
     hasAutomation: true,
@@ -135,20 +136,22 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualSavings: 3000,
     implementationFee: 499,
     employees: 5,
-    operatives: 10,
-    consoles: 3,
-    description: 'AI-automated lead intake and reputation management.',
-    bestFor: 'Small service companies focused on lead capture and review collection.',
+    operatives: 12,  // Added booking and web_presence
+    consoles: 4,  // Added creative_web_presence
+    description: 'AI-automated lead intake, scheduling, and web presence management.',
+    bestFor: 'Small service companies focused on lead capture, review collection, and online presence.',
     highlights: [
-      'AI Receptionist + Follow-up + Review agents',
+      'AI Receptionist + Scheduling Agent + Follow-up + Review agents',
       'Message Aura (Text) + Talk to Aura (Voice)',
       'Customer Portal Console',
       'Outreach & Sales Ops (Campaign, Lead, Marketing agents)',
       'Social Media Ops (Content, Scheduler, Analytics agents)',
-      'Creative Agent for content generation',
+      'Creative Agent + Web Presence Agent',
+      'Creative & Web Presence Console',
       'AI Outbound Calls for reminders (requires Twilio)',
       'Knowledge Base for intelligent responses',
       'Up to 5 employees',
+      'API Access',
     ],
     hasVoice: true,
     hasAutomation: true,
@@ -161,20 +164,22 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     annualSavings: 7994,
     implementationFee: 499,
     employees: 10,
-    operatives: 17,
-    consoles: 4,
-    description: 'Full field operations with comprehensive automation.',
+    operatives: 18,  // Added web_presence
+    consoles: 5,  // Added creative_web_presence
+    description: 'Full field operations with comprehensive automation and web presence.',
     bestFor: 'Growing companies with field technicians needing dispatch automation and online booking.',
     highlights: [
       'Everything in Single-Point',
-      '17 AI Operatives total',
-      '4 Consoles (Customer Portal, Field Ops, Outreach, Social Media)',
+      '18 AI Operatives total',
+      '5 Consoles (Customer Portal, Field Ops, Outreach, Social Media, Creative & Web Presence)',
       'Online appointment booking via AI',
       'Smart dispatch and job assignment',
       'Real-time GPS routing and navigation',
       'Customer ETA notifications',
       'Quoting and invoicing from the field',
+      'Web Presence Agent for site management',
       'Up to 10 employees',
+      'API Access',
     ],
     hasVoice: true,
     hasAutomation: true,
@@ -201,6 +206,7 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
       'Multi-location support',
       'White-label branding',
       '25 Employee Accounts',
+      'API Access',
     ],
     hasVoice: true,
     hasAutomation: true,
@@ -263,7 +269,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Review Agent',
     description: 'Collects customer reviews after service completion. Directs satisfied customers to leave reviews on Google, Yelp, or Facebook.',
     console: 'customer_portal',
-    tier: 'single_point',
+    tier: 'halo',  // Changed from single_point to halo
     dependencies: ['followup'],
     isCore: false,
     worksAlone: false,
@@ -356,7 +362,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Campaign Agent',
     description: 'Creates and sends email/SMS campaigns. Manages campaign scheduling and performance analytics.',
     console: 'marketing_sales',
-    tier: 'express',  // Universal agent - available on all paid tiers
+    tier: 'halo',  // Changed from express to halo
     dependencies: [],
     isCore: true,
     worksAlone: true,
@@ -366,7 +372,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Lead Agent',
     description: 'Qualifies and scores incoming leads based on engagement. Automates follow-up sequences to move leads through the pipeline.',
     console: 'marketing_sales',
-    tier: 'express',  // Universal agent - available on all paid tiers
+    tier: 'halo',  // Changed from express to halo
     dependencies: [],
     isCore: false,
     worksAlone: true,
@@ -376,7 +382,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Marketing Agent',
     description: 'Manages customer segments, promo codes, referral tracking, and win-back targeting for inactive customers.',
     console: 'marketing_sales',
-    tier: 'express',  // Universal agent - available on all paid tiers
+    tier: 'halo',  // Changed from express to halo
     dependencies: [],
     isCore: false,
     worksAlone: true,
@@ -387,7 +393,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Social Media Agent',
     description: 'Creates posts for 6 platforms: Instagram, Facebook, LinkedIn, TikTok, Google My Business, and SMS.',
     console: 'social_media',
-    tier: 'express',  // Universal agent - available on all paid tiers
+    tier: 'aura_flow',  // Changed from express to aura_flow
     dependencies: [],
     isCore: true,
     worksAlone: true,
@@ -397,7 +403,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Social Media Scheduler',
     description: 'Queues and publishes social media content at optimal times. Manages content calendar and scheduling.',
     console: 'social_media',
-    tier: 'express',  // Universal agent - available on all paid tiers
+    tier: 'aura_flow',  // Changed from express to aura_flow
     dependencies: ['social_content'],
     isCore: false,
     worksAlone: false,
@@ -407,7 +413,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Social Media Analytics',
     description: 'Tracks engagement metrics across all social platforms. Provides insights on post performance and audience growth.',
     console: 'social_media',
-    tier: 'express',  // Universal agent - available on all paid tiers
+    tier: 'aura_flow',  // Changed from express to aura_flow
     dependencies: ['social_content'],
     isCore: false,
     worksAlone: false,
@@ -459,7 +465,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Creative Agent',
     description: 'Unified AI content generation for all channels. Creates on-brand content for web presence, social media, campaigns, blogs, and lead nurturing with consistent voice and messaging.',
     console: 'creative_web_presence',
-    tier: 'express',  // Universal agent - available on all paid tiers
+    tier: 'aura_flow',  // Changed from express to aura_flow
     dependencies: [],
     isCore: true,
     worksAlone: true,
@@ -470,7 +476,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
     name: 'Web Presence Agent',
     description: 'AI-powered website and blog management. Auto-optimizes SEO, suggests content updates, monitors site performance, and auto-publishes blog posts from the Content Engine.',
     console: 'creative_web_presence',
-    tier: 'command',
+    tier: 'single_point',  // Changed from command to single_point
     dependencies: ['creative'],
     isCore: true,
     worksAlone: true,
@@ -523,7 +529,7 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'marketing_sales',
     name: 'Outreach & Sales Ops',
     description: 'AI-powered marketing automation with campaign management, customer segmentation, promotional tools, and lead nurturing.',
-    tier: 'express',  // Universal console - available on all paid tiers
+    tier: 'halo',  // Changed from express to halo
     agentCount: 3,
     tabs: ['Campaign', 'Leads', 'Marketing'],
     color: 'orange',
@@ -532,7 +538,7 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'social_media',
     name: 'Social Media Ops',
     description: 'AI-powered social media management with content creation for 6 platforms, scheduling, and visual content calendar.',
-    tier: 'express',  // Universal console - available on all paid tiers
+    tier: 'aura_flow',  // Changed from express to aura_flow
     agentCount: 3,
     tabs: ['Social Posts', 'Calendar', 'Analytics'],
     color: 'pink',
@@ -541,7 +547,7 @@ export const CONSOLES: ConsoleConfig[] = [
     id: 'creative_web_presence',
     name: 'Creative & Web Presence',
     description: 'Content Engine for unified multi-channel generation plus AI-powered website builder, blog management, and SEO optimization.',
-    tier: 'command',
+    tier: 'single_point',  // Changed from command to single_point
     agentCount: 2,
     tabs: ['Content Engine', 'Web Presence', 'Blog'],
     color: 'violet',

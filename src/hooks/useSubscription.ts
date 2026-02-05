@@ -29,15 +29,15 @@ const ALL_FEATURES = [
   'custom_branding', 'widget', 'api_access', 'white_label', 'priority_support'
 ];
 
-// Feature mapping for all 7 tiers
+// Feature mapping for all 7 tiers - API Access included in all paid tiers
 export const TIER_FEATURES: Record<SubscriptionTier, string[]> = {
   free: ['basic_dashboard'],
-  express: ['voice_reminders', 'widget', 'smart_links', 'social_media', 'marketing_automation', 'creative_tools'],
-  aura_flow: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'calendar_sync', 'social_media', 'marketing_automation', 'creative_tools'],
-  halo: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal', 'social_media', 'marketing_automation', 'creative_tools'],
-  core: ['email_reminders', 'advanced_dashboard', 'widget', 'social_media', 'web_presence', 'marketing_automation', 'creative_tools'],
-  single_point: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal', 'quotes', 'social_media', 'marketing_automation', 'creative_tools'],
-  multi_track: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'advanced_ai', 'widget', 'field_ops', 'invoices', 'customer_portal', 'social_media', 'marketing_automation', 'creative_tools'],
+  express: ['voice_reminders', 'widget', 'smart_links', 'api_access'],  // Removed social_media, marketing_automation, creative_tools
+  aura_flow: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'calendar_sync', 'social_media', 'creative_tools', 'api_access'],  // Removed marketing_automation, kept social
+  halo: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal', 'social_media', 'marketing_automation', 'creative_tools', 'api_access'],  // Added api_access
+  core: ['email_reminders', 'advanced_dashboard', 'widget', 'social_media', 'web_presence', 'marketing_automation', 'creative_tools', 'api_access'],  // Added api_access
+  single_point: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'widget', 'customer_portal', 'quotes', 'social_media', 'marketing_automation', 'creative_tools', 'web_presence', 'api_access'],  // Added web_presence, api_access
+  multi_track: ['email_reminders', 'sms_reminders', 'voice_reminders', 'advanced_dashboard', 'appointments_unlimited', 'advanced_ai', 'widget', 'field_ops', 'invoices', 'customer_portal', 'social_media', 'marketing_automation', 'creative_tools', 'web_presence', 'api_access'],  // Added web_presence, api_access
   command: ALL_FEATURES,
 };
 
