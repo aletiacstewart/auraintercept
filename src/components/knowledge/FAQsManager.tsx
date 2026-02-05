@@ -311,7 +311,7 @@ export function FAQsManager() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent>
-                      <p className="text-white/70 mb-4">{faq.answer}</p>
+                      <p className="text-muted-foreground mb-4">{faq.answer}</p>
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline" onClick={() => handleOpenDialog(faq)}>
                           <Pencil className="w-3 h-3 mr-1" />
