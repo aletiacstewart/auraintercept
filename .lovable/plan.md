@@ -1,164 +1,123 @@
 
-# Company Onboarding Questionnaire PDF
+# Aura Intercept Platform FAQ Document
 
 ## Overview
-Create a printable PDF document that collects all information needed to onboard companies to the Aura Intercept platform. This document will serve as a discovery questionnaire that can be emailed, printed, or completed during sales calls.
+Create a comprehensive FAQ PDF document that can be added to the Knowledge Base. This document will cover all common questions about the Aura Intercept platform, organized by category for easy navigation.
 
 ---
 
-## PDF Structure
+## Document Structure (~20 pages)
 
 ### Cover Page
-- Aura Intercept branding with logo placeholder
-- Title: "Company Onboarding Questionnaire"
-- Subtitle: "Complete this form to help us configure your AI platform"
-- Date field and version number (2026)
+- Title: "Aura Intercept Platform FAQ"
+- Subtitle: "Everything You Need to Know About Your AI Business Platform"
+- Version: 2026 Edition
+- Table of Contents summary
 
-### Section 1: Company Profile (2 pages)
-Fillable fields for core company information:
+### Section 1: Getting Started (2 pages)
+| Question | Topic |
+|----------|-------|
+| What is Aura Intercept? | Platform overview |
+| How do I get started? | Onboarding process |
+| What subscription plan is right for me? | Tier selection guide |
+| How long does implementation take? | Timeline expectations |
+| What do I need to prepare before onboarding? | Pre-requirements |
 
-| Field | Purpose |
-|-------|---------|
-| Company Name | Dashboard display |
-| Primary Contact Name | Admin account |
-| Primary Contact Email | Login credentials |
-| Primary Contact Phone | SMS notifications |
-| Business Address | Service area setup |
-| Website URL | Widget integration |
-| Industry/Business Type | Tier recommendation |
-| Years in Business | Context for setup |
-| Logo (attach separately) | Branding |
-| Brand Colors (Primary/Secondary) | Theme customization |
+### Section 2: Subscription Plans & Pricing (3 pages)
+| Question | Topic |
+|----------|-------|
+| What plans are available? | 7-tier overview |
+| What's the difference between tiers? | Feature comparison |
+| Can I upgrade or downgrade my plan? | Plan changes |
+| What are the implementation fees? | One-time costs |
+| Are there annual discounts? | Payment options |
+| What add-ons are available? | Social Media, Web Presence, Employees |
 
-### Section 2: Business Operations Info (1 page)
-| Field | Purpose |
-|-------|---------|
-| Total Employee Count | Tier limits |
-| Number of Technicians/Field Staff | Field ops setup |
-| Number of Locations | Multi-location config |
-| Approximate Annual Revenue | Tier recommendation |
-| Business Hours (per day) | Availability config |
-| Emergency/After-Hours Contact | Emergency routing |
-| Service Categories (list) | Knowledge base |
-| Service Area (cities/zip codes) | Dispatch zones |
+### Section 3: AI Agents & Features (4 pages)
+| Question | Topic |
+|----------|-------|
+| What are AI Operatives? | 24 agents explained |
+| What is Message Aura vs Talk to Aura? | Text vs Voice |
+| How does the AI Receptionist work? | Triage agent |
+| What can the Scheduling Agent do? | Booking automation |
+| How do Follow-up and Review agents help? | Customer retention |
+| What are the Field Operations agents? | Dispatch, Route, ETA, Check-in |
+| How does the Creative Agent generate content? | Content Engine |
 
-### Section 3: AI Opportunity Audit Questions (6-8 pages)
-All 30 questions from the online audit, organized by section with checkbox options:
+### Section 4: Consoles & Dashboards (3 pages)
+| Question | Topic |
+|----------|-------|
+| What consoles are included in my plan? | 7 consoles overview |
+| How do I access the Customer Portal? | Navigation |
+| What's in the Field Operations console? | Mobile technician tools |
+| How do Outreach & Sales Ops work? | Campaign management |
+| What social media platforms are supported? | 6 platforms |
+| What reports can I generate? | Analytics & Export |
 
-**Section A: Business Basics (4 questions)**
-1. Employee count
-2. Multi-location status
-3. Annual revenue
-4. Industry type
+### Section 5: Integrations & Technical Setup (3 pages)
+| Question | Topic |
+|----------|-------|
+| What 3rd party integrations are required? | Twilio, ElevenLabs, Resend, Stripe |
+| How much do integrations cost? | Per-integration pricing |
+| How do I connect my social media accounts? | Platform linking |
+| Can I sync with Google Calendar? | Calendar integration |
+| What is Tavily and do I need it? | AI research tool |
 
-**Section B: Industry & Services (2 questions)**
-5. Appointment model
-6. Service location
+### Section 6: Knowledge Base & Training (2 pages)
+| Question | Topic |
+|----------|-------|
+| How do I train the AI on my business? | Knowledge Base setup |
+| What information should I add? | Services, FAQs, Hours |
+| Can I upload documents? | PDF/policy uploads |
+| How do I configure Aura Intelligence? | Master Logic settings |
+| What is Brand Voice and how do I set it? | Tone configuration |
 
-**Section C: Lead Intake & Response (3 questions)**
-7. Lead response time
-8. After-hours call handling
-9. Weekly lead volume
+### Section 7: Billing & Account Management (2 pages)
+| Question | Topic |
+|----------|-------|
+| How does billing work? | Payment cycles |
+| Can I add more employees? | Employee add-ons |
+| How do I manage my company profile? | Settings & branding |
+| What if I need to cancel? | Cancellation policy |
+| How do I get support? | Help resources |
 
-**Section D: Communication Preferences (4 questions)**
-10. AI interaction mode (text vs voice)
-11. Preferred communication channels
-12. Weekly missed calls
-13. Reservation/booking call needs
-
-**Section E: Scheduling & Operations (5 questions)**
-14. Current booking process
-15. Calendar sync vs portal preference
-16. Daily appointment volume
-17. Dispatch/routing method
-18. Customer ETA communication
-
-**Section F: Customer Retention & Reviews (3 questions)**
-19. Review collection process
-20. Customer reactivation strategy
-21. Appointment reminder method
-
-**Section G: Social Media & Web Presence (3 questions)**
-22. Social media activity level
-23. Content creation method
-24. Website status
-
-**Section H: Business Operations (3 questions)**
-25. Quoting process
-26. Inventory tracking
-27. Walk-in vs appointment model
-
-**Section I: Analytics & Growth (2 questions)**
-28. Performance tracking method
-29. Marketing automation status
-
-### Section 4: Integration Requirements Checklist (1 page)
-Pre-onboarding checklist for 3rd party accounts:
-
-| Integration | Required For | Account Ready? |
-|-------------|--------------|----------------|
-| Twilio | Voice & SMS | [ ] Yes [ ] No [ ] Need Help |
-| ElevenLabs | AI Voice | [ ] Yes [ ] No [ ] Need Help |
-| Resend | Email Delivery | [ ] Yes [ ] No [ ] Need Help |
-| Stripe | Payments | [ ] Yes [ ] No [ ] Need Help |
-| Google Calendar | Scheduling | [ ] Yes [ ] No [ ] Need Help |
-| Social Media Accounts | Social Tools | [ ] Yes [ ] No [ ] Need Help |
-
-### Section 5: Knowledge Base Setup (2 pages)
-Forms to collect:
-- **Services List**: Name, description, duration, price (table with 10 rows)
-- **FAQs**: Question/Answer pairs (10 rows)
-- **Common Customer Questions**: Free-form list
-- **Competitor Differentiators**: What makes you unique
-
-### Section 6: Employee Information (1 page)
-Table for initial employee accounts:
-| Name | Email | Phone | Role | Job Type |
-|------|-------|-------|------|----------|
-| (5-10 blank rows) |
-
-### Section 7: Additional Notes & Goals (1 page)
-- "What are your top 3 pain points?"
-- "What would success look like in 90 days?"
-- "Any specific features you're most excited about?"
-- Signature and date line
+### Section 8: Troubleshooting (1 page)
+| Question | Topic |
+|----------|-------|
+| Why isn't my AI responding correctly? | Training issues |
+| My voice calls aren't working | Twilio setup |
+| Emails aren't being sent | Resend configuration |
+| I can't see certain features | Tier limitations |
 
 ---
 
 ## Technical Implementation
 
 ### New File
-`src/components/documentation/CompanyOnboardingPDF.tsx`
+`src/components/documentation/PlatformFAQPDF.tsx`
 
 ### Key Features
 - Uses @react-pdf/renderer (existing dependency)
-- Applies sanitizePdfText() for all text content
+- Imports data from documentationConfig.ts for accurate pricing/features
 - Professional styling matching existing PDFs
-- Checkbox-style options for audit questions
-- Fillable line spaces for form fields
-- Page numbers and headers
+- Q&A format with clear visual hierarchy
+- Page numbers and section headers
+- Uses sanitizePdfText() utility
 
 ### Export Integration
-Add to existing PDF export dialog (likely in Export Documentation section)
-
-### Data Sources
-- Import `QUESTIONS`, `SECTION_ORDER` from `src/components/audit/types.ts`
-- Import `INTEGRATION_REQUIREMENTS` from `src/lib/documentationConfig.ts`
-- Import `SUBSCRIPTION_TIERS` for tier reference
+Add to ExportDocumentation.tsx with download button
 
 ---
 
-## Page Count Estimate
-- Cover: 1 page
-- Company Profile: 2 pages
-- Business Operations: 1 page
-- Audit Questions: 7 pages (4-5 questions per page)
-- Integration Checklist: 1 page
-- Knowledge Base: 2 pages
-- Employee Info: 1 page
-- Notes & Goals: 1 page
+## Data Sources
 
-**Total: ~16 pages**
+| Data | Source |
+|------|--------|
+| Subscription Tiers | `SUBSCRIPTION_TIERS` from documentationConfig.ts |
+| AI Operatives | `AI_OPERATIVES` from documentationConfig.ts |
+| Consoles | `CONSOLES` from documentationConfig.ts |
+| Integrations | `THIRD_PARTY_INTEGRATIONS` from documentationConfig.ts |
+| Platform Stats | `PLATFORM_STATS` from documentationConfig.ts |
 
 ---
 
@@ -166,6 +125,6 @@ Add to existing PDF export dialog (likely in Export Documentation section)
 
 | File | Action |
 |------|--------|
-| `src/components/documentation/CompanyOnboardingPDF.tsx` | CREATE - Main PDF component |
-| `src/pages/Dashboard.tsx` or Export page | MODIFY - Add export button |
+| `src/components/documentation/PlatformFAQPDF.tsx` | CREATE - Main FAQ PDF component |
+| `src/pages/ExportDocumentation.tsx` | MODIFY - Add export button |
 
