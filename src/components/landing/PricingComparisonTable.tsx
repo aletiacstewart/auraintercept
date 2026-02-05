@@ -338,13 +338,55 @@ export const PricingComparisonTable = () => {
           </tr>
         </thead>
         <tbody className="text-sm">
-          {sections.map((section) => (
+          {sections.map((section) => {
+            // Check if title has numbers in parentheses like "AI Agents (1 / 7 / 12 / 8 / 12 / 18 / 24)"
+            const numberMatch = section.title.match(/^(.+?)\s*\(([^)]+)\)$/);
+            const hasNumbers = numberMatch && numberMatch[2].includes('/');
+            
+            let titleText = section.title;
+            let numbers: string[] = [];
+            
+            if (hasNumbers && numberMatch) {
+              titleText = numberMatch[1];
+              numbers = numberMatch[2].split('/').map(n => n.trim());
+            }
+            
+            return (
             <>
               {/* Section Header */}
               <tr key={`section-${section.title}`} className="bg-slate-700/60">
-                <td colSpan={8} className="py-1.5 px-4 font-semibold text-sky-300">
-                  {section.title}
-                </td>
+                {hasNumbers && numbers.length === 7 ? (
+                  <>
+                    <td className="py-1.5 px-4 font-semibold text-sky-300">
+                      {titleText}
+                    </td>
+                    <td className="py-1.5 px-3 text-center font-semibold text-orange-300/80 text-xs">
+                      {numbers[0]}
+                    </td>
+                    <td className="py-1.5 px-3 text-center font-semibold text-teal-300/80 text-xs">
+                      {numbers[1]}
+                    </td>
+                    <td className="py-1.5 px-3 text-center font-semibold text-rose-300/80 text-xs">
+                      {numbers[2]}
+                    </td>
+                    <td className="py-1.5 px-3 text-center font-semibold text-white/80 text-xs">
+                      {numbers[3]}
+                    </td>
+                    <td className="py-1.5 px-3 text-center font-semibold text-white/80 text-xs">
+                      {numbers[4]}
+                    </td>
+                    <td className="py-1.5 px-3 text-center font-semibold text-sky-300/80 text-xs">
+                      {numbers[5]}
+                    </td>
+                    <td className="py-1.5 px-3 text-center font-semibold text-amber-300/80 text-xs">
+                      {numbers[6]}
+                    </td>
+                  </>
+                ) : (
+                  <td colSpan={8} className="py-1.5 px-4 font-semibold text-sky-300">
+                    {section.title}
+                  </td>
+                )}
               </tr>
               
               {/* Section Rows */}
@@ -369,7 +411,8 @@ export const PricingComparisonTable = () => {
                 );
               })}
             </>
-          ))}
+          );
+          })}
         </tbody>
       </table>
     </TooltipProvider>
