@@ -88,8 +88,8 @@ const sections: FeatureSection[] = [
   {
     title: 'Ideal For',
     features: [
-      { name: 'Business Size', express: 'Single Restaurants', flow: 'Individual/Home', halo: 'Salons & Spas', core: 'Up to 4 employees', singlePoint: 'Up to 8 employees', multiTrack: 'Up to 16 employees', command: 'Up to 32 employees' },
-      { name: 'Use Case', express: 'Voice + smart links', flow: 'Calendar-based booking', halo: 'Appointment-based', core: 'Digital presence tools', singlePoint: 'Lead capture focus', multiTrack: 'Field operations', command: 'Multi-location / Enterprise' },
+      { name: 'Business Size', express: 'Single Restaurants', flow: 'Individual/Real Estate', halo: 'Salons & Spas', core: 'Up to 4 employees', singlePoint: 'Up to 8 employees', multiTrack: 'Up to 16 employees', command: 'Up to 32 employees' },
+      { name: 'Use Case', express: 'Voice + smart links', flow: 'Calendar & showings', halo: 'Appointment-based', core: 'Digital presence tools', singlePoint: 'Lead capture focus', multiTrack: 'Field operations', command: 'Multi-location / Enterprise' },
     ],
   },
   {
