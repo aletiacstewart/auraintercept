@@ -40,11 +40,13 @@ const CONSOLE_NAMES: Record<string, string> = {
   business_management: 'Business Management',
   marketing_sales: 'Outreach & Sales Ops',
   social_media: 'Social Media',
+  creative_web_presence: 'Creative & Web Presence',
   analytics_reports: 'Analytics & Reports',
+  ai_operatives_hub: 'AI Operatives Hub',
 };
 
 interface TierCardProps {
-  tier: 'core' | 'single_point' | 'multi_track' | 'command';
+  tier: 'express' | 'aura_flow' | 'halo' | 'core' | 'single_point' | 'multi_track' | 'command';
   icon: React.ReactNode;
   color: string;
   bgColor: string;
@@ -163,11 +165,61 @@ const TierCard: React.FC<TierCardProps> = ({
 const TierComparisonCards: React.FC = () => {
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-card-foreground">Upgrade Paths & Cost Implications</h3>
+      <h3 className="text-lg font-semibold text-card-foreground">Subscription Tiers & Upgrade Paths</h3>
       <p className="text-sm text-muted-foreground">
         See what each tier unlocks and the incremental cost to upgrade.
       </p>
       
+      {/* Industry-Specific Tiers */}
+      <h4 className="text-md font-semibold text-card-foreground mt-6">Industry-Specific Tiers</h4>
+      <div className="grid gap-4 md:grid-cols-3">
+        <TierCard
+          tier="express"
+          icon={<Zap className="h-5 w-5 text-orange-400" />}
+          color="text-orange-400"
+          bgColor="bg-orange-950/30"
+          borderColor="border-orange-600/50"
+          additionalFeatures={[
+            'Talk to Aura (Voice)',
+            'Smart Link Sharing',
+            'Knowledge Base',
+            'API Access',
+          ]}
+        />
+        
+        <TierCard
+          tier="aura_flow"
+          icon={<MessageSquare className="h-5 w-5 text-cyan-400" />}
+          color="text-cyan-400"
+          bgColor="bg-cyan-950/30"
+          borderColor="border-cyan-600/50"
+          additionalFeatures={[
+            'Calendar Sync',
+            'Social Media Ops',
+            'Creative Agent',
+            '1 Employee Account',
+            'API Access',
+          ]}
+        />
+        
+        <TierCard
+          tier="halo"
+          icon={<Crown className="h-5 w-5 text-rose-400" />}
+          color="text-rose-400"
+          bgColor="bg-rose-950/30"
+          borderColor="border-rose-600/50"
+          additionalFeatures={[
+            'Customer Portal',
+            'Review Agent',
+            'Outreach & Sales Ops',
+            '3 Employee Accounts',
+            'API Access',
+          ]}
+        />
+      </div>
+      
+      {/* General Business Tiers */}
+      <h4 className="text-md font-semibold text-card-foreground mt-6">General Business Tiers</h4>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <TierCard
           tier="core"
@@ -176,10 +228,12 @@ const TierComparisonCards: React.FC = () => {
           bgColor="bg-emerald-950/30"
           borderColor="border-emerald-600/50"
           additionalFeatures={[
-            'Talk to Aura',
-            'Social Media',
+            'Message Aura (Text)',
+            'Marketing Automation',
+            'Social Media Ops',
             'Web Presence (1pg)',
             '2 Employee Accounts',
+            'API Access',
           ]}
         />
         
@@ -190,6 +244,13 @@ const TierComparisonCards: React.FC = () => {
           bgColor="bg-amber-950/30"
           borderColor="border-amber-600/50"
           upgradeFrom={{ tier: 'Core', priceDiff: 1000 }}
+          additionalFeatures={[
+            'Scheduling Agent',
+            'Web Presence Agent',
+            'Creative & Web Console',
+            '5 Employee Accounts',
+            'API Access',
+          ]}
         />
         
         <TierCard
@@ -200,8 +261,11 @@ const TierComparisonCards: React.FC = () => {
           borderColor="border-sky-600/50"
           upgradeFrom={{ tier: 'Single-Point', priceDiff: 2497 }}
           additionalFeatures={[
-            'Social Media',
-            'Web Presence (1pg)',
+            'Field Operations',
+            'Quoting & Invoicing',
+            'Web Presence Agent',
+            '10 Employee Accounts',
+            'API Access',
           ]}
         />
         
@@ -211,10 +275,14 @@ const TierComparisonCards: React.FC = () => {
           color="text-violet-400"
           bgColor="bg-violet-950/30"
           borderColor="border-violet-600/50"
-          upgradeFrom={{ tier: 'Multi-Track', priceDiff: 3000 }}
+          upgradeFrom={{ tier: 'Multi-Track', priceDiff: 2000 }}
           additionalFeatures={[
-            'Social Media',
-            'Web Presence (1pg)',
+            'All 24 AI Operatives',
+            'All 7 Consoles',
+            'Analytics & Reports',
+            'Inventory Management',
+            '25 Employee Accounts',
+            'API Access',
           ]}
         />
       </div>
@@ -224,6 +292,21 @@ const TierComparisonCards: React.FC = () => {
         <CardContent className="py-4">
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
             <div className="flex items-center gap-2">
+              <Badge className="bg-orange-600">Express</Badge>
+              <span className="text-muted-foreground">$197/mo</span>
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-2">
+              <Badge className="bg-cyan-600">Flow</Badge>
+              <span className="text-muted-foreground">$297/mo</span>
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-2">
+              <Badge className="bg-rose-600">Halo</Badge>
+              <span className="text-muted-foreground">$397/mo</span>
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center gap-2">
               <Badge className="bg-emerald-600">Core</Badge>
               <span className="text-muted-foreground">$500/mo</span>
             </div>
@@ -231,19 +314,16 @@ const TierComparisonCards: React.FC = () => {
             <div className="flex items-center gap-2">
               <Badge className="bg-amber-600">Single-Point</Badge>
               <span className="text-muted-foreground">$1,500/mo</span>
-              <span className="text-emerald-400">(+$1,000)</span>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-2">
               <Badge className="bg-sky-600">Multi-Track</Badge>
               <span className="text-muted-foreground">$3,997/mo</span>
-              <span className="text-emerald-400">(+$2,497)</span>
             </div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-2">
               <Badge className="bg-violet-600">Command</Badge>
               <span className="text-muted-foreground">$5,997/mo</span>
-              <span className="text-emerald-400">(+$2,000)</span>
             </div>
           </div>
         </CardContent>

@@ -2172,16 +2172,22 @@ serve(async (req) => {
     // === SUBSCRIPTION TIER GATING ===
     // Define which agents are available in each subscription tier
     // IMPORTANT: Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
-    // 23 Total Agents - Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
+    // 24 Total Agents - Keep in sync with src/lib/subscriptionAgentConfig.ts TIER_AGENT_CONFIG
     const TIER_AGENTS: Record<string, string[]> = {
       free: [],
-      // Aura Halo ($397/mo): AI Receptionist + Scheduling + Follow-up for salons/wellness
-      halo: ['triage', 'booking', 'followup'],
-      // Single-Point (3): NO booking (call to book), but has Voice AI
-      single_point: ['triage', 'followup', 'review'],
-      // Multi-Track (10): Adds booking, field ops, quoting/invoice
-      multi_track: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice'],
-      // Command (22): Full suite - 4 Customer Portal + 4 Field Ops + 4 Business Ops + 3 Marketing + 3 Social Media + 4 Analytics + 1 Analytics Router
+      // Aura Express ($197/mo): AI Receptionist only for restaurants
+      express: ['triage'],
+      // Aura Flow ($297/mo): AI Receptionist + Scheduling + Social Media + Creative (1 employee)
+      aura_flow: ['triage', 'booking', 'followup', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],
+      // Aura Core ($500/mo): AI Chat + Marketing + Social Media
+      core: ['triage', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],
+      // Aura Halo ($397/mo): AI Receptionist + Scheduling + Follow-up + Review + Marketing + Social for salons/wellness
+      halo: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative'],
+      // Single-Point ($1,500/mo): Customer Portal + Marketing + Social + Web Presence
+      single_point: ['triage', 'booking', 'followup', 'review', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
+      // Multi-Track ($3,997/mo): Field ops + booking + Web Presence
+      multi_track: ['triage', 'booking', 'followup', 'review', 'dispatch', 'route', 'eta', 'checkin', 'quoting', 'invoice', 'campaign', 'lead', 'marketing', 'social_content', 'social_scheduler', 'social_analytics', 'creative', 'web_presence'],
+      // Command ($5,997/mo): Full suite - 24 agents + Analytics Router
       command: [
         'triage', 'booking', 'followup', 'review',           // Customer Portal (4)
         'dispatch', 'route', 'eta', 'checkin',               // Field Operations (4)
@@ -2189,6 +2195,7 @@ serve(async (req) => {
         'campaign', 'lead', 'marketing',                      // Marketing & Sales (3)
         'social_content', 'social_scheduler', 'social_analytics', // Social Media (3)
         'insights', 'performance', 'revenue', 'forecast',    // Analytics & Reports (4)
+        'creative', 'web_presence',                          // Creative & Web Presence (2)
         'analytics'                                          // Analytics Router Agent
       ]
     };
@@ -2196,9 +2203,12 @@ serve(async (req) => {
     // Helper to determine required tier for an agent
     const getRequiredTierForAgent = (agent: string): string | null => {
       if (TIER_AGENTS.command.includes(agent) && !TIER_AGENTS.multi_track.includes(agent)) return 'command';
-      if (TIER_AGENTS.multi_track.includes(agent) && !TIER_AGENTS.single_point.includes(agent) && !TIER_AGENTS.halo.includes(agent)) return 'multi_track';
-      if (TIER_AGENTS.single_point.includes(agent) && !TIER_AGENTS.halo.includes(agent)) return 'single_point';
-      if (TIER_AGENTS.halo.includes(agent)) return 'halo';
+      if (TIER_AGENTS.multi_track.includes(agent) && !TIER_AGENTS.single_point.includes(agent)) return 'multi_track';
+      if (TIER_AGENTS.single_point.includes(agent) && !TIER_AGENTS.halo.includes(agent) && !TIER_AGENTS.core.includes(agent)) return 'single_point';
+      if (TIER_AGENTS.halo.includes(agent) && !TIER_AGENTS.aura_flow.includes(agent)) return 'halo';
+      if (TIER_AGENTS.core.includes(agent) && !TIER_AGENTS.aura_flow.includes(agent)) return 'core';
+      if (TIER_AGENTS.aura_flow.includes(agent) && !TIER_AGENTS.express.includes(agent)) return 'aura_flow';
+      if (TIER_AGENTS.express.includes(agent)) return 'express';
       return null;
     };
 

@@ -21,27 +21,23 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'Limited access - upgrade to unlock AI agents',
   },
   express: {
-    // Aura Express ($197/mo): Voice & Chat + Universal agents for restaurants
+    // Aura Express ($197/mo): Voice & Chat only for restaurants - minimal agent set
     agents: [
-      'triage',  // AI Receptionist
-      'campaign', 'lead', 'marketing',  // Outreach & Sales
-      'social_content', 'social_scheduler', 'social_analytics',  // Social Media
-      'creative'  // Creative Agent
+      'triage',  // AI Receptionist only
     ],
-    consoles: ['marketing_sales', 'social_media'],
+    consoles: [],  // No consoles
     label: 'Aura Express',
     price: '$197/mo',
     description: 'AI Voice & Chat for restaurants with smart link sharing',
   },
   aura_flow: {
-    // Aura Flow ($297/mo): AI voice, chat, scheduling + universal agents
+    // Aura Flow ($297/mo): AI voice, chat, scheduling + social media (1 employee)
     agents: [
       'triage', 'booking', 'followup',  // Customer Portal
-      'campaign', 'lead', 'marketing',  // Outreach & Sales
       'social_content', 'social_scheduler', 'social_analytics',  // Social Media
       'creative'  // Creative Agent
     ],
-    consoles: ['marketing_sales', 'social_media'],
+    consoles: ['social_media'],  // Social Media only (removed marketing_sales)
     label: 'Aura Flow',
     price: '$297/mo',
     description: 'AI voice, chat, and scheduling with direct calendar sync',
@@ -60,9 +56,9 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'AI Chat + Social Media + Web Presence',
   },
   halo: {
-    // Aura Halo ($397/mo): AI Receptionist + Scheduling + universal agents for salons/wellness
+    // Aura Halo ($397/mo): AI Receptionist + Scheduling + Review Agent for salons/wellness
     agents: [
-      'triage', 'booking', 'followup',  // Customer Portal
+      'triage', 'booking', 'followup', 'review',  // Customer Portal (added review)
       'campaign', 'lead', 'marketing',  // Outreach & Sales
       'social_content', 'social_scheduler', 'social_analytics',  // Social Media
       'creative'  // Creative Agent
@@ -73,32 +69,32 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
     description: 'AI Receptionist, Scheduling, Voice & SMS/Email for salons & wellness',
   },
   single_point: {
-    // Single-Point: Customer engagement + AI Voice + universal agents
+    // Single-Point: Customer engagement + AI Voice + Scheduling + Web Presence
     agents: [
-      'triage', 'followup', 'review',  // Customer Portal
+      'triage', 'booking', 'followup', 'review',  // Customer Portal (added booking)
       'campaign', 'lead', 'marketing',  // Outreach & Sales
       'social_content', 'social_scheduler', 'social_analytics',  // Social Media
-      'creative'  // Creative Agent
+      'creative', 'web_presence'  // Creative & Web Presence (added web_presence)
     ],
-    consoles: ['customer_portal', 'marketing_sales', 'social_media'],
+    consoles: ['customer_portal', 'marketing_sales', 'social_media', 'creative_web_presence'],  // Added creative_web_presence
     label: 'Single-Point',
     price: '$1,500/mo',
-    description: 'Customer engagement + AI Voice',
+    description: 'Customer engagement + AI Voice + Web Presence',
   },
   multi_track: {
-    // Multi-Track: Field ops + booking + universal agents
+    // Multi-Track: Field ops + booking + Web Presence
     agents: [
       'triage', 'booking', 'followup', 'review',  // Customer Portal
       'dispatch', 'route', 'eta', 'checkin',  // Field Operations
       'quoting', 'invoice',  // Business Operations
       'campaign', 'lead', 'marketing',  // Outreach & Sales
       'social_content', 'social_scheduler', 'social_analytics',  // Social Media
-      'creative'  // Creative Agent
+      'creative', 'web_presence'  // Creative & Web Presence (added web_presence)
     ],
-    consoles: ['customer_portal', 'field_operations', 'marketing_sales', 'social_media'],
+    consoles: ['customer_portal', 'field_operations', 'marketing_sales', 'social_media', 'creative_web_presence'],  // Added creative_web_presence
     label: 'Multi-Track',
     price: '$3,997/mo',
-    description: 'Customer + Field operations + Online booking',
+    description: 'Customer + Field operations + Online booking + Web Presence',
   },
   command: {
     // IMPORTANT: Keep in sync with supabase/functions/ai-agent-chat/index.ts TIER_AGENTS
@@ -121,7 +117,7 @@ export const TIER_AGENT_CONFIG: Record<SubscriptionTier, TierConfig> = {
       // Web Presence (1)
       'web_presence'
     ],
-    consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'analytics_reports', 'ai_operatives_hub'],
+    consoles: ['customer_portal', 'field_operations', 'business_management', 'marketing_sales', 'social_media', 'creative_web_presence', 'analytics_reports', 'ai_operatives_hub'],
     label: 'Aura Pro Command',
     price: '$5,997/mo',
     description: 'Full business automation suite',
@@ -270,30 +266,30 @@ export function isTierAtLeast(currentTier: SubscriptionTier, requiredTier: Subsc
 export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
   free: [],
   express: [
-    // Express tier: Voice & Chat + Marketing + Social
+    // Express tier: Voice & Chat only (no outreach/social consoles)
     'can_access_customers',
-    'can_access_leads',
-    'can_access_campaigns',
+    'api_access',  // Added API Access
   ],
   aura_flow: [
-    // Aura Flow tier: Voice & Chat + Scheduling + Marketing + Social
+    // Aura Flow tier: Voice & Chat + Scheduling + Social Media (1 employee)
     'can_access_appointments',
     'can_access_customers',
-    'can_access_leads',
-    'can_access_campaigns',
+    'api_access',  // Added API Access
   ],
   core: [
     // Core tier: AI Chat + Marketing + Social
     'can_access_customers',
     'can_access_leads',
     'can_access_campaigns',
+    'api_access',  // Added API Access
   ],
   halo: [
-    // Halo tier: Appointments + Customers + Marketing + Social
+    // Halo tier: Appointments + Customers + Marketing + Social + Review
     'can_access_appointments',
     'can_access_customers',
     'can_access_leads',
     'can_access_campaigns',
+    'api_access',  // Added API Access
   ],
   single_point: [
     'can_access_appointments',
@@ -301,6 +297,7 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
     'can_access_quotes',
     'can_access_leads',
     'can_access_campaigns',
+    'api_access',  // Added API Access
   ],
   multi_track: [
     'can_access_appointments',
@@ -311,6 +308,7 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
     'can_access_field_ops',
     'can_access_inventory',
     'can_access_campaigns',
+    'api_access',  // Added API Access
   ],
   command: [
     'can_access_appointments',
@@ -322,6 +320,7 @@ export const TIER_FEATURE_CONFIG: Record<SubscriptionTier, string[]> = {
     'can_access_inventory',
     'can_access_campaigns',
     'can_access_analytics',
+    'api_access',  // Added API Access
   ],
 };
 
