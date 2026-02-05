@@ -1,4 +1,6 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2';
+
+const VERSION = "v1.0.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -6,6 +8,8 @@ const corsHeaders = {
 };
 
 Deno.serve(async (req) => {
+  console.log(`[${VERSION}] Health check request received`);
+  
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -15,7 +19,7 @@ Deno.serve(async (req) => {
 
     if (!company_id) {
       return new Response(
-        JSON.stringify({ error: 'company_id is required' }),
+        JSON.stringify({ error: 'company_id is required', _version: VERSION }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -45,6 +49,8 @@ Deno.serve(async (req) => {
     if (dbError) status = 'unhealthy';
     else if (enabledAgents === 0 || !integrations?.openai_api_key) status = 'degraded';
 
+    console.log(`[${VERSION}] Health check completed: ${status}`);
+
     return new Response(
       JSON.stringify({
         status,
@@ -54,12 +60,14 @@ Deno.serve(async (req) => {
           agents: { total: totalAgents, enabled: enabledAgents, configured: agentConfigs?.filter(a => a.settings).length || 0 },
           api_keys: { openai: !!integrations?.openai_api_key, elevenlabs: !!integrations?.elevenlabs_api_key },
         },
+        _version: VERSION,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
+    console.error(`[${VERSION}] Error:`, error);
     return new Response(
-      JSON.stringify({ status: 'unhealthy', error: String(error), timestamp: new Date().toISOString() }),
+      JSON.stringify({ status: 'unhealthy', error: String(error), timestamp: new Date().toISOString(), _version: VERSION }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
