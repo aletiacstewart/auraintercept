@@ -1,123 +1,165 @@
 
-# Aura Intercept Platform FAQ Document
 
-## Overview
-Create a comprehensive FAQ PDF document that can be added to the Knowledge Base. This document will cover all common questions about the Aura Intercept platform, organized by category for easy navigation.
+# Automated Testing System for Aura Intercept AI Platform
 
----
-
-## Document Structure (~20 pages)
-
-### Cover Page
-- Title: "Aura Intercept Platform FAQ"
-- Subtitle: "Everything You Need to Know About Your AI Business Platform"
-- Version: 2026 Edition
-- Table of Contents summary
-
-### Section 1: Getting Started (2 pages)
-| Question | Topic |
-|----------|-------|
-| What is Aura Intercept? | Platform overview |
-| How do I get started? | Onboarding process |
-| What subscription plan is right for me? | Tier selection guide |
-| How long does implementation take? | Timeline expectations |
-| What do I need to prepare before onboarding? | Pre-requirements |
-
-### Section 2: Subscription Plans & Pricing (3 pages)
-| Question | Topic |
-|----------|-------|
-| What plans are available? | 7-tier overview |
-| What's the difference between tiers? | Feature comparison |
-| Can I upgrade or downgrade my plan? | Plan changes |
-| What are the implementation fees? | One-time costs |
-| Are there annual discounts? | Payment options |
-| What add-ons are available? | Social Media, Web Presence, Employees |
-
-### Section 3: AI Agents & Features (4 pages)
-| Question | Topic |
-|----------|-------|
-| What are AI Operatives? | 24 agents explained |
-| What is Message Aura vs Talk to Aura? | Text vs Voice |
-| How does the AI Receptionist work? | Triage agent |
-| What can the Scheduling Agent do? | Booking automation |
-| How do Follow-up and Review agents help? | Customer retention |
-| What are the Field Operations agents? | Dispatch, Route, ETA, Check-in |
-| How does the Creative Agent generate content? | Content Engine |
-
-### Section 4: Consoles & Dashboards (3 pages)
-| Question | Topic |
-|----------|-------|
-| What consoles are included in my plan? | 7 consoles overview |
-| How do I access the Customer Portal? | Navigation |
-| What's in the Field Operations console? | Mobile technician tools |
-| How do Outreach & Sales Ops work? | Campaign management |
-| What social media platforms are supported? | 6 platforms |
-| What reports can I generate? | Analytics & Export |
-
-### Section 5: Integrations & Technical Setup (3 pages)
-| Question | Topic |
-|----------|-------|
-| What 3rd party integrations are required? | Twilio, ElevenLabs, Resend, Stripe |
-| How much do integrations cost? | Per-integration pricing |
-| How do I connect my social media accounts? | Platform linking |
-| Can I sync with Google Calendar? | Calendar integration |
-| What is Tavily and do I need it? | AI research tool |
-
-### Section 6: Knowledge Base & Training (2 pages)
-| Question | Topic |
-|----------|-------|
-| How do I train the AI on my business? | Knowledge Base setup |
-| What information should I add? | Services, FAQs, Hours |
-| Can I upload documents? | PDF/policy uploads |
-| How do I configure Aura Intelligence? | Master Logic settings |
-| What is Brand Voice and how do I set it? | Tone configuration |
-
-### Section 7: Billing & Account Management (2 pages)
-| Question | Topic |
-|----------|-------|
-| How does billing work? | Payment cycles |
-| Can I add more employees? | Employee add-ons |
-| How do I manage my company profile? | Settings & branding |
-| What if I need to cancel? | Cancellation policy |
-| How do I get support? | Help resources |
-
-### Section 8: Troubleshooting (1 page)
-| Question | Topic |
-|----------|-------|
-| Why isn't my AI responding correctly? | Training issues |
-| My voice calls aren't working | Twilio setup |
-| Emails aren't being sent | Resend configuration |
-| I can't see certain features | Tier limitations |
+## Current State
+- No testing infrastructure exists
+- No vitest/jest configuration
+- No test files for components or edge functions
+- Manual testing only via AIAgentChat console
 
 ---
 
-## Technical Implementation
+## Proposed Testing Architecture
 
-### New File
-`src/components/documentation/PlatformFAQPDF.tsx`
+### Three Testing Layers
 
-### Key Features
-- Uses @react-pdf/renderer (existing dependency)
-- Imports data from documentationConfig.ts for accurate pricing/features
-- Professional styling matching existing PDFs
-- Q&A format with clear visual hierarchy
-- Page numbers and section headers
-- Uses sanitizePdfText() utility
-
-### Export Integration
-Add to ExportDocumentation.tsx with download button
+```text
++---------------------------+
+|   E2E Integration Tests   |  ← Full user flows
++---------------------------+
+|   Edge Function Tests     |  ← Backend AI logic (Deno)
++---------------------------+
+|   Component Unit Tests    |  ← React components (Vitest)
++---------------------------+
+```
 
 ---
 
-## Data Sources
+## Layer 1: Frontend Component Tests
 
-| Data | Source |
-|------|--------|
-| Subscription Tiers | `SUBSCRIPTION_TIERS` from documentationConfig.ts |
-| AI Operatives | `AI_OPERATIVES` from documentationConfig.ts |
-| Consoles | `CONSOLES` from documentationConfig.ts |
-| Integrations | `THIRD_PARTY_INTEGRATIONS` from documentationConfig.ts |
-| Platform Stats | `PLATFORM_STATS` from documentationConfig.ts |
+### Setup Requirements
+
+| Package | Purpose |
+|---------|---------|
+| vitest | Test runner |
+| @testing-library/react | Component rendering |
+| @testing-library/jest-dom | DOM matchers |
+| jsdom | Browser environment |
+
+### Files to Create
+
+| File | Purpose |
+|------|---------|
+| `vitest.config.ts` | Vitest configuration |
+| `src/test/setup.ts` | Test environment setup |
+| `src/test/mocks/supabase.ts` | Supabase client mock |
+
+### Test Files
+
+| Component | Test File |
+|-----------|-----------|
+| AIAgentChat | `src/components/ai/AIAgentChat.test.tsx` |
+| useAIAgent hook | `src/hooks/useAIAgent.test.ts` |
+| useAIAgentOrchestrator | `src/hooks/useAIAgentOrchestrator.test.ts` |
+
+### Example Test Scenarios - AI Agent Chat
+- Renders empty state with suggestions
+- Sends user message and shows loading
+- Displays assistant response
+- Handles error states
+- Clears message history
+
+---
+
+## Layer 2: Edge Function Tests (Deno)
+
+### Test Files to Create
+
+| Edge Function | Test File |
+|---------------|-----------|
+| ai-agent | `supabase/functions/ai-agent/index_test.ts` |
+| ai-orchestrator | `supabase/functions/ai-orchestrator/index_test.ts` |
+| ai-agent-chat | `supabase/functions/ai-agent-chat/index_test.ts` |
+
+### Test Scenarios - AI Agent
+
+| Scenario | What it Tests |
+|----------|---------------|
+| Rate limiting | 30 requests/min per IP |
+| Message validation | Required fields, sanitization |
+| Company context loading | Knowledge base retrieval |
+| Response streaming | SSE format compliance |
+| Error handling | 400/401/429/500 responses |
+
+### Test Scenarios - AI Orchestrator
+
+| Scenario | What it Tests |
+|----------|---------------|
+| Agent handoff | Triage → Booking flow |
+| Context creation | Session persistence |
+| Event emission | Database logging |
+| Settings retrieval | Agent configuration |
+
+---
+
+## Layer 3: AI Agent Test Suite
+
+### Automated Test Console Component
+
+Create `src/components/ai/AIAgentTestSuite.tsx` - A dedicated test runner UI that:
+
+1. **Predefined Test Scenarios**: Common conversation flows
+2. **Batch Testing**: Run all 24 agents with standard prompts
+3. **Response Validation**: Check for expected intents/actions
+4. **Performance Metrics**: Response time tracking
+5. **Export Results**: JSON/CSV test reports
+
+### Test Scenario Categories
+
+| Category | Example Prompts |
+|----------|-----------------|
+| Triage | "What services do you offer?" |
+| Booking | "I'd like to schedule an appointment for Tuesday" |
+| Follow-up | "When is my next appointment?" |
+| Review | "How can I leave a review?" |
+| Lead | "I'm interested in your premium package" |
+| Dispatch | "Who is assigned to my job?" |
+
+### Console Features
+
+```text
++-------------------------------------------+
+|  AI Agent Test Suite                  [▶] |
++-------------------------------------------+
+| Agent: [Dropdown - All 24 agents]         |
+| Scenario: [Dropdown - Test categories]    |
++-------------------------------------------+
+| [ ] Triage Agent           ✓ Pass (1.2s) |
+| [ ] Scheduling Agent       ✓ Pass (0.8s) |
+| [ ] Follow-up Agent        ⚠ Slow (3.5s) |
+| [ ] Review Agent           ✗ Fail        |
++-------------------------------------------+
+| Total: 24 | Pass: 21 | Fail: 1 | Skip: 2 |
++-------------------------------------------+
+```
+
+---
+
+## Implementation Plan
+
+### Phase 1: Testing Infrastructure
+1. Install testing dependencies (vitest, testing-library)
+2. Create vitest.config.ts
+3. Create test setup file with mocks
+4. Update tsconfig for test types
+
+### Phase 2: Component Tests
+1. Create Supabase mock utilities
+2. Write AIAgentChat tests
+3. Write useAIAgent hook tests
+4. Write useAIAgentOrchestrator tests
+
+### Phase 3: Edge Function Tests
+1. Create ai-agent test file
+2. Create ai-orchestrator test file
+3. Add test scenarios for each endpoint
+
+### Phase 4: AI Test Suite Console
+1. Create AIAgentTestSuite component
+2. Define test scenarios per agent
+3. Add to AI Operatives Hub as new tab
+4. Implement result export
 
 ---
 
@@ -125,6 +167,23 @@ Add to ExportDocumentation.tsx with download button
 
 | File | Action |
 |------|--------|
-| `src/components/documentation/PlatformFAQPDF.tsx` | CREATE - Main FAQ PDF component |
-| `src/pages/ExportDocumentation.tsx` | MODIFY - Add export button |
+| `package.json` | ADD - Testing dependencies |
+| `vitest.config.ts` | CREATE - Vitest configuration |
+| `tsconfig.app.json` | MODIFY - Add vitest types |
+| `src/test/setup.ts` | CREATE - Test setup |
+| `src/test/mocks/supabase.ts` | CREATE - Supabase mocks |
+| `src/components/ai/AIAgentChat.test.tsx` | CREATE - Chat tests |
+| `src/hooks/useAIAgent.test.ts` | CREATE - Hook tests |
+| `supabase/functions/ai-agent/index_test.ts` | CREATE - Edge function tests |
+| `src/components/ai/AIAgentTestSuite.tsx` | CREATE - Test console UI |
+| `src/pages/AIOperativesHub.tsx` | MODIFY - Add Testing tab |
+
+---
+
+## Test Commands
+
+After implementation:
+- **Frontend tests**: Run via Vitest tool
+- **Edge function tests**: Run via Deno test tool
+- **Manual AI tests**: Use AIAgentTestSuite in dashboard
 
