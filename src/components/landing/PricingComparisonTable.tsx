@@ -93,7 +93,7 @@ const sections: FeatureSection[] = [
     ],
   },
   {
-    title: 'AI Agents (1 / 7 / 12 / 8 / 12 / 18 / 24)',
+    title: 'AI Agents (1 / 7 / 8 / 12 / 12 / 18 / 24)',
     features: [
       // AI Receptionist - ALL tiers
       { name: 'AI Receptionist (Triage)', express: 'check', flow: 'check', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
@@ -131,7 +131,7 @@ const sections: FeatureSection[] = [
     ],
   },
   {
-    title: 'Control Centers (0 / 1 / 4 / 2 / 4 / 5 / 7)',
+    title: 'Control Centers (0 / 1 / 2 / 4 / 4 / 5 / 7)',
     features: [
       { name: 'Customer Portal Console', express: 'x', flow: 'x', halo: 'check', core: 'x', singlePoint: 'check', multiTrack: 'check', command: 'check' },
       { name: 'Outreach & Sales Ops Console', express: 'x', flow: 'x', halo: 'check', core: 'check', singlePoint: 'check', multiTrack: 'check', command: 'check' },
@@ -313,14 +313,14 @@ export const PricingComparisonTable = () => {
               <div className="text-teal-300">Aura Flow</div>
               <div className="text-[10px] font-normal text-teal-300/70">$297/mo</div>
             </th>
-            <th className="text-center py-2.5 px-3 font-semibold bg-rose-500/20 border-x border-rose-400/30 text-sm">
-              <div className="text-rose-300">Aura Halo</div>
-              <div className="text-xs font-normal text-rose-300/70">$397/mo</div>
-            </th>
             <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
               <div>Core</div>
               <div className="text-xs font-normal text-emerald-400">AI-Assisted</div>
               <div className="text-xs font-normal text-white/70">$500/mo</div>
+            </th>
+            <th className="text-center py-2.5 px-3 font-semibold bg-rose-500/20 border-x border-rose-400/30 text-sm">
+              <div className="text-rose-300">Aura Halo</div>
+              <div className="text-xs font-normal text-rose-300/70">$397/mo</div>
             </th>
             <th className="text-center py-2.5 px-3 font-semibold text-white text-sm">
               <div>Single-Point</div>
@@ -366,10 +366,10 @@ export const PricingComparisonTable = () => {
                     <td className="py-1.5 px-3 text-center font-semibold text-teal-300/80 text-xs">
                       {numbers[1]}
                     </td>
-                    <td className="py-1.5 px-3 text-center font-semibold text-rose-300/80 text-xs">
+                    <td className="py-1.5 px-3 text-center font-semibold text-white/80 text-xs">
                       {numbers[2]}
                     </td>
-                    <td className="py-1.5 px-3 text-center font-semibold text-white/80 text-xs">
+                    <td className="py-1.5 px-3 text-center font-semibold text-rose-300/80 text-xs">
                       {numbers[3]}
                     </td>
                     <td className="py-1.5 px-3 text-center font-semibold text-white/80 text-xs">
@@ -401,8 +401,8 @@ export const PricingComparisonTable = () => {
                       <FeatureNameCell name={feature.name} rowIndex={rowIndex} />
                       {renderValue(feature.express, false, feature.name)}
                       {renderValue(feature.flow, false, feature.name, false, true)}
-                      {renderValue(feature.halo, false, feature.name, true)}
                       {renderValue(feature.core, false, feature.name)}
+                      {renderValue(feature.halo, false, feature.name, true)}
                       {renderValue(feature.singlePoint, false, feature.name)}
                       {renderValue(feature.multiTrack, true, feature.name)}
                       {renderValue(feature.command, false, feature.name)}
