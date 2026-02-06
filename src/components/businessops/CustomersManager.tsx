@@ -30,10 +30,12 @@ import {
   Check,
   ChevronRight,
   Loader2,
-  UserPlus
+  UserPlus,
+  Upload
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { AddCustomerForm } from '@/components/customers/AddCustomerForm';
+import { CustomerImportDialog } from '@/components/customers/CustomerImportDialog';
 
 interface CustomerProfile {
   id: string;
@@ -86,6 +88,7 @@ export function CustomersManager() {
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerProfile | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [addCustomerOpen, setAddCustomerOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   const { data: customers, isLoading } = useQuery({
     queryKey: ['customers', companyId],
@@ -198,6 +201,10 @@ export function CustomersManager() {
             className="pl-10"
           />
         </div>
+        <Button variant="outline" onClick={() => setImportOpen(true)}>
+          <Upload className="h-4 w-4 mr-2" />
+          Import
+        </Button>
         <Button onClick={() => setAddCustomerOpen(true)}>
           <UserPlus className="h-4 w-4 mr-2" />
           New Customer
@@ -497,6 +504,9 @@ export function CustomersManager() {
 
       {/* Add Customer Form */}
       <AddCustomerForm open={addCustomerOpen} onOpenChange={setAddCustomerOpen} />
+      
+      {/* Import Customers Dialog */}
+      <CustomerImportDialog open={importOpen} onOpenChange={setImportOpen} />
     </div>
   );
 }
