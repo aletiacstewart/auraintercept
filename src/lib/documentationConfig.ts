@@ -191,12 +191,12 @@ export const SUBSCRIPTION_TIERS: Record<string, TierConfig> = {
     implementationFee: 'Custom',
     employees: 50,
     operatives: 24,  // Full 24-agent suite including revenue + forecast
-    consoles: 8,  // All 7 + AI Operatives Hub
+    consoles: 7,  // All 7 Control Centers (AI Operatives Hub is management interface, not a console)
     description: 'Enterprise automation with full 24-operative suite and predictive analytics.',
     bestFor: 'Large service companies with 15+ technicians or multi-location operations.',
     highlights: [
       'All 24 AI Operatives',
-      'All 7 Consoles + AI Operatives Hub',
+      'All 7 Control Centers + AI Operatives Hub (Management Interface)',
       'Everything in Performance',
       'Advanced Analytics (Revenue + Forecast agents)',
       'Predictive intelligence and demand forecasting',
@@ -481,7 +481,7 @@ export const AI_OPERATIVES: OperativeConfig[] = [
 ];
 
 // ============================================
-// CONSOLES - 8 TOTAL (including AI Operatives Hub)
+// CONSOLES - 7 CONTROL CENTERS + AI OPERATIVES HUB (Management Interface)
 // ============================================
 
 export interface ConsoleConfig {
@@ -558,10 +558,14 @@ export const CONSOLES: ConsoleConfig[] = [
     tabs: ['Performance', 'Revenue', 'Insights', 'Forecast', 'KPIs', 'Social', 'Reminders', 'Export'],
     color: 'cyan',
   },
+];
+
+// Management Interfaces (separate from Control Centers)
+export const MANAGEMENT_INTERFACES: ConsoleConfig[] = [
   {
     id: 'ai_operatives_hub',
     name: 'AI Operatives Hub',
-    description: 'Central management console for all 24 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
+    description: 'Central management interface for all 24 AI Operatives with real-time monitoring, batch activation, dependency visualization, and performance analytics.',
     tier: 'command',
     agentCount: 24,
     tabs: ['Operatives', 'Quick Start', 'Monitor', 'Analytics', 'History'],
@@ -632,7 +636,7 @@ export const THIRD_PARTY_INTEGRATIONS: IntegrationConfig[] = [
 
 export const PLATFORM_STATS = {
   totalOperatives: 24,
-  totalConsoles: 8,  // Including AI Operatives Hub
+  totalConsoles: 7,  // 7 Control Centers (AI Operatives Hub is a management interface, not counted)
   totalTiers: 7,
   startingPrice: 197,
   maxEmployees: 50,

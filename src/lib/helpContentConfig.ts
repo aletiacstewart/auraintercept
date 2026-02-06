@@ -510,7 +510,7 @@ export const TIER_HELP_DESCRIPTIONS: Record<SubscriptionTier, { title: string; d
     highlights: [
       'Everything in Performance',
       'All 24 AI Agents',
-      'All 8 Control Centers (Consoles)',
+      'All 7 Control Centers (Consoles)',
       'AI Operatives Hub for central management',
       'Multi-location support',
       'White-label branding',
@@ -576,7 +576,7 @@ export const TIER_AGENT_COUNTS: Record<SubscriptionTier, number> = {
   command: 24,
 };
 
-// Console count per tier - NEW STRUCTURE (8 total consoles)
+// Console count per tier - 7 Control Centers (AI Operatives Hub is management interface, not counted)
 export const TIER_CONSOLE_COUNTS: Record<SubscriptionTier, number> = {
   free: 0,
   starter: 0,
@@ -585,7 +585,7 @@ export const TIER_CONSOLE_COUNTS: Record<SubscriptionTier, number> = {
   business: 4,
   field_ops: 6,
   performance: 7,
-  command: 8,  // Includes AI Operatives Hub
+  command: 7,  // All 7 Control Centers + AI Operatives Hub (management interface)
 };
 
 // Employee limits per tier - NEW STRUCTURE
