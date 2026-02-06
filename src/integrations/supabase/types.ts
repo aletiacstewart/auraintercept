@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_performance_metrics: {
+        Row: {
+          agent_type: string
+          avg_response_time_ms: number | null
+          company_id: string
+          created_at: string
+          date: string
+          handoff_count: number | null
+          id: string
+          requests_handled: number | null
+          success_rate: number | null
+        }
+        Insert: {
+          agent_type: string
+          avg_response_time_ms?: number | null
+          company_id: string
+          created_at?: string
+          date: string
+          handoff_count?: number | null
+          id?: string
+          requests_handled?: number | null
+          success_rate?: number | null
+        }
+        Update: {
+          agent_type?: string
+          avg_response_time_ms?: number | null
+          company_id?: string
+          created_at?: string
+          date?: string
+          handoff_count?: number | null
+          id?: string
+          requests_handled?: number | null
+          success_rate?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_performance_metrics_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_performance_metrics_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_agent_configs: {
         Row: {
           agent_type: string
@@ -5550,6 +5601,57 @@ export type Database = {
           },
           {
             foreignKeyName: "subscription_events_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_usage_tracking: {
+        Row: {
+          ai_requests: number | null
+          company_id: string
+          created_at: string
+          emails_sent: number | null
+          id: string
+          month_year: string
+          sms_sent: number | null
+          updated_at: string
+          voice_minutes: number | null
+        }
+        Insert: {
+          ai_requests?: number | null
+          company_id: string
+          created_at?: string
+          emails_sent?: number | null
+          id?: string
+          month_year: string
+          sms_sent?: number | null
+          updated_at?: string
+          voice_minutes?: number | null
+        }
+        Update: {
+          ai_requests?: number | null
+          company_id?: string
+          created_at?: string
+          emails_sent?: number | null
+          id?: string
+          month_year?: string
+          sms_sent?: number | null
+          updated_at?: string
+          voice_minutes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_usage_tracking_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_usage_tracking_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies_public"
